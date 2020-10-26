@@ -6,24 +6,24 @@
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
 	"files": [
-		"dist",
-		"source"
+		"x",
+		"s"
 	],
 	"scripts": {
 		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s test",
-		"clean": "rimraf dist *.pem && mkdirp dist",
-		"importmap": "importly --host=unpkg < package.json > dist/importmap.json",
+		"clean": "rimraf x *.pem && mkdirp x",
+		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
-		"compile-pug": "pug -s -o dist source",
-		"compile-sass": "sass source:dist",
+		"compile-pug": "pug -s -o x s",
+		"compile-sass": "sass s/:x/",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
 		"watch-pug": "npm run compile-pug -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
 		"watch": "run-p watch-tsc watch-pug",
 		"start": "serve -l 8080",
 		"test": "exit 0",
-		"test-lol": "cynic node dist/tests.test.js",
-		"test-browser": "cynic browser dist/tests.test.js --open=true --importmap-path=./dist/importmap.json"
+		"test-lol": "cynic node x/tests.test.js",
+		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json"
 	},
 	"devDependencies": {
 		"@types/gapi.auth2": "0.0.52",

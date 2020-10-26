@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"rootDir": "source",
-		"outDir": "dist",
+		"rootDir": "s",
+		"outDir": "x",
 		"target": "es2018",
 		"lib": ["esnext", "dom"],
 		"module": "esnext",
@@ -12,12 +12,7 @@
 		"declaration": true
 	},
 	"include": [
-		"source/**/*.ts",
-		"source/**/*.js",
-	],
-	"exclude": [
-		"jwt/**/*",
-		"source/microservices",
-		"source/metalfront",
+		"s/**/*.ts",
+		"s/**/*.js",
 	]
 }

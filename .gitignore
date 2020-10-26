@@ -1,5 +1,5 @@
 
-/dist*
+/x
 /node_modules
 
 /*.pem
