@@ -20,7 +20,7 @@
 		"watch-pug": "npm run compile-pug -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
 		"watch": "run-p watch-tsc watch-pug",
-		"start": "serve -l 8080",
+		"start": "serve x",
 		"test": "exit 0",
 		"test-lol": "cynic node x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json"
