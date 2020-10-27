@@ -1,8 +1,9 @@
 
 extends ../_page.pug
 
-block variables
-	- let pageSubtitle = "auth"
+block append variables
+	- base = ".."
+	- pageSubtitle = "auth"
 
 block maincontent
 	p catalog feature: auth

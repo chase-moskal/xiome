@@ -1,23 +1,24 @@
 
 doctype html
 
-block variables
+block append variables
+	- let base = "."
 	- let pageSubtitle
 
 head
 	meta(charset="utf-8")
 	meta(name="viewport" content="width=device-width,initial-scale=1")
 	title &#x1F404; feature.farm#{pageSubtitle && " – " + pageSubtitle}
-	link(rel="stylesheet" href="/styles.css")
-	script(src="/demo.bundle.js")
+	link(rel="stylesheet" href=`${base}/styles.css`)
+	script(src=`${base}/demo.bundle.js`)
 
 header.siteheader
 	div
 		h1 &#x1F404; feature.farm
 		nav
-			a(href="/") about
-			a(href="/apps") apps
-			a(href="/catalog") catalog
+			a(href=`${base}/`) about
+			a(href=`${base}/apps`) apps
+			a(href=`${base}/catalog`) catalog
 
 main
 	block maincontent

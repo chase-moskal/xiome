@@ -1,8 +1,9 @@
 
 extends ../_page.pug
 
-block variables
-	- let pageSubtitle = "catalog"
+block append variables
+	- base = ".."
+	- pageSubtitle = "catalog"
 
 block maincontent
 	h2 catalog
