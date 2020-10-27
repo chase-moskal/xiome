@@ -6,11 +6,9 @@
 	"files.encoding": "utf8",
 	"files.insertFinalNewline": true,
 
-	"search.exclude": {
-		"x": true,
-		"coverage": true,
+	"files.exclude": {
 		"node_modules": true,
-		"package-lock.json": true
+		"package-lock.json": true,
 	},
 
 	"files.watcherExclude": {
