@@ -4,18 +4,11 @@ block variables
 	- let pageSubtitle
 
 head
-
 	meta(charset="utf-8")
 	meta(name="viewport" content="width=device-width,initial-scale=1")
 	title &#x1F404; feature.farm#{pageSubtitle && " – " + pageSubtitle}
-
 	link(rel="stylesheet" href="/styles.css")
-
-	script(type="module-shim" src="/demo.js")
-	script(type="importmap-shim" src="/importmap.json")
-	script(type="importmap-shim").
-		{"imports": {"feature.farm/": "/"}}
-	script(async="" defer="" src="https://unpkg.com/es-module-shims@0.6.0/dist/es-module-shims.js")
+	script(src="/demo.bundle.js")
 
 header.siteheader
 	div
