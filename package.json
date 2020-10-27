@@ -7,15 +7,16 @@
 	"type": "module",
 	"files": [
 		"x",
-		"s"
+		"s",
+		"s2"
 	],
 	"scripts": {
 		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s test",
 		"clean": "rimraf x *.pem && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
-		"compile-pug": "pug -s -o x s",
-		"compile-sass": "sass s/:x/",
+		"compile-pug": "pug -s -o x s2",
+		"compile-sass": "sass s2/:x/",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
 		"watch-pug": "npm run compile-pug -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
