@@ -8,16 +8,16 @@
 	"files": [
 		"x",
 		"s",
-		"html"
+		"web"
 	],
 	"scripts": {
 		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s compile-bundle minify stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
-		"compile-pug": "pug -o x html -O '{\"debug\": false}'",
-		"compile-pug-dev": "pug -o x html -O '{\"debug\": true}'",
-		"compile-sass": "sass html/:x/",
+		"compile-pug": "pug -o x web -O '{\"debug\": false}'",
+		"compile-pug-dev": "pug -o x web -O '{\"debug\": true}'",
+		"compile-sass": "sass web/:x/",
 		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/demo.js -o x/demo.bundle.js",
 		"minify": "terser x/demo.bundle.js -cm --source-map --comments false -o x/demo.bundle.min.js",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
