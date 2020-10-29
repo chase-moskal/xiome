@@ -26,8 +26,7 @@
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
 		"watch": "run-p watch-tsc watch-pug watch-sass watch-bundle",
 		"start": "serve",
-		"test": "exit 0",
-		"test-lol": "cynic node x/tests.test.js",
+		"test": "cynic node x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json",
 		"stats": "ls -lah x/demo.bundle.js x/demo.bundle.min.js"
 	},
