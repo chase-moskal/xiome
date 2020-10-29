@@ -5,7 +5,6 @@ import {Share} from "./share.js"
 import {mixinMobxAutorun} from "./mixin-mobx-autorun.js"
 import {mixinInitiallyHidden} from "./mixin-initially-hidden.js"
 
-export {MobxLitElement}
 export * from "lit-element"
 export * from "@adobe/lit-mobx"
 export * from "./mixin-initially-hidden.js"
