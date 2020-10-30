@@ -2,7 +2,7 @@
 import {Suite} from "cynic"
 
 export default <Suite>{
-	"features": {
+	"feature business logic": {
 
 		"core": {
 			"apps": {
@@ -14,9 +14,13 @@ export default <Suite>{
 				"apps are isolated from external perspective": true,
 			},
 			"auth": {
-				"users can sign up": true,
+				"users can sign up": {
+					"via passkey": true,
+					"via google": true,
+				},
 				"users can login": true,
 				"users can logout": true,
+				"users can obtain scoped tokens for 3rd party services": true,
 				"devs can easily curry auth into any topic": true,
 			},
 			"profiles": {
@@ -25,15 +29,62 @@ export default <Suite>{
 				"admins can overwrite any profile": true,
 			},
 			"permissions": {
-				"admins can manage roles and permissions": true,
-				"admins can choose configure feature privilege levels": true,
+				"hard-coded standard permissions include admin and ban": true,
+				"admins can manage roles for users and permissions for roles": true,
+				"admins can assign roles to users with expiry times": true,
 			},
+			"settings": {
+				"users can access their own settings, but nobody else's": true,
+				"admins can access anybody's settings": true,
+			},
+		},
+
+		"admin": {
+			"stats": {
+				"privileged users can view stats": true,
+			},
+			"bans": {
+				"standard ban role assigns a banishment permission": true,
+			},
+		},
+
+		"payments": {
+			"admins can manage subscription products": true,
+			"admins can manage digital products for sale": true,
+			"admins can assign privileges to product holders": true,
+			"users can buy a product to obtain privileges": true,
+			"users can cancel or upgrade active subscriptions": true,
+			"users obtain a product token to prove what they own": true,
 		},
 
 		"media": {
 			"admins can manage a library of media items (vimeo videos)": true,
-			"admins can set privilege levels on media items": true,
-			"users can view media when they have the right privileges": true,
+			"admins can set role-based access on media items": true,
+			"users with privileged roles can access media items": true,
+			"*payments integration": {
+				"admins can set product-token-based access on media items": true,
+			},
+		},
+
+		"cms": {
+			"anybody can read a content block": true,
+			"admins can write a content block": true,
+		},
+
+		"questions": {
+			"anybody can fetch any questions board": true,
+			"privileged users can post questions": true,
+			"users can delete their own questions": true,
+			"admins can delete any question": true,
+			"admins can purge a whole board": true,
+			"users can 'like' any question": true,
+			"users can 'report' any question": true,
+			"admins can wipe reports on a question": true,
+		},
+
+		"schedule": {
+			"anybody can read any schedule": true,
+			"admins can write any schedule": true,
 		},
 	},
 }
