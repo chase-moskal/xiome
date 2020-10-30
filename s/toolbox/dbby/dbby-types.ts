@@ -20,10 +20,6 @@ export type ToDbbyRow<Row extends DbbyRow> = {
 
 export const toDbbyRow = <Row extends {}>(row: ToDbbyRow<Row>) => row
 
-//
-//
-//
-
 export interface DbbyCondition<Row extends DbbyRow> {
 	set?: Partial<{[P in keyof Row]: true}>
 	equal?: Partial<Row>
@@ -53,10 +49,6 @@ export type DbbyConditionTree<Row extends DbbyRow> =
 	DbbyConditionBranch<"and", Row>
 	| DbbyConditionBranch<"or", Row>
 
-//
-//
-//
-
 export type DbbyConditions<Row extends DbbyRow> = false | DbbyConditionTree<Row>
 
 export interface DbbyConditional<Row extends DbbyRow> {
@@ -81,10 +73,6 @@ export type DbbyAssertion<Row extends DbbyRow> = DbbyConditional<Row> & {
 	make: () => Promise<Row>
 }
 
-//
-//
-//
-
 export type DbbyConditionHelper<
 	Op extends DbbyConditionOperation,
 	Row extends DbbyRow,
@@ -108,10 +96,5 @@ export interface DbbyStorage<Row extends DbbyRow> {
 	load(): Row[]
 }
 
-//
-//
-//
-
-export type GetDbbyTable = <Row extends DbbyRow>(
-		collectionName: string
-	) => DbbyTable<Row>
+export type ConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}> =
+	(constraint: DbbyRow) => T

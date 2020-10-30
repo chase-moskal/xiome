@@ -1,6 +1,8 @@
 
+import {objectMap} from "../object-map.js"
+
 import {and} from "./dbby-helpers.js"
-import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditions} from "./dbby-types.js"
+import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditions, ConstrainTables} from "./dbby-types.js"
 
 export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 		table: DbbyTable<Row>,
@@ -76,4 +78,13 @@ export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 			})
 		},
 	}
+}
+
+export function prepareConstrainTables<
+		T extends {[key: string]: DbbyTable<DbbyRow>}
+	>(tables: T): ConstrainTables<T> {
+	return (constraint: DbbyRow) => <T>objectMap(
+		tables,
+		table => dbbyConstrain(table, constraint)
+	)
 }
