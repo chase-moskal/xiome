@@ -24,7 +24,7 @@
 		"watch-pug": "npm run compile-pug-dev -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
-		"watch2-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
+		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
 		"watch": "run-p watch-tsc watch-pug watch-sass watch-bundle",
 		"start": "serve",
 		"test": "cynic node --label='feature.farm tests' x/tests.test.js",
