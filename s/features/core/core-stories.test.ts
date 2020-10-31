@@ -5,20 +5,24 @@ import {generatePasskey} from "./generate-passkey.js"
 import {testableCoreApi} from "./testable-core-api.js"
 
 export default <Suite>{
-	"technician (me)": {
-		"login and out": true,
-		"configure own apps": true,
-		"view meta-stats": true,
-		"procotol zero: roll secrets": true,
+	"technician": {
+		"login and out of platform": true,
+		"view platform stats": true,
+		"manage apps": true,
+		"procotol zero: roll platform secrets": true,
 	},
 	"creator": {
-		"login to meta-app": true,
+		"login and out of platform": true,
 		"customize profile": true,
-		"manage apps, tokens, admins": true,
+		"manage apps": true,
 	},
 	"customer": {
-		"fetch public profiles": true,
 		"login and out": true,
 		"customize profile": true,
+		"fetch any profile": true,
+	},
+	"developer": {
+		"app tokens respect origin list": true,
+		"verify scoped third-party access token": true,
 	},
 }
