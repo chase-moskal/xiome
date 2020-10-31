@@ -1,26 +1,32 @@
 
-import {processPayloadTopic} from "renraku/dist/curries.js"
+import {processPayloadTopic as topic} from "renraku/dist/curries.js"
 
-import {prepareAuthProcessors} from "./auth-processor.js"
+import {prepareAuthProcessors} from "./auth-processors.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope} from "./core-types.js"
 
-export function makeCoreApi({verifyToken, signToken, constrainTables}: {
+export function makeCoreApi({signToken, verifyToken, constrainTables}: {
 		signToken: SignToken
 		verifyToken: VerifyToken
 		constrainTables: ConstrainTables<AuthTables>
 	}) {
 
-	const authProcessor = prepareAuthProcessors<AuthTables>({
+	const {
+		authForApp,
+		authForUser,
+		authForRootUser,
+	} = prepareAuthProcessors<AuthTables>({
 		verifyToken,
 		constrainTables,
 	})
 
 	return {
-		authTopic: processPayloadTopic(authProcessor.authForApp, ({
+		authTopic: topic(authForApp, {
 			async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
-				tables.account
-				// lol authn
+				return {
+					accessToken: true,
+					refreshToken: true,
+				}
 			},
 			async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
 				// const {googleId, avatar, name} = await verifyGoogleToken(googleToken)
@@ -53,7 +59,7 @@ export function makeCoreApi({verifyToken, signToken, constrainTables}: {
 				// })
 				return ""
 			},
-		})),
+		}),
 
 		// appsTopic: authProcessor.authForRootUser({
 		// 	async listApps({app, access, tables}, o: {
