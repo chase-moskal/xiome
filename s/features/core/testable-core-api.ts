@@ -20,5 +20,10 @@ export function testableCoreApi() {
 		constrainTables: prepareConstrainTables(rawtables),
 	})
 
-	return {api, rawtables}
+	const authTopic = addMetaTopic(async() => ({appToken: "apptokenlol"}), api.authTopic)
+
+	return {
+		rawtables,
+		api: {authTopic},
+	}
 }

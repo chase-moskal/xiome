@@ -1,18 +1,24 @@
 
 import {Suite, expect} from "cynic"
-import {addMetaTopic} from "renraku/dist/curries.js"
 
 import {generatePasskey} from "./generate-passkey.js"
 import {testableCoreApi} from "./testable-core-api.js"
 
 export default <Suite>{
+	"broad strokes": {
+		"meta-user can sign up via passkey": true,
+		"meta-user can register an app, generate a token, and generate an admin": true,
+		"meta-user can login to new app as generated admin": true,
+		"user can sign into new app via google": true,
+		"user can get get third party scoped tokens": true,
+	},
 	"auth": {
 		"users can sign up": {
 			"via passkey": async() => {
-				const authTopic = addMetaTopic(
-					async() => "abc123",
-					testableCoreApi().api.authTopic,
-				)
+				const {authTopic} = testableCoreApi().api
+
+				// root-user logs in, registers an app
+
 				const passkey = generatePasskey()
 				const result = await authTopic.authenticateViaPasskey({
 					passkey,
