@@ -4,7 +4,7 @@ import {tokenDecode} from "redcrypto/dist/token-decode.js"
 
 import {SimpleStorage} from "../../toolbox/json-storage.js"
 
-import {AuthTopic} from "./core-types.js"
+import {CoreApi} from "./core-types.js"
 
 const expiryGraceTime = 10 * 1000
 
@@ -24,7 +24,7 @@ export function makeTokenStore({
 		authorize,
 	}: {
 		storage: SimpleStorage
-		authorize: AddMeta<AuthTopic["authorize"]>
+		authorize: AddMeta<CoreApi["authTopic"]["authorize"]>
 	}) {
 
 	function saveTokens({accessToken, refreshToken}) {

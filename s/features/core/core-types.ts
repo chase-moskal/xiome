@@ -1,18 +1,15 @@
 
 import {makeCoreApi} from "./core-api.js"
 import {makeTokenStore} from "./token-store.js"
+import {DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 
 export * from "redcrypto/dist/types.js"
 
 // api topics
 //
 
-export type AuthApi = ReturnType<typeof makeCoreApi>
+export type CoreApi = ReturnType<typeof makeCoreApi>
 export type TokenStoreTopic = ReturnType<typeof makeTokenStore>
-
-export type AppsTopic = AuthApi["appsTopic"]
-export type AuthTopic = AuthApi["authTopic"]
-export type UserTopic = AuthApi["userTopic"]
 
 // auth types
 //
@@ -22,25 +19,6 @@ export type User = {
 	profile: Profile
 	tags: string[]
 }
-
-export type Claims = Partial<{
-	isAdmin: boolean
-	ban: {
-		until: number
-		reason: string
-	}
-	liveshow: {
-		read: boolean
-		write: boolean
-	}
-	profiles: {
-		readAll: boolean
-		writeAll: boolean
-	}
-	profilesWriteAll: boolean
-	liveshowRead: boolean
-	liveshowWrite: boolean
-}>
 
 export type Profile = {
 	userId: string
@@ -99,6 +77,12 @@ export type Authorizer = (
 
 // database rows
 //
+
+export type AuthTables = {
+	account: DbbyTable<AccountRow>
+	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
+	accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
+}
 
 export type AccountRow = {
 	userId: string
