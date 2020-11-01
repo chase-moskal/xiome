@@ -1,12 +1,19 @@
 
 import {Suite, expect} from "cynic"
 
-import {generatePasskey} from "./generate-passkey.js"
-import {testableCoreApi} from "./testable-core-api.js"
+import {wholeSystemTestable} from "../../assembly/whole-system-testable.js"
 
 export default <Suite>{
 	"technician": {
-		"login and out of platform": true,
+		"login and out of platform": async() => {
+			const system = await wholeSystemTestable()
+			const {core} = system.frontend.models
+			await core.login()
+			expect(core.user).ok()
+			await core.logout()
+			expect(core.user).not.ok()
+			return true
+		},
 		"view platform stats": true,
 		"manage apps": true,
 		"procotol zero: roll platform secrets": true,

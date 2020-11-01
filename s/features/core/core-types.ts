@@ -5,6 +5,29 @@ import {DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 
 export * from "redcrypto/dist/types.js"
 
+export interface PlatformConfig {
+	platformApp: AppPayload & {root: true}
+	mongo: {
+		link: string
+		database: string
+	}
+	google: {
+		clientId: string
+	}
+	tokens: {
+		lifespans: {
+			access: number
+			refresh: number
+			outsideAccess: number
+		}
+	}
+	stripe: {
+		apiKey: string
+		secret: string
+		webhookSecret: string
+	}
+}
+
 // api topics
 //
 
