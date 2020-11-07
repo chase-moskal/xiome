@@ -2,7 +2,9 @@
 import {Rando} from "../toolbox/get-rando.js"
 import {BackendSystems} from "./assembly-types.js"
 
-export async function assembleFrontend({backend}: {
+import {User} from "../types.js"
+
+export async function assembleFrontend({rando, backend}: {
 		rando: Rando
 		backend: BackendSystems
 	}) {
@@ -13,7 +15,9 @@ export async function assembleFrontend({backend}: {
 				get user() {return u},
 				async login() {u=true},
 				async logout() {u=false},
-			}
+			},
+			pay: {},
+			videos: {},
 		}
 	}
 }
