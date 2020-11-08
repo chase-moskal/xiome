@@ -1,22 +1,22 @@
 
 import {CoreApi, User} from "./core-types.js"
-import * as mobf from "../../framework/mobb.js"
+import * as mobb from "../../framework/mobb.js"
 
 export function makeCoreModel({coreApi}: {
 		coreApi: CoreApi
 	}) {
 
-	const observables = mobf.observables({
+	const observables = mobb.observables({
 		authLoad: undefined,
 	})
 
-	const computes = mobf.computeds({
+	const computes = mobb.computeds({
 		get user(): User {
 			return observables.authLoad?.user
 		}
 	})
 
-	const actions = mobf.actions({
+	const actions = mobb.actions({
 		async useExistingLogin() {},
 		async loginWithAccessToken() {},
 		async login() {},
