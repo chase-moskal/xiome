@@ -1,55 +1,144 @@
 
-import {CoreApi, User} from "./core-types.js"
-import * as mobb from "../../framework/mobb.js"
+import {observable, computed, action} from "mobx"
+import * as loading from "../../toolbox/loading.js"
 
-export function makeCoreModel({coreApi}: {
-		coreApi: CoreApi
-	}) {
+import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "./core-types.js"
 
-	const observables = mobb.observables({
-		authLoad: undefined,
-	})
+export class CoreModel {
+	private expiryGraceTime: number
+	private tokenStore: TokenStoreTopic
+	private decodeAccessToken: DecodeAccessToken
+	private triggerAccountPopup: TriggerAccountPopup
 
-	const computes = mobb.computeds({
-		get user(): User {
-			return observables.authLoad?.user
+	private authContext: AuthContext
+
+	constructor(options: {
+			expiryGraceTime: number
+			tokenStore: TokenStoreTopic
+			decodeAccessToken: DecodeAccessToken
+			triggerAccountPopup: TriggerAccountPopup
+		}) {
+		this.tokenStore = options.tokenStore
+		this.expiryGraceTime = options.expiryGraceTime
+		this.decodeAccessToken = options.decodeAccessToken
+		this.triggerAccountPopup = options.triggerAccountPopup
+	}
+
+	@observable authLoad = loading.load<AuthPayload>()
+
+	@computed get user() {
+		return loading.payload(this.authLoad)?.user
+	}
+
+	@computed get getAuthContext() {
+		return loading.payload(this.authLoad)?.getAuthContext
+	}
+
+
+	@action.bound
+	async useExistingLogin() {
+		this.setLoading()
+		try {
+			const accessToken = await this.tokenStore.passiveCheck()
+			if (accessToken) {
+				const detail = this.processAccessToken(accessToken)
+				this.setLoggedIn(detail)
+			}
+			else this.setLoggedOut()
 		}
-	})
+		catch (error) {
+			this.setError(error)
+		}
+	}
 
-	const actions = mobb.actions({
-		async useExistingLogin() {},
-		async loginWithAccessToken() {},
-		async login() {},
-		async logout() {},
-	})
+	 @action.bound
+	async loginWithAccessToken(accessToken: AccessToken) {
+		await this.tokenStore.writeAccessToken(accessToken)
+		if (accessToken) {
+			const payload = this.processAccessToken(accessToken)
+			this.setLoggedIn(payload)
+		}
+		else {
+			this.setLoggedOut()
+		}
+	}
 
-	return {
-		...observables,
-		...computes,
-		...actions,
+	 @action.bound
+	async login() {
+		this.setLoading()
+		try {
+			const authTokens = await this.triggerAccountPopup()
+			await this.tokenStore.writeTokens(authTokens)
+			const payload = this.processAccessToken(authTokens.accessToken)
+			this.setLoggedIn(payload)
+		}
+		catch (error) {
+			console.error(error)
+		}
+	}
+
+	 @action.bound
+	async logout() {
+		this.setLoading()
+		try {
+			await this.tokenStore.clearTokens()
+			this.authContext = null
+			this.setLoggedOut()
+		}
+		catch (error) {
+			this.setError(error)
+		}
+	}
+
+	 @action.bound
+	async reauthorize() {
+		this.setLoading()
+		try {
+			await this.tokenStore.writeAccessToken(null)
+			this.authContext = null
+			await this.useExistingLogin()
+		}
+		catch (error) {
+			this.setError(error)
+		}
+	}
+
+	//
+	// private methods
+	//
+
+	 @action.bound
+	private processAccessToken(accessToken: AccessToken): AuthPayload {
+		this.authContext = this.decodeAccessToken(accessToken)
+		const getAuthContext = async() => {
+			const expiry = this.authContext.exp * 1000
+			const expired = Date.now() > (expiry - this.expiryGraceTime)
+			if (expired) {
+				await this.reauthorize()
+			}
+			return this.authContext
+		}
+		return {getAuthContext, user: this.authContext.user}
+	}
+
+	 @action.bound
+	private setError(error: Error) {
+		this.authLoad = loading.error(undefined)
+		console.error(error)
+	}
+
+	 @action.bound
+	private setLoading() {
+		this.authLoad = loading.loading()
+	}
+
+	 @action.bound
+	private setLoggedIn({user, getAuthContext}: AuthPayload) {
+		this.authLoad = loading.ready({user, getAuthContext})
+	}
+
+	 @action.bound
+	private setLoggedOut() {
+		this.authLoad = loading.ready({user: null, getAuthContext: null})
 	}
 }
-
-// // import {curryTopicMeta} from "renraku/dist/curries.js"
-
-// import {MetalUser} from "../../types.js"
-// import {pubsub} from "../../toolbox/pubsub.js"
-// import {AuthPayload} from "../../metalfront/types.js"
-// import * as loading from "../../metalfront/toolbox/loading.js"
-
-// import {AuthApi, AppsTopic, AuthTopic, UserTopic} from "./auth-types.js"
-
-// export class AuthModel {
-// 	private appsTopic: AppsTopic
-// 	private authTopic: AuthTopic
-// 	private userTopic: UserTopic
-
-// 	constructor({authApi}: {
-// 			authApi: AuthApi
-// 		}) {
-// 		// this.appsTopic = curryTopicMeta(authApi.appsTopic, async(meta) => ({}))
-// 		this.appsTopic = authApi.appsTopic
-// 		this.authTopic = authApi.authTopic
-// 		this.userTopic = authApi.userTopic
-// 	}
-// }

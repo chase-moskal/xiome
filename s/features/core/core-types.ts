@@ -54,12 +54,35 @@ export type Settings = {
 	actAsAdmin: boolean
 }
 
+export type AuthContext = {
+	user: User
+	exp: number
+	accessToken: AccessToken
+}
+
+export type GetAuthContext = () => Promise<AuthContext>
+
+export interface AuthPayload {
+	user: User
+	getAuthContext: GetAuthContext
+}
+
+export type DecodeAccessToken = (accessToken: AccessToken) => AuthContext
+
+export type TriggerAccountPopup = () => Promise<AuthTokens>
+export type TriggerCheckoutPopup = (o: {stripeSessionId: string}) => Promise<void>
+
 // tokens
 //
 
 export type AppToken = string
 export type AccessToken = string
 export type RefreshToken = string
+
+export interface AuthTokens {
+	accessToken: AccessToken
+	refreshToken: RefreshToken
+}
 
 export interface Scope {
 	core?: boolean

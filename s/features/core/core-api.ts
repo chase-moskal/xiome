@@ -1,10 +1,11 @@
 
 import {processPayloadTopic as topic} from "renraku/dist/curries.js"
 
-import {prepareAuthProcessors} from "./auth-processors.js"
-import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
-import {CoreTables, VerifyToken, SignToken, RefreshToken, Scope} from "./core-types.js"
 import {Rando} from "../../toolbox/get-rando.js"
+import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
+
+import {prepareAuthProcessors} from "./auth-processors.js"
+import {CoreTables, VerifyToken, SignToken, RefreshToken, Scope} from "./core-types.js"
 
 export function makeCoreApi({rando, signToken, verifyToken, constrainTables}: {
 		rando: Rando

@@ -3,8 +3,12 @@
 
 feature code migration (4 day)
 - [ ] `core`
-- [ ] `videos`
+  - [x] core model implemented
+  - [ ] permissions somewhat implemented
+  - [ ] popup code are migrated
+  - [ ] reasonable core tests pass
 - [ ] `questions`
+- [ ] `videos`
 - [ ] `pay`
 - [ ] search metalshop for any missing code to migrate
 
