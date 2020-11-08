@@ -101,7 +101,7 @@ export type Authorizer = (
 // database rows
 //
 
-export type AuthTables = {
+export type CoreTables = {
 	account: DbbyTable<AccountRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	accountViaPasskey: DbbyTable<AccountViaPasskeyRow>

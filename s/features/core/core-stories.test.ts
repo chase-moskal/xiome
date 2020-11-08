@@ -2,13 +2,13 @@
 import {Suite, expect} from "cynic"
 
 import {and} from "../../toolbox/dbby/dbby-memory.js"
-import {wholeSystemTestable} from "../../assembly/whole-system-testable.js"
+import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
 import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
 export default <Suite>{
 	"technician": {
 		"login and out of platform": async() => {
-			const system = await wholeSystemTestable()
+			const system = await mockWholeSystem()
 			const {core} = system.frontend.models
 
 			await core.login()
@@ -18,8 +18,8 @@ export default <Suite>{
 			await core.logout()
 			expect(core.user).not.ok()
 
-			const constrainTables = prepareConstrainTables(system.backend.tables)
-			const tables = constrainTables({appId: system.platformAppId})
+			const constrainTables = prepareConstrainTables(system.tables.core)
+			const tables = constrainTables({appId: system.config.platformApp.appId})
 			const count = await tables.account.count({
 				conditions: and({equal: {userId}})
 			})

@@ -3,19 +3,21 @@ import {processPayloadTopic as topic} from "renraku/dist/curries.js"
 
 import {prepareAuthProcessors} from "./auth-processors.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
-import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope} from "./core-types.js"
+import {CoreTables, VerifyToken, SignToken, RefreshToken, Scope} from "./core-types.js"
+import {Rando} from "../../toolbox/get-rando.js"
 
-export function makeCoreApi({signToken, verifyToken, constrainTables}: {
+export function makeCoreApi({rando, signToken, verifyToken, constrainTables}: {
+		rando: Rando
 		signToken: SignToken
 		verifyToken: VerifyToken
-		constrainTables: ConstrainTables<AuthTables>
+		constrainTables: ConstrainTables<CoreTables>
 	}) {
 
 	const {
 		authForApp,
 		authForUser,
 		authForRootUser,
-	} = prepareAuthProcessors<AuthTables>({
+	} = prepareAuthProcessors<CoreTables>({
 		verifyToken,
 		constrainTables,
 	})

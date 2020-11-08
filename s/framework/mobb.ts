@@ -1,18 +1,27 @@
 
-export * from "mobx"
-import {action, computed, observable} from "mobx"
+import * as mobx from "mobx"
 import {objectMap} from "../toolbox/object-map.js"
 
-export type Amend<T extends {}> = {[K in keyof T]: T[K]}
+export * from "mobx"
+// import {action, computed, observable} from "mobx"
 
-export const actionelize =
-	<T extends {}>(o: T): Amend<T> =>
-		objectMap(o, v => action(v))
+export const actions =
+	<T extends {}>(o: T): T =>
+		objectMap(o, v => <any>mobx.action.bound(v))
 
-export const computelize =
-	<T extends {}>(o: T): Amend<T> =>
-		objectMap(o, v => <any>computed(v))
+export const computeds =
+	<T extends {}>(o: T): T =>
+		objectMap(o, v => <any>mobx.computed(v))
 
-export const observelize =
-	<T extends {}>(o: T): Amend<T> =>
-		objectMap(o, v => observable(v))
+export const observables =
+	<T extends {}>(o: T): T =>
+		objectMap(o, v => mobx.observable(v))
+
+// export const mobxActions =
+// 	<T extends {}>(input: T): T => {
+// 		const object = {...input}
+// 		Object.entries(object).forEach(([key, value]) => {
+// 			action.bound(object, key, value)
+// 		})
+// 		return object
+// 	}

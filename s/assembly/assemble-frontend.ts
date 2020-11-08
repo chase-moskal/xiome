@@ -1,23 +1,22 @@
 
 import {Rando} from "../toolbox/get-rando.js"
-import {BackendSystems} from "./assembly-types.js"
+import {makeCoreModel} from "../features/core/core-model.js"
 
-import {User} from "../types.js"
+import {BackendSystems} from "./assembly-types.js"
 
 export async function assembleFrontend({rando, backend}: {
 		rando: Rando
 		backend: BackendSystems
 	}) {
-	let u = false
+
+	const {coreApi} = backend
+
 	return {
 		models: {
-			core: {
-				get user() {return u},
-				async login() {u=true},
-				async logout() {u=false},
-			},
-			pay: {},
-			videos: {},
-		}
+			core: makeCoreModel({coreApi}),
+			// pay: {},
+			// videos: {},
+			// questions: {},
+		},
 	}
 }
