@@ -52,6 +52,9 @@ export function makeCoreApi({rando, signToken, verifyToken, constrainTables}: {
 				// 		lifespan: refreshTokenLifespan,
 				// 	}),
 				// })
+				const accessToken = undefined
+				const refreshToken = undefined
+				return {accessToken, refreshToken}
 			},
 			async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
 				// const {userId} = await verifyToken<RefreshPayload>(refreshToken)

@@ -1,30 +1,41 @@
 
-import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
-import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
+import {addMeta} from "renraku/dist/curries.js"
 
 import {Rando} from "../toolbox/get-rando.js"
+import {SimpleStorage} from "../toolbox/json-storage.js"
 import {prepareConstrainTables} from "../toolbox/dbby/dbby-constrain.js"
 
 import {makeCoreApi} from "../features/core/core-api.js"
-import {PlatformConfig} from "../features/core/core-types.js"
+import {makeTokenStore} from "../features/core/token-store.js"
+import {AppPayload, PlatformConfig, VerifyToken, SignToken} from "../features/core/core-types.js"
 
 import {Tables} from "./assembly-types.js"
 
-export async function assembleBackend({rando, tables, config}: {
+export async function assembleBackend({
+		rando,
+		tables,
+		storage,
+		signToken,
+		verifyToken,
+	}: {
 		rando: Rando
 		tables: Tables
-		config: PlatformConfig
+		storage: SimpleStorage
+		signToken: SignToken
+		verifyToken: VerifyToken
 	}) {
 
-	const signToken = mockSignToken()
-	const verifyToken = mockVerifyToken()
+	const coreApi = makeCoreApi({
+		rando,
+		signToken,
+		verifyToken,
+		constrainTables: prepareConstrainTables(tables.core),
+	})
 
-	return {
-		coreApi: makeCoreApi({
-			rando,
-			signToken,
-			verifyToken,
-			constrainTables: prepareConstrainTables(tables.core),
-		}),
-	}
+	const tokenStore = makeTokenStore({
+		storage,
+		authorize: addMeta(async() => ({}), coreApi.authTopic.authorize),
+	})
+
+	return {coreApi, tokenStore}
 }

@@ -16,9 +16,10 @@ export interface PlatformConfig {
 	}
 	tokens: {
 		lifespans: {
+			app: number
 			access: number
 			refresh: number
-			outsideAccess: number
+			external: number
 		}
 	}
 	stripe: {
@@ -71,6 +72,14 @@ export type DecodeAccessToken = (accessToken: AccessToken) => AuthContext
 
 export type TriggerAccountPopup = () => Promise<AuthTokens>
 export type TriggerCheckoutPopup = (o: {stripeSessionId: string}) => Promise<void>
+
+export interface GoogleResult {
+	name: string
+	avatar: string
+	googleId: string
+}
+
+export type VerifyGoogleToken = (googleToken: string) => Promise<GoogleResult>
 
 // tokens
 //

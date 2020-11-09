@@ -27,9 +27,10 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 		},
 		tokens: {
 			lifespans: {
+				app: 30 * day,
 				refresh: 30 * day,
 				access: 20 * minute,
-				outsideAccess: 10 * minute,
+				external: 10 * minute,
 			}
 		},
 	}

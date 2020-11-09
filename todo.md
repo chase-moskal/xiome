@@ -4,8 +4,7 @@
 feature code migration (4 day)
 - [ ] `core`
   - [x] core model implemented
-  - [ ] permissions somewhat implemented
-  - [ ] popup code are migrated
+  - [ ] all code migrated and structured
   - [ ] reasonable core tests pass
 - [ ] `questions`
 - [ ] `videos`
