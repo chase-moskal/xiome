@@ -5,7 +5,6 @@ import {tempStorage} from "../../toolbox/json-storage.js"
 import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
 import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
-import {CoreApi} from "./core-types.js"
 import {mockSignGoogleToken} from "./mock-google-tokens.js"
 
 async function testableSystem() {
@@ -19,8 +18,8 @@ export default <Suite>{
 			const {core} = system.frontend.models
 			const appToken = await system.signAppToken(system.config.platformApp)
 
-			system.mockNextLogin(async(authTopic: CoreApi["authTopic"]) => {
-				return authTopic.authenticateViaGoogle(
+			system.mockNextLogin(
+				async authTopic => authTopic.authenticateViaGoogle(
 					{appToken},
 					{googleToken: await mockSignGoogleToken({
 						name: "Chase Moskal",
@@ -28,11 +27,10 @@ export default <Suite>{
 						googleId: "mock-google-id",
 					})},
 				)
-			})
+			)
 
 			await core.login()
 			assert(core.user, "initial login")
-			const {userId} = core.user
 
 			await core.logout()
 			assert(!core.user, "initial logout")

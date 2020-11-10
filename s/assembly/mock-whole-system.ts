@@ -19,9 +19,7 @@ export async function mockWholeSystem({storage}: {
 		storage: SimpleStorage
 	}) {
 
-	//
 	// prerequisites and configurations
-	//
 
 	const rando = await getRando()
 	const config = mockPlatformConfig({rando})
@@ -40,9 +38,7 @@ export async function mockWholeSystem({storage}: {
 		},
 	}
 
-	//
 	// backend assembly
-	//
 
 	const backend = await assembleBackend({
 		rando,
@@ -54,9 +50,7 @@ export async function mockWholeSystem({storage}: {
 		verifyGoogleToken,
 	})
 
-	//
 	// bridge connecting backend and frontend
-	//
 
 	let triggerAccountPopup: TriggerAccountPopup = () => {
 		throw new Error("mockNextLogin not set")
@@ -70,9 +64,7 @@ export async function mockWholeSystem({storage}: {
 			authenticateAndAuthorize(backend.coreApi.authTopic)
 	}
 
-	//
 	// frontend assembly
-	//
 
 	const frontend = await assembleFrontend({
 		backend,
@@ -80,13 +72,11 @@ export async function mockWholeSystem({storage}: {
 		triggerAccountPopup,
 	})
 
+	// return handy system internals for testing and debugging
+
 	async function signAppToken(payload: AppPayload) {
 		return signToken({payload, lifespan: config.tokens.lifespans.app})
 	}
-
-	//
-	// return handy system internals for testing and debugging
-	//
 
 	return {config, backend, frontend, tables, mockNextLogin, signAppToken}
 }

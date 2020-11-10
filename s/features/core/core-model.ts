@@ -5,19 +5,19 @@ import * as loading from "../../toolbox/loading.js"
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "./core-types.js"
 
 export class CoreModel {
-	private expiryGraceTime: number
-	private tokenStore: TokenStoreTopic
-	private decodeAccessToken: DecodeAccessToken
-	private triggerAccountPopup: TriggerAccountPopup
+	private readonly expiryGraceTime: number
+	private readonly tokenStore: TokenStoreTopic
+	private readonly decodeAccessToken: DecodeAccessToken
+	private readonly triggerAccountPopup: TriggerAccountPopup
 
 	private authContext: AuthContext
 
 	constructor(options: {
-			expiryGraceTime: number
-			tokenStore: TokenStoreTopic
-			decodeAccessToken: DecodeAccessToken
-			triggerAccountPopup: TriggerAccountPopup
-		}) {
+				expiryGraceTime: number
+				tokenStore: TokenStoreTopic
+				decodeAccessToken: DecodeAccessToken
+				triggerAccountPopup: TriggerAccountPopup
+			}) {
 		this.tokenStore = options.tokenStore
 		this.expiryGraceTime = options.expiryGraceTime
 		this.decodeAccessToken = options.decodeAccessToken
@@ -33,7 +33,6 @@ export class CoreModel {
 	@computed get getAuthContext() {
 		return loading.payload(this.authLoad)?.getAuthContext
 	}
-
 
 	@action.bound
 	async useExistingLogin() {

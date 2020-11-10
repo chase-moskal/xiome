@@ -9,20 +9,20 @@ import {prepareAuthProcessors} from "./auth-processors.js"
 import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload} from "./core-types.js"
 
 export function makeCoreApi({
-		rando,
-		config,
-		signToken,
-		verifyToken,
-		constrainTables,
-		verifyGoogleToken,
-	}: {
-		rando: Rando
-		signToken: SignToken
-		config: PlatformConfig
-		verifyToken: VerifyToken
-		verifyGoogleToken: VerifyGoogleToken
-		constrainTables: ConstrainTables<CoreTables>
-	}) {
+			rando,
+			config,
+			signToken,
+			verifyToken,
+			constrainTables,
+			verifyGoogleToken,
+		}: {
+			rando: Rando
+			signToken: SignToken
+			config: PlatformConfig
+			verifyToken: VerifyToken
+			verifyGoogleToken: VerifyGoogleToken
+			constrainTables: ConstrainTables<CoreTables>
+		}) {
 	const makeAuthTools = prepareAuthTools({rando, signToken})
 	const {
 		authForApp,
@@ -35,7 +35,8 @@ export function makeCoreApi({
 	return {
 		authTopic: process(authForApp, {
 
-			async authenticateViaPasskey({tables},
+			async authenticateViaPasskey(
+						{tables},
 						{passkey}: {passkey: string},
 					) {
 				const tools = makeAuthTools({tables})
@@ -47,7 +48,8 @@ export function makeCoreApi({
 				})
 			},
 
-			async authenticateViaGoogle({tables},
+			async authenticateViaGoogle(
+						{tables},
 						{googleToken}: {googleToken: string},
 					) {
 				const tools = makeAuthTools({tables})
@@ -60,7 +62,8 @@ export function makeCoreApi({
 				})
 			},
 
-			async authorize({tables},
+			async authorize(
+						{tables},
 						{scope, refreshToken}: {
 							scope: Scope
 							refreshToken: RefreshToken
