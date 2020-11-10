@@ -35,6 +35,44 @@ export function makeCoreApi({
 	})
 
 	return {
+
+		authTopic2: topic(authForApp, {
+			async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
+				const tools = prepareAuthTools2({rando, tables})
+				const {userId} = await tools.assertPasskeyAccount(passkey)
+				return tools.signAuthTokens({
+					userId,
+					scope: {core: true},
+					lifespans: config.tokens.lifespans,
+				})
+			},
+			async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
+				const tools = prepareAuthTools2({rando, tables})
+				const {userId} = await tools.assertGoogleAccount(googleToken)
+				return tools.signAuthTokens({
+					userId,
+					scope: {core: true},
+					lifespans: config.tokens.lifespans,
+				})
+			},
+			async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
+				const tools = prepareAuthTools2({rando, tables})
+				const {userId} = await verifyToken<RefreshPayload>(refreshToken)
+				const {user, permit} = await concurrent({
+					user: await tools.fetchUser(userId),
+					permit: await tools.findPermitFor(userId),
+				})
+				return signToken<AccessPayload>({
+					payload: {
+						user,
+						scope,
+						permit,
+					},
+					lifespan: config.tokens.lifespans.access,
+				})
+			},
+		}),
+
 		authTopic: topic(authForApp, {
 			async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
 				return {
