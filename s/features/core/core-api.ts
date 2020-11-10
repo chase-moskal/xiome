@@ -1,12 +1,11 @@
 
-import {processPayloadTopic as topic} from "renraku/dist/curries.js"
+import {processPayloadTopic as process} from "renraku/dist/curries.js"
 
 import {Rando} from "../../toolbox/get-rando.js"
-import {concurrent} from "../../toolbox/concurrent.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
+import {prepareAuthTools} from "./auth-tools.js"
 import {prepareAuthProcessors} from "./auth-processors.js"
-import {prepareAuthTools} from "./authtools/neato.js"
 import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload} from "./core-types.js"
 
 export function makeCoreApi({
@@ -24,7 +23,7 @@ export function makeCoreApi({
 		verifyGoogleToken: VerifyGoogleToken
 		constrainTables: ConstrainTables<CoreTables>
 	}) {
-
+	const makeAuthTools = prepareAuthTools({rando, signToken})
 	const {
 		authForApp,
 		authForUser,
@@ -33,12 +32,13 @@ export function makeCoreApi({
 		verifyToken,
 		constrainTables,
 	})
-
 	return {
+		authTopic: process(authForApp, {
 
-		authTopic2: topic(authForApp, {
-			async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
-				const tools = prepareAuthTools2({rando, tables})
+			async authenticateViaPasskey({tables},
+						{passkey}: {passkey: string},
+					) {
+				const tools = makeAuthTools({tables})
 				const {userId} = await tools.assertPasskeyAccount(passkey)
 				return tools.signAuthTokens({
 					userId,
@@ -46,22 +46,29 @@ export function makeCoreApi({
 					lifespans: config.tokens.lifespans,
 				})
 			},
-			async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
-				const tools = prepareAuthTools2({rando, tables})
-				const {userId} = await tools.assertGoogleAccount(googleToken)
+
+			async authenticateViaGoogle({tables},
+						{googleToken}: {googleToken: string},
+					) {
+				const tools = makeAuthTools({tables})
+				const googleResult = await verifyGoogleToken(googleToken)
+				const {userId} = await tools.assertGoogleAccount(googleResult)
 				return tools.signAuthTokens({
 					userId,
 					scope: {core: true},
 					lifespans: config.tokens.lifespans,
 				})
 			},
-			async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
-				const tools = prepareAuthTools2({rando, tables})
+
+			async authorize({tables},
+						{scope, refreshToken}: {
+							scope: Scope
+							refreshToken: RefreshToken
+						}
+					) {
+				const tools = makeAuthTools({tables})
 				const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-				const {user, permit} = await concurrent({
-					user: await tools.fetchUser(userId),
-					permit: await tools.findPermitFor(userId),
-				})
+				const {user, permit} = await tools.fetchUserAndPermit(userId)
 				return signToken<AccessPayload>({
 					payload: {
 						user,
@@ -73,44 +80,44 @@ export function makeCoreApi({
 			},
 		}),
 
-		authTopic: topic(authForApp, {
-			async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
-				return {
-					accessToken: true,
-					refreshToken: true,
-				}
-			},
-			async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
-				const tools = prepareAuthTools({rando, tables})
-				const {googleId, avatar: googleAvatar, name} = await verifyGoogleToken(googleToken)
-				const accountViaGoogle = await tools.findAccountViaGoogle(googleId)
-				const account = accountViaGoogle
-					? await tools.findAccount(accountViaGoogle.userId)
-					: await tools.registerViaGoogle({googleId, googleAvatar})
-				const user = await tools.findUser(account.userId)
-				const permit = await tools.findPermitFor(account.userId)
-				const scope: Scope = {core: true}
-				return concurrent({
-					accessToken: signToken<AccessPayload>({
-						payload: {user, permit, scope},
-						lifespan: config.tokens.lifespans.access,
-					}),
-					refreshToken: signToken<RefreshPayload>({
-						payload: {userId: user.userId},
-						lifespan: config.tokens.lifespans.refresh,
-					}),
-				})
-			},
-			async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
-				// const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-				// const user = await userLogin(userId)
-				// return signToken<AccessPayload>({
-				// 	payload: {user, scope},
-				// 	lifespan: accessTokenLifespan,
-				// })
-				return ""
-			},
-		}),
+		// authTopic: topic(authForApp, {
+		// 	async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
+		// 		return {
+		// 			accessToken: true,
+		// 			refreshToken: true,
+		// 		}
+		// 	},
+		// 	async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
+		// 		const tools = prepareAuthTools({rando, tables})
+		// 		const {googleId, avatar: googleAvatar, name} = await verifyGoogleToken(googleToken)
+		// 		const accountViaGoogle = await tools.findAccountViaGoogle(googleId)
+		// 		const account = accountViaGoogle
+		// 			? await tools.findAccount(accountViaGoogle.userId)
+		// 			: await tools.registerViaGoogle({googleId, googleAvatar})
+		// 		const user = await tools.findUser(account.userId)
+		// 		const permit = await tools.findPermitFor(account.userId)
+		// 		const scope: Scope = {core: true}
+		// 		return concurrent({
+		// 			accessToken: signToken<AccessPayload>({
+		// 				payload: {user, permit, scope},
+		// 				lifespan: config.tokens.lifespans.access,
+		// 			}),
+		// 			refreshToken: signToken<RefreshPayload>({
+		// 				payload: {userId: user.userId},
+		// 				lifespan: config.tokens.lifespans.refresh,
+		// 			}),
+		// 		})
+		// 	},
+		// 	async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
+		// 		// const {userId} = await verifyToken<RefreshPayload>(refreshToken)
+		// 		// const user = await userLogin(userId)
+		// 		// return signToken<AccessPayload>({
+		// 		// 	payload: {user, scope},
+		// 		// 	lifespan: accessTokenLifespan,
+		// 		// })
+		// 		return ""
+		// 	},
+		// }),
 
 		// appsTopic: authProcessor.authForRootUser({
 		// 	async listApps({app, access, tables}, o: {
@@ -155,14 +162,6 @@ export function makeCoreApi({
 		// }),
 	}
 }
-
-
-
-
-
-
-
-
 
 	// async function verifyScope(accessToken: AccessToken): Promise<User> {
 	// 	const {user, scope} = await verifyToken<AccessPayload>(accessToken)
