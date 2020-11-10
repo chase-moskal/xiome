@@ -4,6 +4,10 @@
 feature code migration (4 day)
 - [ ] `core`
   - [x] core model implemented
+  - [ ] implement auth api
+  - [ ] implement apps api
+  - [ ] complete core api implementation
+  - [ ] migrate popups
   - [ ] all code migrated and structured
   - [ ] reasonable core tests pass
 - [ ] `questions`

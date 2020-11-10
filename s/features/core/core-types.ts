@@ -44,6 +44,11 @@ export type User = {
 	tags: string[]
 }
 
+export type Permit = {
+	roles: string[]
+	privileges: string[]
+}
+
 export type Profile = {
 	userId: string
 	nickname: string
@@ -106,6 +111,7 @@ export interface AppPayload {
 export interface AccessPayload {
 	user: User
 	scope: Scope
+	permit: Permit
 }
 
 export interface RefreshPayload {
@@ -137,6 +143,9 @@ export type CoreTables = {
 	account: DbbyTable<AccountRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
+	profile: DbbyTable<ProfileRow>
+	userRole: DbbyTable<UserRoleRow>
+	rolePrivilege: DbbyTable<RolePrivilegeRow>
 }
 
 export type AccountRow = {
