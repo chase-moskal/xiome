@@ -50,7 +50,6 @@ export type Permit = {
 }
 
 export type Profile = {
-	userId: string
 	nickname: string
 	tagline: string
 	avatar: string

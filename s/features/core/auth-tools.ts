@@ -2,11 +2,12 @@
 import {Rando} from "../../toolbox/get-rando.js"
 import {concurrent} from "../../toolbox/concurrent.js"
 import {and, or} from "../../toolbox/dbby/dbby-helpers.js"
-import {AccountRow, SignToken, CoreTables, User, Permit, GoogleResult, Scope, AccessPayload, RefreshPayload} from "./core-types.js"
+import {AccountRow, SignToken, CoreTables, User, Permit, GoogleResult, Scope, AccessPayload, RefreshPayload, ProfileRow, Profile} from "./core-types.js"
 
-export const prepareAuthTools = ({rando, signToken}: {
+export const prepareAuthTools = ({rando, signToken, generateNickname}: {
 			rando: Rando
 			signToken: SignToken
+			generateNickname: () => string
 		}) => function({tables}: {tables: CoreTables}) {
 
 	function generateAccount(): AccountRow {
@@ -16,16 +17,37 @@ export const prepareAuthTools = ({rando, signToken}: {
 		}
 	}
 
+	async function fetchUserTags(userId: string): Promise<string[]> {
+		// TODO implement
+		return []
+	}
+
+	const profileFromRow = ({
+				avatar,
+				tagline,
+				nickname,
+			}: ProfileRow): Profile => ({
+		avatar,
+		tagline,
+		nickname,
+	})
+
+	const makeDefaultProfile = (userId: string) => ({
+		userId,
+		tagline: "",
+		avatar: undefined,
+		nickname: generateNickname(),
+	})
+
 	async function fetchUser(userId: string): Promise<User> {
-		const profileRow = await tables.profile.one({
-			conditions: and({equal: {userId}})
+		const {tags, profile} = await concurrent({
+			tags: await fetchUserTags(userId),
+			profile: profileFromRow(await tables.profile.assert({
+				conditions: and({equal: {userId}}),
+				make: async() => makeDefaultProfile(userId),
+			})),
 		})
-		throw new Error("TODO implement")
-		return {
-			userId,
-			profile: undefined,
-			tags: undefined,
-		}
+		return {userId, tags, profile}
 	}
 
 	async function fetchPermit(userId: string): Promise<Permit> {
@@ -184,4 +206,3 @@ export const prepareAuthTools = ({rando, signToken}: {
 	// 	findPermitFor,
 	// }
 }
-

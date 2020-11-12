@@ -1,7 +1,6 @@
 
 import {observable, computed, action} from "mobx"
 import * as loading from "../../toolbox/loading.js"
-
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "./core-types.js"
 
 export class CoreModel {

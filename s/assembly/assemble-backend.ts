@@ -18,6 +18,7 @@ export async function assembleBackend({
 			storage,
 			signToken,
 			verifyToken,
+			generateNickname,
 			verifyGoogleToken,
 		}: {
 			rando: Rando
@@ -26,6 +27,7 @@ export async function assembleBackend({
 			storage: SimpleStorage
 			config: PlatformConfig
 			verifyToken: VerifyToken
+			generateNickname: () => string
 			verifyGoogleToken: VerifyGoogleToken
 		}) {
 
@@ -34,6 +36,7 @@ export async function assembleBackend({
 		config,
 		signToken,
 		verifyToken,
+		generateNickname,
 		verifyGoogleToken,
 		constrainTables: prepareConstrainTables(tables.core),
 	})

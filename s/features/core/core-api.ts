@@ -14,16 +14,22 @@ export function makeCoreApi({
 			signToken,
 			verifyToken,
 			constrainTables,
+			generateNickname,
 			verifyGoogleToken,
 		}: {
 			rando: Rando
 			signToken: SignToken
 			config: PlatformConfig
 			verifyToken: VerifyToken
+			generateNickname: () => string
 			verifyGoogleToken: VerifyGoogleToken
 			constrainTables: ConstrainTables<CoreTables>
 		}) {
-	const makeAuthTools = prepareAuthTools({rando, signToken})
+	const makeAuthTools = prepareAuthTools({
+		rando,
+		signToken,
+		generateNickname,
+	})
 	const {
 		authForApp,
 		authForUser,

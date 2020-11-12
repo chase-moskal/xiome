@@ -15,9 +15,10 @@ import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
 import {mockPlatformConfig} from "./mock-platform-config.js"
 
-export async function mockWholeSystem({storage}: {
-		storage: SimpleStorage
-	}) {
+export async function mockWholeSystem({storage, generateNickname}: {
+			storage: SimpleStorage
+			generateNickname: () => string
+		}) {
 
 	// prerequisites and configurations
 
@@ -47,21 +48,21 @@ export async function mockWholeSystem({storage}: {
 		storage,
 		signToken,
 		verifyToken,
+		generateNickname,
 		verifyGoogleToken,
 	})
 
 	// bridge connecting backend and frontend
 
-	let triggerAccountPopup: TriggerAccountPopup = () => {
-		throw new Error("mockNextLogin not set")
+	let triggerAccountPopupAction: TriggerAccountPopup = async() => {
+		throw new Error("no mock login set")
 	}
 
 	function mockNextLogin(
-			authenticateAndAuthorize:
-				(authTopic: CoreApi["authTopic"]) => Promise<AuthTokens>
-		) {
-		triggerAccountPopup = async() =>
-			authenticateAndAuthorize(backend.coreApi.authTopic)
+				auth: (authTopic: CoreApi["authTopic"]) => Promise<AuthTokens>
+			) {
+		triggerAccountPopupAction = async() =>
+			auth(backend.coreApi.authTopic)
 	}
 
 	// frontend assembly
@@ -69,7 +70,7 @@ export async function mockWholeSystem({storage}: {
 	const frontend = await assembleFrontend({
 		backend,
 		expiryGraceTime,
-		triggerAccountPopup,
+		triggerAccountPopup: async() => triggerAccountPopupAction(),
 	})
 
 	// return handy system internals for testing and debugging
