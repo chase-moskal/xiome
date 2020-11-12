@@ -4,9 +4,13 @@ import {processPayloadTopic as process} from "renraku/dist/curries.js"
 import {Rando} from "../../toolbox/get-rando.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
-import {prepareAuthTools} from "./auth-tools.js"
 import {prepareAuthProcessors} from "./auth-processors.js"
 import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload} from "./core-types.js"
+
+import {signAuthTokens} from "./authtools/sign-auth-tokens.js"
+import {fetchUserAndPermit} from "./authtools/fetch-user-and-permit.js"
+import {assertGoogleAccount} from "./authtools/assert-google-account.js"
+import {assertPasskeyAccount} from "./authtools/assert-passkey-account.js"
 
 export function makeCoreApi({
 			rando,
@@ -25,11 +29,7 @@ export function makeCoreApi({
 			verifyGoogleToken: VerifyGoogleToken
 			constrainTables: ConstrainTables<CoreTables>
 		}) {
-	const makeAuthTools = prepareAuthTools({
-		rando,
-		signToken,
-		generateNickname,
-	})
+
 	const {
 		authForApp,
 		authForUser,
@@ -38,36 +38,39 @@ export function makeCoreApi({
 		verifyToken,
 		constrainTables,
 	})
-	return {
-		authTopic: process(authForApp, {
 
+	return {
+
+		authTopic: process(authForApp, {
 			async authenticateViaPasskey(
 						{tables},
 						{passkey}: {passkey: string},
 					) {
-				const tools = makeAuthTools({tables})
-				const {userId} = await tools.assertPasskeyAccount(passkey)
-				return tools.signAuthTokens({
+				const {userId} = await assertPasskeyAccount({tables, passkey})
+				return signAuthTokens({
 					userId,
+					tables,
 					scope: {core: true},
 					lifespans: config.tokens.lifespans,
+					signToken,
+					generateNickname,
 				})
 			},
-
 			async authenticateViaGoogle(
 						{tables},
 						{googleToken}: {googleToken: string},
 					) {
-				const tools = makeAuthTools({tables})
 				const googleResult = await verifyGoogleToken(googleToken)
-				const {userId} = await tools.assertGoogleAccount(googleResult)
-				return tools.signAuthTokens({
+				const {userId} = await assertGoogleAccount({rando, tables, googleResult})
+				return signAuthTokens({
 					userId,
+					tables,
 					scope: {core: true},
 					lifespans: config.tokens.lifespans,
+					signToken,
+					generateNickname,
 				})
 			},
-
 			async authorize(
 						{tables},
 						{scope, refreshToken}: {
@@ -75,15 +78,10 @@ export function makeCoreApi({
 							refreshToken: RefreshToken
 						}
 					) {
-				const tools = makeAuthTools({tables})
 				const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-				const {user, permit} = await tools.fetchUserAndPermit(userId)
+				const {user, permit} = await fetchUserAndPermit({userId, tables, generateNickname})
 				return signToken<AccessPayload>({
-					payload: {
-						user,
-						scope,
-						permit,
-					},
+					payload: {user, scope, permit},
 					lifespan: config.tokens.lifespans.access,
 				})
 			},
