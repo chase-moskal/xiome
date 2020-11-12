@@ -28,6 +28,7 @@
 		"watch": "run-p watch-tsc watch-pug watch-sass watch-bundle",
 		"start": "serve",
 		"test": "cynic node --label='feature.farm tests' x/tests.test.js",
+		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='feature.farm tests' x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json",
 		"stats": "ls -lah x/demo.bundle.js x/demo.bundle.min.js"
 	},
