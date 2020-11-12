@@ -13,12 +13,16 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 		google: {
 			clientId: "mock-google-token",
 		},
-		platformApp: {
-			appId: rando.randomId(),
-			root: true,
-			origins: [
-				"localhost:8080",
-			],
+		platform: {
+			app: {
+				appId: rando.randomId(),
+				origins: [
+					"localhost:8080",
+				],
+			},
+			technician: {
+				passkey: rando.randomId(),
+			},
 		},
 		stripe: {
 			apiKey: "mock-stripe-api-key",

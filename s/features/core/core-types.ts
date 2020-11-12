@@ -6,13 +6,21 @@ import {DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 export * from "redcrypto/dist/types.js"
 
 export interface PlatformConfig {
-	platformApp: AppPayload & {root: true}
 	mongo: {
 		link: string
 		database: string
 	}
 	google: {
 		clientId: string
+	}
+	platform: {
+		app: {
+			appId: string
+			origins: string[]
+		}
+		technician: {
+			passkey: string
+		}
 	}
 	tokens: {
 		lifespans: {

@@ -9,22 +9,28 @@ import {mockSignGoogleToken} from "./mock-google-tokens.js"
 
 async function testableSystem() {
 	let count = 0
-	return mockWholeSystem({
+	const system = await mockWholeSystem({
 		storage: tempStorage(),
 		generateNickname: () => `Anonymous ${count++}`,
 	})
+	return {
+		system,
+		rootAppToken: await system.signAppToken({
+			...system.config.platform.app,
+			root: true,
+		}),
+	}
 }
 
 export default <Suite>{
 	"technician": {
 		"login and out of platform": async() => {
-			const system = await testableSystem()
+			const {system, rootAppToken} = await testableSystem()
 			const {core} = system.frontend.models
-			const appToken = await system.signAppToken(system.config.platformApp)
 
 			system.mockNextLogin(
 				async authTopic => authTopic.authenticateViaGoogle(
-					{appToken},
+					{appToken: rootAppToken},
 					{googleToken: await mockSignGoogleToken({
 						name: "Chase Moskal",
 						avatar: "mock-avatar",
@@ -35,33 +41,14 @@ export default <Suite>{
 
 			await core.login()
 			assert(core.user, "initial login")
-			const user1 = core.user
 
 			await core.logout()
 			assert(!core.user, "initial logout")
 
 			const constrainTables = prepareConstrainTables(system.tables.core)
-			const tables = constrainTables({appId: system.config.platformApp.appId})
+			const tables = constrainTables({appId: system.config.platform.app.appId})
 			const count = await tables.account.count({conditions: false})
 			assert(count === 1, "one account in table")
-
-			system.mockNextLogin(
-				async authTopic => authTopic.authenticateViaGoogle(
-					{appToken},
-					{googleToken: await mockSignGoogleToken({
-						name: "Chase Moskal 2",
-						avatar: "mock-avatar2",
-						googleId: "mock-google-id-2",
-					})},
-				)
-			)
-
-			await core.login()
-			assert(core.user, "initial login")
-
-			const count2 = await tables.account.count({conditions: false})
-			assert(count2 === 2, "two accounts in table")
-			assert(user1.userId !== core.user?.userId, "different logins should have unique user ids")
 		},
 		"view platform stats": true,
 		"manage apps": true,

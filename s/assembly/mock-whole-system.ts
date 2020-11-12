@@ -27,7 +27,6 @@ export async function mockWholeSystem({storage, generateNickname}: {
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
 	const verifyGoogleToken = mockVerifyGoogleToken
-
 	const tables: Tables = {
 		core: {
 			account: dbbyMemory(),
@@ -52,7 +51,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 		verifyGoogleToken,
 	})
 
-	// bridge connecting backend and frontend
+	// mock bridge connecting backend and frontend
 
 	let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 		throw new Error("no mock login set")
@@ -73,7 +72,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 		triggerAccountPopup: async() => triggerAccountPopupAction(),
 	})
 
-	// return handy system internals for testing and debugging
+	// return everything including internals for testing and debugging
 
 	async function signAppToken(payload: AppPayload) {
 		return signToken({payload, lifespan: config.tokens.lifespans.app})
