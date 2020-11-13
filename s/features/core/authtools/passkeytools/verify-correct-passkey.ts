@@ -1,9 +1,10 @@
 
 import {digestPassword} from "./digest-password.js"
+import {Rando} from "../../../../toolbox/get-rando.js"
 import {AccountViaPasskeyRow} from "../../core-types.js"
-import {secureCompareStrings} from "./secure-compare-strings.js"
 
-export async function verifyCorrectPasskey({secret, passkeyRow}: {
+export async function verifyCorrectPasskey({secret, passkeyRow, rando}: {
+			rando: Rando
 			secret: string
 			passkeyRow: AccountViaPasskeyRow
 		}) {
@@ -13,6 +14,6 @@ export async function verifyCorrectPasskey({secret, passkeyRow}: {
 		salt: passkeyRow.salt,
 	})
 
-	const isCorrect = secureCompareStrings(digest, passkeyRow.digest)
+	const isCorrect = rando.compare(digest, passkeyRow.digest)
 	return isCorrect
 }

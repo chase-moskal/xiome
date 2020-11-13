@@ -58,7 +58,7 @@ export function makeCoreApi({
 						{tables},
 						{passkey}: {passkey: string},
 					) {
-				const {userId} = await verifyPasskeyAccount({tables, passkey})
+				const {userId} = await verifyPasskeyAccount({tables, passkey, rando})
 				return signAuthTokens({
 					userId,
 					tables,

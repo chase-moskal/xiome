@@ -1,4 +1,5 @@
 
+import {Rando} from "../../../toolbox/get-rando.js"
 import {and} from "../../../toolbox/dbby/dbby-helpers.js"
 
 import {CoreTables} from "../core-types.js"
@@ -6,7 +7,8 @@ import {parsePasskey} from "./passkeytools/parse-passkey.js"
 import {invalidPasskeyError} from "./passkeytools/invalid-passkey-error.js"
 import {verifyCorrectPasskey} from "./passkeytools/verify-correct-passkey.js"
 
-export async function verifyPasskeyAccount({tables, passkey}: {
+export async function verifyPasskeyAccount({tables, passkey, rando}: {
+			rando: Rando
 			passkey: string
 			tables: CoreTables
 		}): Promise<{userId: string}> {
@@ -19,7 +21,7 @@ export async function verifyPasskeyAccount({tables, passkey}: {
 	})
 
 	if (!passkeyRow) await invalidPasskeyError()
-	const isCorrect = await verifyCorrectPasskey({passkeyRow, secret})
+	const isCorrect = await verifyCorrectPasskey({passkeyRow, secret, rando})
 	if (!isCorrect) await invalidPasskeyError()
 
 	return {userId: passkeyRow.userId}
