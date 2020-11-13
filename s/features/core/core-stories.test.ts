@@ -1,11 +1,12 @@
 
 import {Suite, assert} from "cynic"
+import authtools from "./authtools/authtools.test.js"
 
 import {tempStorage} from "../../toolbox/json-storage.js"
 import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
 import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
-import {mockSignGoogleToken} from "./mock-google-tokens.js"
+// import {mockSignGoogleToken} from "./mock-google-tokens.js"
 
 async function testableSystem() {
 	let count = 0
@@ -22,20 +23,41 @@ async function testableSystem() {
 	}
 }
 
+async function runningSystemAlpha() {
+	const {system, rootAppToken} = await testableSystem()
+
+	system.mockNextLogin(
+		async authTopic => authTopic.authenticateViaPasskey(
+			{appToken: rootAppToken},
+			{passkey: system.config.platform.technician.passkey},
+		)
+	)
+}
+
 export default <Suite>{
 	"technician": {
 		"login and out of platform": async() => {
 			const {system, rootAppToken} = await testableSystem()
 			const {core} = system.frontend.models
 
+			// const passkey = system.config.platform.technician.passkey
+			const passkey = await system.backend.coreApi.authTopic.generatePasskeyAccount({appToken: rootAppToken})
+
+			// system.mockNextLogin(
+			// 	async authTopic => authTopic.authenticateViaGoogle(
+			// 		{appToken: rootAppToken},
+			// 		{googleToken: await mockSignGoogleToken({
+			// 			name: "Chase Moskal",
+			// 			avatar: "mock-avatar",
+			// 			googleId: "mock-google-id",
+			// 		})},
+			// 	)
+			// )
+
 			system.mockNextLogin(
-				async authTopic => authTopic.authenticateViaGoogle(
+				async authTopic => authTopic.authenticateViaPasskey(
 					{appToken: rootAppToken},
-					{googleToken: await mockSignGoogleToken({
-						name: "Chase Moskal",
-						avatar: "mock-avatar",
-						googleId: "mock-google-id",
-					})},
+					{passkey},
 				)
 			)
 
@@ -67,5 +89,8 @@ export default <Suite>{
 	"developer": {
 		"app tokens respect origin list": true,
 		"verify scoped third-party access token": true,
+	},
+	"*unit tests*": {
+		authtools,
 	},
 }

@@ -1,6 +1,6 @@
 
-import {AccountRow} from "../../core-types.js"
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {AccountRow} from "../core-types.js"
+import {Rando} from "../../../toolbox/get-rando.js"
 
 export function generateAccount(rando: Rando): AccountRow {
 	return {

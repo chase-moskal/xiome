@@ -57,6 +57,11 @@ export type Permit = {
 	privileges: string[]
 }
 
+export type Passkey = {
+	passkeyId: string
+	secret: string
+}
+
 export type Profile = {
 	nickname: string
 	tagline: string
@@ -167,7 +172,9 @@ export type AccountViaGoogleRow = {
 }
 
 export type AccountViaPasskeyRow = {
+	passkeyId: string
 	userId: string
+	salt: string
 	digest: string
 }
 

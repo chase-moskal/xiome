@@ -1,6 +1,9 @@
 
 import {Rando} from "../toolbox/get-rando.js"
+
 import {PlatformConfig} from "../features/core/core-types.js"
+import {writePasskey} from "../features/core/authtools/write-passkey.js"
+import {generatePasskey} from "../features/core/authtools/passkeytools/generate-passkey.js"
 
 export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 	const minute = 1000 * 60
@@ -21,7 +24,7 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 				],
 			},
 			technician: {
-				passkey: rando.randomId(),
+				passkey: writePasskey(generatePasskey(rando)),
 			},
 		},
 		stripe: {

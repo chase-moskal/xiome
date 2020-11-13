@@ -2,7 +2,7 @@
 import {Rando} from "../../../toolbox/get-rando.js"
 import {and} from "../../../toolbox/dbby/dbby-helpers.js"
 
-import {generateAccount} from "./utils/generate-account.js"
+import {generateAccount} from "./generate-account.js"
 import {AccountRow, CoreTables, GoogleResult} from "../core-types.js"
 
 export async function assertGoogleAccount({rando, tables, googleResult}: {

@@ -4,13 +4,15 @@ import {processPayloadTopic as process} from "renraku/dist/curries.js"
 import {Rando} from "../../toolbox/get-rando.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
-import {prepareAuthProcessors} from "./auth-processors.js"
 import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload} from "./core-types.js"
 
+import {writePasskey} from "./authtools/write-passkey.js"
+import {prepareAuthProcessors} from "./auth-processors.js"
 import {signAuthTokens} from "./authtools/sign-auth-tokens.js"
 import {fetchUserAndPermit} from "./authtools/fetch-user-and-permit.js"
 import {assertGoogleAccount} from "./authtools/assert-google-account.js"
-import {assertPasskeyAccount} from "./authtools/assert-passkey-account.js"
+import {verifyPasskeyAccount} from "./authtools/verify-passkey-account.js"
+import {generatePasskeyAccountData} from "./authtools/generate-passkey-account-data.js"
 
 export function makeCoreApi({
 			rando,
@@ -42,11 +44,21 @@ export function makeCoreApi({
 	return {
 
 		authTopic: process(authForApp, {
+
+			async generatePasskeyAccount({tables}) {
+				const {account, accountViaPasskey, passkeyId, secret} = await generatePasskeyAccountData(rando)
+				await Promise.all([
+					tables.account.create(account),
+					tables.accountViaPasskey.create(accountViaPasskey),
+				])
+				return writePasskey({passkeyId, secret})
+			},
+
 			async authenticateViaPasskey(
 						{tables},
 						{passkey}: {passkey: string},
 					) {
-				const {userId} = await assertPasskeyAccount({tables, passkey})
+				const {userId} = await verifyPasskeyAccount({tables, passkey})
 				return signAuthTokens({
 					userId,
 					tables,
@@ -56,6 +68,7 @@ export function makeCoreApi({
 					generateNickname,
 				})
 			},
+
 			async authenticateViaGoogle(
 						{tables},
 						{googleToken}: {googleToken: string},
@@ -71,6 +84,7 @@ export function makeCoreApi({
 					generateNickname,
 				})
 			},
+
 			async authorize(
 						{tables},
 						{scope, refreshToken}: {
@@ -86,45 +100,6 @@ export function makeCoreApi({
 				})
 			},
 		}),
-
-		// authTopic: topic(authForApp, {
-		// 	async authenticateViaPasskey({app, tables}, {passkey}: {passkey: string}) {
-		// 		return {
-		// 			accessToken: true,
-		// 			refreshToken: true,
-		// 		}
-		// 	},
-		// 	async authenticateViaGoogle({app, tables}, {googleToken}: {googleToken: string}) {
-		// 		const tools = prepareAuthTools({rando, tables})
-		// 		const {googleId, avatar: googleAvatar, name} = await verifyGoogleToken(googleToken)
-		// 		const accountViaGoogle = await tools.findAccountViaGoogle(googleId)
-		// 		const account = accountViaGoogle
-		// 			? await tools.findAccount(accountViaGoogle.userId)
-		// 			: await tools.registerViaGoogle({googleId, googleAvatar})
-		// 		const user = await tools.findUser(account.userId)
-		// 		const permit = await tools.findPermitFor(account.userId)
-		// 		const scope: Scope = {core: true}
-		// 		return concurrent({
-		// 			accessToken: signToken<AccessPayload>({
-		// 				payload: {user, permit, scope},
-		// 				lifespan: config.tokens.lifespans.access,
-		// 			}),
-		// 			refreshToken: signToken<RefreshPayload>({
-		// 				payload: {userId: user.userId},
-		// 				lifespan: config.tokens.lifespans.refresh,
-		// 			}),
-		// 		})
-		// 	},
-		// 	async authorize({app, tables}, {refreshToken, scope}: {refreshToken: RefreshToken, scope: Scope}) {
-		// 		// const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-		// 		// const user = await userLogin(userId)
-		// 		// return signToken<AccessPayload>({
-		// 		// 	payload: {user, scope},
-		// 		// 	lifespan: accessTokenLifespan,
-		// 		// })
-		// 		return ""
-		// 	},
-		// }),
 
 		// appsTopic: authProcessor.authForRootUser({
 		// 	async listApps({app, access, tables}, o: {
