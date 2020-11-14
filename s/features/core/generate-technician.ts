@@ -2,7 +2,7 @@
 import {PlatformConfig} from "./core-types.js"
 import {Rando} from "../../toolbox/get-rando.js"
 import {writePasskey} from "./authtools/write-passkey.js"
-import {digestPassword} from "./authtools/passkeytools/digest-password.js"
+import {digestPassword} from "../../toolbox/password/digest-password.js"
 import {generatePasskey} from "./authtools/passkeytools/generate-passkey.js"
 
 export async function generateTechnician(rando: Rando): Promise<{

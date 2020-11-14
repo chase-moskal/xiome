@@ -1,7 +1,7 @@
 
-import {digestPassword} from "./digest-password.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {AccountViaPasskeyRow} from "../../core-types.js"
+import {digestPassword} from "../../../../toolbox/password/digest-password.js"
 
 export async function verifyCorrectPasskey({secret, passkeyRow, rando}: {
 			rando: Rando
