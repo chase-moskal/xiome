@@ -9,7 +9,7 @@ export function prepareAuthProcessors<
 		constrainTables: ConstrainTables<Tables>
 	}) {
 
-	async function authForApp({appToken}: {appToken: AppToken}) {
+	async function anonymousOnAnyApp({appToken}: {appToken: AppToken}) {
 		const app = await verifyToken<AppPayload>(appToken)
 		return {
 			app,
@@ -17,28 +17,28 @@ export function prepareAuthProcessors<
 		}
 	}
 
-	async function authForUser({appToken, accessToken}: {
+	async function userOnAnyApp({appToken, accessToken}: {
 			appToken: AppToken
 			accessToken: AccessToken
 		}) {
 		return {
-			...await authForApp({appToken}),
+			...await anonymousOnAnyApp({appToken}),
 			access: await verifyToken<AccessPayload>(accessToken),
 		}
 	}
 
-	async function authForRootUser(meta: {
+	async function userOnPlatform(meta: {
 			appToken: AppToken
 			accessToken: AccessToken
 		}) {
-		const auth = await authForUser(meta)
-		if (!auth.app.root) throw new Error("apps topic is root-only")
+		const auth = await userOnAnyApp(meta)
+		if (!auth.app.root) throw new Error("access this topic is restricted, platform-only")
 		return auth
 	}
 
 	return {
-		authForApp,
-		authForUser,
-		authForRootUser,
+		userOnAnyApp,
+		userOnPlatform,
+		anonymousOnAnyApp,
 	}
 }

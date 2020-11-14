@@ -1,57 +1,48 @@
 
-import {Suite, assert} from "cynic"
+import {Suite} from "cynic"
+import {commonTests} from "./testing/common-tests.js"
 import authtools from "./authtools/authtools.test.js"
-
-import {testableSystem} from "./testing/testable-system.js"
 
 export default <Suite>{
 	authtools,
 	"stories": {
 		"technician": {
-			"login and out of platform": async() => {
-				const {system, rootAppToken} = await testableSystem()
-				const {core} = system.frontend.models
-	
-				// system.mockNextLogin(
-				// 	async authTopic => authTopic.authenticateViaGoogle(
-				// 		{appToken: rootAppToken},
-				// 		{googleToken: await mockSignGoogleToken({
-				// 			name: "Chase Moskal",
-				// 			avatar: "mock-avatar",
-				// 			googleId: "mock-google-id",
-				// 		})},
-				// 	)
-				// )
-	
-				system.mockNextLogin(
-					async authTopic => authTopic.authenticateViaPasskey(
-						{appToken: rootAppToken},
-						{passkey: system.technicianPasskey},
+			"common": commonTests({
+				initialize: async({system, rootAppToken}) => {
+					system.mockNextLogin(
+						async() => system.backend.coreApi.authTopic.authenticateViaPasskey(
+							{appToken: rootAppToken},
+							{passkey: system.technicianPasskey},
+						)
 					)
-				)
-	
-				await core.login()
-				assert(core.user, "initial login")
-	
-				await core.logout()
-				assert(!core.user, "initial logout")
-	
-				// const constrainTables = prepareConstrainTables(system.tables.core)
-				// const tables = constrainTables({appId: system.config.platform.app.appId})
-				// const count = await tables.account.count({conditions: false})
-				// assert(count === 1, "one account in table")
-			},
+				},
+			}),
+			"login to *any* app": true,
 			"view platform stats": true,
-			"manage apps": true,
 			"procotol zero: roll platform secrets": true,
 		},
 		"creator": {
+			"common": commonTests({
+				initialize: async({system, rootAppToken: appToken}) => {
+					const {authTopic} = system.backend.coreApi
+					const passkey = await authTopic.generatePasskeyAccount({appToken})
+					system.mockNextLogin(
+						async() => authTopic.authenticateViaPasskey({appToken}, {passkey})
+					)
+				},
+			}),
 			"login and out of platform": true,
 			"customize profile": true,
-			"manage apps": true,
+			"register and delete apps": true,
+			"generate an admin account to login with": true,
+			"no-can-do": {
+				"can't view platform stats": true,
+				"can't login to other creator's apps": true,
+				"can't protocol zero and roll platform secrets": true,
+			},
 		},
 		"customer": {
-			"login and out": true,
+			"login and out of standard app": true,
 			"customize profile": true,
 			"fetch any profile": true,
 		},

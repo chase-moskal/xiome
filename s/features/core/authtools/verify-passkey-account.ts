@@ -28,12 +28,11 @@ async function matchHardcodedTechnicianAccount({app, rando, config, passkeyPaylo
 			secret: secret,
 			passkeyRow: accountViaPasskey,
 		})
-		if (passkeyIsCorrect) return {
-			userId: account.userId,
-		}
+		if (passkeyIsCorrect) return {userId: account.userId}
+		else await invalidPasskeyError()
 	}
 
-	await invalidPasskeyError()
+	return undefined
 }
 
 async function matchExistingPasskeyAccount({rando, passkeyPayload, tables}: {

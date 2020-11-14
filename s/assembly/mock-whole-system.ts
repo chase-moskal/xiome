@@ -59,11 +59,8 @@ export async function mockWholeSystem({storage, generateNickname}: {
 		throw new Error("no mock login set")
 	}
 
-	function mockNextLogin(
-				auth: (authTopic: CoreApi["authTopic"]) => Promise<AuthTokens>
-			) {
-		triggerAccountPopupAction = async() =>
-			auth(backend.coreApi.authTopic)
+	function mockNextLogin(auth: () => Promise<AuthTokens>) {
+		triggerAccountPopupAction = async() => auth()
 	}
 
 	// frontend assembly

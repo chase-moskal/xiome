@@ -33,16 +33,16 @@ export function makeCoreApi({
 		}) {
 
 	const {
-		authForApp,
-		authForUser,
-		authForRootUser,
+		userOnAnyApp: userOnAnyApp,
+		userOnPlatform: userOnPlatform,
+		anonymousOnAnyApp: anonymousOnAnyApp,
 	} = prepareAuthProcessors<CoreTables>({
 		verifyToken,
 		constrainTables,
 	})
 
 	return {
-		authTopic: process(authForApp, {
+		authTopic: process(anonymousOnAnyApp, {
 
 			async generatePasskeyAccount({tables}) {
 				const {secret, account, passkeyId, accountViaPasskey} = await generatePasskeyAccountData(rando)
@@ -106,28 +106,28 @@ export function makeCoreApi({
 			},
 		}),
 
-		// appsTopic: authProcessor.authForRootUser({
-		// 	async listApps({app, access, tables}, o: {
-		// 			userId: string
-		// 		}) {},
-		// 	async registerApp({app, access, tables}, o: {
-		// 			userId: string
-		// 			appDraft: any
-		// 		}) {},
-		// 	async deleteApp({app, access, tables}, o: {
-		// 			userId: string
-		// 			appId: string
-		// 		}) {},
-		// 	async createAppToken({app, access, tables}, o: {
-		// 			userId: string
-		// 			appId: string
-		// 			appTokenDraft: any
-		// 		}) {},
-		// 	async deleteAppToken({app, access, tables}, o: {
-		// 			userId: string
-		// 			appTokenId: string
-		// 		}) {},
-		// }),
+		appsTopic: process(userOnPlatform, {
+			async listApps({app, access, tables}, o: {
+					userId: string
+				}) {},
+			async registerApp({app, access, tables}, o: {
+					userId: string
+					appDraft: any
+				}) {},
+			async deleteApp({app, access, tables}, o: {
+					userId: string
+					appId: string
+				}) {},
+			async createAppToken({app, access, tables}, o: {
+					userId: string
+					appId: string
+					appTokenDraft: any
+				}) {},
+			async deleteAppToken({app, access, tables}, o: {
+					userId: string
+					appTokenId: string
+				}) {},
+		}),
 
 		// userTopic: authProcessor.authForUser({
 		// 	async getUser({app, access, tables}, {userId}: {userId: string}) {
