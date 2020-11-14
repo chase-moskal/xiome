@@ -42,12 +42,10 @@ export function makeCoreApi({
 	})
 
 	return {
-
 		authTopic: process(authForApp, {
 
 			async generatePasskeyAccount({tables}) {
-				const {secret, account, passkeyId, accountViaPasskey}
-					= await generatePasskeyAccountData(rando)
+				const {secret, account, passkeyId, accountViaPasskey} = await generatePasskeyAccountData(rando)
 				await Promise.all([
 					tables.account.create(account),
 					tables.accountViaPasskey.create(accountViaPasskey),

@@ -10,4 +10,8 @@ export async function systemAlpha() {
 			{passkey: system.technicianPasskey},
 		)
 	)
+
+	await system.frontend.models.core.login()
+
+	// TODO implement: example app registration, return apptoken
 }
