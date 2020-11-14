@@ -2,6 +2,8 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
+import {generateTechnician} from "../features/core/generate-technician.js"
+import {mockPlatformConfig} from "../features/core/mock-platform-config.js"
 import {mockVerifyGoogleToken} from "../features/core/mock-google-tokens.js"
 import {AppPayload, AuthTokens, CoreApi, TriggerAccountPopup} from "../features/core/core-types.js"
 
@@ -13,7 +15,6 @@ import {Tables} from "./assembly-types.js"
 import {expiryGraceTime} from "./constants.js"
 import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
-import {mockPlatformConfig} from "./mock-platform-config.js"
 
 export async function mockWholeSystem({storage, generateNickname}: {
 			storage: SimpleStorage
@@ -23,7 +24,8 @@ export async function mockWholeSystem({storage, generateNickname}: {
 	// prerequisites and configurations
 
 	const rando = await getRando()
-	const config = mockPlatformConfig({rando})
+	const {technicianPasskey, technician} = await generateTechnician(rando)
+	const config = mockPlatformConfig({rando, technician})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
 	const verifyGoogleToken = mockVerifyGoogleToken
@@ -78,5 +80,13 @@ export async function mockWholeSystem({storage, generateNickname}: {
 		return signToken({payload, lifespan: config.tokens.lifespans.app})
 	}
 
-	return {config, backend, frontend, tables, mockNextLogin, signAppToken}
+	return {
+		config,
+		tables,
+		backend,
+		frontend,
+		technicianPasskey,
+		signAppToken,
+		mockNextLogin,
+	}
 }

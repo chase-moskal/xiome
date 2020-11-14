@@ -18,9 +18,7 @@ export interface PlatformConfig {
 			appId: string
 			origins: string[]
 		}
-		technician: {
-			passkey: string
-		}
+		technician: HardcodedTechnician
 	}
 	tokens: {
 		lifespans: {
@@ -35,6 +33,12 @@ export interface PlatformConfig {
 		secret: string
 		webhookSecret: string
 	}
+}
+
+// TODO remove this, use PlatformConfig["platform"]["technician"]
+export type HardcodedTechnician = {
+	account: AccountRow
+	accountViaPasskey: AccountViaPasskeyRow
 }
 
 // api topics
@@ -57,7 +61,7 @@ export type Permit = {
 	privileges: string[]
 }
 
-export type Passkey = {
+export type PasskeyPayload = {
 	passkeyId: string
 	secret: string
 }

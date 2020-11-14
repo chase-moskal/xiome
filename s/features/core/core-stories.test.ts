@@ -4,9 +4,7 @@ import authtools from "./authtools/authtools.test.js"
 
 import {tempStorage} from "../../toolbox/json-storage.js"
 import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
-import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
-
-// import {mockSignGoogleToken} from "./mock-google-tokens.js"
+// import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
 async function testableSystem() {
 	let count = 0
@@ -29,7 +27,7 @@ async function runningSystemAlpha() {
 	system.mockNextLogin(
 		async authTopic => authTopic.authenticateViaPasskey(
 			{appToken: rootAppToken},
-			{passkey: system.config.platform.technician.passkey},
+			{passkey: system.technicianPasskey},
 		)
 	)
 }
@@ -39,9 +37,6 @@ export default <Suite>{
 		"login and out of platform": async() => {
 			const {system, rootAppToken} = await testableSystem()
 			const {core} = system.frontend.models
-
-			// const passkey = system.config.platform.technician.passkey
-			const passkey = await system.backend.coreApi.authTopic.generatePasskeyAccount({appToken: rootAppToken})
 
 			// system.mockNextLogin(
 			// 	async authTopic => authTopic.authenticateViaGoogle(
@@ -57,7 +52,7 @@ export default <Suite>{
 			system.mockNextLogin(
 				async authTopic => authTopic.authenticateViaPasskey(
 					{appToken: rootAppToken},
-					{passkey},
+					{passkey: system.technicianPasskey},
 				)
 			)
 
@@ -67,10 +62,10 @@ export default <Suite>{
 			await core.logout()
 			assert(!core.user, "initial logout")
 
-			const constrainTables = prepareConstrainTables(system.tables.core)
-			const tables = constrainTables({appId: system.config.platform.app.appId})
-			const count = await tables.account.count({conditions: false})
-			assert(count === 1, "one account in table")
+			// const constrainTables = prepareConstrainTables(system.tables.core)
+			// const tables = constrainTables({appId: system.config.platform.app.appId})
+			// const count = await tables.account.count({conditions: false})
+			// assert(count === 1, "one account in table")
 		},
 		"view platform stats": true,
 		"manage apps": true,

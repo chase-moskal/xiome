@@ -1,6 +1,6 @@
 
-import {Passkey} from "../core-types.js"
+import {PasskeyPayload} from "../core-types.js"
 
-export function writePasskey({passkeyId, secret}: Passkey): string {
+export function writePasskey({passkeyId, secret}: PasskeyPayload): string {
 	return `${passkeyId}.${secret}`
 }

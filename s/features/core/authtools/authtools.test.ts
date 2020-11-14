@@ -1,7 +1,7 @@
 
 import {Suite, assert} from "cynic"
 
-import {Passkey} from "../core-types.js"
+import {PasskeyPayload} from "../core-types.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 
 import {writePasskey} from "./write-passkey.js"
@@ -11,7 +11,7 @@ export default <Suite>(async() => {
 	const rando = await getRando()
 	return {
 		"passkey parsing": async() => {
-			const p1: Passkey = {passkeyId: rando.randomId(), secret: rando.randomId()}
+			const p1: PasskeyPayload = {passkeyId: rando.randomId(), secret: rando.randomId()}
 			const encoded = writePasskey(p1)
 			const p2 = parsePasskey(encoded)
 			assert(p1.passkeyId === p2.passkeyId, "passkeyId is preserved")
