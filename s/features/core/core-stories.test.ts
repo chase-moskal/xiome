@@ -6,31 +6,8 @@ import {tempStorage} from "../../toolbox/json-storage.js"
 import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
 // import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
-async function testableSystem() {
-	let count = 0
-	const system = await mockWholeSystem({
-		storage: tempStorage(),
-		generateNickname: () => `Anonymous ${count++}`,
-	})
-	return {
-		system,
-		rootAppToken: await system.signAppToken({
-			...system.config.platform.app,
-			root: true,
-		}),
-	}
-}
-
-async function runningSystemAlpha() {
-	const {system, rootAppToken} = await testableSystem()
-
-	system.mockNextLogin(
-		async authTopic => authTopic.authenticateViaPasskey(
-			{appToken: rootAppToken},
-			{passkey: system.technicianPasskey},
-		)
-	)
-}
+// import {systemAlpha} from "./testing/system-alpha.js"
+import {testableSystem} from "./testing/testable-system.js"
 
 export default <Suite>{
 	"technician": {
