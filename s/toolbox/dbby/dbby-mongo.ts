@@ -88,11 +88,13 @@ function prepareQuery<Row extends DbbyRow>({conditions}: DbbyConditional<Row>): 
 
 	function recurse(tree: DbbyConditionTree<Row>): FilterQuery<{}> {
 		const [operator, ...conds] = tree
-		const query = conds.map(cond =>
-			Array.isArray(cond)
+
+		const query = conds
+			.map(cond => Array.isArray(cond)
 				? recurse(cond)
-				: conditionsToMongoQuery(cond)
-		)
+				: conditionsToMongoQuery(cond))
+			.filter(cond => !!cond)
+
 		return operator === "and"
 			? {$and: query}
 			: {$or: query}
@@ -142,27 +144,29 @@ const mongoloids: {[key: string]: (value: any) => any} = {
 }
 
 function conditionsToMongoQuery<Row extends DbbyRow>(
-		conditions: DbbyCondition<Row>
-	): FilterQuery<Row> {
-	return <any>{
-		$and: [
-			mapwise(conditions.set, mongoloids.set),
-			mapwise(conditions.equal, mongoloids.equal),
-			mapwise(conditions.greater, mongoloids.greater),
-			mapwise(conditions.greatery, mongoloids.greatery),
-			mapwise(conditions.less, mongoloids.less),
-			mapwise(conditions.lessy, mongoloids.lessy),
-			mapwise(conditions.listed, mongoloids.listed),
-			mapwise(conditions.search, mongoloids.search),
+			conditions: false | DbbyCondition<Row>
+		): FilterQuery<Row> {
+	return conditions
+		? <any>{
+			$and: [
+				mapwise(conditions.set, mongoloids.set),
+				mapwise(conditions.equal, mongoloids.equal),
+				mapwise(conditions.greater, mongoloids.greater),
+				mapwise(conditions.greatery, mongoloids.greatery),
+				mapwise(conditions.less, mongoloids.less),
+				mapwise(conditions.lessy, mongoloids.lessy),
+				mapwise(conditions.listed, mongoloids.listed),
+				mapwise(conditions.search, mongoloids.search),
 
-			notwise(conditions.notSet, mongoloids.set),
-			notwise(conditions.notEqual, mongoloids.equal),
-			notwise(conditions.notGreater, mongoloids.greater),
-			notwise(conditions.notGreatery, mongoloids.greatery),
-			notwise(conditions.notLess, mongoloids.less),
-			notwise(conditions.notLessy, mongoloids.lessy),
-			notwise(conditions.notListed, mongoloids.listed),
-			notwise(conditions.notSearch, mongoloids.search),
-		].filter(isSet)
-	}
+				notwise(conditions.notSet, mongoloids.set),
+				notwise(conditions.notEqual, mongoloids.equal),
+				notwise(conditions.notGreater, mongoloids.greater),
+				notwise(conditions.notGreatery, mongoloids.greatery),
+				notwise(conditions.notLess, mongoloids.less),
+				notwise(conditions.notLessy, mongoloids.lessy),
+				notwise(conditions.notListed, mongoloids.listed),
+				notwise(conditions.notSearch, mongoloids.search),
+			].filter(isSet)
+		}
+		: false
 }

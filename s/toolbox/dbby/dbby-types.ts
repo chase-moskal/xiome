@@ -41,15 +41,18 @@ export interface DbbyCondition<Row extends DbbyRow> {
 }
 
 export type DbbyConditionOperation = "and" | "or"
-export type DbbyConditionLeaf<Row extends DbbyRow> = DbbyCondition<Row> | DbbyConditionTree<Row>
+export type DbbyConditionLeaf<Row extends DbbyRow> = DbbyCondition<Row> | DbbyConditions<Row>
 export type DbbyConditionBranch<Op extends DbbyConditionOperation, Row extends DbbyRow> =
 	[Op, ...DbbyConditionLeaf<Row>[]]
 
 export type DbbyConditionTree<Row extends DbbyRow> =
-	DbbyConditionBranch<"and", Row>
+	| DbbyConditionBranch<"and", Row>
 	| DbbyConditionBranch<"or", Row>
 
 export type DbbyConditions<Row extends DbbyRow> = false | DbbyConditionTree<Row>
+
+function main<Row extends DbbyRow>(cond: DbbyConditions<Row>) {}
+main<{a: boolean}>(["or", {equal: {a: true}}])
 
 export interface DbbyConditional<Row extends DbbyRow> {
 	conditions: DbbyConditions<Row>
@@ -97,4 +100,4 @@ export interface DbbyStorage<Row extends DbbyRow> {
 }
 
 export type ConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}> =
-	(constraint: DbbyRow) => T
+	(constraint: DbbyConditions<DbbyRow>) => T

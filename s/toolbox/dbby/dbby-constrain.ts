@@ -2,17 +2,17 @@
 import {objectMap} from "../object-map.js"
 
 import {and} from "./dbby-helpers.js"
-import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditions, ConstrainTables} from "./dbby-types.js"
+import {DbbyTable, DbbyRow, DbbyConditionBranch, DbbyConditions, ConstrainTables} from "./dbby-types.js"
 
-export function dbbyConstrain<Row extends DbbyRow, Constraint extends Row>(
+export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 			table: DbbyTable<Row>,
-			constraint: DbbyCondition<Row>,
+			constraint: DbbyConditions<Constraint>,
 		): DbbyTable<Row> {
 
 	const spike = (conditionTree: DbbyConditions<Row>) => (
 		conditionTree
-			? and(constraint, conditionTree)
-			: and(constraint)
+			? <DbbyConditionBranch<"and", Row>>and(constraint, conditionTree)
+			: <DbbyConditionBranch<"and", Row>>and(constraint)
 	)
 
 	return {
@@ -77,8 +77,8 @@ export function dbbyConstrain<Row extends DbbyRow, Constraint extends Row>(
 export function prepareConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}>(
 			tables: T,
 		): ConstrainTables<T> {
-	return (constraint: DbbyRow) => <T>objectMap(
+	return (constraint: DbbyConditions<DbbyRow>) => <T>objectMap(
 		tables,
-		table => dbbyConstrain(table, constraint)
+		table => dbbyConstrain(table, constraint),
 	)
 }

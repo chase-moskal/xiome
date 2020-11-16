@@ -3,6 +3,7 @@ import {Suite, expect} from "cynic"
 import {dbbyMemory} from "./dbby-memory.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
+import { DbbyRow, DbbyTable } from "./dbby-types.js"
 
 type DemoUser = {
 	userId: string
@@ -20,12 +21,22 @@ async function setupThreeUserDemo() {
 	return dbby
 }
 
+function constrainAppTable<Row extends DbbyRow>(
+			table: DbbyTable<Row>,
+			appId: string,
+		) {
+	return dbbyConstrain<Row, {appId: string}>(
+		table,
+		and({equal: {appId}}),
+	)
+}
+
 export default <Suite>{
 	"dbby-constrain": {
 		"apply app id constraint": async() => {
 			const dbby = dbbyMemory<DemoUser>()
-			const a1 = dbbyConstrain(dbby, {appId: "a1"})
-			const a2 = dbbyConstrain(dbby, {appId: "a2"})
+			const a1 = constrainAppTable(dbby, "a1")
+			const a2 = constrainAppTable(dbby, "a2")
 			await a1.create({userId: "u1", balance: 100, location: "america"})
 			await a2.create({userId: "u2", balance: 100, location: "canada"})
 			await a2.delete(find({userId: "u1"}))
