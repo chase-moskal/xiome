@@ -2,7 +2,7 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-import {generateTechnician} from "../features/core/generate-technician.js"
+// import {generateTechnician} from "../features/core/generate-technician.js"
 import {mockPlatformConfig} from "../features/core/mock-platform-config.js"
 import {mockVerifyGoogleToken} from "../features/core/mock-google-tokens.js"
 import {AppPayload, AuthTokens, CoreApi, TriggerAccountPopup} from "../features/core/core-types.js"
@@ -24,7 +24,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 	// prerequisites and configurations
 
 	const rando = await getRando()
-	const {technicianPasskey, technician} = await generateTechnician(rando)
+	const {technicianPasskey, technician} = <any>{} // TODO wtf // await generateTechnician(rando)
 	const config = mockPlatformConfig({rando, technician})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
@@ -37,7 +37,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 			rolePrivilege: dbbyMemory(),
 			accountViaEmail: dbbyMemory(),
 			accountViaGoogle: dbbyMemory(),
-			accountViaPasskey: dbbyMemory(),
+			// accountViaPasskey: dbbyMemory(),
 		},
 	}
 

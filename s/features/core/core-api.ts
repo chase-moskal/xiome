@@ -7,7 +7,7 @@ import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
 import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, AccountRow, AccountViaEmailRow, ProfileRow, UserRoleRow, RolePrivilegeRow, AccountViaGoogleRow} from "./core-types.js"
 
-import {writePasskey} from "./authtools/write-passkey.js"
+// import {writePasskey} from "./authtools/write-passkey.js"
 import {prepareAuthProcessors} from "./auth-processors.js"
 import {signAuthTokens} from "./authtools/sign-auth-tokens.js"
 import {fetchUserAndPermit} from "./authtools/fetch-user-and-permit.js"
