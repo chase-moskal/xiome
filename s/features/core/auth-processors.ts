@@ -1,4 +1,5 @@
 
+import {and} from "../../toolbox/dbby/dbby-helpers.js"
 import {DbbyTable, ConstrainTables, DbbyRow} from "../../toolbox/dbby/dbby-types.js"
 import {VerifyToken, AccessToken, AccessPayload, AppToken, AppPayload} from "./core-types.js"
 
@@ -13,7 +14,7 @@ export function prepareAuthProcessors<
 		const app = await verifyToken<AppPayload>(appToken)
 		return {
 			app,
-			tables: <Tables>constrainTables({appId: app.appId}),
+			tables: <Tables>constrainTables(and({equal: {appId: app.appId}})),
 		}
 	}
 
