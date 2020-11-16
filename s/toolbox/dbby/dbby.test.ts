@@ -3,7 +3,7 @@ import {Suite, expect} from "cynic"
 import {dbbyMemory} from "./dbby-memory.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
-import { DbbyRow, DbbyTable } from "./dbby-types.js"
+import {DbbyRow, DbbyTable} from "./dbby-types.js"
 
 type DemoUser = {
 	userId: string
