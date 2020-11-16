@@ -2,17 +2,46 @@
 import {processPayloadTopic as process} from "renraku/dist/curries.js"
 
 import {Rando} from "../../toolbox/get-rando.js"
+import {DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
-import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload} from "./core-types.js"
+import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, AccountRow, AccountViaEmailRow, ProfileRow, UserRoleRow, RolePrivilegeRow, AccountViaGoogleRow} from "./core-types.js"
 
 import {writePasskey} from "./authtools/write-passkey.js"
 import {prepareAuthProcessors} from "./auth-processors.js"
 import {signAuthTokens} from "./authtools/sign-auth-tokens.js"
 import {fetchUserAndPermit} from "./authtools/fetch-user-and-permit.js"
-import {assertGoogleAccount} from "./authtools/assert-google-account.js"
-import {verifyPasskeyAccount} from "./authtools/verify-passkey-account.js"
-import {generatePasskeyAccountData} from "./authtools/generate-passkey-account-data.js"
+// import {assertGoogleAccount} from "./authtools/assert-google-account.js"
+// import {generatePasskeyAccountData} from "./authtools/generate-passkey-account-data.js"
+
+export async function makeAuthTopic({
+			rando,
+			config,
+			signToken,
+			verifyToken,
+			constrainTables,
+			generateNickname,
+			verifyGoogleToken,
+		}: {
+			rando: Rando
+			signToken: SignToken
+			config: PlatformConfig
+			verifyToken: VerifyToken
+			generateNickname: () => string
+			verifyGoogleToken: VerifyGoogleToken
+			constrainTables: ConstrainTables<{
+				account: DbbyTable<AccountRow>
+				accountViaEmail: DbbyTable<AccountViaEmailRow>
+				accountViaGoogle: DbbyTable<AccountViaGoogleRow>
+				profile: DbbyTable<ProfileRow>
+				userRole: DbbyTable<UserRoleRow>
+				rolePrivilege: DbbyTable<RolePrivilegeRow>
+			}>
+		}) {
+	return {
+
+	}
+}
 
 export function makeCoreApi({
 			rando,

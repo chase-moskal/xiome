@@ -59,10 +59,10 @@ export type Permit = {
 	privileges: string[]
 }
 
-export type PasskeyPayload = {
-	passkeyId: string
-	secret: string
-}
+// export type PasskeyPayload = {
+// 	passkeyId: string
+// 	secret: string
+// }
 
 export type Profile = {
 	nickname: string
@@ -162,7 +162,7 @@ export type CoreTables = {
 	account: DbbyTable<AccountRow>
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
-	accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
+	// accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
 	profile: DbbyTable<ProfileRow>
 	userRole: DbbyTable<UserRoleRow>
 	rolePrivilege: DbbyTable<RolePrivilegeRow>
@@ -199,12 +199,12 @@ export type AccountViaGoogleRow = {
 	googleAvatar: string
 }
 
-export type AccountViaPasskeyRow = {
-	passkeyId: string
-	userId: string
-	salt: string
-	digest: string
-}
+// export type AccountViaPasskeyRow = {
+// 	passkeyId: string
+// 	userId: string
+// 	salt: string
+// 	digest: string
+// }
 
 export type AccountViaSignatureRow = {
 	userId: string
