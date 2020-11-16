@@ -35,6 +35,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 			profile: dbbyMemory(),
 			userRole: dbbyMemory(),
 			rolePrivilege: dbbyMemory(),
+			accountViaEmail: dbbyMemory(),
 			accountViaGoogle: dbbyMemory(),
 			accountViaPasskey: dbbyMemory(),
 		},

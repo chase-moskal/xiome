@@ -27,12 +27,16 @@ export async function generateTechnician(rando: Rando): Promise<{
 				userId,
 				created,
 			},
-			accountViaPasskey: {
+			accountViaEmail: {
 				userId,
-				passkeyId,
-				salt,
-				digest,
+				email,
 			},
+			// accountViaPasskey: {
+			// 	userId,
+			// 	passkeyId,
+			// 	salt,
+			// 	digest,
+			// },
 		},
 	}
 }

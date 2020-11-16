@@ -6,6 +6,7 @@ export function mockPlatformConfig({rando, technician}: {
 			rando: Rando
 			technician: PlatformConfig["platform"]["technician"]
 		}): PlatformConfig {
+
 	const minute = 1000 * 60
 	const day = minute * 60 * 24
 
@@ -34,6 +35,7 @@ export function mockPlatformConfig({rando, technician}: {
 		tokens: {
 			lifespans: {
 				app: 30 * day,
+				login: 5 * minute,
 				refresh: 30 * day,
 				access: 20 * minute,
 				external: 10 * minute,

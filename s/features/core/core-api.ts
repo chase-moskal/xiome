@@ -33,9 +33,9 @@ export function makeCoreApi({
 		}) {
 
 	const {
-		userOnAnyApp: userOnAnyApp,
-		userOnPlatform: userOnPlatform,
-		anonymousOnAnyApp: anonymousOnAnyApp,
+		userOnAnyApp,
+		userOnPlatform,
+		anonymousOnAnyApp,
 	} = prepareAuthProcessors<CoreTables>({
 		verifyToken,
 		constrainTables,
@@ -44,51 +44,65 @@ export function makeCoreApi({
 	return {
 		authTopic: process(anonymousOnAnyApp, {
 
-			async generatePasskeyAccount({tables}) {
-				const {secret, account, passkeyId, accountViaPasskey} = await generatePasskeyAccountData(rando)
-				await Promise.all([
-					tables.account.create(account),
-					tables.accountViaPasskey.create(accountViaPasskey),
-				])
-				return writePasskey({passkeyId, secret})
-			},
-
-			async authenticateViaPasskey(
+			async sendLoginLink(
 						{app, tables},
-						{passkey}: {passkey: string},
+						{email}: {email: string},
 					) {
-				const {userId} = await verifyPasskeyAccount({
-					app,
-					rando,
-					config,
-					tables,
-					passkey,
-				})
-				return signAuthTokens({
-					userId,
-					tables,
-					scope: {core: true},
-					lifespans: config.tokens.lifespans,
-					signToken,
-					generateNickname,
-				})
+				throw new Error("TODO implement")
 			},
 
-			async authenticateViaGoogle(
-						{tables},
-						{googleToken}: {googleToken: string},
+			async authenticateViaLoginToken(
+						{app, tables},
+						{loginToken}: {loginToken: string},
 					) {
-				const googleResult = await verifyGoogleToken(googleToken)
-				const {userId} = await assertGoogleAccount({rando, tables, googleResult})
-				return signAuthTokens({
-					userId,
-					tables,
-					scope: {core: true},
-					lifespans: config.tokens.lifespans,
-					signToken,
-					generateNickname,
-				})
+				throw new Error("TODO implement")
 			},
+
+			// async generatePasskeyAccount({tables}) {
+			// 	const {secret, account, passkeyId, accountViaPasskey} = await generatePasskeyAccountData(rando)
+			// 	await Promise.all([
+			// 		tables.account.create(account),
+			// 		tables.accountViaPasskey.create(accountViaPasskey),
+			// 	])
+			// 	return writePasskey({passkeyId, secret})
+			// },
+
+			// async authenticateViaPasskey(
+			// 			{app, tables},
+			// 			{passkey}: {passkey: string},
+			// 		) {
+			// 	const {userId} = await verifyPasskeyAccount({
+			// 		app,
+			// 		rando,
+			// 		config,
+			// 		tables,
+			// 		passkey,
+			// 	})
+			// 	return signAuthTokens({
+			// 		userId,
+			// 		tables,
+			// 		scope: {core: true},
+			// 		lifespans: config.tokens.lifespans,
+			// 		signToken,
+			// 		generateNickname,
+			// 	})
+			// },
+
+			// async authenticateViaGoogle(
+			// 			{tables},
+			// 			{googleToken}: {googleToken: string},
+			// 		) {
+			// 	const googleResult = await verifyGoogleToken(googleToken)
+			// 	const {userId} = await assertGoogleAccount({rando, tables, googleResult})
+			// 	return signAuthTokens({
+			// 		userId,
+			// 		tables,
+			// 		scope: {core: true},
+			// 		lifespans: config.tokens.lifespans,
+			// 		signToken,
+			// 		generateNickname,
+			// 	})
+			// },
 
 			async authorize(
 						{tables},
@@ -108,11 +122,15 @@ export function makeCoreApi({
 
 		appsTopic: process(userOnPlatform, {
 			async listApps({app, access, tables}, o: {
-					userId: string
-				}) {},
+						userId: string
+					}) {
+				return []
+			},
 			async registerApp({app, access, tables}, o: {
 					userId: string
-					appDraft: any
+					appDraft: {
+						label: string
+					}
 				}) {},
 			async deleteApp({app, access, tables}, o: {
 					userId: string

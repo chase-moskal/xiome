@@ -12,7 +12,7 @@ export async function testableSystem() {
 
 	return {
 		system,
-		rootAppToken: await system.signAppToken({
+		platformToken: await system.signAppToken({
 			...system.config.platform.app,
 			root: true,
 		}),

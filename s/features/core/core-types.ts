@@ -18,11 +18,15 @@ export interface PlatformConfig {
 			appId: string
 			origins: string[]
 		}
-		technician: HardcodedTechnician
+		technician: {
+			account: AccountRow
+			accountViaEmail: AccountViaEmailRow
+		}
 	}
 	tokens: {
 		lifespans: {
 			app: number
+			login: number
 			access: number
 			refresh: number
 			external: number
@@ -33,12 +37,6 @@ export interface PlatformConfig {
 		secret: string
 		webhookSecret: string
 	}
-}
-
-// TODO remove this, use PlatformConfig["platform"]["technician"]
-export type HardcodedTechnician = {
-	account: AccountRow
-	accountViaPasskey: AccountViaPasskeyRow
 }
 
 // api topics
@@ -106,6 +104,7 @@ export type VerifyGoogleToken = (googleToken: string) => Promise<GoogleResult>
 //
 
 export type AppToken = string
+export type LoginToken = string
 export type AccessToken = string
 export type RefreshToken = string
 
@@ -116,6 +115,10 @@ export interface AuthTokens {
 
 export interface Scope {
 	core?: boolean
+}
+
+export type LoginPayload = {
+	userId: string
 }
 
 export interface AppPayload {
@@ -157,6 +160,7 @@ export type Authorizer = (
 
 export type CoreTables = {
 	account: DbbyTable<AccountRow>
+	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
 	profile: DbbyTable<ProfileRow>
@@ -164,9 +168,29 @@ export type CoreTables = {
 	rolePrivilege: DbbyTable<RolePrivilegeRow>
 }
 
+export type AppRow = {
+	appId: string
+	label: string
+}
+
+export type AppOwnershipRow = {
+	appId: string
+	userId: string
+}
+
+export type AppTokenRow = {
+	userId: string
+	origins: string
+}
+
 export type AccountRow = {
 	userId: string
 	created: number
+}
+
+export type AccountViaEmailRow = {
+	userId: string
+	email: string
 }
 
 export type AccountViaGoogleRow = {
