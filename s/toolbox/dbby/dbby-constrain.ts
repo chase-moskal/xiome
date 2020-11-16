@@ -4,43 +4,37 @@ import {objectMap} from "../object-map.js"
 import {and} from "./dbby-helpers.js"
 import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditions, ConstrainTables} from "./dbby-types.js"
 
-export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
-		table: DbbyTable<Row>,
-		constraint: Constraint,
-	): DbbyTable<Row & Partial<Constraint>> {
+export function dbbyConstrain<Row extends DbbyRow, Constraint extends Row>(
+			table: DbbyTable<Row>,
+			constraint: DbbyCondition<Row>,
+		): DbbyTable<Row> {
 
-	const tab = <DbbyTable<Row & Partial<Constraint>>>table
-
-	const condition: DbbyCondition<Row & Partial<Constraint>> = {
-		equal: <any>constraint
-	}
-
-	const spike = (conditions: DbbyConditions<Row & Partial<Constraint>>) => (
-		conditions
-			? and(condition, conditions)
-			: and(condition)
+	const spike = (conditionTree: DbbyConditions<Row>) => (
+		conditionTree
+			? and(constraint, conditionTree)
+			: and(constraint)
 	)
 
 	return {
 		async create(...rows) {
-			return tab.create(
+			return table.create(
 				...rows.map(row => ({...row, ...constraint}))
 			)
 		},
 		async read(options) {
-			return tab.read({
+			return table.read({
 				...options,
 				conditions: spike(options.conditions),
 			})
 		},
 		async one(options) {
-			return tab.one({
+			return table.one({
 				...options,
 				conditions: spike(options.conditions),
 			})
 		},
 		async assert(options) {
-			return tab.assert({
+			return table.assert({
 				...options,
 				conditions: spike(options.conditions),
 				make: async() => {
@@ -51,7 +45,7 @@ export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 		},
 		async update(options) {
 			const opts: any = options
-			return tab.update({
+			return table.update({
 				...options,
 				conditions: spike(options.conditions),
 				upsert: opts.upsert
@@ -66,13 +60,13 @@ export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 			})
 		},
 		async delete(options) {
-			return tab.delete({
+			return table.delete({
 				...options,
 				conditions: spike(options.conditions),
 			})
 		},
 		async count(options) {
-			return tab.count({
+			return table.count({
 				...options,
 				conditions: spike(options.conditions),
 			})
@@ -80,9 +74,9 @@ export function dbbyConstrain<Row extends DbbyRow, Constraint extends DbbyRow>(
 	}
 }
 
-export function prepareConstrainTables<
-		T extends {[key: string]: DbbyTable<DbbyRow>}
-	>(tables: T): ConstrainTables<T> {
+export function prepareConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}>(
+			tables: T,
+		): ConstrainTables<T> {
 	return (constraint: DbbyRow) => <T>objectMap(
 		tables,
 		table => dbbyConstrain(table, constraint)
