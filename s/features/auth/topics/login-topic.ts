@@ -3,7 +3,7 @@ import {processPayloadTopic as processAuth} from "renraku/dist/curries.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
-import {CoreTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, SendEmail, LoginPayload} from "../auth-types.js"
+import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, SendEmail, LoginPayload} from "../auth-types.js"
 
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
@@ -26,7 +26,7 @@ export function makeLoginTopic({
 			sendEmail: SendEmail
 			verifyToken: VerifyToken
 			generateNickname: () => string
-			constrainTables: ConstrainTables<CoreTables>
+			constrainTables: ConstrainTables<AuthTables>
 		}) {
 	const sendLoginEmail = prepareSendLoginEmail({config, sendEmail})
 	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {

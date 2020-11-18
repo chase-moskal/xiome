@@ -38,7 +38,7 @@ export async function assembleBackend({
 		verifyToken,
 		sendEmail,
 		generateNickname,
-		constrainTables: prepareConstrainTables(tables.core),
+		constrainTables: prepareConstrainTables(tables.auth),
 	})
 
 	const tokenStore = makeTokenStore({

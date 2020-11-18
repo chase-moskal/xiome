@@ -1,10 +1,10 @@
 
-import {CoreTables, Permit} from "../../../auth-types.js"
+import {AuthTables, Permit} from "../../../auth-types.js"
 import {and, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 
 export async function fetchPermit({userId, tables}: {
 			userId: string
-			tables: CoreTables
+			tables: AuthTables
 		}): Promise<Permit> {
 
 	const roleRows = await tables.userRole.read({

@@ -31,7 +31,7 @@ export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
 	const tables: SystemTables = {
-		core: {
+		auth: {
 			account: dbbyMemory(),
 			profile: dbbyMemory(),
 			userRole: dbbyMemory(),

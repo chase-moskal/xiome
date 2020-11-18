@@ -3,11 +3,11 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 
 import {generateAccountRow} from "./generate-account-row.js"
-import {AccountRow, CoreTables, GoogleResult} from "../../auth-types.js"
+import {AccountRow, AuthTables, GoogleResult} from "../../auth-types.js"
 
 export async function assertGoogleAccount({rando, tables, googleResult}: {
 			rando: Rando
-			tables: CoreTables
+			tables: AuthTables
 			googleResult: GoogleResult
 		}): Promise<{userId: string}> {
 

@@ -1,6 +1,6 @@
 
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {SignToken, Scope, AccessPayload, RefreshPayload, CoreTables} from "../../auth-types.js"
+import {SignToken, Scope, AccessPayload, RefreshPayload, AuthTables} from "../../auth-types.js"
 
 import {assertUser} from "./user/assert-user.js"
 import {fetchPermit} from "./user/fetch-permit.js"
@@ -15,7 +15,7 @@ export async function signAuthTokens({
 		}: {
 			scope: Scope
 			userId: string
-			tables: CoreTables
+			tables: AuthTables
 			lifespans: {
 				access: number
 				refresh: number

@@ -1,5 +1,5 @@
 
-import {CoreTables, User} from "../../../auth-types.js"
+import {AuthTables, User} from "../../../auth-types.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 
@@ -9,7 +9,7 @@ import {generateProfileRow} from "./generate-profile-row.js"
 
 export async function assertUser({userId, tables, generateNickname}: {
 			userId: string
-			tables: CoreTables
+			tables: AuthTables
 			generateNickname: () => string
 		}): Promise<User> {
 

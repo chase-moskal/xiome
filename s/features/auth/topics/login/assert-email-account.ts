@@ -1,5 +1,5 @@
 
-import {CoreTables} from "../../auth-types.js"
+import {AuthTables} from "../../auth-types.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 
@@ -8,7 +8,7 @@ import {generateAccountRow} from "./generate-account-row.js"
 export async function assertEmailAccount({rando, email, tables}: {
 			rando: Rando
 			email: string
-			tables: CoreTables
+			tables: AuthTables
 		}) {
 
 	const accountViaEmail = await tables.accountViaEmail.assert({
