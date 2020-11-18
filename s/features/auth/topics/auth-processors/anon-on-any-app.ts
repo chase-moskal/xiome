@@ -11,7 +11,7 @@ export function prepareAnonOnAnyApp<T extends Tables>({
 		const app = await verifyToken<AppPayload>(appToken)
 		return {
 			app,
-			tables: <Tables>constrainTables(and({equal: {appId: app.appId}})),
+			tables: <T>constrainTables(and({equal: {appId: app.appId}})),
 		}
 	}
 }
