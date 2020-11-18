@@ -1,15 +1,11 @@
 
 import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {VerifyToken, AppToken, AppPayload} from "./../../auth-types.js"
-import {DbbyTable, ConstrainTables, DbbyRow} from "../../../../toolbox/dbby/dbby-types.js"
+import {AppToken, AppPayload, AuthProcessorPreparations, Tables} from "./../../auth-types.js"
 
-export function prepareAnonOnAnyApp<Tables extends {[key: string]: DbbyTable<DbbyRow>}>({
+export function prepareAnonOnAnyApp<T extends Tables>({
 			verifyToken,
 			constrainTables,
-		}: {
-			verifyToken: VerifyToken
-			constrainTables: ConstrainTables<Tables>
-		}) {
+		}: AuthProcessorPreparations<T>) {
 
 	return async({appToken}: {appToken: AppToken}) => {
 		const app = await verifyToken<AppPayload>(appToken)
