@@ -8,6 +8,7 @@ import {CoreTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, 
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
+import {prepareSendLoginEmail} from "../emails/send-login-email.js"
 import {prepareAnonOnAnyApp} from "./auth-processors/anon-on-any-app.js"
 
 export function makeLoginTopic({
@@ -27,6 +28,7 @@ export function makeLoginTopic({
 			generateNickname: () => string
 			constrainTables: ConstrainTables<CoreTables>
 		}) {
+	const sendLoginEmail = prepareSendLoginEmail({config, sendEmail})
 	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {
 
 		async sendLoginLink(
@@ -38,15 +40,7 @@ export function makeLoginTopic({
 				payload: {userId},
 				lifespan: config.tokens.lifespans.login,
 			})
-			// TODO refactor hardcoded email!
-			await sendEmail({
-				to: email,
-				subject: `Login to ${app.label}`,
-				body: `Login with this link: https://auth.feature.farm/login#${loginToken}`
-					+ `\n\nIf you did not request this login link, just ignore it`
-					+ `\n\nYou can reply to get in touch with support`
-					+ `\n\n    - Feature.farm support staff`,
-			})
+			await sendLoginEmail({to: email, app, loginToken})
 		},
 
 		async authenticateViaLoginToken(

@@ -16,10 +16,7 @@ export interface PlatformConfig {
 		clientId: string
 	}
 	platform: {
-		app: {
-			appId: string
-			origins: string[]
-		}
+		app: AppPayload
 		technician: {
 			account: AccountRow
 			accountViaEmail: AccountViaEmailRow
@@ -55,6 +52,12 @@ export type SendEmail = ({}: {
 	body: string
 }) => Promise<void>
 
+export type SendLoginEmail = ({}: {
+	to: string
+	app: AppPayload
+	loginToken: string
+}) => Promise<void>
+
 // api topicss
 //
 
@@ -74,11 +77,6 @@ export type Permit = {
 	roles: string[]
 	privileges: string[]
 }
-
-// export type PasskeyPayload = {
-// 	passkeyId: string
-// 	secret: string
-// }
 
 export type Profile = {
 	nickname: string
@@ -140,8 +138,9 @@ export type LoginPayload = {
 export interface AppPayload {
 	appId: string
 	label: string
+	home: string
 	origins: string[]
-	root?: boolean
+	platform?: boolean
 }
 
 export interface AccessPayload {
@@ -179,7 +178,6 @@ export type CoreTables = {
 	account: DbbyTable<AccountRow>
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
-	// accountViaPasskey: DbbyTable<AccountViaPasskeyRow>
 	profile: DbbyTable<ProfileRow>
 	userRole: DbbyTable<UserRoleRow>
 	rolePrivilege: DbbyTable<RolePrivilegeRow>
@@ -215,13 +213,6 @@ export type AccountViaGoogleRow = {
 	googleId: string
 	googleAvatar: string
 }
-
-// export type AccountViaPasskeyRow = {
-// 	passkeyId: string
-// 	userId: string
-// 	salt: string
-// 	digest: string
-// }
 
 export type AccountViaSignatureRow = {
 	userId: string

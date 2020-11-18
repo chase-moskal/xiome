@@ -11,7 +11,7 @@ export function prepareUserOnPlatform<T extends Tables>(preparations: AuthProces
 				accessToken: AccessToken
 			}) => {
 		const auth = await userOnAnyApp(meta)
-		if (!auth.app.root) throw new Error("restricted platform-only topic")
+		if (!auth.app.platform) throw new Error("restricted platform-only topic")
 		return auth
 	}
 }

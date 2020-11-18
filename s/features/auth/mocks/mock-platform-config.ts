@@ -19,8 +19,11 @@ export function mockPlatformConfig({rando, technician}: {
 			technician,
 			app: {
 				appId: rando.randomId(),
+				platform: true,
+				label: "feature.farm",
+				home: "https://feature.farm",
 				origins: [
-					"localhost:8080",
+					"https://feature.farm",
 				],
 			},
 		},

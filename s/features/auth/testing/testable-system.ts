@@ -9,14 +9,14 @@ export async function testableSystem() {
 	const system = await mockWholeSystem({
 		storage: tempStorage(),
 		generateNickname: () => `Anonymous ${count++}`,
-		sendEmail: async(emailDetails) => console.log("EMAIL LOL", emailDetails),
+		sendEmail: async(emailDetails) => console.log("EMAIL", emailDetails),
 	})
 
 	return {
 		system,
 		platformToken: await system.signAppToken({
 			...system.config.platform.app,
-			root: true,
+			platform: true,
 			label: "Platform",
 		}),
 	}
