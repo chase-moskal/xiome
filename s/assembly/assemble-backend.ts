@@ -31,7 +31,7 @@ export async function assembleBackend({
 			generateNickname: () => string
 		}) {
 
-	const coreApi = makeAuthApi({
+	const authApi = makeAuthApi({
 		rando,
 		config,
 		signToken,
@@ -43,8 +43,9 @@ export async function assembleBackend({
 
 	const tokenStore = makeTokenStore({
 		storage,
-		authorize: addMeta(async() => ({}), coreApi.loginTopic.authorize),
+		expiryRenewalCushion: config.tokens.expiryRenewalCushion,
+		authorize: addMeta(async() => ({}), authApi.loginTopic.authorize),
 	})
 
-	return {coreApi, tokenStore}
+	return {authApi, tokenStore}
 }

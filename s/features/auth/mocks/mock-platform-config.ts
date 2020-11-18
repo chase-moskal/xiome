@@ -1,15 +1,12 @@
 
 import {PlatformConfig} from "../auth-types.js"
 import {Rando} from "../../../toolbox/get-rando.js"
+import {second, minute, day} from "../../../toolbox/timely.js"
 
 export function mockPlatformConfig({rando, technician}: {
 			rando: Rando
 			technician: PlatformConfig["platform"]["technician"]
 		}): PlatformConfig {
-
-	const minute = 1000 * 60
-	const day = minute * 60 * 24
-
 	return {
 		mongo: {
 			link: "mock-mongo-link",
@@ -33,6 +30,7 @@ export function mockPlatformConfig({rando, technician}: {
 			webhookSecret: "mock-stripe-webhook-secret",
 		},
 		tokens: {
+			expiryRenewalCushion: 10 * second,
 			lifespans: {
 				app: 30 * day,
 				login: 5 * minute,

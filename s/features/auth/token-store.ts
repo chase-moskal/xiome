@@ -1,31 +1,20 @@
 
 import {asTopic, AddMeta} from "renraku/dist/types.js"
-import {tokenDecode} from "redcrypto/dist/token-decode.js"
 
 import {SimpleStorage} from "../../toolbox/json-storage.js"
 
 import {AuthApi} from "./auth-types.js"
-
-const expiryGraceTime = 10 * 1000
-
-const tokenIsValid = (token: string) => {
-	let valid = false
-	if (token) {
-		const decoded = tokenDecode<any>(token)
-		const expiry = decoded.exp * 1000
-		const expired = Date.now() > (expiry - expiryGraceTime)
-		valid = !expired
-	}
-	return valid
-}
+import {isTokenExpired} from "./tools/is-token-expired.js"
 
 export function makeTokenStore({
-		storage,
-		authorize,
-	}: {
-		storage: SimpleStorage
-		authorize: AddMeta<AuthApi["loginTopic"]["authorize"]>
-	}) {
+			storage,
+			expiryRenewalCushion,
+			authorize,
+		}: {
+			storage: SimpleStorage
+			expiryRenewalCushion: number
+			authorize: AddMeta<AuthApi["loginTopic"]["authorize"]>
+		}) {
 
 	function saveTokens({accessToken, refreshToken}) {
 		storage.setItem("accessToken", accessToken || "")
@@ -51,8 +40,8 @@ export function makeTokenStore({
 			let accessToken = storage.getItem("accessToken")
 			let refreshToken = storage.getItem("refreshToken")
 
-			const accessValid = tokenIsValid(accessToken)
-			const refreshValid = tokenIsValid(refreshToken)
+			const accessValid = !isTokenExpired(accessToken, expiryRenewalCushion)
+			const refreshValid = !isTokenExpired(refreshToken, expiryRenewalCushion)
 
 			if (refreshValid) {
 				if (!accessValid) {

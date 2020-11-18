@@ -26,6 +26,7 @@ export interface PlatformConfig {
 		}
 	}
 	tokens: {
+		expiryRenewalCushion: number
 		lifespans: {
 			app: number
 			login: number
