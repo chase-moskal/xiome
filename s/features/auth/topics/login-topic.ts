@@ -20,9 +20,9 @@ export function makeLoginTopic({
 			generateNickname,
 		}: {
 			rando: Rando
+			config: PlatformConfig
 			signToken: SignToken
 			sendEmail: SendEmail
-			config: PlatformConfig
 			verifyToken: VerifyToken
 			generateNickname: () => string
 			constrainTables: ConstrainTables<CoreTables>
