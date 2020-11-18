@@ -6,11 +6,11 @@ export function commonTests(makeTestable: () => ReturnType<typeof testableSystem
 	return <Suite>{
 		"login and out": async() => {
 			const {system} = await makeTestable()
-			const {core} = system.frontend.models
-			await core.login()
-			assert(core.user, "initial login")
-			await core.logout()
-			assert(!core.user, "initial logout")
+			const {auth} = system.frontend.models
+			await auth.login()
+			assert(auth.user, "initial login")
+			await auth.logout()
+			assert(!auth.user, "initial logout")
 		},
 
 		"customize own profile": true,

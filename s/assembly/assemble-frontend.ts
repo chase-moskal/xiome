@@ -1,5 +1,5 @@
 
-import {CoreModel} from "../features/auth/auth-model.js"
+import {AuthModel} from "../features/auth/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
@@ -17,7 +17,7 @@ export async function assembleFrontend({
 	const {tokenStore} = backend
 	return {
 		models: {
-			core: new CoreModel({
+			auth: new AuthModel({
 				tokenStore,
 				expiryGraceTime,
 				decodeAccessToken,

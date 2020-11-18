@@ -3,7 +3,7 @@ import {observable, computed, action} from "mobx"
 import * as loading from "../../toolbox/loading.js"
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "./auth-types.js"
 
-export class CoreModel {
+export class AuthModel {
 	private readonly expiryGraceTime: number
 	private readonly tokenStore: TokenStoreTopic
 	private readonly decodeAccessToken: DecodeAccessToken
