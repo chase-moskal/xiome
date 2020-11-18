@@ -1,6 +1,5 @@
 
 import {Suite, assert} from "cynic"
-import {Await} from "../../../types/fancy.js"
 import {testableSystem} from "./testable-system.js"
 
 export function commonTests(makeTestable: () => ReturnType<typeof testableSystem>) {

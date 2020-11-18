@@ -2,10 +2,9 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-// import {generateTechnician} from "../features/core/generate-technician.js"
 import {mockPlatformConfig} from "../features/core/mock-platform-config.js"
 import {mockVerifyGoogleToken} from "../features/core/mock-google-tokens.js"
-import {AppPayload, AuthTokens, CoreApi, TriggerAccountPopup} from "../features/core/core-types.js"
+import {AppPayload, AuthTokens, SendEmail, TriggerAccountPopup} from "../features/core/core-types.js"
 
 import {getRando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
@@ -16,15 +15,19 @@ import {expiryGraceTime} from "./constants.js"
 import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
 
-export async function mockWholeSystem({storage, generateNickname}: {
+export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
 			storage: SimpleStorage
+			sendEmail: SendEmail
 			generateNickname: () => string
 		}) {
 
 	// prerequisites and configurations
 
 	const rando = await getRando()
-	const {technicianPasskey, technician} = <any>{} // TODO wtf // await generateTechnician(rando)
+
+	// TODO figure this out
+	const {technicianPasskey, technician} = <any>{}
+
 	const config = mockPlatformConfig({rando, technician})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
@@ -37,7 +40,6 @@ export async function mockWholeSystem({storage, generateNickname}: {
 			rolePrivilege: dbbyMemory(),
 			accountViaEmail: dbbyMemory(),
 			accountViaGoogle: dbbyMemory(),
-			// accountViaPasskey: dbbyMemory(),
 		},
 	}
 
@@ -48,6 +50,7 @@ export async function mockWholeSystem({storage, generateNickname}: {
 		config,
 		tables,
 		storage,
+		sendEmail,
 		signToken,
 		verifyToken,
 		generateNickname,

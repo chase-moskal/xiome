@@ -2,51 +2,25 @@
 import {processPayloadTopic as process} from "renraku/dist/curries.js"
 
 import {Rando} from "../../toolbox/get-rando.js"
+import {find} from "../../toolbox/dbby/dbby-helpers.js"
 import {DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
-import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, AccountRow, AccountViaEmailRow, ProfileRow, UserRoleRow, RolePrivilegeRow, AccountViaGoogleRow} from "./core-types.js"
+import {CoreTables, VerifyToken, VerifyGoogleToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, SendEmail, AccountRow, AccountViaEmailRow, ProfileRow, UserRoleRow, RolePrivilegeRow, AccountViaGoogleRow, LoginPayload} from "./core-types.js"
 
 // import {writePasskey} from "./authtools/write-passkey.js"
 import {prepareAuthProcessors} from "./auth-processors.js"
 import {signAuthTokens} from "./authtools/sign-auth-tokens.js"
+import {assertEmailAccount} from "./authtools/assert-email-account.js"
 import {fetchUserAndPermit} from "./authtools/fetch-user-and-permit.js"
 // import {assertGoogleAccount} from "./authtools/assert-google-account.js"
 // import {generatePasskeyAccountData} from "./authtools/generate-passkey-account-data.js"
-
-export async function makeAuthTopic({
-			rando,
-			config,
-			signToken,
-			verifyToken,
-			constrainTables,
-			generateNickname,
-			verifyGoogleToken,
-		}: {
-			rando: Rando
-			signToken: SignToken
-			config: PlatformConfig
-			verifyToken: VerifyToken
-			generateNickname: () => string
-			verifyGoogleToken: VerifyGoogleToken
-			constrainTables: ConstrainTables<{
-				account: DbbyTable<AccountRow>
-				accountViaEmail: DbbyTable<AccountViaEmailRow>
-				accountViaGoogle: DbbyTable<AccountViaGoogleRow>
-				profile: DbbyTable<ProfileRow>
-				userRole: DbbyTable<UserRoleRow>
-				rolePrivilege: DbbyTable<RolePrivilegeRow>
-			}>
-		}) {
-	return {
-
-	}
-}
 
 export function makeCoreApi({
 			rando,
 			config,
 			signToken,
+			sendEmail,
 			verifyToken,
 			constrainTables,
 			generateNickname,
@@ -54,6 +28,7 @@ export function makeCoreApi({
 		}: {
 			rando: Rando
 			signToken: SignToken
+			sendEmail: SendEmail
 			config: PlatformConfig
 			verifyToken: VerifyToken
 			generateNickname: () => string
@@ -77,14 +52,50 @@ export function makeCoreApi({
 						{app, tables},
 						{email}: {email: string},
 					) {
-				throw new Error("TODO implement")
+				const {userId} = await assertEmailAccount({rando, email, tables})
+				const loginToken = await signToken<LoginPayload>({
+					payload: {userId},
+					lifespan: config.tokens.lifespans.login,
+				})
+				// TODO refactor hardcoded email!
+				await sendEmail({
+					to: email,
+					subject: `Login to ${app.label}`,
+					body: `Login with this link: https://auth.feature.farm/login#${loginToken}`
+						+ `\n\nIf you did not request this login link, just ignore it`
+						+ `\n\nYou can reply to get in touch with support`
+						+ `\n\n    - Feature.farm support staff`,
+				})
 			},
 
 			async authenticateViaLoginToken(
-						{app, tables},
+						{tables},
 						{loginToken}: {loginToken: string},
 					) {
-				throw new Error("TODO implement")
+				const {userId} = await verifyToken<LoginPayload>(loginToken)
+				return signAuthTokens({
+					userId,
+					tables,
+					scope: {core: true},
+					lifespans: config.tokens.lifespans,
+					signToken,
+					generateNickname,
+				})
+			},
+
+			async authorize(
+						{tables},
+						{scope, refreshToken}: {
+							scope: Scope
+							refreshToken: RefreshToken
+						}
+					) {
+				const {userId} = await verifyToken<RefreshPayload>(refreshToken)
+				const {user, permit} = await fetchUserAndPermit({userId, tables, generateNickname})
+				return signToken<AccessPayload>({
+					payload: {user, scope, permit},
+					lifespan: config.tokens.lifespans.access,
+				})
 			},
 
 			// async generatePasskeyAccount({tables}) {
@@ -132,21 +143,6 @@ export function makeCoreApi({
 			// 		generateNickname,
 			// 	})
 			// },
-
-			async authorize(
-						{tables},
-						{scope, refreshToken}: {
-							scope: Scope
-							refreshToken: RefreshToken
-						}
-					) {
-				const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-				const {user, permit} = await fetchUserAndPermit({userId, tables, generateNickname})
-				return signToken<AccessPayload>({
-					payload: {user, scope, permit},
-					lifespan: config.tokens.lifespans.access,
-				})
-			},
 		}),
 
 		appsTopic: process(userOnPlatform, {

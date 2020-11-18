@@ -39,6 +39,12 @@ export interface PlatformConfig {
 	}
 }
 
+export type SendEmail = ({}: {
+	to: string
+	subject: string
+	body: string
+}) => Promise<void>
+
 // api topics
 //
 
@@ -123,6 +129,7 @@ export type LoginPayload = {
 
 export interface AppPayload {
 	appId: string
+	label: string
 	origins: string[]
 	root?: boolean
 }

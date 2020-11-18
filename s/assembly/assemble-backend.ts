@@ -7,7 +7,7 @@ import {prepareConstrainTables} from "../toolbox/dbby/dbby-constrain.js"
 
 import {makeCoreApi} from "../features/core/core-api.js"
 import {makeTokenStore} from "../features/core/token-store.js"
-import {VerifyToken, SignToken, VerifyGoogleToken, PlatformConfig} from "../features/core/core-types.js"
+import {VerifyToken, SignToken, VerifyGoogleToken, PlatformConfig, SendEmail} from "../features/core/core-types.js"
 
 import {Tables} from "./assembly-types.js"
 
@@ -16,6 +16,7 @@ export async function assembleBackend({
 			config,
 			tables,
 			storage,
+			sendEmail,
 			signToken,
 			verifyToken,
 			generateNickname,
@@ -23,9 +24,10 @@ export async function assembleBackend({
 		}: {
 			rando: Rando
 			tables: Tables
-			signToken: SignToken
 			storage: SimpleStorage
 			config: PlatformConfig
+			sendEmail: SendEmail
+			signToken: SignToken
 			verifyToken: VerifyToken
 			generateNickname: () => string
 			verifyGoogleToken: VerifyGoogleToken
@@ -36,6 +38,7 @@ export async function assembleBackend({
 		config,
 		signToken,
 		verifyToken,
+		sendEmail,
 		generateNickname,
 		verifyGoogleToken,
 		constrainTables: prepareConstrainTables(tables.core),

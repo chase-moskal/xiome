@@ -33,10 +33,10 @@ export default <Suite>{
 			// }),
 			"common tests for passkey technician on platform": commonTests(async() => {
 				const testable = await testableSystem()
-				testable.system.mockNextLogin(async() => testable.system.backend.coreApi.authTopic.sendLoginLink(
-					{appToken: testable.platformToken},
-					{email: ""},
-				))
+				// testable.system.mockNextLogin(async() => testable.system.backend.coreApi.authTopic.sendLoginLink(
+				// 	{appToken: testable.platformToken, tables: testable.system.tables},
+				// 	{email: ""},
+				// ))
 				return testable
 			}),
 			"login to *any* app": true,
