@@ -3,7 +3,7 @@ import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
 import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
-import {AppPayload, AuthTokens, SendEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
+import {AppPayload, AuthTokens, SendLoginEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
 
 import {getRando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
@@ -14,9 +14,9 @@ import {expiryGraceTime} from "./constants.js"
 import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
 
-export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
+export async function mockWholeSystem({storage, sendLoginEmail, generateNickname}: {
 			storage: SimpleStorage
-			sendEmail: SendEmail
+			sendLoginEmail: SendLoginEmail
 			generateNickname: () => string
 		}) {
 
@@ -48,9 +48,9 @@ export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
 		config,
 		tables,
 		storage,
-		sendEmail,
 		signToken,
 		verifyToken,
+		sendLoginEmail,
 		generateNickname,
 	})
 

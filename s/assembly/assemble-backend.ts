@@ -7,7 +7,7 @@ import {prepareConstrainTables} from "../toolbox/dbby/dbby-constrain.js"
 
 import {makeAuthApi} from "../features/auth/auth-api.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
-import {VerifyToken, SignToken, PlatformConfig, SendEmail} from "../features/auth/auth-types.js"
+import {VerifyToken, SignToken, PlatformConfig, SendLoginEmail} from "../features/auth/auth-types.js"
 
 import {SystemTables} from "./assembly-types.js"
 
@@ -16,18 +16,18 @@ export async function assembleBackend({
 			config,
 			tables,
 			storage,
-			sendEmail,
 			signToken,
 			verifyToken,
+			sendLoginEmail,
 			generateNickname,
 		}: {
 			rando: Rando
 			tables: SystemTables
 			storage: SimpleStorage
 			config: PlatformConfig
-			sendEmail: SendEmail
 			signToken: SignToken
 			verifyToken: VerifyToken
+			sendLoginEmail: SendLoginEmail
 			generateNickname: () => string
 		}) {
 
@@ -36,7 +36,7 @@ export async function assembleBackend({
 		config,
 		signToken,
 		verifyToken,
-		sendEmail,
+		sendLoginEmail,
 		generateNickname,
 		constrainTables: prepareConstrainTables(tables.auth),
 	})

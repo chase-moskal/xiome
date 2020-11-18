@@ -46,17 +46,20 @@ export type AuthProcessorPreparations<T extends Tables> = {
 	constrainTables: ConstrainTables<T>
 }
 
-export type SendEmail = ({}: {
+export interface EmailDetails {
 	to: string
 	subject: string
 	body: string
-}) => Promise<void>
+}
 
-export type SendLoginEmail = ({}: {
+export interface LoginEmailDetails {
 	to: string
 	app: AppPayload
 	loginToken: string
-}) => Promise<void>
+}
+
+export type SendEmail = ({}: EmailDetails) => Promise<void>
+export type SendLoginEmail = ({}: LoginEmailDetails) => Promise<void>
 
 // api topicss
 //
