@@ -5,11 +5,11 @@ import {Rando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {prepareConstrainTables} from "../toolbox/dbby/dbby-constrain.js"
 
-import {makeCoreApi} from "../features/core/core-api.js"
-import {makeTokenStore} from "../features/core/token-store.js"
-import {VerifyToken, SignToken, VerifyGoogleToken, PlatformConfig, SendEmail} from "../features/core/core-types.js"
+import {makeAuthApi} from "../features/auth/auth-api.js"
+import {makeTokenStore} from "../features/auth/token-store.js"
+import {VerifyToken, SignToken, PlatformConfig, SendEmail} from "../features/auth/auth-types.js"
 
-import {Tables} from "./assembly-types.js"
+import {SystemTables} from "./assembly-types.js"
 
 export async function assembleBackend({
 			rando,
@@ -20,33 +20,30 @@ export async function assembleBackend({
 			signToken,
 			verifyToken,
 			generateNickname,
-			verifyGoogleToken,
 		}: {
 			rando: Rando
-			tables: Tables
+			tables: SystemTables
 			storage: SimpleStorage
 			config: PlatformConfig
 			sendEmail: SendEmail
 			signToken: SignToken
 			verifyToken: VerifyToken
 			generateNickname: () => string
-			verifyGoogleToken: VerifyGoogleToken
 		}) {
 
-	const coreApi = makeCoreApi({
+	const coreApi = makeAuthApi({
 		rando,
 		config,
 		signToken,
 		verifyToken,
 		sendEmail,
 		generateNickname,
-		verifyGoogleToken,
 		constrainTables: prepareConstrainTables(tables.core),
 	})
 
 	const tokenStore = makeTokenStore({
 		storage,
-		authorize: addMeta(async() => ({}), coreApi.authTopic.authorize),
+		authorize: addMeta(async() => ({}), coreApi.loginTopic.authorize),
 	})
 
 	return {coreApi, tokenStore}

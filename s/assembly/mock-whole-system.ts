@@ -2,15 +2,14 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-import {mockPlatformConfig} from "../features/core/mock-platform-config.js"
-import {mockVerifyGoogleToken} from "../features/core/mock-google-tokens.js"
-import {AppPayload, AuthTokens, SendEmail, TriggerAccountPopup} from "../features/core/core-types.js"
+import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
+import {AppPayload, AuthTokens, SendEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
 
 import {getRando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {dbbyMemory} from "../toolbox/dbby/dbby-memory.js"
 
-import {Tables} from "./assembly-types.js"
+import {SystemTables} from "./assembly-types.js"
 import {expiryGraceTime} from "./constants.js"
 import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
@@ -31,8 +30,7 @@ export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
 	const config = mockPlatformConfig({rando, technician})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
-	const verifyGoogleToken = mockVerifyGoogleToken
-	const tables: Tables = {
+	const tables: SystemTables = {
 		core: {
 			account: dbbyMemory(),
 			profile: dbbyMemory(),
@@ -54,7 +52,6 @@ export async function mockWholeSystem({storage, sendEmail, generateNickname}: {
 		signToken,
 		verifyToken,
 		generateNickname,
-		verifyGoogleToken,
 	})
 
 	// mock bridge connecting backend and frontend

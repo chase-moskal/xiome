@@ -1,3 +1,3 @@
 
 export * from "./types/fancy.js"
-export * from "./features/core/core-types.js"
+export * from "./features/auth/auth-types.js"

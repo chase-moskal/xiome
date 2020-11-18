@@ -1,7 +1,7 @@
 
-import {CoreModel} from "../features/core/core-model.js"
-import {TriggerAccountPopup} from "../features/core/core-types.js"
-import {decodeAccessToken} from "../features/core/decode-access-token.js"
+import {CoreModel} from "../features/auth/auth-model.js"
+import {TriggerAccountPopup} from "../features/auth/auth-types.js"
+import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
 import {BackendSystems} from "./assembly-types.js"
 
