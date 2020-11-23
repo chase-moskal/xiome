@@ -11,13 +11,9 @@ const universal = prepareHardPermissions({
 		},
 	},
 	privileges: {
-
-		// powerful privileges
 		"edit_any_profile": "GGGGGGGGGGGGGGGGGGGGGGGGGG",
 		"edit_user_roles": "ZZZZZZZZZZZZZZZZZ",
 		"edit_permissions": "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
-
-		// not so powerful
 		"banned_from_public_influence": "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
 	},
 })
