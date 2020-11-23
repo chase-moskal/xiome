@@ -20,7 +20,9 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 			generateNickname: () => string
 		}) {
 
+	//
 	// prerequisites and configurations
+	//
 
 	const rando = await getRando()
 	const config = mockPlatformConfig({rando})
@@ -37,7 +39,9 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		},
 	}
 
+	//
 	// backend assembly
+	//
 
 	const backend = await assembleBackend({
 		rando,
@@ -50,17 +54,17 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		generateNickname,
 	})
 
+	//
 	// mock bridge connecting backend and frontend
+	//
 
 	let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 		throw new Error("no mock login set")
 	}
 
-	function setNextLogin(auth: () => Promise<AuthTokens>) {
-		triggerAccountPopupAction = async() => auth()
-	}
-
+	//
 	// frontend assembly
+	//
 
 	const frontend = await assembleFrontend({
 		backend,
@@ -68,20 +72,28 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		triggerAccountPopup: async() => triggerAccountPopupAction(),
 	})
 
-	// return everything including internals for testing and debugging
+	//
+	// controls
+	//
 
-	async function signAppToken(payload: AppPayload) {
-		return signToken({payload, lifespan: config.tokens.lifespans.app})
+	const controls = {
+		setNextLogin(auth: () => Promise<AuthTokens>) {
+			triggerAccountPopupAction = async() => auth()
+		},
+		async signAppToken(payload: AppPayload) {
+			return signToken({payload, lifespan: config.tokens.lifespans.app})
+		},
 	}
+
+	//
+	// return everything
+	//
 
 	return {
 		config,
 		tables,
 		backend,
 		frontend,
-		controls: {
-			signAppToken,
-			setNextLogin,
-		},
+		controls,
 	}
 }

@@ -22,7 +22,6 @@ export async function fetchPermit({userId, tables, hardPermissions}: {
 	}
 
 	const userRoleRows = await tablesBackedByHardcodedValues.userRole.read(find({userId}))
-
 	const roleIds = userRoleRows.map(({roleId}) => roleId)
 	const rolePrivilegeRows = await tablesBackedByHardcodedValues.rolePrivilege.read({
 		conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
