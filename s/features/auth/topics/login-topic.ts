@@ -27,14 +27,13 @@ export function makeLoginTopic({
 			generateNickname: () => string
 			constrainTables: ConstrainTables<AuthTables>
 		}) {
-	const {technician} = config.platform
 	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {
 
 		async sendLoginLink(
 					{app, tables},
 					{email}: {email: string},
 				) {
-			const {userId} = await assertEmailAccount({rando, email, tables, technician})
+			const {userId} = await assertEmailAccount({rando, email, tables})
 			const loginToken = await signToken<LoginPayload>({
 				payload: {userId},
 				lifespan: config.tokens.lifespans.login,
@@ -43,7 +42,7 @@ export function makeLoginTopic({
 		},
 
 		async authenticateViaLoginToken(
-					{tables},
+					{app, tables},
 					{loginToken}: {loginToken: string},
 				) {
 			const {userId} = await verifyToken<LoginPayload>(loginToken)
@@ -52,20 +51,30 @@ export function makeLoginTopic({
 				tables,
 				scope: {core: true},
 				lifespans: config.tokens.lifespans,
+				hardPermissions: app.platform
+					? config.permissions.platform
+					: config.permissions.app,
 				signToken,
 				generateNickname,
 			})
 		},
 
 		async authorize(
-					{tables},
+					{app, tables},
 					{scope, refreshToken}: {
 						scope: Scope
 						refreshToken: RefreshToken
 					}
 				) {
 			const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-			const {user, permit} = await fetchUserAndPermit({userId, tables, generateNickname})
+			const {user, permit} = await fetchUserAndPermit({
+				userId,
+				tables,
+				hardPermissions: app.platform
+					? config.permissions.platform
+					: config.permissions.app,
+				generateNickname,
+			})
 			return signToken<AccessPayload>({
 				payload: {user, scope, permit},
 				lifespan: config.tokens.lifespans.access,

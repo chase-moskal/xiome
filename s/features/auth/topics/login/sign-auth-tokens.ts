@@ -1,6 +1,6 @@
 
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {SignToken, Scope, AccessPayload, RefreshPayload, AuthTables} from "../../auth-types.js"
+import {SignToken, Scope, AccessPayload, RefreshPayload, AuthTables, HardPermissions} from "../../auth-types.js"
 
 import {fetchUser} from "./user/fetch-user.js"
 import {fetchPermit} from "./user/fetch-permit.js"
@@ -10,12 +10,14 @@ export async function signAuthTokens({
 			userId,
 			tables,
 			lifespans,
+			hardPermissions,
 			signToken,
 			generateNickname,
 		}: {
 			scope: Scope
 			userId: string
 			tables: AuthTables
+			hardPermissions: HardPermissions
 			lifespans: {
 				access: number
 				refresh: number
@@ -26,7 +28,7 @@ export async function signAuthTokens({
 
 	const {user, permit} = await concurrent({
 		user: fetchUser({userId, tables, generateNickname}),
-		permit: fetchPermit({userId, tables}),
+		permit: fetchPermit({userId, hardPermissions, tables}),
 	})
 
 	return concurrent({

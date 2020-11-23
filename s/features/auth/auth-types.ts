@@ -98,7 +98,6 @@ export type User = {
 }
 
 export type Permit = {
-	roles: string[]
 	privileges: string[]
 }
 
