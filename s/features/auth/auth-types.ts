@@ -24,9 +24,8 @@ export interface PlatformConfig {
 		}
 	}
 	permissions: {
-		universal: HardcodedPermissions
-		app: HardcodedPermissions
-		platform: HardcodedPermissions
+		app: HardPermissions
+		platform: HardPermissions
 	}
 	tokens: {
 		expiryRenewalCushion: number
@@ -45,7 +44,16 @@ export interface PlatformConfig {
 	}
 }
 
-export interface HardcodedPermissions {
+export interface HardPermissionsBlueprint {
+	inherit?: HardPermissions
+	privileges: {[label: string]: string}
+	roles: {[label: string]: {
+		roleId: string
+		privileges: string[]
+	}}
+}
+
+export interface HardPermissions {
 	roles: RoleRow[]
 	privileges: PrivilegeRow[]
 	userRoles: UserRoleRow[]

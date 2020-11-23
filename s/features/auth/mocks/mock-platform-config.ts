@@ -6,18 +6,12 @@ import {second, minute, day} from "../../../toolbox/timely.js"
 import {hardPermissions} from "../hard-permissions.js"
 
 export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
-	const id01 = rando.randomId()
-	const id02 = rando.randomId()
-	const id03 = rando.randomId()
-	const id04 = rando.randomId()
 	return {
 		mongo: {
 			link: "mock-mongo-link",
 			database: "platform",
 		},
-		google: {
-			clientId: "mock-google-token",
-		},
+		permissions: hardPermissions,
 		platform: {
 			from: "hello@feature.farm",
 			technician: {
@@ -32,6 +26,9 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 					"https://feature.farm",
 				],
 			},
+		},
+		google: {
+			clientId: "mock-google-token",
 		},
 		stripe: {
 			apiKey: "mock-stripe-api-key",
@@ -48,6 +45,5 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 				external: 10 * minute,
 			}
 		},
-		permissions: hardPermissions,
 	}
 }
