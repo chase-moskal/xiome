@@ -1,5 +1,6 @@
 
 import {VerifyToken} from "redcrypto/dist/types.js"
+
 import {DbbyRow, DbbyTable, ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 
 import {makeAuthApi} from "./auth-api.js"
@@ -22,6 +23,11 @@ export interface PlatformConfig {
 			email: string
 		}
 	}
+	permissions: {
+		universal: HardcodedPermissions
+		app: HardcodedPermissions
+		platform: HardcodedPermissions
+	}
 	tokens: {
 		expiryRenewalCushion: number
 		lifespans: {
@@ -37,6 +43,13 @@ export interface PlatformConfig {
 		secret: string
 		webhookSecret: string
 	}
+}
+
+export interface HardcodedPermissions {
+	roles: RoleRow[]
+	privileges: PrivilegeRow[]
+	userRoles: UserRoleRow[]
+	rolePrivileges: RolePrivilegeRow[]
 }
 
 export type Tables = {[key: string]: DbbyTable<DbbyRow>}
@@ -153,7 +166,7 @@ export interface AccessPayload {
 }
 
 export interface RefreshPayload {
-	userId: string 
+	userId: string
 }
 
 export interface TokenData<Payload> {
@@ -246,15 +259,14 @@ export type PrivilegeRow = {
 	label: string
 }
 
-// user has roles
+// user has role
 export type UserRoleRow = {
 	userId: string
 	roleId: string
 }
 
-// role has privileges
+// role has privilege
 export type RolePrivilegeRow = {
-	privilegeId: string
 	roleId: string
-	label: string
+	privilegeId: string
 }

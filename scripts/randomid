@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+node --input-type=module <<EOF
+
+import {getRando} from "./x/toolbox/get-rando.js"
+;(async() => {
+
+	const {randomId} = await getRando()
+	console.log(randomId())
+
+})()
+
+EOF

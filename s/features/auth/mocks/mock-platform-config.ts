@@ -3,7 +3,13 @@ import {PlatformConfig} from "../auth-types.js"
 import {Rando} from "../../../toolbox/get-rando.js"
 import {second, minute, day} from "../../../toolbox/timely.js"
 
+import {hardPermissions} from "../hard-permissions.js"
+
 export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
+	const id01 = rando.randomId()
+	const id02 = rando.randomId()
+	const id03 = rando.randomId()
+	const id04 = rando.randomId()
 	return {
 		mongo: {
 			link: "mock-mongo-link",
@@ -42,5 +48,6 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 				external: 10 * minute,
 			}
 		},
+		permissions: hardPermissions,
 	}
 }
