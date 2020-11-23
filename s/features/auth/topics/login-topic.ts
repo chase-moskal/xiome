@@ -34,11 +34,14 @@ export function makeLoginTopic({
 					{email}: {email: string},
 				) {
 			const {userId} = await assertEmailAccount({rando, email, tables})
-			const loginToken = await signToken<LoginPayload>({
-				payload: {userId},
-				lifespan: config.tokens.lifespans.login,
+			await sendLoginEmail({
+				app,
+				to: email,
+				loginToken: await signToken<LoginPayload>({
+					payload: {userId},
+					lifespan: config.tokens.lifespans.login,
+				}),
 			})
-			await sendLoginEmail({to: email, app, loginToken})
 		},
 
 		async authenticateViaLoginToken(
