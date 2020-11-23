@@ -54,6 +54,7 @@ export function makeLoginTopic({
 				tables,
 				scope: {core: true},
 				lifespans: config.tokens.lifespans,
+				technician: config.platform.technician,
 				hardPermissions: app.platform
 					? config.permissions.platform
 					: config.permissions.app,
@@ -73,6 +74,7 @@ export function makeLoginTopic({
 			const {user, permit} = await fetchUserAndPermit({
 				userId,
 				tables,
+				technician: config.platform.technician,
 				hardPermissions: app.platform
 					? config.permissions.platform
 					: config.permissions.app,
