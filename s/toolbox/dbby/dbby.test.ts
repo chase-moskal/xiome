@@ -1,5 +1,6 @@
 
 import {Suite, expect} from "cynic"
+
 import {dbbyMemory} from "./dbby-memory.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
@@ -33,6 +34,16 @@ function constrainAppTable<Row extends DbbyRow>(
 
 export default <Suite>{
 	"dbby-constrain": {
+		"read all rows from constrained table": async() => {
+			const dbby = dbbyMemory<DemoUser>()
+			const alpha = constrainAppTable(dbby, "a1")
+			await alpha.create(
+				{userId: "u1", balance: 101, location: "canada"},
+				{userId: "u2", balance: 102, location: "america"},
+			)
+			const results = await alpha.read({conditions: false})
+			expect(results.length).equals(2)
+		},
 		"apply app id constraint": async() => {
 			const dbby = dbbyMemory<DemoUser>()
 			const a1 = constrainAppTable(dbby, "a1")

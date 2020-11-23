@@ -10,6 +10,7 @@ export function commonTests({makeTestableSystem}: {
 		"login and out": async() => {
 			const {system} = await makeTestableSystem()
 			const {auth} = system.frontend.models
+			debugger
 			await auth.login()
 			assert(auth.user, "initial login")
 			await auth.logout()

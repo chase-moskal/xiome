@@ -4,6 +4,20 @@ import {commonTests} from "./testing/common-tests.js"
 import {testableSystem} from "./testing/testable-system.js"
 import {decodeAccessToken} from "./tools/decode-access-token.js"
 
+async function technicianSystem() {
+	const testable = await testableSystem()
+	const appToken = testable.platformAppToken
+	const {loginTopic} = testable.system.backend.authApi
+	const {email} = testable.system.config.platform.technician
+	testable.system.controls.setNextLogin(async function registerTechnician() {
+		const {nextLoginEmail} = testable
+		await loginTopic.sendLoginLink({appToken}, {email})
+		const {loginToken} = await nextLoginEmail
+		return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
+	})
+	return testable
+}
+
 export default <Suite>{
 	// "complex interactions": {
 	// 	"system can boot up, create three apps, mess around": async() => {
@@ -29,21 +43,7 @@ export default <Suite>{
 			// 		)
 			// 	},
 			// }),
-			"common tests for technician on platform": commonTests({
-				makeTestableSystem: async() => {
-					const testable = await testableSystem()
-					const appToken = testable.platformAppToken
-					const {loginTopic} = testable.system.backend.authApi
-					const {email} = testable.system.config.platform.technician
-					testable.system.controls.setNextLogin(async function registerTechnician() {
-						const {nextLoginEmail} = testable
-						await loginTopic.sendLoginLink({appToken}, {email})
-						const {loginToken} = await nextLoginEmail
-						return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
-					})
-					return testable
-				}
-			}),
+			"common tests for technician on platform": commonTests({makeTestableSystem: technicianSystem}),
 			"login to *any* app": async() => {},
 			"view platform stats": true,
 			"procotol zero: roll platform secrets": true,
