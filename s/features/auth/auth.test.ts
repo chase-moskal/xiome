@@ -36,8 +36,9 @@ export default <Suite>{
 					const {loginTopic} = testable.system.backend.authApi
 					const {email} = testable.system.config.platform.technician
 					testable.system.controls.setNextLogin(async function registerTechnician() {
+						const {nextLoginEmail} = testable
 						await loginTopic.sendLoginLink({appToken}, {email})
-						const {loginToken} = await testable.nextLoginEmail
+						const {loginToken} = await nextLoginEmail
 						return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
 					})
 					return testable
