@@ -27,13 +27,14 @@ export function makeLoginTopic({
 			generateNickname: () => string
 			constrainTables: ConstrainTables<AuthTables>
 		}) {
+	const {technician} = config.platform
 	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {
 
 		async sendLoginLink(
 					{app, tables},
 					{email}: {email: string},
 				) {
-			const {userId} = await assertEmailAccount({rando, email, tables})
+			const {userId} = await assertEmailAccount({rando, email, tables, technician})
 			const loginToken = await signToken<LoginPayload>({
 				payload: {userId},
 				lifespan: config.tokens.lifespans.login,

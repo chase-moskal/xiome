@@ -17,9 +17,9 @@ export interface PlatformConfig {
 	}
 	platform: {
 		app: AppPayload
+		from: string
 		technician: {
-			account: AccountRow
-			accountViaEmail: AccountViaEmailRow
+			email: string
 		}
 	}
 	tokens: {

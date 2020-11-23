@@ -9,8 +9,8 @@ import {getRando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {dbbyMemory} from "../toolbox/dbby/dbby-memory.js"
 
-import {SystemTables} from "./assembly-types.js"
 import {expiryGraceTime} from "./constants.js"
+import {SystemTables} from "./assembly-types.js"
 import {assembleBackend} from "./assemble-backend.js"
 import {assembleFrontend} from "./assemble-frontend.js"
 
@@ -23,11 +23,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	// prerequisites and configurations
 
 	const rando = await getRando()
-
-	// TODO figure this out
-	const {technicianPasskey, technician} = <any>{}
-
-	const config = mockPlatformConfig({rando, technician})
+	const config = mockPlatformConfig({rando})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
 	const tables: SystemTables = {
@@ -60,7 +56,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		throw new Error("no mock login set")
 	}
 
-	function mockNextLogin(auth: () => Promise<AuthTokens>) {
+	function setNextLogin(auth: () => Promise<AuthTokens>) {
 		triggerAccountPopupAction = async() => auth()
 	}
 
@@ -83,8 +79,9 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		tables,
 		backend,
 		frontend,
-		technicianPasskey,
-		signAppToken,
-		mockNextLogin,
+		controls: {
+			signAppToken,
+			setNextLogin,
+		},
 	}
 }

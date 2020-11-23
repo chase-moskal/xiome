@@ -3,10 +3,7 @@ import {PlatformConfig} from "../auth-types.js"
 import {Rando} from "../../../toolbox/get-rando.js"
 import {second, minute, day} from "../../../toolbox/timely.js"
 
-export function mockPlatformConfig({rando, technician}: {
-			rando: Rando
-			technician: PlatformConfig["platform"]["technician"]
-		}): PlatformConfig {
+export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 	return {
 		mongo: {
 			link: "mock-mongo-link",
@@ -16,7 +13,10 @@ export function mockPlatformConfig({rando, technician}: {
 			clientId: "mock-google-token",
 		},
 		platform: {
-			technician,
+			from: "hello@feature.farm",
+			technician: {
+				email: "chasemoskal@gmail.com",
+			},
 			app: {
 				appId: rando.randomId(),
 				platform: true,

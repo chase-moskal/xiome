@@ -29,15 +29,21 @@ export default <Suite>{
 			// 		)
 			// 	},
 			// }),
-			"common tests for passkey technician on platform": commonTests(async() => {
-				const testable = await testableSystem()
-				// testable.system.mockNextLogin(async() => testable.system.backend.coreApi.authTopic.sendLoginLink(
-				// 	{appToken: testable.platformToken, tables: testable.system.tables},
-				// 	{email: ""},
-				// ))
-				return testable
+			"common tests for technician on platform": commonTests({
+				makeTestableSystem: async() => {
+					const testable = await testableSystem()
+					const appToken = testable.platformAppToken
+					const {loginTopic} = testable.system.backend.authApi
+					const {email} = testable.system.config.platform.technician
+					testable.system.controls.setNextLogin(async function registerTechnician() {
+						await loginTopic.sendLoginLink({appToken}, {email})
+						const {loginToken} = await testable.nextLoginEmail
+						return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
+					})
+					return testable
+				}
 			}),
-			"login to *any* app": true,
+			"login to *any* app": async() => {},
 			"view platform stats": true,
 			"procotol zero: roll platform secrets": true,
 		},
