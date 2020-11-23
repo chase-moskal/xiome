@@ -7,11 +7,14 @@ import {fetchTags} from "./fetch-tags.js"
 import {profileFromRow} from "./profile-from-row.js"
 import {generateProfileRow} from "./generate-profile-row.js"
 
-export async function assertUser({userId, tables, generateNickname}: {
+export async function fetchUser({userId, tables, generateNickname}: {
 			userId: string
 			tables: AuthTables
 			generateNickname: () => string
 		}): Promise<User> {
+
+	const account = await tables.account.one({conditions: and({equal: {userId}})})
+	if (!account) throw new Error("account not found")
 
 	const {tags, profile} = await concurrent({
 		tags: await fetchTags(userId),

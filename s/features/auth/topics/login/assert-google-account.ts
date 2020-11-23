@@ -5,6 +5,8 @@ import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {AccountRow, AuthTables, GoogleResult} from "../../auth-types.js"
 
+import {applyPermissionsForNewcomer} from "./permissions/apply-permissions-for-newcomer.js"
+
 export async function assertGoogleAccount({rando, tables, googleResult}: {
 			rando: Rando
 			tables: AuthTables
@@ -32,6 +34,7 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 				userId: account.userId,
 			}),
 		])
+		await applyPermissionsForNewcomer({tables, userId: account.userId})
 	}
 
 	return account
