@@ -100,4 +100,4 @@ export interface DbbyStorage<Row extends DbbyRow> {
 }
 
 export type ConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}> =
-	(constraint: DbbyConditions<DbbyRow>) => T
+	(namespace: DbbyRow) => T

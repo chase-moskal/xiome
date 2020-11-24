@@ -26,10 +26,7 @@ function constrainAppTable<Row extends DbbyRow>(
 			table: DbbyTable<Row>,
 			appId: string,
 		) {
-	return dbbyConstrain<Row, {appId: string}>(
-		table,
-		and({equal: {appId}}),
-	)
+	return dbbyConstrain<Row, {appId: string}>(table, {appId})
 }
 
 export default <Suite>{
