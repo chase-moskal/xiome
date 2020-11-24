@@ -1,5 +1,4 @@
 
-import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {AppToken, AppPayload, AuthProcessorPreparations, Tables} from "./../../auth-types.js"
 
 export function prepareAnonOnAnyApp<T extends Tables>({

@@ -1,7 +1,7 @@
 
 import {observable, computed, action} from "mobx"
-import * as loading from "../../toolbox/loading.js"
-import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "./auth-types.js"
+import * as loading from "../../../toolbox/loading.js"
+import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "../auth-types.js"
 
 export class AuthModel {
 	private readonly expiryGraceTime: number

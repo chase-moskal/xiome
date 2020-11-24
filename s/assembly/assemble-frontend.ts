@@ -1,5 +1,5 @@
 
-import {AuthModel} from "../features/auth/auth-model.js"
+import {AuthModel} from "../features/auth/models/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 

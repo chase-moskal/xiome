@@ -6,7 +6,6 @@ import {testableSystem} from "./testing/base/testable-system.js"
 
 function commonTests(makeTestableSystem: typeof testableSystem) {
 	return <Suite>{
-
 		"login and out": async() => {
 			const {system} = await makeTestableSystem()
 			const {auth} = system.frontend.models
@@ -15,7 +14,6 @@ function commonTests(makeTestableSystem: typeof testableSystem) {
 			await auth.logout()
 			assert(!auth.user, "initial logout")
 		},
-
 		"customize own profile": true,
 	}
 }
