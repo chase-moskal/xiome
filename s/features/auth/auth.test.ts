@@ -1,22 +1,7 @@
 
-import {Suite, assert} from "cynic"
+import {Suite} from "cynic"
 import {commonTests} from "./testing/common-tests.js"
-import {testableSystem} from "./testing/testable-system.js"
-import {decodeAccessToken} from "./tools/decode-access-token.js"
-
-async function technicianSystem() {
-	const testable = await testableSystem()
-	const appToken = testable.platformAppToken
-	const {loginTopic} = testable.system.backend.authApi
-	const {email} = testable.system.config.platform.technician
-	testable.system.controls.setNextLogin(async function registerTechnician() {
-		const {nextLoginEmail} = testable
-		await loginTopic.sendLoginLink({appToken}, {email})
-		const {loginToken} = await nextLoginEmail
-		return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
-	})
-	return testable
-}
+import {technicianSystem} from "./testing/technician-system.js"
 
 export default <Suite>{
 	// "complex interactions": {
@@ -33,16 +18,6 @@ export default <Suite>{
 	// },
 	"stories": {
 		"technician": {
-			// "common tests for passkey technician on platform": commonTests({
-			// 	initialize: async({system, platformToken}) => {
-			// 		system.mockNextLogin(
-			// 			async() => system.backend.coreApi.authTopic.authenticateViaPasskey(
-			// 				{appToken: platformToken},
-			// 				{passkey: system.technicianPasskey},
-			// 			)
-			// 		)
-			// 	},
-			// }),
 			"common tests for technician on platform": commonTests({makeTestableSystem: technicianSystem}),
 			"login to *any* app": async() => {},
 			"view platform stats": true,
