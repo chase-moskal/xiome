@@ -4,6 +4,7 @@ import {Suite, expect} from "cynic"
 import {dbbyMemory} from "./dbby-memory.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
+import {dbbyHardcoded} from "./dbby-hardcoded.js"
 import {DbbyRow, DbbyTable} from "./dbby-types.js"
 
 type DemoUser = {
@@ -30,6 +31,18 @@ function constrainAppTable<Row extends DbbyRow>(
 }
 
 export default <Suite>{
+	"dbby-hardcoded": {
+		"read": async() => {
+			const actualTable = await setupThreeUserDemo()
+			const hardTable = dbbyMemory<DemoUser>()
+			await hardTable.create({userId: "u92", balance: 92, location: "victoria"})
+			const combinedTable = dbbyHardcoded({actualTable, hardTable})
+			const result01 = await combinedTable.read({conditions: false})
+			const result02 = await combinedTable.read(find({userId: "u92"}))
+			expect(result01.length).equals(4)
+			expect(result02.length).equals(1)
+		},
+	},
 	"dbby-constrain": {
 		"read all rows from constrained table": async() => {
 			const dbby = dbbyMemory<DemoUser>()
