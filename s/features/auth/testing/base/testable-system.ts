@@ -1,8 +1,8 @@
 
-import {LoginEmailDetails} from "../auth-types.js"
-import {tempStorage} from "../../../toolbox/json-storage.js"
-import {remotePromise} from "../../../toolbox/remote-promise.js"
-import {mockWholeSystem} from "../../../assembly/mock-whole-system.js"
+import {LoginEmailDetails} from "../../auth-types.js"
+import {tempStorage} from "../../../../toolbox/json-storage.js"
+import {remotePromise} from "../../../../toolbox/remote-promise.js"
+import {mockWholeSystem} from "../../../../assembly/mock-whole-system.js"
 
 export async function testableSystem() {
 	let count = 0
