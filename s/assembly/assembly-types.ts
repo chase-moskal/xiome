@@ -1,5 +1,5 @@
 
-import {Await} from "../types/fancy.js"
+import {Await, Api} from "../types.js"
 import {AuthTables} from "../features/auth/auth-types.js"
 
 import {assembleBackend} from "./assemble-backend.js"

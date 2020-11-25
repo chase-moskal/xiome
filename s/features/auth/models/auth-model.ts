@@ -1,7 +1,10 @@
 
 import {observable, computed, action} from "mobx"
+
+import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
-import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "../auth-types.js"
+
+import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload, AuthApi} from "../auth-types.js"
 
 export class AuthModel {
 	private readonly expiryGraceTime: number
@@ -14,6 +17,7 @@ export class AuthModel {
 	constructor(options: {
 				expiryGraceTime: number
 				tokenStore: TokenStoreTopic
+				getAuthApi: GetApi<AuthApi>
 				decodeAccessToken: DecodeAccessToken
 				triggerAccountPopup: TriggerAccountPopup
 			}) {

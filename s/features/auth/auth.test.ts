@@ -2,19 +2,32 @@
 import {Suite, assert} from "cynic"
 import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
-import {testableSystem} from "./testing/base/testable-system.js"
 
-function commonTests(makeTestableSystem: typeof testableSystem) {
+import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
+
+function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setNextEmailLogin>) {
 	return <Suite>{
 		"login and out": async() => {
-			const {system} = await makeTestableSystem()
-			const {auth} = system.frontend.models
+			const {frontend} = await prepareSystemWithExampleLogin()
+			const {auth} = frontend.models
+
 			await auth.login()
-			assert(auth.user, "initial login")
+			assert(auth.user, "failed to login")
+
 			await auth.logout()
-			assert(!auth.user, "initial logout")
+			assert(!auth.user, "failed to logout")
 		},
-		"customize own profile": true,
+		"customize own profile": async() => {
+			const {frontend} = await prepareSystemWithExampleLogin()
+			const {auth} = frontend.models
+
+			await auth.login()
+			const {profile} = auth.user
+			assert(profile, "failed to read profile")
+
+			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
+			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
+		},
 	}
 }
 

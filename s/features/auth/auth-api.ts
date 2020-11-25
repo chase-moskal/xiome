@@ -4,6 +4,7 @@ import {makeLoginTopic} from "./topics/login-topic.js"
 import {Rando} from "../../toolbox/get-rando.js"
 import {ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
 import {AuthTables, VerifyToken, SignToken, PlatformConfig, SendLoginEmail} from "./auth-types.js"
+import {makePersonalTopic} from "./topics/personal-topic.js"
 
 export function makeAuthApi(options: {
 			rando: Rando
@@ -16,5 +17,6 @@ export function makeAuthApi(options: {
 		}) {
 	return {
 		loginTopic: makeLoginTopic(options),
+		personalTopic: makePersonalTopic(options),
 	}
 }

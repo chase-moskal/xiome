@@ -82,7 +82,7 @@ export interface LoginEmailDetails {
 export type SendEmail = ({}: EmailDetails) => Promise<void>
 export type SendLoginEmail = ({}: LoginEmailDetails) => Promise<void>
 
-// api topicss
+// api topics
 //
 
 export type AuthApi = ReturnType<typeof makeAuthApi>

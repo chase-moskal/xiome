@@ -19,7 +19,7 @@ export async function testableSystem() {
 
 	return {
 		system,
-		platformAppToken: await system.controls.signAppToken(system.config.platform.app),
+		platformAppToken: await system.hacks.signAppToken(system.config.platform.app),
 		get nextLoginEmail() {
 			return remoteNextLoginEmail.promise
 		},
