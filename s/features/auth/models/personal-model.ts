@@ -6,6 +6,7 @@ import {addMetaTopic, addMetaApi} from "renraku/dist/curries.js"
 import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
+import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
 
 import {User, Settings, Profile, AuthApi, GetAuthContext, AuthPayload, AccessToken, AppToken} from "../auth-types.js"
 
@@ -27,6 +28,7 @@ export interface PersonalModelOptions {
 	reauthorize: () => Promise<void>
 }
 
+ @mixinModelMobx
 export class PersonalModel {
 	@observable personalLoad: loading.Load<Personal> = loading.none()
 
@@ -56,7 +58,6 @@ export class PersonalModel {
 		const {user, getAuthContext} = loading.payload(authLoad) || {}
 		this.#getAuthContext = getAuthContext
 		const loggedIn = !!user
-
 		if (loggedIn) {
 			try {
 				const {accessToken} = await getAuthContext()

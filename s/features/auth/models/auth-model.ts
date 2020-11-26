@@ -3,9 +3,10 @@ import {observable, computed, action} from "mobx"
 
 import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
-
+import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload, AuthApi} from "../auth-types.js"
 
+ @mixinModelMobx
 export class AuthModel {
 	private readonly expiryGraceTime: number
 	private readonly tokenStore: TokenStoreTopic
@@ -135,8 +136,8 @@ export class AuthModel {
 	}
 
 	 @action.bound
-	private setLoggedIn({user, getAuthContext}: AuthPayload) {
-		this.authLoad = loading.ready({user, getAuthContext})
+	private setLoggedIn(authPayload: AuthPayload) {
+		this.authLoad = loading.ready(authPayload)
 	}
 
 	 @action.bound

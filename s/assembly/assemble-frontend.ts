@@ -1,4 +1,6 @@
 
+import {autorun} from "mobx"
+
 import {AuthModel} from "../features/auth/models/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
@@ -32,6 +34,11 @@ export async function assembleFrontend({
 	const personal = new PersonalModel({
 		getAuthApi,
 		reauthorize: auth.reauthorize,
+	})
+
+	autorun(() => {
+		const {authLoad} = auth
+		personal.handleAuthLoad(authLoad)
 	})
 
 	return {
