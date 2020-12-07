@@ -1,9 +1,12 @@
 
+import {action, autorun, observable} from "mobx"
+
 import {Suite, assert} from "cynic"
 import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
 
 import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
+import { nap } from "../../toolbox/nap.js"
 
 function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setNextEmailLogin>) {
 	return <Suite>{
@@ -32,6 +35,28 @@ function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setN
 }
 
 export default <Suite>{
+	// "mobx": {
+	// 	"works at all": async() => {
+	// 		let data = observable(0)
+	// 		const set = action((x: number) => data = x)
+	// 		const noop = (...args: any[]) => {}
+	// 		let changeCount = 0
+	// 		autorun(() => {
+	// 			debugger
+	// 			noop(data)
+	// 			changeCount += 1
+	// 		})
+	// 		const message = "mobx autorun failed"
+	// 		// assert(changeCount === 1, message)
+	// 		set(2)
+	// 		// assert(changeCount === 2, message)
+	// 		set(3)
+	// 		set(4)
+	// 		// assert(changeCount === 4, message)
+	// 		await nap(2000)
+	// 		assert(changeCount === 4, "O_O")
+	// 	},
+	// },
 	"stories": {
 		"technician": {
 			"common tests for technician on platform": commonTests(technicianSystem),
@@ -40,7 +65,7 @@ export default <Suite>{
 			"procotol zero: roll platform secrets": true,
 		},
 		"creative": {
-			"common tests for creative on platform": commonTests(creativeSystem),
+			// "common tests for creative on platform": commonTests(creativeSystem),
 			"register an app": true,
 			"generate an admin account to login with": true,
 			"no-can-do": {

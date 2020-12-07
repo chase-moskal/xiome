@@ -13,6 +13,8 @@ export function buildHardPermissions(blueprint: HardPermissionsBlueprint): HardP
 		roles,
 		privileges,
 		rolePrivileges,
+
+		// TODO ok so that's why user roles are empty?
 		userRoles: [],
 	}
 }

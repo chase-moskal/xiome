@@ -1,7 +1,7 @@
 
 # todo list
 
-feature code migration (4 day)
+feature code migration
 - [ ] `core`
   - [x] core model implemented
   - [ ] implement auth api
@@ -15,32 +15,32 @@ feature code migration (4 day)
 - [ ] `pay`
 - [ ] search metalshop for any missing code to migrate
 
-new features and systemic changes (2 day)
+new features and systemic changes
 - [ ] new permissions system is flexible and cool
 - [ ] google avatar can be used, but no longer default
 - [ ] new statistics tracking system
 
-website frontends (2 day)
+website frontends
 - [ ] structuring to fit two websites into this repo
 - [ ] https://crochet.dev
 - [ ] https://feature.farm
 
-k8s (4 day)
+k8s
 - [ ] new repo structure
 - [ ] new microservice dockerization
 - [ ] complete code migration and finalization
 
-ci/cd (2 day)
+ci/cd
 - [ ] github actions for all deployments and releases to stage
 - [ ] production
 
-make it beautiful (4 day)
+make it beautiful
 - [ ] product is complete
 - [ ] backups
 - [ ] 2x security pass
 - [ ] launch
 
-clientele (7 day)
+clientele
 - [ ] website refactor in new monorepo, github actions
 - [ ] deploy new website
 - [ ] register client app, implement features

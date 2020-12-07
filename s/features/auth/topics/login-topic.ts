@@ -33,7 +33,7 @@ export function makeLoginTopic({
 					{app, tables},
 					{email}: {email: string},
 				) {
-			const {userId} = await assertEmailAccount({rando, email, tables})
+			const {userId} = await assertEmailAccount({rando, email, config, tables})
 			await sendLoginEmail({
 				app,
 				to: email,
