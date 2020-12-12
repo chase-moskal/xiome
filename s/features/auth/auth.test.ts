@@ -20,43 +20,21 @@ function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setN
 			await auth.logout()
 			assert(!auth.user, "failed to logout")
 		},
-		"customize own profile": async() => {
-			const {frontend} = await prepareSystemWithExampleLogin()
-			const {auth} = frontend.models
+		// "customize own profile": async() => {
+		// 	const {frontend} = await prepareSystemWithExampleLogin()
+		// 	const {auth} = frontend.models
 
-			await auth.login()
-			const {profile} = auth.user
-			assert(profile, "failed to read profile")
+		// 	await auth.login()
+		// 	const {profile} = auth.user
+		// 	assert(profile, "failed to read profile")
 
-			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
-			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
-		},
+		// 	await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
+		// 	assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
+		// },
 	}
 }
 
 export default <Suite>{
-	// "mobx": {
-	// 	"works at all": async() => {
-	// 		let data = observable(0)
-	// 		const set = action((x: number) => data = x)
-	// 		const noop = (...args: any[]) => {}
-	// 		let changeCount = 0
-	// 		autorun(() => {
-	// 			debugger
-	// 			noop(data)
-	// 			changeCount += 1
-	// 		})
-	// 		const message = "mobx autorun failed"
-	// 		// assert(changeCount === 1, message)
-	// 		set(2)
-	// 		// assert(changeCount === 2, message)
-	// 		set(3)
-	// 		set(4)
-	// 		// assert(changeCount === 4, message)
-	// 		await nap(2000)
-	// 		assert(changeCount === 4, "O_O")
-	// 	},
-	// },
 	"stories": {
 		"technician": {
 			"common tests for technician on platform": commonTests(technicianSystem),
