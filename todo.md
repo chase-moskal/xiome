@@ -1,4 +1,16 @@
 
+# shortlist
+
+- [x] stabilize basic logins
+- [ ] fix setProfile and permissions shenanigans
+  - [ ] integrate hardbacked permissions authtables across the board
+  - [ ] implement setProfile by querying the hardbacked tables
+  - [ ] rename dbby-hardcoded into dbby-hardbacked?
+- [ ] implement platform logins and profile stuff
+- [ ] implement app logins and profile stuff
+
+---------------------------
+
 # todo list
 
 feature code migration

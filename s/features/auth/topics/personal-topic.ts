@@ -3,11 +3,18 @@ import {processPayloadTopic as processAuth} from "renraku/dist/curries.js"
 
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
-import {AuthTables, VerifyToken, Profile, PlatformConfig} from "../auth-types.js"
+import {AuthTables, VerifyToken, Profile, PlatformConfig, AppPayload, AccessPayload} from "../auth-types.js"
 
 import {validateProfile} from "./personal/validate-profile.js"
 import {prepareUserOnAnyApp} from "./auth-processors/user-on-any-app.js"
 import {doesUserHaveHardPrivilege} from "./personal/does-user-have-hard-privilege.js"
+
+function isUserAllowedToEditProfile({app, access}: {
+		app: AppPayload
+		access: AccessPayload
+	}) {
+	access.permit.privileges
+}
 
 export function makePersonalTopic({
 			config,
@@ -24,6 +31,16 @@ export function makePersonalTopic({
 					userId: string
 					profile: Profile
 				}) {
+
+			debugger
+
+			const allowedToEditProfile = isUserAllowedToEditProfile({
+				app,
+				access,
+				config,
+				tables,
+			})
+
 			const operationIsAllowed = doesUserHaveHardPrivilege({
 				app,
 				access,

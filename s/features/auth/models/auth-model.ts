@@ -70,7 +70,6 @@ export class AuthModel {
 	async login() {
 		this.setLoading()
 		try {
-			debugger
 			const authTokens = await this.triggerAccountPopup()
 			await this.tokenStore.writeTokens(authTokens)
 			const payload = this.processAccessToken(authTokens.accessToken)

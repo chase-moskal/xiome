@@ -20,17 +20,17 @@ function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setN
 			await auth.logout()
 			assert(!auth.user, "failed to logout")
 		},
-		// "customize own profile": async() => {
-		// 	const {frontend} = await prepareSystemWithExampleLogin()
-		// 	const {auth} = frontend.models
+		"customize own profile": async() => {
+			const {frontend} = await prepareSystemWithExampleLogin()
+			const {auth} = frontend.models
 
-		// 	await auth.login()
-		// 	const {profile} = auth.user
-		// 	assert(profile, "failed to read profile")
+			await auth.login()
+			const {profile} = auth.user
+			assert(profile, "failed to read profile")
 
-		// 	await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
-		// 	assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
-		// },
+			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
+			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
+		},
 	}
 }
 
