@@ -16,7 +16,7 @@ export async function assertEmailAccount({rando, tables, email, config}: {
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = rando.compare(email, config.platform.technician.email)
-			const {roleId} = config.permissions.platform.roles["technician"]
+			const {roleId} = config.permissions.platform.roles.find(row => row.label === "technician")
 
 			const account = generateAccountRow({rando})
 			const {userId} = account
