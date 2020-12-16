@@ -6,7 +6,7 @@ import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
 import {AuthTables, VerifyToken, Profile, PlatformConfig, AppPayload, AccessPayload} from "../auth-types.js"
 
 import {validateProfile} from "./personal/validate-profile.js"
-import {prepareUserOnAnyApp} from "./auth-processors/user-on-any-app.js"
+import {processRequestForUser} from "./auth-processors/process-request-for-user.js"
 import {doesUserHaveHardPrivilege} from "./personal/does-user-have-hard-privilege.js"
 
 function isUserAllowedToEditProfile({app, access}: {
@@ -25,7 +25,7 @@ export function makePersonalTopic({
 			verifyToken: VerifyToken
 			constrainTables: ConstrainTables<AuthTables>
 		}) {
-	return processAuth(prepareUserOnAnyApp({verifyToken, constrainTables}), {
+	return processAuth(processRequestForUser({verifyToken, constrainTables}), {
 
 		async setProfile({access, app, tables}, {userId, profile}: {
 					userId: string

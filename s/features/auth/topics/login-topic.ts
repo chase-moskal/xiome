@@ -8,7 +8,7 @@ import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, 
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
-import {prepareAnonOnAnyApp} from "./auth-processors/anon-on-any-app.js"
+import {processRequestForAnon} from "./auth-processors/process-request-for-anon.js"
 
 export function makeLoginTopic({
 			rando,
@@ -27,7 +27,7 @@ export function makeLoginTopic({
 			generateNickname: () => string
 			constrainTables: ConstrainTables<AuthTables>
 		}) {
-	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {
+	return processAuth(processRequestForAnon({verifyToken, constrainTables}), {
 
 		async sendLoginLink(
 					{app, tables},

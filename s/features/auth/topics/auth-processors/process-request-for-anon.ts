@@ -1,7 +1,7 @@
 
-import {AppToken, AppPayload, AuthProcessorPreparations, Tables} from "./../../auth-types.js"
+import {AppToken, AppPayload, AuthProcessorPreparations, Tables} from "../../auth-types.js"
 
-export function prepareAnonOnAnyApp<T extends Tables>({
+export function processRequestForAnon<T extends Tables>({
 			verifyToken,
 			constrainTables,
 		}: AuthProcessorPreparations<T>) {

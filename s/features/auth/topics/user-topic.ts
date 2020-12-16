@@ -5,7 +5,7 @@ import {AuthTables, VerifyToken} from "../auth-types.js"
 import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
 
 import {fetchUser} from "./login/user/fetch-user.js"
-import {prepareAnonOnAnyApp} from "./auth-processors/anon-on-any-app.js"
+import {processRequestForAnon} from "./auth-processors/process-request-for-anon.js"
 
 export function makeUserTopic({
 			verifyToken,
@@ -16,7 +16,7 @@ export function makeUserTopic({
 			generateNickname: () => string
 			constrainTables: ConstrainTables<AuthTables>
 		}) {
-	return processAuth(prepareAnonOnAnyApp({verifyToken, constrainTables}), {
+	return processAuth(processRequestForAnon({verifyToken, constrainTables}), {
 
 		async getUser({tables}, {userId}: {
 					userId: string
