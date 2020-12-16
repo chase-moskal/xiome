@@ -3,11 +3,33 @@
 
 - [x] stabilize basic logins
 - [ ] fix setProfile and permissions shenanigans
+  - [ ] refactors
+    - rename prepareAnonOnAnyApp to `processRequestForAnonymousUserOnAnyApp` (and similar)
+    - `constrainTables` should be replaced with `getAuthTables` which composes `constrainTables` and hardbacked permissions tables
   - [ ] integrate hardbacked permissions authtables across the board
   - [ ] implement setProfile by querying the hardbacked tables
   - [ ] rename dbby-hardcoded into dbby-hardbacked?
 - [ ] implement platform logins and profile stuff
 - [ ] implement app logins and profile stuff
+
+## topic auth processing explained
+
+- we use `processAuth` on every topic to preprocess each request's `meta` information into usable request payload information
+- `processAuth` requires you to specify an "auth processor", which determines how that meta information is processed. examples of auth processsors include:
+  - `prepareAnonOnAnyApp` process auth for an anonymous user, on any app (platform app or otherwise)
+    - provides app payload
+    - provides constrained tables
+  - `prepareUserOnAnyApp` process auth for an authenticated user, on any app (platform app or otherwise)
+    - extends anonOnAnyApp above
+    - addition: throws error if access token isn't valid
+    - addition: provides access payload
+  - `prepareUserOnPlatform` process auth for authenticated user, but only allow access to the platform
+    - extends userOnAnyApp above
+    - addition: throws error if the app being accessed isn't the platform app (only allows requests for platform app)
+- a `constrainTables` function is given to the auth processors
+  - this specially prepared function will return the database table accessors our topic needs
+  - this function is primed ahead of time to provide only the tables we need
+  - this function also hardbacks the privilege tables
 
 ---------------------------
 
