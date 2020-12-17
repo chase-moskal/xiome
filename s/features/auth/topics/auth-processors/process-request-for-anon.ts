@@ -2,15 +2,15 @@
 import {AppToken, AppPayload, AuthProcessorPreparations, Tables} from "../../auth-types.js"
 
 export function processRequestForAnon<T extends Tables>({
+			getTables,
 			verifyToken,
-			constrainTables,
 		}: AuthProcessorPreparations<T>) {
 
 	return async({appToken}: {appToken: AppToken}) => {
 		const app = await verifyToken<AppPayload>(appToken)
 		return {
 			app,
-			tables: <T>constrainTables({appId: app.appId}),
+			tables: <T>getTables({appId: app.appId}),
 		}
 	}
 }

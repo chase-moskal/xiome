@@ -2,8 +2,7 @@
 import {processPayloadTopic as processAuth} from "renraku/dist/curries.js"
 
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
-import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
-import {AuthTables, VerifyToken, Profile, PlatformConfig, AppPayload, AccessPayload} from "../auth-types.js"
+import {AuthTables, VerifyToken, Profile, PlatformConfig, AppPayload, AccessPayload, GetTables} from "../auth-types.js"
 
 import {validateProfile} from "./personal/validate-profile.js"
 import {processRequestForUser} from "./auth-processors/process-request-for-user.js"
@@ -18,14 +17,14 @@ function isUserAllowedToEditProfile({app, access}: {
 
 export function makePersonalTopic({
 			config,
+			getTables,
 			verifyToken,
-			constrainTables,
 		}: {
 			config: PlatformConfig
 			verifyToken: VerifyToken
-			constrainTables: ConstrainTables<AuthTables>
+			getTables: GetTables<AuthTables>
 		}) {
-	return processAuth(processRequestForUser({verifyToken, constrainTables}), {
+	return processAuth(processRequestForUser({verifyToken, getTables}), {
 
 		async setProfile({access, app, tables}, {userId, profile}: {
 					userId: string
@@ -34,26 +33,28 @@ export function makePersonalTopic({
 
 			debugger
 
-			const allowedToEditProfile = isUserAllowedToEditProfile({
-				app,
-				access,
-				config,
-				tables,
-			})
+		// TODO rewrite
 
-			const operationIsAllowed = doesUserHaveHardPrivilege({
-				app,
-				access,
-				config,
-				label: "edit_any_profile",
-			})
-			if (!operationIsAllowed) throw new Error("forbidden")
-			const {problems} = validateProfile(profile)
-			if (problems.length) throw new Error(`invalid profile: ${problems.join("; ")}`)
-			await tables.profile.update({
-				...find({userId}),
-				write: profile,
-			})
+		// 	const allowedToEditProfile = isUserAllowedToEditProfile({
+		// 		app,
+		// 		access,
+		// 		config,
+		// 		tables,
+		// 	})
+
+		// 	const operationIsAllowed = doesUserHaveHardPrivilege({
+		// 		app,
+		// 		access,
+		// 		config,
+		// 		label: "edit_any_profile",
+		// 	})
+		// 	if (!operationIsAllowed) throw new Error("forbidden")
+		// 	const {problems} = validateProfile(profile)
+		// 	if (problems.length) throw new Error(`invalid profile: ${problems.join("; ")}`)
+		// 	await tables.profile.update({
+		// 		...find({userId}),
+		// 		write: profile,
+		// 	})
 		},
 	})
 }

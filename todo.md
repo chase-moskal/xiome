@@ -3,14 +3,42 @@
 
 - [x] stabilize basic logins
 - [ ] fix setProfile and permissions shenanigans
-  - [ ] refactors
+  - [x] refactors
     - [x] rename auth processors
-    - [ ] `constrainTables` should be replaced with `getAuthTables` which composes `constrainTables` and hardbacked permissions tables
+    - [x] `constrainTables` should be replaced with `getAuthTables` which composes `constrainTables` and hardbacked permissions tables
   - [ ] integrate hardbacked permissions authtables across the board
   - [ ] implement setProfile by querying the hardbacked tables
   - [ ] rename dbby-hardcoded into dbby-hardbacked?
 - [ ] implement platform logins and profile stuff
 - [ ] implement app logins and profile stuff
+
+## permissions explained
+
+permissions model
+- topic methods can require certain privileges in an access token
+- privileges have labels like `edit_any_profile`
+- roles have labels like `fancy_person`
+- multiple privileges can be assigned to each role
+- multiple roles can be assigned to each user
+- when a user gets an access token, it's packed with the roles and privileges said user has
+
+hardcoded vs customizable permissions
+- there's a core set of permisisons that are hardcoded into the permisisons tables
+  - sets out the concept of `admin` and enables them to customize their app's permissions
+- on top of that, there's a layer of customizable permissions
+- we know the platform app id on startup
+- [ ] PROBLEM: we can't hardcode every app id upon startup
+  - we don't have a mechanism to constrain the permissions tables but also provide the hardcoded fallback values for every app id
+  - notice that there's no problem here for the platform app: we know the platform app's id from the config, so we can initialize the hardcoded permissions to use this appid
+  - the problem is that the other apps are not hardcoded, not known at startup
+  - how can we obtain an app's customizable permissions, but also the universal defaults (cannot be hardcoded)
+  - possible solutions:
+    - a new dbby fallback mechanism of some kind
+    - a new processing step which dynamically adds a special hardcoded fallback layer for all non-platform apps
+    - (BIGBRAIN) 
+
+apps vs platform
+- all permissisons tables are constrained by appid
 
 ## topic auth processing explained
 

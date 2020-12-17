@@ -2,8 +2,7 @@
 import {processPayloadTopic as processAuth} from "renraku/dist/curries.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
-import {ConstrainTables} from "../../../toolbox/dbby/dbby-types.js"
-import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, LoginPayload, SendLoginEmail} from "../auth-types.js"
+import {AuthTables, VerifyToken, SignToken, RefreshToken, Scope, AccessPayload, PlatformConfig, RefreshPayload, LoginPayload, SendLoginEmail, GetTables} from "../auth-types.js"
 
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
@@ -13,10 +12,10 @@ import {processRequestForAnon} from "./auth-processors/process-request-for-anon.
 export function makeLoginTopic({
 			rando,
 			config,
+			getTables,
 			signToken,
 			verifyToken,
 			sendLoginEmail,
-			constrainTables,
 			generateNickname,
 		}: {
 			rando: Rando
@@ -25,9 +24,9 @@ export function makeLoginTopic({
 			verifyToken: VerifyToken
 			sendLoginEmail: SendLoginEmail
 			generateNickname: () => string
-			constrainTables: ConstrainTables<AuthTables>
+			getTables: GetTables<AuthTables>
 		}) {
-	return processAuth(processRequestForAnon({verifyToken, constrainTables}), {
+	return processAuth(processRequestForAnon({verifyToken, getTables}), {
 
 		async sendLoginLink(
 					{app, tables},

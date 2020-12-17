@@ -3,7 +3,6 @@ import {addMeta} from "renraku/dist/curries.js"
 
 import {Rando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
-import {prepareConstrainTables} from "../toolbox/dbby/dbby-constrain.js"
 
 import {makeAuthApi} from "../features/auth/auth-api.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
@@ -38,7 +37,7 @@ export async function assembleBackend({
 		verifyToken,
 		sendLoginEmail,
 		generateNickname,
-		constrainTables: prepareConstrainTables(tables.auth),
+		authTables: tables.auth,
 	})
 
 	const tokenStore = makeTokenStore({
