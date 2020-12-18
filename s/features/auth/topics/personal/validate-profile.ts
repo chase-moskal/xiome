@@ -12,7 +12,7 @@ export function validateProfile(profile: Profile): {
 	let fields = Object.entries(profile)
 
 	function pluck<T extends keyof Profile>(prop: T): Profile[T] {
-		const [,value] = fields.find(([key]) => key === prop)
+		const [,value] = fields.find(([key]) => key === prop) ?? []
 		fields = fields.filter(([key]) => key !== prop)
 		return value
 	}

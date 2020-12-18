@@ -6,13 +6,15 @@ import {AuthTables, VerifyToken, Profile, PlatformConfig, AppPayload, AccessPayl
 
 import {validateProfile} from "./personal/validate-profile.js"
 import {processRequestForUser} from "./auth-processors/process-request-for-user.js"
-import {doesUserHaveHardPrivilege} from "./personal/does-user-have-hard-privilege.js"
 
 function isUserAllowedToEditProfile({app, access}: {
 		app: AppPayload
+		tables: AuthTables
 		access: AccessPayload
+		config: PlatformConfig
 	}) {
-	access.permit.privileges
+	// TODO implement
+	return true
 }
 
 export function makePersonalTopic({
@@ -31,30 +33,23 @@ export function makePersonalTopic({
 					profile: Profile
 				}) {
 
-			debugger
+			const allowed = isUserAllowedToEditProfile({
+				app,
+				access,
+				config,
+				tables,
+			})
 
-		// TODO rewrite
+			if (!allowed) throw new Error("forbidden")
 
-		// 	const allowedToEditProfile = isUserAllowedToEditProfile({
-		// 		app,
-		// 		access,
-		// 		config,
-		// 		tables,
-		// 	})
+			const {problems} = validateProfile(profile)
 
-		// 	const operationIsAllowed = doesUserHaveHardPrivilege({
-		// 		app,
-		// 		access,
-		// 		config,
-		// 		label: "edit_any_profile",
-		// 	})
-		// 	if (!operationIsAllowed) throw new Error("forbidden")
-		// 	const {problems} = validateProfile(profile)
-		// 	if (problems.length) throw new Error(`invalid profile: ${problems.join("; ")}`)
-		// 	await tables.profile.update({
-		// 		...find({userId}),
-		// 		write: profile,
-		// 	})
+			if (problems.length) throw new Error(`invalid profile: ${problems.join("; ")}`)
+
+			await tables.profile.update({
+				...find({userId}),
+				write: profile,
+			})
 		},
 	})
 }

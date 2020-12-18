@@ -8,11 +8,9 @@ import {isTokenExpired} from "./tools/is-token-expired.js"
 
 export function makeTokenStore({
 			storage,
-			expiryRenewalCushion,
 			authorize,
 		}: {
 			storage: SimpleStorage
-			expiryRenewalCushion: number
 			authorize: AddMeta<AuthApi["loginTopic"]["authorize"]>
 		}) {
 
@@ -40,8 +38,8 @@ export function makeTokenStore({
 			let accessToken = storage.getItem("accessToken")
 			let refreshToken = storage.getItem("refreshToken")
 
-			const accessValid = !isTokenExpired(accessToken, expiryRenewalCushion)
-			const refreshValid = !isTokenExpired(refreshToken, expiryRenewalCushion)
+			const accessValid = !isTokenExpired(accessToken)
+			const refreshValid = !isTokenExpired(refreshToken)
 
 			if (refreshValid) {
 				if (!accessValid) {

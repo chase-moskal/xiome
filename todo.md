@@ -6,8 +6,8 @@
   - [x] refactors
     - [x] rename auth processors
     - [x] `constrainTables` should be replaced with `getAuthTables` which composes `constrainTables` and hardbacked permissions tables
-  - [ ] integrate hardbacked permissions authtables across the board
-  - [ ] implement setProfile by querying the hardbacked tables
+  - [x] integrate hardbacked permissions authtables across the board
+  - [x] implement setProfile by querying the hardbacked tables
   - [ ] rename dbby-hardcoded into dbby-hardbacked?
 - [ ] implement platform logins and profile stuff
 - [ ] implement app logins and profile stuff

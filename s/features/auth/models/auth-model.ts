@@ -5,10 +5,10 @@ import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
 import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload, AuthApi} from "../auth-types.js"
+import { isTokenTimingExpired } from "../tools/is-token-timing-expired.js"
 
  @mixinModelMobx
 export class AuthModel {
-	private readonly expiryGraceTime: number
 	private readonly tokenStore: TokenStoreTopic
 	private readonly decodeAccessToken: DecodeAccessToken
 	private readonly triggerAccountPopup: TriggerAccountPopup
@@ -16,14 +16,12 @@ export class AuthModel {
 	private authContext: AuthContext
 
 	constructor(options: {
-				expiryGraceTime: number
 				tokenStore: TokenStoreTopic
 				getAuthApi: GetApi<AuthApi>
 				decodeAccessToken: DecodeAccessToken
 				triggerAccountPopup: TriggerAccountPopup
 			}) {
 		this.tokenStore = options.tokenStore
-		this.expiryGraceTime = options.expiryGraceTime
 		this.decodeAccessToken = options.decodeAccessToken
 		this.triggerAccountPopup = options.triggerAccountPopup
 	}
@@ -114,11 +112,7 @@ export class AuthModel {
 	private processAccessToken(accessToken: AccessToken): AuthPayload {
 		this.authContext = this.decodeAccessToken(accessToken)
 		const getAuthContext = async() => {
-			const expiry = this.authContext.exp * 1000
-			const expired = Date.now() > (expiry - this.expiryGraceTime)
-			if (expired) {
-				await this.reauthorize()
-			}
+			if (isTokenTimingExpired(this.authContext.exp)) await this.reauthorize()
 			return this.authContext
 		}
 		return {getAuthContext, user: this.authContext.user}

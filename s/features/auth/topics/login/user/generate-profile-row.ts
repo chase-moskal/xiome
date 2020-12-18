@@ -8,6 +8,6 @@ export const generateProfileRow = ({userId, generateNickname}: {
 
 	userId,
 	tagline: "",
-	avatar: undefined,
+	avatar: "",
 	nickname: generateNickname(),
 })

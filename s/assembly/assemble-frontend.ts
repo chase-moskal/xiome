@@ -1,6 +1,9 @@
 
 import {autorun} from "mobx"
+import {addMeta} from "renraku/dist/curries.js"
 
+import {SimpleStorage} from "../toolbox/json-storage.js"
+import {makeTokenStore} from "../features/auth/token-store.js"
 import {AuthModel} from "../features/auth/models/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
@@ -11,21 +14,26 @@ import {prepareApiAuthorizer} from "./api-auth/prepare-api-authorizer.js"
 
 export async function assembleFrontend({
 			backend,
+			storage,
 			appToken,
-			expiryGraceTime,
 			triggerAccountPopup,
 		}: {
 			appToken: string
-			expiryGraceTime: number
+			storage: SimpleStorage
 			backend: BackendSystems
 			triggerAccountPopup: TriggerAccountPopup
 		}) {
-	const {tokenStore, authApi} = backend
+
+	const {authApi} = backend
 	const getAuthApi = prepareApiAuthorizer(authApi, appToken)
+
+	const tokenStore = makeTokenStore({
+		storage,
+		authorize: addMeta(async() => ({appToken}), authApi.loginTopic.authorize),
+	})
 
 	const auth = new AuthModel({
 		tokenStore,
-		expiryGraceTime,
 		getAuthApi,
 		decodeAccessToken,
 		triggerAccountPopup,

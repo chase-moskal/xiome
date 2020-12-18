@@ -1,13 +1,14 @@
 
 import {tokenDecode} from "redcrypto/dist/token-decode.js"
 
-export function isTokenExpired(token: string, expiryRenewalCushion: number) {
+import {isTokenTimingExpired} from "./is-token-timing-expired.js"
+
+export function isTokenExpired(token: string) {
 	let expired = true
 
 	if (token) {
 		const decoded = tokenDecode<any>(token)
-		const expiry = decoded.exp * 1000
-		expired = Date.now() > (expiry - expiryRenewalCushion)
+		expired = isTokenTimingExpired(decoded.exp)
 	}
 
 	return expired
