@@ -1,6 +1,6 @@
 
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {SignToken, Scope, AccessPayload, RefreshPayload, AuthTables, HardPermissions, PlatformConfig} from "../../auth-types.js"
+import {SignToken, Scope, AccessPayload, RefreshPayload, AuthTables, PlatformConfig, HardPermissions} from "../../auth-types.js"
 
 import {fetchUser} from "./user/fetch-user.js"
 import {fetchPermit} from "./user/fetch-permit.js"

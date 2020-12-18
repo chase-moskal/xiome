@@ -32,9 +32,11 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 
 	const tables: SystemTables = {
 		auth: {
+			role: dbbyMemory(),
 			account: dbbyMemory(),
 			profile: dbbyMemory(),
 			userRole: dbbyMemory(),
+			privilege: dbbyMemory(),
 			rolePrivilege: dbbyMemory(),
 			accountViaEmail: dbbyMemory(),
 			accountViaGoogle: dbbyMemory(),

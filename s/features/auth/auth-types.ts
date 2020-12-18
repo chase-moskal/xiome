@@ -1,7 +1,7 @@
 
 import {VerifyToken} from "redcrypto/dist/types.js"
 
-import {DbbyRow, DbbyTable, ConstrainTables} from "../../toolbox/dbby/dbby-types.js"
+import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 
 import {makeAuthApi} from "./auth-api.js"
 import {makeTokenStore} from "./token-store.js"
@@ -53,7 +53,7 @@ export interface HardPermissionsBlueprint {
 	}}
 }
 
-export interface HardPermissions {
+export type HardPermissions = {
 	roles: RoleRow[]
 	privileges: PrivilegeRow[]
 	userRoles: UserRoleRow[]
@@ -199,13 +199,18 @@ export type Authorizer = (
 // database rows
 //
 
-export type AuthTables = {
+export type PermissionsTables = {
+	role: DbbyTable<RoleRow>
+	privilege: DbbyTable<PrivilegeRow>
+	userRole: DbbyTable<UserRoleRow>
+	rolePrivilege: DbbyTable<RolePrivilegeRow>
+}
+
+export type AuthTables = PermissionsTables & {
 	account: DbbyTable<AccountRow>
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	profile: DbbyTable<ProfileRow>
-	userRole: DbbyTable<UserRoleRow>
-	rolePrivilege: DbbyTable<RolePrivilegeRow>
 }
 
 export type AppRow = {

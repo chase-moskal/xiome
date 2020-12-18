@@ -2,9 +2,9 @@
 import {makeLoginTopic} from "./topics/login-topic.js"
 import {makePersonalTopic} from "./topics/personal-topic.js"
 import {AuthTables, VerifyToken, SignToken, PlatformConfig, SendLoginEmail} from "./auth-types.js"
+import {prepareAuthTablesPermissionsAndConstraints} from "./permissions/tables/prepare-auth-tables-permissions-and-constraints.js"
 
 import {Rando} from "../../toolbox/get-rando.js"
-import {prepareConstrainTables} from "../../toolbox/dbby/dbby-constrain.js"
 
 export function makeAuthApi(options: {
 			rando: Rando
@@ -16,11 +16,7 @@ export function makeAuthApi(options: {
 			generateNickname: () => string
 		}) {
 
-	// TODO implement permissions
-	function getTables({appId}: {appId: string}): AuthTables {
-		throw new Error("implement permissions hardcoding and whatever")
-		return prepareConstrainTables(options.authTables)({appId})
-	}
+	const getTables = prepareAuthTablesPermissionsAndConstraints(options)
 
 	return {
 		loginTopic: makeLoginTopic({...options, getTables}),

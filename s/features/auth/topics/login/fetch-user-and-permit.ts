@@ -1,6 +1,6 @@
 
-import {AuthTables, HardPermissions, PlatformConfig} from "../../auth-types.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
+import {AuthTables, HardPermissions, PlatformConfig} from "../../auth-types.js"
 
 import {fetchUser} from "./user/fetch-user.js"
 import {fetchPermit} from "./user/fetch-permit.js"

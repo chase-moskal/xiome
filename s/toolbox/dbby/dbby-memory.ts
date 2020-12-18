@@ -4,14 +4,21 @@ import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated
 export {and, or, find} from "./dbby-helpers.js"
 
 export function dbbyMemory<Row extends DbbyRow>({
-		dbbyStorage,
-	}: {
-		dbbyStorage?: DbbyStorage<Row>
-	} = {}): DbbyTable<Row> {
+			rows,
+			dbbyStorage,
+		}: {
+			rows?: Row[]
+			dbbyStorage?: DbbyStorage<Row>
+		} = {}): DbbyTable<Row> {
 
 	let table: Row[] = dbbyStorage
 		? dbbyStorage.load() || []
 		: []
+
+	if (rows) {
+		for (const row of rows) insertCopy(row)
+		save()
+	}
 
 	function save() {
 		if (dbbyStorage) dbbyStorage.save(table)
