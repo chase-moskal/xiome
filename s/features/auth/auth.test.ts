@@ -1,5 +1,6 @@
 
 import {Suite, assert} from "cynic"
+import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
 import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
 
@@ -38,7 +39,7 @@ export default <Suite>{
 			"procotol zero: roll platform secrets": true,
 		},
 		"creative": {
-			// "common tests for creative on platform": commonTests(creativeSystem),
+			"common tests for creative on platform": commonTests(creativeSystem),
 			"register an app": true,
 			"generate an admin account to login with": true,
 			"no-can-do": {
