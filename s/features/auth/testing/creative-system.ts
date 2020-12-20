@@ -1,10 +1,10 @@
 
 import {testableSystem} from "./base/testable-system.js"
-import {setNextEmailLogin} from "./routines/set-next-email-login.js"
+import {primeFrontendWithLogin} from "./routines/prime-frontend-with-login.js"
 
 export async function creativeSystem() {
 	const testable = await testableSystem()
-	return setNextEmailLogin({
+	return primeFrontendWithLogin({
 		testable,
 		email: "somebody@chasemoskal.com",
 		appToken: testable.platformAppToken,

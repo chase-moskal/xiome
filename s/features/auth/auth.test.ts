@@ -2,7 +2,7 @@
 import {Suite, assert} from "cynic"
 import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
-import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
+import {primeFrontendWithLogin} from "./testing/routines/prime-frontend-with-login.js"
 
 export default <Suite>{
 	"stories": {
@@ -34,7 +34,7 @@ export default <Suite>{
 	},
 }
 
-function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof setNextEmailLogin>) {
+function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof primeFrontendWithLogin>) {
 	return <Suite>{
 		"login and out": async() => {
 			const {frontend} = await prepareSystemRiggedWithCannedLogin()

@@ -3,10 +3,10 @@ import {AppToken} from "../../auth-types.js"
 import {Await} from "../../../../types/fancy.js"
 import {testableSystem} from "../base/testable-system.js"
 
-export async function setNextEmailLogin({
+export async function primeFrontendWithLogin({
 			email,
 			appToken,
-			testable
+			testable,
 		}: {
 			email: string
 			appToken: AppToken
