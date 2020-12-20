@@ -82,7 +82,7 @@
 		"mobx-lit-element": "^0.1.2",
 		"mongodb": "^3.6.3",
 		"pug": "^3.0.0",
-		"redcrypto": "0.0.0-dev.7",
+		"redcrypto": "0.0.0-dev.8",
 		"renraku": "0.0.0-dev.32",
 		"stripe": "^8.129.0",
 		"unique-names-generator": "^4.3.1"
