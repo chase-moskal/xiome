@@ -4,32 +4,6 @@ import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
 import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
 
-function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof setNextEmailLogin>) {
-	return <Suite>{
-		"login and out": async() => {
-			const {frontend} = await prepareSystemRiggedWithCannedLogin()
-			const {auth} = frontend.models
-
-			await auth.login()
-			assert(auth.user, "failed to login")
-
-			await auth.logout()
-			assert(!auth.user, "failed to logout")
-		},
-		"customize own profile": async() => {
-			const {frontend} = await prepareSystemRiggedWithCannedLogin()
-			const {auth} = frontend.models
-
-			await auth.login()
-			const {profile} = auth.user
-			assert(profile, "failed to read profile")
-
-			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
-			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
-		},
-	}
-}
-
 export default <Suite>{
 	"stories": {
 		"technician": {
@@ -58,4 +32,30 @@ export default <Suite>{
 			"verify scoped third-party access token": true,
 		},
 	},
+}
+
+function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof setNextEmailLogin>) {
+	return <Suite>{
+		"login and out": async() => {
+			const {frontend} = await prepareSystemRiggedWithCannedLogin()
+			const {auth} = frontend.models
+
+			await auth.login()
+			assert(auth.user, "failed to login")
+
+			await auth.logout()
+			assert(!auth.user, "failed to logout")
+		},
+		"customize own profile": async() => {
+			const {frontend} = await prepareSystemRiggedWithCannedLogin()
+			const {auth} = frontend.models
+
+			await auth.login()
+			const {profile} = auth.user
+			assert(profile, "failed to read profile")
+
+			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
+			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
+		},
+	}
 }
