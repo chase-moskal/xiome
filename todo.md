@@ -2,13 +2,13 @@
 # shortlist
 
 - [x] stabilize basic logins
-- [ ] fix setProfile and permissions shenanigans
+- [x] fix setProfile and permissions shenanigans
   - [x] refactors
     - [x] rename auth processors
     - [x] `constrainTables` should be replaced with `getAuthTables` which composes `constrainTables` and hardbacked permissions tables
   - [x] integrate hardbacked permissions authtables across the board
   - [x] implement setProfile by querying the hardbacked tables
-  - [ ] rename dbby-hardcoded into dbby-hardbacked?
+  - [x] (nah) rename dbby-hardcoded into dbby-hardbacked?
 - [ ] implement platform logins and profile stuff
 - [ ] implement app logins and profile stuff
 
@@ -35,7 +35,7 @@ hardcoded vs customizable permissions
   - possible solutions:
     - a new dbby fallback mechanism of some kind
     - a new processing step which dynamically adds a special hardcoded fallback layer for all non-platform apps
-    - (BIGBRAIN) 
+    - (BIGBRAIN) getTables function now dynamically provides tables, conditionally hardcoding permissions
 
 apps vs platform
 - all permissisons tables are constrained by appid

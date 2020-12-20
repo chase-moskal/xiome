@@ -7,7 +7,6 @@ export function processRequestForAnon<T extends Tables>({
 		}: AuthProcessorPreparations<T>) {
 
 	return async({appToken}: {appToken: AppToken}) => {
-		if (!appToken) debugger
 		const app = await verifyToken<AppPayload>(appToken)
 		return {
 			app,

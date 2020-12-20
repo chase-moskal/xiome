@@ -4,10 +4,10 @@ import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
 import {setNextEmailLogin} from "./testing/routines/set-next-email-login.js"
 
-function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setNextEmailLogin>) {
+function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof setNextEmailLogin>) {
 	return <Suite>{
 		"login and out": async() => {
-			const {frontend} = await prepareSystemWithExampleLogin()
+			const {frontend} = await prepareSystemRiggedWithCannedLogin()
 			const {auth} = frontend.models
 
 			await auth.login()
@@ -17,7 +17,7 @@ function commonTests(prepareSystemWithExampleLogin: () => ReturnType<typeof setN
 			assert(!auth.user, "failed to logout")
 		},
 		"customize own profile": async() => {
-			const {frontend} = await prepareSystemWithExampleLogin()
+			const {frontend} = await prepareSystemRiggedWithCannedLogin()
 			const {auth} = frontend.models
 
 			await auth.login()
