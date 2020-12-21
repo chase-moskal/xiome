@@ -2,7 +2,6 @@
 import {Suite, assert} from "cynic"
 import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
-import {testableSystem} from "./testing/base/testable-system.js"
 import {PrimedTestableSystem} from "./testing/auth-testing-types.js"
 
 export default <Suite>{
