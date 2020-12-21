@@ -1,11 +1,10 @@
 
 import {observable, computed, action} from "mobx"
 
-import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
 import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
+import {isTokenTimingExpired} from "../tools/is-token-timing-expired.js"
 import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload, AuthApi} from "../auth-types.js"
-import { isTokenTimingExpired } from "../tools/is-token-timing-expired.js"
 
  @mixinModelMobx
 export class AuthModel {
@@ -17,7 +16,6 @@ export class AuthModel {
 
 	constructor(options: {
 				tokenStore: TokenStoreTopic
-				getAuthApi: GetApi<AuthApi>
 				decodeAccessToken: DecodeAccessToken
 				triggerAccountPopup: TriggerAccountPopup
 			}) {

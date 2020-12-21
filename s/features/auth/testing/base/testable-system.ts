@@ -24,7 +24,7 @@ export async function testableSystem() {
 
 		const {frontend, frontHacks} = await system.assembleFrontendForApp(appToken)
 		const {loginTopic} = system.backend.authApi
-		
+
 		frontHacks.setNextLogin(async() => {
 			const {promise} = remoteNextLoginEmail
 			await loginTopic.sendLoginLink({appToken}, {email})

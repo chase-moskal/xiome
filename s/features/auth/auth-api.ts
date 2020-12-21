@@ -1,10 +1,10 @@
 
+import {Rando} from "../../toolbox/get-rando.js"
+import {makeAppTopic} from "./topics/app-topic.js"
 import {makeLoginTopic} from "./topics/login-topic.js"
 import {makePersonalTopic} from "./topics/personal-topic.js"
 import {AuthTables, VerifyToken, SignToken, PlatformConfig, SendLoginEmail} from "./auth-types.js"
 import {prepareAuthTablesPermissionsAndConstraints} from "./permissions/tables/prepare-auth-tables-permissions-and-constraints.js"
-
-import {Rando} from "../../toolbox/get-rando.js"
 
 export function makeAuthApi(options: {
 			rando: Rando
@@ -19,6 +19,7 @@ export function makeAuthApi(options: {
 	const getTables = prepareAuthTablesPermissionsAndConstraints(options)
 
 	return {
+		appTopic: makeAppTopic({...options, getTables}),
 		loginTopic: makeLoginTopic({...options, getTables}),
 		personalTopic: makePersonalTopic({...options, getTables}),
 	}

@@ -160,6 +160,12 @@ export type LoginPayload = {
 	userId: string
 }
 
+export interface AppDraft {
+	label: string
+	home: string
+	origins: string[]
+}
+
 export interface AppPayload {
 	appId: string
 	label: string
@@ -211,11 +217,15 @@ export type AuthTables = PermissionsTables & {
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	profile: DbbyTable<ProfileRow>
+	app: DbbyTable<AppRow>
+	appToken: DbbyTable<AppTokenRow>
+	appOwnership: DbbyTable<AppOwnershipRow>
 }
 
 export type AppRow = {
 	appId: string
 	label: string
+	home: string
 }
 
 export type AppOwnershipRow = {
@@ -224,7 +234,7 @@ export type AppOwnershipRow = {
 }
 
 export type AppTokenRow = {
-	userId: string
+	appId: string
 	origins: string
 }
 

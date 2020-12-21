@@ -1,32 +1,10 @@
 
 import {observable, action} from "mobx"
-import {AddMetaApi} from "renraku/dist/types.js"
-import {addMetaTopic, addMetaApi} from "renraku/dist/curries.js"
 
-import {GetApi} from "../../../types.js"
 import * as loading from "../../../toolbox/loading.js"
-import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
-
-import {User, Settings, Profile, AuthApi, GetAuthContext, AuthPayload, AccessToken, AppToken} from "../auth-types.js"
-
-export function authorizeTopics({authApi, appToken, accessToken}: {
-			authApi: AuthApi
-			appToken: string
-			accessToken: string
-		}) {
-	return addMetaApi(async() => ({appToken, accessToken}), authApi)
-}
-
-export interface Personal {
-	user: User
-	settings: Settings
-}
-
-export interface PersonalModelOptions {
-	getAuthApi: GetApi<AuthApi>
-	reauthorize: () => Promise<void>
-}
+import {Personal, PersonalModelOptions} from "./types/personal-model-types.js"
+import {Profile, GetAuthContext, AuthPayload} from "../auth-types.js"
 
  @mixinModelMobx
 export class PersonalModel {

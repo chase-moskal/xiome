@@ -3,6 +3,7 @@ import {autorun} from "mobx"
 import {addMeta} from "renraku/dist/curries.js"
 
 import {SimpleStorage} from "../toolbox/json-storage.js"
+import {AppModel} from "../features/auth/models/app-model.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
 import {AuthModel} from "../features/auth/models/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
@@ -34,7 +35,6 @@ export async function assembleFrontend({
 
 	const auth = new AuthModel({
 		tokenStore,
-		getAuthApi,
 		decodeAccessToken,
 		triggerAccountPopup,
 	})
@@ -44,12 +44,22 @@ export async function assembleFrontend({
 		reauthorize: auth.reauthorize,
 	})
 
+	const app = new AppModel({
+		getAuthApi,
+		authModel: auth,
+		decodeAccessToken,
+	})
+
 	autorun(() => {
 		const {authLoad} = auth
 		personal.handleAuthLoad(authLoad)
 	})
 
 	return {
-		models: {auth, personal},
+		models: {
+			app,
+			auth,
+			personal,
+		},
 	}
 }

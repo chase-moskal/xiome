@@ -38,6 +38,9 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 			rolePrivilege: dbbyMemory(),
 			accountViaEmail: dbbyMemory(),
 			accountViaGoogle: dbbyMemory(),
+			app: dbbyMemory(),
+			appToken: dbbyMemory(),
+			appOwnership: dbbyMemory(),
 		},
 	}
 
