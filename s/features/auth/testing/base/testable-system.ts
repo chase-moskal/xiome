@@ -39,8 +39,5 @@ export async function testableSystem() {
 		system,
 		primeFrontendWithLogin,
 		platformAppToken: await system.hacks.signAppToken(system.config.platform.app),
-		get nextLoginEmail() {
-			return remoteNextLoginEmail.promise
-		},
 	}
 }
