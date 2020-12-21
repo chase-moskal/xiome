@@ -17,8 +17,27 @@ export async function testableSystem() {
 		},
 	})
 
+	async function primeFrontendWithLogin({email, appToken}: {
+				email: string
+				appToken: string
+			}) {
+
+		const {frontend, frontHacks} = await system.assembleFrontendForApp(appToken)
+		const {loginTopic} = system.backend.authApi
+		
+		frontHacks.setNextLogin(async() => {
+			const {promise} = remoteNextLoginEmail
+			await loginTopic.sendLoginLink({appToken}, {email})
+			const {loginToken} = await promise
+			return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
+		})
+
+		return {frontend, frontHacks}
+	}
+
 	return {
 		system,
+		primeFrontendWithLogin,
 		platformAppToken: await system.hacks.signAppToken(system.config.platform.app),
 		get nextLoginEmail() {
 			return remoteNextLoginEmail.promise

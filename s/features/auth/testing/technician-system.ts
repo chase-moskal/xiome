@@ -1,12 +1,15 @@
 
 import {testableSystem} from "./base/testable-system.js"
-import {primeFrontendWithLogin} from "./routines/prime-frontend-with-login.js"
+import {PrimedTestableSystem} from "./auth-testing-types.js"
 
-export async function technicianSystem() {
+export async function technicianSystem(): Promise<PrimedTestableSystem> {
 	const testable = await testableSystem()
-	return primeFrontendWithLogin({
+
+	return {
 		testable,
-		appToken: testable.platformAppToken,
-		email: testable.system.config.platform.technician.email,
-	})
+		primed: await testable.primeFrontendWithLogin({
+			appToken: testable.platformAppToken,
+			email: testable.system.config.platform.technician.email,
+		})
+	}
 }

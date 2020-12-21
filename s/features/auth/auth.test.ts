@@ -2,7 +2,8 @@
 import {Suite, assert} from "cynic"
 import {creativeSystem} from "./testing/creative-system.js"
 import {technicianSystem} from "./testing/technician-system.js"
-import {primeFrontendWithLogin} from "./testing/routines/prime-frontend-with-login.js"
+import {testableSystem} from "./testing/base/testable-system.js"
+import {PrimedTestableSystem} from "./testing/auth-testing-types.js"
 
 export default <Suite>{
 	"stories": {
@@ -14,7 +15,9 @@ export default <Suite>{
 		},
 		"creative": {
 			"common tests for creative on platform": commonTests(creativeSystem),
-			"register an app": true,
+			// "register an app": async() => {
+			// 	const {system, nextLoginEmail, platformAppToken} = await testableSystem()
+			// },
 			"generate an admin account to login with": true,
 			"no-can-do": {
 				"can't view platform stats": true,
@@ -34,11 +37,11 @@ export default <Suite>{
 	},
 }
 
-function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof primeFrontendWithLogin>) {
+function commonTests(getTestingSystemPrimedWithLogin: () => Promise<PrimedTestableSystem>) {
 	return <Suite>{
 		"login and out": async() => {
-			const {frontend} = await prepareSystemRiggedWithCannedLogin()
-			const {auth} = frontend.models
+			const {primed} = await getTestingSystemPrimedWithLogin()
+			const {auth} = primed.frontend.models
 
 			await auth.login()
 			assert(auth.user, "failed to login")
@@ -47,14 +50,14 @@ function commonTests(prepareSystemRiggedWithCannedLogin: () => ReturnType<typeof
 			assert(!auth.user, "failed to logout")
 		},
 		"customize own profile": async() => {
-			const {frontend} = await prepareSystemRiggedWithCannedLogin()
-			const {auth} = frontend.models
+			const {primed} = await getTestingSystemPrimedWithLogin()
+			const {auth} = primed.frontend.models
 
 			await auth.login()
 			const {profile} = auth.user
 			assert(profile, "failed to read profile")
 
-			await frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
+			await primed.frontend.models.personal.saveProfile({...profile, nickname: "Jimmy"})
 			assert(auth.user.profile.nickname === "Jimmy", "failed to set profile nickname")
 		},
 	}
