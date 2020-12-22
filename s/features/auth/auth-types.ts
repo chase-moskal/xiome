@@ -166,6 +166,12 @@ export interface AppDraft {
 	origins: string[]
 }
 
+export interface AppTokenDraft {
+	appId: string
+	label: string
+	origins: string[]
+}
+
 export interface AppPayload {
 	appId: string
 	label: string
@@ -235,7 +241,9 @@ export type AppOwnershipRow = {
 
 export type AppTokenRow = {
 	appId: string
+	label: string
 	origins: string
+	appTokenId: string
 }
 
 export type AccountRow = {

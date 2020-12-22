@@ -3,7 +3,7 @@ import {processPayloadTopic as processAuth} from "renraku/dist/curries.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables, VerifyToken, PlatformConfig, GetTables, AppDraft, AppPayload} from "../auth-types.js"
+import {AuthTables, VerifyToken, PlatformConfig, GetTables, AppDraft, AppPayload, AppTokenDraft, AppTokenRow} from "../auth-types.js"
 
 import {processRequestForPlatformUser} from "./auth-processors/process-request-for-platform-user.js"
 
@@ -47,29 +47,61 @@ export function makeAppTopic({
 				ownerUserId: string
 			}) {
 			const appId = rando.randomId()
-			await tables.app.create({
-				appId,
-				label: appDraft.label,
-				home: appDraft.home,
-			})
-			await tables.appOwnership.create({
-				appId,
-				userId: ownerUserId,
-			})
+			await Promise.all([
+				tables.app.create({
+					appId,
+					label: appDraft.label,
+					home: appDraft.home,
+				}),
+				tables.appOwnership.create({
+					appId,
+					userId: ownerUserId,
+				})
+			])
 			return {appId}
 		},
 
-		async updateApp({access, app, tables}, {appId}: {
+		async updateApp({access, app, tables}, {appId, draft}: {
 				appId: string
 				draft: AppDraft
 			}) {
-			throw new Error("TODO implement")
+			await tables.app.update({
+				...find({appId}),
+				whole: {
+					appId,
+					home: draft.home,
+					label: draft.label,
+				},
+			})
 		},
 
-		async registerAppToken({access, app, tables}, {appId}: {
-				appId: string
+		async registerAppToken({access, app, tables}, draft: AppTokenDraft) {
+			const appTokenId = rando.randomId()
+			await tables.appToken.create({
+				appTokenId,
+				appId: draft.appId,
+				label: draft.label,
+				origins: draft.origins.join(";"),
+			})
+		},
+
+		async updateAppToken({access, app, tables}, {appTokenId, draft}: {
+				appTokenId: string
+				draft: AppTokenDraft
 			}) {
-			throw new Error("TODO implement")
+			await tables.appToken.update({
+				...find({appTokenId}),
+				whole: {
+					appTokenId,
+					appId: draft.appId,
+					label: draft.label,
+					origins: draft.origins.join(";"),
+				},
+			})
+		},
+
+		async deleteAppToken({access, app, tables}, {appTokenId}: {appTokenId: string}) {
+			await tables.appToken.delete(find({appTokenId}))
 		},
 	})
 }
