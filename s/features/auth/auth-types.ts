@@ -1,7 +1,8 @@
 
-import {VerifyToken} from "redcrypto/dist/types.js"
+import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
+import { Rando } from "../../toolbox/get-rando.js"
 
 import {makeAuthApi} from "./auth-api.js"
 import {makeTokenStore} from "./token-store.js"
@@ -43,6 +44,36 @@ export interface PlatformConfig {
 		webhookSecret: string
 	}
 }
+
+export interface AuthOptions {
+	rando: Rando
+	config: PlatformConfig
+	signToken: SignToken
+	verifyToken: VerifyToken
+	sendLoginEmail: SendLoginEmail
+	generateNickname: () => string
+}
+
+export interface AnonMeta {
+	appToken: AppToken
+}
+
+export interface AnonAuth {
+	app: AppPayload
+	tables: AuthTables
+}
+
+export interface UserMeta extends AnonMeta {
+	accessToken: AccessToken
+}
+
+export interface UserAuth extends AnonAuth {
+	access: AccessPayload
+}
+
+export interface PlatformUserMeta extends UserMeta {}
+
+export interface PlatformUserAuth extends UserAuth {}
 
 export interface HardPermissionsBlueprint {
 	inherit?: HardPermissions
