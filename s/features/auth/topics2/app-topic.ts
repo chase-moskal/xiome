@@ -61,7 +61,9 @@ export const appTopic = ({rando}: AuthOptions) => asTopic<PlatformUserAuth>()({
 		})
 	},
 
-	async registerAppToken({tables}, draft: AppTokenDraft) {
+	async registerAppToken({tables}, {draft}: {
+			draft: AppTokenDraft
+		}) {
 		const appTokenId = rando.randomId()
 		await tables.appToken.create({
 			appTokenId,
@@ -86,7 +88,9 @@ export const appTopic = ({rando}: AuthOptions) => asTopic<PlatformUserAuth>()({
 		})
 	},
 
-	async deleteAppToken({tables}, {appTokenId}: {appTokenId: string}) {
+	async deleteAppToken({tables}, {appTokenId}: {
+			appTokenId: string
+		}) {
 		await tables.appToken.delete(find({appTokenId}))
 	},
 })
