@@ -4,7 +4,7 @@ import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 import { Rando } from "../../toolbox/get-rando.js"
 
-import {makeAuthApi} from "./auth-api.js"
+import {makeAuthApi} from "./new-auth-api.js"
 import {makeTokenStore} from "./token-store.js"
 
 export * from "redcrypto/dist/types.js"

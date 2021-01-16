@@ -9,7 +9,7 @@ import {personalTopic} from "./topics2/personal-topic.js"
 import {preparePolicies} from "./policies/prepare-auth-policies.js"
 import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, AuthOptions} from "./auth-types.js"
 
-export const createAuthApi = ({options, policies}: {
+export const makeAuthApi = ({options, policies}: {
 		options: AuthOptions
 		policies: ReturnType<typeof preparePolicies>
 	}) => asApi({

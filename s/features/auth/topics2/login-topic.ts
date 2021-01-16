@@ -1,9 +1,9 @@
 
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
-import {signAuthTokens} from "../topics/login/sign-auth-tokens.js"
-import {assertEmailAccount} from "../topics/login/assert-email-account.js"
-import {fetchUserAndPermit} from "../topics/login/fetch-user-and-permit.js"
+import {signAuthTokens} from "./login/sign-auth-tokens.js"
+import {assertEmailAccount} from "./login/assert-email-account.js"
+import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
 import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthOptions} from "../auth-types.js"
 
 export const loginTopic = ({

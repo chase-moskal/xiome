@@ -2,7 +2,7 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
-import {validateProfile} from "../topics/personal/validate-profile.js"
+import {validateProfile} from "./personal/validate-profile.js"
 import {UserAuth, AccessPayload, AuthOptions, AppPayload, AuthTables, PlatformConfig, Profile} from "../auth-types.js"
 
 export const personalTopic = ({config,}: AuthOptions) => asTopic<UserAuth>()({
