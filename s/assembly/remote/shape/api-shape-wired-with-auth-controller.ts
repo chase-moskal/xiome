@@ -8,9 +8,9 @@ import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
-import {AuthController} from "../../types/remote/shape/auth-controller.js"
+import {AuthController} from "../../types/frontend/auth-controller.js"
 
-export function prepareApiShape({appToken}: {
+export function prepareApiShapeWiredWithAuthController({appToken}: {
 		appToken: AppToken
 	}) {
 
@@ -63,11 +63,8 @@ export function prepareApiShape({appToken}: {
 
 	function installAuthController(loginService: Business<ReturnType<typeof loginTopic>>) {
 		authController = makeAuthController(loginService)
-		return {shape, authController}
+		return authController
 	}
 
-	return {
-		shape,
-		installAuthController,
-	}
+	return {shape, installAuthController}
 }

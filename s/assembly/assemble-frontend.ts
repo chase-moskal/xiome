@@ -10,14 +10,17 @@ import {PersonalModel} from "../features/auth/models/personal-model.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
 import {SystemRemote} from "./types/frontend/system-remote.js"
+import {AuthController} from "./types/frontend/auth-controller.js"
 
 export async function assembleFrontend({
 		remote,
 		storage,
+		authController,
 		triggerAccountPopup,
 	}: {
 		remote: SystemRemote
 		storage: SimpleStorage
+		authController: AuthController
 		triggerAccountPopup: TriggerAccountPopup
 	}) {
 
