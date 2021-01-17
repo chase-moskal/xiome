@@ -1,35 +1,33 @@
 
 import {autorun} from "mobx"
-import {toBusiness} from "renraku/x/transforms/to-business.js"
 
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {AppModel} from "../features/auth/models/app-model.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
 import {AuthModel} from "../features/auth/models/auth-model.js"
+import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
-import {AnonAuth, TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
-import {BackendSystems, Remotes} from "./assembly-types.js"
-import {prepareApiAuthorizer} from "./api-auth/prepare-api-authorizer.js"
+import {SystemRemote} from "./assembly-types.js"
 
 export async function assembleFrontend({
-			remotes,
-			storage,
-			appToken,
-			triggerAccountPopup,
-		}: {
-			appToken: string
-			remotes: Remotes
-			storage: SimpleStorage
-			triggerAccountPopup: TriggerAccountPopup
-		}) {
+		storage,
+		appToken,
+		systemRemote,
+		triggerAccountPopup,
+	}: {
+		appToken: string
+		storage: SimpleStorage
+		systemRemote: SystemRemote
+		triggerAccountPopup: TriggerAccountPopup
+	}) {
 
-	const {auth} = remotes
+	const {auth} = systemRemote
 
 	const tokenStore = makeTokenStore({
 		storage,
-		authorize: auth.login.authorize,
+		authorize: auth.loginService.authorize
 	})
 
 	const authModel = new AuthModel({
@@ -50,7 +48,7 @@ export async function assembleFrontend({
 	})
 
 	autorun(() => {
-		const {authLoad} = auth
+		const {authLoad} = authModel
 		personalModel.handleAuthLoad(authLoad)
 	})
 
