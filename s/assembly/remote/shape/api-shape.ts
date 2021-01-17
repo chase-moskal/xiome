@@ -3,8 +3,8 @@ import {asShape} from "renraku/x/identities/as-shape.js"
 import {Business} from "renraku/x/types/primitives/business.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
-import { SystemApi } from "../../SystemApi"
 import {makeAuthController} from "./auth-controller.js"
+import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
