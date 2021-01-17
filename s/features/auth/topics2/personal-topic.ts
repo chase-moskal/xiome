@@ -3,9 +3,10 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {validateProfile} from "./personal/validate-profile.js"
-import {UserAuth, AccessPayload, AuthOptions, AppPayload, AuthTables, PlatformConfig, Profile} from "../auth-types.js"
+import {UserAuth, AuthOptions, Profile} from "../auth-types.js"
+import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-profile.js"
 
-export const personalTopic = ({config,}: AuthOptions) => asTopic<UserAuth>()({
+export const personalTopic = ({config}: AuthOptions) => asTopic<UserAuth>()({
 
 	async setProfile({access, app, tables}, {userId, profile}: {
 			userId: string
@@ -29,13 +30,3 @@ export const personalTopic = ({config,}: AuthOptions) => asTopic<UserAuth>()({
 		})
 	},
 })
-
-function isUserAllowedToEditProfile({app, access}: {
-		app: AppPayload
-		tables: AuthTables
-		access: AccessPayload
-		config: PlatformConfig
-	}) {
-	// TODO implement
-	return true
-}

@@ -1,5 +1,5 @@
 
-import {GetApi} from "../../../../types.js"
+import { Business } from "renraku/x/types/primitives/business"
 import {User, Settings, AuthApi} from "../../auth-types.js"
 
 export interface Personal {
@@ -8,6 +8,6 @@ export interface Personal {
 }
 
 export interface PersonalModelOptions {
-	getAuthApi: GetApi<AuthApi>
+	personal: Business<AuthApi["personal"]>
 	reauthorize: () => Promise<void>
 }

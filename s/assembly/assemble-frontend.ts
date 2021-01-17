@@ -1,65 +1,64 @@
 
 import {autorun} from "mobx"
-import {addMeta} from "renraku/dist/curries.js"
+import {toBusiness} from "renraku/x/transforms/to-business.js"
 
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {AppModel} from "../features/auth/models/app-model.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
 import {AuthModel} from "../features/auth/models/auth-model.js"
-import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
+import {AnonAuth, TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
-import {BackendSystems} from "./assembly-types.js"
+import {BackendSystems, Remotes} from "./assembly-types.js"
 import {prepareApiAuthorizer} from "./api-auth/prepare-api-authorizer.js"
 
 export async function assembleFrontend({
-			backend,
+			remotes,
 			storage,
 			appToken,
 			triggerAccountPopup,
 		}: {
 			appToken: string
+			remotes: Remotes
 			storage: SimpleStorage
-			backend: BackendSystems
 			triggerAccountPopup: TriggerAccountPopup
 		}) {
 
-	const {authApi} = backend
-	const getAuthApi = prepareApiAuthorizer(authApi, appToken)
+	const {auth} = remotes
 
 	const tokenStore = makeTokenStore({
 		storage,
-		authorize: addMeta(async() => ({appToken}), authApi.loginTopic.authorize),
+		authorize: auth.login.authorize,
 	})
 
-	const auth = new AuthModel({
+	const authModel = new AuthModel({
 		tokenStore,
 		decodeAccessToken,
 		triggerAccountPopup,
 	})
 
-	const personal = new PersonalModel({
+	const personalModel = new PersonalModel({
 		getAuthApi,
-		reauthorize: auth.reauthorize,
+		reauthorize: authModel.reauthorize,
 	})
 
-	const app = new AppModel({
+	const appModel = new AppModel({
 		getAuthApi,
-		authModel: auth,
+		authModel,
 		decodeAccessToken,
 	})
 
 	autorun(() => {
 		const {authLoad} = auth
-		personal.handleAuthLoad(authLoad)
+		personalModel.handleAuthLoad(authLoad)
 	})
 
 	return {
 		models: {
-			app,
-			auth,
-			personal,
+			app: appModel,
+			authModel,
+			personal: personalModel,
 		},
 	}
 }

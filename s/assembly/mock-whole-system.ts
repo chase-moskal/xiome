@@ -1,6 +1,7 @@
 
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
+import {loopbackJsonRemote} from "renraku/x/remote/loopback-json-remote.js"
 
 import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
 import {AppPayload, AuthTokens, SendLoginEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
@@ -56,6 +57,17 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 		verifyToken,
 		sendLoginEmail,
 		generateNickname,
+	})
+
+	//
+	// glue-between
+	//
+
+	const remotes = loopbackJsonRemote({
+		link: "https://api.xiom.app",
+		servelet,
+		shape: {},
+		// shape: {},
 	})
 
 	//

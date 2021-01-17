@@ -6,15 +6,15 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {AccessPayload, AnonAuth, AnonMeta, AppPayload, AuthTables, GetTables, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
 
-export function preparePolicies({verifyToken, getTables}: {
+export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		verifyToken: VerifyToken
-		getTables: GetTables<AuthTables>
+		getAuthTables: GetTables<AuthTables>
 	}) {
 
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async({appToken}) => {
 			const app = await verifyToken<AppPayload>(appToken)
-			const tables = getTables({appId: app.appId})
+			const tables = getAuthTables({appId: app.appId})
 			return {app, tables}
 		},
 	}
