@@ -1,20 +1,18 @@
 
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
-import {loopbackJsonRemote} from "renraku/x/remote/loopback-json-remote.js"
-import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
-import {AppPayload, AuthTokens, SendLoginEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
 
 import {getRando} from "../toolbox/get-rando.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {dbbyMemory} from "../toolbox/dbby/dbby-memory.js"
 
 import {assembleApi} from "./assemble-api.js"
-import {prepareApiShape} from "./api-shape.js"
-import {SystemTables} from "./assembly-types.js"
 import {assembleFrontend} from "./assemble-frontend.js"
+import {prepareMockRemote} from "./remote/mock-remote.js"
+import {SystemTables} from "./types/backend/system-tables.js"
+import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
+import {AppPayload, AuthTokens, SendLoginEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
 
 export async function mockWholeSystem({storage, sendLoginEmail, generateNickname}: {
 		storage: SimpleStorage
@@ -48,7 +46,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	}
 
 	//
-	// backend api assembly
+	// api assembly
 	//
 
 	const api = assembleApi({
@@ -66,24 +64,15 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	//
 
 	async function assembleFrontendForApp(appToken: string) {
-
-		const servelet = makeJsonHttpServelet(api)
-		const {shape, installAuthController} = prepareApiShape({appToken})
-		const systemRemote = loopbackJsonRemote<typeof api>({
-			shape,
-			servelet,
-			link: "http://localhost:5001/",
-		})
-		installAuthController(systemRemote.auth.loginService)
+		const remote = prepareMockRemote({api, appToken})
 
 		let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 			throw new Error("no mock login set")
 		}
 
 		const frontend = await assembleFrontend({
-			systemRemote,
+			remote,
 			storage,
-			appToken,
 			triggerAccountPopup: async() => triggerAccountPopupAction(),
 		})
 
@@ -93,7 +82,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 			},
 		}
 
-		return {frontend, frontHacks, systemRemote}
+		return {frontend, frontHacks, remote}
 	}
 
 	//

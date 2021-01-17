@@ -9,21 +9,19 @@ import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
-import {SystemRemote} from "./assembly-types.js"
+import {SystemRemote} from "./types/frontend/system-remote.js"
 
 export async function assembleFrontend({
+		remote,
 		storage,
-		appToken,
-		systemRemote,
 		triggerAccountPopup,
 	}: {
-		appToken: string
+		remote: SystemRemote
 		storage: SimpleStorage
-		systemRemote: SystemRemote
 		triggerAccountPopup: TriggerAccountPopup
 	}) {
 
-	const {auth} = systemRemote
+	const {auth} = remote
 
 	const tokenStore = makeTokenStore({
 		storage,

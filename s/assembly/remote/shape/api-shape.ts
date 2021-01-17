@@ -1,27 +1,14 @@
 
 import {asShape} from "renraku/x/identities/as-shape.js"
+import {Business} from "renraku/x/types/primitives/business.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
-import {SystemApi} from "./assembly-types.js"
-import {Business} from "renraku/x/types/primitives/business.js"
-import {loginTopic} from "../features/auth/topics/login-topic.js"
-import {AccessToken, AppToken} from "../features/auth/auth-types.js"
+import { SystemApi } from "../../SystemApi"
+import {makeAuthController} from "./auth-controller.js"
+import {AppToken} from "../../../features/auth/auth-types.js"
+import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
-export interface AuthController {
-	getAccessToken: () => Promise<AccessToken>
-	setAccessToken: (token: AccessToken) => void
-}
-
-export function makeAuthController(loginService: Business<ReturnType<typeof loginTopic>>) {
-	let accessToken: AccessToken
-	return {
-		getAccessToken: async() => {
-			// TODO implement auto token refreshing
-			return accessToken
-		},
-		setAccessToken: (token: AccessToken) => {accessToken = token},
-	}
-}
+import {AuthController} from "../../types/remote/shape/auth-controller.js"
 
 export function prepareApiShape({appToken}: {
 		appToken: AppToken
