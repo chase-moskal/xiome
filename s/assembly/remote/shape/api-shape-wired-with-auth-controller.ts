@@ -3,20 +3,20 @@ import {asShape} from "renraku/x/identities/as-shape.js"
 import {Business} from "renraku/x/types/primitives/business.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
-import {makeAuthController} from "./auth-controller.js"
-import {SimpleStorage} from "../../../toolbox/json-storage.js"
+import {makeAuthGoblin} from "./auth-goblin/auth-goblin.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
 import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
-import {AuthController} from "../../types/frontend/auth-controller.js"
+import {AuthGoblin} from "../../types/frontend/auth-goblin/auth-goblin.js"
+import {TokenStore2} from "../../types/frontend/auth-goblin/token-store2.js"
 
-export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
+export function prepareApiShapeWiredWithAuthController({appToken, tokenStore}: {
 		appToken: AppToken
-		storage: SimpleStorage
+		tokenStore: TokenStore2
 	}) {
 
-	let authController: AuthController
+	let authGoblin: AuthGoblin
 
 	const shape = asShape<SystemApi>({
 		auth: {
@@ -32,7 +32,7 @@ export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 				[_augment]: {
 					getMeta: async() => ({
 						appToken,
-						accessToken: await authController.getAccessToken(),
+						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
 				listApps: true,
@@ -46,7 +46,7 @@ export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 				[_augment]: {
 					getMeta: async() => ({
 						appToken,
-						accessToken: await authController.getAccessToken(),
+						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
 				setProfile: true,
@@ -55,7 +55,7 @@ export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 				[_augment]: {
 					getMeta: async() => ({
 						appToken,
-						accessToken: await authController.getAccessToken(),
+						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
 				getUser: true,
@@ -64,11 +64,11 @@ export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 	})
 
 	function installAuthController(loginService: Business<ReturnType<typeof loginTopic>>) {
-		authController = makeAuthController({
-			storage,
+		authGoblin = makeAuthGoblin({
+			tokenStore,
 			authorize: loginService.authorize,
 		})
-		return authController
+		return authGoblin
 	}
 
 	return {shape, installAuthController}

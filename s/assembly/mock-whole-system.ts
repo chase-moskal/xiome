@@ -2,16 +2,16 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-
+import {assembleApi} from "./assemble-api.js"
 import {getRando} from "../toolbox/get-rando.js"
+import {assembleFrontend} from "./assemble-frontend.js"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {dbbyMemory} from "../toolbox/dbby/dbby-memory.js"
-
-import {assembleApi} from "./assemble-api.js"
-import {assembleFrontend} from "./assemble-frontend.js"
 import {prepareMockRemote} from "./remote/mock-remote.js"
-import {SystemTables} from "./types/backend/system-tables.js"
+import {makeTokenStore2} from "./remote/shape/auth-goblin/token-store2.js"
 import {mockPlatformConfig} from "../features/auth/mocks/mock-platform-config.js"
+
+import {SystemTables} from "./types/backend/system-tables.js"
 import {AppPayload, AuthTokens, SendLoginEmail, TriggerAccountPopup} from "../features/auth/auth-types.js"
 
 export async function mockWholeSystem({storage, sendLoginEmail, generateNickname}: {
@@ -64,7 +64,8 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	//
 
 	async function assembleFrontendForApp(appToken: string) {
-		const {remote, authController} = prepareMockRemote({api, appToken, storage})
+		const tokenStore = makeTokenStore2({storage})
+		const {remote, authController} = prepareMockRemote({api, appToken, tokenStore})
 
 		let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 			throw new Error("no mock login set")

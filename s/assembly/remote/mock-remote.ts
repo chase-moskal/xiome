@@ -2,21 +2,21 @@
 import {loopbackJsonRemote} from "renraku/x/remote/loopback-json-remote.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {SimpleStorage} from "../../toolbox/json-storage.js"
 import {prepareApiShapeWiredWithAuthController} from "./shape/api-shape-wired-with-auth-controller.js"
 
 import {SystemApi} from "../types/backend/system-api.js"
 import {AppToken} from "../../features/auth/auth-types.js"
+import {TokenStore2} from "../types/frontend/auth-goblin/token-store2.js"
 
-export function prepareMockRemote({api, appToken, storage}: {
+export function prepareMockRemote({api, appToken, tokenStore}: {
 		api: SystemApi
 		appToken: AppToken
-		storage: SimpleStorage
+		tokenStore: TokenStore2
 	}) {
 
 	const {shape, installAuthController} = prepareApiShapeWiredWithAuthController({
-		storage,
 		appToken,
+		tokenStore,
 	})
 
 	const remote = loopbackJsonRemote<typeof api>({
