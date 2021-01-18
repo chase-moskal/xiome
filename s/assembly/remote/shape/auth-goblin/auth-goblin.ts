@@ -12,6 +12,11 @@ import {decodeAccessToken2} from "../../../../features/auth/tools/decode-access-
 import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
 
+type AuthResult = {
+	access: AccessPayload
+	accessToken: AccessToken
+}
+
 export function makeAuthGoblin({tokenStore, authorize}: {
 		tokenStore: ReturnType<typeof makeTokenStore2>
 		authorize: Business<ReturnType<typeof loginTopic>>["authorize"]
@@ -43,27 +48,41 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 		return {access, accessToken}
 	}
 
-	async function getAccessAndReauthorizeIfNecessary() {
-		const {accessToken, refreshToken} = await tokenStore.loadTokens()
-		let result: {access: AccessPayload; accessToken: AccessToken} = {
-			accessToken,
-			access: undefined,
-		}
-		if (isTokenValid(refreshToken)) {
-			if (!isTokenValid(accessToken)) {
-				result = await authorizeAndProcess(refreshToken)
+	let activeOperation: Promise<AuthResult>
+	async function getAccessAndReauthorizeIfNecessary(): Promise<AuthResult> {
+		const operation = async() => {
+			const {accessToken, refreshToken} = await tokenStore.loadTokens()
+			let result: AuthResult = {
+				accessToken,
+				access: undefined,
 			}
+			if (isTokenValid(refreshToken)) {
+				if (!isTokenValid(accessToken)) {
+					result = await authorizeAndProcess(refreshToken)
+				}
+			}
+			else {
+				await clearTokens()
+				result.accessToken = undefined
+			}
+			return result
 		}
+		if (activeOperation) return await activeOperation
 		else {
-			await clearTokens()
-			result.accessToken = undefined
+			activeOperation = operation()
+			const result = await activeOperation
+			activeOperation = undefined
+			return result
 		}
-		return result
+
 	}
 
 	return {
-		clearTokens,
+		clearAuth: clearTokens,
 		onAccess: accessEvent.subscribe,
+		async authenticate(tokens: AuthTokens) {
+			await saveTokensAndFireEvents(tokens)
+		},
 		async reauthorize(): Promise<AccessPayload> {
 			const {refreshToken} = await tokenStore.loadTokens()
 			if (!refreshToken) throw new Error("missing refresh token")

@@ -4,24 +4,25 @@ import {autorun} from "mobx"
 import {SimpleStorage} from "../toolbox/json-storage.js"
 import {AppModel} from "../features/auth/models/app-model.js"
 import {makeTokenStore} from "../features/auth/token-store.js"
-import {AuthModel} from "../features/auth/models/auth-model.js"
+// import {AuthModel} from "../features/auth/models/auth-model.js"
 import {TriggerAccountPopup} from "../features/auth/auth-types.js"
+import {makeAuthModel2} from "../features/auth/models/auth-model2.js"
 import {PersonalModel} from "../features/auth/models/personal-model.js"
 import {decodeAccessToken} from "../features/auth/tools/decode-access-token.js"
 
 import {SystemRemote} from "./types/frontend/system-remote.js"
-import {AuthController} from "./types/frontend/auth-controller.js"
+import {AuthGoblin} from "./types/frontend/auth-goblin/auth-goblin.js"
 
 export async function assembleFrontend({
+		url,
 		remote,
-		storage,
-		authController,
-		triggerAccountPopup,
+		authGoblin,
+		// triggerAccountPopup,
 	}: {
+		url: string
 		remote: SystemRemote
-		storage: SimpleStorage
-		authController: AuthController
-		triggerAccountPopup: TriggerAccountPopup
+		authGoblin: AuthGoblin
+		// triggerAccountPopup: TriggerAccountPopup
 	}) {
 
 	// const {auth} = remote
@@ -31,33 +32,38 @@ export async function assembleFrontend({
 	// 	authorize: auth.loginService.authorize
 	// })
 
-	const authModel = new AuthModel({
-		tokenStore,
-		decodeAccessToken,
-		triggerAccountPopup,
+	const authModel = makeAuthModel2({
+		authGoblin,
+		loginService: remote.auth.loginService,
 	})
 
-	const personalModel = new PersonalModel({
-		getAuthApi,
-		reauthorize: authModel.reauthorize,
-	})
+	// const authModel = new AuthModel({
+	// 	tokenStore,
+	// 	decodeAccessToken,
+	// 	triggerAccountPopup,
+	// })
 
-	const appModel = new AppModel({
-		getAuthApi,
-		authModel,
-		decodeAccessToken,
-	})
+	// const personalModel = new PersonalModel({
+	// 	getAuthApi,
+	// 	reauthorize: authModel.reauthorize,
+	// })
 
-	autorun(() => {
-		const {authLoad} = authModel
-		personalModel.handleAuthLoad(authLoad)
-	})
+	// const appModel = new AppModel({
+	// 	getAuthApi,
+	// 	authModel,
+	// 	decodeAccessToken,
+	// })
+
+	// autorun(() => {
+	// 	const {authLoad} = authModel
+	// 	personalModel.handleAuthLoad(authLoad)
+	// })
 
 	return {
 		models: {
-			app: appModel,
 			authModel,
-			personal: personalModel,
+			// app: appModel,
+			// personal: personalModel,
 		},
 	}
 }

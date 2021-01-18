@@ -28,7 +28,6 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	const config = mockPlatformConfig({rando})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
-
 	const tables: SystemTables = {
 		auth: {
 			role: dbbyMemory(),
@@ -65,7 +64,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 
 	async function assembleFrontendForApp(appToken: string) {
 		const tokenStore = makeTokenStore2({storage})
-		const {remote, authController} = prepareMockRemote({api, appToken, tokenStore})
+		const {remote, authGoblin} = prepareMockRemote({api, appToken, tokenStore})
 
 		let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 			throw new Error("no mock login set")
@@ -79,9 +78,9 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 
 		const frontend = await assembleFrontend({
 			remote,
-			storage,
-			authController,
-			triggerAccountPopup: async() => triggerAccountPopupAction(),
+			authGoblin,
+			url: "http://localhost:5000/",
+			// triggerAccountPopup: async() => triggerAccountPopupAction(),
 		})
 
 		return {frontend, frontHacks, remote}

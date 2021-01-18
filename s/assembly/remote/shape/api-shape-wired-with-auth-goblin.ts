@@ -11,7 +11,7 @@ import {AppToken} from "../../../features/auth/auth-types.js"
 import {AuthGoblin} from "../../types/frontend/auth-goblin/auth-goblin.js"
 import {TokenStore2} from "../../types/frontend/auth-goblin/token-store2.js"
 
-export function prepareApiShapeWiredWithAuthController({appToken, tokenStore}: {
+export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 		appToken: AppToken
 		tokenStore: TokenStore2
 	}) {
@@ -63,7 +63,7 @@ export function prepareApiShapeWiredWithAuthController({appToken, tokenStore}: {
 		},
 	})
 
-	function installAuthController(loginService: Business<ReturnType<typeof loginTopic>>) {
+	function installAuthGoblin(loginService: Business<ReturnType<typeof loginTopic>>) {
 		authGoblin = makeAuthGoblin({
 			tokenStore,
 			authorize: loginService.authorize,
@@ -71,5 +71,5 @@ export function prepareApiShapeWiredWithAuthController({appToken, tokenStore}: {
 		return authGoblin
 	}
 
-	return {shape, installAuthController}
+	return {shape, installAuthGoblin}
 }
