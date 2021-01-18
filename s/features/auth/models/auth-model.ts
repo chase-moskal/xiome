@@ -4,23 +4,27 @@ import {observable, computed, action} from "mobx"
 import * as loading from "../../../toolbox/loading.js"
 import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
 import {isTokenTimingExpired} from "../tools/is-token-timing-expired.js"
-import {TokenStoreTopic, AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "../auth-types.js"
+import {AuthController} from "../../../assembly/types/frontend/auth-controller.js"
+import {AccessToken, DecodeAccessToken, TriggerAccountPopup, AuthContext, AuthPayload} from "../auth-types.js"
 
  @mixinModelMobx
 export class AuthModel {
-	private readonly tokenStore: TokenStoreTopic
-	private readonly decodeAccessToken: DecodeAccessToken
+	// private readonly tokenStore: TokenStoreTopic
+	// private readonly decodeAccessToken: DecodeAccessToken
+	private readonly authController: AuthController
 	private readonly triggerAccountPopup: TriggerAccountPopup
 
 	private authContext: AuthContext
 
 	constructor(options: {
-				tokenStore: TokenStoreTopic
-				decodeAccessToken: DecodeAccessToken
+				// tokenStore: TokenStoreTopic
+				// decodeAccessToken: DecodeAccessToken
+				authController: AuthController
 				triggerAccountPopup: TriggerAccountPopup
 			}) {
-		this.tokenStore = options.tokenStore
-		this.decodeAccessToken = options.decodeAccessToken
+		// this.tokenStore = options.tokenStore
+		// this.decodeAccessToken = options.decodeAccessToken
+		this.authController = options.authController
 		this.triggerAccountPopup = options.triggerAccountPopup
 	}
 
@@ -38,7 +42,7 @@ export class AuthModel {
 	async useExistingLogin() {
 		this.setLoading()
 		try {
-			const accessToken = await this.tokenStore.passiveCheck()
+			const accessToken = await this.authController.getAccessToken()
 			if (accessToken) {
 				const detail = this.processAccessToken(accessToken)
 				this.setLoggedIn(detail)

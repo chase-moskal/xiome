@@ -24,12 +24,12 @@ export async function assembleFrontend({
 		triggerAccountPopup: TriggerAccountPopup
 	}) {
 
-	const {auth} = remote
+	// const {auth} = remote
 
-	const tokenStore = makeTokenStore({
-		storage,
-		authorize: auth.loginService.authorize
-	})
+	// const tokenStore = makeTokenStore({
+	// 	storage,
+	// 	authorize: auth.loginService.authorize
+	// })
 
 	const authModel = new AuthModel({
 		tokenStore,

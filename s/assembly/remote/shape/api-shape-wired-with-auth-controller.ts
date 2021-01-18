@@ -9,13 +9,14 @@ import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
 import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
+import {AuthController} from "../../types/frontend/auth-controller.js"
 
 export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 		appToken: AppToken
 		storage: SimpleStorage
 	}) {
 
-	let authController: ReturnType<typeof makeAuthController>
+	let authController: AuthController
 
 	const shape = asShape<SystemApi>({
 		auth: {

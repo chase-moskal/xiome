@@ -4,10 +4,16 @@ import {Business} from "renraku/x/types/primitives/business.js"
 import {pubsub} from "../../../toolbox/pubsub.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 import {isTokenValid} from "../../../features/auth/tools/is-token-valid.js"
-import {AccessToken, AuthTokens} from "../../../features/auth/auth-types.js"
 import {makeJsonStorage, SimpleStorage} from "../../../toolbox/json-storage.js"
+import {decodeAccessToken2} from "../../../features/auth/tools/decode-access-token2.js"
+import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../features/auth/auth-types.js"
 
 const tokenStorageKey = "tokenStorage"
+
+const getEmptyTokens = (): AuthTokens => ({
+	accessToken: undefined,
+	refreshToken: undefined,
+})
 
 export function makeAuthController({storage, authorize}: {
 		storage: SimpleStorage
@@ -15,48 +21,75 @@ export function makeAuthController({storage, authorize}: {
 	}) {
 
 	const store = makeJsonStorage(storage)
-	const accessTokenEvent = pubsub<(accessToken: AccessToken) => void | Promise<void>>()
 
-	async function saveTokens(tokens: AuthTokens) {
+	const accessEvent = pubsub<
+		(access: AccessPayload | undefined) => void | Promise<void>
+	>()
+
+	function saveTokens(tokens: AuthTokens) {
 		store.write(tokenStorageKey, tokens)
-		await accessTokenEvent.publish(tokens.accessToken)
 	}
 
-	async function loadTokens(): Promise<AuthTokens> {
-		let tokens: AuthTokens = {accessToken: undefined, refreshToken: undefined}
+	function loadTokens() {
+		let tokens: AuthTokens = getEmptyTokens()
 		try {
 			tokens = store.read(tokenStorageKey)
 		} catch (e) {
 			console.warn(`ignored corrupted "${tokenStorageKey}"`)
 		}
-		return tokens
+		return tokens || getEmptyTokens()
+	}
+
+	async function processAccessToken(
+			accessToken: AccessToken | undefined
+		): Promise<AccessPayload | undefined> {
+		let access: AccessPayload
+		if (accessToken) {
+			access = decodeAccessToken2(accessToken)
+			await accessEvent.publish(access)
+		}
+		return access
+	}
+
+	async function clearAuth() {
+		saveTokens(getEmptyTokens())
+		await processAccessToken(undefined)
+	}
+
+	async function refreshAuth(
+			refreshToken: RefreshToken
+		): Promise<AccessPayload> {
+		const accessToken = await authorize({
+			refreshToken,
+			scope: {core: true},
+		})
+		saveTokens({accessToken, refreshToken})
+		return processAccessToken(accessToken)
 	}
 
 	return {
-		subscribeToAccessTokenChange: accessTokenEvent.subscribe,
+		clearAuth,
 
-		async clearTokens() {
-			const accessToken = undefined
-			saveTokens({accessToken, refreshToken: undefined})
-		},
+		subscribeToAccessChange: accessEvent.subscribe,
 
-		async getAccessToken() {
-			const {accessToken, refreshToken} = await loadTokens()
+		async getAccess(): Promise<AccessPayload | undefined> {
+			let access: AccessPayload
+			const {accessToken, refreshToken} = loadTokens()
 			if (isTokenValid(refreshToken)) {
 				if (!isTokenValid(accessToken)) {
-					saveTokens({
-						refreshToken,
-						accessToken: await authorize({
-							refreshToken,
-							scope: {core: true},
-						}),
-					})
+					access = await refreshAuth(refreshToken)
 				}
 			}
 			else {
-				saveTokens({refreshToken: undefined, accessToken: undefined})
+				await clearAuth()
 			}
-			return accessToken
+			return access
+		},
+
+		async reauthorize(): Promise<AccessPayload> {
+			const {refreshToken} = loadTokens()
+			if (!refreshToken) throw new Error("missing refresh token")
+			return refreshAuth(refreshToken)
 		},
 	}
 }
