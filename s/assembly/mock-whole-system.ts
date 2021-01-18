@@ -64,17 +64,16 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	//
 
 	async function assembleFrontendForApp(appToken: string) {
-		const {remote, authController} = prepareMockRemote({api, appToken})
-
-		// // TODO merge auth controller and token storage?
-		// const {remote, authController, tokenStore} = prepareMockRemote2({
-		// 	api,
-		// 	storage,
-		// 	appToken,
-		// })
+		const {remote, authController} = prepareMockRemote({api, appToken, storage})
 
 		let triggerAccountPopupAction: TriggerAccountPopup = async() => {
 			throw new Error("no mock login set")
+		}
+
+		const frontHacks = {
+			setNextLogin(auth: () => Promise<AuthTokens>) {
+				triggerAccountPopupAction = async() => auth()
+			},
 		}
 
 		const frontend = await assembleFrontend({
@@ -83,12 +82,6 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 			authController,
 			triggerAccountPopup: async() => triggerAccountPopupAction(),
 		})
-
-		const frontHacks = {
-			setNextLogin(auth: () => Promise<AuthTokens>) {
-				triggerAccountPopupAction = async() => auth()
-			},
-		}
 
 		return {frontend, frontHacks, remote}
 	}

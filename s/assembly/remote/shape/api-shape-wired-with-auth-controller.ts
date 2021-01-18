@@ -4,17 +4,18 @@ import {Business} from "renraku/x/types/primitives/business.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {makeAuthController} from "./auth-controller.js"
-import {SystemApi} from "../../types/backend/system-api.js"
-import {AppToken} from "../../../features/auth/auth-types.js"
+import {SimpleStorage} from "../../../toolbox/json-storage.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
-import {AuthController} from "../../types/frontend/auth-controller.js"
+import {SystemApi} from "../../types/backend/system-api.js"
+import {AppToken} from "../../../features/auth/auth-types.js"
 
-export function prepareApiShapeWiredWithAuthController({appToken}: {
+export function prepareApiShapeWiredWithAuthController({appToken, storage}: {
 		appToken: AppToken
+		storage: SimpleStorage
 	}) {
 
-	let authController: AuthController
+	let authController: ReturnType<typeof makeAuthController>
 
 	const shape = asShape<SystemApi>({
 		auth: {
@@ -62,7 +63,10 @@ export function prepareApiShapeWiredWithAuthController({appToken}: {
 	})
 
 	function installAuthController(loginService: Business<ReturnType<typeof loginTopic>>) {
-		authController = makeAuthController(loginService)
+		authController = makeAuthController({
+			storage,
+			authorize: loginService.authorize,
+		})
 		return authController
 	}
 
