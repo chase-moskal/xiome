@@ -70,8 +70,10 @@ export function makeAuthModel2({authGoblin, loginService}: {
 		}
 
 		async reauthorize() {
-			await authGoblin.reauthorize()
-			try { state.setAccess(await authGoblin.getAccess()) }
+			try {
+				await authGoblin.reauthorize()
+				state.setAccess(await authGoblin.getAccess())
+			}
 			catch (error) { state.setError(error) }
 		}
 	}
