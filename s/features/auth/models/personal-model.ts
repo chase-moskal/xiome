@@ -1,76 +1,66 @@
 
-import {observable, action} from "mobx"
-
+import {mobxify} from "../../../framework/mobxify.js"
 import * as loading from "../../../toolbox/loading.js"
-import {mixinModelMobx} from "../../../framework/mixin-model-mobx.js"
-import {Personal, PersonalModelOptions} from "./types/personal-model-types.js"
-import {Profile, GetAuthContext, AuthPayload} from "../auth-types.js"
+import {personalTopic} from "../topics/personal-topic.js"
 
- @mixinModelMobx
-export class PersonalModel {
-	@observable personalLoad: loading.Load<Personal> = loading.none()
+import {Service} from "../../../types/service.js"
+import {Personal} from "./types/personal-model-types.js"
+import {Profile, AccessPayload} from "../auth-types.js"
 
-	#options: PersonalModelOptions
-	#getAuthContext: GetAuthContext
+export function makePersonalModel({personalService, getAccess, reauthorize}: {
+		reauthorize: () => Promise<void>
+		getAccess: () => Promise<AccessPayload>
+		personalService: Service<typeof personalTopic>
+	}) {
+	return mobxify(new class {
 
-	constructor(options: PersonalModelOptions) {
-		this.#options = options
-	}
+		personalLoad = loading.load<Personal>()
 
-	 @action.bound
-	private setPersonalLoad(personalLoad: loading.Load<Personal>) {
-		this.personalLoad = personalLoad
-	}
+		setPersonalLoad(load: loading.Load<Personal>) {
+			this.personalLoad = load
+		}
 
-	 @action.bound
-	async handleAuthLoad(authLoad: loading.Load<AuthPayload>) {
-		this.setPersonalLoad(loading.select<AuthPayload, loading.Load<Personal>>(authLoad, {
-			none: () => loading.none(),
-			loading: () => loading.loading(),
-			error: reason => loading.error(reason),
-			ready: ({user}) => !!user
-				? loading.loading()
-				: loading.none(),
-		}))
+		acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
+			this.setPersonalLoad(
+				loading.select<AccessPayload, loading.Load<Personal>>(accessLoad, {
+					none: () => loading.none(),
+					loading: () => loading.loading(),
+					error: reason => loading.error(reason),
+					ready: ({user}) => !!user
+						? loading.loading()
+						: loading.none()
+				})
+			)
+			const user = loading.payload(accessLoad)?.user
+			if (user) {
+				try {
+					// TODO get settings
+					const settings = undefined
+					this.setPersonalLoad(loading.ready({user, settings}))
+				}
+				catch (error) {
+					this.setPersonalLoad(loading.error("error loading personal details"))
+					console.error(error)
+				}
+			}
+		}
 
-		const {user, getAuthContext} = loading.payload(authLoad) || {}
-		this.#getAuthContext = getAuthContext
-		const loggedIn = !!user
-		if (loggedIn) {
+		async saveProfile(draft: Profile): Promise<void> {
+			this.setPersonalLoad(loading.loading())
 			try {
-				const {accessToken} = await getAuthContext()
-
-				// TODO implement settings
-				const settings = undefined
-				// const settings = await this.settingsOperations.run(
-				// 	this.settingsSheriff.fetchSettings({accessToken})
-				// )
-
-				this.setPersonalLoad(loading.ready({
-					user,
-					settings,
-				}))
+				const access = await getAccess()
+				if (!access) throw new Error("must be logged in")
+				const {user} = access
+				await personalService.setProfile({
+					userId: user.userId,
+					profile: draft,
+				})
+				await reauthorize()
 			}
 			catch (error) {
-				this.setPersonalLoad(loading.error("failed to load settings"))
-				console.error(error)
+				this.setPersonalLoad(loading.error("failed to save profile"))
+				throw error
 			}
 		}
-	}
-
-	 @action.bound
-	async saveProfile(draft: Profile): Promise<void> {
-		this.setPersonalLoad(loading.loading())
-		try {
-			if (!this.#getAuthContext) throw new Error("not logged in")
-			const {accessToken, user} = await this.#getAuthContext()
-			const authApi = this.#options.getAuthApi(accessToken)
-			await authApi.personalTopic.setProfile({userId: user.userId, profile: draft})
-			await this.#options.reauthorize()
-		}
-		catch (error) {
-			this.setPersonalLoad(loading.error("failed to save profile"))
-			throw error
-		}
-	}
+	})
 }
