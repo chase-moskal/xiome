@@ -35,7 +35,7 @@ export function makeAuthModel2({authGoblin, loginService}: {
 	})
 
 	return new class {
-		get accessLoad() {
+		getAccessLoad() {
 			return state.accessLoad
 		}
 
