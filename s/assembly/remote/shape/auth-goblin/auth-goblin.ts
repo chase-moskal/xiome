@@ -5,18 +5,13 @@ import {Business} from "renraku/x/types/primitives/business.js"
 import {emptyTokens} from "./empty-tokens.js"
 import {makeTokenStore2} from "./token-store2.js"
 import {pubsub} from "../../../../toolbox/pubsub.js"
+import {onesie} from "../../../../toolbox/onesie.js"
 import {loginTopic} from "../../../../features/auth/topics/login-topic.js"
 import {isTokenValid} from "../../../../features/auth/tools/is-token-valid.js"
 import {decodeAccessToken2} from "../../../../features/auth/tools/decode-access-token2.js"
 
 import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
-import { onesie } from "../../../../toolbox/onesie.js"
-
-type AuthResult = {
-	access: AccessPayload
-	accessToken: AccessToken
-}
 
 export function makeAuthGoblin({tokenStore, authorize}: {
 		tokenStore: ReturnType<typeof makeTokenStore2>
@@ -51,7 +46,7 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 
 	const getAccessAndReauthorizeIfNecessary = onesie(async() => {
 		const {accessToken, refreshToken} = await tokenStore.loadTokens()
-		let result: AuthResult = {
+		let result: {access: AccessPayload; accessToken: AccessToken} = {
 			accessToken,
 			access: undefined,
 		}
