@@ -11,6 +11,7 @@ import {decodeAccessToken2} from "../../../../features/auth/tools/decode-access-
 
 import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
+import { onesie } from "../../../../toolbox/onesie.js"
 
 type AuthResult = {
 	access: AccessPayload
@@ -48,34 +49,23 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 		return {access, accessToken}
 	}
 
-	let activeOperation: Promise<AuthResult>
-	async function getAccessAndReauthorizeIfNecessary(): Promise<AuthResult> {
-		const operation = async() => {
-			const {accessToken, refreshToken} = await tokenStore.loadTokens()
-			let result: AuthResult = {
-				accessToken,
-				access: undefined,
-			}
-			if (isTokenValid(refreshToken)) {
-				if (!isTokenValid(accessToken)) {
-					result = await authorizeAndProcess(refreshToken)
-				}
-			}
-			else {
-				await clearTokens()
-				result.accessToken = undefined
-			}
-			return result
+	const getAccessAndReauthorizeIfNecessary = onesie(async() => {
+		const {accessToken, refreshToken} = await tokenStore.loadTokens()
+		let result: AuthResult = {
+			accessToken,
+			access: undefined,
 		}
-		if (activeOperation) return await activeOperation
+		if (isTokenValid(refreshToken)) {
+			if (!isTokenValid(accessToken)) {
+				result = await authorizeAndProcess(refreshToken)
+			}
+		}
 		else {
-			activeOperation = operation()
-			const result = await activeOperation
-			activeOperation = undefined
-			return result
+			await clearTokens()
+			result.accessToken = undefined
 		}
-
-	}
+		return result
+	})
 
 	return {
 		clearAuth: clearTokens,
