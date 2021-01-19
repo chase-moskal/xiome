@@ -1,11 +1,11 @@
 
 import {asShape} from "renraku/x/identities/as-shape.js"
-import {Business} from "renraku/x/types/primitives/business.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {makeAuthGoblin} from "./auth-goblin/auth-goblin.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 
+import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
 import {AuthGoblin} from "../../types/frontend/auth-goblin/auth-goblin.js"
@@ -63,7 +63,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 		},
 	})
 
-	function installAuthGoblin(loginService: Business<ReturnType<typeof loginTopic>>) {
+	function installAuthGoblin(loginService: Service<typeof loginTopic>) {
 		authGoblin = makeAuthGoblin({
 			tokenStore,
 			authorize: loginService.authorize,

@@ -91,6 +91,7 @@ export async function mockWholeSystem({storage, sendLoginEmail, generateNickname
 	//
 
 	return {
+		api,
 		config,
 		tables,
 		assembleFrontendForApp,

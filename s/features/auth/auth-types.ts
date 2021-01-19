@@ -1,11 +1,9 @@
 
 import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 
-import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
-import { Rando } from "../../toolbox/get-rando.js"
-
 import {makeAuthApi} from "./auth-api.js"
-import {makeTokenStore} from "./token-store.js"
+import {Rando} from "../../toolbox/get-rando.js"
+import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 
 export * from "redcrypto/dist/types.js"
 
@@ -115,11 +113,10 @@ export interface LoginEmailDetails {
 export type SendEmail = ({}: EmailDetails) => Promise<void>
 export type SendLoginEmail = ({}: LoginEmailDetails) => Promise<void>
 
-// api topics
+// api
 //
 
 export type AuthApi = ReturnType<typeof makeAuthApi>
-export type TokenStoreTopic = ReturnType<typeof makeTokenStore>
 
 // auth types
 //

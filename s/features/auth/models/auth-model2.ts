@@ -1,19 +1,18 @@
 
-import {makeAutoObservable} from "mobx"
-import {Business} from "renraku/x/types/primitives/business.js"
-
 import {loginTopic} from "../topics/login-topic.js"
+import {mobxify} from "../../../framework/mobxify.js"
 import * as loading from "../../../toolbox/loading.js"
 
+import {Service} from "../../../types/service.js"
 import {AccessPayload, LoginToken} from "../auth-types.js"
 import {AuthGoblin} from "../../../assembly/types/frontend/auth-goblin/auth-goblin.js"
 
 export function makeAuthModel2({authGoblin, loginService}: {
 		authGoblin: AuthGoblin
-		loginService: Business<ReturnType<typeof loginTopic>>
+		loginService: Service<typeof loginTopic>
 	}) {
 
-	const state = makeAutoObservable(new class {
+	const state = mobxify(new class {
 		accessLoad = loading.load<AccessPayload>()
 
 		setError(error: Error) {

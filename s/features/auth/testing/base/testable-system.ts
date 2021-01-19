@@ -22,14 +22,16 @@ export async function testableSystem() {
 				appToken: string
 			}) {
 
-		const {frontend, frontHacks} = await system.assembleFrontendForApp(appToken)
-		const {loginTopic} = system.backend.authApi
+		const {frontend, frontHacks, remote} =
+			await system.assembleFrontendForApp(appToken)
+
+		const {loginService} = remote.auth
 
 		frontHacks.setNextLogin(async() => {
 			const {promise} = remoteNextLoginEmail
-			await loginTopic.sendLoginLink({appToken}, {email})
+			await loginService.sendLoginLink({email})
 			const {loginToken} = await promise
-			return loginTopic.authenticateViaLoginToken({appToken}, {loginToken})
+			return loginService.authenticateViaLoginToken({loginToken})
 		})
 
 		return {frontend, frontHacks}

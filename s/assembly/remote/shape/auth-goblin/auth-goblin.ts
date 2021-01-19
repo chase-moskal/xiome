@@ -1,7 +1,4 @@
 
-
-import {Business} from "renraku/x/types/primitives/business.js"
-
 import {emptyTokens} from "./empty-tokens.js"
 import {makeTokenStore2} from "./token-store2.js"
 import {pubsub} from "../../../../toolbox/pubsub.js"
@@ -10,12 +7,13 @@ import {loginTopic} from "../../../../features/auth/topics/login-topic.js"
 import {isTokenValid} from "../../../../features/auth/tools/is-token-valid.js"
 import {decodeAccessToken2} from "../../../../features/auth/tools/decode-access-token2.js"
 
+import {Service} from "../../../../types/service.js"
 import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
 
 export function makeAuthGoblin({tokenStore, authorize}: {
 		tokenStore: ReturnType<typeof makeTokenStore2>
-		authorize: Business<ReturnType<typeof loginTopic>>["authorize"]
+		authorize: Service<typeof loginTopic>["authorize"]
 	}) {
 
 	const accessEvent = pubsub<AccessEventListener>()

@@ -1,14 +1,13 @@
 
-import {Business} from "renraku/x/types/primitives/business.js"
-
 import {appTopic} from "../topics/app-topic.js"
 import {mobxify} from "../../../framework/mobxify.js"
 
+import {Service} from "../../../types/service.js"
 import {AccessPayload, AppDraft, AppPayload} from "../auth-types.js"
 
-export function makeAppModel({getAccess, appService}: {
+export function makeAppModel({appService, getAccess}: {
+		appService: Service<typeof appTopic>
 		getAccess: () => Promise<AccessPayload>
-		appService: Business<ReturnType<typeof appTopic>>
 	}) {
 
 	return mobxify(new class {
