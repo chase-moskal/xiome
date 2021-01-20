@@ -11,7 +11,7 @@ export interface JsonStorage {
 	delete(key: string): void
 }
 
-export function tempStorage(): SimpleStorage {
+export function memoryStorage(): SimpleStorage {
 	const data: {[key: string]: string} = {}
 	return {
 		getItem(key: string) {

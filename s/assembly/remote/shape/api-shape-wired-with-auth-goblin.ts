@@ -4,6 +4,7 @@ import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {makeAuthGoblin} from "./auth-goblin/auth-goblin.js"
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
+import {decodeAppToken} from "../../../features/auth/tools/decode-app-token.js"
 
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../types/backend/system-api.js"
@@ -17,6 +18,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 	}) {
 
 	let authGoblin: AuthGoblin
+	const {appId} = decodeAppToken(appToken)
 
 	const shape = asShape<SystemApi>({
 		auth: {
@@ -65,6 +67,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 
 	function installAuthGoblin(loginService: Service<typeof loginTopic>) {
 		authGoblin = makeAuthGoblin({
+			appId,
 			tokenStore,
 			authorize: loginService.authorize,
 		})

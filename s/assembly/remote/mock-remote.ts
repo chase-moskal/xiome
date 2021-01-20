@@ -8,8 +8,14 @@ import {SystemApi} from "../types/backend/system-api.js"
 import {AppToken} from "../../features/auth/auth-types.js"
 import {TokenStore2} from "../types/frontend/auth-goblin/token-store2.js"
 
-export function prepareMockRemote({api, appToken, tokenStore}: {
+export function prepareMockRemote({
+		api,
+		apiLink,
+		appToken,
+		tokenStore,
+	}: {
 		api: SystemApi
+		apiLink: string
 		appToken: AppToken
 		tokenStore: TokenStore2
 	}) {
@@ -21,7 +27,7 @@ export function prepareMockRemote({api, appToken, tokenStore}: {
 
 	const remote = loopbackJsonRemote<typeof api>({
 		shape,
-		link: "http://localhost:5001/",
+		link: apiLink,
 		servelet: makeJsonHttpServelet(api),
 	})
 

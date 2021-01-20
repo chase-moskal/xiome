@@ -39,6 +39,14 @@ export async function assembleFrontend({
 		appService: remote.auth.appService,
 	})
 
+	{
+		const {searchParams} = new URL(url)
+		const loginToken = searchParams.get("login")
+		if (loginToken) {
+			await authModel.login(loginToken)
+		}
+	}
+
 	autorun(() => {
 		const accessLoad = getAccessLoad()
 		personalModel.acceptAccessLoad(accessLoad)

@@ -11,7 +11,8 @@ import {Service} from "../../../../types/service.js"
 import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
 
-export function makeAuthGoblin({tokenStore, authorize}: {
+export function makeAuthGoblin({appId, tokenStore, authorize}: {
+		appId: string
 		tokenStore: ReturnType<typeof makeTokenStore2>
 		authorize: Service<typeof loginTopic>["authorize"]
 	}) {
@@ -19,12 +20,11 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 	const accessEvent = pubsub<AccessEventListener>()
 
 	async function saveTokensAndFireEvents(tokens: AuthTokens) {
-		await tokenStore.saveTokens(tokens)
-		let access: AccessPayload
-		if (tokens.accessToken) {
-			access = decodeAccessToken2(tokens.accessToken)
-			await accessEvent.publish(access)
-		}
+		await tokenStore.saveTokens(appId, tokens)
+		const access: AccessPayload = tokens.accessToken
+			? decodeAccessToken2(tokens.accessToken)
+			: undefined
+		await accessEvent.publish(access)
 		return access
 	}
 
@@ -43,7 +43,7 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 	}
 
 	const getAccessAndReauthorizeIfNecessary = onesie(async() => {
-		const {accessToken, refreshToken} = await tokenStore.loadTokens()
+		const {accessToken, refreshToken} = await tokenStore.loadTokens(appId)
 		let result: {access: AccessPayload; accessToken: AccessToken} = {
 			accessToken,
 			access: undefined,
@@ -63,11 +63,15 @@ export function makeAuthGoblin({tokenStore, authorize}: {
 	return {
 		clearAuth: clearTokens,
 		onAccess: accessEvent.subscribe,
+		async refreshFromStorage() {
+			const {access} = await getAccessAndReauthorizeIfNecessary()
+			await accessEvent.publish(access)
+		},
 		async authenticate(tokens: AuthTokens) {
 			await saveTokensAndFireEvents(tokens)
 		},
 		async reauthorize(): Promise<AccessPayload> {
-			const {refreshToken} = await tokenStore.loadTokens()
+			const {refreshToken} = await tokenStore.loadTokens(appId)
 			if (!refreshToken) throw new Error("missing refresh token")
 			return (await authorizeAndProcess(refreshToken)).access
 		},
