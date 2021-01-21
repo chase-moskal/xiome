@@ -1,10 +1,12 @@
 
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
+
 import {getRando} from "../../toolbox/get-rando.js"
-import {SystemTables} from "../types/backend/system-tables.js"
 import {dbbyMemory} from "../../toolbox/dbby/dbby-memory.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
+
+import {SystemTables} from "../types/backend/system-tables.js"
 
 export async function mockPrerequisites() {
 	const rando = await getRando()

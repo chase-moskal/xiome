@@ -29,7 +29,7 @@ export async function mockWholeSystem({sendLoginEmail}: {
 		generateNickname,
 	})
 
-	const fakeBrowser = prepareMockBrowser({api})
+	const mockBrowser = prepareMockBrowser({api})
 
 	const platformAppToken = await signToken<AppPayload>({
 		payload: config.platform.app,
@@ -40,12 +40,7 @@ export async function mockWholeSystem({sendLoginEmail}: {
 		api,
 		config,
 		tables,
-		fakeBrowser,
+		mockBrowser,
 		platformAppToken,
-		// hacks: {
-		// 	async signAppToken(payload: AppPayload) {
-		// 		return signToken({payload, lifespan: config.tokens.lifespans.app})
-		// 	},
-		// },
 	}
 }

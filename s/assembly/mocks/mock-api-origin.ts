@@ -11,7 +11,7 @@ export function mockApiOrigin() {
 
 	let iframeCount = 0
 
-	function fakeTokenIframe() {
+	function mockTokenIframe() {
 		const iframeId = iframeCount++
 		const tokenStore = makeTokenStore2({
 			storage,
@@ -27,5 +27,5 @@ export function mockApiOrigin() {
 		}
 	}
 
-	return {fakeTokenIframe}
+	return {mockTokenIframe}
 }

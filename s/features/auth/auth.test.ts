@@ -1,72 +1,10 @@
 
-import {Suite, assert} from "cynic"
-
-import {LoginEmailDetails} from "./auth-types.js"
-import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
-import { Await } from "../../types/fancy.js"
-
-// import {creativeSystem} from "./testing/creative-system.js"
-// import {technicianSystem} from "./testing/technician-system.js"
-// import {PrimedTestableSystem} from "./testing/auth-testing-types.js"
-
-const apiLink = "https://api.xiom.app/"
-const platformLink = "https://xiom.app/"
+import {Suite} from "cynic"
+import technician from "./tests/technician.js"
 
 export default <Suite>{
 	"stories": {
-		"technician": {
-			"sign up, login, and logout": async() => {
-				let recentLoginEmail: LoginEmailDetails
-				const system = await mockWholeSystem({
-					sendLoginEmail: async details => {
-						recentLoginEmail = details
-					},
-				})
-				const browser = await system.fakeBrowser()
-				const grabAccess = (window: Await<ReturnType<typeof browser.mockAppWindow>>) =>
-					window.frontend.authModel.getAccess()
-
-				// technician signup
-				const windowA = await browser.mockAppWindow({
-					apiLink,
-					windowLink: platformLink,
-					appToken: system.platformAppToken,
-				})
-				await windowA.frontend.authModel.sendLoginLink(
-					system.config.platform.technician.email
-				)
-				assert(
-					await grabAccess(windowA) === undefined,
-					"windowA should start logged out"
-				)
-
-				// technician login
-				const windowB = await browser.mockAppWindow({
-					apiLink,
-					appToken: system.platformAppToken,
-					windowLink: `${platformLink}?login=${recentLoginEmail.loginToken}`,
-				})
-				assert(
-					(await grabAccess(windowB)).user,
-					"windowB should now be logged in"
-				)
-				assert(
-					(await grabAccess(windowA)).user,
-					"windowA should also be logged in"
-				)
-
-				// technician logout
-				await windowB.frontend.authModel.logout()
-				assert(
-					await grabAccess(windowA) === undefined
-						&& await grabAccess(windowB) === undefined,
-					"both windows should be logged out"
-				)
-			},
-			"login to *any* app": true,
-			"view platform stats": true,
-			"procotol zero: roll platform secrets": true,
-		},
+		technician,
 		"creative": {
 			// "common tests for creative on platform": commonTests(creativeSystem),
 			// "register an app": async() => {

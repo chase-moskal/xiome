@@ -8,7 +8,7 @@ import {AppToken} from "../../features/auth/auth-types.js"
 
 export function prepareMockBrowser({api}: {api: SystemApi}) {
 	return async function mockBrowser() {
-		const {fakeTokenIframe} = mockApiOrigin()
+		const {mockTokenIframe} = mockApiOrigin()
 
 		async function mockAppWindow({
 			apiLink,
@@ -19,7 +19,7 @@ export function prepareMockBrowser({api}: {api: SystemApi}) {
 			windowLink: string
 			appToken: AppToken
 		}) {
-			const {tokenStore, onStorageEvent} = fakeTokenIframe()
+			const {tokenStore, onStorageEvent} = mockTokenIframe()
 			const {remote, authGoblin} = prepareMockRemote({
 				api,
 				apiLink,
