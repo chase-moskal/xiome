@@ -1,7 +1,7 @@
 
 import {emptyTokens} from "./empty-tokens.js"
-import {AuthTokens} from "../../../../features/auth/auth-types.js"
-import {makeJsonStorage, SimpleStorage} from "../../../../toolbox/json-storage.js"
+import {AuthTokens} from "../auth-types.js"
+import {makeJsonStorage, SimpleStorage} from "../../../toolbox/json-storage.js"
 
 function getStorageKey(appId: string) {
 	return `tokenStore-${appId}`

@@ -7,7 +7,7 @@ import {makePersonalModel} from "../features/auth/models/personal-model.js"
 import {loginWithTokenFromLink} from "./frontend/login-with-token-from-link.js"
 
 import {SystemRemote} from "./types/frontend/system-remote.js"
-import {AuthGoblin} from "./types/frontend/auth-goblin/auth-goblin.js"
+import {AuthGoblin} from "../features/auth/types/goblin/auth-goblin.js"
 
 export async function assembleFrontend({
 		link,

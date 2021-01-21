@@ -1,6 +1,6 @@
 
 import {assembleApi} from "./assemble-api.js"
-import {prepareMockBrowser} from "./mocks/mock-browser.js"
+import {mockBrowser} from "./mocks/mock-browser.js"
 import {mockPrerequisites} from "./mocks/mock-prerequisites.js"
 
 import {AppPayload, SendLoginEmail} from "../features/auth/auth-types.js"
@@ -29,8 +29,6 @@ export async function mockWholeSystem({sendLoginEmail}: {
 		generateNickname,
 	})
 
-	const mockBrowser = prepareMockBrowser({api})
-
 	const platformAppToken = await signToken<AppPayload>({
 		payload: config.platform.app,
 		lifespan: 365 * (1000 * 60 * 60 * 24),
@@ -40,7 +38,7 @@ export async function mockWholeSystem({sendLoginEmail}: {
 		api,
 		config,
 		tables,
-		mockBrowser,
 		platformAppToken,
+		mockBrowser: async() => mockBrowser({api}),
 	}
 }

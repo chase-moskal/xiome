@@ -1,15 +1,15 @@
 
 import {emptyTokens} from "./empty-tokens.js"
 import {makeTokenStore2} from "./token-store2.js"
-import {pubsub} from "../../../../toolbox/pubsub.js"
-import {onesie} from "../../../../toolbox/onesie.js"
-import {loginTopic} from "../../../../features/auth/topics/login-topic.js"
-import {isTokenValid} from "../../../../features/auth/tools/is-token-valid.js"
-import {decodeAccessToken2} from "../../../../features/auth/tools/decode-access-token2.js"
+import {pubsub} from "../../../toolbox/pubsub.js"
+import {onesie} from "../../../toolbox/onesie.js"
+import {loginTopic} from "../topics/login-topic.js"
+import {isTokenValid} from "../tools/is-token-valid.js"
+import {decodeAccessToken2} from "../tools/decode-access-token2.js"
 
-import {Service} from "../../../../types/service.js"
-import {AccessEventListener} from "../../../types/frontend/auth-goblin/access-event-listener.js"
-import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../../../../features/auth/auth-types.js"
+import {Service} from "../../../types/service.js"
+import {AccessEventListener} from "../types/goblin/access-event-listener.js"
+import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../auth-types.js"
 
 export function makeAuthGoblin({appId, tokenStore, authorize}: {
 		appId: string

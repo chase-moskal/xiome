@@ -1,5 +1,5 @@
 
-import {AuthTokens} from "../../../../features/auth/auth-types.js"
+import {AuthTokens} from "../auth-types.js"
 
 export const emptyTokens = (): AuthTokens => ({
 	accessToken: undefined,

@@ -1,51 +1,27 @@
 
 import {Suite, assert} from "cynic"
 
-import {Await} from "../../../types/fancy.js"
 import {LoginEmailDetails} from "../auth-types.js"
 import {mockWholeSystem} from "../../../assembly/mock-whole-system.js"
+import {creativeSignupAndLogin} from "./creative/creative-signup-and-login.js"
 
 const apiLink = "https://api.xiom.app/"
 const platformLink = "https://xiom.app/"
 const appLink = "https://example.chasemoskal.com/"
 
-const creativeEmail = "creative@chasemoskal.com"
-
-async function creativeSignupAndLogin() {
-	let recentLoginEmail: LoginEmailDetails
-	const system = await mockWholeSystem({
-		sendLoginEmail: async details => {
-			recentLoginEmail = details
-		},
-	})
-	const browser = await system.mockBrowser()
-
-	const signupWindow = await browser.mockAppWindow({
-		apiLink,
-		windowLink: platformLink,
-		appToken: system.platformAppToken,
-	})
-	await signupWindow.frontend.authModel.sendLoginLink(creativeEmail)
-
-	const loginWindow = await browser.mockAppWindow({
-		apiLink,
-		appToken: system.platformAppToken,
-		windowLink: `${platformLink}?login=${recentLoginEmail.loginToken}`,
-	})
-
-	assert((await loginWindow.frontend.authModel.getAccess()).user,
-		"creative is logged in")
-
-	return {window: loginWindow}
-}
+const signupAndLogin = async() => creativeSignupAndLogin({
+	apiLink,
+	platformLink,
+	email: "creative@chasemoskal.com",
+})
 
 export default <Suite>{
 	"sign up and login": async() => {
-		await creativeSignupAndLogin()
+		await signupAndLogin()
 	},
 
 	"register app": async() => {
-		const {window} = await creativeSignupAndLogin()
+		const {window} = await signupAndLogin()
 		await window.frontend.appModel.loadAppListing()
 		const {appModel} = window.frontend
 		assert(appModel.appList.length === 0, "should start with zero apps")

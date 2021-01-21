@@ -5,7 +5,7 @@ import * as loading from "../../../toolbox/loading.js"
 
 import {Service} from "../../../types/service.js"
 import {AccessPayload, LoginToken} from "../auth-types.js"
-import {AuthGoblin} from "../../../assembly/types/frontend/auth-goblin/auth-goblin.js"
+import {AuthGoblin} from "../types/goblin/auth-goblin.js"
 
 export function makeAuthModel2({authGoblin, loginService}: {
 		authGoblin: AuthGoblin

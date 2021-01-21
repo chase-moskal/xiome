@@ -2,13 +2,13 @@
 import {loopbackJsonRemote} from "renraku/x/remote/loopback-json-remote.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {prepareApiShapeWiredWithAuthGoblin} from "./shape/api-shape-wired-with-auth-goblin.js"
+import {prepareApiShapeWiredWithAuthGoblin} from "../remote/api-shape-wired-with-auth-goblin.js"
 
 import {SystemApi} from "../types/backend/system-api.js"
 import {AppToken} from "../../features/auth/auth-types.js"
-import {TokenStore2} from "../types/frontend/auth-goblin/token-store2.js"
+import {TokenStore2} from "../../features/auth/types/goblin/token-store2.js"
 
-export function prepareMockRemote({
+export function mockRemote({
 		api,
 		apiLink,
 		appToken,
