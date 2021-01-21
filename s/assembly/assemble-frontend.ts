@@ -4,21 +4,19 @@ import {autorun} from "mobx"
 import {makeAppModel} from "../features/auth/models/app-model.js"
 import {makeAuthModel2} from "../features/auth/models/auth-model2.js"
 import {makePersonalModel} from "../features/auth/models/personal-model.js"
+import {loginWithTokenFromLink} from "./frontend/login-with-token-from-link.js"
 
 import {SystemRemote} from "./types/frontend/system-remote.js"
-import {TriggerAccountPopup} from "../features/auth/auth-types.js"
 import {AuthGoblin} from "./types/frontend/auth-goblin/auth-goblin.js"
 
 export async function assembleFrontend({
-		url,
+		link,
 		remote,
 		authGoblin,
-		// triggerAccountPopup,
 	}: {
-		url: string
+		link: string
 		remote: SystemRemote
 		authGoblin: AuthGoblin
-		// triggerAccountPopup: TriggerAccountPopup
 	}) {
 
 	const authModel = makeAuthModel2({
@@ -39,11 +37,7 @@ export async function assembleFrontend({
 		appService: remote.auth.appService,
 	})
 
-	{
-		const {searchParams} = new URL(url)
-		const loginToken = searchParams.get("login")
-		if (loginToken) await authModel.login(loginToken)
-	}
+	await loginWithTokenFromLink({link, authModel})
 
 	autorun(() => {
 		const accessLoad = getAccessLoad()
@@ -51,10 +45,8 @@ export async function assembleFrontend({
 	})
 
 	return {
-		models: {
-			appModel,
-			authModel,
-			personalModel,
-		},
+		appModel,
+		authModel,
+		personalModel,
 	}
 }

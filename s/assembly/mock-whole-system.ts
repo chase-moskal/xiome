@@ -31,10 +31,9 @@ export async function mockWholeSystem({sendLoginEmail}: {
 
 	const fakeBrowser = prepareMockBrowser({api})
 
-	const day = 1000 * 60 * 60 * 24
 	const platformAppToken = await signToken<AppPayload>({
 		payload: config.platform.app,
-		lifespan: 365 * day,
+		lifespan: 365 * (1000 * 60 * 60 * 24),
 	})
 
 	return {

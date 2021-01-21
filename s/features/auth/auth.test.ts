@@ -1,51 +1,67 @@
 
 import {Suite, assert} from "cynic"
 
-import { LoginEmailDetails } from "./auth-types.js"
-import { mockWholeSystem } from "../../assembly/mock-whole-system.js"
+import {LoginEmailDetails} from "./auth-types.js"
+import {mockWholeSystem} from "../../assembly/mock-whole-system.js"
+import { Await } from "../../types/fancy.js"
 
 // import {creativeSystem} from "./testing/creative-system.js"
 // import {technicianSystem} from "./testing/technician-system.js"
 // import {PrimedTestableSystem} from "./testing/auth-testing-types.js"
 
-const apiLink = "http://localhost:5001/"
-const windowLink = "http://localhost:5000/"
+const apiLink = "https://api.xiom.app/"
+const platformLink = "https://xiom.app/"
 
 export default <Suite>{
 	"stories": {
 		"technician": {
-			"common tests for technician on platform": async() => {
-				let recentLogin: LoginEmailDetails
+			"sign up, login, and logout": async() => {
+				let recentLoginEmail: LoginEmailDetails
 				const system = await mockWholeSystem({
 					sendLoginEmail: async details => {
-						recentLogin = details
+						recentLoginEmail = details
 					},
 				})
 				const browser = await system.fakeBrowser()
+				const grabAccess = (window: Await<ReturnType<typeof browser.mockAppWindow>>) =>
+					window.frontend.authModel.getAccess()
 
 				// technician signup
-				{
-					const platformWindow = await browser.mockAppWindow({
-						apiLink,
-						windowLink,
-						appToken: system.platformAppToken,
-					})
-					await platformWindow.frontend.models.authModel.sendLoginLink(
-						system.config.platform.technician.email
-					)
-				}
+				const windowA = await browser.mockAppWindow({
+					apiLink,
+					windowLink: platformLink,
+					appToken: system.platformAppToken,
+				})
+				await windowA.frontend.authModel.sendLoginLink(
+					system.config.platform.technician.email
+				)
+				assert(
+					await grabAccess(windowA) === undefined,
+					"windowA should start logged out"
+				)
 
 				// technician login
-				{
-					const browser2 = await system.fakeBrowser()
-					const technicianWindow = await browser2.mockAppWindow({
-						apiLink,
-						windowLink: `${windowLink}?login=${recentLogin.loginToken}`,
-						appToken: system.platformAppToken,
-					})
-					const access = await technicianWindow.frontend.models.authModel.getAccess()
-					assert(access.user.userId.length > 0, "error with user id")
-				}
+				const windowB = await browser.mockAppWindow({
+					apiLink,
+					appToken: system.platformAppToken,
+					windowLink: `${platformLink}?login=${recentLoginEmail.loginToken}`,
+				})
+				assert(
+					(await grabAccess(windowB)).user,
+					"windowB should now be logged in"
+				)
+				assert(
+					(await grabAccess(windowA)).user,
+					"windowA should also be logged in"
+				)
+
+				// technician logout
+				await windowB.frontend.authModel.logout()
+				assert(
+					await grabAccess(windowA) === undefined
+						&& await grabAccess(windowB) === undefined,
+					"both windows should be logged out"
+				)
 			},
 			"login to *any* app": true,
 			"view platform stats": true,

@@ -30,7 +30,7 @@ export function prepareMockBrowser({api}: {api: SystemApi}) {
 			const frontend = await assembleFrontend({
 				remote,
 				authGoblin,
-				url: windowLink,
+				link: windowLink,
 			})
 			return {frontend, remote}
 		}
