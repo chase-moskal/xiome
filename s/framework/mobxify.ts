@@ -1,13 +1,11 @@
 
 import {makeAutoObservable} from "mobx"
-import {objectMap} from "../toolbox/object-map.js"
 
 export function mobxify<T extends {[key: string]: any}>(ooo: T): T {
-	return makeAutoObservable(
-		objectMap(ooo, value =>
-			typeof value === "function"
-				? value.bind(ooo)
-				: value
-		)
-	)
+
+	for (const key in ooo)
+		if (typeof ooo[key] === "function")
+			ooo[key] = ooo[key].bind(ooo)
+
+	return makeAutoObservable(ooo)
 }

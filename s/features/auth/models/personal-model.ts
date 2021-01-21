@@ -4,21 +4,21 @@ import * as loading from "../../../toolbox/loading.js"
 import {personalTopic} from "../topics/personal-topic.js"
 
 import {Service} from "../../../types/service.js"
-import {Personal} from "./types/personal-model-types.js"
 import {Profile, AccessPayload} from "../auth-types.js"
+import {Personal} from "./types/personal-model-types.js"
 
 export function makePersonalModel({personalService, getAccess, reauthorize}: {
 		reauthorize: () => Promise<void>
 		getAccess: () => Promise<AccessPayload>
 		personalService: Service<typeof personalTopic>
 	}) {
-	return mobxify({
 
-		personalLoad: loading.load<Personal>(),
+	return mobxify(new class {
+		personalLoad = loading.load<Personal>()
 
 		setPersonalLoad(load: loading.Load<Personal>) {
 			this.personalLoad = load
-		},
+		}
 
 		acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
 			this.setPersonalLoad(
@@ -43,7 +43,7 @@ export function makePersonalModel({personalService, getAccess, reauthorize}: {
 					console.error(error)
 				}
 			}
-		},
+		}
 
 		async saveProfile(draft: Profile): Promise<void> {
 			this.setPersonalLoad(loading.loading())
@@ -61,6 +61,6 @@ export function makePersonalModel({personalService, getAccess, reauthorize}: {
 				this.setPersonalLoad(loading.error("failed to save profile"))
 				throw error
 			}
-		},
+		}
 	})
 }

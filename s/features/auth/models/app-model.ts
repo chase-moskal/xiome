@@ -10,17 +10,17 @@ export function makeAppModel({appService, getAccess}: {
 		getAccess: () => Promise<AccessPayload>
 	}) {
 
-	return mobxify({
-		appList: <AppPayload[]>[],
-		appDraft: <AppDraft>undefined,
+	return mobxify(new class {
+		appList: AppPayload[] =[]
+		appDraft: AppDraft = undefined
 
 		setListing(apps: AppPayload[]) {
 			this.appList = apps
-		},
+		}
 
 		setAppDraft(draft: AppDraft) {
 			this.appDraft = draft
-		},
+		}
 
 		async loadAppListing() {
 			const access = await getAccess()
@@ -28,7 +28,7 @@ export function makeAppModel({appService, getAccess}: {
 			const ownerUserId = access.user.userId
 			const apps = await appService.listApps({ownerUserId})
 			this.setListing(apps)
-		},
+		}
 
 		async submitAppDraftForRegistration() {
 			const {appDraft} = this
@@ -40,6 +40,6 @@ export function makeAppModel({appService, getAccess}: {
 				ownerUserId: access.user.userId,
 			})
 			await this.loadAppListing()
-		},
+		}
 	})
 }
