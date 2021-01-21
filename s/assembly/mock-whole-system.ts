@@ -6,9 +6,8 @@ import {mockPrerequisites} from "./mocks/mock-prerequisites.js"
 import {AppPayload, SendLoginEmail} from "../features/auth/auth-types.js"
 
 // TODO merge testable system
-export async function mockWholeSystem({sendLoginEmail, generateNickname}: {
+export async function mockWholeSystem({sendLoginEmail}: {
 		sendLoginEmail: SendLoginEmail
-		generateNickname: () => string
 	}) {
 
 	const {
@@ -17,6 +16,7 @@ export async function mockWholeSystem({sendLoginEmail, generateNickname}: {
 		tables,
 		signToken,
 		verifyToken,
+		generateNickname,
 	} = await mockPrerequisites()
 
 	const api = assembleApi({
@@ -31,15 +31,22 @@ export async function mockWholeSystem({sendLoginEmail, generateNickname}: {
 
 	const fakeBrowser = prepareMockBrowser({api})
 
+	const day = 1000 * 60 * 60 * 24
+	const platformAppToken = await signToken<AppPayload>({
+		payload: config.platform.app,
+		lifespan: 365 * day,
+	})
+
 	return {
 		api,
 		config,
 		tables,
 		fakeBrowser,
-		hacks: {
-			async signAppToken(payload: AppPayload) {
-				return signToken({payload, lifespan: config.tokens.lifespans.app})
-			},
-		},
+		platformAppToken,
+		// hacks: {
+		// 	async signAppToken(payload: AppPayload) {
+		// 		return signToken({payload, lifespan: config.tokens.lifespans.app})
+		// 	},
+		// },
 	}
 }

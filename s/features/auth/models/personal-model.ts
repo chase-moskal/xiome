@@ -12,13 +12,13 @@ export function makePersonalModel({personalService, getAccess, reauthorize}: {
 		getAccess: () => Promise<AccessPayload>
 		personalService: Service<typeof personalTopic>
 	}) {
-	return mobxify(new class {
+	return mobxify({
 
-		personalLoad = loading.load<Personal>()
+		personalLoad: loading.load<Personal>(),
 
 		setPersonalLoad(load: loading.Load<Personal>) {
 			this.personalLoad = load
-		}
+		},
 
 		acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
 			this.setPersonalLoad(
@@ -43,7 +43,7 @@ export function makePersonalModel({personalService, getAccess, reauthorize}: {
 					console.error(error)
 				}
 			}
-		}
+		},
 
 		async saveProfile(draft: Profile): Promise<void> {
 			this.setPersonalLoad(loading.loading())
@@ -61,6 +61,6 @@ export function makePersonalModel({personalService, getAccess, reauthorize}: {
 				this.setPersonalLoad(loading.error("failed to save profile"))
 				throw error
 			}
-		}
+		},
 	})
 }

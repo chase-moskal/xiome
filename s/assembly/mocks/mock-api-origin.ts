@@ -21,7 +21,7 @@ export function mockApiOrigin() {
 			tokenStore,
 			onStorageEvent: (handler: () => void | Promise<void>) => {
 				storageEvent.subscribe(id => {
-					if (id === iframeId) handler()
+					if (id !== iframeId) handler()
 				})
 			},
 		}

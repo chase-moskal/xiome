@@ -12,21 +12,21 @@ export function makeAuthModel2({authGoblin, loginService}: {
 		loginService: Service<typeof loginTopic>
 	}) {
 
-	const state = mobxify(new class {
-		accessLoad = loading.load<AccessPayload>()
+	const state = mobxify({
+		accessLoad: loading.load<AccessPayload>(),
 
 		setError(error: Error) {
 			this.accessLoad = loading.error(undefined)
 			console.error(error)
-		}
+		},
 
 		setLoading() {
 			this.accessLoad = loading.loading()
-		}
+		},
 
 		setAccess(access: AccessPayload) {
 			this.accessLoad = loading.ready(access)
-		}
+		},
 	})
 
 	authGoblin.onAccess(access => {
@@ -38,10 +38,8 @@ export function makeAuthModel2({authGoblin, loginService}: {
 			return state.accessLoad
 		}
 
-		async getAccess() {
-			return loading.isReady(state.accessLoad)
-				? authGoblin.getAccess()
-				: Promise.resolve(undefined)
+		async getAccess(): Promise<AccessPayload> {
+			return authGoblin.getAccess()
 		}
 
 		async useExistingLogin() {

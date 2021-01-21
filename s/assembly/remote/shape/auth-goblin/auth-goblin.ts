@@ -49,7 +49,10 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 			access: undefined,
 		}
 		if (isTokenValid(refreshToken)) {
-			if (!isTokenValid(accessToken)) {
+			if (isTokenValid(accessToken)) {
+				result.access = decodeAccessToken2(accessToken)
+			}
+			else {
 				result = await authorizeAndProcess(refreshToken)
 			}
 		}

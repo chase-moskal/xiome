@@ -1,6 +1,6 @@
 
-import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token"
-import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token"
+import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
+import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SystemTables} from "../types/backend/system-tables.js"
 import {dbbyMemory} from "../../toolbox/dbby/dbby-memory.js"
@@ -26,11 +26,16 @@ export async function mockPrerequisites() {
 			appOwnership: dbbyMemory(),
 		},
 	}
+
+	let nicknameCount = 0
+	const generateNickname = () => `Anonymous ${nicknameCount++}`
+
 	return {
 		rando,
 		config,
 		tables,
 		signToken,
 		verifyToken,
+		generateNickname,
 	}
 }

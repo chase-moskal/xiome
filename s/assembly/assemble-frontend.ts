@@ -42,9 +42,7 @@ export async function assembleFrontend({
 	{
 		const {searchParams} = new URL(url)
 		const loginToken = searchParams.get("login")
-		if (loginToken) {
-			await authModel.login(loginToken)
-		}
+		if (loginToken) await authModel.login(loginToken)
 	}
 
 	autorun(() => {

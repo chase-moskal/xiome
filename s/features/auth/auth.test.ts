@@ -1,13 +1,52 @@
 
 import {Suite, assert} from "cynic"
+
+import { LoginEmailDetails } from "./auth-types.js"
+import { mockWholeSystem } from "../../assembly/mock-whole-system.js"
+
 // import {creativeSystem} from "./testing/creative-system.js"
 // import {technicianSystem} from "./testing/technician-system.js"
 // import {PrimedTestableSystem} from "./testing/auth-testing-types.js"
 
+const apiLink = "http://localhost:5001/"
+const windowLink = "http://localhost:5000/"
+
 export default <Suite>{
 	"stories": {
 		"technician": {
-			// "common tests for technician on platform": commonTests(technicianSystem),
+			"common tests for technician on platform": async() => {
+				let recentLogin: LoginEmailDetails
+				const system = await mockWholeSystem({
+					sendLoginEmail: async details => {
+						recentLogin = details
+					},
+				})
+				const browser = await system.fakeBrowser()
+
+				// technician signup
+				{
+					const platformWindow = await browser.mockAppWindow({
+						apiLink,
+						windowLink,
+						appToken: system.platformAppToken,
+					})
+					await platformWindow.frontend.models.authModel.sendLoginLink(
+						system.config.platform.technician.email
+					)
+				}
+
+				// technician login
+				{
+					const browser2 = await system.fakeBrowser()
+					const technicianWindow = await browser2.mockAppWindow({
+						apiLink,
+						windowLink: `${windowLink}?login=${recentLogin.loginToken}`,
+						appToken: system.platformAppToken,
+					})
+					const access = await technicianWindow.frontend.models.authModel.getAccess()
+					assert(access.user.userId.length > 0, "error with user id")
+				}
+			},
 			"login to *any* app": true,
 			"view platform stats": true,
 			"procotol zero: roll platform secrets": true,

@@ -10,19 +10,27 @@ export function prepareMockBrowser({api}: {api: SystemApi}) {
 	return async function mockBrowser() {
 		const {fakeTokenIframe} = mockApiOrigin()
 
-		async function mockAppWindow({appToken}: {appToken: AppToken}) {
+		async function mockAppWindow({
+			apiLink,
+			appToken,
+			windowLink,
+		}: {
+			apiLink: string
+			windowLink: string
+			appToken: AppToken
+		}) {
 			const {tokenStore, onStorageEvent} = fakeTokenIframe()
 			const {remote, authGoblin} = prepareMockRemote({
 				api,
+				apiLink,
 				appToken,
 				tokenStore,
-				apiLink: "http://localhost:5001/",
 			})
 			onStorageEvent(authGoblin.refreshFromStorage)
 			const frontend = await assembleFrontend({
 				remote,
 				authGoblin,
-				url: "http://localhost:5000/",
+				url: windowLink,
 			})
 			return {frontend, remote}
 		}
