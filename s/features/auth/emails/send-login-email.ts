@@ -1,14 +1,15 @@
 
 import {minute} from "../../../toolbox/timely.js"
 import {PlatformConfig, SendEmail, SendLoginEmail} from "../auth-types.js"
+import { makeLoginLink } from "./make-login-link.js"
 
 export function prepareSendLoginEmail({config, sendEmail}: {
-			config: PlatformConfig
-			sendEmail: SendEmail
-		}): SendLoginEmail {
+		config: PlatformConfig
+		sendEmail: SendEmail
+	}): SendLoginEmail {
 
 	return async function sendLoginEmail({to, app, loginToken}) {
-		const loginLink = app.home + "#" + loginToken
+		const loginLink = makeLoginLink({loginToken, home: app.home})
 		const minutesLeft = (config.tokens.lifespans.login / minute).toFixed(0)
 		const platformLink = config.platform.app.home
 		return sendEmail({
@@ -24,7 +25,7 @@ export function prepareSendLoginEmail({config, sendEmail}: {
 				``,
 				`  * logins powered by ${platformLink} *`,
 				``,
-			].join("\n\n"),
+			].join("\n"),
 		})
 	}
 }
