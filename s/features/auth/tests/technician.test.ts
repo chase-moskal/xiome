@@ -1,9 +1,9 @@
 
 import {Suite, assert} from "cynic"
 
-import {makeLoginLink} from "../tools/emails/make-login-link.js"
 import {testableSystem} from "./helpers/testable-system.js"
 import {apiLink, platformLink} from "./helpers/constants.js"
+import {makeLoginLink} from "../tools/emails/make-login-link.js"
 
 import {Await} from "../../../types/fancy.js"
 

@@ -1,5 +1,5 @@
 
-import { makeLoginLink } from "./make-login-link.js"
+import {makeLoginLink} from "./make-login-link.js"
 import {minute} from "../../../../toolbox/timely.js"
 import {PlatformConfig, SendEmail, SendLoginEmail} from "../../auth-types.js"
 
