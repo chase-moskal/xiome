@@ -3,13 +3,10 @@ import {assembleApi} from "./assemble-api.js"
 import {mockBrowser} from "./mocks/mock-browser.js"
 import {mockPrerequisites} from "./mocks/mock-prerequisites.js"
 
-import {AppPayload, SendLoginEmail} from "../features/auth/auth-types.js"
+import {AppPayload} from "../features/auth/auth-types.js"
+import {MockSystemOptions} from "./types/mock-system-options.js"
 
-// TODO merge testable system
-export async function mockWholeSystem({sendLoginEmail}: {
-		sendLoginEmail: SendLoginEmail
-	}) {
-
+export async function mockWholeSystem({sendLoginEmail}: MockSystemOptions) {
 	const {
 		rando,
 		config,

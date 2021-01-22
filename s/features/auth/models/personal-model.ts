@@ -1,28 +1,27 @@
 
 import {mobxify} from "../../../framework/mobxify.js"
 import * as loading from "../../../toolbox/loading.js"
-import {personalTopic} from "../topics/personal-topic.js"
 
-import {Service} from "../../../types/service.js"
+import {Persona} from "./types/personal/persona.js"
 import {Profile, AccessPayload} from "../auth-types.js"
-import {Personal} from "./types/personal-model-types.js"
+import {PersonalModelOptions} from "./types/personal/personal-model-options.js"
 
-export function makePersonalModel({personalService, getAccess, reauthorize}: {
-		reauthorize: () => Promise<void>
-		getAccess: () => Promise<AccessPayload>
-		personalService: Service<typeof personalTopic>
-	}) {
+export function makePersonalModel({
+		personalService,
+		getAccess,
+		reauthorize,
+	}: PersonalModelOptions) {
 
 	return mobxify(new class {
-		personalLoad = loading.load<Personal>()
+		personalLoad = loading.load<Persona>()
 
-		setPersonalLoad(load: loading.Load<Personal>) {
+		setPersonalLoad(load: loading.Load<Persona>) {
 			this.personalLoad = load
 		}
 
 		acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
 			this.setPersonalLoad(
-				loading.select<AccessPayload, loading.Load<Personal>>(accessLoad, {
+				loading.select<AccessPayload, loading.Load<Persona>>(accessLoad, {
 					none: () => loading.none(),
 					loading: () => loading.loading(),
 					error: reason => loading.error(reason),

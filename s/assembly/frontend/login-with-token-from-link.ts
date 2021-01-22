@@ -1,9 +1,9 @@
 
-import {makeAuthModel2} from "../../features/auth/models/auth-model2.js"
+import {makeAuthModel} from "../../features/auth/models/auth-model.js"
 
 export async function loginWithTokenFromLink({link, authModel}: {
 		link: string
-		authModel: ReturnType<typeof makeAuthModel2>
+		authModel: ReturnType<typeof makeAuthModel>
 	}) {
 	const {searchParams} = new URL(link)
 	const loginToken = searchParams.get("login")

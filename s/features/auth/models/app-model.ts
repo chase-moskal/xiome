@@ -1,17 +1,13 @@
 
-import {appTopic} from "../topics/app-topic.js"
 import {mobxify} from "../../../framework/mobxify.js"
 
-import {Service} from "../../../types/service.js"
-import {AccessPayload, AppDraft, AppPayload} from "../auth-types.js"
+import {AppDraft, AppPayload} from "../auth-types.js"
+import {AppModelOptions} from "./types/app/app-model-options.js"
 
-export function makeAppModel({appService, getAccess}: {
-		appService: Service<typeof appTopic>
-		getAccess: () => Promise<AccessPayload>
-	}) {
+export function makeAppModel({appService, getAccess}: AppModelOptions) {
 
 	return mobxify(new class {
-		appList: AppPayload[] =[]
+		appList: AppPayload[] = []
 		appDraft: AppDraft = undefined
 
 		setListing(apps: AppPayload[]) {
