@@ -1,6 +1,6 @@
 
 import {SystemRemote} from "./system-remote.js"
-import {AuthGoblin} from "../../../features/auth/types/goblin/auth-goblin.js"
+import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
 
 export interface FrontendOptions {
 	link: string

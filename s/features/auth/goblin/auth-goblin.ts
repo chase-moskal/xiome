@@ -8,7 +8,7 @@ import {isTokenValid} from "../tools/is-token-valid.js"
 import {decodeAccessToken2} from "../tools/decode-access-token2.js"
 
 import {Service} from "../../../types/service.js"
-import {AccessEventListener} from "../types/goblin/access-event-listener.js"
+import {AccessEventListener} from "./types/access-event-listener.js"
 import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../auth-types.js"
 
 export function makeAuthGoblin({appId, tokenStore, authorize}: {

@@ -6,7 +6,7 @@ import {prepareApiShapeWiredWithAuthGoblin} from "../remote/api-shape-wired-with
 
 import {SystemApi} from "../types/backend/system-api.js"
 import {AppToken} from "../../features/auth/auth-types.js"
-import {TokenStore2} from "../../features/auth/types/goblin/token-store2.js"
+import {TokenStore2} from "../../features/auth/goblin/types/token-store2.js"
 
 export function mockRemote({
 		api,
