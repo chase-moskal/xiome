@@ -3,7 +3,7 @@ import {assert} from "cynic"
 
 import {testableSystem} from "./testable-system.js"
 import {apiLink, platformLink} from "./constants.js"
-import {makeLoginLink} from "../../emails/make-login-link.js"
+import {makeLoginLink} from "../../tools/emails/make-login-link.js"
 
 export async function creativeSignupAndLogin(email: string) {
 	const {system, getLatestLoginEmail} = await testableSystem()

@@ -1,7 +1,7 @@
 
-import {minute} from "../../../toolbox/timely.js"
-import {PlatformConfig, SendEmail, SendLoginEmail} from "../auth-types.js"
 import { makeLoginLink } from "./make-login-link.js"
+import {minute} from "../../../../toolbox/timely.js"
+import {PlatformConfig, SendEmail, SendLoginEmail} from "../../auth-types.js"
 
 export function prepareSendLoginEmail({config, sendEmail}: {
 		config: PlatformConfig
