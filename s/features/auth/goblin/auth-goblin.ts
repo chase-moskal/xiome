@@ -4,8 +4,8 @@ import {makeTokenStore2} from "./token-store2.js"
 import {pubsub} from "../../../toolbox/pubsub.js"
 import {onesie} from "../../../toolbox/onesie.js"
 import {loginTopic} from "../topics/login-topic.js"
-import {isTokenValid} from "../tools/is-token-valid.js"
-import {decodeAccessToken2} from "../tools/decode-access-token2.js"
+import {isTokenValid} from "../tools/tokens/is-token-valid.js"
+import {decodeAccessToken} from "../tools/decode-access-token.js"
 
 import {Service} from "../../../types/service.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
@@ -22,7 +22,7 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 	async function saveTokensAndFireEvents(tokens: AuthTokens) {
 		await tokenStore.saveTokens(appId, tokens)
 		const access: AccessPayload = tokens.accessToken
-			? decodeAccessToken2(tokens.accessToken)
+			? decodeAccessToken(tokens.accessToken)
 			: undefined
 		await accessEvent.publish(access)
 		return access
@@ -50,7 +50,7 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 		}
 		if (isTokenValid(refreshToken)) {
 			if (isTokenValid(accessToken)) {
-				result.access = decodeAccessToken2(accessToken)
+				result.access = decodeAccessToken(accessToken)
 			}
 			else {
 				result = await authorizeAndProcess(refreshToken)

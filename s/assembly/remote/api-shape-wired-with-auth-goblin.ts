@@ -4,7 +4,7 @@ import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {loginTopic} from "../../features/auth/topics/login-topic.js"
 import {makeAuthGoblin} from "../../features/auth/goblin/auth-goblin.js"
-import {decodeAppToken} from "../../features/auth/tools/decode-app-token.js"
+import {decodeAppToken} from "../../features/auth/tools/tokens/decode-app-token.js"
 
 import {Service} from "../../types/service.js"
 import {SystemApi} from "../types/backend/system-api.js"
