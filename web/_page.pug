@@ -12,10 +12,16 @@ head
 	link(rel="stylesheet" href=`${base}/styles.css`)
 
 	if debug
-		script(async type="module-shim" src=`${base}/demo.js`)
-		script(async type="importmap-shim" src=`${base}/importmap.json`)
-		script(async defer src="https://unpkg.com/es-module-shims@0.6.0/dist/es-module-shims.js")
+		script.
+			// hacks for mobx
+			window.process = {env: {NODE_ENV: "development"}}
+		script(defer type="module-shim" src=`${base}/demo.js`)
+		script(defer type="importmap-shim" src=`${base}/importmap.json`)
+		script(async defer src="https://unpkg.com/es-module-shims@0.8.0/dist/es-module-shims.js")
 	else
+		script.
+			// hacks for mobx
+			window.process = {env: {NODE_ENV: "production"}}
 		script(src=`${base}/demo.bundle.js`)
 
 header.siteheader
