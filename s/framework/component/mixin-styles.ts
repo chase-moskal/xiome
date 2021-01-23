@@ -1,5 +1,5 @@
 
-import {ConstructorFor} from "../types.js"
+import {ConstructorFor} from "../../types.js"
 import {LitElement, CSSResult, CSSResultArray} from "lit-element"
 
 export type CSS = CSSResult | CSSResultArray | CSSStyleSheet

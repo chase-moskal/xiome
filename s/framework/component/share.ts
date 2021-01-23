@@ -1,5 +1,5 @@
 
-import {ConstructorFor} from "../types.js"
+import {ConstructorFor} from "../../types.js"
 
 export type Share = any
 

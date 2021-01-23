@@ -1,11 +1,8 @@
 
 import {makeAutoObservable} from "mobx"
+import {bindMethods} from "../toolbox/bind-methods.js"
 
-export function mobxify<T extends {[key: string]: any}>(ooo: T): T {
-
-	for (const key in ooo)
-		if (typeof ooo[key] === "function")
-			ooo[key] = ooo[key].bind(ooo)
-
-	return makeAutoObservable(ooo)
+export function mobxify<T extends {[key: string]: any}>(obj: T): T {
+	bindMethods(obj)
+	return makeAutoObservable(obj)
 }

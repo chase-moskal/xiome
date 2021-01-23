@@ -1,19 +1,17 @@
 
 import {MobxLitElement} from "@adobe/lit-mobx"
 
-import {Share} from "./share.js"
-import {mixinMobxAutorun} from "./mixin-mobx-autorun.js"
-import {mixinInitiallyHidden} from "./mixin-initially-hidden.js"
+import {Share} from "./component/share.js"
+import {mixinMobxAutorun} from "./component/mixin-mobx-autorun.js"
+import {mixinInitiallyHidden} from "./component/mixin-initially-hidden.js"
 
 export * from "lit-element"
+export * from "lit-html"
 export * from "@adobe/lit-mobx"
-export * from "./mixin-initially-hidden.js"
-export * from "./mixin-mobx-autorun.js"
-export * from "./mixin-styles.js"
-export * from "./mobb.js"
-export * from "./register-components.js"
-export * from "./share.js"
-export * from "./theme-components.js"
+export * from "./component/mixin-styles.js"
+export * from "./component/register-components.js"
+export * from "./component/share.js"
+export * from "./component/theme-components.js"
 
 @mixinMobxAutorun
 @mixinInitiallyHidden
