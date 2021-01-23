@@ -25,7 +25,7 @@ export function makePersonalModel({
 					none: () => loading.none(),
 					loading: () => loading.loading(),
 					error: reason => loading.error(reason),
-					ready: ({user}) => !!user
+					ready: access => !!access
 						? loading.loading()
 						: loading.none()
 				})
