@@ -11,15 +11,14 @@
 		"web"
 	],
 	"scripts": {
-		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s compile-bundle minify stats test",
+		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s compile-bundle stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
 		"compile-pug": "pug -o x web -O '{\"debug\": false}'",
 		"compile-pug-dev": "pug -o x web -O '{\"debug\": true}'",
 		"compile-sass": "sass web/:x/",
-		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/demo.js -o x/demo.bundle.js",
-		"minify": "terser x/demo.bundle.js -cm --source-map --comments false -o x/demo.bundle.min.js",
+		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/platform.js -o x/platform.bundle.js && terser x/platform.bundle.js -cm --source-map --comments false -o x/platform.bundle.min.js",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
 		"watch-pug": "npm run compile-pug-dev -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
@@ -30,10 +29,10 @@
 		"test": "cynic node --label='feature.farm tests' x/tests.test.js",
 		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='feature.farm tests' x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json",
-		"stats": "ls -lah x/demo.bundle.js x/demo.bundle.min.js"
+		"stats": "ls -lah x/platform.bundle.js x/platform.bundle.min.js"
 	},
 	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^11.0.1",
+		"@rollup/plugin-node-resolve": "^11.1.0",
 		"@types/gapi.auth2": "0.0.52",
 		"@types/js-yaml": "^4.0.0",
 		"@types/koa": "^2.11.4",
@@ -42,7 +41,7 @@
 		"@types/koa-mount": "^4.0.0",
 		"@types/koa-static": "^4.0.1",
 		"@types/mongodb": "^3.6.3",
-		"@types/node": "^14.14.20",
+		"@types/node": "^14.14.22",
 		"@types/pug": "^2.0.4",
 		"chokidar-cli": "^2.1.0",
 		"cynic": "0.1.0-dev.14",
@@ -53,15 +52,15 @@
 		"octicons": "^8.5.0",
 		"pug-cli": "^1.0.0-alpha6",
 		"rimraf": "^3.0.2",
-		"rollup": "^2.36.1",
+		"rollup": "^2.38.0",
 		"rollup-plugin-sizes": "^1.0.3",
-		"sass": "^1.32.4",
+		"sass": "^1.32.5",
 		"serve": "^11.3.2",
 		"terser": "^5.5.1",
 		"typescript": "^4.1.3"
 	},
 	"dependencies": {
-		"@adobe/lit-mobx": "^1.0.0",
+		"@adobe/lit-mobx": "^1.0.1",
 		"@koa/cors": "^3.1.0",
 		"@stripe/stripe-js": "^1.11.0",
 		"chalk": "^4.1.0",
@@ -83,7 +82,7 @@
 		"pug": "^3.0.0",
 		"redcrypto": "0.0.0-dev.8",
 		"renraku": "0.0.0-dev.32",
-		"stripe": "^8.130.0",
+		"stripe": "^8.132.0",
 		"unique-names-generator": "^4.3.1"
 	},
 	"keywords": [
