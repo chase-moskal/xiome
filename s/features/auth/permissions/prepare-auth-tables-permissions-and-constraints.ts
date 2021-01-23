@@ -1,10 +1,10 @@
 
-import {isPlatform} from "../../tools/is-platform.js"
-import {dbbyHardcoded} from "../../../../toolbox/dbby/dbby-hardcoded.js"
-import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
-import {AuthTables, PlatformConfig, PermissionsTables} from "../../auth-types.js"
+import {isPlatform} from "../tools/is-platform.js"
+import {dbbyHardcoded} from "../../../toolbox/dbby/dbby-hardcoded.js"
+import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
+import {AuthTables, PlatformConfig, PermissionsTables} from "../auth-types.js"
 
-import {transformHardPermissionsToMemoryTables} from "./transform-hard-permissions-to-memory-tables.js"
+import {transformHardPermissionsToMemoryTables} from "./tables/transform-hard-permissions-to-memory-tables.js"
 
 export function prepareAuthTablesPermissionsAndConstraints({config, authTables}: {
 			config: PlatformConfig

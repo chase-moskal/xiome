@@ -6,7 +6,7 @@ import {userTopic} from "./topics/user-topic.js"
 import {loginTopic} from "./topics/login-topic.js"
 import {personalTopic} from "./topics/personal-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
-import {prepareAuthTablesPermissionsAndConstraints} from "./permissions/tables/prepare-auth-tables-permissions-and-constraints.js"
+import {prepareAuthTablesPermissionsAndConstraints} from "./permissions/prepare-auth-tables-permissions-and-constraints.js"
 import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, AuthOptions, AuthTables} from "./auth-types.js"
 
 export const makeAuthApi = ({authTables, ...options}: AuthOptions & {

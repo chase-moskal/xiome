@@ -1,5 +1,5 @@
 
-import {HardPermissionsBlueprint, HardPermissions} from "../../auth-types.js"
+import {HardPermissionsBlueprint, HardPermissions} from "../../../auth-types.js"
 
 import {buildRoles} from "./builders/build-roles.js"
 import {buildPrivileges} from "./builders/build-privileges.js"

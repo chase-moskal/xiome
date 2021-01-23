@@ -1,5 +1,5 @@
 
-import {buildHardPermissions} from "./infrastructure/build-hard-permissions.js"
+import {buildHardPermissions} from "./build/build-hard-permissions.js"
 
 export const universalPermissions = buildHardPermissions({
 	roles: {

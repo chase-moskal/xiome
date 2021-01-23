@@ -3,7 +3,7 @@ import {PlatformConfig} from "../auth-types.js"
 import {Rando} from "../../../toolbox/get-rando.js"
 import {second, minute, day} from "../../../toolbox/timely.js"
 
-import {hardPermissions} from "../hard-permissions.js"
+import {hardPermissions} from "../permissions/hard-permissions.js"
 
 export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 	return {

@@ -1,7 +1,7 @@
 
 import {powerPrivileges} from "./power-privileges.js"
 import {universalPermissions} from "./universal-permissions.js"
-import {buildHardPermissions} from "./infrastructure/build-hard-permissions.js"
+import {buildHardPermissions} from "./build/build-hard-permissions.js"
 
 export const appPermissions = buildHardPermissions({
 	inherit: universalPermissions,
