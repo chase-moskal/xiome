@@ -1,16 +1,16 @@
 
 import {autorun} from "mobx"
 import {makeAppModel} from "../features/auth/models/app-model.js"
-import {FrontendOptions} from "./types/frontend/frontend-options.js"
+import {AssembleModelsOptions} from "./types/frontend/system-models-options.js"
 import {makeAuthModel} from "../features/auth/models/auth-model.js"
 import {makePersonalModel} from "../features/auth/models/personal-model.js"
 import {loginWithTokenFromLink} from "./frontend/login-with-token-from-link.js"
 
-export async function assembleFrontend({
+export async function assembleModels({
 		link,
 		remote,
 		authGoblin,
-	}: FrontendOptions) {
+	}: AssembleModelsOptions) {
 
 	const authModel = makeAuthModel({
 		authGoblin,

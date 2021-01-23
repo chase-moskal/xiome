@@ -1,7 +1,7 @@
 
-import {pubsub} from "../../toolbox/pubsub.js"
-import {memoryStorage} from "../../toolbox/json-storage.js"
-import {makeTokenStore2} from "../../features/auth/goblin/token-store2.js"
+import {pubsub} from "../../../toolbox/pubsub.js"
+import {memoryStorage} from "../../../toolbox/json-storage.js"
+import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
 
 type TokenStorageListener = (iframeId: number) => void | Promise<void>
 

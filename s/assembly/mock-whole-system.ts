@@ -1,7 +1,7 @@
 
 import {assembleApi} from "./assemble-api.js"
-import {mockBrowser} from "./mocks/mock-browser.js"
-import {mockPrerequisites} from "./mocks/mock-prerequisites.js"
+import {mockBrowser} from "./frontend/mocks/mock-browser.js"
+import {mockPrerequisites} from "./backend/mock-prerequisites.js"
 
 import {AppPayload} from "../features/auth/auth-types.js"
 import {MockSystemOptions} from "./types/mock-system-options.js"
