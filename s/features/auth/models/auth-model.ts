@@ -25,22 +25,27 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		state.setAccess(access)
 	})
 
-	return new class {
+	return {
 		getAccessLoad() {
 			return state.accessLoad
-		}
+		},
+
+		get access() {
+			return loading.payload(state.accessLoad)
+		},
+
 		async getAccess(): Promise<AccessPayload> {
 			return authGoblin.getAccess()
-		}
+		},
 		async useExistingLogin() {
 			state.setLoading()
 			try { state.setAccess(await authGoblin.getAccess()) }
 			catch (error) { state.setError(error) }
-		}
+		},
 		async sendLoginLink(email: string) {
 			try { await loginService.sendLoginLink({email}) }
 			catch (error) { state.setError(error) }
-		}
+		},
 		async login(loginToken: LoginToken) {
 			try {
 				await authGoblin.authenticate(
@@ -48,16 +53,16 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 				)
 			}
 			catch (error) { state.setError(error) }
-		}
+		},
 		async logout() {
 			await authGoblin.clearAuth()
-		}
+		},
 		async reauthorize() {
 			try {
 				await authGoblin.reauthorize()
 				state.setAccess(await authGoblin.getAccess())
 			}
 			catch (error) { state.setError(error) }
-		}
+		},
 	}
 }

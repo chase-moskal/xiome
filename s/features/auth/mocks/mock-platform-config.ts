@@ -5,7 +5,17 @@ import {second, minute, day} from "../../../toolbox/timely.js"
 
 import {hardPermissions} from "../permissions/hard-permissions.js"
 
-export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
+export function mockPlatformConfig({
+		rando,
+		platformLink,
+		technicianEmail,
+		platformAppLabel,
+	}: {
+		rando: Rando
+		platformLink: string
+		technicianEmail: string
+		platformAppLabel: string
+	}): PlatformConfig {
 	return {
 		mongo: {
 			link: "mock-mongo-link",
@@ -13,18 +23,16 @@ export function mockPlatformConfig({rando}: {rando: Rando}): PlatformConfig {
 		},
 		permissions: hardPermissions,
 		platform: {
-			from: "hello@feature.farm",
+			from: `hello@${new URL(platformLink).hostname}`,
 			technician: {
-				email: "chasemoskal@gmail.com",
+				email: technicianEmail,
 			},
 			app: {
-				appId: rando.randomId(),
+				appId: "402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076",
 				platform: true,
-				label: "feature.farm",
-				home: "https://feature.farm",
-				origins: [
-					"https://feature.farm",
-				],
+				label: platformAppLabel,
+				home: platformLink,
+				origins: [new URL(platformLink).origin],
 			},
 		},
 		google: {

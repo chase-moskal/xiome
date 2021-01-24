@@ -108,6 +108,8 @@ export interface LoginEmailDetails {
 	to: string
 	app: AppPayload
 	loginToken: string
+	lifespan: number
+	platformLink: string
 }
 
 export type SendEmail = ({}: EmailDetails) => Promise<void>

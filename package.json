@@ -13,7 +13,7 @@
 	"scripts": {
 		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s compile-bundle stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
-		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
+		"importmap": "importly --host=node_modules < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
 		"compile-pug": "pug -o x web -O '{\"debug\": false}'",
 		"compile-pug-dev": "pug -o x web -O '{\"debug\": true}'",

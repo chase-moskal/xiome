@@ -1,4 +1,6 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
+
 import {AuthTables, User} from "../../../auth-types.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
@@ -14,7 +16,7 @@ export async function fetchUser({userId, tables, generateNickname}: {
 		}): Promise<User> {
 
 	const account = await tables.account.one({conditions: and({equal: {userId}})})
-	if (!account) throw new Error("account not found")
+	if (!account) throw new ApiError(500, "user account not found")
 
 	const {tags, profile} = await concurrent({
 		tags: await fetchTags(userId),

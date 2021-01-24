@@ -23,6 +23,8 @@ export const loginTopic = ({
 		await sendLoginEmail({
 			app,
 			to: email,
+			platformLink: config.platform.app.home,
+			lifespan: config.tokens.lifespans.login,
 			loginToken: await signToken<LoginPayload>({
 				payload: {userId},
 				lifespan: config.tokens.lifespans.login,

@@ -1,31 +1,36 @@
 
 import {makeLoginLink} from "./make-login-link.js"
 import {minute} from "../../../../toolbox/timely.js"
-import {PlatformConfig, SendEmail, SendLoginEmail} from "../../auth-types.js"
+import {SendEmail, SendLoginEmail} from "../../auth-types.js"
 
-export function prepareSendLoginEmail({config, sendEmail}: {
-		config: PlatformConfig
+export function prepareSendLoginEmail({sendEmail}: {
 		sendEmail: SendEmail
 	}): SendLoginEmail {
 
-	return async function sendLoginEmail({to, app, loginToken}) {
+	return async function sendLoginEmail({
+			to,
+			app,
+			lifespan,
+			loginToken,
+			platformLink,
+		}) {
+
 		const loginLink = makeLoginLink({loginToken, home: app.home})
-		const minutesLeft = (config.tokens.lifespans.login / minute).toFixed(0)
-		const platformLink = config.platform.app.home
+		const minutesLeft = (lifespan / minute).toFixed(0)
+
 		return sendEmail({
 			to,
 			subject: `Login link for ${app.label}`,
-			body: [
-				`Login link for ${app.label}`,
-				`    » ${loginLink} «`,
-				``,
-				`Link expires in ${minutesLeft} minutes`,
-				``,
-				`If you didn't request this login link, just ignore it`,
-				``,
-				`  * logins powered by ${platformLink} *`,
-				``,
-			].join("\n"),
+			body: (
+`
+Login link for ${app.label} (expires in ${minutesLeft} minutes)
+ » ${loginLink} «
+
+If you didn't request this login link, just ignore it
+
+ * logins powered by ${platformLink} *
+`
+			),
 		})
 	}
 }

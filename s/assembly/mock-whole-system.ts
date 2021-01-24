@@ -6,7 +6,14 @@ import {mockPrerequisites} from "./backend/mock-prerequisites.js"
 import {AppPayload} from "../features/auth/auth-types.js"
 import {MockSystemOptions} from "./types/mock-system-options.js"
 
-export async function mockWholeSystem({sendLoginEmail}: MockSystemOptions) {
+export async function mockWholeSystem({
+		tableStorage,
+		platformLink,
+		technicianEmail,
+		platformAppLabel,
+		sendLoginEmail,
+	}: MockSystemOptions) {
+
 	const {
 		rando,
 		config,
@@ -14,7 +21,12 @@ export async function mockWholeSystem({sendLoginEmail}: MockSystemOptions) {
 		signToken,
 		verifyToken,
 		generateNickname,
-	} = await mockPrerequisites()
+	} = await mockPrerequisites({
+		tableStorage,
+		platformLink,
+		technicianEmail,
+		platformAppLabel,
+	})
 
 	const api = assembleApi({
 		rando,
