@@ -23,10 +23,10 @@ export default <Suite>{
 		assert(appModel.appList.length === 1, "should now have one app")
 	},
 
-	"generate an admin account to login with": true,
-	"no-can-do": {
-		"can't view platform stats": true,
-		"can't login to other creator's apps": true,
-		"can't protocol zero and roll platform secrets": true,
-	},
+	// "generate an admin account to login with": true,
+	// "no-can-do": {
+	// 	"can't view platform stats": true,
+	// 	"can't login to other creator's apps": true,
+	// 	"can't protocol zero and roll platform secrets": true,
+	// },
 }

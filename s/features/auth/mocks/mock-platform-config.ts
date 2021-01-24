@@ -6,12 +6,10 @@ import {second, minute, day} from "../../../toolbox/timely.js"
 import {hardPermissions} from "../permissions/hard-permissions.js"
 
 export function mockPlatformConfig({
-		rando,
 		platformLink,
 		technicianEmail,
 		platformAppLabel,
 	}: {
-		rando: Rando
 		platformLink: string
 		technicianEmail: string
 		platformAppLabel: string

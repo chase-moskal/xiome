@@ -23,7 +23,6 @@ export async function mockPrerequisites({
 
 	const rando = await getRando()
 	const config = mockPlatformConfig({
-		rando,
 		platformLink,
 		technicianEmail,
 		platformAppLabel,

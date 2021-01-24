@@ -57,7 +57,7 @@ export default <Suite>{
 		)
 	},
 
-	"login to *any* app": true,
-	"view platform stats": true,
-	"procotol zero: roll platform secrets": true,
+	// "login to *any* app": true,
+	// "view platform stats": true,
+	// "procotol zero: roll platform secrets": true,
 }

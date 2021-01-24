@@ -3,6 +3,7 @@ import {assembleModels} from "./assembly/assemble-models.js"
 import {mockWholeSystem} from "./assembly/mock-whole-system.js"
 import {mockRemote} from "./assembly/frontend/mocks/mock-remote.js"
 import {makeTokenStore2} from "./features/auth/goblin/token-store2.js"
+import {sendEmail} from "./features/auth/tools/emails/mock-send-email.js"
 import {registerComponents, share, themeComponents} from "./framework/component.js"
 import {prepareSendLoginEmail} from "./features/auth/tools/emails/send-login-email.js"
 
@@ -18,20 +19,7 @@ void async function platform() {
 		platformLink: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",
 		tableStorage: window.localStorage,
-		sendLoginEmail: prepareSendLoginEmail({
-			sendEmail: async email => console.log(
-`
-====== SEND EMAIL ======
-to: ${email.to}
-subject: ${email.subject}
-time: ${new Date().toLocaleString()}
-
-${email.body}
-
-========================
-`
-			),
-		}),
+		sendLoginEmail: prepareSendLoginEmail({sendEmail}),
 	})
 
 	const {remote, authGoblin} = mockRemote({
