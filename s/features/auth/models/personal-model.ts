@@ -19,30 +19,30 @@ export function makePersonalModel({
 			this.personalLoad = load
 		}
 
-		acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
-			this.setPersonalLoad(
-				loading.select<AccessPayload, loading.Load<Persona>>(accessLoad, {
-					none: () => loading.none(),
-					loading: () => loading.loading(),
-					error: reason => loading.error(reason),
-					ready: access => !!access
-						? loading.loading()
-						: loading.none()
-				})
-			)
-			const user = loading.payload(accessLoad)?.user
-			if (user) {
-				try {
-					// TODO get settings
-					const settings = undefined
-					this.setPersonalLoad(loading.ready({user, settings}))
-				}
-				catch (error) {
-					this.setPersonalLoad(loading.error("error loading personal details"))
-					console.error(error)
-				}
-			}
-		}
+		// acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
+		// 	this.setPersonalLoad(
+		// 		loading.select<AccessPayload, loading.Load<Persona>>(accessLoad, {
+		// 			none: () => loading.none(),
+		// 			loading: () => loading.loading(),
+		// 			error: reason => loading.error(reason),
+		// 			ready: access => !!access
+		// 				? loading.loading()
+		// 				: loading.none()
+		// 		})
+		// 	)
+		// 	const user = loading.payload(accessLoad)?.user
+		// 	if (user) {
+		// 		try {
+		// 			// TODO get settings
+		// 			const settings = undefined
+		// 			this.setPersonalLoad(loading.ready({user, settings}))
+		// 		}
+		// 		catch (error) {
+		// 			this.setPersonalLoad(loading.error("error loading personal details"))
+		// 			console.error(error)
+		// 		}
+		// 	}
+		// }
 
 		async saveProfile(draft: Profile): Promise<void> {
 			this.setPersonalLoad(loading.loading())

@@ -14,7 +14,7 @@ export default <Suite>{
 
 		const grabAccess =
 			(window: Await<ReturnType<typeof browser.mockAppWindow>>) =>
-				window.frontend.authModel.getAccess()
+				window.frontend.authModel.getValidAccess()
 
 		// signup
 		const windowForSignup = await browser.mockAppWindow({

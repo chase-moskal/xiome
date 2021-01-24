@@ -13,7 +13,6 @@ import {AuthPanel} from "./features/auth/components/auth-panel.js"
 import theme from "./theme.css.js"
 
 void async function platform() {
-
 	const system = await mockWholeSystem({
 		platformAppLabel: "Xiom Apps",
 		platformLink: "http://localhost:5000/",
@@ -22,11 +21,16 @@ void async function platform() {
 		sendLoginEmail: prepareSendLoginEmail({sendEmail}),
 	})
 
+	const channel = new BroadcastChannel("tokenChangeEvent")
+
 	const {remote, authGoblin} = mockRemote({
 		api: system.api,
 		apiLink: "http://localhost:5001/",
 		appToken: system.platformAppToken,
-		tokenStore: makeTokenStore2({storage: window.localStorage}),
+		tokenStore: makeTokenStore2({
+			storage: window.localStorage,
+			publishTokenChange: () => channel.postMessage(undefined),
+		}),
 	})
 
 	const models = await assembleModels({
@@ -40,5 +44,9 @@ void async function platform() {
 		FarmExample,
 	}))
 
+	await models.authModel.useExistingLogin()
+	channel.onmessage = models.authModel.useExistingLogin
+
 	;(window as any).system = system
+	;(window as any).models = models
 }()

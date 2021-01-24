@@ -27,7 +27,7 @@ export async function creativeSignupAndLogin(email: string) {
 	})
 
 	assert(
-		await windowForLogin.frontend.authModel.getAccess(),
+		await windowForLogin.frontend.authModel.getValidAccess(),
 		"creative is logged in"
 	)
 

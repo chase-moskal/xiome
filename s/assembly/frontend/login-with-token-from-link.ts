@@ -1,5 +1,5 @@
 
-import {makeAuthModel} from "../../features/auth/models/auth-model.js"
+import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
 
 export async function loginWithTokenFromLink({link, authModel}: {
 		link: string

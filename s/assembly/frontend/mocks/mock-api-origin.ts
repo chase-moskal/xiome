@@ -7,7 +7,7 @@ type TokenStorageListener = (iframeId: number) => void | Promise<void>
 
 export function mockApiOrigin() {
 	const storage = memoryStorage()
-	const storageEvent = pubsub<TokenStorageListener>()
+	const tokenChangeEvent = pubsub<TokenStorageListener>()
 
 	let iframeCount = 0
 
@@ -15,12 +15,12 @@ export function mockApiOrigin() {
 		const iframeId = iframeCount++
 		const tokenStore = makeTokenStore2({
 			storage,
-			publishMockStorageEvent: () => storageEvent.publish(iframeId),
+			publishTokenChange: () => tokenChangeEvent.publish(iframeId),
 		})
 		return {
 			tokenStore,
 			onStorageEvent: (handler: () => void | Promise<void>) => {
-				storageEvent.subscribe(id => {
+				tokenChangeEvent.subscribe(id => {
 					if (id !== iframeId) handler()
 				})
 			},
