@@ -1,5 +1,5 @@
 
-import styles from "./login-panel.css.js"
+import styles from "./xiome-login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
 import {loading} from "../../../../toolbox/loading2.js"
 import {makeAuthModel} from "../../models/auth-model2.js"

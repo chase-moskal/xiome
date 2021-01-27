@@ -12,7 +12,7 @@ import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-wi
 import {ZapExample} from "./features/zapcomponents/example/zap-example.js"
 import {ZapLoading} from "./features/zapcomponents/loading/zap-loading.js"
 import {ZapTextInput} from "./features/zapcomponents/inputs/zap-text-input.js"
-import {XiomeLoginPanel} from "./features/auth/components/login-panel/login-panel.js"
+import {XiomeLoginPanel} from "./features/auth/components/login-panel/xiome-login-panel.js"
 
 import theme from "./theme.css.js"
 
