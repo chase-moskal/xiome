@@ -1,5 +1,5 @@
 
-import {loading} from "../../../toolbox/loading2.js"
+import {loading} from "../../../toolbox/loading/loading.js"
 import {mobxify} from "../../../framework/mobxify.js"
 
 import {AccessPayload, LoginToken} from "../auth-types.js"

@@ -19,8 +19,8 @@ export async function assembleModels({
 	const {getValidAccess, reauthorize} = authModel
 
 	const personalModel = makePersonalModel({
-		getAccess: getValidAccess,
 		reauthorize,
+		getAccess: getValidAccess,
 		personalService: remote.auth.personalService,
 	})
 

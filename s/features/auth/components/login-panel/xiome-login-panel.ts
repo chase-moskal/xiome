@@ -1,7 +1,7 @@
 
 import styles from "./xiome-login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
-import {loading} from "../../../../toolbox/loading2.js"
+import {loading} from "../../../../toolbox/loading/loading.js"
 import {makeAuthModel} from "../../models/auth-model2.js"
 import {ZapTextInput} from "../../../zapcomponents/inputs/zap-text-input.js"
 import {emailValidator} from "../../../zapcomponents/inputs/validators/email-validator.js"

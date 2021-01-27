@@ -1,6 +1,7 @@
 
 import styles from "./zap-loading.css.js"
-import {loading, LoadingView} from "../../../toolbox/loading2.js"
+import {loading} from "../../../toolbox/loading/loading.js"
+import { LoadingView } from "../../../toolbox/loading/types/loading-view"
 import {Component, html, mixinStyles, property} from "../../../framework/component.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"

@@ -1,9 +1,7 @@
 
 import {mobxify} from "../../../framework/mobxify.js"
-import * as loading from "../../../toolbox/loading.js"
 
-import {Persona} from "./types/personal/persona.js"
-import {Profile, AccessPayload} from "../auth-types.js"
+import {Profile} from "../auth-types.js"
 import {PersonalModelOptions} from "./types/personal/personal-model-options.js"
 
 export function makePersonalModel({
@@ -13,11 +11,11 @@ export function makePersonalModel({
 	}: PersonalModelOptions) {
 
 	return mobxify(new class {
-		personalLoad = loading.load<Persona>()
+		// personalLoad = loading.load<Persona>()
 
-		setPersonalLoad(load: loading.Load<Persona>) {
-			this.personalLoad = load
-		}
+		// setPersonalLoad(load: loading.Load<Persona>) {
+		// 	this.personalLoad = load
+		// }
 
 		// acceptAccessLoad(accessLoad: loading.Load<AccessPayload>) {
 		// 	this.setPersonalLoad(
@@ -45,7 +43,7 @@ export function makePersonalModel({
 		// }
 
 		async saveProfile(draft: Profile): Promise<void> {
-			this.setPersonalLoad(loading.loading())
+			// this.setPersonalLoad(loading.loading())
 			try {
 				const access = await getAccess()
 				if (!access) throw new Error("must be logged in")
@@ -57,7 +55,7 @@ export function makePersonalModel({
 				await reauthorize()
 			}
 			catch (error) {
-				this.setPersonalLoad(loading.error("failed to save profile"))
+				// this.setPersonalLoad(loading.error("failed to save profile"))
 				throw error
 			}
 		}

@@ -1,49 +1,11 @@
 
-import {autorun} from "mobx"
-import {mobxify} from "../framework/mobxify.js"
-
-export enum Mode {
-	None,
-	Loading,
-	Error,
-	Ready,
-}
-
-export interface LoadingActions<xPayload> {
-	setNone(): void
-	setLoading(): void
-	setError(reason: string): void
-	setReady(payload: xPayload): void
-	setLoadingUntil({}: {
-		promise: Promise<xPayload>
-		errorReason: string
-	}): Promise<xPayload>
-}
-
-export interface LoadingSelector<xPayload, xResult> {
-	none: () => xResult
-	loading: () => xResult
-	error: (reason: string) => xResult
-	ready: (payload: xPayload) => xResult
-}
-
-export type LoadingMode = "none" | "loading" | "error" | "ready"
-
-export interface LoadingView<xPayload> {
-	readonly none: boolean
-	readonly loading: boolean
-	readonly error: boolean
-	readonly ready: boolean
-	readonly reason: string
-	readonly payload: xPayload
-	select<xResult>(selector: LoadingSelector<xPayload, xResult>): xResult
-	readonly mode: LoadingMode
-}
-
-export interface Loading<xPayload> {
-	view: LoadingView<xPayload>
-	actions: LoadingActions<xPayload>
-}
+import {Mode} from "./types/mode.js"
+import {Loading} from "./types/loading.js"
+import {mobxify} from "../../framework/mobxify.js"
+import {LoadingView} from "./types/loading-view.js"
+import {LoadingMode} from "./types/loading-mode.js"
+import {LoadingActions} from "./types/loading-actions.js"
+import {LoadingSelector} from "./types/loading-selector.js"
 
 export function loading<xPayload>(): Loading<xPayload> {
 	const state = mobxify({
@@ -149,29 +111,4 @@ export function loading<xPayload>(): Loading<xPayload> {
 	}
 
 	return {actions, view}
-}
-
-export function metaLoadingView({subviews, errorReason}: {
-		subviews: LoadingView<any>[]
-		errorReason: string
-	}): LoadingView<undefined> {
-
-	const composite = loading<undefined>()
-
-	autorun(() => {
-		let allNone = true
-		let allReady = true
-		let anyError = false
-		for (const sub of subviews) {
-			allNone = allNone && sub.none
-			allReady = allReady && sub.ready
-			anyError = anyError || sub.error
-		}
-		if (allNone) composite.actions.setNone()
-		else if (allReady) composite.actions.setReady(undefined)
-		else if (anyError) composite.actions.setError(errorReason)
-		else composite.actions.setLoading()
-	})
-
-	return composite.view
 }
