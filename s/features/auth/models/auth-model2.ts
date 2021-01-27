@@ -39,17 +39,22 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		},
 
 		async login(loginToken: LoginToken) {
-			if (isTokenValid(loginToken))
-				await state.accessLoading.actions.setLoadingUntil({
-					promise: (async() => {
-						return await authGoblin.authenticate(
-							await loginService.authenticateViaLoginToken({loginToken})
-						)
-					})(),
-					errorReason: "failed to login with token",
-				})
-			else
-				state.accessLoading.actions.setError("login link expired")
+			try {
+				if (isTokenValid(loginToken))
+					await state.accessLoading.actions.setLoadingUntil({
+						promise: (async() => {
+							return await authGoblin.authenticate(
+								await loginService.authenticateViaLoginToken({loginToken})
+							)
+						})(),
+						errorReason: "failed to login with token",
+					})
+				else
+					state.accessLoading.actions.setError("login link expired")
+			}
+			catch (error) {
+				state.accessLoading.actions.setError("error with login")
+			}
 		},
 
 		async logout() {

@@ -26,6 +26,8 @@ export interface LoadingSelector<xPayload, xResult> {
 	ready: (payload: xPayload) => xResult
 }
 
+export type LoadingMode = "none" | "loading" | "error" | "ready"
+
 export interface LoadingView<xPayload> {
 	readonly none: boolean
 	readonly loading: boolean
@@ -34,6 +36,7 @@ export interface LoadingView<xPayload> {
 	readonly reason: string
 	readonly payload: xPayload
 	select<xResult>(selector: LoadingSelector<xPayload, xResult>): xResult
+	readonly mode: LoadingMode
 }
 
 export function loading<xPayload>() {
@@ -128,7 +131,15 @@ export function loading<xPayload>() {
 				case Mode.Error: return selector.error(state.reason)
 				case Mode.Ready: return selector.ready(state.payload)
 			}
-		}
+		},
+		get mode() {
+			return view.select<LoadingMode>({
+				none: () => "none",
+				loading: () => "loading",
+				error: () => "error",
+				ready: () => "ready",
+			})
+		},
 	}
 
 	return {actions, view}

@@ -1,6 +1,6 @@
 
 import styles from "./zap-example.css.js"
-import {Component, html, mixinStyles} from "../../framework/component.js"
+import {Component, html, mixinStyles} from "../../../framework/component.js"
 
  @mixinStyles(styles)
 export class ZapExample extends Component {
