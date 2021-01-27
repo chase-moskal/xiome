@@ -1,4 +1,5 @@
 
+import { autorun } from "mobx"
 import {mobxify} from "../framework/mobxify.js"
 
 export enum Mode {
@@ -39,7 +40,12 @@ export interface LoadingView<xPayload> {
 	readonly mode: LoadingMode
 }
 
-export function loading<xPayload>() {
+export interface Loading<xPayload> {
+	view: LoadingView<xPayload>
+	actions: LoadingActions<xPayload>
+}
+
+export function loading<xPayload>(): Loading<xPayload> {
 	const state = mobxify({
 		mode: <Mode>Mode.None,
 		payload: <xPayload>undefined,
@@ -143,4 +149,34 @@ export function loading<xPayload>() {
 	}
 
 	return {actions, view}
+}
+
+export function metaLoadingView({subloading, errorReason}: {
+		subloading: Loading<any>[]
+		errorReason: string
+	}): LoadingView<undefined> {
+	const composite = loading<undefined>()
+	autorun(() => {
+		let allNone = true
+		let allReady = true
+		let anyError = false
+		for (const sub of subloading) {
+			allNone = allNone && sub.view.none
+			allReady = allReady && sub.view.ready
+			anyError = anyError || sub.view.error
+		}
+		if (allNone) {
+			composite.actions.setNone()
+		}
+		else if (allReady) {
+			composite.actions.setReady(undefined)
+		}
+		else if (anyError) {
+			composite.actions.setError(errorReason)
+		}
+		else {
+			composite.actions.setLoading()
+		}
+	})
+	return composite.view
 }

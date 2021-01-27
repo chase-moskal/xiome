@@ -3,8 +3,8 @@ import {loading} from "../../../toolbox/loading2.js"
 import {mobxify} from "../../../framework/mobxify.js"
 
 import {AccessPayload, LoginToken} from "../auth-types.js"
+import {isTokenValid} from "../tools/tokens/is-token-valid.js"
 import {AuthModelOptions} from "./types/auth/auth-model-options.js"
-import { isTokenValid } from "../tools/tokens/is-token-valid.js"
 
 export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 	const state = mobxify({
@@ -16,7 +16,7 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 	})
 
 	return {
-		getAccessLoadingView() {
+		get accessLoadingView() {
 			return state.accessLoading.view
 		},
 
@@ -32,10 +32,7 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		},
 
 		async sendLoginLink(email: string) {
-			await state.accessLoading.actions.setLoadingUntil({
-				promise: loginService.sendLoginLink({email}).then(() => undefined),
-				errorReason: "failed to send login link",
-			})
+			return await loginService.sendLoginLink({email})
 		},
 
 		async login(loginToken: LoginToken) {

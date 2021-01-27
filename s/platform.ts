@@ -4,8 +4,8 @@ import {mockWholeSystem} from "./assembly/mock-whole-system.js"
 import {mockRemote} from "./assembly/frontend/mocks/mock-remote.js"
 import {makeTokenStore2} from "./features/auth/goblin/token-store2.js"
 import {sendEmail} from "./features/auth/tools/emails/mock-send-email.js"
-import { platformAppLabel } from "./features/auth/tests/helpers/constants.js"
-import {registerComponents, share, themeComponents} from "./framework/component.js"
+import {platformAppLabel} from "./features/auth/tests/helpers/constants.js"
+import {registerComponents, share2, themeComponents} from "./framework/component.js"
 import {prepareSendLoginEmail} from "./features/auth/tools/emails/send-login-email.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-with-link-token-or-use-existing-login.js"
 
@@ -49,7 +49,9 @@ void async function platform() {
 	registerComponents(themeComponents(theme, {
 		ZapExample,
 		ZapLoading,
-		AuthPanel: share(AuthPanel, () => models.authModel),
+		AuthPanel: share2(AuthPanel, {
+			authModel: models.authModel,
+		}),
 	}))
 
 	await loginWithLinkTokenOrUseExistingLogin({

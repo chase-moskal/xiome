@@ -16,7 +16,7 @@ export async function assembleModels({
 		loginService: remote.auth.loginService,
 	})
 
-	const {getValidAccess, getAccessLoadingView, reauthorize} = authModel
+	const {getValidAccess, reauthorize} = authModel
 
 	const personalModel = makePersonalModel({
 		getAccess: getValidAccess,
@@ -30,8 +30,8 @@ export async function assembleModels({
 	})
 
 	autorun(() => {
-		const accessLoadingView = getAccessLoadingView()
-		console.log(accessLoadingView.payload)
+		const access = authModel.accessLoadingView
+		console.log("access:", access)
 	})
 
 	return {
