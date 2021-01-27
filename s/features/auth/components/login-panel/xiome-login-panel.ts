@@ -60,6 +60,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 				<div slot=none>
 					<p>logged out</p>
 					<zap-text-input
+						placeholder="enter your email"
 						.validator=${emailValidator}
 						@textchange=${this.handleEmailChange}
 					></zap-text-input>

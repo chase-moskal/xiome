@@ -13,6 +13,9 @@ export class ZapTextInput extends Component {
 	@property({type: Boolean, reflect: true})
 	["show-validation-when-empty"] = false
 
+	@property({type: String, reflect: true})
+	["placeholder"]: string = ""
+
 	@property({type: Function})
 	validator: TextInputValidator = undefined
 
@@ -48,7 +51,7 @@ export class ZapTextInput extends Component {
 	})
 
 	render() {
-		const {problems, draft, validator, handleInputChange} = this
+		const {problems, draft, placeholder, validator, handleInputChange} = this
 		const valid = problems.length === 0
 		const showValidation = validator && (
 			this["show-validation-when-empty"]
@@ -68,6 +71,7 @@ export class ZapTextInput extends Component {
 					<input
 						type=text
 						.value="${draft}"
+						placeholder=${placeholder}
 						@change=${handleInputChange}
 						@keyup=${handleInputChange}/>
 					${showValidation ? icon : null}
