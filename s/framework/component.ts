@@ -13,8 +13,8 @@ export * from "./component/register-components.js"
 export * from "./component/share.js"
 export * from "./component/theme-components.js"
 
-@mixinMobxAutorun
-@mixinInitiallyHidden
+ @mixinMobxAutorun
+ @mixinInitiallyHidden
 export class Component extends MobxLitElement {}
 
 export class WiredComponent<S extends Share> extends Component {

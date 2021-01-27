@@ -13,6 +13,10 @@ export interface LoadingActions<xPayload> {
 	setLoading(): void
 	setError(reason: string): void
 	setReady(payload: xPayload): void
+	setLoadingUntil({}: {
+		promise: Promise<xPayload>
+		errorReason: string
+	}): Promise<xPayload>
 }
 
 export interface LoadingSelector<xPayload, xResult> {
@@ -76,6 +80,21 @@ export function loading<xPayload>() {
 				mode: Mode.Ready,
 				reason: undefined,
 			})
+		},
+		async setLoadingUntil({promise, errorReason}: {
+				promise: Promise<xPayload>
+				errorReason: string
+			}): Promise<xPayload> {
+			actions.setLoading()
+			try {
+				const payload = await promise
+				actions.setReady(payload)
+				return payload
+			}
+			catch (error) {
+				actions.setError(errorReason)
+				console.error(error)
+			}
 		},
 	}
 

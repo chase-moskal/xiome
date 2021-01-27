@@ -4,29 +4,20 @@ import {mobxify} from "../../../framework/mobxify.js"
 
 import {AccessPayload, LoginToken} from "../auth-types.js"
 import {AuthModelOptions} from "./types/auth/auth-model-options.js"
+import { isTokenValid } from "../tools/tokens/is-token-valid.js"
 
 export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 	const state = mobxify({
-		access: loading<AccessPayload>(),
+		accessLoading: loading<AccessPayload>(),
 	})
 
 	authGoblin.onAccess(access => {
-		state.access.actions.setReady(access)
+		state.accessLoading.actions.setReady(access)
 	})
-
-	async function tryOrReportAccessError(func: () => any) {
-		try {
-			return func()
-		}
-		catch (error) {
-			state.access.actions.setError("auth error")
-			console.error(error)
-		}
-	}
 
 	return {
 		getAccessLoadingView() {
-			return state.access.view
+			return state.accessLoading.view
 		},
 
 		async getValidAccess(): Promise<AccessPayload> {
@@ -34,22 +25,31 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		},
 
 		async useExistingLogin() {
-			state.access.actions.setLoading()
-			await tryOrReportAccessError(async() => {
-				state.access.actions.setReady(await authGoblin.getAccess())
+			await state.accessLoading.actions.setLoadingUntil({
+				promise: authGoblin.getAccess(),
+				errorReason: "error loading existing login",
 			})
 		},
 
 		async sendLoginLink(email: string) {
-			await loginService.sendLoginLink({email})
+			await state.accessLoading.actions.setLoadingUntil({
+				promise: loginService.sendLoginLink({email}).then(() => undefined),
+				errorReason: "failed to send login link",
+			})
 		},
 
 		async login(loginToken: LoginToken) {
-			await tryOrReportAccessError(async() => {
-				await authGoblin.authenticate(
-					await loginService.authenticateViaLoginToken({loginToken})
-				)
-			})
+			if (isTokenValid(loginToken))
+				await state.accessLoading.actions.setLoadingUntil({
+					promise: (async() => {
+						return await authGoblin.authenticate(
+							await loginService.authenticateViaLoginToken({loginToken})
+						)
+					})(),
+					errorReason: "failed to login with token",
+				})
+			else
+				state.accessLoading.actions.setError("login link expired")
 		},
 
 		async logout() {
@@ -57,8 +57,9 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		},
 
 		async reauthorize() {
-			await tryOrReportAccessError(async() => {
-				await authGoblin.reauthorize()
+			await state.accessLoading.actions.setLoadingUntil({
+				promise: authGoblin.reauthorize(),
+				errorReason: "failed to reauthorize",
 			})
 		},
 	}

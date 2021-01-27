@@ -57,7 +57,6 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 			}
 		}
 		else {
-			// await clearTokens()
 			result.accessToken = undefined
 		}
 		return result
@@ -67,12 +66,12 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 		clearAuth: clearTokens,
 		onAccess: accessEvent.subscribe,
 		async refreshFromStorage() {
-			debugger
 			const {access} = await getAccessAndReauthorizeIfNecessary()
 			await accessEvent.publish(access)
 		},
 		async authenticate(tokens: AuthTokens) {
-			await saveTokensAndFireEvents(tokens)
+			const access = await saveTokensAndFireEvents(tokens)
+			return access
 		},
 		async reauthorize(): Promise<AccessPayload> {
 			const {refreshToken} = await tokenStore.loadTokens(appId)

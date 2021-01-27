@@ -6,10 +6,12 @@ import {prepareApiShapeWiredWithAuthGoblin} from "../api-shape-wired-with-auth-g
 
 import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
+import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.js"
 import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
 
 export function mockRemote({
 		api,
+		latency,
 		apiLink,
 		appToken,
 		tokenStore,
@@ -18,6 +20,7 @@ export function mockRemote({
 		apiLink: string
 		appToken: AppToken
 		tokenStore: TokenStore2
+		latency: MockLatency
 	}) {
 
 	const {shape, installAuthGoblin} = prepareApiShapeWiredWithAuthGoblin({
@@ -25,10 +28,13 @@ export function mockRemote({
 		tokenStore,
 	})
 
-	const remote = loopbackJsonRemote<typeof api>({
-		shape,
-		link: apiLink,
-		servelet: makeJsonHttpServelet(api),
+	const remote = addMockLatency({
+		latency,
+		remote: loopbackJsonRemote<typeof api>({
+			shape,
+			link: apiLink,
+			servelet: makeJsonHttpServelet(api),
+		}),
 	})
 
 	const authGoblin = installAuthGoblin(remote.auth.loginService)

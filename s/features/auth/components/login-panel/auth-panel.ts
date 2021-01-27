@@ -1,8 +1,8 @@
 
-import styles from "./styles/auth-panel.css.js"
-import {WiredComponent, html, mixinStyles, TemplateResult} from "../../../framework/component.js"
-import {makeAuthModel} from "../models/auth-model2.js"
-import {LoadingView} from "../../../toolbox/loading2.js"
+import styles from "./auth-panel.css.js"
+import {WiredComponent, html, mixinStyles, TemplateResult} from "../../../../framework/component.js"
+import {makeAuthModel} from "../../models/auth-model2.js"
+import {LoadingView} from "../../../../toolbox/loading2.js"
 
 type AuthModel = ReturnType<typeof makeAuthModel>
 
@@ -31,17 +31,17 @@ export class AuthPanel extends WiredComponent<AuthModel> {
 
 	render() {
 		const accessLoadingView = this.share.getAccessLoadingView()
-		return renderLoading(accessLoadingView, access => {
-			if (access)
-				return html`
-					<p>logged in as ${accessLoadingView.payload.user.profile.nickname}</p>
+		const access = accessLoadingView.payload
+		return html`
+			<zap-loading .loadingView=${accessLoadingView}>
+				${access ? html`
+					<p>logged in as ${access.user.profile.nickname}</p>
 					<button @click=${this.logout}>Logout</button>
-				`
-			else
-				return html`
+				` : html`
 					<p>logged out</p>
 					<button @click=${this.sendLoginLink}>Send login link</button>
-				`
-		})
+				`}
+			</zap-loading>
+		`
 	}
 }

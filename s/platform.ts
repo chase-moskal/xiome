@@ -7,10 +7,12 @@ import {sendEmail} from "./features/auth/tools/emails/mock-send-email.js"
 import {registerComponents, share, themeComponents} from "./framework/component.js"
 import {prepareSendLoginEmail} from "./features/auth/tools/emails/send-login-email.js"
 
-import {FarmExample} from "./zapcomponents/farm-example.js"
-import {AuthPanel} from "./features/auth/components/auth-panel.js"
+import {ZapExample} from "./zapcomponents/example/zap-example.js"
+import {ZapLoading} from "./zapcomponents/loading/zap-loading.js"
+import {AuthPanel} from "./features/auth/components/login-panel/auth-panel.js"
 
 import theme from "./theme.css.js"
+import { loginWithLinkTokenOrUseExistingLogin } from "./assembly/frontend/login-with-link-token-or-use-existing-login.js"
 
 void async function platform() {
 	const system = await mockWholeSystem({
@@ -31,6 +33,10 @@ void async function platform() {
 			storage: window.localStorage,
 			publishTokenChange: () => channel.postMessage(undefined),
 		}),
+		latency: {
+			min: 200,
+			max: 800,
+		},
 	})
 
 	const models = await assembleModels({
@@ -40,11 +46,16 @@ void async function platform() {
 	})
 
 	registerComponents(themeComponents(theme, {
+		ZapExample,
+		ZapLoading,
 		AuthPanel: share(AuthPanel, () => models.authModel),
-		FarmExample,
 	}))
 
-	await models.authModel.useExistingLogin()
+	await loginWithLinkTokenOrUseExistingLogin({
+		authModel: models.authModel,
+		link: window.location.toString(),
+	})
+
 	channel.onmessage = models.authModel.useExistingLogin
 
 	;(window as any).system = system
