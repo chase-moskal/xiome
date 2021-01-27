@@ -8,15 +8,18 @@ import {WiredComponent, html, mixinStyles, property} from "../../../../framework
 @mixinStyles(styles)
 export class AuthPanel extends WiredComponent<{authModel: AuthModel}> {
 
+	@property({type: String})
+	emailDraft = ""
+
 	@property({type: Object})
 	sendLoading = loading<{email: string}>()
 
 	private async sendLoginLink() {
-		const email = "chasemoskal@gmail.com"
+		const email = this.emailDraft
 		this.sendLoading.actions.setLoadingUntil({
 			promise: this.share.authModel.sendLoginLink(email)
 				.then(() => ({email})),
-			errorReason: "failed sending email",
+			errorReason: `failed sending email to "${email}"`,
 		})
 	}
 
@@ -25,7 +28,6 @@ export class AuthPanel extends WiredComponent<{authModel: AuthModel}> {
 	}
 
 	private logout() {
-		this.sendLoading.actions.setNone()
 		this.share.authModel.logout()
 	}
 
@@ -36,19 +38,27 @@ export class AuthPanel extends WiredComponent<{authModel: AuthModel}> {
 		`
 	}
 
+	private setEmailDraft(event: InputEvent) {
+		const input = event.target as HTMLInputElement
+		this.emailDraft = input.value
+	}
+
+	autorun() {
+		void this.share.authModel.accessLoadingView.payload
+		this.resetSendLoading()
+	}
+
 	private renderLoggedOut() {
-		console.log(this.sendLoading)
 		return html`
 			<zap-loading .loadingView=${this.sendLoading.view}>
 				<div slot=none>
 					<p>logged out</p>
+					<input type=text .value=${this.emailDraft} @change=${this.setEmailDraft}/>
 					<button @click=${this.sendLoginLink}>Send login link</button>
 				</div>
 				${this.sendLoading.view.ready ? html`
-					<div>
-						email is sent (${this.sendLoading.view.payload.email})
-						<button @click=${this.resetSendLoading}>try another address?</button>
-					</div>
+					<p>email is sent (${this.sendLoading.view.payload.email})</p>
+					<button @click=${this.resetSendLoading}>try another address?</button>
 				` : null}
 			</zap-loading>
 		`
