@@ -17,7 +17,7 @@ slot[name=loading] svg {
 		fade 500ms ease infinite alternate;
 }
 
-slot[name=error] {
+slot[name=error] * {
 	color: var(--loading-error-color, red);
 }
 
