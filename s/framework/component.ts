@@ -20,3 +20,9 @@ export class Component extends MobxLitElement {}
 export class WiredComponent<S extends Share> extends Component {
 	readonly share: S
 }
+
+export function maybe(condition: any, content: any) {
+	return condition
+		? content
+		: null
+}

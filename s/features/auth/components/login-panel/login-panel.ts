@@ -3,19 +3,28 @@ import styles from "./login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
 import {loading} from "../../../../toolbox/loading2.js"
 import {makeAuthModel} from "../../models/auth-model2.js"
-import {WiredComponent, html, mixinStyles, property} from "../../../../framework/component.js"
+import {ZapTextInput} from "../../../zapcomponents/inputs/zap-text-input.js"
+import {emailValidator} from "../../../zapcomponents/inputs/validators/email-validator.js"
+import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class LoginPanel extends WiredComponent<{authModel: AuthModel}> {
-
-	@property({type: String})
-	emailDraft = ""
+export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	@property({type: Object})
-	sendLoading = loading<{email: string}>()
+	private sendLoading = loading<{email: string}>()
+
+	@query("zap-text-input")
+	private zapTextInput: ZapTextInput
+
+	@property({type: String})
+	private emailIsValid = false
+
+	private handleEmailChange() {
+		this.emailIsValid = this.zapTextInput.problems.length === 0
+	}
 
 	private async sendLoginLink() {
-		const email = this.emailDraft
+		const email = this.zapTextInput.text
 		this.sendLoading.actions.setLoadingUntil({
 			promise: this.share.authModel.sendLoginLink(email)
 				.then(() => ({email})),
@@ -25,10 +34,16 @@ export class LoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private resetSendLoading() {
 		this.sendLoading.actions.setNone()
+		if (this.zapTextInput) this.zapTextInput.text = ""
 	}
 
 	private logout() {
 		this.share.authModel.logout()
+	}
+
+	autorun() {
+		void this.share.authModel.accessLoadingView.payload
+		this.resetSendLoading()
 	}
 
 	private renderLoggedIn(access: AccessPayload) {
@@ -38,23 +53,21 @@ export class LoginPanel extends WiredComponent<{authModel: AuthModel}> {
 		`
 	}
 
-	private setEmailDraft(event: InputEvent) {
-		const input = event.target as HTMLInputElement
-		this.emailDraft = input.value
-	}
-
-	autorun() {
-		void this.share.authModel.accessLoadingView.payload
-		this.resetSendLoading()
-	}
-
 	private renderLoggedOut() {
+		const {emailIsValid} = this
 		return html`
 			<zap-loading .loadingView=${this.sendLoading.view}>
 				<div slot=none>
 					<p>logged out</p>
-					<input type=text .value=${this.emailDraft} @change=${this.setEmailDraft}/>
-					<button @click=${this.sendLoginLink}>Send login link</button>
+					<zap-text-input
+						.validator=${emailValidator}
+						@textchange=${this.handleEmailChange}
+					></zap-text-input>
+					<button
+						?disabled=${!emailIsValid}
+						@click=${this.sendLoginLink}>
+							Send login link
+					</button>
 				</div>
 				${this.sendLoading.view.ready ? html`
 					<p>email is sent (${this.sendLoading.view.payload.email})</p>

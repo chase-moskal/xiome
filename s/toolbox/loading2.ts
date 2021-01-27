@@ -1,5 +1,5 @@
 
-import { autorun } from "mobx"
+import {autorun} from "mobx"
 import {mobxify} from "../framework/mobxify.js"
 
 export enum Mode {
@@ -151,32 +151,27 @@ export function loading<xPayload>(): Loading<xPayload> {
 	return {actions, view}
 }
 
-export function metaLoadingView({subloading, errorReason}: {
-		subloading: Loading<any>[]
+export function metaLoadingView({subviews, errorReason}: {
+		subviews: LoadingView<any>[]
 		errorReason: string
 	}): LoadingView<undefined> {
+
 	const composite = loading<undefined>()
+
 	autorun(() => {
 		let allNone = true
 		let allReady = true
 		let anyError = false
-		for (const sub of subloading) {
-			allNone = allNone && sub.view.none
-			allReady = allReady && sub.view.ready
-			anyError = anyError || sub.view.error
+		for (const sub of subviews) {
+			allNone = allNone && sub.none
+			allReady = allReady && sub.ready
+			anyError = anyError || sub.error
 		}
-		if (allNone) {
-			composite.actions.setNone()
-		}
-		else if (allReady) {
-			composite.actions.setReady(undefined)
-		}
-		else if (anyError) {
-			composite.actions.setError(errorReason)
-		}
-		else {
-			composite.actions.setLoading()
-		}
+		if (allNone) composite.actions.setNone()
+		else if (allReady) composite.actions.setReady(undefined)
+		else if (anyError) composite.actions.setError(errorReason)
+		else composite.actions.setLoading()
 	})
+
 	return composite.view
 }

@@ -3,8 +3,8 @@ import styles from "./zap-loading.css.js"
 import {loading, LoadingView} from "../../../toolbox/loading2.js"
 import {Component, html, mixinStyles, property} from "../../../framework/component.js"
 
-import errorSvg from "../../../framework/icons/error.svg.js"
-import spinnerSvg from "../../../framework/icons/spinner.svg.js"
+import svgWarning from "../../../framework/icons/warning.svg.js"
+import svgSpinner from "../../../framework/icons/spinner.svg.js"
 
 @mixinStyles(styles)
 export class ZapLoading<xPayload = any> extends Component {
@@ -13,10 +13,10 @@ export class ZapLoading<xPayload = any> extends Component {
 	loadingView: LoadingView<xPayload> = loading<xPayload>().view
 
 	@property({type: Object})
-	errorIcon = errorSvg
+	errorIcon = svgWarning
 
 	@property({type: Object})
-	loadingIcon = spinnerSvg
+	loadingIcon = svgSpinner
 
 	@property({type: String})
 	["loading-message"] = "loading..."

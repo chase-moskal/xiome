@@ -11,7 +11,8 @@ import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-wi
 
 import {ZapExample} from "./features/zapcomponents/example/zap-example.js"
 import {ZapLoading} from "./features/zapcomponents/loading/zap-loading.js"
-import {LoginPanel} from "./features/auth/components/login-panel/login-panel.js"
+import {ZapTextInput} from "./features/zapcomponents/inputs/zap-text-input.js"
+import {XiomeLoginPanel} from "./features/auth/components/login-panel/login-panel.js"
 
 import theme from "./theme.css.js"
 
@@ -25,7 +26,6 @@ void async function platform() {
 	})
 
 	const channel = new BroadcastChannel("tokenChangeEvent")
-
 	const {remote, authGoblin} = mockRemote({
 		api: system.api,
 		apiLink: "http://localhost:5001/",
@@ -39,6 +39,7 @@ void async function platform() {
 			max: 800,
 		},
 	})
+	channel.onmessage = authGoblin.refreshFromStorage
 
 	const models = await assembleModels({
 		remote,
@@ -49,15 +50,14 @@ void async function platform() {
 	registerComponents(themeComponents(theme, {
 		ZapExample,
 		ZapLoading,
-		LoginPanel: share2(LoginPanel, {authModel: models.authModel}),
+		ZapTextInput,
+		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel: models.authModel}),
 	}))
 
 	await loginWithLinkTokenOrUseExistingLogin({
 		authModel: models.authModel,
 		link: window.location.toString(),
 	})
-
-	channel.onmessage = models.authModel.useExistingLogin
 
 	;(window as any).system = system
 	;(window as any).models = models
