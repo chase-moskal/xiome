@@ -21,7 +21,7 @@ export class WiredComponent<S extends Share> extends Component {
 	readonly share: S
 }
 
-export function maybe(condition: any, content: any) {
+export function maybe<xContent>(condition: any, content: xContent): xContent {
 	return condition
 		? content
 		: null
