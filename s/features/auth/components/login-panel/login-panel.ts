@@ -1,12 +1,12 @@
 
-import styles from "./auth-panel.css.js"
+import styles from "./login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
 import {loading} from "../../../../toolbox/loading2.js"
 import {makeAuthModel} from "../../models/auth-model2.js"
 import {WiredComponent, html, mixinStyles, property} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class AuthPanel extends WiredComponent<{authModel: AuthModel}> {
+export class LoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	@property({type: String})
 	emailDraft = ""

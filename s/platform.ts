@@ -11,7 +11,7 @@ import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-wi
 
 import {ZapExample} from "./features/zapcomponents/example/zap-example.js"
 import {ZapLoading} from "./features/zapcomponents/loading/zap-loading.js"
-import {AuthPanel} from "./features/auth/components/login-panel/auth-panel.js"
+import {LoginPanel} from "./features/auth/components/login-panel/login-panel.js"
 
 import theme from "./theme.css.js"
 
@@ -49,9 +49,7 @@ void async function platform() {
 	registerComponents(themeComponents(theme, {
 		ZapExample,
 		ZapLoading,
-		AuthPanel: share2(AuthPanel, {
-			authModel: models.authModel,
-		}),
+		LoginPanel: share2(LoginPanel, {authModel: models.authModel}),
 	}))
 
 	await loginWithLinkTokenOrUseExistingLogin({
