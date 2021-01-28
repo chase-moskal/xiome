@@ -1,0 +1,63 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Play&family=Varela+Round&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+
+	// // DEBUG LINES
+	// outline: 1px solid #0f02;
+}
+
+html {
+	font-size: 21px;
+}
+
+[initially-hidden] {
+	display: none;
+}
+
+.siteheader {
+	position: relative;
+}
+
+menu-system {
+	--menu-margin: 1em 0 0 0;
+}
+
+main,
+.siteheader,
+.sitefooter {
+	width: 90%;
+	max-width: 1600px;
+	margin: auto;
+	padding: 0.5rem 1rem;
+}
+
+.siteheader > div:nth-child(1) {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.siteheader nav {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.siteheader nav a {
+	padding: 0.1em 0.5em;
+	margin-left: -0.5em;
+}
+
+.siteheader nav a:hover,
+.siteheader nav a:focus {
+	color: #fffe;
+	text-decoration: underline;
+}
+
+.sitefooter {
+	margin-bottom: 5em;
+}

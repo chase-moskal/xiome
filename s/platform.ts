@@ -1,4 +1,6 @@
 
+import "menutown"
+
 import {assembleModels} from "./assembly/assemble-models.js"
 import {mockWholeSystem} from "./assembly/mock-whole-system.js"
 import {mockRemote} from "./assembly/frontend/mocks/mock-remote.js"

@@ -1,0 +1,45 @@
+
+html {
+	font-family: "Play", sans-serif;
+	color: #fff8;
+	min-height: 100%;
+	background: #2f3038;
+	background: linear-gradient(
+		to bottom right,
+		#2f3038,
+		#21222a
+	);
+}
+
+a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+a:hover,
+a:focus {
+	color: #fffe;
+	text-decoration: underline;
+	text-shadow: 0 0 10px #fff4;
+}
+
+menu-system {
+	color: #333;
+}
+
+.siteheader h1 {
+	color: white;
+	letter-spacing: 0.2em;
+	font-family: "Varela Round", sans-serif;
+	font-weight: normal;
+	text-transform: uppercase;
+	text-shadow: 0 0 20px #fff6;
+}
+
+main h2 {
+	font-weight: normal;
+}
+
+.sitefooter {
+	color: #fff4;
+}

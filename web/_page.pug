@@ -8,28 +8,36 @@ block append variables
 head
 	meta(charset="utf-8")
 	meta(name="viewport" content="width=device-width,initial-scale=1")
-	title &#x1F404; feature.farm#{pageSubtitle && " – " + pageSubtitle}
+	title &#x1F404; xiome.io#{pageSubtitle && " – " + pageSubtitle}
 	link(rel="stylesheet" href=`${base}/styles.css`)
 
 	if debug
 		script window.process = {env: {NODE_ENV: "development"}} // necessary hack for mobx
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/platform.js`)
-		script(async defer src="https://unpkg.com/es-module-shims@0.8.0/dist/es-module-shims.js")
+		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 	else
 		script window.process = {env: {NODE_ENV: "production"}} // necessary hack for mobx
 		script(src=`${base}/platform.bundle.js`)
 
 header.siteheader
 	div
-		h1 &#x1F404; feature.farm
+		h1 Xiome #{base}
 		nav
-			a(href=`${base}/`) about
+			a(href=`${base}/`) learn
 			a(href=`${base}/apps`) apps
-			a(href=`${base}/catalog`) catalog
+			a(href=`${base}/components`) components
+	menu-system(sticky initially-hidden)
+		menu-display(data-label="account")
+			p(slot="button") avatar
+			xiome-login-panel
 
 main
 	block maincontent
 
 footer.sitefooter
-	p footer stuff
+	p #[a(href="mailto:hello@xiome.io") hello@xiome.io]
+	p #[a(href="https://github.com/chasemoskal/xiome#readme") xiome on github]
+
+//- script.
+//- 	const links = document.querySelectorAll(".siteheader nav a")
