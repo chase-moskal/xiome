@@ -11,7 +11,7 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		accessLoading: loading<AccessPayload>(),
 	})
 
-	authGoblin.onAccess(access => {
+	authGoblin.onAccessChange(access => {
 		state.accessLoading.actions.setReady(access)
 	})
 
@@ -19,6 +19,8 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 		get accessLoadingView() {
 			return state.accessLoading.view
 		},
+
+		onAccessChange: authGoblin.onAccessChange,
 
 		async getValidAccess(): Promise<AccessPayload> {
 			return authGoblin.getAccess()
@@ -39,11 +41,8 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 			try {
 				if (isTokenValid(loginToken))
 					await state.accessLoading.actions.setLoadingUntil({
-						promise: (async() => {
-							return await authGoblin.authenticate(
-								await loginService.authenticateViaLoginToken({loginToken})
-							)
-						})(),
+						promise: loginService.authenticateViaLoginToken({loginToken})
+							.then(tokens => authGoblin.authenticate(tokens)),
 						errorReason: "failed to login with token",
 					})
 				else

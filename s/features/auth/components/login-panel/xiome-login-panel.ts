@@ -41,9 +41,10 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 		this.share.authModel.logout()
 	}
 
-	autorun() {
-		void this.share.authModel.accessLoadingView.payload
-		this.resetSendLoading()
+	subscribe() {
+		return this.share.authModel.onAccessChange(() => {
+			this.resetSendLoading()
+		})
 	}
 
 	private renderLoggedIn(access: AccessPayload) {

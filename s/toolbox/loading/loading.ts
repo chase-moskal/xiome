@@ -6,20 +6,21 @@ import {LoadingView} from "./types/loading-view.js"
 import {LoadingMode} from "./types/loading-mode.js"
 import {LoadingActions} from "./types/loading-actions.js"
 import {LoadingSelector} from "./types/loading-selector.js"
+import { makeAutoObservable, action } from "mobx"
 
 export function loading<xPayload>(): Loading<xPayload> {
-	const state = mobxify({
+	const state = makeAutoObservable({
 		mode: <Mode>Mode.None,
 		payload: <xPayload>undefined,
 		reason: <string>undefined,
-		set({mode, payload, reason}: {
+		set: ({mode, payload, reason}: {
 				mode: Mode
 				payload: xPayload
 				reason: string
-			}) {
-			this.mode = mode
-			this.payload = payload
-			this.reason = reason
+			}) => {
+			state.mode = mode
+			state.payload = payload
+			state.reason = reason
 		},
 	})
 

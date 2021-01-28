@@ -33,6 +33,7 @@ export class ZapTextInput extends Component {
 
 	set text(value: string) {
 		this.input.value = value
+		this.updateFromRawInput()
 	}
 
 	@query("input")
@@ -41,14 +42,16 @@ export class ZapTextInput extends Component {
 	@property({type: String})
 	private draft: string = ""
 
-	private handleInputChange = debounce2(500, () => {
+	private updateFromRawInput = () => {
 		const {value} = this.input
 		this.draft = value
 		this.problems = this.validator
 			? this.validator(value)
 			: []
 		this.dispatchEvent(new TextChangeEvent())
-	})
+	}
+
+	private handleInputChange = debounce2(500, this.updateFromRawInput)
 
 	render() {
 		const {problems, draft, placeholder, validator, handleInputChange} = this
