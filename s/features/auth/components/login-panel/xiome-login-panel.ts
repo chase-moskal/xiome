@@ -49,7 +49,9 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private renderLoggedIn(access: AccessPayload) {
 		return html`
-			<p>logged in as ${access.user.profile.nickname}</p>
+			<slot>
+				<p>Welcome ${access.user.profile.nickname}!</p>
+			</slot>
 			<button @click=${this.logout}>Logout</button>
 		`
 	}
@@ -59,7 +61,9 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 		return html`
 			<zap-loading .loadingView=${this.sendLoading.view}>
 				<div slot=none>
-					<p>logged out</p>
+					<slot name=logged-out>
+						<p>Login with your email address</p>
+					</slot>
 					<zap-text-input
 						placeholder="enter your email"
 						.validator=${emailValidator}
@@ -72,7 +76,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 					</button>
 				</div>
 				${this.sendLoading.view.ready ? html`
-					<p>email is sent (${this.sendLoading.view.payload.email})</p>
+					<p>email sent to ${this.sendLoading.view.payload.email}</p>
 					<button @click=${this.resetSendLoading}>try another address?</button>
 				` : null}
 			</zap-loading>
