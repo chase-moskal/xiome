@@ -11,7 +11,7 @@ export default <Suite>{
 	},
 
 	"register app": async() => {
-		const {appModel} = (await creativeSignupAndLogin(email)).frontend
+		const {appModel} = (await creativeSignupAndLogin(email)).models
 		await appModel.loadAppListing()
 		assert(appModel.appList.length === 0, "should start with zero apps")
 		appModel.setAppDraft({

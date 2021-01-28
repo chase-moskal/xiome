@@ -17,7 +17,7 @@ export async function creativeSignupAndLogin(email: string) {
 		appToken: system.platformAppToken,
 	})
 
-	await windowForSignup.frontend.authModel.sendLoginLink(email)
+	await windowForSignup.models.authModel.sendLoginLink(email)
 
 	const windowForLogin = await browser.mockAppWindow({
 		apiLink,
@@ -30,7 +30,7 @@ export async function creativeSignupAndLogin(email: string) {
 	})
 
 	assert(
-		await windowForLogin.frontend.authModel.getValidAccess(),
+		await windowForLogin.models.authModel.getValidAccess(),
 		"creative is logged in"
 	)
 

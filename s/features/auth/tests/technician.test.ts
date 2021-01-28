@@ -15,7 +15,7 @@ export default <Suite>{
 
 		const grabAccess =
 			(window: Await<ReturnType<typeof browser.mockAppWindow>>) =>
-				window.frontend.authModel.getValidAccess()
+				window.models.authModel.getValidAccess()
 
 		// signup
 		const windowForSignup = await browser.mockAppWindow({
@@ -24,7 +24,7 @@ export default <Suite>{
 			windowLink: platformLink,
 			appToken: system.platformAppToken,
 		})
-		await windowForSignup.frontend.authModel.sendLoginLink(
+		await windowForSignup.models.authModel.sendLoginLink(
 			system.config.platform.technician.email
 		)
 		assert(
@@ -52,7 +52,7 @@ export default <Suite>{
 		)
 
 		// logout
-		await windowForLogin.frontend.authModel.logout()
+		await windowForLogin.models.authModel.logout()
 		assert(
 			await grabAccess(windowForSignup) === undefined
 				&& await grabAccess(windowForLogin) === undefined,

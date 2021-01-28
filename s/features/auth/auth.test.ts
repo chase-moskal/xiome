@@ -7,6 +7,7 @@ import technician from "./tests/technician.test.js"
 export default <Suite>{
 	technician,
 	creative,
+
 	// "creative-old": {
 	// 	// "common tests for creative on platform": commonTests(creativeSystem),
 	// 	// "register an app": async() => {
