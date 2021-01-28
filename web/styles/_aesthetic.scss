@@ -11,16 +11,26 @@ html {
 	);
 }
 
+
 a {
 	color: inherit;
 	text-decoration: inherit;
+	&:hover, &:focus {
+		color: #fffe;
+		text-decoration: underline;
+		text-shadow: 0 0 10px #fff4;
+	}
 }
 
-a:hover,
-a:focus {
-	color: #fffe;
-	text-decoration: underline;
-	text-shadow: 0 0 10px #fff4;
+.siteheader {
+	.marked-link {
+		border-radius: 4px;
+		text-decoration: underline;
+		text-decoration-color: #fff2;
+	}
+	&[data-page-subtitle=home] nav a[href$="/"] { @extend .marked-link }
+	&[data-page-subtitle=apps] nav a[href$="/apps"] { @extend .marked-link }
+	&[data-page-subtitle=components] nav a[href$="/components"] { @extend .marked-link }
 }
 
 menu-system {
@@ -37,6 +47,7 @@ menu-system {
 }
 
 main h2 {
+	color: #fffa;
 	font-weight: normal;
 }
 

@@ -1,19 +1,9 @@
 
-header[data-page-subtitle=undefined] nav a[href$="/"] { opacity: 0.5 }
-header[data-page-subtitle=apps] nav a[href$="/apps"] { opacity: 0.5 }
-header[data-page-subtitle=components] nav a[href$="/components"] { opacity: 0.5 }
-
 .page-learn {
 	max-width: 700px;
-}
-
-.page-learn ol.instructions {
-	margin: 1em;
-	margin-left: 2em;
-}
-
-.page-learn ol.instructions > li {
-	margin: 0.25em 0;
+	ol.instructions {
+		margin-left: 2em;
+	}
 }
 
 // .catalog {

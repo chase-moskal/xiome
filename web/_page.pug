@@ -1,7 +1,7 @@
 
 doctype html
 
-block append variables
+block variables
 	- let base = "."
 	- let pageSubtitle
 
@@ -20,9 +20,9 @@ head
 		script window.process = {env: {NODE_ENV: "production"}} // necessary hack for mobx
 		script(src=`${base}/platform.bundle.js`)
 
-header.siteheader
+header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div
-		h1 Xiome #{base}
+		h1 Xiome
 		nav
 			a(href=`${base}/`) learn
 			a(href=`${base}/apps`) apps
@@ -36,8 +36,6 @@ main
 	block maincontent
 
 footer.sitefooter
-	p #[a(href="mailto:hello@xiome.io") hello@xiome.io]
-	p #[a(href="https://github.com/chasemoskal/xiome#readme") xiome on github]
-
-//- script.
-//- 	const links = document.querySelectorAll(".siteheader nav a")
+	p #[a(href="mailto:hello@xiome.io") » hello@xiome.io «]
+	p #[a(href="https://github.com/chasemoskal/xiome#readme") » xiome on github «]
+	p #[a(href="https://github.com/chasemoskal/xiome#readme") » xiome on discord «]
