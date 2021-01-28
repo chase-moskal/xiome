@@ -20,10 +20,9 @@ html {
 
 .siteheader {
 	position: relative;
-}
-
-menu-system {
-	--menu-margin: 1em 0 0 0;
+	menu-system {
+		--menu-margin: 1em 0 0 0;
+	}
 }
 
 .slice {
@@ -38,17 +37,14 @@ menu-system {
 	> div:nth-child(1) {
 		display: inline-flex;
 		flex-direction: column;
-		justify-content: center;
 	}
 	nav {
 		display: flex;
 		flex-direction: row;
-		justify-content: center;
 		margin-left: -0.3em;
 		> a {
 			padding: 0.1em 0.3em;
 			:hover, :focus {
-				color: #fffe;
 				text-decoration: underline;
 			}
 		}
@@ -75,6 +71,9 @@ main {
 		&:first-child {
 			margin-top: 0;
 		}
+	}
+	ol, ul {
+		margin-left: 1.5em;
 	}
 }
 

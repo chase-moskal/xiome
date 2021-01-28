@@ -4,7 +4,7 @@ html {
 	color: #fff8;
 	min-height: 100%;
 	background: #2f3038;
-	background: linear-gradient(
+	background: fixed linear-gradient(
 		to bottom right,
 		#2f3038,
 		#21222a
@@ -12,10 +12,10 @@ html {
 }
 
 a {
-	color: inherit;
+	color: #adfa;
 	text-decoration: inherit;
 	&:hover, &:focus {
-		color: #fffe;
+		color: #fff;
 		text-decoration: underline;
 		text-shadow: 0 0 10px #fff4;
 	}
@@ -25,7 +25,7 @@ a {
 	.marked-link {
 		border-radius: 4px;
 		text-decoration: underline;
-		text-decoration-color: #fff2;
+		text-decoration-color: #adf2;
 	}
 	&[data-page-subtitle=home] nav a[href$="/"] { @extend .marked-link }
 	&[data-page-subtitle=apps] nav a[href$="/apps"] { @extend .marked-link }
@@ -51,5 +51,5 @@ main h2 {
 }
 
 .sitefooter {
-	color: #fff4;
+	opacity: 0.7;
 }
