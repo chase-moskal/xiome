@@ -43,7 +43,6 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 	}
 
 	const getAccessAndReauthorizeIfNecessary = onesie(async() => {
-		debugger
 		const {accessToken, refreshToken} = await tokenStore.loadTokens(appId)
 		let result: {access: AccessPayload; accessToken: AccessToken} = {
 			accessToken,

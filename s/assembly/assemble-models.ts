@@ -29,10 +29,9 @@ export async function assembleModels({
 		appService: remote.auth.appService,
 	})
 
-	autorun(() => {
-		const access = authModel.accessLoadingView
-		console.log("access:", access)
-	})
+	// autorun(() => {
+	// 	void authModel.accessLoadingView.payload
+	// })
 
 	return {
 		appModel,
