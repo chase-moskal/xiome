@@ -9,7 +9,7 @@
   - [x] integrate hardbacked permissions authtables across the board
   - [x] implement setProfile by querying the hardbacked tables
   - [x] (nah) rename dbby-hardcoded into dbby-hardbacked?
-- [ ] implement platform logins and profile stuff
+- [x] implement platform logins
 - [ ] implement app logins and profile stuff
 
 ## permissions explained

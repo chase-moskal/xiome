@@ -1,7 +1,7 @@
 {
-	"name": "feature.farm",
+	"name": "xiome",
 	"version": "0.0.0-dev.0",
-	"description": "web app factory",
+	"description": "fullstack web app framework",
 	"license": "ISC",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
@@ -26,8 +26,8 @@
 		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
 		"watch": "run-p watch-tsc watch-pug watch-sass watch-bundle",
 		"start": "serve",
-		"test": "cynic node --label='feature.farm tests' x/tests.test.js",
-		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='feature.farm tests' x/tests.test.js",
+		"test": "cynic node --label='xiome tests' x/tests.test.js",
+		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='xiome tests' x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json",
 		"stats": "ls -lah x/platform.bundle.js x/platform.bundle.min.js"
 	},
@@ -81,7 +81,7 @@
 		"mongodb": "^3.6.3",
 		"pug": "^3.0.0",
 		"redcrypto": "0.0.0-dev.8",
-		"renraku": "0.0.0-dev.32",
+		"renraku": "0.0.0-dev.33",
 		"stripe": "^8.132.0",
 		"unique-names-generator": "^4.3.1"
 	},
@@ -90,10 +90,10 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/chase-moskal/feature.farm.git"
+		"url": "git+https://github.com/chase-moskal/xiome.git"
 	},
 	"bugs": {
-		"url": "https://github.com/chase-moskal/feature.farm/issues"
+		"url": "https://github.com/chase-moskal/xiome/issues"
 	},
-	"homepage": "https://github.com/chase-moskal/feature.farm#readme"
+	"homepage": "https://github.com/chase-moskal/xiome#readme"
 }
