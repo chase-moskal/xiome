@@ -38,6 +38,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 					}),
 				},
 				listApps: true,
+				deleteApp: true,
 				updateApp: true,
 				registerApp: true,
 				deleteAppToken: true,

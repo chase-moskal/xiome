@@ -4,14 +4,18 @@ import {AccessPayload} from "../../../../types.js"
 import {AuthModel} from "../../types/auth-model.js"
 import {loading} from "../../../../toolbox/loading/loading.js"
 import {ZapTextInput} from "../../../zapcomponents/inputs/zap-text-input.js"
+import {whenLoadingIsDone} from "../../../../framework/loading/when-loading-is-done.js"
 import {emailValidator} from "../../../zapcomponents/inputs/validators/email-validator.js"
-import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
+import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
+import {WiredComponent, html, mixinStyles, property, query, maybe} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
-	@property({type: Object})
-	private sendLoading = loading<{email: string}>()
+	@property({type: Boolean, reflect: true})
+	["show-logout"]: boolean = false
+
+	private sentLoading = loading<{email: string}>()
 
 	@query("zap-text-input")
 	private zapTextInput: ZapTextInput
@@ -19,21 +23,17 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 	@property({type: String})
 	private emailIsValid = false
 
-	private handleEmailChange() {
-		this.emailIsValid = this.zapTextInput.problems.length === 0
-	}
-
-	private async sendLoginLink() {
+	private async sendEmail() {
 		const email = this.zapTextInput.text
-		this.sendLoading.actions.setLoadingUntil({
+		this.sentLoading.actions.setLoadingUntil({
 			promise: this.share.authModel.sendLoginLink(email)
 				.then(() => ({email})),
 			errorReason: `failed sending email to "${email}"`,
 		})
 	}
 
-	private resetSendLoading() {
-		this.sendLoading.actions.setNone()
+	private resetSentLoading() {
+		this.sentLoading.actions.setNone()
 		if (this.zapTextInput) this.zapTextInput.text = ""
 	}
 
@@ -43,7 +43,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	subscribe() {
 		return this.share.authModel.onAccessChange(() => {
-			this.resetSendLoading()
+			this.resetSentLoading()
 		})
 	}
 
@@ -52,14 +52,21 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 			<slot>
 				<p>Welcome ${access.user.profile.nickname}!</p>
 			</slot>
-			<button @click=${this.logout}>Logout</button>
+			${this["show-logout"]
+				? html`<button @click=${this.logout}>Logout</button>`
+				: null}
 		`
+	}
+
+	private handleEmailChange() {
+		this.emailIsValid = this.zapTextInput.problems.length === 0
 	}
 
 	private renderLoggedOut() {
 		const {emailIsValid} = this
+		const sentLoadingView = this.sentLoading.view
 		return html`
-			<zap-loading .loadingView=${this.sendLoading.view}>
+			<zap-loading .loadingView=${sentLoadingView}>
 				<div slot=none>
 					<slot name=logged-out>
 						<p>Login with your email address</p>
@@ -71,27 +78,23 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 					></zap-text-input>
 					<button
 						?disabled=${!emailIsValid}
-						@click=${this.sendLoginLink}>
+						@click=${this.sendEmail}>
 							Send login link
 					</button>
 				</div>
-				${this.sendLoading.view.ready ? html`
-					<p>email sent to ${this.sendLoading.view.payload.email}</p>
-					<button @click=${this.resetSendLoading}>try another address?</button>
-				` : null}
+				${whenLoadingIsDone(sentLoadingView, sent => html`
+					<p>email sent to ${sent.email}</p>
+					<button @click=${this.resetSentLoading}>try another address?</button>
+				`)}
 			</zap-loading>
 		`
 	}
 
 	render() {
 		const {accessLoadingView} = this.share.authModel
-		const access = accessLoadingView.payload
-		return html`
-			<zap-loading .loadingView=${accessLoadingView}>
-				${access
-					? this.renderLoggedIn(access)
-					: this.renderLoggedOut()}
-			</zap-loading>
-		`
+		return renderWrappedInLoading(accessLoadingView, access => access
+			? this.renderLoggedIn(access)
+			: this.renderLoggedOut()
+		)
 	}
 }

@@ -38,5 +38,9 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 			})
 			await this.loadAppList()
 		},
+		async deleteApp(appId: string) {
+			await appService.deleteApp({appId})
+			await this.loadAppList()
+		},
 	})
 }

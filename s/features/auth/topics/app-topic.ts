@@ -9,7 +9,10 @@ import {makeAppTokenRow} from "./apps/make-app-token-row.js"
 import {PlatformUserAuth, AuthOptions, AppDraft, AppTokenDraft} from "../auth-types.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
-export const appTopic = ({rando, signToken}: AuthOptions) => asTopic<PlatformUserAuth>()({
+export const appTopic = ({
+		rando,
+		signToken,
+	}: AuthOptions) => asTopic<PlatformUserAuth>()({
 
 	async listApps({tables}, {ownerUserId}: {
 			ownerUserId: string
@@ -92,6 +95,13 @@ export const appTopic = ({rando, signToken}: AuthOptions) => asTopic<PlatformUse
 			...find({appTokenId}),
 			whole: appTokenRow,
 		})
+	},
+
+	async deleteApp({tables, access}, {appId}: {
+			appId: string
+		}) {
+		await requireUserIsAllowedToEditApp({tables, access, appId})
+		await tables.app.delete(find({appId}))
 	},
 
 	async deleteAppToken({tables, access}, {appTokenId}: {

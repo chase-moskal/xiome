@@ -2,10 +2,11 @@
 import styles from "./zap-text-input.css.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {TextChangeEvent} from "./events/text-change-event.js"
-import svgWarning from "../../../framework/icons/warning.svg.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
-import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 import {Component, html, mixinStyles, property, query, maybe} from "../../../framework/component.js"
+
+import svgWarning from "../../../framework/icons/warning.svg.js"
+import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 
  @mixinStyles(styles)
 export class ZapTextInput extends Component {
