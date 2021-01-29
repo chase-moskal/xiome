@@ -24,7 +24,7 @@
 		"watch-sass": "npm run compile-sass -s -- --watch",
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
 		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
-		"watch": "run-p watch-tsc watch-pug watch-sass watch-bundle",
+		"watch": "run-p watch-tsc watch-pug watch-sass",
 		"start": "serve",
 		"test": "cynic node --label='xiome tests' x/tests.test.js",
 		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='xiome tests' x/tests.test.js",
