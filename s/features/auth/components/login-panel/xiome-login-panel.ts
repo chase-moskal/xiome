@@ -1,8 +1,8 @@
 
 import styles from "./xiome-login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
+import {AuthModel} from "../../types/auth-model.js"
 import {loading} from "../../../../toolbox/loading/loading.js"
-import {makeAuthModel} from "../../models/auth-model2.js"
 import {ZapTextInput} from "../../../zapcomponents/inputs/zap-text-input.js"
 import {emailValidator} from "../../../zapcomponents/inputs/validators/email-validator.js"
 import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
@@ -95,5 +95,3 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 		`
 	}
 }
-
-type AuthModel = ReturnType<typeof makeAuthModel>

@@ -14,6 +14,7 @@ import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-wi
 import {ZapExample} from "./features/zapcomponents/example/zap-example.js"
 import {ZapLoading} from "./features/zapcomponents/loading/zap-loading.js"
 import {ZapTextInput} from "./features/zapcomponents/inputs/zap-text-input.js"
+import {XiomeAppList} from "./features/auth/components/apps/app-list/xiome-app-list.js"
 import {XiomeLoginPanel} from "./features/auth/components/login-panel/xiome-login-panel.js"
 
 import theme from "./theme.css.js"
@@ -53,6 +54,7 @@ void async function platform() {
 		ZapExample,
 		ZapLoading,
 		ZapTextInput,
+		XiomeAppList: share2(XiomeAppList, {appModel: models.appModel}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel: models.authModel}),
 	}))
 
