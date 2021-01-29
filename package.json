@@ -1,14 +1,13 @@
 {
 	"name": "xiome",
 	"version": "0.0.0-dev.0",
-	"description": "fullstack web app framework",
+	"description": "cloud app platform and framework",
 	"license": "ISC",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
 	"files": [
 		"x",
-		"s",
-		"web"
+		"s"
 	],
 	"scripts": {
 		"prepare": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass && run-s compile-bundle stats test",
