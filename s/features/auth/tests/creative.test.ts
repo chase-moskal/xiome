@@ -12,15 +12,18 @@ export default <Suite>{
 
 	"register app": async() => {
 		const {appModel} = (await creativeSignupAndLogin(email)).models
-		await appModel.loadAppListing()
-		assert(appModel.appList.length === 0, "should start with zero apps")
-		appModel.setAppDraft({
+		assert(appModel.appListLoadingView.none, "applist loading should start 'none'")
+
+		await appModel.loadAppList()
+		assert(appModel.appListLoadingView.ready, "applist should be finished loading")
+		assert(appModel.appListLoadingView.payload.length === 0, "should start with zero apps")
+
+		await appModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [new URL(appLink).origin],
 		})
-		await appModel.submitAppDraftForRegistration()
-		assert(appModel.appList.length === 1, "should now have one app")
+		assert(appModel.appListLoadingView.payload.length === 1, "should now have one app")
 	},
 
 	// "generate an admin account to login with": true,
