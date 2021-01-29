@@ -1,5 +1,5 @@
 
-import styles from "./zap-loading.css.js"
+import styles from "./xio-loading.css.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {LoadingView} from "../../../framework/loading/types/loading-view.js"
 import {Component, html, mixinStyles, property} from "../../../framework/component.js"
@@ -8,7 +8,7 @@ import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgSpinner from "../../../framework/icons/spinner.svg.js"
 
 @mixinStyles(styles)
-export class ZapLoading<xPayload = any> extends Component {
+export class XioLoading<xPayload = any> extends Component {
 
 	@property({type: Object})
 	loadingView: LoadingView<xPayload> = loading<xPayload>().view

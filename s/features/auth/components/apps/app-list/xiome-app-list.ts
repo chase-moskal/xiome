@@ -3,7 +3,7 @@ import styles from "./xiome-app-list.css.js"
 import {AppModel} from "../../../types/app-model.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
 import {loading} from "../../../../../framework/loading/loading.js"
-import {ZapTextInput} from "../../../../zapcomponents/inputs/zap-text-input.js"
+import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {WiredComponent, html, mixinStyles, query} from "../../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../../framework/loading/render-wrapped-in-loading.js"
 
@@ -12,10 +12,10 @@ export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
 	private createAppLoading = loading()
 
 	@query(".app-creator .app-label")
-	private appLabel: ZapTextInput
+	private appLabel: XioTextInput
 
 	@query(".app-creator .app-home")
-	private appHome: ZapTextInput
+	private appHome: XioTextInput
 
 	@query(".app-creator .app-origins")
 	private appOrigins: HTMLTextAreaElement
@@ -80,8 +80,8 @@ export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
 	private renderAppCreator() {
 		return html`
 			<div class=app-creator>
-				<zap-text-input class=app-label placeholder="app label"></zap-text-input>
-				<zap-text-input class=app-home placeholder="app home"></zap-text-input>
+				<xio-text-input class=app-label placeholder="app label"></xio-text-input>
+				<xio-text-input class=app-home placeholder="app home"></xio-text-input>
 				<textarea class=app-origins placeholder="app origins"></textarea>
 				<br/>
 				<button @click=${this.handleCreateClick}>

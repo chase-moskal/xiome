@@ -1,5 +1,5 @@
 
-import styles from "./zap-text-input.css.js"
+import styles from "./xio-text-input.css.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {TextChangeEvent} from "./events/text-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
@@ -9,7 +9,7 @@ import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 
  @mixinStyles(styles)
-export class ZapTextInput extends Component {
+export class XioTextInput extends Component {
 
 	@property({type: Boolean, reflect: true})
 	["show-validation-when-empty"] = false

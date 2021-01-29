@@ -10,9 +10,9 @@ export function renderWrappedInLoading<xPayload, xResult>(
 	) {
 
 	return html`
-		<zap-loading .loadingView=${view}>
+		<xio-loading .loadingView=${view}>
 			${whenLoadingIsDone(view, render)}
 			${more}
-		</zap-loading>
+		</xio-loading>
 	`
 }
