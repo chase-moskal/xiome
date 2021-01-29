@@ -2,7 +2,7 @@
 import styles from "./xiome-app-list.css.js"
 import {AppModel} from "../../../types/app-model.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
-import {loading} from "../../../../../toolbox/loading/loading.js"
+import {loading} from "../../../../../framework/loading/loading.js"
 import {ZapTextInput} from "../../../../zapcomponents/inputs/zap-text-input.js"
 import {WiredComponent, html, mixinStyles, query} from "../../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../../framework/loading/render-wrapped-in-loading.js"

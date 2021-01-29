@@ -1,5 +1,5 @@
 
-import {LoadingView} from "../../toolbox/loading/types/loading-view.js"
+import {LoadingView} from "./types/loading-view.js"
 
 export function whenLoadingIsDone<xPayload, xResult>(
 		view: LoadingView<xPayload>,

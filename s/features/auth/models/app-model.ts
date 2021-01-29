@@ -1,6 +1,6 @@
 
 import {mobxify} from "../../../framework/mobxify.js"
-import {loading} from "../../../toolbox/loading/loading.js"
+import {loading} from "../../../framework/loading/loading.js"
 
 import {AppDraft} from "../auth-types.js"
 import {AppDisplay} from "../types/apps/app-display.js"

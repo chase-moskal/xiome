@@ -1,7 +1,7 @@
 
 import {Mode} from "./types/mode.js"
 import {Loading} from "./types/loading.js"
-import {mobxify} from "../../framework/mobxify.js"
+import {mobxify} from "../mobxify.js"
 import {LoadingView} from "./types/loading-view.js"
 import {LoadingMode} from "./types/loading-mode.js"
 import {LoadingActions} from "./types/loading-actions.js"
