@@ -1,5 +1,5 @@
 
-import {Suite, assert} from "cynic"
+import {Suite, assert, expect} from "cynic"
 import {appLink} from "./helpers/constants.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"
 
@@ -24,6 +24,14 @@ export default <Suite>{
 			origins: [new URL(appLink).origin],
 		})
 		assert(appModel.appListLoadingView.payload.length === 1, "should now have one app")
+
+		await expect(async() => {
+			await appModel.registerApp({
+				home: "badlink",
+				label: "My App",
+				origins: ["https://example.chasemoskal.com"],
+			})
+		}).throws()
 	},
 
 	// "generate an admin account to login with": true,

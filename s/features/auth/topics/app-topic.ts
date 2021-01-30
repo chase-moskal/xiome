@@ -3,11 +3,14 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {getApp} from "./apps/get-app.js"
-import {AppDisplay} from "../types/apps/app-display.js"
 import {find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {makeAppTokenRow} from "./apps/make-app-token-row.js"
-import {PlatformUserAuth, AuthOptions, AppDraft, AppTokenDraft} from "../auth-types.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
+
+import {AppDisplay} from "../types/apps/app-display.js"
+import {PlatformUserAuth, AuthOptions, AppDraft, AppTokenDraft} from "../auth-types.js"
+import { validateAppDraft } from "./apps/validate-app-draft.js"
+import { throwProblems } from "./apps/throw-problems.js"
 
 export const appTopic = ({
 		rando,
@@ -45,6 +48,7 @@ export const appTopic = ({
 			appDraft: AppDraft
 			ownerUserId: string
 		}) {
+		throwProblems(validateAppDraft(appDraft))
 		const appId = rando.randomId()
 		await Promise.all([
 			tables.app.create({
@@ -55,7 +59,7 @@ export const appTopic = ({
 			tables.appOwnership.create({
 				appId,
 				userId: ownerUserId,
-			})
+			}),
 		])
 		return {appId}
 	},
