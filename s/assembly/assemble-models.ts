@@ -29,9 +29,9 @@ export async function assembleModels({
 		appService: remote.auth.appService,
 	})
 
-	// autorun(() => {
-	// 	void authModel.accessLoadingView.payload
-	// })
+	authModel.onAccessChange(() => {
+		appModel.accessChange()
+	})
 
 	return {
 		appModel,

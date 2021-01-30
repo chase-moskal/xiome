@@ -9,16 +9,6 @@ import { makeAppCreator } from "./app-creator.js"
 
 @mixinStyles(styles)
 export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
-	private createAppLoading = loading<void>()
-
-	// @query(".app-creator .app-label")
-	// private appLabel: XioTextInput
-
-	// @query(".app-creator .app-home")
-	// private appHome: XioTextInput
-
-	// @query(".app-creator .app-origins")
-	// private appOrigins: HTMLTextAreaElement
 
 	firstUpdated() {
 		this.share.appModel.loadAppList()
@@ -60,48 +50,13 @@ export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
 		`
 	}
 
-	// private handleCreateClick = async() => {
-	// 	const draft = {
-	// 		home: this.appHome.text,
-	// 		label: this.appLabel.text,
-	// 		origins: this.appOrigins.value
-	// 			.split("\n")
-	// 			.map(line => line.trim()),
-	// 	}
-	// 	this.appHome.text = ""
-	// 	this.appLabel.text = ""
-	// 	this.appOrigins.value = ""
-	// 	await this.createAppLoading.actions.setLoadingUntil({
-	// 		errorReason: "",
-	// 		promise: this.share.appModel.registerApp(draft),
-	// 	})
-	// }
-
 	private readonly appCreator = makeAppCreator({
 		shadowRoot: this.shadowRoot,
 		requestUpdate: () => this.requestUpdate(),
 		createApp: async appDraft => {
 			await this.share.appModel.registerApp(appDraft)
-			// await this.createAppLoading.actions.setLoadingUntil({
-			// 	errorReason: "failed to create app",
-			// 	promise: this.share.appModel.registerApp(appDraft),
-			// })
 		},
 	})
-
-	// private renderAppCreator() {
-	// 	return html`
-	// 		<div class=app-creator>
-	// 			<xio-text-input class=app-label placeholder="app label"></xio-text-input>
-	// 			<xio-text-input class=app-home placeholder="app home"></xio-text-input>
-	// 			<textarea class=app-origins placeholder="app origins"></textarea>
-	// 			<br/>
-	// 			<button @click=${this.handleCreateClick}>
-	// 				create app
-	// 			</button>
-	// 		</div>
-	// 	`
-	// }
 
 	render() {
 		const {appListLoadingView} = this.share.appModel

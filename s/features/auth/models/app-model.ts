@@ -9,25 +9,37 @@ import {AppModelOptions} from "./types/app/app-model-options.js"
 export function makeAppModel({appService, getAccess}: AppModelOptions) {
 
 	const state = mobxify({
+		active: false,
 		appListLoading: loading<AppDisplay[]>(),
+		setActive(active: boolean) {
+			state.active = active
+		},
 	})
 
 	async function getUserId() {
 		const access = await getAccess()
-		if (!access) throw new Error("must be logged in")
-		return access.user.userId
+		return access?.user.userId
+	}
+
+	async function loadAppList() {
+		state.setActive(true)
+		return await state.appListLoading.actions.setLoadingUntil({
+			errorReason: "failed to load app list",
+			promise: getUserId()
+				.then(userId => userId
+					? appService.listApps({ownerUserId: userId})
+					: []),
+		})
 	}
 
 	return mobxify({
 		get appListLoadingView() {
 			return state.appListLoading.view
 		},
-		async loadAppList() {
-			await state.appListLoading.actions.setLoadingUntil({
-				errorReason: "failed to load app list",
-				promise: getUserId()
-					.then(userId => appService.listApps({ownerUserId: userId})),
-			})
+		loadAppList,
+		async accessChange() {
+			if (state.active)
+				await loadAppList()
 		},
 		async registerApp(appDraft: AppDraft) {
 			if (!appDraft) throw new Error("app draft missing")
@@ -36,11 +48,16 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				appDraft,
 				ownerUserId: userId,
 			})
-			await this.loadAppList()
+			await loadAppList()
 		},
 		async deleteApp(appId: string) {
-			await appService.deleteApp({appId})
-			await this.loadAppList()
+			await state.appListLoading.actions.setLoadingUntil({
+				errorReason: "failed to delete app",
+				promise: (async() => {
+					await appService.deleteApp({appId})
+					return await loadAppList()
+				})(),
+			})
 		},
 	})
 }

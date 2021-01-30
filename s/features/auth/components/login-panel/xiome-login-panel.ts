@@ -8,6 +8,7 @@ import {whenLoadingIsDone} from "../../../../framework/loading/when-loading-is-d
 import {emailValidator} from "../../../xio-components/inputs/validators/email-validator.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 import {WiredComponent, html, mixinStyles, property, query, maybe} from "../../../../framework/component.js"
+import {email} from "../../../../toolbox/darkvalley.js"
 
 @mixinStyles(styles)
 export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
@@ -24,7 +25,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 	private emailIsValid = false
 
 	private async sendEmail() {
-		const email = this.textInput.text
+		const email = this.textInput.value
 		this.sentLoading.actions.setLoadingUntil({
 			promise: this.share.authModel.sendLoginLink(email)
 				.then(() => ({email})),
@@ -34,7 +35,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private resetSentLoading() {
 		this.sentLoading.actions.setNone()
-		if (this.textInput) this.textInput.text = ""
+		if (this.textInput) this.textInput.setText("")
 	}
 
 	private logout() {
@@ -73,8 +74,8 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 					</slot>
 					<xio-text-input
 						placeholder="enter your email"
-						.validator=${emailValidator}
-						@textchange=${this.handleEmailChange}
+						.validator=${email()}
+						@valuechange=${this.handleEmailChange}
 					></xio-text-input>
 					<button
 						?disabled=${!emailIsValid}

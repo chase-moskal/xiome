@@ -1,2 +1,2 @@
 
-export type TextInputValidator = (draft: string) => string[]
+export type TextInputValidator<xParsedValue> = (draft: xParsedValue) => string[]

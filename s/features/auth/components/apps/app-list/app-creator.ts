@@ -1,9 +1,11 @@
 
 import {AppDraft} from "../../../../../types.js"
-import {html} from "../../../../../framework/component.js"
+import {html, maybe} from "../../../../../framework/component.js"
 import {debounce2} from "../../../../../toolbox/debounce2.js"
 import {validateAppDraft} from "../../../topics/apps/validate-app-draft.js"
+import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
+import { TextInputParser } from "../../../../xio-components/inputs/types/text-input-parser.js"
 
 export function makeAppCreator({shadowRoot, requestUpdate, createApp}: {
 		shadowRoot: ShadowRoot
@@ -13,6 +15,7 @@ export function makeAppCreator({shadowRoot, requestUpdate, createApp}: {
 
 	let problems = []
 	let appDraft: AppDraft
+	let formDisabled = false
 
 	function getFormElements() {
 		const select = <X extends HTMLElement>(name: string) =>
@@ -20,30 +23,27 @@ export function makeAppCreator({shadowRoot, requestUpdate, createApp}: {
 		return {
 			appHome: select<XioTextInput>("home"),
 			appLabel: select<XioTextInput>("label"),
-			appOrigins: select<HTMLTextAreaElement>("origins"),
+			appOrigins: select<XioTextInput<string[]>>("origins"),
 		}
 	}
 
 	function clearForm() {
 		const {appHome, appLabel, appOrigins} = getFormElements()
-		appHome.text = ""
-		appLabel.text = ""
-		appOrigins.value = ""
+		appHome.setText("")
+		appLabel.setText("")
+		appOrigins.setText("")
 		requestUpdate()
 	}
 
 	function readForm() {
 		const {appHome, appLabel, appOrigins} = getFormElements()
 		appDraft = {
-			home: appHome.text,
-			label: appLabel.text,
-			origins: (appOrigins.value ?? "")
-				.split("\n")
-				.map(line => line.trim()),
+			home: appHome.value,
+			label: appLabel.value,
+			origins: appOrigins.value,
 		}
 		problems = validateAppDraft(appDraft)
 		if (problems.length) appDraft = undefined
-		console.log({problems, appDraft})
 		requestUpdate()
 	}
 
@@ -56,33 +56,59 @@ export function makeAppCreator({shadowRoot, requestUpdate, createApp}: {
 	}
 
 	async function handleCreateClick() {
-		clearForm()
-		await createApp(appDraft)
+		readForm()
+		formDisabled = true
+		const draft: AppDraft = {...appDraft}
+		requestUpdate()
+		try {
+			await createApp(draft)
+			clearForm()
+		}
+		finally {
+			formDisabled = false
+			requestUpdate()
+		}
 	}
+
+	const parseOrigins: TextInputParser<string[]> = text =>
+		text
+			.split("\n")
+			.map(line => line.trim())
+			.filter(line => line.length > 0)
 
 	function render() {
 		return html`
 			<div class=app-creator>
+
 				<xio-text-input
 					class=app-label
 					placeholder="app label"
-					@textchange=${handleFormChange}
-
+					?disabled=${formDisabled}
+					.validator=${appDraftValidators.label}
+					@valuechange=${handleFormChange}
 				></xio-text-input>
+
 				<xio-text-input
 					class=app-home
 					placeholder="app home"
-					@textchange=${handleFormChange}
+					?disabled=${formDisabled}
+					.validator=${appDraftValidators.home}
+					@valuechange=${handleFormChange}
 				></xio-text-input>
-				<textarea
+
+				<xio-text-input
+					textarea
 					class=app-origins
 					placeholder="app origins"
-					@keyup=${handleFormChange}
-					@change=${handleFormChange}
-				></textarea>
+					?disabled=${formDisabled}
+					.parser=${parseOrigins}
+					.validator=${appDraftValidators.origins}
+					@valuechange=${handleFormChange}
+				></xio-text-input>
+
 				<br/>
 				<button
-					?disabled=${!appDraft || problems.length > 0}
+					?disabled=${formDisabled || !appDraft || problems.length > 0}
 					@click=${handleCreateClick}>
 						create app
 				</button>

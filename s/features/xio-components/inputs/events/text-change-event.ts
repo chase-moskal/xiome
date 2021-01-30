@@ -1,10 +1,10 @@
 
-export class TextChangeEvent extends CustomEvent<undefined> {
-	constructor() {
-		super("textchange", {
+export class ValueChangeEvent<xParsedValue> extends CustomEvent<xParsedValue> {
+	constructor(value: xParsedValue) {
+		super("valuechange", {
 			bubbles: true,
 			composed: true,
-			detail: undefined,
+			detail: value,
 		})
 	}
 }

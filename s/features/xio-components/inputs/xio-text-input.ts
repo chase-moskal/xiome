@@ -1,55 +1,63 @@
 
 import styles from "./xio-text-input.css.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
-import {TextChangeEvent} from "./events/text-change-event.js"
+import {ValueChangeEvent} from "./events/text-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
 import {Component, html, mixinStyles, property, query, maybe} from "../../../framework/component.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import { TextInputParser } from "./types/text-input-parser.js"
 
  @mixinStyles(styles)
-export class XioTextInput extends Component {
+export class XioTextInput<xParsedValue = string> extends Component {
+
+	@property({type: Boolean, reflect: true})
+	["textarea"] = false
 
 	@property({type: Boolean, reflect: true})
 	["show-validation-when-empty"] = false
+
+	@property({type: Boolean, reflect: true})
+	["disabled"] = false
 
 	@property({type: String, reflect: true})
 	["placeholder"]: string = ""
 
 	@property({type: Function})
-	validator: TextInputValidator = undefined
+	parser: TextInputParser<xParsedValue> =
+		(text: string) => <xParsedValue><unknown>text
+
+	@property({type: Function})
+	validator: TextInputValidator<xParsedValue> = () => []
 
 	@property({type: Object})
 	problems: string[] = []
 
-	get text(): string {
-		const {draft, validator} = this
-		return validator
-			? validator(draft).length === 0
-				? draft
-				: undefined
-			: draft
+	get value(): xParsedValue {
+		const {draft} = this
+		const parsed = this.parser(draft)
+		this.problems = this.validator(parsed)
+		return this.problems.length === 0
+			? parsed
+			: undefined
 	}
 
-	set text(value: string) {
+	setText(value: string) {
 		this.input.value = value
 		this.updateFromRawInput()
 	}
 
-	@query("input")
-	private input: HTMLInputElement
+	@query(".input")
+	private input: HTMLInputElement | HTMLTextAreaElement
 
 	@property({type: String})
 	private draft: string = ""
 
 	private updateFromRawInput = () => {
-		const {value} = this.input
-		this.draft = value
-		this.problems = this.validator
-			? this.validator(value)
-			: []
-		this.dispatchEvent(new TextChangeEvent())
+		this.draft = this.input.value
+		const {value} = this
+		this.dispatchEvent(new ValueChangeEvent(value))
 	}
 
 	private handleInputChange = debounce2(500, this.updateFromRawInput)
@@ -68,16 +76,28 @@ export class XioTextInput extends Component {
 				? svgCircleCheck
 				: svgWarning
 			: null
-
 		return html`
 			<div class=container>
 				<div class=mainbox>
-					<input
-						type=text
-						.value="${draft}"
-						placeholder=${placeholder}
-						@change=${handleInputChange}
-						@keyup=${handleInputChange}/>
+					${this["textarea"] ? html`
+						<textarea
+							class=input
+							.value="${draft}"
+							?disabled=${this["disabled"]}
+							placeholder=${placeholder}
+							@change=${handleInputChange}
+							@keyup=${handleInputChange}
+						></textarea>
+					` : html`
+						<input
+							type=text
+							class=input
+							.value="${draft}"
+							?disabled=${this["disabled"]}
+							placeholder=${placeholder}
+							@change=${handleInputChange}
+							@keyup=${handleInputChange}/>
+					`}
 					${showValidation ? icon : null}
 				</div>
 				${maybe(showProblems, html`
