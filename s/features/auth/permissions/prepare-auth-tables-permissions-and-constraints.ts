@@ -6,6 +6,8 @@ import {AuthTables, PlatformConfig, PermissionsTables} from "../auth-types.js"
 
 import {transformHardPermissionsToMemoryTables} from "./tables/transform-hard-permissions-to-memory-tables.js"
 
+const namespaceKeyAppId = "_appId"
+
 export function prepareAuthTablesPermissionsAndConstraints({config, authTables}: {
 			config: PlatformConfig
 			authTables: AuthTables
@@ -17,7 +19,12 @@ export function prepareAuthTablesPermissionsAndConstraints({config, authTables}:
 			? config.permissions.platform
 			: config.permissions.app
 
-		const hardTables: PermissionsTables = transformHardPermissionsToMemoryTables(appId, hardPermissions)
+		const hardTables: PermissionsTables =
+			transformHardPermissionsToMemoryTables(
+				hardPermissions,
+				namespaceKeyAppId,
+				appId,
+			)
 
 		const hardbackedAuthTables = {
 			...authTables,
@@ -27,6 +34,6 @@ export function prepareAuthTablesPermissionsAndConstraints({config, authTables}:
 			rolePrivilege: dbbyHardcoded({actualTable: authTables.rolePrivilege, hardTable: hardTables.rolePrivilege}),
 		}
 
-		return prepareConstrainTables(hardbackedAuthTables)({appId})
+		return prepareConstrainTables(hardbackedAuthTables)({[namespaceKeyAppId]: appId})
 	}
 }
