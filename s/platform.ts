@@ -14,7 +14,7 @@ import {loginWithLinkTokenOrUseExistingLogin} from "./assembly/frontend/login-wi
 import {XioExample} from "./features/xio-components/example/xio-example.js"
 import {XioLoading} from "./features/xio-components/loading/xio-loading.js"
 import {XioTextInput} from "./features/xio-components/inputs/xio-text-input.js"
-import {XiomeAppList} from "./features/auth/components/apps/app-list/xiome-app-list.js"
+import {XiomeAppManager} from "./features/auth/components/apps/xiome-app-manager.js"
 import {XiomeLoginPanel} from "./features/auth/components/login-panel/xiome-login-panel.js"
 
 import theme from "./theme.css.js"
@@ -54,7 +54,7 @@ void async function platform() {
 		XioExample,
 		XioLoading,
 		XioTextInput,
-		XiomeAppList: share2(XiomeAppList, {appModel: models.appModel}),
+		XiomeAppManager: share2(XiomeAppManager, {appModel: models.appModel}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel: models.authModel}),
 	}))
 

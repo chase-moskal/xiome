@@ -1,14 +1,14 @@
 
-import styles from "./xiome-app-list.css.js"
-import {AppModel} from "../../../types/app-model.js"
-import {AppDisplay} from "../../../types/apps/app-display.js"
-import {loading} from "../../../../../framework/loading/loading.js"
-import {WiredComponent, html, mixinStyles, query} from "../../../../../framework/component.js"
-import {renderWrappedInLoading} from "../../../../../framework/loading/render-wrapped-in-loading.js"
-import { makeAppCreator } from "./app-creator.js"
+import styles from "./xiome-app-manager.css.js"
+import {AppModel} from "../../types/app-model.js"
+import {AppDisplay} from "../../types/apps/app-display.js"
+import {WiredComponent, html, mixinStyles, query} from "../../../../framework/component.js"
+import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
+
+import {makeAppCreator} from "./app-creator/app-creator.js"
 
 @mixinStyles(styles)
-export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
+export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 
 	firstUpdated() {
 		this.share.appModel.loadAppList()
@@ -51,7 +51,7 @@ export class XiomeAppList extends WiredComponent<{appModel: AppModel}> {
 	}
 
 	private readonly appCreator = makeAppCreator({
-		shadowRoot: this.shadowRoot,
+		root: this.shadowRoot,
 		requestUpdate: () => this.requestUpdate(),
 		createApp: async appDraft => {
 			await this.share.appModel.registerApp(appDraft)
