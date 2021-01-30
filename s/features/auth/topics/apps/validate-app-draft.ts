@@ -1,5 +1,6 @@
 
-import {check, object, array, alphaNumeric, createSchema, Builder, atLeast, not, moreThan, length, enUS, string, any, between} from "bueno"
+import {check, array, createSchema, Builder, atLeast, not, moreThan, length, enUS, string, any, Schema} from "bueno"
+
 import {AppDraft} from "../../../../types.js"
 
 export function validateAppDraft(appDraft: AppDraft) {
@@ -21,14 +22,17 @@ export function validateAppDraft(appDraft: AppDraft) {
 		}
 	}))
 
-	const schema = object({
-		label: smallText,
-		home: url,
-		origins: any(length(atLeast(1)), array(url)),
-	})
+	function commit(problem: string) {
+		if (problem) problems.push(problem)
+	}
 
-	const error = check(appDraft, schema, enUS)
-	if (error) problems.push(error)
+	function validate(value: any, schema: Schema<any>) {
+		commit(check(value, schema, enUS))
+	}
+
+	validate(appDraft.label, smallText)
+	validate(appDraft.home, url)
+	validate(appDraft.origins, any(length(atLeast(1)), array(url)))
 
 	return problems
 }
