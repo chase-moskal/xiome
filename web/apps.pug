@@ -3,13 +3,12 @@ extends _templates/_page.pug
 
 block append variables
 	- pageSubtitle = "apps"
-	- test = "!!!!!"
 
 block maincontent
 	.content.page-apps
-		h2 apps
 
 		xiome-login-panel(initially-hidden)
 			p(slot="logged-out") login to create and manage xiome apps
 			xiome-app-manager
-				p no apps
+				h2 your xiome apps
+				h2(slot="no-apps") create your first xiome app

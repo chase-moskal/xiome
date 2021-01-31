@@ -16,7 +16,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 
 	private renderNoApps() {
 		return html`
-			<slot></slot>
+			<slot name=no-apps></slot>
 		`
 	}
 
@@ -26,20 +26,21 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 
 	private renderAppList(appList: AppDisplay[]) {
 		return html`
+			<slot></slot>
 			<div class=applist>
 				${appList.map(app => html`
 					<div class=app data-app-id=${app.appId}>
-						<p class=app-id>
-							<span>app-id:</span>
-							<span>${app.appId}</span>
-						</p>
-						<p>
-							<span>app-label:</span>
+						<p class=app-label>
+							<span>label:</span>
 							<span>${app.label}</span>
 						</p>
-						<p>
-							<span>app-home:</span>
+						<p class=app-home>
+							<span>home:</span>
 							<span>${app.home}</span>
+						</p>
+						<p class=app-id>
+							<span>app id:</span>
+							<span>${app.appId}</span>
 						</p>
 						<button @click=${() => this.deleteApp(app.appId)}>
 							delete app
@@ -65,6 +66,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 				? this.renderAppList(appList)
 				: this.renderNoApps()
 			)}
+			<slot name=creator-heading></slot>
 			${this.appCreator.render()}
 		`
 	}

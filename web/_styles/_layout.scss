@@ -53,28 +53,33 @@ html {
 
 main {
 	@extend .slice;
-	
+	padding: 0.5rem 0;
+}
+
+.pad {
+	padding: 0 1rem;
 }
 
 .content {
 	p, ol, ul, li { margin-top: 0.3em; }
+	ol, ul { margin-left: 1.5em; }
 	h1, h2, h3, h4, h5, h6 {
 		margin-top: 0.5em;
 		font-weight: normal;
+		&:first-child {
+			margin-top: 0;
+		}
 	}
 	h2 { font-size: 1.3em; }
 	h3 { font-size: 1.2em; }
 	h4 { font-size: 1.1em; }
 	h5 { font-size: 1.1em; font-weight: bold; }
 	h5 { font-size: 1.1em; font-weight: bold; font-size: italic; }
-	h2 {
-		&:first-child {
-			margin-top: 0;
-		}
-	}
-	ol, ul {
-		margin-left: 1.5em;
-	}
+	// h2 {
+	// 	&:first-child {
+	// 		margin-top: 0;
+	// 	}
+	// }
 }
 
 .sitefooter {

@@ -1,13 +1,13 @@
 
 import styles from "./xio-text-input.css.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
+import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/text-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
 import {Component, html, mixinStyles, property, query, maybe} from "../../../framework/component.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
-import { TextInputParser } from "./types/text-input-parser.js"
 
  @mixinStyles(styles)
 export class XioTextInput<xParsedValue = string> extends Component {

@@ -3,6 +3,15 @@
 	max-width: 700px;
 }
 
+.page-apps {
+	xiome-app-manager {
+		h2 {
+			padding: 0 1rem;
+			margin-top: 0;
+		}
+	}
+}
+
 // .catalog {
 // 	display: grid;
 // 	grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
