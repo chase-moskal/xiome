@@ -7,21 +7,22 @@ import {AppPayload} from "../features/auth/auth-types.js"
 import {MockSystemOptions} from "./types/mock-system-options.js"
 
 export async function mockWholeSystem({
+		rando,
 		tableStorage,
 		platformLink,
 		technicianEmail,
 		platformAppLabel,
 		sendLoginEmail,
+		generateNickname,
 	}: MockSystemOptions) {
 
 	const {
-		rando,
 		config,
 		tables,
 		signToken,
 		verifyToken,
-		generateNickname,
 	} = await mockPrerequisites({
+		rando,
 		tableStorage,
 		platformLink,
 		technicianEmail,

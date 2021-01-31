@@ -1,0 +1,22 @@
+
+export const adjectives = [
+	"Funny",
+	"Charming",
+	"Wonderful",
+	"Fancy",
+	"Whimsical",
+	"Gregarious",
+	"Curious",
+	"Fabulous",
+	"Winking",
+	"Dastardly",
+	"Saavy",
+	"Groovy",
+	"Happy",
+	"Snappy",
+	"Sneaky",
+	"Quick",
+	"Super",
+	"Fast",
+	"Fuzzy",
+]

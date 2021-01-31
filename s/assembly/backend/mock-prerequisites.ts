@@ -2,7 +2,7 @@
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-import {getRando} from "../../toolbox/get-rando.js"
+import {Rando} from "../../toolbox/get-rando.js"
 import {SimpleStorage} from "../../toolbox/json-storage.js"
 import {mockStorageTables} from "./tools/mock-storage-tables.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
@@ -10,18 +10,19 @@ import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config
 import {SystemTables} from "../types/backend/system-tables.js"
 
 export async function mockPrerequisites({
+		rando,
 		tableStorage,
 		platformLink,
 		technicianEmail,
 		platformAppLabel,
 	}: {
+		rando: Rando
 		platformLink: string
 		technicianEmail: string
 		platformAppLabel: string
 		tableStorage: SimpleStorage
 	}) {
 
-	const rando = await getRando()
 	const config = mockPlatformConfig({
 		platformLink,
 		technicianEmail,
@@ -46,15 +47,11 @@ export async function mockPrerequisites({
 		}),
 	}
 
-	let nicknameCount = 0
-	const generateNickname = () => `Anonymous ${nicknameCount++}`
-
 	return {
 		rando,
 		config,
 		tables,
 		signToken,
 		verifyToken,
-		generateNickname,
 	}
 }

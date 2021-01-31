@@ -1,6 +1,7 @@
 
 import "menutown"
 
+import {getRando} from "./toolbox/get-rando.js"
 import {assembleModels} from "./assembly/assemble-models.js"
 import {mockWholeSystem} from "./assembly/mock-whole-system.js"
 import {mockRemote} from "./assembly/frontend/mocks/mock-remote.js"
@@ -18,14 +19,18 @@ import {XiomeAppManager} from "./features/auth/components/apps/xiome-app-manager
 import {XiomeLoginPanel} from "./features/auth/components/login-panel/xiome-login-panel.js"
 
 import theme from "./theme.css.js"
+import { standardNicknameGenerator } from "./features/auth/tools/nicknames/standard-nickname-generator.js"
 
 void async function platform() {
+	const rando = await getRando()
 	const system = await mockWholeSystem({
+		rando,
 		platformAppLabel,
 		platformLink: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",
 		tableStorage: window.localStorage,
 		sendLoginEmail: prepareSendLoginEmail({sendEmail}),
+		generateNickname: standardNicknameGenerator({rando}),
 	})
 
 	const channel = new BroadcastChannel("tokenChangeEvent")
