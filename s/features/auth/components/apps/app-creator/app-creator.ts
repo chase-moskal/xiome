@@ -1,12 +1,12 @@
 
+import {formState} from "../form/form-state.js"
 import {AppDraft} from "../../../../../types.js"
 import {html} from "../../../../../framework/component.js"
+import {formEventHandlers} from "../form/form-event-handlers.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
+import {validateAppDraft} from "../../../topics/apps/validate-app-draft.js"
 import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
-
-import {AppCreatorState} from "./types/app-creator-state.js"
-import {appCreatorEventHandlers} from "./preparations/app-creator-event-handlers.js"
-import {appCreatorFormOperations} from "./preparations/app-creator-form-operations.js"
+import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 
 export function makeAppCreator({root, requestUpdate, createApp}: {
 		root: ShadowRoot | HTMLElement
@@ -14,28 +14,44 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 		createApp: (appDraft: AppDraft) => Promise<void>
 	}) {
 
-	const state: AppCreatorState = {
-		problems: [],
-		appDraft: undefined,
-		formDisabled: false,
+	const state = formState<AppDraft>()
+
+	function getFormElements() {
+		const select = <X extends HTMLElement>(name: string) =>
+			root.querySelector<X>(`.appcreator .app-${name}`)
+		return {
+			appHome: select<XioTextInput>("home"),
+			appLabel: select<XioTextInput>("label"),
+			appOrigins: select<XioTextInput<string[]>>("origins"),
+		}
 	}
 
-	const {clearForm, readForm} = appCreatorFormOperations({
-		requestUpdate,
+	const {handleFormChange, handleSubmitClick} = formEventHandlers({
 		state,
-		root,
-	})
-
-	const {handleFormChange, handleCreateClick} = appCreatorEventHandlers({
 		requestUpdate,
-		clearForm,
-		createApp,
-		readForm,
-		state,
+		submit: createApp,
+		clearForm: () => {
+			const {appHome, appLabel, appOrigins} = getFormElements()
+			appHome.setText("")
+			appLabel.setText("")
+			appOrigins.setText("")
+			requestUpdate()
+		},
+		readForm: () => {
+			const {appHome, appLabel, appOrigins} = getFormElements()
+			state.draft = {
+				home: appHome.value,
+				label: appLabel.value,
+				origins: appOrigins.value,
+			}
+			state.problems = validateAppDraft(state.draft)
+			if (state.problems.length) state.draft = undefined
+			requestUpdate()
+		},
 	})
 
 	function render() {
-		const {formDisabled, appDraft, problems} = state
+		const {formDisabled, draft, problems} = state
 		return html`
 			<div class=appcreator>
 
@@ -67,8 +83,8 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 				<button
 					class=create-app-button
-					?disabled=${formDisabled || !appDraft || problems.length > 0}
-					@click=${handleCreateClick}>
+					?disabled=${formDisabled || !draft || problems.length > 0}
+					@click=${handleSubmitClick}>
 						create app
 				</button>
 			</div>

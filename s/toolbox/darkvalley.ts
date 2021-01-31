@@ -67,6 +67,11 @@ export const number = (): Condition<number> => value =>
 		? ["must be a number"]
 		: []
 
+export const length = (len: number): Condition<{length: number}> => value =>
+	value.length !== len
+		? [`length must be ${len}`]
+		: []
+
 export const minLength = (min: number): Condition<{length: number}> => value =>
 	value.length < min
 		? ["too small"]

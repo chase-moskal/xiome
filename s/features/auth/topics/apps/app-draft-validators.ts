@@ -1,7 +1,7 @@
 
 import {validator, depend as d, string, array, minLength, maxLength, notWhitespace, url, origin} from "../../../../toolbox/darkvalley.js"
 
-export const appDraftValidators = {
+export const appDraftValidators = Object.freeze({
 	home: validator<string>(d(
 		string(),
 		minLength(1),
@@ -19,4 +19,4 @@ export const appDraftValidators = {
 		minLength(1),
 		maxLength(100),
 	)),
-}
+})
