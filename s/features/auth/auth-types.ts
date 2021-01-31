@@ -261,6 +261,7 @@ export type AppRow = {
 	appId: string
 	label: string
 	home: string
+	archived: boolean
 }
 
 export type AppOwnershipRow = {

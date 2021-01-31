@@ -5,8 +5,8 @@ import creative from "./tests/creative.test.js"
 import technician from "./tests/technician.test.js"
 
 export default <Suite>{
-	technician,
-	creative,
+	"as technician": technician,
+	"as creative": creative,
 
 	// "creative-old": {
 	// 	// "common tests for creative on platform": commonTests(creativeSystem),

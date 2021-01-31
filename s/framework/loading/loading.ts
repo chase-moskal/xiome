@@ -65,7 +65,7 @@ export function loading<xPayload>(): Loading<xPayload> {
 			}
 			catch (error) {
 				actions.setError(errorReason)
-				console.error(error)
+				throw error
 			}
 		},
 	}

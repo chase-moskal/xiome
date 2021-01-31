@@ -3,7 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {getApp} from "./apps/get-app.js"
-import {find, or} from "../../../toolbox/dbby/dbby-mongo.js"
+import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {makeAppTokenRow} from "./apps/make-app-token-row.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
@@ -11,6 +11,7 @@ import {throwProblems} from "./apps/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
 import {PlatformUserAuth, AuthOptions, AppDraft, AppTokenDraft} from "../auth-types.js"
+import { regenerateAllTokensForApp } from "./apps/regenerate-all-tokens-for-app.js"
 
 export const appTopic = ({
 		rando,
@@ -23,7 +24,10 @@ export const appTopic = ({
 
 		const ownerships = await tables.appOwnership.read(find({userId: ownerUserId}))
 		const appRows = await tables.app.read({
-			conditions: or(...ownerships.map(own => ({equal: {appId: own.appId}})))
+			conditions: and(
+				{equal: {archived: false}},
+				or(...ownerships.map(own => ({equal: {appId: own.appId}})))
+			)
 		})
 
 		return Promise.all(appRows.map(async appRow => {
@@ -55,6 +59,7 @@ export const appTopic = ({
 				appId,
 				label: appDraft.label,
 				home: appDraft.home,
+				archived: false,
 			}),
 			tables.appOwnership.create({
 				appId,
@@ -75,8 +80,10 @@ export const appTopic = ({
 				appId,
 				home: draft.home,
 				label: draft.label,
+				archived: false,
 			},
 		})
+		await regenerateAllTokensForApp({appId, tables, rando, signToken})
 	},
 
 	async registerAppToken({tables, access}, {draft}: {
@@ -86,6 +93,7 @@ export const appTopic = ({
 		const appRow = await getApp(tables, draft.appId)
 		const appTokenRow = await makeAppTokenRow({rando, signToken, appRow, draft})
 		await tables.appToken.create(appTokenRow)
+		return {appTokenId: appTokenRow.appTokenId}
 	},
 
 	async updateAppToken({tables, access}, {appTokenId, draft}: {
@@ -105,7 +113,10 @@ export const appTopic = ({
 			appId: string
 		}) {
 		await requireUserIsAllowedToEditApp({tables, access, appId})
-		await tables.app.delete(find({appId}))
+		await tables.app.update({
+			...find({appId}),
+			write: {archived: true},
+		})
 	},
 
 	async deleteAppToken({tables, access}, {appTokenId}: {

@@ -2,7 +2,7 @@
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 
-import {AppDraft} from "../auth-types.js"
+import {AppDraft, AppTokenDraft} from "../auth-types.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
 
@@ -32,7 +32,35 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		})
 	}
 
-	return mobxify({
+	async function reloadAppListAfter(promise: Promise<any>) {
+		try {
+			await promise
+		}
+		finally {
+			return loadAppList()
+		}
+	}
+
+	async function loadingOperation<xResult>({errorReason, promise}: {
+			errorReason: string
+			promise: Promise<xResult>
+		}) {
+		let result: xResult
+		await state.appListLoading.actions.setLoadingUntil({
+			errorReason,
+			promise: (async() => {
+				try {
+					result = await promise
+				}
+				finally {
+					return loadAppList()
+				}
+			})(),
+		})
+		return result
+	}
+
+	return {
 		get appListLoadingView() {
 			return state.appListLoading.view
 		},
@@ -44,20 +72,26 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		async registerApp(appDraft: AppDraft) {
 			if (!appDraft) throw new Error("app draft missing")
 			const userId = await getUserId()
-			await appService.registerApp({
-				appDraft,
-				ownerUserId: userId,
+			const result = await loadingOperation({
+				errorReason: "failed to register app",
+				promise: appService.registerApp({
+					appDraft,
+					ownerUserId: userId,
+				}),
 			})
-			await loadAppList()
+			return result
 		},
 		async deleteApp(appId: string) {
-			await state.appListLoading.actions.setLoadingUntil({
+			return loadingOperation({
 				errorReason: "failed to delete app",
-				promise: (async() => {
-					await appService.deleteApp({appId})
-					return await loadAppList()
-				})(),
+				promise: appService.deleteApp({appId}),
 			})
 		},
-	})
+		async registerAppToken(draft: AppTokenDraft) {
+			return loadingOperation({
+				errorReason: "failed to register app token",
+				promise: appService.registerAppToken({draft}),
+			})
+		},
+	}
 }
