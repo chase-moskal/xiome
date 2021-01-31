@@ -15,24 +15,21 @@ export function appCreatorFormOperations({state, root, requestUpdate}: {
 		return {
 			appHome: select<XioTextInput>("home"),
 			appLabel: select<XioTextInput>("label"),
-			appOrigins: select<XioTextInput<string[]>>("origins"),
 		}
 	}
 
 	function clearForm() {
-		const {appHome, appLabel, appOrigins} = getFormElements()
+		const {appHome, appLabel} = getFormElements()
 		appHome.setText("")
 		appLabel.setText("")
-		appOrigins.setText("")
 		requestUpdate()
 	}
 
 	function readForm() {
-		const {appHome, appLabel, appOrigins} = getFormElements()
+		const {appHome, appLabel} = getFormElements()
 		state.appDraft = {
 			home: appHome.value,
 			label: appLabel.value,
-			origins: appOrigins.value,
 		}
 		state.problems = validateAppDraft(state.appDraft)
 		if (state.problems.length) state.appDraft = undefined

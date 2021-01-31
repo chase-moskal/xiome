@@ -3,7 +3,6 @@ import {formState} from "../form/form-state.js"
 import {AppDraft} from "../../../../../types.js"
 import {html} from "../../../../../framework/component.js"
 import {formEventHandlers} from "../form/form-event-handlers.js"
-import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {validateAppDraft} from "../../../topics/apps/validate-app-draft.js"
 import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
@@ -22,7 +21,6 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 		return {
 			appHome: select<XioTextInput>("home"),
 			appLabel: select<XioTextInput>("label"),
-			appOrigins: select<XioTextInput<string[]>>("origins"),
 		}
 	}
 
@@ -31,18 +29,16 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 		requestUpdate,
 		submit: createApp,
 		clearForm: () => {
-			const {appHome, appLabel, appOrigins} = getFormElements()
+			const {appHome, appLabel} = getFormElements()
 			appHome.setText("")
 			appLabel.setText("")
-			appOrigins.setText("")
 			requestUpdate()
 		},
 		readForm: () => {
-			const {appHome, appLabel, appOrigins} = getFormElements()
+			const {appHome, appLabel} = getFormElements()
 			state.draft = {
 				home: appHome.value,
 				label: appLabel.value,
-				origins: appOrigins.value,
 			}
 			state.problems = validateAppDraft(state.draft)
 			if (state.problems.length) state.draft = undefined
@@ -68,16 +64,6 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 					placeholder="app home"
 					?disabled=${formDisabled}
 					.validator=${appDraftValidators.home}
-					@valuechange=${handleFormChange}
-				></xio-text-input>
-
-				<xio-text-input
-					textarea
-					class=app-origins
-					placeholder="app origins"
-					?disabled=${formDisabled}
-					.parser=${parseOrigins}
-					.validator=${appDraftValidators.origins}
 					@valuechange=${handleFormChange}
 				></xio-text-input>
 

@@ -21,7 +21,6 @@ export default <Suite>{
 		await appModel.registerApp({
 			home: appLink,
 			label: "My App",
-			origins: [new URL(appLink).origin],
 		})
 		assert(appModel.appListLoadingView.payload.length === 1, "should now have one app")
 
@@ -29,7 +28,6 @@ export default <Suite>{
 			await appModel.registerApp({
 				home: "badlink",
 				label: "My App",
-				origins: ["https://example.chasemoskal.com"],
 			})
 		}).throws()
 	},

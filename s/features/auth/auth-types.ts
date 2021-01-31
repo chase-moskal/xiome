@@ -193,7 +193,6 @@ export type LoginPayload = {
 export interface AppDraft {
 	label: string
 	home: string
-	origins: string[]
 }
 
 export interface AppTokenDraft {
