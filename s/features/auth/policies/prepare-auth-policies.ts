@@ -11,6 +11,11 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		getAuthTables: GetTables<AuthTables>
 	}) {
 
+	//
+	// TODO
+	// origin verification
+	//
+
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async({appToken}, request) => {
 			const app = await verifyToken<AppPayload>(appToken)
