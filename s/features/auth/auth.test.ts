@@ -1,6 +1,5 @@
 
 import {Suite} from "cynic"
-
 import creative from "./tests/creative.test.js"
 import technician from "./tests/technician.test.js"
 

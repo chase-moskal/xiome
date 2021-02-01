@@ -29,6 +29,7 @@ export async function mockBrowser({api}: {api: SystemApi}) {
 			latency,
 			appToken,
 			tokenStore,
+			origin: new URL(windowLink).origin,
 		})
 		onStorageEvent(authGoblin.refreshFromStorage)
 		const models = await assembleModels({

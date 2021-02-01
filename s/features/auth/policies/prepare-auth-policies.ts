@@ -1,9 +1,9 @@
 
-
 import {VerifyToken} from "redcrypto/dist/types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
+import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
 import {AccessPayload, AnonAuth, AnonMeta, AppPayload, AuthTables, GetTables, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
 
 export function prepareAuthPolicies({verifyToken, getAuthTables}: {
@@ -11,14 +11,10 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		getAuthTables: GetTables<AuthTables>
 	}) {
 
-	//
-	// TODO
-	// origin verification
-	//
-
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async({appToken}, request) => {
 			const app = await verifyToken<AppPayload>(appToken)
+			throwInvalidOrigin(request, app)
 			const tables = getAuthTables({appId: app.appId})
 			return {app, tables}
 		},

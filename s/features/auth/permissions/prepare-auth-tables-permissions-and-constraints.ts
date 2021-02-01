@@ -27,13 +27,17 @@ export function prepareAuthTablesPermissionsAndConstraints({config, authTables}:
 			)
 
 		const hardbackedAuthTables = {
-			...authTables,
 			role: dbbyHardcoded({actualTable: authTables.role, hardTable: hardTables.role}),
 			userRole: dbbyHardcoded({actualTable: authTables.userRole, hardTable: hardTables.userRole}),
 			privilege: dbbyHardcoded({actualTable: authTables.privilege, hardTable: hardTables.privilege}),
 			rolePrivilege: dbbyHardcoded({actualTable: authTables.rolePrivilege, hardTable: hardTables.rolePrivilege}),
 		}
 
-		return prepareConstrainTables(hardbackedAuthTables)({[namespaceKeyAppId]: appId})
+		return {
+			...authTables,
+			...prepareConstrainTables(hardbackedAuthTables)({
+				[namespaceKeyAppId]: appId
+			}),
+		}
 	}
 }

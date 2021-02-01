@@ -43,7 +43,7 @@
 		"@types/node": "^14.14.22",
 		"@types/pug": "^2.0.4",
 		"chokidar-cli": "^2.1.0",
-		"cynic": "^0.1.0-dev.15",
+		"cynic": "^0.1.0-dev.16",
 		"feather-icons": "^4.28.0",
 		"importly": "0.1.0-dev.0",
 		"mkdirp": "^1.0.4",
@@ -81,7 +81,7 @@
 		"mongodb": "^3.6.3",
 		"pug": "^3.0.0",
 		"redcrypto": "0.0.0-dev.8",
-		"renraku": "0.0.0-dev.33",
+		"renraku": "^0.0.0-dev.34",
 		"stripe": "^8.132.0",
 		"unique-names-generator": "^4.3.1"
 	},

@@ -1,11 +1,13 @@
 
 import {Suite, assert, expect} from "cynic"
-import {appLink} from "./helpers/constants.js"
-import {signupAndLogin} from "./helpers/signup-and-login.js"
+import {find} from "../../../toolbox/dbby/dbby-mongo.js"
+import {appLink, platformLink} from "./helpers/constants.js"
+import {standardSystem} from "./helpers/standard-system.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"
 
 const creativeEmail = "creative@chasemoskal.com"
 const customerEmail = "customer@chasemoskal.com"
+const appOrigin = new URL(appLink).origin
 
 export default <Suite>{
 	"sign up and login": async() => {
@@ -39,8 +41,12 @@ export default <Suite>{
 	},
 
 	"create an app token, and use it to login": async() => {
-		const appOrigin = new URL(appLink).origin
-		const platformWindow = await creativeSignupAndLogin(creativeEmail)
+		const {signupAndLogin, system} = await standardSystem()
+		const platformWindow = await signupAndLogin({
+			email: creativeEmail,
+			appLink: platformLink,
+			appToken: system.platformAppToken,
+		})
 		const {appModel: platformAppModel} = platformWindow.models
 
 		const {appId} = await platformAppModel.registerApp({
@@ -49,6 +55,8 @@ export default <Suite>{
 		})
 		assert(platformAppModel.appListLoadingView.payload.length === 1, "should now have one app")
 		const app = platformAppModel.appListLoadingView.payload[0]
+		const appRow = await system.tables.auth.app.read(find({appId}))
+		assert(appRow, "app row must be present")
 
 		await platformAppModel.registerAppToken({
 			appId,
@@ -63,7 +71,7 @@ export default <Suite>{
 		assert(token.origins[0] === appOrigin, "token origin must match")
 
 		const {appToken} = token
-		await signupAndLogin({
+		const appWindow = await signupAndLogin({
 			appToken,
 			appLink: app.home,
 			email: customerEmail,

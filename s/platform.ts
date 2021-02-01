@@ -17,16 +17,17 @@ import {XioLoading} from "./features/xio-components/loading/xio-loading.js"
 import {XioTextInput} from "./features/xio-components/inputs/xio-text-input.js"
 import {XiomeAppManager} from "./features/auth/components/apps/xiome-app-manager.js"
 import {XiomeLoginPanel} from "./features/auth/components/login-panel/xiome-login-panel.js"
+import {standardNicknameGenerator} from "./features/auth/tools/nicknames/standard-nickname-generator.js"
 
 import theme from "./theme.css.js"
-import { standardNicknameGenerator } from "./features/auth/tools/nicknames/standard-nickname-generator.js"
 
 void async function platform() {
 	const rando = await getRando()
+	const platformLink = "http://localhost:5000/"
 	const system = await mockWholeSystem({
 		rando,
+		platformLink,
 		platformAppLabel,
-		platformLink: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",
 		tableStorage: window.localStorage,
 		sendLoginEmail: prepareSendLoginEmail({sendEmail}),
@@ -46,6 +47,7 @@ void async function platform() {
 			min: 200,
 			max: 800,
 		},
+		origin: new URL(platformLink).origin,
 	})
 	channel.onmessage = authGoblin.refreshFromStorage
 
