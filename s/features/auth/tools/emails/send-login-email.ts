@@ -9,21 +9,22 @@ export function prepareSendLoginEmail({sendEmail}: {
 
 	return async function sendLoginEmail({
 			to,
-			app,
+			appHome,
+			appLabel,
 			lifespan,
 			loginToken,
 			platformLink,
 		}) {
 
-		const loginLink = makeLoginLink({loginToken, home: app.home})
+		const loginLink = makeLoginLink({loginToken, home: appHome})
 		const minutesLeft = (lifespan / minute).toFixed(0)
 
 		return sendEmail({
 			to,
-			subject: `Login link for ${app.label}`,
+			subject: `Login link for ${appLabel}`,
 			body: (
 `
-Login link for ${app.label} (expires in ${minutesLeft} minutes)
+Login link for ${appLabel} (expires in ${minutesLeft} minutes)
  » ${loginLink} «
 
 If you didn't request this login link, just ignore it

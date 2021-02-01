@@ -40,7 +40,11 @@ export async function mockWholeSystem({
 	})
 
 	const platformAppToken = await signToken<AppPayload>({
-		payload: config.platform.app,
+		payload: {
+			platform: true,
+			appId: config.platform.appDetails.appId,
+			origins: config.platform.appDetails.origins,
+		},
 		lifespan: 365 * (1000 * 60 * 60 * 24),
 	})
 

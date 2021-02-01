@@ -4,7 +4,8 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
-import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthOptions} from "../auth-types.js"
+import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthOptions, AppRow} from "../auth-types.js"
+import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 
 export const loginTopic = ({
 		rando,
@@ -19,11 +20,20 @@ export const loginTopic = ({
 			{app, tables},
 			{email}: {email: string},
 		) {
+		const appRow: AppRow = app.platform
+			? {
+				home: config.platform.appDetails.home,
+				appId: config.platform.appDetails.appId,
+				label: config.platform.appDetails.label,
+				archived: false,
+			}
+			: await tables.app.one(find({appId: app.appId}))
 		const {userId} = await assertEmailAccount({rando, email, config, tables})
 		await sendLoginEmail({
-			app,
+			appHome: appRow.home,
+			appLabel: appRow.label,
 			to: email,
-			platformLink: config.platform.app.home,
+			platformLink: config.platform.appDetails.home,
 			lifespan: config.tokens.lifespans.login,
 			loginToken: await signToken<LoginPayload>({
 				payload: {userId},

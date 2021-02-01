@@ -12,7 +12,7 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 	}) {
 
 	const anon: Policy<AnonMeta, AnonAuth> = {
-		processAuth: async({appToken}) => {
+		processAuth: async({appToken}, request) => {
 			const app = await verifyToken<AppPayload>(appToken)
 			const tables = getAuthTables({appId: app.appId})
 			return {app, tables}
@@ -20,16 +20,16 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 	}
 
 	const user: Policy<UserMeta, UserAuth> = {
-		processAuth: async({accessToken, ...anonMeta}) => {
-			const anonAuth = await anon.processAuth(anonMeta)
+		processAuth: async({accessToken, ...anonMeta}, request) => {
+			const anonAuth = await anon.processAuth(anonMeta, request)
 			const access = await verifyToken<AccessPayload>(accessToken)
 			return {access, ...anonAuth}
 		},
 	}
 
 	const platformUser: Policy<PlatformUserMeta, PlatformUserAuth> = {
-		processAuth: async userMeta => {
-			const userAuth = await user.processAuth(userMeta)
+		processAuth: async(userMeta, request) => {
+			const userAuth = await user.processAuth(userMeta, request)
 			if (!userAuth.app.platform)
 				throw new ApiError(403, "forbiddden: only platform users allowed here")
 			return userAuth

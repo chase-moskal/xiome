@@ -16,7 +16,12 @@ export interface PlatformConfig {
 		clientId: string
 	}
 	platform: {
-		app: AppPayload
+		appDetails: {
+			appId: string
+			label: string
+			home: string
+			origins: string[]
+		}
 		from: string
 		technician: {
 			email: string
@@ -106,9 +111,10 @@ export interface EmailDetails {
 
 export interface LoginEmailDetails {
 	to: string
-	app: AppPayload
-	loginToken: string
+	appHome: string
+	appLabel: string
 	lifespan: number
+	loginToken: string
 	platformLink: string
 }
 
@@ -203,8 +209,6 @@ export interface AppTokenDraft {
 
 export interface AppPayload {
 	appId: string
-	label: string
-	home: string
 	origins: string[]
 	platform?: boolean
 }

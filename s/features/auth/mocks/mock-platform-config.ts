@@ -1,6 +1,5 @@
 
 import {PlatformConfig} from "../auth-types.js"
-import {Rando} from "../../../toolbox/get-rando.js"
 import {second, minute, day} from "../../../toolbox/timely.js"
 
 import {hardPermissions} from "../permissions/hard-permissions.js"
@@ -14,6 +13,7 @@ export function mockPlatformConfig({
 		technicianEmail: string
 		platformAppLabel: string
 	}): PlatformConfig {
+
 	return {
 		mongo: {
 			link: "mock-mongo-link",
@@ -25,9 +25,8 @@ export function mockPlatformConfig({
 			technician: {
 				email: technicianEmail,
 			},
-			app: {
+			appDetails: {
 				appId: "402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076",
-				platform: true,
 				label: platformAppLabel,
 				home: platformLink,
 				origins: [new URL(platformLink).origin],

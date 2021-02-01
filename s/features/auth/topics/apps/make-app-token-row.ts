@@ -28,8 +28,6 @@ export async function makeAppTokenRow({rando, appRow, draft, signToken}: {
 
 	const app: AppPayload = {
 		appId: appRow.appId,
-		home: appRow.home,
-		label: appRow.label,
 		origins: draft.origins,
 	}
 
