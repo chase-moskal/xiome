@@ -46,18 +46,17 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 			promise: Promise<xResult>
 		}) {
 		let result: xResult
+		let error: any
 		await state.appListLoading.actions.setLoadingUntil({
 			errorReason,
 			promise: (async() => {
-				try {
-					result = await promise
-				}
-				finally {
-					return loadAppList()
-				}
+				try { result = await promise }
+				catch (err) { error = err }
+				return loadAppList()
 			})(),
 		})
-		return result
+		if (error) throw error
+		else return result
 	}
 
 	return {

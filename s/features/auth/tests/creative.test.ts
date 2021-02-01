@@ -50,7 +50,7 @@ export default <Suite>{
 		assert(platformAppModel.appListLoadingView.payload.length === 1, "should now have one app")
 		const app = platformAppModel.appListLoadingView.payload[0]
 
-		const {appTokenId} = await platformAppModel.registerAppToken({
+		await platformAppModel.registerAppToken({
 			appId,
 			label: "My App Token",
 			origins: [appOrigin],
@@ -63,11 +63,20 @@ export default <Suite>{
 		assert(token.origins[0] === appOrigin, "token origin must match")
 
 		const {appToken} = token
-		const appWindow = await signupAndLogin({
+		await signupAndLogin({
 			appToken,
 			appLink: app.home,
 			email: customerEmail,
 		})
+
+		const badLink = "https://badexample.com/"
+		await expect(async() => {
+			await signupAndLogin({
+				appToken,
+				appLink: badLink,
+				email: customerEmail,
+			})
+		}).throws()
 	}
 
 	// "generate an admin account to login with": true,
