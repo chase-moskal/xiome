@@ -2,7 +2,7 @@
 import {TokenDepot} from "./types/token-depot.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
 import {html, maybe} from "../../../../../framework/component.js"
-import {prepareTokenDepots} from "./utils/token-depot-for-app.js"
+import {prepareTokenDepots} from "./depot/token-depot-for-app.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {TokenManagerOptions} from "./types/token-manager-options.js"
 import {AppTokenDisplay} from "../../../types/apps/app-token-display.js"
