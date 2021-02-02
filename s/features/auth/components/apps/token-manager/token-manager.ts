@@ -1,56 +1,72 @@
 
-import {AppTokenDraft} from "../../../auth-types.js"
+import {TokenDepot} from "./types/token-depot.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
-import {tokenDepotStates} from "./utils/token-depot-states.js"
-import {formEventHandlers} from "../form/form-event-handlers.js"
-import {makeTokenManagerRenderer} from "./utils/token-manager-renderer.js"
-import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
-import {validateAppTokenDraft} from "../../../topics/apps/validate-app-token-draft.js"
+import {html, maybe} from "../../../../../framework/component.js"
+import {parseOrigins} from "../../../topics/apps/parse-origins.js"
+import {TokenManagerOptions} from "./types/token-manager-options.js"
+import {prepareTokenDepotForApp} from "./utils/token-depot-for-app.js"
+import {AppTokenDisplay} from "../../../types/apps/app-token-display.js"
+import {appTokenDraftValidators} from "../../../topics/apps/app-token-draft-validators.js"
 
-export function makeTokenManager({root, requestUpdate, createToken}: {
-		root: ShadowRoot | HTMLElement
-		requestUpdate: () => void
-		createToken: (draft: AppTokenDraft) => Promise<void>
-	}) {
+export function makeTokenManager(options: TokenManagerOptions) {
+	const tokenDepotForApp = prepareTokenDepotForApp(options)
 
-	const {obtainState} = tokenDepotStates()
-
-	function tokenDepotForApp(app: AppDisplay) {
-		const state = obtainState(app)
-		function getFormElements() {
-			const select = <X extends HTMLElement>(name: string) =>
-				root.querySelector<X>(`.tokenmanager .token-${name}`)
-			return {
-				tokenLabel: select<XioTextInput>("label"),
-				tokenOrigins: select<XioTextInput<string[]>>("origins"),
-			}
-		}
-		const {handleFormChange, handleSubmitClick} = formEventHandlers({
-			state: state.form,
-			requestUpdate,
-			submit: createToken,
-			clearForm: () => {
-				const {tokenLabel, tokenOrigins} = getFormElements()
-				tokenLabel.setText("")
-				tokenOrigins.setText("")
-				requestUpdate()
-			},
-			readForm: () => {
-				const {tokenLabel, tokenOrigins} = getFormElements()
-				state.form.draft = {
-					appId: app.appId,
-					label: tokenLabel.value,
-					origins: tokenOrigins.value,
-				}
-				state.form.problems = validateAppTokenDraft(state.form.draft)
-				if (state.form.problems.length) state.form.draft = undefined
-				requestUpdate()
-			},
-		})
-		return {state, handleFormChange, handleSubmitClick}
+	function renderTokenList(tokens: AppTokenDisplay[]) {
+		return maybe(tokens.length > 0, html`
+			<ul>
+					${tokens.map(token => html`
+						<li>
+							<p>token-heading</p>
+							<p class=token-label>${token.label}</p>
+							<p class=token-id>${token.appTokenId}</p>
+							<p class=token-itself>${token.appToken}</p>
+							<p class=token-expiry>${token.expiry}</p>
+							<p class=token-origins>${token.origins.join("<br/>")}</p>
+						</li>
+					`)}
+			</ul>
+		`)
 	}
 
-	return {
-		render: makeTokenManagerRenderer({tokenDepotForApp}),
+	function renderTokenCreator(depot: TokenDepot) {
+		const {state, handleFormChange, handleSubmitClick} = depot
+		const {formDisabled, draft, problems} = state.form
+		return html`
+			<xio-text-input
+				class=token-label
+				placeholder="token label"
+				.validator=${appTokenDraftValidators.label}
+				@valuechange=${handleFormChange}
+			></xio-text-input>
+
+			<xio-text-input
+				textarea
+				class=token-origins
+				placeholder="origins"
+				?disabled=${formDisabled}
+				.parser=${parseOrigins}
+				.validator=${appTokenDraftValidators.origins}
+				@valuechange=${handleFormChange}
+			></xio-text-input>
+
+			<button
+				class=create-token-button
+				?disabled=${formDisabled || !draft || problems.length > 0}
+				@click=${handleSubmitClick}>
+					create token
+			</button>
+		`
 	}
+
+	function render(app: AppDisplay) {
+		const depot = tokenDepotForApp(app)
+		return html`
+			<div class=tokenmanager>
+				${renderTokenList(app.tokens)}
+				${renderTokenCreator(depot)}
+			</div>
+		`
+	}
+
+	return {render}
 }
