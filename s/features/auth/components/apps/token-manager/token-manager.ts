@@ -2,14 +2,14 @@
 import {TokenDepot} from "./types/token-depot.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
 import {html, maybe} from "../../../../../framework/component.js"
+import {prepareTokenDepots} from "./utils/token-depot-for-app.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {TokenManagerOptions} from "./types/token-manager-options.js"
-import {prepareTokenDepotForApp} from "./utils/token-depot-for-app.js"
 import {AppTokenDisplay} from "../../../types/apps/app-token-display.js"
 import {appTokenDraftValidators} from "../../../topics/apps/app-token-draft-validators.js"
 
 export function makeTokenManager(options: TokenManagerOptions) {
-	const tokenDepotForApp = prepareTokenDepotForApp(options)
+	const {getTokenDepotForApp} = prepareTokenDepots(options)
 
 	function renderTokenList(tokens: AppTokenDisplay[]) {
 		return maybe(tokens.length > 0, html`
@@ -59,7 +59,7 @@ export function makeTokenManager(options: TokenManagerOptions) {
 	}
 
 	function render(app: AppDisplay) {
-		const depot = tokenDepotForApp(app)
+		const depot = getTokenDepotForApp(app)
 		return html`
 			<div class=tokenmanager>
 				${renderTokenList(app.tokens)}

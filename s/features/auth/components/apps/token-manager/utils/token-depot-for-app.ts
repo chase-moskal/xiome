@@ -7,7 +7,7 @@ import {TokenManagerOptions} from "../types/token-manager-options.js"
 import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
 import {validateAppTokenDraft} from "../../../../topics/apps/validate-app-token-draft.js"
 
-export function prepareTokenDepotForApp({
+export function prepareTokenDepots({
 		root,
 		createToken,
 		requestUpdate,
@@ -24,7 +24,7 @@ export function prepareTokenDepotForApp({
 		return state
 	}
 
-	return function tokenDepotForApp(app: AppDisplay) {
+	function getTokenDepotForApp(app: AppDisplay) {
 		const state = obtainState(app)
 		function getFormElements() {
 			const select = <X extends HTMLElement>(name: string) =>
@@ -58,4 +58,6 @@ export function prepareTokenDepotForApp({
 		})
 		return {state, handleFormChange, handleSubmitClick}
 	}
+
+	return {getTokenDepotForApp}
 }
