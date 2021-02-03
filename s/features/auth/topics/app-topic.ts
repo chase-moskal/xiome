@@ -3,15 +3,14 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {getApp} from "./apps/get-app.js"
-import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
-import {makeAppTokenRow} from "./apps/make-app-token-row.js"
-import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
-
 import {throwProblems} from "./apps/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
+import {makeAppTokenRow} from "./apps/make-app-token-row.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
+import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
+// import {regenerateAllTokensForApp} from "./apps/regenerate-all-tokens-for-app.js"
 import {PlatformUserAuth, AuthOptions, AppDraft, AppTokenDraft} from "../auth-types.js"
-import { regenerateAllTokensForApp } from "./apps/regenerate-all-tokens-for-app.js"
+import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
 export const appTopic = ({
 		rando,
@@ -83,7 +82,7 @@ export const appTopic = ({
 				archived: false,
 			},
 		})
-		await regenerateAllTokensForApp({appId, tables, rando, signToken})
+		// await regenerateAllTokensForApp({appId, tables, rando, signToken})
 	},
 
 	async registerAppToken({tables, access}, {draft}: {
