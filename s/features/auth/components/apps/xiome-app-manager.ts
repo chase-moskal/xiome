@@ -26,7 +26,12 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 	private readonly tokenManager = makeTokenManager({
 		root: this.shadowRoot,
 		requestUpdate: () => this.requestUpdate(),
-		createToken: async tokenDraft => console.log("createToken", tokenDraft),
+		createToken: async tokenDraft => {
+			await this.share.appModel.registerAppToken(tokenDraft)
+		},
+		deleteToken: async appTokenId => {
+			await this.share.appModel.deleteAppToken(appTokenId)
+		},
 	})
 
 	private renderNoApps() {
@@ -39,6 +44,17 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		await this.share.appModel.deleteApp(appId)
 	}
 
+	render() {
+		const {appListLoadingView} = this.share.appModel
+		return html`
+			${renderWrappedInLoading(appListLoadingView, appList => appList.length
+				? this.renderAppList(appList)
+				: this.renderNoApps())}
+			<slot name=create-app-heading></slot>
+			${this.appCreator.render()}
+		`
+	}
+
 	private renderAppList(appList: AppDisplay[]) {
 		return html`
 			<slot></slot>
@@ -47,36 +63,31 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 					<div class=app data-app-id=${app.appId}>
 						<div class=appdetails>
 							<p class=app-label>
-								<span>label:</span>
+								<span>💡</span>
 								<span>${app.label}</span>
 							</p>
 							<p class=app-home>
 								<span>home:</span>
-								<span>${app.home}</span>
+								<span>
+									<a part=link target=_blank href="${app.home}">
+										${app.home}
+									</a>
+								</span>
 							</p>
 							<p class=app-id>
 								<span>app id:</span>
-								<span>${app.appId}</span>
+								<code>${app.appId}</code>
 							</p>
 						</div>
 						${this.tokenManager.render(app)}
-						<button @click=${() => this.deleteApp(app.appId)}>
-							delete app
+						<button
+							class=delete-app-button
+							@click=${() => this.deleteApp(app.appId)}>
+								delete app
 						</button>
 					</div>
 				`)}
 			</div>
-		`
-	}
-
-	render() {
-		const {appListLoadingView} = this.share.appModel
-		return html`
-			${renderWrappedInLoading(appListLoadingView, appList => appList.length
-				? this.renderAppList(appList)
-				: this.renderNoApps())}
-			<slot name=creator-heading></slot>
-			${this.appCreator.render()}
 		`
 	}
 }

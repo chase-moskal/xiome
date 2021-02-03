@@ -12,6 +12,9 @@ import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
  @mixinStyles(styles)
 export class XioTextInput<xParsedValue = string> extends Component {
 
+	@property({type: String, reflect: true})
+	["initial"]: string = ""
+
 	@property({type: Boolean, reflect: true})
 	["textarea"] = false
 
@@ -61,6 +64,10 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	}
 
 	private handleInputChange = debounce2(500, this.updateFromRawInput)
+
+	firstUpdated() {
+		this.draft = this.initial
+	}
 
 	render() {
 		const {problems, draft, placeholder, validator, handleInputChange} = this

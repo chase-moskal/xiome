@@ -92,5 +92,11 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				promise: appService.registerAppToken({draft}),
 			})
 		},
+		async deleteAppToken(appTokenId: string) {
+			return loadingOperation({
+				errorReason: "failed to delete app token",
+				promise: appService.deleteAppToken({appTokenId})
+			})
+		},
 	}
 }

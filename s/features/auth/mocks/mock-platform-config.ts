@@ -1,6 +1,6 @@
 
 import {PlatformConfig} from "../auth-types.js"
-import {second, minute, day} from "../../../toolbox/timely.js"
+import {second, minute, day} from "../../../toolbox/goodtimes/times.js"
 
 import {hardPermissions} from "../permissions/hard-permissions.js"
 

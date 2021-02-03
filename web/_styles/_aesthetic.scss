@@ -11,7 +11,8 @@ html {
 	);
 }
 
-a {
+a,
+*::part(link) {
 	color: #adfa;
 	text-decoration: inherit;
 	&:hover, &:focus {

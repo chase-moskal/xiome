@@ -28,7 +28,9 @@ export function prepareTokenDepots({
 		const state = obtainState(app)
 		function getFormElements() {
 			const select = <X extends HTMLElement>(name: string) =>
-				root.querySelector<X>(`.tokenmanager .token-${name}`)
+				root.querySelector<X>(
+					`.app[data-app-id="${app.appId}"] .token-creator .token-${name}`
+				)
 			return {
 				tokenLabel: select<XioTextInput>("label"),
 				tokenOrigins: select<XioTextInput<string[]>>("origins"),
@@ -48,8 +50,8 @@ export function prepareTokenDepots({
 				const {tokenLabel, tokenOrigins} = getFormElements()
 				state.form.draft = {
 					appId: app.appId,
-					label: tokenLabel.value,
-					origins: tokenOrigins.value,
+					label: tokenLabel?.value ?? "",
+					origins: tokenOrigins?.value ?? [],
 				}
 				state.form.problems = validateAppTokenDraft(state.form.draft)
 				if (state.form.problems.length) state.form.draft = undefined

@@ -2,8 +2,8 @@
 import {SignToken} from "redcrypto/dist/types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 
-import {day} from "../../../../toolbox/timely.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
+import {day} from "../../../../toolbox/goodtimes/times.js"
 
 import {AppRow, AppTokenRow} from "../../../../types.js"
 import {AppPayload, AppTokenDraft} from "../../auth-types.js"
