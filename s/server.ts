@@ -17,7 +17,7 @@ void async function main() {
 	const rando = await getRando()
 	const system = await mockWholeSystem({
 		rando,
-		platformLink: "https://localhost:5000/",
+		platformLink: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",
 		platformAppLabel: "Xiome Platform",
 		tableStorage: memoryStorage(),
@@ -27,6 +27,8 @@ void async function main() {
 
 	const servelet = makeJsonHttpServelet(system.api)
 	const server = makeNodeHttpServer(servelet)
+
+	console.log(`🎟️ platform app token: ${system.platformAppToken}`)
 
 	server.listen(port)
 	console.log(`📡 server listening on port ${port}`)

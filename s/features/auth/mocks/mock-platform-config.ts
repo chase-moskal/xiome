@@ -44,7 +44,7 @@ export function mockPlatformConfig({
 			expiryRenewalCushion: 10 * second,
 			lifespans: {
 				app: 30 * day,
-				login: 5 * minute,
+				login: 20 * minute,
 				refresh: 30 * day,
 				access: 20 * minute,
 				external: 10 * minute,
