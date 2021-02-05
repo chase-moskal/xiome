@@ -1,12 +1,12 @@
 
-import {assembleApi} from "./assemble-api.js"
+import {assembleApi} from "./backend/assemble-api.js"
 import {mockBrowser} from "./frontend/mocks/mock-browser.js"
 import {mockPrerequisites} from "./backend/mock-prerequisites.js"
 
 import {AppPayload} from "../features/auth/auth-types.js"
 import {MockSystemOptions} from "./types/mock-system-options.js"
 
-export async function mockWholeSystem({
+export async function mockBackend({
 		rando,
 		tableStorage,
 		platformLink,

@@ -1,9 +1,9 @@
 
 import {mockRemote} from "./mock-remote.js"
 import {mockApiOrigin} from "./mock-api-origin.js"
-import {assembleModels} from "../../assemble-models.js"
+import {assembleModels} from "../assemble-models.js"
 import {MockLatency} from "../../../framework/add-mock-latency.js"
-import {loginWithLinkTokenOrUseExistingLogin} from "../login-with-link-token-or-use-existing-login.js"
+import {loginWithLinkTokenOrUseExistingLogin} from "../auth/login-with-link-token-or-use-existing-login.js"
 
 import {SystemApi} from "../../types/backend/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"

@@ -4,7 +4,7 @@ import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.j
 
 import {getRando} from "./toolbox/get-rando.js"
 import {memoryStorage} from "./toolbox/json-storage.js"
-import {mockWholeSystem} from "./assembly/mock-whole-system.js"
+import {mockBackend} from "./assembly/mock-backend.js"
 import {sendEmail} from "./features/auth/tools/emails/mock-send-email.js"
 import {prepareSendLoginEmail} from "./features/auth/tools/emails/send-login-email.js"
 import {standardNicknameGenerator} from "./features/auth/tools/nicknames/standard-nickname-generator.js"
@@ -15,7 +15,7 @@ void async function main() {
 	console.log("starting server in mock mode")
 
 	const rando = await getRando()
-	const system = await mockWholeSystem({
+	const system = await mockBackend({
 		rando,
 		platformLink: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",

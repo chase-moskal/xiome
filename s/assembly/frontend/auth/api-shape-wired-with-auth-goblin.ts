@@ -2,15 +2,15 @@
 import {asShape} from "renraku/x/identities/as-shape.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
-import {loginTopic} from "../../features/auth/topics/login-topic.js"
-import {makeAuthGoblin} from "../../features/auth/goblin/auth-goblin.js"
-import {decodeAppToken} from "../../features/auth/tools/tokens/decode-app-token.js"
+import {loginTopic} from "../../../features/auth/topics/login-topic.js"
+import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
+import {decodeAppToken} from "../../../features/auth/tools/tokens/decode-app-token.js"
 
-import {Service} from "../../types/service.js"
-import {SystemApi} from "../types/backend/system-api.js"
-import {AppToken} from "../../features/auth/auth-types.js"
-import {AuthGoblin} from "../../features/auth/goblin/types/auth-goblin.js"
-import {TokenStore2} from "../../features/auth/goblin/types/token-store2.js"
+import {Service} from "../../../types/service.js"
+import {SystemApi} from "../../types/backend/system-api.js"
+import {AppToken} from "../../../features/auth/auth-types.js"
+import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
+import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
 
 export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 		appToken: AppToken

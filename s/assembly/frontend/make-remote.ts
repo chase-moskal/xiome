@@ -2,7 +2,7 @@
 import {generateRemote} from "renraku/x/remote/generate-remote.js"
 import {makeJsonRequester} from "renraku/x/remote/make-json-requester.js"
 
-import {prepareApiShapeWiredWithAuthGoblin} from "./api-shape-wired-with-auth-goblin.js"
+import {prepareApiShapeWiredWithAuthGoblin} from "./auth/api-shape-wired-with-auth-goblin.js"
 
 import {AppToken} from "../../features/auth/auth-types.js"
 import {TokenStore2} from "../../features/auth/goblin/types/token-store2.js"
