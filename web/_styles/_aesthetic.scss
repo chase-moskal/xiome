@@ -22,6 +22,18 @@ a,
 	}
 }
 
+a[data-external],
+*::part(link-external) {
+	&::before {
+		content: "» ";
+		display: inline;
+	}
+	&::after {
+		content: " «";
+		display: inline;
+	}
+}
+
 .siteheader {
 	.marked-link {
 		border-radius: 4px;
@@ -49,8 +61,15 @@ menu-system {
 main h2 {
 	color: #fffa;
 	font-weight: normal;
+	em {
+		font-style: normal;
+		text-decoration: underline;
+	}
 }
 
 .sitefooter {
-	opacity: 0.7;
+	opacity: 0.8;
+	> p > span {
+		opacity: 0.8;
+	}
 }

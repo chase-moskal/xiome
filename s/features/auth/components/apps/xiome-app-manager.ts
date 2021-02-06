@@ -69,7 +69,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 							<p class=app-home>
 								<span>home:</span>
 								<span>
-									<a part=link target=_blank href="${app.home}">
+									<a part="link link-external" target=_blank href="${app.home}">
 										${app.home}
 									</a>
 								</span>
