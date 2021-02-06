@@ -49,7 +49,7 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 	function render() {
 		const {formDisabled, draft, problems} = state
 		return html`
-			<div class=appcreator>
+			<div class=app-creator>
 
 				<xio-text-input
 					class=app-label

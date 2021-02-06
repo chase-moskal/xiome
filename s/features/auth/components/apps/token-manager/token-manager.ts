@@ -8,8 +8,8 @@ import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {TokenManagerOptions} from "./types/token-manager-options.js"
 import {AppTokenDisplay} from "../../../types/apps/app-token-display.js"
 import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
+import {formatDuration} from "../../../../../toolbox/goodtimes/format-duration.js"
 import {appTokenDraftValidators} from "../../../topics/apps/app-token-draft-validators.js"
-import { formatDuration } from "../../../../../toolbox/goodtimes/format-duration.js"
 
 export function makeTokenManager(options: TokenManagerOptions) {
 	const {getTokenDepotForApp} = prepareTokenDepots(options)
