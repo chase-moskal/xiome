@@ -12,13 +12,13 @@ head
 	link(rel="stylesheet" href=`${base}/styles.css`)
 
 	if debug
+		xiome-config(mock="platform")
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
 		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 	else
+		xiome-config
 		script(src=`${base}/xiome.bundle.min.js`)
-
-	xiome-config(token="eyJhbGciOm51bGwsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InBsYXRmb3JtIjp0cnVlLCJhcHBJZCI6IjQwMjIwOGE2ZDMyOTVhYWQyMzVjNjhjYjIwYTM1YzMwZTgzNTM0NGJiYzQwZmIzOTg3NDRjNTkzYjZhZWEwNzYiLCJvcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCJdfSwiaWF0IjoxNjEyNDgzMTAzLjU4NSwiZXhwIjoxNjQ0MDE5MTAzLjU4NX0=.ImZha2UtbW9jay10b2tlbi1zaWduYXR1cmUi")
 
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div

@@ -13,7 +13,7 @@ export async function assembleXiome(config: XiomeConfig) {
 	const connection = (<XiomeConfigMock>config).mock
 		? await mockBackendAndRemote({
 			apiOrigin,
-			platformHome,
+			platformHome: window.location.href,
 			platformLabel,
 			technicianEmail,
 			sendEmail,
