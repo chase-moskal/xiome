@@ -16,10 +16,10 @@ export default <Suite>{
 
 	"register app": async() => {
 		const {appModel} = (await creativeSignupAndLogin(creativeEmail)).models
-		assert(appModel.appListLoadingView.none, "applist loading should start 'none'")
+		assert(appModel.appListLoadingView.none, "app-list loading should start 'none'")
 
 		await appModel.loadAppList()
-		assert(appModel.appListLoadingView.ready, "applist should be finished loading")
+		assert(appModel.appListLoadingView.ready, "app-list should be finished loading")
 		assert(appModel.appListLoadingView.payload.length === 0, "should start with zero apps")
 
 		const {appId} = await appModel.registerApp({

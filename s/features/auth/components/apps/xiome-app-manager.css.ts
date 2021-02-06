@@ -21,7 +21,7 @@ code.id {
 	display: block;
 }
 
-.xiome-config { color: #fff4; }
+.xiome-config { color: #fff6; }
 .xiome-config [data-syntax=tag] { color: deepskyblue; }
 .xiome-config [data-syntax=attr] { color: skyblue; }
 .xiome-config [data-syntax=data] { color: #aaffa0; }
@@ -29,14 +29,14 @@ code.id {
 	display: block; margin-left: 1em;
 }
 
-.applist .app {
+.app-list .app {
 	padding: 0.4em 1rem;
 	margin: 0 var(--xmargin, 0);
 	margin-top: 0.5em;
 	border: 1px solid;
 }
 
-.applist .app + .app {
+.app-list .app + .app {
 	margin-top: 0.5em;
 }
 

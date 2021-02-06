@@ -58,7 +58,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 	private renderAppList(appList: AppDisplay[]) {
 		return html`
 			<slot></slot>
-			<div class=applist>
+			<div class=app-list>
 				${appList.map(app => html`
 					<div class=app data-app-id=${app.appId}>
 						<p class=app-label>
