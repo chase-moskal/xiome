@@ -4,7 +4,7 @@ import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.j
 
 import {prepareApiShapeWiredWithAuthGoblin} from "../auth/api-shape-wired-with-auth-goblin.js"
 
-import {SystemApi} from "../../types/backend/system-api.js"
+import {SystemApi} from "../../backend/types/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
 import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
 import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.js"

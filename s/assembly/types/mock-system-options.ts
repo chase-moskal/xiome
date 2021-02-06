@@ -5,10 +5,10 @@ import {SendLoginEmail} from "../../features/auth/auth-types.js"
 
 export interface MockSystemOptions {
 	rando: Rando
-	tableStorage: SimpleStorage
-	platformLink: string
+	platformHome: string
+	platformLabel: string
 	technicianEmail: string
-	platformAppLabel: string
+	tableStorage: SimpleStorage
 	sendLoginEmail: SendLoginEmail
 	generateNickname: () => string
 }

@@ -13,8 +13,8 @@ import {XioTextInput} from "../../features/xio-components/inputs/xio-text-input.
 import {XiomeAppManager} from "../../features/auth/components/apps/xiome-app-manager.js"
 import {XiomeLoginPanel} from "../../features/auth/components/login-panel/xiome-login-panel.js"
 
-import theme from "../../theme.css.js"
-import {SystemApi} from "../types/backend/system-api.js"
+import theme from "../../framework/theme.css.js"
+import {SystemApi} from "../backend/types/system-api.js"
 import {AuthGoblin} from "../../features/auth/goblin/types/auth-goblin.js"
 
 export async function assembleAndInitializeFrontend({authGoblin, remote}: {
@@ -28,18 +28,18 @@ export async function assembleAndInitializeFrontend({authGoblin, remote}: {
 		link: window.location.toString(),
 	})
 
-	registerComponents(themeComponents(theme, {
+	const components = themeComponents(theme, {
 		XioExample,
 		XioLoading,
 		XioTextInput,
 		XiomeAppManager: share2(XiomeAppManager, {appModel: models.appModel}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel: models.authModel}),
-	}))
+	})
 
 	await loginWithLinkTokenOrUseExistingLogin({
 		authModel: models.authModel,
 		link: window.location.toString(),
 	})
 
-	return {models}
+	return {components, models}
 }

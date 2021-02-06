@@ -7,7 +7,7 @@ import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
 import {decodeAppToken} from "../../../features/auth/tools/tokens/decode-app-token.js"
 
 import {Service} from "../../../types/service.js"
-import {SystemApi} from "../../types/backend/system-api.js"
+import {SystemApi} from "../../backend/types/system-api.js"
 import {AppToken} from "../../../features/auth/auth-types.js"
 import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
 import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"

@@ -1,17 +1,17 @@
 
-import {assembleApi} from "./backend/assemble-api.js"
-import {mockBrowser} from "./frontend/mocks/mock-browser.js"
-import {mockPrerequisites} from "./backend/mock-prerequisites.js"
+import {assembleApi} from "./assemble-api.js"
+import {mockBrowser} from "../frontend/mocks/mock-browser.js"
+import {mockPrerequisites} from "./mock-prerequisites.js"
 
-import {AppPayload} from "../features/auth/auth-types.js"
-import {MockSystemOptions} from "./types/mock-system-options.js"
+import {AppPayload} from "../../features/auth/auth-types.js"
+import {MockSystemOptions} from "../types/mock-system-options.js"
 
 export async function mockBackend({
 		rando,
 		tableStorage,
-		platformLink,
+		platformHome,
+		platformLabel,
 		technicianEmail,
-		platformAppLabel,
 		sendLoginEmail,
 		generateNickname,
 	}: MockSystemOptions) {
@@ -24,9 +24,9 @@ export async function mockBackend({
 	} = await mockPrerequisites({
 		rando,
 		tableStorage,
-		platformLink,
+		platformHome,
+		platformLabel,
 		technicianEmail,
-		platformAppLabel,
 	})
 
 	const api = assembleApi({

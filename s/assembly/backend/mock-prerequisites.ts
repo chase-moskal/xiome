@@ -7,26 +7,26 @@ import {SimpleStorage} from "../../toolbox/json-storage.js"
 import {mockStorageTables} from "./tools/mock-storage-tables.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
 
-import {SystemTables} from "../types/backend/system-tables.js"
+import {SystemTables} from "./types/system-tables.js"
 
 export async function mockPrerequisites({
 		rando,
 		tableStorage,
-		platformLink,
+		platformHome,
+		platformLabel,
 		technicianEmail,
-		platformAppLabel,
 	}: {
 		rando: Rando
-		platformLink: string
+		platformHome: string
+		platformLabel: string
 		technicianEmail: string
-		platformAppLabel: string
 		tableStorage: SimpleStorage
 	}) {
 
 	const config = mockPlatformConfig({
-		platformLink,
+		platformHome,
+		platformLabel,
 		technicianEmail,
-		platformAppLabel,
 	})
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()

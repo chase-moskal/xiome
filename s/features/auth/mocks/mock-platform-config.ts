@@ -5,13 +5,13 @@ import {second, minute, day} from "../../../toolbox/goodtimes/times.js"
 import {hardPermissions} from "../permissions/hard-permissions.js"
 
 export function mockPlatformConfig({
-		platformLink,
+		platformHome,
+		platformLabel,
 		technicianEmail,
-		platformAppLabel,
 	}: {
-		platformLink: string
+		platformHome: string
+		platformLabel: string
 		technicianEmail: string
-		platformAppLabel: string
 	}): PlatformConfig {
 
 	return {
@@ -21,15 +21,15 @@ export function mockPlatformConfig({
 		},
 		permissions: hardPermissions,
 		platform: {
-			from: `hello@${new URL(platformLink).hostname}`,
+			from: `hello@${new URL(platformHome).hostname}`,
 			technician: {
 				email: technicianEmail,
 			},
 			appDetails: {
 				appId: "402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076",
-				label: platformAppLabel,
-				home: platformLink,
-				origins: [new URL(platformLink).origin],
+				label: platformLabel,
+				home: platformHome,
+				origins: [new URL(platformHome).origin],
 			},
 		},
 		google: {

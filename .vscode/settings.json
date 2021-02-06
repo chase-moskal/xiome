@@ -31,5 +31,7 @@
 
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"javascript.format.semicolons": "remove",
-	"typescript.format.semicolons": "remove"
+	"typescript.format.semicolons": "remove",
+	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false
 }

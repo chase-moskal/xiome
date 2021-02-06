@@ -17,7 +17,7 @@
 		"compile-pug": "pug -o x web -O '{\"debug\": false}'",
 		"compile-pug-dev": "pug -o x web -O '{\"debug\": true}'",
 		"compile-sass": "sass web/:x/",
-		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/platform.js -o x/platform.bundle.js && terser x/platform.bundle.js -cm --source-map --comments false -o x/platform.bundle.min.js",
+		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/xiome.js -o x/xiome.bundle.js && terser x/xiome.bundle.js -cm --source-map --comments false -o x/xiome.bundle.min.js",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
 		"watch-pug": "npm run compile-pug-dev -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
@@ -30,7 +30,7 @@
 		"test": "cynic node --label='xiome tests' x/tests.test.js",
 		"test-debug": "node inspect node_modules/cynic/dist/cli.js node --label='xiome tests' x/tests.test.js",
 		"test-browser": "cynic browser x/tests.test.js --open=true --importmap-path=./x/importmap.json",
-		"stats": "ls -lah x/platform.bundle.js x/platform.bundle.min.js"
+		"stats": "ls -lah x/xiome.bundle.js x/xiome.bundle.min.js"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^11.1.1",
