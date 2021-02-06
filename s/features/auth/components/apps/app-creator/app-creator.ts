@@ -17,7 +17,7 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 	function getFormElements() {
 		const select = <X extends HTMLElement>(name: string) =>
-			root.querySelector<X>(`.appcreator .app-${name}`)
+			root.querySelector<X>(`.app-creator .app-${name}`)
 		return {
 			appHome: select<XioTextInput>("home"),
 			appLabel: select<XioTextInput>("label"),

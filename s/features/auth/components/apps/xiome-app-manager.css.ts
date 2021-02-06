@@ -9,6 +9,12 @@ code {
 	border-radius: 0.3em;
 	background: #0002;
 	overflow-wrap: anywhere;
+	word-break: break-all;
+}
+
+code.id {
+	opacity: 0.7;
+	font-size: 0.5em;
 }
 
 .codeblock {
@@ -34,7 +40,11 @@ code {
 	margin-top: 0.5em;
 }
 
-.appcreator {
+.app-details {
+	margin-left: 1em;
+}
+
+.app-creator {
 	margin: 0 var(--xmargin, 0);
 	padding: 0.4em 1rem;
 }
@@ -45,14 +55,13 @@ code {
 }
 
 .token-list {
-	margin: 0.5em 0;
+	margin: 1.5em 0;
 }
 
 .token-list > li {
-	padding: 0 0.5em;
-	border: 4px solid #fff4;
-	border-top: 0;
-	border-bottom: 0;
+	border: 1px solid #fff1;
+	padding: 0.5em;
+	border-radius: 0.5em;
 }
 
 .token-list > li + li{
@@ -63,9 +72,31 @@ code {
 	margin-top: 0.2em;
 }
 
-.token-list .token-origins {
+.token-details {
+	list-style: none;
+	margin-left: 1em;
+}
+
+.token-details > li > * {
+	margin-left: 1em;
+}
+
+.token-details > li + li {
+	margin-top: 0.5em;
+}
+
+.token-details > li > *:first-child {
+	margin-left: 0;
+}
+
+.token-list ul {
 	margin-top: 0;
 	margin-left: 1em;
+}
+
+.token-expiry [data-is-expired] {
+	color: red;
+	font-weight: bold;
 }
 
 .token-creator {

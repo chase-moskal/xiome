@@ -59,6 +59,21 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		else return result
 	}
 
+	async function registerAppAndDefaultToken({appDraft, ownerUserId}: {
+			appDraft: AppDraft
+			ownerUserId: string
+		}) {
+		const {appId} = await appService.registerApp({appDraft, ownerUserId})
+		const {appTokenId} = await appService.registerAppToken({
+			draft: {
+				appId,
+				label: "Default Connection",
+				origins: [new URL(appDraft.home).origin],
+			}
+		})
+		return {appId, appTokenId}
+	}
+
 	return {
 		get appListLoadingView() {
 			return state.appListLoading.view
@@ -73,7 +88,7 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 			const userId = await getUserId()
 			const result = await loadingOperation({
 				errorReason: "failed to register app",
-				promise: appService.registerApp({
+				promise: registerAppAndDefaultToken({
 					appDraft,
 					ownerUserId: userId,
 				}),

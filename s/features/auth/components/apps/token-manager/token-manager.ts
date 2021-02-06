@@ -9,63 +9,82 @@ import {TokenManagerOptions} from "./types/token-manager-options.js"
 import {AppTokenDisplay} from "../../../types/apps/app-token-display.js"
 import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
 import {appTokenDraftValidators} from "../../../topics/apps/app-token-draft-validators.js"
-
-const xiomeConfig = (tokenActual: string) => {
-	const h = (syntax: string, s: string) => html`<span data-syntax=${syntax}>${s}</span>`
-	const tag = (s: string) => h("tag", s)
-	const attr = (s: string) => h("attr", s)
-	const data = (s: string) => h("data", s)
-	const glue = (s: string) => h("glue", s)
-	return html`
-		${glue(`<`)}${tag(`xiome-config`)}
-			<div data-syntax=indent>
-				${attr(`token`)}${glue(`="`)}${data(tokenActual)}${glue(`"`)}${glue(`>`)}
-			</div>
-		${glue(`</`)}${tag(`xiome-config`)}${glue(`>`)}
-	`
-}
+import { formatDuration } from "../../../../../toolbox/goodtimes/format-duration.js"
 
 export function makeTokenManager(options: TokenManagerOptions) {
 	const {getTokenDepotForApp} = prepareTokenDepots(options)
 
+	const renderXiomeConfig = (tokenActual: string) => {
+		const h = (syntax: string, s: string) => html`<span data-syntax=${syntax}>${s}</span>`
+		const tag = (s: string) => h("tag", s)
+		const attr = (s: string) => h("attr", s)
+		const data = (s: string) => h("data", s)
+		const glue = (s: string) => h("glue", s)
+		return html`
+			${glue(`<`)}${tag(`xiome-config`)}
+				<div data-syntax=indent>
+					${attr(`app-token`)}${glue(`="`)}${data(tokenActual)}${glue(`"`)}${glue(`>`)}
+				</div>
+			${glue(`</`)}${tag(`xiome-config`)}${glue(`>`)}
+		`
+	}
+
+	function renderTokenExpiry(expiry: number) {
+		const now = Date.now()
+		const isExpired = now > expiry
+
+		function renderExpiryCountdown() {
+			const {days, hours, minutes} = formatDuration(expiry - now)
+			return `in ${days}, ${hours}, ${minutes}`
+		}
+
+		return html`
+			<p ?data-is-expired=${isExpired}>
+				${isExpired ? "expired!" : "expiry:"}
+			</p>
+			${isExpired
+				? null
+				: html`<p>${renderExpiryCountdown()}</p>`}
+			<p class=expiry-date>${formatDate(expiry).full}</p>
+		`
+	}
+
 	function renderTokenList(tokens: AppTokenDisplay[]) {
 		return maybe(tokens.length > 0, html`
 			<ul class="token-list">
-					${tokens.map(token => html`
-						<li>
-							<p class=token-label>
-								<span>🎟️</span>
-								<span>${token.label}</span>
-							</p>
-							<p class=token-id>
-								<span>token id:</span>
-								<code>${token.appTokenId}</code>
-							</p>
-							<p class=token-expiry>
-								<span>expiry</span>
-								${formatDate(token.expiry).full}
-							</p>
-							<p>
-								<span>allowed origins</span>
-							</p>
-							<ul class=token-origins>
-								${token.origins.map(origin => html`
-									<li>${origin}</li>
-								`)}
-							</ul>
-							<p class=token-code>
-								<span>copy-paste the config into your webpage html:</span>
+				${tokens.map(token => html`
+					<li>
+						<p class=token-label>
+							<span>🎟️</span>
+							<strong>${token.label}</strong>
+							<code class=id>${token.appTokenId}</code>
+						</p>
+						<ul class=token-details>
+							<li class=token-code>
+								<p>copy-paste the config into your webpage html:</p>
 								<code class="codeblock xiome-config">
-									${xiomeConfig(token.appToken)}
+									${renderXiomeConfig(token.appToken)}
 								</code>
-							</p>
+							</li>
+							<li class=token-expiry>
+								${renderTokenExpiry(token.expiry)}
+							</li>
+							<li class="token-origins">
+								<p>allowed origins:</p>
+								<ul>
+									${token.origins.map(origin => html`
+										<li>${origin}</li>
+									`)}
+								</ul>
+							</li>
 							<button
 								class=delete-token-button
 								@click=${() => options.deleteToken(token.appTokenId)}>
-									delete token
+									delete connection
 							</button>
-						</li>
-					`)}
+						</ul>
+					</li>
+				`)}
 			</ul>
 		`)
 	}
@@ -79,11 +98,11 @@ export function makeTokenManager(options: TokenManagerOptions) {
 		}
 		return html`
 			<div class=token-creator>
-				<h4>create a new app token</h4>
+				<h4>create a new connection</h4>
 
 				<xio-text-input
 					class=token-label
-					placeholder="token label"
+					placeholder="connection label"
 					.validator=${appTokenDraftValidators.label}
 					@valuechange=${handleFormChange}
 				></xio-text-input>

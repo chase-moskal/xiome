@@ -61,11 +61,12 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 			<div class=applist>
 				${appList.map(app => html`
 					<div class=app data-app-id=${app.appId}>
-						<div class=appdetails>
-							<p class=app-label>
-								<span>💡</span>
-								<span>${app.label}</span>
-							</p>
+						<p class=app-label>
+							<span>💡</span>
+							<strong>${app.label}</strong>
+							<code class=id>${app.appId}</code>
+						</p>
+						<div class=app-details>
 							<p class=app-home>
 								<span>home:</span>
 								<span>
@@ -73,10 +74,6 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 										${app.home}
 									</a>
 								</span>
-							</p>
-							<p class=app-id>
-								<span>app id:</span>
-								<code>${app.appId}</code>
 							</p>
 						</div>
 						${this.tokenManager.render(app)}
