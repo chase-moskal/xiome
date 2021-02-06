@@ -1,0 +1,14 @@
+
+extends _templates/_page.pug
+
+block append variables
+	- pageSubtitle = "setup"
+
+block maincontent
+	.content.page-setup
+
+		xiome-login-panel(initially-hidden)
+			p(slot="logged-out") login to register and manage xiome apps
+			xiome-app-manager
+				h2 your registered xiome apps
+				h3(slot="create-app-heading") register a new xiome app
