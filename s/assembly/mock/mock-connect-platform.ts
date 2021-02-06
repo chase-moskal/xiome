@@ -2,7 +2,6 @@
 import {apiOrigin} from "../constants.js"
 import {SendEmail} from "../../features/auth/auth-types.js"
 import {SimpleStorage} from "../../toolbox/json-storage.js"
-import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockStandardBackend} from "./common/mock-standard-backend.js"
 
