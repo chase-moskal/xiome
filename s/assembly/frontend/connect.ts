@@ -9,7 +9,6 @@ export async function connect({
 	}: XiomeConfigConnected) {
 
 	const apiLink = apiOrigin + "/"
-
 	const channel = new BroadcastChannel("tokenChangeEvent")
 	const tokenStore = makeTokenStore2({
 		storage: window.localStorage,
@@ -18,7 +17,7 @@ export async function connect({
 
 	const {remote, authGoblin} = makeRemote({
 		appToken,
-		apiLink: apiOrigin + "/",
+		apiLink,
 		tokenStore,
 	})
 

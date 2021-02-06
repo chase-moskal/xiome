@@ -8,7 +8,7 @@ import {makeLoginLink} from "../../tools/emails/make-login-link.js"
 export async function creativeSignupAndLogin(email: string) {
 	const {system, getLatestLoginEmail} = await testableSystem()
 	const browser = await system.mockBrowser()
-	const latency = 0
+	const latency = false
 
 	const windowForSignup = await browser.mockAppWindow({
 		apiLink,

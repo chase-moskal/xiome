@@ -10,7 +10,7 @@ export interface MockLatencyRange {
 	max: number
 }
 
-export type MockLatency = 0 | MockLatencyRange
+export type MockLatency = false | MockLatencyRange
 
 export function addMockLatency<xApi extends Api>({latency, remote}: {
 		latency: MockLatency
@@ -18,7 +18,7 @@ export function addMockLatency<xApi extends Api>({latency, remote}: {
 	}){
 
 	function getRandomizedDelay() {
-		if (latency === 0) return 0
+		if (latency === false) return 0
 		const range = latency.max - latency.min
 		const randomRange = Math.random() * range
 		return latency.min + randomRange

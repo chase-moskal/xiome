@@ -3,7 +3,7 @@ import {assembleApi} from "./assemble-api.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {mockPrerequisites} from "./mock-prerequisites.js"
 
-import {AppPayload} from "../../features/auth/auth-types.js"
+import {AppPayload, LoginEmailDetails} from "../../features/auth/auth-types.js"
 import {MockSystemOptions} from "../types/mock-system-options.js"
 
 export async function mockBackend({
@@ -29,14 +29,20 @@ export async function mockBackend({
 		technicianEmail,
 	})
 
+	let latestLoginEmail: LoginEmailDetails
+	const getLatestLoginEmail = () => latestLoginEmail
+
 	const api = assembleApi({
 		rando,
 		config,
 		tables,
 		signToken,
 		verifyToken,
-		sendLoginEmail,
 		generateNickname,
+		sendLoginEmail: async details => {
+			latestLoginEmail = details
+			await sendLoginEmail(details)
+		},
 	})
 
 	const platformAppToken = await signToken<AppPayload>({
@@ -53,6 +59,7 @@ export async function mockBackend({
 		config,
 		tables,
 		platformAppToken,
+		getLatestLoginEmail,
 		mockBrowser: async() => mockBrowser({api}),
 	}
 }

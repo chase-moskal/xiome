@@ -5,7 +5,7 @@ import {testableSystem} from "./testable-system.js"
 import {makeLoginLink} from "../../tools/emails/make-login-link.js"
 
 export async function standardSystem() {
-	const latency = 0
+	const latency = false
 	const {system, getLatestLoginEmail} = await testableSystem()
 	
 	async function signupAndLogin({email, appLink, appToken}: {

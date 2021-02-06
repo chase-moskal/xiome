@@ -11,7 +11,7 @@ export default <Suite>{
 	"sign up, login, and logout": async() => {
 		const {system, getLatestLoginEmail} = await testableSystem()
 		const browser = await system.mockBrowser()
-		const latency = 0
+		const latency = false
 
 		const grabAccess =
 			(window: Await<ReturnType<typeof browser.mockAppWindow>>) =>
