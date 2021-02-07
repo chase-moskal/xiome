@@ -50,10 +50,11 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 		const {formDisabled, draft, problems} = state
 		return html`
 			<div class=app-creator>
+				<slot name=create-app-heading></slot>
 
 				<xio-text-input
 					class=app-label
-					placeholder="app label"
+					placeholder="community label"
 					?disabled=${formDisabled}
 					.validator=${appDraftValidators.label}
 					@valuechange=${handleFormChange}
@@ -61,7 +62,7 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 				<xio-text-input
 					class=app-home
-					placeholder="app home"
+					placeholder="website homepage"
 					?disabled=${formDisabled}
 					.validator=${appDraftValidators.home}
 					@valuechange=${handleFormChange}
@@ -71,7 +72,7 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 					class=create-app-button
 					?disabled=${formDisabled || !draft || problems.length > 0}
 					@click=${handleSubmitClick}>
-						create app
+						register community
 				</button>
 			</div>
 		`

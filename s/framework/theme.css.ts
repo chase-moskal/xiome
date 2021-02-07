@@ -8,4 +8,10 @@ export default css`
 	box-sizing: border-box;
 }
 
+input[type=text],
+textarea,
+button {
+	padding: 0.2em;
+}
+
 `

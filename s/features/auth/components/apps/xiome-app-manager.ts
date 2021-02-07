@@ -1,17 +1,18 @@
 
 import styles from "./xiome-app-manager.css.js"
-import {AppModel} from "../../types/app-model.js"
-import {AppDisplay} from "../../types/apps/app-display.js"
+import {makeAppCreator} from "./app-creator/app-creator.js"
+import {makeTokenManager} from "./token-manager/token-manager.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
-import {makeAppCreator} from "./app-creator/app-creator.js"
-import {makeTokenManager} from "./token-manager/token-manager.js"
+import {AppModel} from "../../types/app-model.js"
+import {AppDisplay} from "../../types/apps/app-display.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 
-	firstUpdated() {
+	firstUpdated(changes: any) {
+		super.firstUpdated(changes)
 		this.share.appModel.loadAppList()
 	}
 
@@ -50,7 +51,6 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 			${renderWrappedInLoading(appListLoadingView, appList => appList.length
 				? this.renderAppList(appList)
 				: this.renderNoApps())}
-			<slot name=create-app-heading></slot>
 			${this.appCreator.render()}
 		`
 	}
@@ -62,13 +62,13 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 				${appList.map(app => html`
 					<div class=app data-app-id=${app.appId}>
 						<p class=app-label>
-							<span>💡</span>
+							<span>🌐</span>
 							<strong>${app.label}</strong>
 							<code class=id>${app.appId}</code>
 						</p>
 						<div class=app-details>
 							<p class=app-home>
-								<span>home:</span>
+								<span>homepage:</span>
 								<span>
 									<a part="link link-external" target=_blank href="${app.home}">
 										${app.home}
@@ -80,7 +80,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 						<button
 							class=delete-app-button
 							@click=${() => this.deleteApp(app.appId)}>
-								delete app
+								delete community
 						</button>
 					</div>
 				`)}

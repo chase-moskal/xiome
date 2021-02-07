@@ -34,6 +34,17 @@ a[data-external],
 	}
 }
 
+code { background: #0002; }
+.codeblock { display: block; }
+.htmlcode { color: #fff6; }
+.htmlcode [data-syntax=tag] { color: deepskyblue; }
+.htmlcode [data-syntax=attr] { color: skyblue; }
+.htmlcode [data-syntax=data] { color: #aaffa0; }
+.htmlcode [data-syntax=indent] {
+	display: block;
+	margin-left: 1em;
+}
+
 .siteheader {
 	.marked-link {
 		border-radius: 4px;
@@ -41,7 +52,7 @@ a[data-external],
 		text-decoration-color: #adf2;
 	}
 	&[data-page-subtitle=home] nav a[href$="/"] { @extend .marked-link }
-	&[data-page-subtitle=apps] nav a[href$="/apps"] { @extend .marked-link }
+	&[data-page-subtitle=setup] nav a[href$="/setup"] { @extend .marked-link }
 	&[data-page-subtitle=components] nav a[href$="/components"] { @extend .marked-link }
 }
 

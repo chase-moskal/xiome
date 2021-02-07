@@ -17,7 +17,7 @@ head
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
 		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 	else
-		xiome-config
+		xiome-config(mock="platform")
 		script(src=`${base}/xiome.bundle.min.js`)
 
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader

@@ -21,23 +21,22 @@ code.id {
 	display: block;
 }
 
-.xiome-config { color: #fff6; }
-.xiome-config [data-syntax=tag] { color: deepskyblue; }
-.xiome-config [data-syntax=attr] { color: skyblue; }
-.xiome-config [data-syntax=data] { color: #aaffa0; }
-.xiome-config [data-syntax=indent] {
+.htmlcode { color: #fff6; }
+.htmlcode [data-syntax=tag] { color: deepskyblue; }
+.htmlcode [data-syntax=attr] { color: skyblue; }
+.htmlcode [data-syntax=data] { color: #aaffa0; }
+.htmlcode [data-syntax=indent] {
 	display: block; margin-left: 1em;
 }
 
 .app-list .app {
 	padding: 0.4em 1rem;
-	margin: 0 var(--xmargin, 0);
+	margin: var(--app-margin, 0);
 	margin-top: 0.5em;
-	border: 1px solid;
 }
 
 .app-list .app + .app {
-	margin-top: 0.5em;
+	margin-top: 1.5em;
 }
 
 .app-details {
@@ -46,7 +45,13 @@ code.id {
 
 .app-creator {
 	margin: 0 var(--xmargin, 0);
-	padding: 0.4em 1rem;
+	/* padding: 0.4em 1rem; */
+}
+
+.app,
+.token-list > li {
+	border: 1px solid #fff1;
+	border-radius: 0.2em;
 }
 
 .token-manager ul,
@@ -55,17 +60,16 @@ code.id {
 }
 
 .token-list {
-	margin: 1.5em 0;
+	margin: 0.5em 0;
+	margin-top: 1em;
 }
 
 .token-list > li {
-	border: 1px solid #fff1;
 	padding: 0.5em;
-	border-radius: 0.5em;
 }
 
 .token-list > li + li{
-	margin-top: 1.5em;
+	margin-top: 0.5em;
 }
 
 .token-list > li > * + * {

@@ -1,14 +1,31 @@
 
 .page-learn {
 	max-width: 700px;
+	ul {
+		list-style: none;
+		margin-left: 0.5em;
+		> li + li {
+			margin-top: 0.8em;
+		}
+	}
+	ol {
+		margin-top: 0.8em;
+	}
 }
 
 .page-setup {
-	xiome-app-manager {
-		--xmargin: -1rem;
-		h2 {
-			margin-top: 0;
+	.plate {
+		max-width: 700px;
+		p + p {
+			margin-top: 0.5em;
 		}
+		.mocksnippet {
+			margin-left: 1em;
+		}
+	}
+	xiome-login-panel {
+		display: block;
+		margin: 1em 0;
 	}
 }
 

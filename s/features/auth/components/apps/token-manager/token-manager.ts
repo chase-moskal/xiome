@@ -55,14 +55,14 @@ export function makeTokenManager(options: TokenManagerOptions) {
 				${tokens.map(token => html`
 					<li>
 						<p class=token-label>
-							<span>🎟️</span>
+							<span>⚡</span>
 							<strong>${token.label}</strong>
 							<code class=id>${token.appTokenId}</code>
 						</p>
 						<ul class=token-details>
 							<li class=token-code>
 								<p>copy-paste the config into your webpage html:</p>
-								<code class="codeblock xiome-config">
+								<code class="codeblock htmlcode">
 									${renderXiomeConfig(token.appToken)}
 								</code>
 							</li>
@@ -98,7 +98,7 @@ export function makeTokenManager(options: TokenManagerOptions) {
 		}
 		return html`
 			<div class=token-creator>
-				<h4>create a new connection</h4>
+				<h3>create a new connection</h3>
 
 				<xio-text-input
 					class=token-label
