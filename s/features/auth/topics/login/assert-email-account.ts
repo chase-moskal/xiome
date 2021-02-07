@@ -23,7 +23,13 @@ export async function assertEmailAccount({rando, tables, email, config}: {
 
 			const operationCreatesAccount = tables.account.create(account)
 			const operationCreatesTechnicianUserRole = isTechnician
-				? tables.userRole.create({userId, roleId})
+				? tables.userHasRole.create({
+					userId,
+					roleId,
+					public: true,
+					timeframeStart: undefined,
+					timeframeEnd: undefined,
+				})
 				: Promise.resolve()
 
 			await Promise.all([operationCreatesAccount, operationCreatesTechnicianUserRole])

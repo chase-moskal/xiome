@@ -1,12 +1,12 @@
 
-import {HardPermissionsBlueprint, PrivilegeRow, RolePrivilegeRow} from "../../../../auth-types.js"
+import {HardPermissionsBlueprint, PrivilegeRow, RoleHasPrivilegeRow} from "../../../../auth-types.js"
 
-export function buildRolePrivileges(
+export function buildRoleHasPrivileges(
 			blueprint: HardPermissionsBlueprint,
 			privileges: PrivilegeRow[],
-		): RolePrivilegeRow[] {
+		): RoleHasPrivilegeRow[] {
 
-	const inheritedRolePrivileges = blueprint.inherit?.rolePrivileges ?? []
+	const inheritedRolePrivileges = blueprint.inherit?.roleHasPrivileges ?? []
 
 	const newRolePrivileges = Object.entries(blueprint.roles)
 		.map(([,{roleId, privileges: privilegeLabels}]) => privilegeLabels.map(label => {

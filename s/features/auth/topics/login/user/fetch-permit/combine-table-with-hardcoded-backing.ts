@@ -3,7 +3,10 @@ import {dbbyMemory} from "../../../../../../toolbox/dbby/dbby-memory.js"
 import {dbbyHardcoded} from "../../../../../../toolbox/dbby/dbby-hardcoded.js"
 import {DbbyRow, DbbyTable} from "../../../../../../toolbox/dbby/dbby-types.js"
 
-export async function combineTableWithHardcodedBacking<Row extends DbbyRow>({hardRows, actualTable}: {
+export async function combineTableWithHardcodedBacking<Row extends DbbyRow>({
+			hardRows,
+			actualTable,
+		}: {
 			hardRows: Row[]
 			actualTable: DbbyTable<Row>
 		}) {

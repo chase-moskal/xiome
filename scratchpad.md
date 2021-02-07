@@ -4,6 +4,7 @@
 - [ ] theory: advanced privileges and claims
   - bans, and premium, which have an expiry
   - stats like joinedDate
+- [ ] app token refresh / access, also fetches permissions data
 - [ ] port all metalshop features
 - [ ] separate platform repo and establish orchestration and ci/cd
 

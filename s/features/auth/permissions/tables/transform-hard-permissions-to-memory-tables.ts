@@ -16,8 +16,8 @@ export function transformHardPermissionsToMemoryTables(
 
 	return {
 		role: dbbyMemory({rows: augmentWithAppId(hardPermissions.roles)}),
-		userRole: dbbyMemory({rows: augmentWithAppId(hardPermissions.userRoles)}),
+		userHasRole: dbbyMemory({rows: augmentWithAppId(hardPermissions.userHasRoles)}),
 		privilege: dbbyMemory({rows: augmentWithAppId(hardPermissions.privileges)}),
-		rolePrivilege: dbbyMemory({rows: augmentWithAppId(hardPermissions.rolePrivileges)}),
+		roleHasPrivilege: dbbyMemory({rows: augmentWithAppId(hardPermissions.roleHasPrivileges)}),
 	}
 }

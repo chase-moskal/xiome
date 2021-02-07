@@ -90,8 +90,8 @@ export interface HardPermissionsBlueprint {
 export type HardPermissions = {
 	roles: RoleRow[]
 	privileges: PrivilegeRow[]
-	userRoles: UserRoleRow[]
-	rolePrivileges: RolePrivilegeRow[]
+	userHasRoles: UserHasRoleRow[]
+	roleHasPrivileges: RoleHasPrivilegeRow[]
 }
 
 export type Tables = {[key: string]: DbbyTable<DbbyRow>}
@@ -132,7 +132,10 @@ export type AuthApi = ReturnType<typeof makeAuthApi>
 export type User = {
 	userId: string
 	profile: Profile
-	tags: string[]
+	roles: PublicUserRole[]
+	stats: {
+		joined: number
+	}
 }
 
 export type Permit = {
@@ -143,6 +146,17 @@ export type Profile = {
 	nickname: string
 	tagline: string
 	avatar: string
+}
+
+export type PublicUserRole = {
+	roleId: string
+	label: string
+	timeframeStart: number
+	timeframeEnd: number
+}
+
+export type UserStats = {
+	joined: number
 }
 
 export type Settings = {
@@ -247,8 +261,8 @@ export type Authorizer = (
 export type PermissionsTables = {
 	role: DbbyTable<RoleRow>
 	privilege: DbbyTable<PrivilegeRow>
-	userRole: DbbyTable<UserRoleRow>
-	rolePrivilege: DbbyTable<RolePrivilegeRow>
+	userHasRole: DbbyTable<UserHasRoleRow>
+	roleHasPrivilege: DbbyTable<RoleHasPrivilegeRow>
 }
 
 export type AuthTables = PermissionsTables & {
@@ -327,14 +341,15 @@ export type PrivilegeRow = {
 	label: string
 }
 
-// user has role
-export type UserRoleRow = {
+export type UserHasRoleRow = {
 	userId: string
 	roleId: string
+	timeframeStart: number
+	timeframeEnd: number
+	public: boolean
 }
 
-// role has privilege
-export type RolePrivilegeRow = {
+export type RoleHasPrivilegeRow = {
 	roleId: string
 	privilegeId: string
 }

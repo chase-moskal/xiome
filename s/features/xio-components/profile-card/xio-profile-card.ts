@@ -10,6 +10,7 @@ import {renderWrappedInLoading} from "../../../framework/loading/render-wrapped-
 import {profileValidator} from "./validators/profile-validator.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
+import { formatDate } from "../../../toolbox/goodtimes/format-date.js"
 
 const styles = css`
 
@@ -122,29 +123,29 @@ export class XioProfileCard extends Component {
 	})
 
 	private renderTags(user: User) {
-		// const {readonly} = this
+		const {readonly} = this
 
-		const isStaff = user.tags.find(tag => tag === "staff")
-		const isBanned = user.tags.find(tag => tag === "banned")
-		const isPremium = user.tags.find(tag => tag === "premium")
+		const staffRole = user.roles.find(role => role.label === "staff")
+		const bannedRole = user.roles.find(role => role.label === "banned")
+		const premiumRole = user.roles.find(role => role.label === "premium")
 
 		const renderTag = (tag: string, title?: string) =>
 			html`<li data-tag=${tag} title=${title || ""}>${tag}</li>`
 
 		let items = []
-		if (isBanned)
+		if (bannedRole)
 			items.push(renderTag(
 				"banned",
-				// `banned until ${formatDate(user.claims.banUntil).datestring}, reason: ${user.claims.banReason}`
+				`banned until ${formatDate(bannedRole.timeframeEnd).date}`
 			))
-		if (isStaff)
+		if (staffRole)
 			items.push(renderTag("staff"))
-		if (isPremium)
+		if (premiumRole)
 			items.push(renderTag(
 				"premium",
-				// readonly
-				// 	? undefined
-				// 	: `premium until ${formatDate(user.claims.premiumUntil).datestring}`
+				readonly
+					? undefined
+					: `premium until ${formatDate(premiumRole.timeframeEnd).date}`
 			))
 
 		return items.length
