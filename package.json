@@ -83,7 +83,7 @@
 		"mongodb": "^3.6.3",
 		"pug": "^3.0.0",
 		"redcrypto": "0.0.0-dev.8",
-		"renraku": "^0.0.0-dev.34",
+		"renraku": "^0.0.0-dev.35",
 		"stripe": "^8.132.0",
 		"unique-names-generator": "^4.3.1"
 	},
