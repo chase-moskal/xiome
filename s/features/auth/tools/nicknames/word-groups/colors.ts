@@ -11,6 +11,7 @@ export const colors = [
 	"Silver",
 	"Bright",
 	"Light",
+	"Gold",
 	"Golden",
 	"Aqua",
 	"Minty",

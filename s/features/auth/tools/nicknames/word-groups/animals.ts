@@ -13,7 +13,6 @@ export const animals = [
 	"Owl",
 	"Hawk",
 	"Duck",
-	"Chicken",
 	"Wolf",
 	"Coyote",
 	"Dingo",
@@ -24,7 +23,6 @@ export const animals = [
 	"Bear",
 	"Kiwi",
 	"Penguin",
-	"Weasel",
 	"Otter",
 	"Dolphin",
 	"Starfish",
@@ -33,4 +31,6 @@ export const animals = [
 	"Swordfish",
 	"Sparrow",
 	"Turtle",
+	"Puppy",
+	"Kitten",
 ]
