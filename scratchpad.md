@@ -1,12 +1,11 @@
 
 ## todo
-- [ ] implement my-avatar component (just silhouette for now)
-- [ ] determine true value of implementing api-served token page?
-- [ ] add script tags to xiome-config code snippets
-- [ ] port profile editing components
-- [ ] full suite local test
-- [ ] linode server alpha (site alpha warning banner, restrict to localhost)
-- [ ] plan orchestration
+
+- [ ] theory: advanced privileges and claims
+  - bans, and premium, which have an expiry
+  - stats like joinedDate
+- [ ] port all metalshop features
+- [ ] separate platform repo and establish orchestration and ci/cd
 
 ## permissions explained
 

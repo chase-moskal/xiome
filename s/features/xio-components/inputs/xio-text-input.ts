@@ -2,7 +2,7 @@
 import styles from "./xio-text-input.css.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {TextInputParser} from "./types/text-input-parser.js"
-import {ValueChangeEvent} from "./events/text-change-event.js"
+import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
 import {Component, html, mixinStyles, property, query, maybe} from "../../../framework/component.js"
 
@@ -14,6 +14,9 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	@property({type: String, reflect: true})
 	["initial"]: string = ""
+
+	@property({type: Boolean, reflect: true})
+	["readonly"]: boolean = false
 
 	@property({type: Boolean, reflect: true})
 	["textarea"] = false
@@ -91,6 +94,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 							class=input
 							.value="${draft}"
 							?disabled=${this["disabled"]}
+							?readonly=${this["readonly"]}
 							placeholder=${placeholder}
 							@change=${handleInputChange}
 							@keyup=${handleInputChange}
@@ -101,6 +105,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 							class=input
 							.value="${draft}"
 							?disabled=${this["disabled"]}
+							?readonly=${this["readonly"]}
 							placeholder=${placeholder}
 							@change=${handleInputChange}
 							@keyup=${handleInputChange}/>
