@@ -1,7 +1,7 @@
 
-import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
+import {isPlatform} from "../tools/is-platform.js"
 import {throwProblems} from "./apps/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
@@ -10,7 +10,6 @@ import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 import {PlatformUserAuth, AuthOptions, AppDraft, App} from "../auth-types.js"
-import {isPlatform} from "../tools/is-platform.js"
 
 export const appTopic = ({
 		rando,

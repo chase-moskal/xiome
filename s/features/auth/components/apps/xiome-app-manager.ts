@@ -1,7 +1,6 @@
 
 import styles from "./xiome-app-manager.css.js"
 import {makeAppCreator} from "./app-creator/app-creator.js"
-// import {makeTokenManager} from "./token-manager/token-manager.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
