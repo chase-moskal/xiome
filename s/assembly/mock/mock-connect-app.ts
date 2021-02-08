@@ -8,10 +8,11 @@ import {makeEmailController} from "./common/email-controller.js"
 import {mockStandardBackend} from "./common/mock-standard-backend.js"
 
 export async function mockConnectApp({
-		origins, platformHome, tableStorage, sendEmail
+		origins, platformHome, appWindowLink, tableStorage, sendEmail
 	}: {
 		origins: string[]
 		platformHome: string
+		appWindowLink: string
 		tableStorage: SimpleStorage
 		sendEmail: SendEmail
 	}) {
@@ -38,8 +39,8 @@ export async function mockConnectApp({
 		appId,
 		apiLink,
 		backend,
-		platformHome,
 		tableStorage,
+		appWindowLink,
 	})
 
 	return {remote, authGoblin, backend}

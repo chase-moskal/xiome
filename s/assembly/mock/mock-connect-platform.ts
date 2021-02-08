@@ -23,8 +23,8 @@ export async function mockConnectPlatform({
 	const {remote, authGoblin} = await mockWiredRemote({
 		apiLink,
 		backend,
-		platformHome,
 		tableStorage,
+		appWindowLink: platformHome,
 		appId: backend.platformAppId,
 	})
 

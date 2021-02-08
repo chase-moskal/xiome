@@ -15,4 +15,7 @@ button {
 	padding: 0.2em;
 }
 
+button { cursor: pointer; }
+button[disabled] { cursor: default; }
+
 `

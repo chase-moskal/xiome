@@ -6,11 +6,11 @@ import {SimpleStorage} from "../../../toolbox/json-storage.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
 
 export async function mockWiredRemote({
-		apiLink, appId, platformHome, tableStorage, backend,
+		apiLink, appId, appWindowLink, tableStorage, backend,
 	}: {
 		appId: string
 		apiLink: string
-		platformHome: string
+		appWindowLink: string
 		tableStorage: SimpleStorage
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
@@ -22,7 +22,7 @@ export async function mockWiredRemote({
 		appId,
 		apiLink,
 		api: backend.api,
-		origin: new URL(platformHome).origin,
+		origin: new URL(appWindowLink).origin,
 		latency: {min: 200, max: 800},
 		tokenStore: makeTokenStore2({
 			appId,

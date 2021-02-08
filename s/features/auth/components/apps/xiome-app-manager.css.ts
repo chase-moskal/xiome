@@ -4,7 +4,7 @@ export default css`
 
 code {
 	display: inline-block;
-	font-size: 0.7em;
+	font-size: 0.8em;
 	padding: 0.2em;
 	border-radius: 0.3em;
 	background: #0002;
@@ -26,7 +26,8 @@ code.id {
 .htmlcode [data-syntax=attr] { color: skyblue; }
 .htmlcode [data-syntax=data] { color: #aaffa0; }
 .htmlcode [data-syntax=indent] {
-	display: block; margin-left: 1em;
+	display: block;
+	margin-left: 1em;
 }
 
 .app {
@@ -40,7 +41,7 @@ code.id {
 }
 
 .app > * + * {
-	margin-top: 1em;
+	margin-top: 0.5em;
 }
 
 .app + .app {

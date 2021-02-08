@@ -25,19 +25,6 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		},
 	})
 
-	// private readonly tokenManager = makeTokenManager({
-	// 	root: this.shadowRoot,
-	// 	requestUpdate: () => this.requestUpdate(),
-	// 	createToken: async tokenDraft => {
-	// 		await this.share.appModel.registerAppToken(tokenDraft)
-	// 	},
-	// 	deleteToken: async appTokenId => {
-	// 		await this.share.appModel.deleteAppToken(appTokenId)
-	// 	},
-	// })
-
-	// ${this.tokenManager.render(app)}
-
 	private renderNoApps() {
 		return html`
 			<slot name=no-apps></slot>

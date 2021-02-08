@@ -9,6 +9,7 @@ export async function mockConnect(config: XiomeConfigMock) {
 		origins: [window.location.origin],
 		tableStorage: window.localStorage,
 		platformHome: window.location.href,
+		appWindowLink: window.location.href,
 		sendEmail,
 	}
 	return config.mock === "platform"
