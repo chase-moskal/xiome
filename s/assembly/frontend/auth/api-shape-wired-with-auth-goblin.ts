@@ -2,13 +2,12 @@
 import {asShape} from "renraku/x/identities/as-shape.js"
 import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
-import {loginTopic} from "../../../features/auth/topics/login-topic.js"
-import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
-
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
-import {appTopic} from "../../../features/auth/topics/app-topic.js"
+import {loginTopic} from "../../../features/auth/topics/login-topic.js"
+import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
 import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
+import {appTokenTopic} from "../../../features/auth/topics/app-token-topic.js"
 import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
 
 export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
@@ -20,6 +19,12 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 
 	const shape = asShape<SystemApi>({
 		auth: {
+			appTokenService: {
+				[_augment]: {
+					getMeta: async() => undefined,
+				},
+				authorizeApp: true,
+			},
 			loginService: {
 				[_augment]: {
 					getMeta: async() => ({
@@ -37,7 +42,6 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
-				authorizeApp: true,
 				listApps: true,
 				deleteApp: true,
 				updateApp: true,
@@ -64,15 +68,15 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		},
 	})
 
-	function installAuthGoblin({loginService, appService}: {
+	function installAuthGoblin({loginService, appTokenService}: {
 			loginService: Service<typeof loginTopic>
-			appService: Service<typeof appTopic>
+			appTokenService: Service<typeof appTokenTopic>
 		}) {
 		authGoblin = makeAuthGoblin({
 			appId,
 			tokenStore,
 			authorize: loginService.authorize,
-			authorizeApp: appService.authorizeApp,
+			authorizeApp: appTokenService.authorizeApp,
 		})
 		return authGoblin
 	}

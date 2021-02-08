@@ -29,86 +29,34 @@ code.id {
 	display: block; margin-left: 1em;
 }
 
-.app-list .app {
+.app {
 	padding: 0.4em 1rem;
 	margin: var(--app-margin, 0);
 	margin-top: 0.5em;
 }
 
-.app-list .app + .app {
-	margin-top: 1.5em;
+.app-code code {
+	padding: 1em;
 }
 
-.app-details {
-	margin-left: 1em;
+.app > * + * {
+	margin-top: 1em;
+}
+
+.app + .app {
+	margin-top: 1.5em;
 }
 
 .app-creator {
 	margin: 0 var(--xmargin, 0);
-	/* padding: 0.4em 1rem; */
 }
 
-.app,
-.token-list > li {
+.app {
 	border: 1px solid #fff1;
 	border-radius: 0.2em;
 }
 
-.token-manager ul,
-.token-manager ol {
-	list-style: none;
-}
-
-.token-list {
-	margin: 0.5em 0;
-	margin-top: 1em;
-}
-
-.token-list > li {
-	padding: 0.5em;
-}
-
-.token-list > li + li{
-	margin-top: 0.5em;
-}
-
-.token-list > li > * + * {
-	margin-top: 0.2em;
-}
-
-.token-details {
-	list-style: none;
-	margin-left: 1em;
-}
-
-.token-details > li > * {
-	margin-left: 1em;
-}
-
-.token-details > li + li {
-	margin-top: 0.5em;
-}
-
-.token-details > li > *:first-child {
-	margin-left: 0;
-}
-
-.token-list ul {
-	margin-top: 0;
-	margin-left: 1em;
-}
-
-.token-expiry [data-is-expired] {
-	color: red;
-	font-weight: bold;
-}
-
-.token-creator {
-	margin-top: 1em;
-}
-
-.delete-app-button,
-.delete-token-button {
+.delete-app-button {
 	display: block;
 	margin-left: auto;
 	color: red;

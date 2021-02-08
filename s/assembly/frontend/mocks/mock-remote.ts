@@ -41,8 +41,8 @@ export function mockRemote({
 	})
 
 	const authGoblin = installAuthGoblin({
-		appService: remote.auth.appService,
 		loginService: remote.auth.loginService,
+		appTokenService: remote.auth.appTokenService,
 	})
 
 	return {remote, authGoblin}

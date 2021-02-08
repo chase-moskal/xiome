@@ -4,12 +4,18 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
-import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
+import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
 
 export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		verifyToken: VerifyToken
 		getAuthTables: GetTables<AuthTables>
 	}) {
+
+	const green: Policy<GreenMeta, GreenAuth> = {
+		processAuth: async(meta, request) => {
+			return {getAuthTables}
+		},
+	}
 
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async({appToken}, request) => {
@@ -32,10 +38,10 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		processAuth: async(userMeta, request) => {
 			const userAuth = await user.processAuth(userMeta, request)
 			if (!userAuth.app.platform)
-				throw new ApiError(403, "forbiddden: only platform users allowed here")
+				throw new ApiError(403, "forbidden: only platform users allowed here")
 			return userAuth
 		},
 	}
 
-	return {anon, user, platformUser}
+	return {green, anon, user, platformUser}
 }

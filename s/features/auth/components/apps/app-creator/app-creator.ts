@@ -3,7 +3,6 @@ import {formState} from "../form/form-state.js"
 import {AppDraft} from "../../../../../types.js"
 import {dedupe} from "../../../../../toolbox/dedupe.js"
 import {html} from "../../../../../framework/component.js"
-import {renderXiomeConfig} from "../utils/render-xiome-config.js"
 import {formEventHandlers} from "../form/form-event-handlers.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {validateAppDraft} from "../../../topics/apps/validate-app-draft.js"
@@ -31,7 +30,10 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 	const {handleFormChange, handleSubmitClick} = formEventHandlers({
 		state,
 		requestUpdate,
-		submit: createApp,
+		submit: async draft => {
+			draft.origins = dedupe([draft.home, ...draft.origins])
+			createApp(draft)
+		},
 		clearForm: () => {
 			const {appHome, appLabel, appOrigins} = getFormElements()
 			appHome.setText("")
@@ -55,11 +57,6 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 	function render() {
 		const {formDisabled, draft, problems} = state
 
-		function parseOriginsIncludingHome(text: string) {
-			const homeOrigin = new URL(draft.home).origin
-			return dedupe(parseOrigins(`${homeOrigin}\n${text}`))
-		}
-
 		return html`
 			<div class=app-creator>
 				<slot name=create-app-heading></slot>
@@ -82,12 +79,12 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 				<xio-text-input
 					textarea
-					class=token-origins
+					class=app-origins
 					placeholder="additional origins"
 					?disabled=${formDisabled}
 					show-validation-when-empty
-					.parser=${parseOriginsIncludingHome}
-					.validator=${appDraftValidators.origins}
+					.parser=${parseOrigins}
+					.validator=${appDraftValidators.additionalOrigins}
 					@valuechange=${handleFormChange}
 				></xio-text-input>
 

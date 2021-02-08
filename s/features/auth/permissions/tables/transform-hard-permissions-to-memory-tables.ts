@@ -4,11 +4,15 @@ import {DbbyRow} from "../../../../toolbox/dbby/dbby-types.js"
 import {dbbyMemory} from "../../../../toolbox/dbby/dbby-memory.js"
 import {PermissionsTables, HardPermissions} from "../../auth-types.js"
 
-export function transformHardPermissionsToMemoryTables(
-			hardPermissions: HardPermissions,
-			namespaceKeyAppId: string,
-			appId: string,
-		): PermissionsTables {
+export function transformHardPermissionsToMemoryTables({
+		appId,
+		hardPermissions,
+		namespaceKeyAppId,
+	}: {
+		hardPermissions: HardPermissions,
+		namespaceKeyAppId: string,
+		appId: string,
+	}): PermissionsTables {
 
 	function augmentWithAppId<Row extends DbbyRow>(rows: Row[]) {
 		return addAppIdsToRows(rows, namespaceKeyAppId, appId)

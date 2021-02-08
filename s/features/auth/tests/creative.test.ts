@@ -62,35 +62,22 @@ export default <Suite>{
 		const app = platformAppModel.appListLoadingView.payload[0]
 		assert(app, "app must be present")
 
-		// TODO
+		// app window 1
+		await signupAndLogin({
+			appId: app.appId,
+			appLink: app.home,
+			email: customerEmail,
+		})
 
-		// await platformAppModel.registerAppToken({
-		// 	appId,
-		// 	label: "My App Token",
-		// 	origins: [appOrigin],
-		// })
-		// const token = platformAppModel.appListLoadingView.payload[0].tokens[0]
-		// assert(token, "app token should exist")
-		// assert(typeof token.appToken === "string", "token must be string")
-		// assert(token.appToken.length > 10, "token string must be many characters")
-		// assert(token.origins.length === 1, "token must have one origin")
-		// assert(token.origins[0] === appOrigin, "token origin must match")
-
-		// const {appToken} = token
-		// const appWindow = await signupAndLogin({
-		// 	appToken,
-		// 	appLink: app.home,
-		// 	email: customerEmail,
-		// })
-
-		// const badLink = "https://badexample.com/"
-		// await expect(async() => {
-		// 	await signupAndLogin({
-		// 		appToken,
-		// 		appLink: badLink,
-		// 		email: customerEmail,
-		// 	})
-		// }).throws()
+		// app window 2
+		const badLink = "https://badexample.com/"
+		await expect(async() => {
+			await signupAndLogin({
+				appId: app.appId,
+				appLink: badLink,
+				email: customerEmail,
+			})
+		}).throws()
 	}
 
 	// "generate an admin account to login with": true,

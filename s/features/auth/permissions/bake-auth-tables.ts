@@ -1,12 +1,11 @@
 
 import {isPlatform} from "../tools/is-platform.js"
+import {dbbyMemory} from "../../../toolbox/dbby/dbby-memory.js"
 import {dbbyHardcoded} from "../../../toolbox/dbby/dbby-hardcoded.js"
 import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
-import {AuthTables, PlatformConfig, PermissionsTables, AppRow} from "../auth-types.js"
-
+import {originsToDatabase} from "../topics/origins/origins-to-database.js"
+import {AuthTables, PlatformConfig, PermissionsTables, AppRow, AuthTablesGlobal} from "../auth-types.js"
 import {transformHardPermissionsToMemoryTables} from "./tables/transform-hard-permissions-to-memory-tables.js"
-import { dbbyMemory } from "../../../toolbox/dbby/dbby-memory.js"
-import { originsToDatabase } from "../topics/origins/origins-to-database.js"
 
 const namespaceKeyAppId = "_appId"
 
@@ -16,32 +15,30 @@ export function bakeAuthTables({config, authTables}: {
 		}) {
 
 	return function getTables({appId}: {appId: string}): AuthTables {
-
-		const hardPermissions = isPlatform(appId, config)
-			? config.permissions.platform
-			: config.permissions.app
-
-		const hardTables: PermissionsTables =
-			transformHardPermissionsToMemoryTables(
-				hardPermissions,
-				namespaceKeyAppId,
+		const hardTables: PermissionsTables = (
+			transformHardPermissionsToMemoryTables({
 				appId,
-			)
+				namespaceKeyAppId,
+				hardPermissions: (
+					isPlatform(appId, config)
+						? config.permissions.platform
+						: config.permissions.app
+				),
+			})
+		)
 
-		const platformDetails = config.platform.appDetails
-		const hardAppTable = dbbyMemory<AppRow>({rows: [{
-			appId: platformDetails.appId,
-			home: platformDetails.home,
-			label: platformDetails.label,
-			origins: originsToDatabase(platformDetails.origins),
-			archived: false,
-		}]})
+		const platformApp = config.platform.appDetails
+		const hardAppTable = dbbyMemory<AppRow>({
+			rows: [{
+				appId: platformApp.appId,
+				home: platformApp.home,
+				label: platformApp.label,
+				origins: originsToDatabase(platformApp.origins),
+				archived: false,
+			}],
+		})
 
-		const hardbackedAuthTables = {
-			app: dbbyHardcoded({
-				actualTable: authTables.app,
-				hardTable: hardAppTable,
-			}),
+		const permissionsTables = {
 			role: dbbyHardcoded({
 				actualTable: authTables.role,
 				hardTable: hardTables.role,
@@ -60,11 +57,22 @@ export function bakeAuthTables({config, authTables}: {
 			}),
 		}
 
-		return {
+		const appNamespacedTables = prepareConstrainTables({
 			...authTables,
-			...prepareConstrainTables(hardbackedAuthTables)({
-				[namespaceKeyAppId]: appId
+			...permissionsTables,
+		})({[namespaceKeyAppId]: appId})
+
+		const globalTables: AuthTablesGlobal = {
+			appOwnership: authTables.appOwnership,
+			app: dbbyHardcoded({
+				actualTable: authTables.app,
+				hardTable: hardAppTable,
 			}),
+		}
+
+		return {
+			...appNamespacedTables,
+			...globalTables,
 		}
 	}
 }

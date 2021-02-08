@@ -9,29 +9,13 @@ import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
-import {PlatformUserAuth, AuthOptions, AppDraft, AppToken, App} from "../auth-types.js"
+import {PlatformUserAuth, AuthOptions, AppDraft, App} from "../auth-types.js"
+import {isPlatform} from "../tools/is-platform.js"
 
 export const appTopic = ({
 		rando,
 		config,
-		signToken,
 	}: AuthOptions) => asTopic<PlatformUserAuth>()({
-
-	async authorizeApp({tables}, {appId}: {
-			appId: string
-		}): Promise<AppToken> {
-		const appRow = await tables.app.one(find({appId}))
-		if (appRow.archived) throw new ApiError(403, "app has been archived")
-		return signToken<App>({
-			lifespan: config.tokens.lifespans.app,
-			payload: {
-				appId,
-				platform: false,
-				permissions: undefined,
-				origins: originsFromDatabase(appRow.origins),
-			},
-		})
-	},
 
 	async listApps({tables}, {ownerUserId}: {
 			ownerUserId: string
@@ -48,6 +32,7 @@ export const appTopic = ({
 			label: row.label,
 			home: row.home,
 			origins: originsFromDatabase(row.origins),
+			platform: isPlatform(row.appId, config),
 		})))
 	},
 

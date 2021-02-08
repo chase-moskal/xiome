@@ -7,17 +7,17 @@ import {loginTopic} from "../topics/login-topic.js"
 import {isTokenValid} from "../tools/tokens/is-token-valid.js"
 import {decodeAccessToken} from "../tools/tokens/decode-access-token.js"
 
-import {appTopic} from "../topics/app-topic.js"
 import {Service} from "../../../types/service.js"
+import {appTokenTopic} from "../topics/app-token-topic.js"
+import {decodeAppToken} from "../tools/tokens/decode-app-token.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
-import {AccessPayload, AccessToken, App, AuthTokens, RefreshToken} from "../auth-types.js"
-import { decodeAppToken } from "../tools/tokens/decode-app-token.js"
+import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../auth-types.js"
 
 export function makeAuthGoblin({appId, tokenStore, authorize, authorizeApp}: {
 		appId: string
 		tokenStore: ReturnType<typeof makeTokenStore2>
 		authorize: Service<typeof loginTopic>["authorize"]
-		authorizeApp: Service<typeof appTopic>["authorizeApp"]
+		authorizeApp: Service<typeof appTokenTopic>["authorizeApp"]
 	}) {
 
 	const accessEvent = pubsub<AccessEventListener>()
@@ -67,12 +67,13 @@ export function makeAuthGoblin({appId, tokenStore, authorize, authorizeApp}: {
 
 	const getAppTokenAndReauthorizeIfNecessary = onesie(async() => {
 		let appToken = await tokenStore.loadAppToken()
-		if (isTokenValid(appToken)) {
+		if (!appToken || !isTokenValid(appToken)) {
 			appToken = await authorizeApp({appId})
 		}
-		return appToken
+		const result = appToken
 			? {appToken, app: decodeAppToken(appToken)}
 			: {appToken, app: undefined}
+		return result
 	})
 
 	return {

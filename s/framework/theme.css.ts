@@ -11,6 +11,7 @@ export default css`
 input[type=text],
 textarea,
 button {
+	font: inherit;
 	padding: 0.2em;
 }
 

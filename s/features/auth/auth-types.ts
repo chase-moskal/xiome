@@ -57,6 +57,11 @@ export interface AuthOptions {
 	generateNickname: () => string
 }
 
+export type GreenMeta = undefined
+export type GreenAuth = {
+	getAuthTables: GetTables<AuthTables>
+}
+
 export interface AnonMeta {
 	appToken: AppToken
 }
@@ -198,8 +203,8 @@ export type AppToken = string
 
 export interface App {
 	appId: string
-	origins: string[]
 	permissions: any
+	origins: string[]
 	platform: boolean
 }
 
@@ -280,15 +285,19 @@ export type PermissionsTables = {
 	roleHasPrivilege: DbbyTable<RoleHasPrivilegeRow>
 }
 
-export type AuthTables = PermissionsTables & {
+export type AuthTablesNamespaced = PermissionsTables & {
 	account: DbbyTable<AccountRow>
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	profile: DbbyTable<ProfileRow>
+}
+
+export type AuthTablesGlobal = {
 	app: DbbyTable<AppRow>
-	appToken: DbbyTable<AppTokenRow>
 	appOwnership: DbbyTable<AppOwnershipRow>
 }
+
+export type AuthTables = AuthTablesNamespaced & AuthTablesGlobal
 
 export type AppRow = {
 	appId: string

@@ -8,10 +8,6 @@ export function renderXiomeConfig(appId: string) {
 	const data = (s: string) => h("data", s)
 	const glue = (s: string) => h("glue", s)
 	return html`
-		${glue(`<`)}${tag(`xiome-config`)}
-			<div data-syntax=indent>
-				${attr(`app`)}${glue(`="`)}${data(appId)}${glue(`"`)}${glue(`>`)}
-			</div>
-		${glue(`</`)}${tag(`xiome-config`)}${glue(`>`)}
+		${glue(`<`)}${tag(`xiome-config`)} ${attr(`app`)}${glue(`="`)}${data(appId)}${glue(`"`)}${glue(`>`)}${glue(`</`)}${tag(`xiome-config`)}${glue(`>`)}
 	`
 }

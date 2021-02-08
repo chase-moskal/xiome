@@ -7,7 +7,7 @@ import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapp
 
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
-import { renderXiomeConfig } from "./utils/render-xiome-config.js"
+import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
@@ -69,21 +69,19 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 							<strong>${app.label}</strong>
 							<code class=id>${app.appId}</code>
 						</p>
-						<div class=app-details>
-							<p class=app-home>
-								<span>homepage:</span>
-								<span>
-									<a part="link link-external" target=_blank href="${app.home}">
-										${app.home}
-									</a>
-								</span>
-							</p>
-						</div>
-						<div class="app-code">
-						<p>copy-paste the config into your webpage html:</p>
-						<code class="codeblock htmlcode">
-							${renderXiomeConfig(app.appId)}
-						</code>
+						<p class=app-home>
+							<span>homepage:</span>
+							<span>
+								<a part="link link-external" target=_blank href="${app.home}">
+									${app.home}
+								</a>
+							</span>
+						</p>
+						<div class=app-code>
+							<p>copy-paste the config into your webpage html:</p>
+							<code class=htmlcode>
+								${renderXiomeConfig(app.appId)}
+							</code>
 						</div>
 						<button
 							class=delete-app-button

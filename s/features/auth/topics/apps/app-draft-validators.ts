@@ -19,4 +19,9 @@ export const appDraftValidators = Object.freeze({
 		minLength(1),
 		maxLength(100),
 	)),
+	additionalOrigins: validator<string[]>(d(
+		array(d(string(), origin(), maxLength(1000))),
+		minLength(0),
+		maxLength(99),
+	)),
 })

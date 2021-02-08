@@ -6,7 +6,6 @@ import {MockLatency} from "../../../framework/add-mock-latency.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "../auth/login-with-link-token-or-use-existing-login.js"
 
 import {SystemApi} from "../../backend/types/system-api.js"
-import {AppToken} from "../../../features/auth/auth-types.js"
 
 export async function mockBrowser({api}: {api: SystemApi}) {
 	const {mockTokenIframe} = mockApiOrigin()
