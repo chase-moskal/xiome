@@ -8,25 +8,25 @@ export async function standardSystem() {
 	const latency = false
 	const {system, getLatestLoginEmail} = await testableSystem()
 	
-	async function signupAndLogin({email, appLink, appToken}: {
+	async function signupAndLogin({email, appLink, appId}: {
+			appId: string
 			email: string
 			appLink: string
-			appToken: string
 		}) {
 
 		const browser = await system.mockBrowser()
 		const windowForSignup = await browser.mockAppWindow({
+			appId,
 			apiLink,
 			latency,
-			appToken,
 			windowLink: appLink,
 		})
 		await windowForSignup.models.authModel.sendLoginLink(email)
 	
 		const windowForLogin = await browser.mockAppWindow({
+			appId,
 			apiLink,
 			latency,
-			appToken,
 			windowLink: makeLoginLink({
 				home: appLink,
 				loginToken: getLatestLoginEmail().loginToken,

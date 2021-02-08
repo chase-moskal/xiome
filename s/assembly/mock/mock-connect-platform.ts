@@ -19,14 +19,13 @@ export async function mockConnectPlatform({
 		tableStorage,
 		sendEmail,
 	})
-	const appToken = backend.platformAppToken
 
 	const {remote, authGoblin} = await mockWiredRemote({
 		apiLink,
 		backend,
-		appToken,
 		platformHome,
 		tableStorage,
+		appId: backend.platformAppId,
 	})
 
 	return {remote, authGoblin, backend}

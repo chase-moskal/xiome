@@ -1,8 +1,8 @@
 
-import {AccessPayload, AppPayload, AuthTables, PlatformConfig} from "../../auth-types.js";
+import {AccessPayload, App, AuthTables, PlatformConfig} from "../../auth-types.js";
 
 export function isUserAllowedToEditProfile({app, access}: {
-		app: AppPayload
+		app: App
 		tables: AuthTables
 		access: AccessPayload
 		config: PlatformConfig

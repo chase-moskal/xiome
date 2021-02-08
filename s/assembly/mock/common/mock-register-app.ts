@@ -2,8 +2,9 @@
 import {Await} from "../../../types/fancy.js"
 import {mockBackend} from "../../backend/mock-backend.js"
 
-export async function mockRegisterApp({apiLink, backend}: {
+export async function mockRegisterApp({appOrigins, apiLink, backend}: {
 		apiLink: string
+		appOrigins: string[]
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
 
@@ -11,8 +12,8 @@ export async function mockRegisterApp({apiLink, backend}: {
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
 		apiLink,
 		latency: false,
+		appId: backend.platformAppId,
 		windowLink: window.location.href,
-		appToken: backend.platformAppToken,
 	})
 
 	const {authModel, appModel} = mockWindowForPlatform.models
@@ -23,16 +24,8 @@ export async function mockRegisterApp({apiLink, backend}: {
 	const {appId} = await appModel.registerApp({
 		label: "Mock App",
 		home: window.location.href,
-	})
-	const {appTokenId} = await appModel.registerAppToken({
-		appId,
-		label: "Mock Token",
-		origins: [window.location.origin],
+		origins: []
 	})
 
-	const appToken = appModel.appListLoadingView.payload
-		.find(app => app.appId === appId).tokens
-		.find(token => token.appTokenId === appTokenId).appToken
-
-	return appToken
+	return appId
 }

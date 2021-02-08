@@ -8,7 +8,7 @@ import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-pro
 
 export const personalTopic = ({config}: AuthOptions) => asTopic<UserAuth>()({
 
-	async setProfile({access, app, tables}, {userId, profile}: {
+	async setProfile({access, app: app, tables}, {userId, profile}: {
 			userId: string
 			profile: Profile
 		}) {

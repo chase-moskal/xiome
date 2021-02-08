@@ -4,19 +4,22 @@ import {XiomeConfigConnected} from "./types/xiome-config-connected.js"
 import {makeTokenStore2} from "../../features/auth/goblin/token-store2.js"
 
 export async function connect({
-		appToken,
+		appId,
 		apiOrigin = "https://api.xiome.io",
 	}: XiomeConfigConnected) {
 
 	const apiLink = apiOrigin + "/"
 	const channel = new BroadcastChannel("tokenChangeEvent")
+	const broadcast = () => channel.postMessage(undefined)
 	const tokenStore = makeTokenStore2({
+		appId,
 		storage: window.localStorage,
-		publishTokenChange: () => channel.postMessage(undefined),
+		publishAppTokenChange: broadcast,
+		publishAuthTokenChange: broadcast,
 	})
 
 	const {remote, authGoblin} = makeRemote({
-		appToken,
+		appId,
 		apiLink,
 		tokenStore,
 	})

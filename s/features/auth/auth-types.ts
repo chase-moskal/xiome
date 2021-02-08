@@ -62,7 +62,7 @@ export interface AnonMeta {
 }
 
 export interface AnonAuth {
-	app: AppPayload
+	app: App
 	tables: AuthTables
 }
 
@@ -192,7 +192,33 @@ export type VerifyGoogleToken = (googleToken: string) => Promise<GoogleResult>
 // tokens
 //
 
+// app tokens
+
 export type AppToken = string
+
+export interface App {
+	appId: string
+	origins: string[]
+	permissions: any
+	platform: boolean
+}
+
+// export type AppToken = string
+
+// export interface AppTokenDraft {
+// 	appId: string
+// 	label: string
+// 	origins: string[]
+// }
+
+// export interface AppPayload {
+// 	appId: string
+// 	origins: string[]
+// 	platform?: boolean
+// }
+
+//
+
 export type LoginToken = string
 export type AccessToken = string
 export type RefreshToken = string
@@ -213,18 +239,7 @@ export type LoginPayload = {
 export interface AppDraft {
 	label: string
 	home: string
-}
-
-export interface AppTokenDraft {
-	appId: string
-	label: string
 	origins: string[]
-}
-
-export interface AppPayload {
-	appId: string
-	origins: string[]
-	platform?: boolean
 }
 
 export interface AccessPayload {
@@ -279,6 +294,7 @@ export type AppRow = {
 	appId: string
 	label: string
 	home: string
+	origins: string
 	archived: boolean
 }
 

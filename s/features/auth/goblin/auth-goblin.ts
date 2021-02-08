@@ -5,22 +5,25 @@ import {pubsub} from "../../../toolbox/pubsub.js"
 import {onesie} from "../../../toolbox/onesie.js"
 import {loginTopic} from "../topics/login-topic.js"
 import {isTokenValid} from "../tools/tokens/is-token-valid.js"
-import {decodeAccessToken} from "../tools/decode-access-token.js"
+import {decodeAccessToken} from "../tools/tokens/decode-access-token.js"
 
+import {appTopic} from "../topics/app-topic.js"
 import {Service} from "../../../types/service.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
-import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../auth-types.js"
+import {AccessPayload, AccessToken, App, AuthTokens, RefreshToken} from "../auth-types.js"
+import { decodeAppToken } from "../tools/tokens/decode-app-token.js"
 
-export function makeAuthGoblin({appId, tokenStore, authorize}: {
+export function makeAuthGoblin({appId, tokenStore, authorize, authorizeApp}: {
 		appId: string
 		tokenStore: ReturnType<typeof makeTokenStore2>
 		authorize: Service<typeof loginTopic>["authorize"]
+		authorizeApp: Service<typeof appTopic>["authorizeApp"]
 	}) {
 
 	const accessEvent = pubsub<AccessEventListener>()
 
 	async function saveTokensAndFireEvents(tokens: AuthTokens) {
-		await tokenStore.saveTokens(appId, tokens)
+		await tokenStore.saveAuthTokens(tokens)
 		const access: AccessPayload = tokens.accessToken
 			? decodeAccessToken(tokens.accessToken)
 			: undefined
@@ -43,7 +46,7 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 	}
 
 	const getAccessAndReauthorizeIfNecessary = onesie(async() => {
-		const {accessToken, refreshToken} = await tokenStore.loadTokens(appId)
+		const {accessToken, refreshToken} = await tokenStore.loadAuthTokens()
 		let result: {access: AccessPayload; accessToken: AccessToken} = {
 			accessToken,
 			access: undefined,
@@ -62,6 +65,16 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 		return result
 	})
 
+	const getAppTokenAndReauthorizeIfNecessary = onesie(async() => {
+		let appToken = await tokenStore.loadAppToken()
+		if (isTokenValid(appToken)) {
+			appToken = await authorizeApp({appId})
+		}
+		return appToken
+			? {appToken, app: decodeAppToken(appToken)}
+			: {appToken, app: undefined}
+	})
+
 	return {
 		clearAuth: clearTokens,
 		onAccessChange: accessEvent.subscribe,
@@ -74,7 +87,7 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 			return access
 		},
 		async reauthorize(): Promise<AccessPayload> {
-			const {refreshToken} = await tokenStore.loadTokens(appId)
+			const {refreshToken} = await tokenStore.loadAuthTokens()
 			if (!refreshToken) throw new Error("missing refresh token")
 			return (await authorizeAndProcess(refreshToken)).access
 		},
@@ -83,6 +96,12 @@ export function makeAuthGoblin({appId, tokenStore, authorize}: {
 		},
 		async getAccessToken() {
 			return (await getAccessAndReauthorizeIfNecessary()).accessToken
+		},
+		async getApp() {
+			return (await getAppTokenAndReauthorizeIfNecessary()).app
+		},
+		async getAppToken() {
+			return (await getAppTokenAndReauthorizeIfNecessary()).appToken
 		},
 	}
 }

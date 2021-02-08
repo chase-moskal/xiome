@@ -6,8 +6,9 @@ import {sendEmail} from "../../features/auth/tools/emails/mock-send-email.js"
 
 export async function mockConnect(config: XiomeConfigMock) {
 	const options = {
-		platformHome: window.location.href,
+		origins: [window.location.origin],
 		tableStorage: window.localStorage,
+		platformHome: window.location.href,
 		sendEmail,
 	}
 	return config.mock === "platform"

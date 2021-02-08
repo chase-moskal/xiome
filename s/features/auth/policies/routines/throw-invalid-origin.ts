@@ -1,9 +1,9 @@
 
-import {AppPayload} from "../../auth-types.js"
+import {App} from "../../auth-types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
-export function throwInvalidOrigin(request: HttpRequest, app: AppPayload) {
+export function throwInvalidOrigin(request: HttpRequest, app: App) {
 
 	if (!request.headers.origin)
 		throw new ApiError(400, "origin header required")

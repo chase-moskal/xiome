@@ -28,7 +28,7 @@ void async function main() {
 	const servelet = makeJsonHttpServelet(system.api)
 	const server = makeNodeHttpServer(servelet)
 
-	console.log(`🎟️ platform app token: ${system.platformAppToken}`)
+	console.log(`🎟️ platform app id: ${system.platformAppId}`)
 
 	server.listen(port)
 	console.log(`📡 server listening on port ${port}`)

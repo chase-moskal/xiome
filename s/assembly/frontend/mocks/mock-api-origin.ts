@@ -11,11 +11,14 @@ export function mockApiOrigin() {
 
 	let iframeCount = 0
 
-	function mockTokenIframe() {
+	function mockTokenIframe(appId: string) {
 		const iframeId = iframeCount++
+		const publishTokenChange = () => tokenChangeEvent.publish(iframeId)
 		const tokenStore = makeTokenStore2({
+			appId,
 			storage,
-			publishTokenChange: () => tokenChangeEvent.publish(iframeId),
+			publishAppTokenChange: publishTokenChange,
+			publishAuthTokenChange: publishTokenChange,
 		})
 		return {
 			tokenStore,

@@ -14,15 +14,15 @@ export async function creativeSignupAndLogin(email: string) {
 		apiLink,
 		latency,
 		windowLink: platformLink,
-		appToken: system.platformAppToken,
+		appId: system.platformAppId,
 	})
 
 	await windowForSignup.models.authModel.sendLoginLink(email)
 
 	const windowForLogin = await browser.mockAppWindow({
 		apiLink,
-		appToken: system.platformAppToken,
 		latency,
+		appId: system.platformAppId,
 		windowLink: makeLoginLink({
 			home: platformLink,
 			loginToken: getLatestLoginEmail().loginToken,

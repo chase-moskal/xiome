@@ -1,6 +1,6 @@
 
 import {PlatformConfig} from "../auth-types.js"
-import {second, minute, day} from "../../../toolbox/goodtimes/times.js"
+import {second, minute, day, year} from "../../../toolbox/goodtimes/times.js"
 
 import {hardPermissions} from "../permissions/hard-permissions.js"
 
@@ -43,10 +43,10 @@ export function mockPlatformConfig({
 		tokens: {
 			expiryRenewalCushion: 10 * second,
 			lifespans: {
-				app: 30 * day,
+				app: 5 * minute,
 				login: 20 * minute,
 				refresh: 30 * day,
-				access: 20 * minute,
+				access: 5 * minute,
 				external: 10 * minute,
 			}
 		},

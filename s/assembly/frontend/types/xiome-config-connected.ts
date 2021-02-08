@@ -1,5 +1,5 @@
 
 export interface XiomeConfigConnected {
-	appToken: string
+	appId: string
 	apiOrigin?: string
 }

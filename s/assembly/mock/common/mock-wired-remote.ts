@@ -6,26 +6,29 @@ import {SimpleStorage} from "../../../toolbox/json-storage.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
 
 export async function mockWiredRemote({
-		apiLink, appToken, platformHome, tableStorage, backend,
+		apiLink, appId, platformHome, tableStorage, backend,
 	}: {
+		appId: string
 		apiLink: string
-		appToken: string
 		platformHome: string
 		tableStorage: SimpleStorage
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
 
 	const channel = new BroadcastChannel("tokenChangeEvent")
+	const publishTokenChange = () => channel.postMessage(undefined)
 
 	const {remote, authGoblin} = mockRemote({
+		appId,
 		apiLink,
-		appToken,
 		api: backend.api,
 		origin: new URL(platformHome).origin,
 		latency: {min: 200, max: 800},
 		tokenStore: makeTokenStore2({
+			appId,
 			storage: tableStorage,
-			publishTokenChange: () => channel.postMessage(undefined),
+			publishAppTokenChange: publishTokenChange,
+			publishAuthTokenChange: publishTokenChange,
 		}),
 	})
 

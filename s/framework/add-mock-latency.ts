@@ -15,7 +15,7 @@ export type MockLatency = false | MockLatencyRange
 export function addMockLatency<xApi extends Api>({latency, remote}: {
 		latency: MockLatency
 		remote: ToRemote<xApi>
-	}){
+	}): ToRemote<xApi> {
 
 	function getRandomizedDelay() {
 		if (latency === false) return 0

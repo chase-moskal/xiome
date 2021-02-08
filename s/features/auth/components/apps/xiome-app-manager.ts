@@ -1,12 +1,13 @@
 
 import styles from "./xiome-app-manager.css.js"
 import {makeAppCreator} from "./app-creator/app-creator.js"
-import {makeTokenManager} from "./token-manager/token-manager.js"
+// import {makeTokenManager} from "./token-manager/token-manager.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
+import { renderXiomeConfig } from "./utils/render-xiome-config.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
@@ -24,16 +25,18 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		},
 	})
 
-	private readonly tokenManager = makeTokenManager({
-		root: this.shadowRoot,
-		requestUpdate: () => this.requestUpdate(),
-		createToken: async tokenDraft => {
-			await this.share.appModel.registerAppToken(tokenDraft)
-		},
-		deleteToken: async appTokenId => {
-			await this.share.appModel.deleteAppToken(appTokenId)
-		},
-	})
+	// private readonly tokenManager = makeTokenManager({
+	// 	root: this.shadowRoot,
+	// 	requestUpdate: () => this.requestUpdate(),
+	// 	createToken: async tokenDraft => {
+	// 		await this.share.appModel.registerAppToken(tokenDraft)
+	// 	},
+	// 	deleteToken: async appTokenId => {
+	// 		await this.share.appModel.deleteAppToken(appTokenId)
+	// 	},
+	// })
+
+	// ${this.tokenManager.render(app)}
 
 	private renderNoApps() {
 		return html`
@@ -76,7 +79,12 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 								</span>
 							</p>
 						</div>
-						${this.tokenManager.render(app)}
+						<div class="app-code">
+						<p>copy-paste the config into your webpage html:</p>
+						<code class="codeblock htmlcode">
+							${renderXiomeConfig(app.appId)}
+						</code>
+						</div>
 						<button
 							class=delete-app-button
 							@click=${() => this.deleteApp(app.appId)}>

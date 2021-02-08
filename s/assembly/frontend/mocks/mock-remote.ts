@@ -11,22 +11,22 @@ import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.j
 
 export function mockRemote({
 		api,
+		appId,
 		origin,
 		apiLink,
 		latency,
-		appToken,
 		tokenStore,
 	}: {
 		api: SystemApi
 		origin: string
 		apiLink: string
-		appToken: AppToken
+		appId: AppToken
 		latency: MockLatency
 		tokenStore: TokenStore2
 	}) {
 
 	const {shape, installAuthGoblin} = prepareApiShapeWiredWithAuthGoblin({
-		appToken,
+		appId,
 		tokenStore,
 	})
 
@@ -40,6 +40,10 @@ export function mockRemote({
 		}),
 	})
 
-	const authGoblin = installAuthGoblin(remote.auth.loginService)
+	const authGoblin = installAuthGoblin({
+		appService: remote.auth.appService,
+		loginService: remote.auth.loginService,
+	})
+
 	return {remote, authGoblin}
 }

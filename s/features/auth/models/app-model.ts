@@ -2,7 +2,7 @@
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 
-import {AppDraft, AppTokenDraft} from "../auth-types.js"
+import {AppDraft} from "../auth-types.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
 
@@ -32,14 +32,14 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		})
 	}
 
-	async function reloadAppListAfter(promise: Promise<any>) {
-		try {
-			await promise
-		}
-		finally {
-			return loadAppList()
-		}
-	}
+	// async function reloadAppListAfter(promise: Promise<any>) {
+	// 	try {
+	// 		await promise
+	// 	}
+	// 	finally {
+	// 		return loadAppList()
+	// 	}
+	// }
 
 	async function loadingOperation<xResult>({errorReason, promise}: {
 			errorReason: string
@@ -59,20 +59,20 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		else return result
 	}
 
-	async function registerAppAndDefaultToken({appDraft, ownerUserId}: {
-			appDraft: AppDraft
-			ownerUserId: string
-		}) {
-		const {appId} = await appService.registerApp({appDraft, ownerUserId})
-		const {appTokenId} = await appService.registerAppToken({
-			draft: {
-				appId,
-				label: "Default Connection",
-				origins: [new URL(appDraft.home).origin],
-			}
-		})
-		return {appId, appTokenId}
-	}
+	// async function registerAppAndDefaultToken({appDraft, ownerUserId}: {
+	// 		appDraft: AppDraft
+	// 		ownerUserId: string
+	// 	}) {
+	// 	const {appId} = await appService.registerApp({appDraft, ownerUserId})
+	// 	const {appTokenId} = await appService.registerAppToken({
+	// 		draft: {
+	// 			appId,
+	// 			label: "Default Connection",
+	// 			origins: [new URL(appDraft.home).origin],
+	// 		}
+	// 	})
+	// 	return {appId, appTokenId}
+	// }
 
 	return {
 		get appListLoadingView() {
@@ -88,7 +88,7 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 			const userId = await getUserId()
 			const result = await loadingOperation({
 				errorReason: "failed to register app",
-				promise: registerAppAndDefaultToken({
+				promise: appService.registerApp({
 					appDraft,
 					ownerUserId: userId,
 				}),
@@ -101,17 +101,17 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				promise: appService.deleteApp({appId}),
 			})
 		},
-		async registerAppToken(draft: AppTokenDraft) {
-			return loadingOperation({
-				errorReason: "failed to register app token",
-				promise: appService.registerAppToken({draft}),
-			})
-		},
-		async deleteAppToken(appTokenId: string) {
-			return loadingOperation({
-				errorReason: "failed to delete app token",
-				promise: appService.deleteAppToken({appTokenId})
-			})
-		},
+		// async registerAppToken(draft: AppTokenDraft) {
+		// 	return loadingOperation({
+		// 		errorReason: "failed to register app token",
+		// 		promise: appService.registerAppToken({draft}),
+		// 	})
+		// },
+		// async deleteAppToken(appTokenId: string) {
+		// 	return loadingOperation({
+		// 		errorReason: "failed to delete app token",
+		// 		promise: appService.deleteAppToken({appTokenId})
+		// 	})
+		// },
 	}
 }

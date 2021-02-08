@@ -4,7 +4,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
-import {AccessPayload, AnonAuth, AnonMeta, AppPayload, AuthTables, GetTables, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
+import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
 
 export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		verifyToken: VerifyToken
@@ -13,7 +13,7 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async({appToken}, request) => {
-			const app = await verifyToken<AppPayload>(appToken)
+			const app = await verifyToken<App>(appToken)
 			throwInvalidOrigin(request, app)
 			const tables = getAuthTables({appId: app.appId})
 			return {app, tables}

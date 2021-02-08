@@ -20,14 +20,7 @@ export const loginTopic = ({
 			{app, tables},
 			{email}: {email: string},
 		) {
-		const appRow: AppRow = app.platform
-			? {
-				home: config.platform.appDetails.home,
-				appId: config.platform.appDetails.appId,
-				label: config.platform.appDetails.label,
-				archived: false,
-			}
-			: await tables.app.one(find({appId: app.appId}))
+		const appRow = await tables.app.one(find({appId: app.appId}))
 		const {userId} = await assertEmailAccount({rando, email, config, tables})
 		await sendLoginEmail({
 			appHome: appRow.home,

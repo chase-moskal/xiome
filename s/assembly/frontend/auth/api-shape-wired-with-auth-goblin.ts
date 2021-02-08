@@ -4,27 +4,27 @@ import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {loginTopic} from "../../../features/auth/topics/login-topic.js"
 import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
-import {decodeAppToken} from "../../../features/auth/tools/tokens/decode-app-token.js"
 
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
-import {AppToken} from "../../../features/auth/auth-types.js"
+import {appTopic} from "../../../features/auth/topics/app-topic.js"
 import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
 import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
 
-export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
-		appToken: AppToken
+export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
+		appId: string
 		tokenStore: TokenStore2
 	}) {
 
 	let authGoblin: AuthGoblin
-	const {appId} = decodeAppToken(appToken)
 
 	const shape = asShape<SystemApi>({
 		auth: {
 			loginService: {
 				[_augment]: {
-					getMeta: async() => ({appToken}),
+					getMeta: async() => ({
+						appToken: await authGoblin.getAppToken(),
+					}),
 				},
 				authenticateViaLoginToken: true,
 				authorize: true,
@@ -33,22 +33,20 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 			appService: {
 				[_augment]: {
 					getMeta: async() => ({
-						appToken,
+						appToken: await authGoblin.getAppToken(),
 						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
+				authorizeApp: true,
 				listApps: true,
 				deleteApp: true,
 				updateApp: true,
 				registerApp: true,
-				deleteAppToken: true,
-				updateAppToken: true,
-				registerAppToken: true,
 			},
 			personalService: {
 				[_augment]: {
 					getMeta: async() => ({
-						appToken,
+						appToken: await authGoblin.getAppToken(),
 						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
@@ -57,7 +55,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 			userService: {
 				[_augment]: {
 					getMeta: async() => ({
-						appToken,
+						appToken: await authGoblin.getAppToken(),
 						accessToken: await authGoblin.getAccessToken(),
 					}),
 				},
@@ -66,11 +64,15 @@ export function prepareApiShapeWiredWithAuthGoblin({appToken, tokenStore}: {
 		},
 	})
 
-	function installAuthGoblin(loginService: Service<typeof loginTopic>) {
+	function installAuthGoblin({loginService, appService}: {
+			loginService: Service<typeof loginTopic>
+			appService: Service<typeof appTopic>
+		}) {
 		authGoblin = makeAuthGoblin({
 			appId,
 			tokenStore,
 			authorize: loginService.authorize,
+			authorizeApp: appService.authorizeApp,
 		})
 		return authGoblin
 	}

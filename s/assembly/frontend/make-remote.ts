@@ -4,21 +4,20 @@ import {makeJsonRequester} from "renraku/x/remote/make-json-requester.js"
 
 import {prepareApiShapeWiredWithAuthGoblin} from "./auth/api-shape-wired-with-auth-goblin.js"
 
-import {AppToken} from "../../features/auth/auth-types.js"
 import {TokenStore2} from "../../features/auth/goblin/types/token-store2.js"
 
 export function makeRemote({
+		appId,
 		apiLink,
-		appToken,
 		tokenStore,
 	}: {
+		appId: string
 		apiLink: string
-		appToken: AppToken
 		tokenStore: TokenStore2
 	}) {
 
 	const {shape, installAuthGoblin} = prepareApiShapeWiredWithAuthGoblin({
-		appToken,
+		appId,
 		tokenStore,
 	})
 
@@ -31,6 +30,10 @@ export function makeRemote({
 		}),
 	})
 
-	const authGoblin = installAuthGoblin(remote.auth.loginService)
+	const authGoblin = installAuthGoblin({
+		appService: remote.auth.appService,
+		loginService: remote.auth.loginService,
+	})
+
 	return {remote, authGoblin}
 }

@@ -1,29 +1,38 @@
 
 import {emptyTokens} from "./empty-tokens.js"
-import {AuthTokens} from "../auth-types.js"
+import {AppToken, AuthTokens} from "../auth-types.js"
 import {makeJsonStorage} from "../../../toolbox/json-storage.js"
 import {TokenStoreOptions} from "./types/token-store-options.js"
 
 export function makeTokenStore2({
+		appId,
 		storage,
-		publishTokenChange = () => {}
+		publishAppTokenChange = () => {},
+		publishAuthTokenChange = () => {},
 	}: TokenStoreOptions) {
 
 	const jsonStorage = makeJsonStorage(storage)
-	const getStorageKey = (appId: string) => `tokenStore-${appId}`
-	return {
+	const appKey = `tokenstore-app-${appId}`
+	const authKey = `tokenstore-auth-${appId}`
 
-		async saveTokens(appId: string, tokens: AuthTokens) {
-			const key = getStorageKey(appId)
-			jsonStorage.write(key, tokens)
-			await publishTokenChange()
+	return {
+		async saveAppToken(appToken: AppToken) {
+			jsonStorage.write(appKey, appToken)
+			await publishAppTokenChange()
 		},
 
-		async loadTokens(appId: string) {
-			const key = getStorageKey(appId)
-			const result = jsonStorage.read<AuthTokens>(key)
-				|| emptyTokens()
-			return result
+		async loadAppToken(): Promise<AppToken> {
+			return jsonStorage.read<AppToken>(appKey) ?? undefined
+		},
+
+		async saveAuthTokens(tokens: AuthTokens) {
+			jsonStorage.write(authKey, tokens)
+			await publishAuthTokenChange()
+		},
+
+		async loadAuthTokens(): Promise<AuthTokens> {
+			return jsonStorage.read<AuthTokens>(authKey)
+				?? emptyTokens()
 		},
 	}
 }

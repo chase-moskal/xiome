@@ -12,22 +12,22 @@ export async function mockBrowser({api}: {api: SystemApi}) {
 	const {mockTokenIframe} = mockApiOrigin()
 
 	async function mockAppWindow({
+			appId,
 			apiLink,
 			latency,
-			appToken,
 			windowLink,
 		}: {
+			appId: string
 			apiLink: string
 			windowLink: string
-			appToken: AppToken
 			latency: MockLatency
 		}) {
-		const {tokenStore, onStorageEvent} = mockTokenIframe()
+		const {tokenStore, onStorageEvent} = mockTokenIframe(appId)
 		const {remote, authGoblin} = mockRemote({
 			api,
+			appId,
 			apiLink,
 			latency,
-			appToken,
 			tokenStore,
 			origin: new URL(windowLink).origin,
 		})
