@@ -7,7 +7,8 @@
 - [x] proper app tokens, also fetches
 - [ ] core functionality
   - [x] improved xio-text-input
-  - [ ] app ui, can update homepage
+  - [x] app ui, can update homepage
+  - [ ] refactor app creation forms
   - [ ] profile display and editing
   - [ ] app basic stats
   - [ ] app admin management

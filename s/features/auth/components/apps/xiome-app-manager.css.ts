@@ -40,16 +40,20 @@ code.id {
 	margin-top: 0.5em;
 }
 
-.app-code code {
-	padding: 1em;
-}
-
 .app > * + * {
-	margin-top: 0.5em;
+	margin-top: 0.3em;
 }
 
 .app + .app {
 	margin-top: 1.5em;
+}
+
+.app-code {
+	margin: 1em 0 !important;
+}
+
+.app-code code {
+	padding: 0.2em 1em;
 }
 
 .app-creator {
@@ -62,7 +66,7 @@ code.id {
 }
 
 .app-creator > * + * {
-	margin-top: 0.5em;
+	margin-top: 0.3em;
 }
 
 .app {

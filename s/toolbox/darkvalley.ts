@@ -12,6 +12,20 @@ export function validator<xValue>(...conditions: Condition<xValue>[]): Condition
 	}
 }
 
+export function branch<xValue>(...conditions: Condition<xValue>[]): Condition<xValue> {
+	return value => {
+		const results = conditions.map(condition => condition(value))
+		let anySuccess = false
+		for (const problems of results)
+			if (problems.length === 0)
+				anySuccess = true
+		return anySuccess
+			? []
+			: results.flat()
+				.map((problem, index) => index > 0 ? `or, ${problem}` : problem)
+	}
+}
+
 export function one<xValue>(
 		...conditions: Condition<xValue>[]
 	): Condition<xValue> {
@@ -95,6 +109,18 @@ export const url = (): Condition<string> => value => {
 	catch (error) {
 		return ["invalid url"]
 	}
+}
+
+export const localhost = (): Condition<string> => value => {
+	return /^https?:\/\/localhost$/i.test(value)
+		? []
+		: ["must be 'http://localhost' or 'https://localhost'"]
+}
+
+export const https = (): Condition<string> => value => {
+	return /^https:\/\//i.test(value)
+		? []
+		: ["must be secure, starting with 'https'"]
 }
 
 export const origin = (): Condition<string> => value =>

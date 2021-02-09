@@ -2,14 +2,19 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
+/* * { outline: 1px solid #f002; } */
+
 :host {
 	display: block;
-	max-width: 32em;
+	max-width: 48em;
+	--width: var(--xio-text-input-width, 24em);
 	--pad: var(--xio-text-input-pad, 0.3em);
 	--font: var(--xio-text-input-font, inherit);
 	--color: var(--xio-text-input-color, inherit);
 	--label-font: var(--xio-text-input-label-font, inherit);
 	--label-color: var(--xio-text-input-label-color, inherit);
+	--problems-font: var(--xio-text-input-problems-font, inherit);
+	--problems-color: var(--xio-text-input-problems-color);
 	--background: var(--xio-text-input-background, transparent);
 	--valid-color: var(--xio-text-input-valid-color, #00ff8c);
 	--invalid-color: var(--xio-text-input-invalid-color, #ff6100);
@@ -19,6 +24,7 @@ export default css`
 
 label {
 	font: var(--label-font);
+	color: var(--label-color);
 }
 
 slot {
@@ -37,19 +43,20 @@ slot {
 }
 
 .inputbox {
+	display: block;
+	width: 100%;
+	max-width: var(--width);
 	position: relative;
-	flex: 1 1 auto;
+	flex: 0 1 auto;
 }
 
 .inputbox svg {
 	position: absolute;
 	display: block;
+	top: var(--pad);
 	right: var(--pad);
-	top: 0;
-	bottom: 0;
-	margin: auto;
-	width: 1em;
-	height: 1em;
+	width: 1.2em;
+	height: 1.2em;
 	pointer-events: none;
 }
 
@@ -66,6 +73,7 @@ slot {
 	font: var(--font);
 	padding: var(--pad);
 	padding-right: calc(1em + calc(2 * var(--pad)));
+	margin: 0;
 	color: var(--color);
 	background: var(--background);
 	border: var(--border);
@@ -78,17 +86,18 @@ textarea {
 
 .problems {
 	display: flex;
+	font: var(--problems-font);
+	padding: var(--pad) calc(4 * var(--pad));
 	flex-direction: column;
-	justify-content: center;
-	flex: 0 0 auto;
-	width: 12em;
-	padding: var(--pad);
+	justify-content: flex-start;
+	flex: 1 1 auto;
+	min-width: 12em;
 	list-style: none;
-	color: var(--invalid-color);
+	color: var(--problems-color, var(--invalid-color));
 }
 
-.problems > li::before {
-	content: "- ";
+.problems > li + li {
+	margin-top: 0.2em;
 }
 
 `

@@ -6,5 +6,10 @@ export function formState<xDraft>(): FormState<xDraft> {
 		problems: [],
 		draft: undefined,
 		formDisabled: false,
+		get valid(): boolean {
+			return !this.formDisabled
+				&& this.draft
+				&& this.problems.length === 0
+		},
 	}
 }

@@ -60,7 +60,6 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				await loadAppList()
 		},
 		async registerApp(appDraft: AppDraft) {
-			if (!appDraft) throw new Error("app draft missing")
 			const userId = await getUserId()
 			const result = await loadingOperation({
 				errorReason: "failed to register app",
@@ -70,6 +69,15 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				}),
 			})
 			return result
+		},
+		async updateApp(appId: string, appDraft: AppDraft) {
+			await loadingOperation({
+				errorReason: "failed to update app",
+				promise: appService.updateApp({
+					appId,
+					appDraft,
+				})
+			})
 		},
 		async deleteApp(appId: string) {
 			return loadingOperation({

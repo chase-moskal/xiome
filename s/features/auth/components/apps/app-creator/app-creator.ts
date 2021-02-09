@@ -28,7 +28,7 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 			appOrigins.setText("")
 			requestUpdate()
 		},
-		readForm: () => {
+		readAndValidateForm: () => {
 			const {appHome, appLabel, appOrigins} = getFormElements(root)
 			state.draft = joinHomeToOrigins({
 				home: appHome.value,

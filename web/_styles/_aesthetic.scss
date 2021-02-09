@@ -76,6 +76,15 @@ menu-system {
 	text-shadow: 0 0 20px #fff6;
 }
 
+main {
+	--xio-text-input-font: 1em "Varela Round", sans-serif;
+	--xio-text-input-label-font: 0.8em "Play", sans-serif;
+	--xio-text-input-problems-font: 0.8em "Play", sans-serif;
+	--xio-text-input-label-color: #fff6;
+	--xio-text-input-background: #00000008;
+	--xio-text-input-border: 1px solid #fff1;
+}
+
 main h2 {
 	color: #fffa;
 	font-weight: normal;

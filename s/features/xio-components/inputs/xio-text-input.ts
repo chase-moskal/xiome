@@ -38,7 +38,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		= (text: string) => <xParsedValue><unknown>text
 
 	@property({type: Function})
-	validator: TextInputValidator<xParsedValue> = () => []
+	validator: TextInputValidator<xParsedValue>
 
 	@property({type: Object})
 	problems: string[] = []
@@ -46,7 +46,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	get value(): xParsedValue {
 		const {draft} = this
 		const parsed = this.parser(draft)
-		this.problems = this.validator(parsed)
+		this.problems = this.validator ? this.validator(parsed) : []
 		return this.problems.length === 0
 			? parsed
 			: undefined
@@ -79,9 +79,12 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	}
 
 	render() {
-		const {problems, draft, placeholder, validator, handleInputChange} = this
+		const {
+			readonly, disabled, problems, draft, placeholder, textarea,
+			validator, handleInputChange,
+		} = this
 		const valid = problems.length === 0
-		const showValidation = validator && (
+		const showValidation = !readonly && validator && (
 			this["show-validation-when-empty"]
 				? true
 				: draft.length !== 0
@@ -98,12 +101,12 @@ export class XioTextInput<xParsedValue = string> extends Component {
 				<div class=flexy>
 					<div class=inputbox>
 						${showValidation ? icon : null}
-						${this["textarea"] ? html`
+						${textarea ? html`
 							<textarea
 								id="textinput"
 								.value="${draft}"
-								?disabled=${this["disabled"]}
-								?readonly=${this["readonly"]}
+								?disabled=${disabled}
+								?readonly=${readonly}
 								placeholder=${placeholder}
 								@change=${handleInputChange}
 								@keyup=${handleInputChange}
@@ -113,15 +116,15 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								id="textinput"
 								type=text
 								.value="${draft}"
-								?disabled=${this["disabled"]}
-								?readonly=${this["readonly"]}
+								?disabled=${disabled}
+								?readonly=${readonly}
 								placeholder=${placeholder}
 								@change=${handleInputChange}
 								@keyup=${handleInputChange}/>
 						`}
 					</div>
 					<ol class=problems>
-						${maybe(showProblems, this.problems.map(problem => html`
+						${maybe(showProblems, problems.map(problem => html`
 							<li>${problem}</li>
 						`))}
 					</ol>

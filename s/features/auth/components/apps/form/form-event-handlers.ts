@@ -3,16 +3,16 @@ import {FormState} from "./types/form-state.js"
 import {debounce2} from "../../../../../toolbox/debounce2.js"
 
 export function formEventHandlers<xDraft>({
-		state, readForm, clearForm, requestUpdate, submit,
+		state, readAndValidateForm, clearForm, requestUpdate, submit,
 	}: {
 		state: FormState<xDraft>
-		readForm: () => void
 		clearForm: () => void
 		requestUpdate: () => void
+		readAndValidateForm: () => void
 		submit: (draft: xDraft) => Promise<void>
 	}) {
 
-	const readFormDebounced = debounce2(500, readForm)
+	const readFormDebounced = debounce2(200, readAndValidateForm)
 
 	function handleFormChange() {
 		state.problems = []
@@ -21,7 +21,7 @@ export function formEventHandlers<xDraft>({
 	}
 
 	async function handleSubmitClick() {
-		readForm()
+		readAndValidateForm()
 		state.formDisabled = true
 		const draft = state.draft
 		requestUpdate()
