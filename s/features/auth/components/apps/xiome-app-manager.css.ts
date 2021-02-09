@@ -49,7 +49,17 @@ code.id {
 }
 
 .app-creator {
-	margin: 0 var(--xmargin, 0);
+	margin: 2em 0;
+}
+
+.app-creator xio-text-input {
+	display: block;
+	width: 100%;
+	max-width: 32em;
+}
+
+.app-creator > * + * {
+	margin-top: 0.5em;
 }
 
 .app {
@@ -59,8 +69,9 @@ code.id {
 
 .delete-app-button {
 	display: block;
-	margin-left: auto;
+	text-align: right;
 	color: red;
+	--xio-button-hover-background: red;
 }
 
 `

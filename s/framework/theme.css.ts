@@ -8,14 +8,8 @@ export default css`
 	box-sizing: border-box;
 }
 
-input[type=text],
-textarea,
-button {
-	font: inherit;
-	padding: 0.2em;
+*:focus {
+	outline: var(--focus-outline, 3px solid cyan);
 }
-
-button { cursor: pointer; }
-button[disabled] { cursor: default; }
 
 `

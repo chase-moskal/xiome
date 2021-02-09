@@ -69,11 +69,11 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 								${renderXiomeConfig(app.appId)}
 							</code>
 						</div>
-						<button
+						<xio-button
 							class=delete-app-button
-							@click=${() => this.deleteApp(app.appId)}>
+							@press=${() => this.deleteApp(app.appId)}>
 								delete community
-						</button>
+						</xio-button>
 					</div>
 				`)}
 			</div>

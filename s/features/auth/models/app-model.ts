@@ -32,15 +32,6 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		})
 	}
 
-	// async function reloadAppListAfter(promise: Promise<any>) {
-	// 	try {
-	// 		await promise
-	// 	}
-	// 	finally {
-	// 		return loadAppList()
-	// 	}
-	// }
-
 	async function loadingOperation<xResult>({errorReason, promise}: {
 			errorReason: string
 			promise: Promise<xResult>
@@ -58,21 +49,6 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 		if (error) throw error
 		else return result
 	}
-
-	// async function registerAppAndDefaultToken({appDraft, ownerUserId}: {
-	// 		appDraft: AppDraft
-	// 		ownerUserId: string
-	// 	}) {
-	// 	const {appId} = await appService.registerApp({appDraft, ownerUserId})
-	// 	const {appTokenId} = await appService.registerAppToken({
-	// 		draft: {
-	// 			appId,
-	// 			label: "Default Connection",
-	// 			origins: [new URL(appDraft.home).origin],
-	// 		}
-	// 	})
-	// 	return {appId, appTokenId}
-	// }
 
 	return {
 		get appListLoadingView() {
@@ -101,17 +77,5 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 				promise: appService.deleteApp({appId}),
 			})
 		},
-		// async registerAppToken(draft: AppTokenDraft) {
-		// 	return loadingOperation({
-		// 		errorReason: "failed to register app token",
-		// 		promise: appService.registerAppToken({draft}),
-		// 	})
-		// },
-		// async deleteAppToken(appTokenId: string) {
-		// 	return loadingOperation({
-		// 		errorReason: "failed to delete app token",
-		// 		promise: appService.deleteAppToken({appTokenId})
-		// 	})
-		// },
 	}
 }

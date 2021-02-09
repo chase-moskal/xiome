@@ -1,4 +1,11 @@
 
+* {
+	--focus-outline: 3px solid cyan;
+	&:focus {
+		outline: var(--focus-outline)
+	}
+}
+
 html {
 	font-family: "Play", sans-serif;
 	color: #fff8;

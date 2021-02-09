@@ -30,9 +30,12 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	@property({type: String, reflect: true})
 	["placeholder"]: string = ""
 
+	@property({type: Number})
+	["debounce"] = 200
+
 	@property({type: Function})
-	parser: TextInputParser<xParsedValue> =
-		(text: string) => <xParsedValue><unknown>text
+	parser: TextInputParser<xParsedValue>
+		= (text: string) => <xParsedValue><unknown>text
 
 	@property({type: Function})
 	validator: TextInputValidator<xParsedValue> = () => []
@@ -54,7 +57,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		this.updateFromRawInput()
 	}
 
-	@query(".input")
+	@query("#textinput")
 	private input: HTMLInputElement | HTMLTextAreaElement
 
 	@property({type: String})
@@ -66,7 +69,10 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		this.dispatchEvent(new ValueChangeEvent(value))
 	}
 
-	private handleInputChange = debounce2(500, this.updateFromRawInput)
+	private handleInputChange = debounce2(
+		this["debounce"],
+		this.updateFromRawInput,
+	)
 
 	firstUpdated() {
 		this.draft = this.initial
@@ -87,38 +93,39 @@ export class XioTextInput<xParsedValue = string> extends Component {
 				: svgWarning
 			: null
 		return html`
-			<div class=container>
-				<div class=mainbox>
-					${this["textarea"] ? html`
-						<textarea
-							class=input
-							.value="${draft}"
-							?disabled=${this["disabled"]}
-							?readonly=${this["readonly"]}
-							placeholder=${placeholder}
-							@change=${handleInputChange}
-							@keyup=${handleInputChange}
-						></textarea>
-					` : html`
-						<input
-							type=text
-							class=input
-							.value="${draft}"
-							?disabled=${this["disabled"]}
-							?readonly=${this["readonly"]}
-							placeholder=${placeholder}
-							@change=${handleInputChange}
-							@keyup=${handleInputChange}/>
-					`}
-					${showValidation ? icon : null}
-				</div>
-				${maybe(showProblems, html`
+			<div class=container ?data-valid=${valid}>
+				<label for="textinput"><slot></slot></label>
+				<div class=flexy>
+					<div class=inputbox>
+						${showValidation ? icon : null}
+						${this["textarea"] ? html`
+							<textarea
+								id="textinput"
+								.value="${draft}"
+								?disabled=${this["disabled"]}
+								?readonly=${this["readonly"]}
+								placeholder=${placeholder}
+								@change=${handleInputChange}
+								@keyup=${handleInputChange}
+							></textarea>
+						` : html`
+							<input
+								id="textinput"
+								type=text
+								.value="${draft}"
+								?disabled=${this["disabled"]}
+								?readonly=${this["readonly"]}
+								placeholder=${placeholder}
+								@change=${handleInputChange}
+								@keyup=${handleInputChange}/>
+						`}
+					</div>
 					<ol class=problems>
-						${this.problems.map(problem => html`
+						${maybe(showProblems, this.problems.map(problem => html`
 							<li>${problem}</li>
-						`)}
+						`))}
 					</ol>
-				`)}
+				</div>
 			</div>
 		`
 	}

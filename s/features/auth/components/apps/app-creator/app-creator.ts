@@ -1,13 +1,13 @@
 
 import {formState} from "../form/form-state.js"
 import {AppDraft} from "../../../../../types.js"
-import {dedupe} from "../../../../../toolbox/dedupe.js"
 import {html} from "../../../../../framework/component.js"
+import {getFormElements} from "./utils/get-form-elements.js"
 import {formEventHandlers} from "../form/form-event-handlers.js"
+import {joinHomeToOrigins} from "./utils/join-home-to-origins.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {validateAppDraft} from "../../../topics/apps/validate-app-draft.js"
 import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
-import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 
 export function makeAppCreator({root, requestUpdate, createApp}: {
 		root: ShadowRoot | HTMLElement
@@ -17,37 +17,24 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 	const state = formState<AppDraft>()
 
-	function getFormElements() {
-		const select = <X extends HTMLElement>(name: string) =>
-			root.querySelector<X>(`.app-creator .app-${name}`)
-		return {
-			appHome: select<XioTextInput>("home"),
-			appLabel: select<XioTextInput>("label"),
-			appOrigins: select<XioTextInput<string[]>>("origins"),
-		}
-	}
-
 	const {handleFormChange, handleSubmitClick} = formEventHandlers({
 		state,
 		requestUpdate,
-		submit: async draft => {
-			draft.origins = dedupe([draft.home, ...draft.origins])
-			createApp(draft)
-		},
+		submit: async draft => createApp(joinHomeToOrigins(draft)),
 		clearForm: () => {
-			const {appHome, appLabel, appOrigins} = getFormElements()
+			const {appHome, appLabel, appOrigins} = getFormElements(root)
 			appHome.setText("")
 			appLabel.setText("")
 			appOrigins.setText("")
 			requestUpdate()
 		},
 		readForm: () => {
-			const {appHome, appLabel, appOrigins} = getFormElements()
-			state.draft = {
+			const {appHome, appLabel, appOrigins} = getFormElements(root)
+			state.draft = joinHomeToOrigins({
 				home: appHome.value,
 				label: appLabel.value,
 				origins: appOrigins.value,
-			}
+			})
 			state.problems = validateAppDraft(state.draft)
 			if (state.problems.length) state.draft = undefined
 			requestUpdate()
@@ -56,44 +43,43 @@ export function makeAppCreator({root, requestUpdate, createApp}: {
 
 	function render() {
 		const {formDisabled, draft, problems} = state
-
 		return html`
 			<div class=app-creator>
 				<slot name=create-app-heading></slot>
 
 				<xio-text-input
 					class=app-label
-					placeholder="community label"
 					?disabled=${formDisabled}
 					.validator=${appDraftValidators.label}
-					@valuechange=${handleFormChange}
-				></xio-text-input>
+					@valuechange=${handleFormChange}>
+						community label
+				</xio-text-input>
 
 				<xio-text-input
 					class=app-home
-					placeholder="website homepage"
 					?disabled=${formDisabled}
 					.validator=${appDraftValidators.home}
-					@valuechange=${handleFormChange}
-				></xio-text-input>
+					@valuechange=${handleFormChange}>
+						website homepage
+				</xio-text-input>
 
 				<xio-text-input
 					textarea
 					class=app-origins
-					placeholder="additional origins"
 					?disabled=${formDisabled}
 					show-validation-when-empty
 					.parser=${parseOrigins}
 					.validator=${appDraftValidators.additionalOrigins}
-					@valuechange=${handleFormChange}
-				></xio-text-input>
+					@valuechange=${handleFormChange}>
+						additional origins (optional)
+				</xio-text-input>
 
-				<button
-					class=create-app-button
+				<xio-button
+					class="create-app-button"
 					?disabled=${formDisabled || !draft || problems.length > 0}
-					@click=${handleSubmitClick}>
+					@press=${handleSubmitClick}>
 						register community
-				</button>
+				</xio-button>
 			</div>
 		`
 	}
