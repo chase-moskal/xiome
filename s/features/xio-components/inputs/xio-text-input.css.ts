@@ -4,6 +4,7 @@ export default css`
 
 :host {
 	display: block;
+	max-width: 32em;
 	--pad: var(--xio-text-input-pad, 0.3em);
 	--font: var(--xio-text-input-font, inherit);
 	--color: var(--xio-text-input-color, inherit);
@@ -43,10 +44,10 @@ slot {
 .inputbox svg {
 	position: absolute;
 	display: block;
+	right: var(--pad);
 	top: 0;
 	bottom: 0;
 	margin: auto;
-	right: var(--pad);
 	width: 1em;
 	height: 1em;
 	pointer-events: none;

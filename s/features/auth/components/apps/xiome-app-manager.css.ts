@@ -30,6 +30,10 @@ code.id {
 	margin-left: 1em;
 }
 
+.app-list {
+	margin-bottom: 2em;
+}
+
 .app {
 	padding: 0.4em 1rem;
 	margin: var(--app-margin, 0);
@@ -49,13 +53,12 @@ code.id {
 }
 
 .app-creator {
-	margin: 2em 0;
+	margin-bottom: 2em;
 }
 
 .app-creator xio-text-input {
 	display: block;
 	width: 100%;
-	max-width: 32em;
 }
 
 .app-creator > * + * {

@@ -5,7 +5,7 @@ block append variables
 	- pageSubtitle = "setup"
 
 block maincontent
-	.page-setup.content
+	.page-setup
 
 		xiome-login-panel(initially-hidden)
 			h2(slot="logged-out") login to setup communities
@@ -13,10 +13,10 @@ block maincontent
 				h2 your registered communities
 				h2(slot="create-app-heading") register a community
 
-		.plate
+		.plate.content
 			h2 understanding how xiome communities work
 			p a single xiome community can span across multiple websites
-			h2 developers "mock" mode
+			h2 developer's "mock" mode
 			p this snippet is for developers to test their systems on a fake community
 			code.htmlcode.mocksnippet
 				span &lt;#[span(data-syntax="tag") xiome-config]
