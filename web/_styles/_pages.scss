@@ -15,6 +15,7 @@
 
 .page-setup {
 	.plate {
+		margin-top: 1em;
 		max-width: 700px;
 		p + p {
 			margin-top: 0.5em;
@@ -24,11 +25,10 @@
 		}
 	}
 	xiome-app-manager {
-		--app-margin: 0 -1em;
+		// --app-margin: 0 -1em;
 	}
 	xiome-login-panel {
 		display: block;
-		margin: 1em 0;
 	}
 }
 

@@ -76,19 +76,21 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 						<p>Login with your email address</p>
 					</slot>
 					<xio-text-input
-						placeholder="enter your email"
 						.validator=${email()}
-						@valuechange=${this.handleEmailChange}
-					></xio-text-input>
-					<button
+						@valuechange=${this.handleEmailChange}>
+							your email
+					</xio-text-input>
+					<xio-button
 						?disabled=${!emailIsValid}
-						@click=${this.sendEmail}>
-							Send login link
-					</button>
+						@press=${this.sendEmail}>
+							send login link
+					</xio-button>
 				</div>
 				${whenLoadingIsDone(sentLoadingView, sent => html`
 					<p>email sent to ${sent.email}</p>
-					<button @click=${this.resetSentLoading}>try another address?</button>
+					<xio-button @press=${this.resetSentLoading}>
+						try another address?
+					</xio-button>
 				`)}
 			</xio-loading>
 		`

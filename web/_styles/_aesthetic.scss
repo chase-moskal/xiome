@@ -56,7 +56,7 @@ code { background: #0002; }
 	.marked-link {
 		border-radius: 4px;
 		text-decoration: underline;
-		text-decoration-color: #adf2;
+		text-decoration-color: #adf4;
 	}
 	&[data-page-subtitle=home] nav a[href$="/"] { @extend .marked-link }
 	&[data-page-subtitle=setup] nav a[href$="/setup"] { @extend .marked-link }

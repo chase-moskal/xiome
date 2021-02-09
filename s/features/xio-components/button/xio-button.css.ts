@@ -10,7 +10,7 @@ button {
 	cursor: pointer;
 	font: inherit;
 	font-weight: bold;
-	padding: 0.5em;
+	padding: var(--xio-button-padding, 0.2em 0.5em);
 	color: inherit;
 	background: var(--xio-button-background, transparent);
 	border: 1px solid;

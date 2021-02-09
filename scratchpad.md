@@ -6,7 +6,7 @@
   - stats like joinedDate
 - [x] proper app tokens, also fetches
 - [ ] core functionality
-  - [ ] improved xio-text-input
+  - [x] improved xio-text-input
   - [ ] app ui, can update homepage
   - [ ] profile display and editing
   - [ ] app basic stats

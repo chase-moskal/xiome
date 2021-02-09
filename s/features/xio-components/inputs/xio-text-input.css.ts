@@ -3,6 +3,7 @@ import {css} from "../../../framework/component.js"
 export default css`
 
 :host {
+	display: block;
 	--pad: var(--xio-text-input-pad, 0.3em);
 	--font: var(--xio-text-input-font, inherit);
 	--color: var(--xio-text-input-color, inherit);
