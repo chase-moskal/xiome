@@ -1,6 +1,6 @@
 
 * {
-	--focus-outline: 3px solid cyan;
+	--focus-outline: 2px solid #8ff8;
 	&:focus {
 		outline: var(--focus-outline)
 	}

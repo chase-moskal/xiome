@@ -53,7 +53,7 @@ code.id {
 }
 
 .app-code code {
-	padding: 0.2em 1em;
+	padding: 1em 2em;
 }
 
 .app-creator {
