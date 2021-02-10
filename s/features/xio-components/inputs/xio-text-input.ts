@@ -65,8 +65,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	private updateFromRawInput = () => {
 		this.draft = this.input.value
-		const {value} = this
-		this.dispatchEvent(new ValueChangeEvent(value))
+		this.dispatchEvent(new ValueChangeEvent(this.value))
 	}
 
 	private handleInputChange = debounce2(

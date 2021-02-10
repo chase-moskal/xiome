@@ -1,16 +1,15 @@
 
 import styles from "./xiome-app-manager.css.js"
-import {makeAppCreator} from "./app-creator/app-creator.js"
-import {parseOrigins} from "../../topics/apps/parse-origins.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
-import {makeAppStateManager} from "./utils/app-state-manager.js"
-import {appDraftValidators} from "../../topics/apps/app-draft-validators.js"
-import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
+import {makeAppForm} from "./form/app-form.js"
+import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
+import {multipleAppForms} from "./form/multiple-app-forms.js"
+import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
@@ -20,12 +19,37 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		this.share.appModel.loadAppList()
 	}
 
-	private readonly appCreator = makeAppCreator({
-		root: this.shadowRoot,
+	private readonly appRegistrationForm = makeAppForm({
+		clearOnSubmit: true,
+		submitButtonText: "register new app",
 		requestUpdate: () => this.requestUpdate(),
-		createApp: async appDraft => {
+		query: selector => (
+			this.shadowRoot
+				.querySelector(".app-registration")
+				.querySelector(selector)
+		),
+		submit: async formDraft => {
+			const appDraft = formDraftToAppDraft(formDraft)
 			await this.share.appModel.registerApp(appDraft)
 		},
+	})
+
+	private readonly appListingForms = multipleAppForms({
+		configureNewAppForm: (app: AppDisplay) => makeAppForm({
+			clearOnSubmit: false,
+			submitButtonText: "save changes",
+			initialValues: appDisplayToFormDraft(app),
+			requestUpdate: () => this.requestUpdate(),
+			query: selector => (
+				this.shadowRoot
+					.querySelector(`.app[data-app-id="${app.appId}"] .app-editor`)
+					.querySelector(selector)
+			),
+			submit: async formDraft => {
+				const appDraft = formDraftToAppDraft(formDraft)
+				await this.share.appModel.updateApp(app.appId, appDraft)
+			},
+		})
 	})
 
 	private renderNoApps() {
@@ -44,7 +68,10 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 			${renderWrappedInLoading(appListLoadingView, appList => appList.length
 				? this.renderAppList(appList)
 				: this.renderNoApps())}
-			${this.appCreator.render()}
+			<div class=app-registration>
+				<slot name="register-app-heading"></slot>
+				${this.appRegistrationForm.render()}
+			</div>
 		`
 	}
 
@@ -57,66 +84,13 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		`
 	}
 
-	private getAppState = makeAppStateManager({
-		submit: this.share.appModel.updateApp,
-		requestUpdate: () => this.requestUpdate(),
-	})
-
 	private renderApp(app: AppDisplay) {
-		const getValueFor = <X extends HTMLElement>(select: string): X => (
-			this.shadowRoot
-				.querySelector(`.app[data-app-id="${app.appId}"] .app-${select}`)
-		)
-		const {formState, formEventHandlers} = this.getAppState({
-			app,
-			getFormValues: () => ({
-				label: getValueFor<XioTextInput>("label").value,
-				home: getValueFor<XioTextInput>("home").value,
-				origins: getValueFor<XioTextInput<string[]>>("origins").value,
-			})
-		})
-		function originsMinusHome(home: string, origins: string[]) {
-			return origins
-				.filter(o => o.toLowerCase() !== new URL(home.toLowerCase()).origin)
-				.map(o => o.toLowerCase())
-		}
+		const appForm = this.appListingForms.getAppForm(app)
 		return html`
 			<div class=app data-app-id=${app.appId}>
-				<xio-text-input
-					class=app-label
-					initial="${app.label}"
-					?disabled=${formState.formDisabled}
-					.validator=${appDraftValidators.label}
-					@valuechange=${formEventHandlers.handleFormChange}>
-						community label
-				</xio-text-input>
-
-				<xio-text-input
-					class=app-home
-					initial="${app.home}"
-					?disabled=${formState.formDisabled}
-					.validator=${appDraftValidators.home}
-					@valuechange=${formEventHandlers.handleFormChange}>
-						website homepage
-				</xio-text-input>
-
-				<xio-text-input
-					textarea
-					class=app-origins
-					initial="${originsMinusHome(app.home, app.origins).join("\n")}"
-					?disabled=${formState.formDisabled}
-					show-validation-when-empty
-					.parser=${parseOrigins}
-					.validator=${appDraftValidators.additionalOrigins}
-					@valuechange=${formEventHandlers.handleFormChange}>
-						additional origins (optional)
-				</xio-text-input>
-
-				<xio-button
-					?disabled=${!formState.valid}
-					@press=${formEventHandlers.handleSubmitClick}>
-					save changes
-				</xio-button>
+				<div class=app-editor>
+					${appForm.render()}
+				</div>
 
 				<div class=app-code>
 					<p>install html</p>

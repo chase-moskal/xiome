@@ -1,5 +1,5 @@
 
-import {validator, one, branch, string, array, minLength, maxLength, notWhitespace, url, https, localhost, origin} from "../../../../toolbox/darkvalley.js"
+import {validator, one, branch, string, array, each, minLength, maxLength, notWhitespace, url, https, localhost, origin} from "../../../../toolbox/darkvalley.js"
 
 export const appDraftValidators = Object.freeze({
 	home: validator<string>(one(
@@ -17,7 +17,7 @@ export const appDraftValidators = Object.freeze({
 	origins: validator<string[]>(one(
 		minLength(1),
 		maxLength(100),
-		array(one(
+		each(one(
 			string(),
 			maxLength(1000),
 			one(
@@ -27,9 +27,10 @@ export const appDraftValidators = Object.freeze({
 		)),
 	)),
 	additionalOrigins: validator<string[]>(one(
+		array(),
 		minLength(0),
 		maxLength(99),
-		array(one(
+		each(one(
 			string(),
 			maxLength(1000),
 			one(

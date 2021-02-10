@@ -1,5 +1,5 @@
 
-import {validator, depend as d, string, array, length, minLength, maxLength, notWhitespace, origin} from "../../../../toolbox/darkvalley.js"
+import {validator, depend as d, string, each, length, minLength, maxLength, notWhitespace, origin} from "../../../../toolbox/darkvalley.js"
 
 export const appTokenDraftValidators = Object.freeze({
 	appId: validator<string>(d(
@@ -13,7 +13,7 @@ export const appTokenDraftValidators = Object.freeze({
 		notWhitespace(),
 	)),
 	origins: validator<string[]>(d(
-		array(d(string(), origin(), maxLength(1000))),
+		each(d(string(), origin(), maxLength(1000))),
 		minLength(1),
 		maxLength(100),
 	)),

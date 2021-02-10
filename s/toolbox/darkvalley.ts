@@ -56,7 +56,7 @@ export function depend<xValue>(
 	}
 }
 
-export function array<xValue>(
+export function each<xValue>(
 		...conditions: Condition<xValue>[]
 	): Condition<xValue[]> {
 	return arr => {
@@ -80,6 +80,12 @@ export const number = (): Condition<number> => value =>
 	typeof value !== "number"
 		? ["must be a number"]
 		: []
+
+
+export const array = (): Condition<string> => value =>
+	Array.isArray(value)
+		? []
+		: ["must be an array"]
 
 export const length = (len: number): Condition<{length: number}> => value =>
 	value.length !== len
