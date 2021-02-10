@@ -93,7 +93,6 @@ export function makeAppForm({
 		const submitButtonDisabled = !changes
 			|| formDisabled
 			|| problems.length > 0
-		const ifChangesArePresent = <T>(t: T) => changes ? t : undefined
 		return html`
 			<div class=app-form>
 				<slot name=create-app-heading></slot>

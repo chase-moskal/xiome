@@ -1,15 +1,17 @@
 
 import styles from "./xiome-app-manager.css.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
+
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
+import {makeAppForm} from "./form/app-form.js"
+import {multipleAppForms} from "./form/multiple-app-forms.js"
+import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
+import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
+
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
-import {makeAppForm} from "./form/app-form.js"
-import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
-import {multipleAppForms} from "./form/multiple-app-forms.js"
-import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
@@ -52,26 +54,13 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		})
 	})
 
-	private renderNoApps() {
-		return html`
-			<slot name=no-apps></slot>
-		`
-	}
-
 	private deleteApp = async(appId: string) => {
 		await this.share.appModel.deleteApp(appId)
 	}
 
-	render() {
-		const {appListLoadingView} = this.share.appModel
+	private renderNoApps() {
 		return html`
-			${renderWrappedInLoading(appListLoadingView, appList => appList.length
-				? this.renderAppList(appList)
-				: this.renderNoApps())}
-			<div class=app-registration>
-				<slot name="register-app-heading"></slot>
-				${this.appRegistrationForm.render()}
-			</div>
+			<slot name=no-apps></slot>
 		`
 	}
 
@@ -104,6 +93,19 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 					@press=${() => this.deleteApp(app.appId)}>
 						delete community
 				</xio-button>
+			</div>
+		`
+	}
+
+	render() {
+		const {appListLoadingView} = this.share.appModel
+		return html`
+			${renderWrappedInLoading(appListLoadingView, appList => appList.length
+				? this.renderAppList(appList)
+				: this.renderNoApps())}
+			<div class=app-registration>
+				<slot name="register-app-heading"></slot>
+				${this.appRegistrationForm.render()}
 			</div>
 		`
 	}
