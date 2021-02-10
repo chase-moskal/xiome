@@ -103,7 +103,8 @@ export function makeAppForm({
 					class=app-label
 					initial="${initialValues.label}"
 					?disabled=${formDisabled}
-					.validator=${ifChangesArePresent(appDraftValidators.label)}
+					?hide-validation=${!changes}
+					.validator=${appDraftValidators.label}
 					@valuechange=${handleFormChange}>
 						community label
 				</xio-text-input>
@@ -112,7 +113,8 @@ export function makeAppForm({
 					data-form=home
 					initial="${initialValues.home}"
 					?disabled=${formDisabled}
-					.validator=${ifChangesArePresent(appDraftValidators.home)}
+					?hide-validation=${!changes}
+					.validator=${appDraftValidators.home}
 					@valuechange=${handleFormChange}>
 						website homepage
 				</xio-text-input>
@@ -122,9 +124,10 @@ export function makeAppForm({
 					data-form=additional-origins
 					initial="${initialValues.additionalOrigins.join("\n")}"
 					?disabled=${formDisabled}
+					?hide-validation=${!changes}
 					show-validation-when-empty
 					.parser=${parseOrigins}
-					.validator=${ifChangesArePresent(appDraftValidators.additionalOrigins)}
+					.validator=${appDraftValidators.additionalOrigins}
 					@valuechange=${handleFormChange}>
 						additional origins (optional)
 				</xio-text-input>

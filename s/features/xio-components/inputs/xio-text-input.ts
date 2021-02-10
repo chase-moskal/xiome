@@ -22,6 +22,9 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	["textarea"] = false
 
 	@property({type: Boolean, reflect: true})
+	["hide-validation"] = false
+
+	@property({type: Boolean, reflect: true})
 	["show-validation-when-empty"] = false
 
 	@property({type: Boolean, reflect: true})
@@ -83,7 +86,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 			validator, handleInputChange,
 		} = this
 		const valid = problems.length === 0
-		const showValidation = !readonly && validator && (
+		const showValidation = !this["hide-validation"] && !readonly && validator && (
 			this["show-validation-when-empty"]
 				? true
 				: draft.length !== 0
