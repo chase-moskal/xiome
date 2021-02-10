@@ -8,7 +8,7 @@
 - [ ] core functionality
   - [x] improved xio-text-input
   - [x] app ui, can update homepage
-  - [ ] refactor app creation forms
+  - [x] refactor app creation forms
   - [ ] profile display and editing
   - [ ] app basic stats
   - [ ] app admin management
