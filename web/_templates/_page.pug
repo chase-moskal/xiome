@@ -10,15 +10,19 @@ head
 	meta(name="viewport" content="width=device-width,initial-scale=1")
 	title xiome.io#{pageSubtitle && " – " + pageSubtitle}
 	link(rel="stylesheet" href=`${base}/styles.css`)
+	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
 
 	if debug
 		xiome-config(mock="platform")
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
+		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
 		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 	else
 		xiome-config(mock="platform")
 		script(src=`${base}/xiome.bundle.min.js`)
+
+	block head
 
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div

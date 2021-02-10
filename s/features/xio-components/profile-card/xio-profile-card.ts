@@ -8,9 +8,9 @@ import {Component, html, property, css} from "../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../framework/loading/render-wrapped-in-loading.js"
 
 import {profileValidator} from "./validators/profile-validator.js"
+import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
-import { formatDate } from "../../../toolbox/goodtimes/format-date.js"
 
 const styles = css`
 
