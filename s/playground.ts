@@ -11,7 +11,7 @@ class XioPlayground extends Component {
 			userId: "abc123",
 			profile: {
 				avatar: "",
-				nickname: "Original Ostrich",
+				nickname: "Original Ostrich the Great x2",
 				tagline: "i'm super cool",
 			},
 			roles: [],
@@ -24,6 +24,7 @@ class XioPlayground extends Component {
 			<p>xio-profile-card</p>
 			<xio-profile-card
 				.user=${user}
+				.XXXsaveProfile=${() => {}}
 			></xio-profile-card>
 		`
 	}

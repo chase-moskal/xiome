@@ -20,14 +20,13 @@ html {
 
 html {
 	xiome-app-manager {
-		&::part(appform-textinput) {
-			color: red !important;
+		&::part(appform-xiotextinput-problems) {
+			font: 0.8em "Play", sans-serif;
 		}
-		&::part(appform-xiotextinput) {
+		&::part(appform-xiotextinput-textinput) {
 			font-family: "Varela Round", sans-serif;
-			--xio-text-input-background: #00000008;
-			--xio-text-input-border: 1px solid #fff1;
-			--xio-text-input-problems-font: 0.8em "Play", sans-serif;
+			background: #00000008;
+			border: 1px solid #fff1;
 		}
 		&::part(appform-xiotextinput-label) {
 			color: #fff6;

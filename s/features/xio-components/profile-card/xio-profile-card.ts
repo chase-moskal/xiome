@@ -4,14 +4,17 @@ import {select} from "../../../toolbox/select/select.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {deepClone, deepEqual} from "../../../toolbox/deep.js"
 import {mixinStyles} from "../../../framework/component/mixin-styles.js"
-import {Component, html, property} from "../../../framework/component.js"
+import {Component, html, maybe, property} from "../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../framework/loading/render-wrapped-in-loading.js"
 
 import styles from "./xio-profile-card.css.js"
+import {Validator} from "../../../toolbox/darkvalley.js"
 import {profileValidator} from "./validators/profile-validator.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
+import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
+import { XioTextInput } from "../inputs/xio-text-input.js"
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component {
@@ -21,9 +24,6 @@ export class XioProfileCard extends Component {
 
 	@property({type: Object})
 	saveProfile?: (profile: Profile) => Promise<void>
-
-	// @property({type: Boolean})
-	// private busy: boolean = false
 
 	@property()
 	private busy2 = loading<void>()
@@ -35,15 +35,20 @@ export class XioProfileCard extends Component {
 		return !this.saveProfile
 	}
 
+	private problems: string[] = []
+
 	private generateNewProfileFromInputs(): Profile {
 		const {profile} = this.user
 		const clonedProfile = deepClone(profile)
-		const getValue = (name: string) => select<HTMLInputElement>(
-			`xio-text-input.${name}`,
+		const obtain = (name: string) => select<XioTextInput>(
+			`xio-text-input[data-field="${name}"]`,
 			this.shadowRoot,
-		).value
-		clonedProfile.nickname = getValue("nickname")
-		clonedProfile.tagline = getValue("tagline")
+		)
+		const nicknameInput = obtain("nickname")
+		const taglineInput = obtain("tagline")
+		clonedProfile.nickname = nicknameInput.value
+		clonedProfile.tagline = taglineInput.value
+		this.problems = [...nicknameInput.problems, ...taglineInput.problems]
 		return clonedProfile
 	}
 
@@ -100,41 +105,81 @@ export class XioProfileCard extends Component {
 	}
 
 	render() {
-		const {user, busy2, readonly, handleChange, handleSave} = this
+		const {user} = this
 		if (!user) return null
 		const {userId, profile} = user
-		return renderWrappedInLoading(busy2.view, () => html`
+
+		const renderText = (({field, text, input}: {
+				field: string
+				text: string
+				input?: {
+					label: string
+					readonly: boolean
+					validator: Validator<string>
+					ontextchange: (event: ValueChangeEvent<string>) => void
+				}
+			}) => input
+			? html`
+				<xio-text-input
+					data-field="${field}"
+					initial=${text}
+					part="xiotextinput"
+					exportparts="${`
+						label: xiotextinput-label,
+						textinput: xiotextinput-textinput,
+						problems: xiotextinput-problems,
+					`}"
+					?readonly=${input.readonly}
+					.validator=${input.validator}
+					@valuechange=${input.ontextchange}>
+						<span>${input.label}</span>
+				</xio-text-input>
+			`
+			: html`
+				<p part="textfield" data-field="${field}">${text}</p>
+			`
+		)
+
+		return renderWrappedInLoading(this.busy2.view, () => html`
 			<div class=textfields ?data-readonly=${this.readonly}>
-
-				<xio-text-input
-					class=nickname
-					initial=${profile.nickname}
-					?readonly=${readonly}
-					.validator=${profileValidator.nickname}
-					@textchange=${handleChange}>
-						<span>nickname</span>
-				</xio-text-input>
-
-				<xio-text-input
-					class=tagline
-					initial=${profile.tagline}
-					?readonly=${readonly}
-					.validator=${profileValidator.tagline}
-					@textchange=${handleChange}>
-						<span>tagline</span>
-				</xio-text-input>
+				${renderText({
+					field: "nickname",
+					text: profile.nickname,
+					input: this.readonly
+						? undefined
+						: {
+							label: "nickname",
+							readonly: false,
+							validator: profileValidator.nickname,
+							ontextchange: this.handleChange,
+						}
+				})}
+				${renderText({
+					field: "tagline",
+					text: profile.tagline,
+					input: this.readonly
+						? undefined
+						: {
+							label: "tagline",
+							readonly: false,
+							validator: profileValidator.tagline,
+							ontextchange: this.handleChange,
+						}
+				})}
 			</div>
 			${this.renderTags(user)}
 			<ul class="detail">
 				<li>user id: <span>${userId}</span></li>
 			</ul>
-			${this.changedProfile ? html`
+			${this.readonly ? null : html`
 				<div class="buttonbar">
-					<button @click=${handleSave}>
-						Save
+					<button
+						?disabled=${!this.changedProfile || this.problems.length > 0}
+						@click=${this.handleSave}>
+							<slot name=save-button>save profile</slot>
 					</button>
 				</div>
-			` : null}
+			`}
 		`)
 	}
 }

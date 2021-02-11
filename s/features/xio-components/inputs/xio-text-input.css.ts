@@ -8,7 +8,7 @@ export default css`
 	display: block;
 	max-width: 48rem;
 	--width: var(--xio-text-input-width, 24rem);
-	--pad: var(--xio-text-input-pad, 0.3rem);
+	--pad: var(--xio-text-input-pad, 0.3em);
 	--font: var(--xio-text-input-font, inherit);
 	--color: var(--xio-text-input-color, inherit);
 	--label-font: var(--xio-text-input-label-font, inherit);

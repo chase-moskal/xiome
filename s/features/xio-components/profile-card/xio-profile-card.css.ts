@@ -32,23 +32,23 @@ export default css`
 	color: var(--cobalt-tagcolor-banned, red);
 }
 
-xio-text-input {
-	--xio-text-input-pad: 0.1rem;
+p[data-field="tagline"] {
+	opacity: 0.7;
+	font-size: 0.8em;
+	font-style: italic;
 }
 
 xio-text-input > span {
-	display: none;
 	opacity: 0.6;
-	font-size: 0.6rem;
-	margin-left: 0.2rem;
+	font-size: 0.7rem;
 }
 
-.textfields[data-readonly] xio-text-input::part(textinput) {
+/* .textfields[data-readonly] xio-text-input::part(textinput) {
 	border: 0;
 	background: transparent;
-}
+} */
 
-.tagline::part(textinput) {
+/* .tagline::part(textinput) {
 	opacity: 0.7;
 	padding-left: 1em;
 	font-size: 0.8em;
@@ -58,7 +58,7 @@ xio-text-input > span {
 .tagline.value-present::before,
 .tagline.value-present::after {
 	content: '"';
-}
+} */
 
 .detail {
 	opacity: 0.5;

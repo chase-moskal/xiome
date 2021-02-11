@@ -9,7 +9,7 @@ import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 
 import {AppFormDraft} from "./types/app-form-draft.js"
-import { TextInputParser } from "../../../../xio-components/inputs/types/text-input-parser.js"
+import {TextInputParser} from "../../../../xio-components/inputs/types/text-input-parser.js"
 
 export function makeAppForm({
 		clearOnSubmit,
