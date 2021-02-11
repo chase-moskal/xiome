@@ -1,7 +1,7 @@
 
-export type Condition<xValue> = (value: xValue) => string[]
+export type Validator<xValue> = (value: xValue) => string[]
 
-export function validator<xValue>(...conditions: Condition<xValue>[]): Condition<xValue> {
+export function validator<xValue>(...conditions: Validator<xValue>[]): Validator<xValue> {
 	return value => {
 		const problems: string[] = []
 		for (const condition of conditions) {
@@ -12,7 +12,7 @@ export function validator<xValue>(...conditions: Condition<xValue>[]): Condition
 	}
 }
 
-export function branch<xValue>(...conditions: Condition<xValue>[]): Condition<xValue> {
+export function branch<xValue>(...conditions: Validator<xValue>[]): Validator<xValue> {
 	return value => {
 		const results = conditions.map(condition => condition(value))
 		let anySuccess = false
@@ -27,8 +27,8 @@ export function branch<xValue>(...conditions: Condition<xValue>[]): Condition<xV
 }
 
 export function one<xValue>(
-		...conditions: Condition<xValue>[]
-	): Condition<xValue> {
+		...conditions: Validator<xValue>[]
+	): Validator<xValue> {
 	return value => {
 		let problems: string[] = []
 		for (const condition of conditions) {
@@ -41,9 +41,9 @@ export function one<xValue>(
 }
 
 export function depend<xValue>(
-		first: Condition<xValue>,
-		...conditions: Condition<xValue>[]
-	): Condition<xValue> {
+		first: Validator<xValue>,
+		...conditions: Validator<xValue>[]
+	): Validator<xValue> {
 	return value => {
 		const problems = first(value)
 		if (problems.length === 0) {
@@ -57,8 +57,8 @@ export function depend<xValue>(
 }
 
 export function each<xValue>(
-		...conditions: Condition<xValue>[]
-	): Condition<xValue[]> {
+		...conditions: Validator<xValue>[]
+	): Validator<xValue[]> {
 	return arr => {
 		if (!Array.isArray(arr)) return ["must be array"]
 		const validate = validator<xValue>(...conditions)
@@ -71,43 +71,43 @@ export function each<xValue>(
 	}
 }
 
-export const string = (): Condition<string> => value =>
+export const string = (): Validator<string> => value =>
 	typeof value !== "string"
 		? ["must be a string"]
 		: []
 
-export const number = (): Condition<number> => value =>
+export const number = (): Validator<number> => value =>
 	typeof value !== "number"
 		? ["must be a number"]
 		: []
 
 
-export const array = (): Condition<string> => value =>
+export const array = (): Validator<string> => value =>
 	Array.isArray(value)
 		? []
 		: ["must be an array"]
 
-export const length = (len: number): Condition<{length: number}> => value =>
+export const length = (len: number): Validator<{length: number}> => value =>
 	value.length !== len
 		? [`length must be ${len}`]
 		: []
 
-export const minLength = (min: number): Condition<{length: number}> => value =>
+export const minLength = (min: number): Validator<{length: number}> => value =>
 	value.length < min
 		? ["too small"]
 		: []
 
-export const maxLength = (max: number): Condition<{length: number}> => value =>
+export const maxLength = (max: number): Validator<{length: number}> => value =>
 	value.length > max
 		? ["too big"]
 		: []
 
-export const notWhitespace = (): Condition<string> => value =>
+export const notWhitespace = (): Validator<string> => value =>
 	value.trim().length === 0
 		? ["can't be all whitespace"]
 		: []
 
-export const url = (): Condition<string> => value => {
+export const url = (): Validator<string> => value => {
 	try {
 		void new URL(value)
 		return []
@@ -117,26 +117,26 @@ export const url = (): Condition<string> => value => {
 	}
 }
 
-export const localhost = (): Condition<string> => value => {
+export const localhost = (): Validator<string> => value => {
 	return /^https?:\/\/localhost$/i.test(value)
 		? []
 		: ["must be 'http://localhost' or 'https://localhost'"]
 }
 
-export const https = (): Condition<string> => value => {
+export const https = (): Validator<string> => value => {
 	return /^https:\/\//i.test(value)
 		? []
 		: ["must be secure, starting with 'https'"]
 }
 
-export const origin = (): Condition<string> => value =>
+export const origin = (): Validator<string> => value =>
 	/^https?:\/\/[a-zA-Z\.\d]+(?:|:\d+)$/i.test(value)
 		? []
 		: ["invalid origin"]
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-export const email = (): Condition<string> => value =>
+export const email = (): Validator<string> => value =>
 	emailRegex.test(value)
 		? []
 		: ["invalid email"]

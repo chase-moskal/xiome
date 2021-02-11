@@ -24,9 +24,12 @@
 			margin-left: 1em;
 		}
 	}
-	// xiome-app-manager {
-	// 	--app-margin: 0 -1em;
-	// }
+}
+
+.page-playground {
+	xio-profile-card {
+		outline: 1px solid #f002;
+	}
 }
 
 // .catalog {

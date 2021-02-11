@@ -1,6 +1,7 @@
 
 import {deepEqual} from "../../../../../toolbox/deep.js"
 import {html} from "../../../../../framework/component.js"
+import {Validator} from "../../../../../toolbox/darkvalley.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
 import {validateAppFormDraft} from "./utils/validate-app-form-draft.js"
 import {getEmptyAppFormDraft} from "./utils/get-empty-app-form-draft.js"
@@ -8,6 +9,7 @@ import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 
 import {AppFormDraft} from "./types/app-form-draft.js"
+import { TextInputParser } from "../../../../xio-components/inputs/types/text-input-parser.js"
 
 export function makeAppForm({
 		clearOnSubmit,
@@ -93,43 +95,68 @@ export function makeAppForm({
 		const submitButtonDisabled = !changes
 			|| formDisabled
 			|| problems.length > 0
+		const exportPartsTextInput = `
+			textinput: appform-xiotextinput-textinput,
+			label: appform-xiotextinput-label,
+			problems: appform-xiotextinput-problems,
+		`
+		const renderTextInput = <xValue = string>({
+				label, dataForm, initialText, showValidationWhenEmpty,
+				parser, validator,
+			}: {
+				label: string
+				dataForm: string
+				initialText: string
+				showValidationWhenEmpty: boolean
+				validator: Validator<xValue>
+				parser: TextInputParser<xValue>
+			}) => html`
+			<xio-text-input
+				part=appform-xiotextinput
+				exportparts=${exportPartsTextInput}
+				data-form="${dataForm}"
+				initial="${initialText}"
+				?disabled=${formDisabled}
+				?hide-validation=${!changes}
+				?show-validation-when-empty=${showValidationWhenEmpty}
+				.parser=${parser}
+				.validator=${validator}
+				@valuechange=${handleFormChange}>
+					<span part=xio-text-input-label>
+						${label}
+					</span>
+			</xio-text-input>
+		`
 		return html`
 			<div class=app-form>
 				<slot name=create-app-heading></slot>
 
-				<xio-text-input
-					data-form=label
-					class=app-label
-					initial="${initialValues.label}"
-					?disabled=${formDisabled}
-					?hide-validation=${!changes}
-					.validator=${appDraftValidators.label}
-					@valuechange=${handleFormChange}>
-						community label
-				</xio-text-input>
+				${renderTextInput({
+					dataForm: "label",
+					label: "community label",
+					initialText: initialValues.label,
+					showValidationWhenEmpty: false,
+					parser: undefined,
+					validator: appDraftValidators.label,
+				})}
 
-				<xio-text-input
-					data-form=home
-					initial="${initialValues.home}"
-					?disabled=${formDisabled}
-					?hide-validation=${!changes}
-					.validator=${appDraftValidators.home}
-					@valuechange=${handleFormChange}>
-						website homepage
-				</xio-text-input>
+				${renderTextInput({
+					dataForm: "home",
+					label: "website homepage",
+					initialText: initialValues.home,
+					showValidationWhenEmpty: false,
+					parser: undefined,
+					validator: appDraftValidators.home,
+				})}
 
-				<xio-text-input
-					textarea
-					data-form=additional-origins
-					initial="${initialValues.additionalOrigins.join("\n")}"
-					?disabled=${formDisabled}
-					?hide-validation=${!changes}
-					show-validation-when-empty
-					.parser=${parseOrigins}
-					.validator=${appDraftValidators.additionalOrigins}
-					@valuechange=${handleFormChange}>
-						additional origins (optional)
-				</xio-text-input>
+				${renderTextInput<string[]>({
+					dataForm: "additional-origins",
+					label: "additional origins (optional)",
+					initialText: initialValues.additionalOrigins.join("\n"),
+					showValidationWhenEmpty: true,
+					parser: parseOrigins,
+					validator: appDraftValidators.additionalOrigins,
+				})}
 
 				<xio-button
 					class="create-app-button"

@@ -1,86 +1,19 @@
 
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
-import {deepClone, deepEqual} from "../../../toolbox/deep.js"
 import {loading} from "../../../framework/loading/loading.js"
+import {deepClone, deepEqual} from "../../../toolbox/deep.js"
 import {mixinStyles} from "../../../framework/component/mixin-styles.js"
-import {Component, html, property, css} from "../../../framework/component.js"
+import {Component, html, property} from "../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../framework/loading/render-wrapped-in-loading.js"
 
+import styles from "./xio-profile-card.css.js"
 import {profileValidator} from "./validators/profile-validator.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
 
-const styles = css`
-
-.cardplate > * {
-	display: block;
-}
-
-.cardplate > * + * {
-	margin-top: 0.4rem;
-}
-
-.tags {
-	list-style: none;
-	font-size: 0.6em;
-	cursor: default;
-}
-
-.tags > li {
-	display: inline-block;
-	margin: 0 0.1em;
-	padding: 0 0.25em;
-	border: 1px solid;
-	border-radius: 1em;
-}
-
-[data-tag=staff] {
-	color: var(--cobalt-tagcolor-staff, lime);
-}
-
-[data-tag=banned] {
-	color: var(--cobalt-tagcolor-banned, red);
-}
-
-.textfield {
-	display: block;
-	width: 100%;
-}
-
-iron-text-input {
-	display: block;
-}
-
-.tagline {
-	font-style: italic;
-}
-
-.tagline[readonly] {
-	opacity: 0.8;
-	font-size: 0.8em;
-}
-
-.tagline.value-present::before,
-.tagline.value-present::after {
-	content: '"';
-}
-
-.detail {
-	opacity: 0.5;
-	font-size: 0.7em;
-	list-style: none;
-}
-
-.buttonbar {
-	margin-top: 1rem;
-	text-align: right;
-}
-
-`
-
- @mixinStyles(styles)
+@mixinStyles(styles)
 export class XioProfileCard extends Component {
 
 	@property({type: Object})
@@ -162,26 +95,34 @@ export class XioProfileCard extends Component {
 		})
 	}
 
+	firstUpdated() {
+		this.busy2.actions.setReady()
+	}
+
 	render() {
 		const {user, busy2, readonly, handleChange, handleSave} = this
 		if (!user) return null
 		const {userId, profile} = user
 		return renderWrappedInLoading(busy2.view, () => html`
-			<div class=textfields>
+			<div class=textfields ?data-readonly=${this.readonly}>
+
 				<xio-text-input
 					class=nickname
 					initial=${profile.nickname}
 					?readonly=${readonly}
 					.validator=${profileValidator.nickname}
-					@textchange=${handleChange}
-				></xio-text-input>
+					@textchange=${handleChange}>
+						<span>nickname</span>
+				</xio-text-input>
+
 				<xio-text-input
 					class=tagline
 					initial=${profile.tagline}
 					?readonly=${readonly}
 					.validator=${profileValidator.tagline}
-					@textchange=${handleChange}
-				></xio-text-input>
+					@textchange=${handleChange}>
+						<span>tagline</span>
+				</xio-text-input>
 			</div>
 			${this.renderTags(user)}
 			<ul class="detail">

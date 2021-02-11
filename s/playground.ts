@@ -1,8 +1,9 @@
 
 import {User} from "./features/auth/auth-types.js"
-import {Component, registerComponents, html} from "./framework/component.js"
+import {Component, mixinLightDom, registerComponents, html} from "./framework/component.js"
 
-registerComponents({XioPlayground: class extends Component {
+@mixinLightDom
+class XioPlayground extends Component {
 
 	render() {
 
@@ -26,4 +27,6 @@ registerComponents({XioPlayground: class extends Component {
 			></xio-profile-card>
 		`
 	}
-}})
+}
+
+registerComponents({XioPlayground})

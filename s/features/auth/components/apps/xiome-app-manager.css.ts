@@ -56,17 +56,12 @@ code.id {
 	padding: 1em 2em;
 }
 
-.app-creator {
-	margin-bottom: 2em;
-}
-
-.app-creator xio-text-input {
-	display: block;
-	width: 100%;
-}
-
-.app-creator > * + * {
+.app-form > * + * {
 	margin-top: 0.3em;
+}
+
+.app-form xio-button {
+	margin-top: 0.6em;
 }
 
 .app {

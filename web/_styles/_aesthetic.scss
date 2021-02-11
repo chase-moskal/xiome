@@ -18,6 +18,25 @@ html {
 	);
 }
 
+html {
+	xiome-app-manager {
+		&::part(appform-textinput) {
+			color: red !important;
+		}
+		&::part(appform-xiotextinput) {
+			font-family: "Varela Round", sans-serif;
+			--xio-text-input-background: #00000008;
+			--xio-text-input-border: 1px solid #fff1;
+			--xio-text-input-problems-font: 0.8em "Play", sans-serif;
+		}
+		&::part(appform-xiotextinput-label) {
+			color: #fff6;
+			font-size: 0.8em;
+			font-family: "Play", sans-serif;
+		}
+	}
+}
+
 a,
 *::part(link) {
 	color: #adfa;
@@ -74,15 +93,6 @@ menu-system {
 	font-weight: normal;
 	text-transform: uppercase;
 	text-shadow: 0 0 20px #fff6;
-}
-
-main {
-	--xio-text-input-font: 1em "Varela Round", sans-serif;
-	--xio-text-input-label-font: 0.8em "Play", sans-serif;
-	--xio-text-input-problems-font: 0.8em "Play", sans-serif;
-	--xio-text-input-label-color: #fff6;
-	--xio-text-input-background: #00000008;
-	--xio-text-input-border: 1px solid #fff1;
 }
 
 main h2 {

@@ -1,5 +1,6 @@
 
 import styles from "./xio-text-input.css.js"
+import {nullParser} from "./parsing/null-parser.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
@@ -37,18 +38,17 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	["debounce"] = 200
 
 	@property({type: Function})
-	parser: TextInputParser<xParsedValue>
-		= (text: string) => <xParsedValue><unknown>text
+	parser: undefined | TextInputParser<xParsedValue>
 
 	@property({type: Function})
-	validator: TextInputValidator<xParsedValue>
+	validator: undefined | TextInputValidator<xParsedValue>
 
 	@property({type: Object})
 	problems: string[] = []
 
 	get value(): xParsedValue {
 		const {draft} = this
-		const parsed = this.parser(draft)
+		const parsed = this.parser ? this.parser(draft) : nullParser(draft)
 		this.problems = this.validator ? this.validator(parsed) : []
 		return this.problems.length === 0
 			? parsed
@@ -99,16 +99,18 @@ export class XioTextInput<xParsedValue = string> extends Component {
 			: null
 		return html`
 			<div class=container ?data-valid=${valid}>
-				<label for="textinput"><slot></slot></label>
+				<label for="textinput" part=label><slot></slot></label>
 				<div class=flexy>
 					<div class=inputbox>
 						${showValidation ? icon : null}
 						${textarea ? html`
 							<textarea
 								id="textinput"
+								part=textinput
 								.value="${draft}"
 								?disabled=${disabled}
 								?readonly=${readonly}
+								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
 								@change=${handleInputChange}
 								@keyup=${handleInputChange}
@@ -117,15 +119,17 @@ export class XioTextInput<xParsedValue = string> extends Component {
 							<input
 								id="textinput"
 								type=text
+								part=textinput
 								.value="${draft}"
 								?disabled=${disabled}
 								?readonly=${readonly}
+								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
 								@change=${handleInputChange}
 								@keyup=${handleInputChange}/>
 						`}
 					</div>
-					<ol class=problems>
+					<ol class=problems part=problems>
 						${maybe(showProblems, problems.map(problem => html`
 							<li>${problem}</li>
 						`))}
