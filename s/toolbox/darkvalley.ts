@@ -103,7 +103,7 @@ export const maxLength = (max: number): Validator<{length: number}> => value =>
 		: []
 
 export const notWhitespace = (): Validator<string> => value =>
-	value.trim().length === 0
+	value.length > 0 && value.trim().length === 0
 		? ["can't be all whitespace"]
 		: []
 

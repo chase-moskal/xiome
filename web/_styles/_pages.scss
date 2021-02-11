@@ -27,10 +27,14 @@
 }
 
 .page-playground {
-	xio-profile-card {
+	xio-playground {
+		display: block;
 		margin-top: 1em;
 		width: 20em;
-		outline: 1px solid #f002;
+	}
+	xio-profile-card {
+		padding: 1em;
+		background: #0002;
 	}
 }
 

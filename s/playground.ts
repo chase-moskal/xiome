@@ -1,6 +1,7 @@
 
 import {User} from "./features/auth/auth-types.js"
 import {Component, mixinLightDom, registerComponents, html} from "./framework/component.js"
+import { nap } from "./toolbox/nap.js"
 
 @mixinLightDom
 class XioPlayground extends Component {
@@ -11,7 +12,7 @@ class XioPlayground extends Component {
 			userId: "abc123",
 			profile: {
 				avatar: "",
-				nickname: "Original Ostrich the Great x2",
+				nickname: "Original Ostrich",
 				tagline: "i'm super cool",
 			},
 			roles: [],
@@ -20,11 +21,17 @@ class XioPlayground extends Component {
 			},
 		}
 
+		const saveProfile = async(profile: User["profile"]) => {
+			await nap(1000)
+			user.profile = profile
+			console.log("save profile:", profile)
+		}
+
 		return html`
 			<p>xio-profile-card</p>
 			<xio-profile-card
 				.user=${user}
-				.XXXsaveProfile=${() => {}}
+				.saveProfile=${saveProfile}
 			></xio-profile-card>
 		`
 	}

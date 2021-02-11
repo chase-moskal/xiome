@@ -43,32 +43,15 @@ xio-text-input > span {
 	font-size: 0.7rem;
 }
 
-/* .textfields[data-readonly] xio-text-input::part(textinput) {
-	border: 0;
-	background: transparent;
-} */
-
-/* .tagline::part(textinput) {
-	opacity: 0.7;
-	padding-left: 1em;
-	font-size: 0.8em;
-	font-style: italic;
-}
-
-.tagline.value-present::before,
-.tagline.value-present::after {
-	content: '"';
-} */
-
 .detail {
 	opacity: 0.5;
 	font-size: 0.7em;
+	margin-top: 0.5em;
 	list-style: none;
 }
 
 .buttonbar {
 	margin-top: 1rem;
-	text-align: right;
 }
 
 `

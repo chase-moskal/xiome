@@ -4,17 +4,16 @@ import {select} from "../../../toolbox/select/select.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {deepClone, deepEqual} from "../../../toolbox/deep.js"
 import {mixinStyles} from "../../../framework/component/mixin-styles.js"
-import {Component, html, maybe, property} from "../../../framework/component.js"
+import {Component, html, property} from "../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../framework/loading/render-wrapped-in-loading.js"
 
 import styles from "./xio-profile-card.css.js"
 import {Validator} from "../../../toolbox/darkvalley.js"
 import {profileValidator} from "./validators/profile-validator.js"
-import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
-import { XioTextInput } from "../inputs/xio-text-input.js"
+import {XioTextInput} from "../inputs/xio-text-input.js"
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component {
@@ -31,21 +30,28 @@ export class XioProfileCard extends Component {
 	@property({type: Object})
 	private changedProfile: Profile = undefined
 
+	private get changes(): boolean {
+		return !!this.changedProfile
+	}
+
 	private get readonly() {
 		return !this.saveProfile
 	}
 
 	private problems: string[] = []
 
-	private generateNewProfileFromInputs(): Profile {
-		const {profile} = this.user
-		const clonedProfile = deepClone(profile)
-		const obtain = (name: string) => select<XioTextInput>(
+	private getTextInputField(name: string) {
+		return select<XioTextInput>(
 			`xio-text-input[data-field="${name}"]`,
 			this.shadowRoot,
 		)
-		const nicknameInput = obtain("nickname")
-		const taglineInput = obtain("tagline")
+	}
+
+	private generateNewProfileFromInputs(): Profile {
+		const {profile} = this.user
+		const clonedProfile = deepClone(profile)
+		const nicknameInput = this.getTextInputField("nickname")
+		const taglineInput = this.getTextInputField("tagline")
 		clonedProfile.nickname = nicknameInput.value
 		clonedProfile.tagline = taglineInput.value
 		this.problems = [...nicknameInput.problems, ...taglineInput.problems]
@@ -60,43 +66,45 @@ export class XioProfileCard extends Component {
 		this.changedProfile = changes ? newProfile : undefined
 	})
 
-	private renderTags(user: User) {
-		const {readonly} = this
+	// private renderTags(user: User) {
+	// 	const {readonly} = this
 
-		const staffRole = user.roles.find(role => role.label === "staff")
-		const bannedRole = user.roles.find(role => role.label === "banned")
-		const premiumRole = user.roles.find(role => role.label === "premium")
+	// 	const staffRole = user.roles.find(role => role.label === "staff")
+	// 	const bannedRole = user.roles.find(role => role.label === "banned")
+	// 	const premiumRole = user.roles.find(role => role.label === "premium")
 
-		const renderTag = (tag: string, title?: string) =>
-			html`<li data-tag=${tag} title=${title || ""}>${tag}</li>`
+	// 	const renderTag = (tag: string, title?: string) =>
+	// 		html`<li data-tag=${tag} title=${title || ""}>${tag}</li>`
 
-		let items = []
-		if (bannedRole)
-			items.push(renderTag(
-				"banned",
-				`banned until ${formatDate(bannedRole.timeframeEnd).date}`
-			))
-		if (staffRole)
-			items.push(renderTag("staff"))
-		if (premiumRole)
-			items.push(renderTag(
-				"premium",
-				readonly
-					? undefined
-					: `premium until ${formatDate(premiumRole.timeframeEnd).date}`
-			))
+	// 	let items = []
+	// 	if (bannedRole)
+	// 		items.push(renderTag(
+	// 			"banned",
+	// 			`banned until ${formatDate(bannedRole.timeframeEnd).date}`
+	// 		))
+	// 	if (staffRole)
+	// 		items.push(renderTag("staff"))
+	// 	if (premiumRole)
+	// 		items.push(renderTag(
+	// 			"premium",
+	// 			readonly
+	// 				? undefined
+	// 				: `premium until ${formatDate(premiumRole.timeframeEnd).date}`
+	// 		))
 
-		return items.length
-			? html`<ol class="tags">${items}</ol>`
-			: null
-	}
+	// 	return items.length
+	// 		? html`<ol class="tags">${items}</ol>`
+	// 		: null
+	// }
 
 	private handleSave = async() => {
 		const profile = this.changedProfile
-		this.changedProfile = null
 		this.busy2.actions.setLoadingUntil({
 			errorReason: "failed to save profile",
 			promise: this.saveProfile(profile)
+				.finally(() => {
+					this.changedProfile = null
+				})
 		})
 	}
 
@@ -114,9 +122,10 @@ export class XioProfileCard extends Component {
 				text: string
 				input?: {
 					label: string
+					changes: boolean
 					readonly: boolean
 					validator: Validator<string>
-					ontextchange: (event: ValueChangeEvent<string>) => void
+					onvaluechange: (event: ValueChangeEvent<string>) => void
 				}
 			}) => input
 			? html`
@@ -129,9 +138,11 @@ export class XioProfileCard extends Component {
 						textinput: xiotextinput-textinput,
 						problems: xiotextinput-problems,
 					`}"
+					show-validation-when-empty
 					?readonly=${input.readonly}
+					?hide-validation=${!input.changes}
 					.validator=${input.validator}
-					@valuechange=${input.ontextchange}>
+					@valuechange=${input.onvaluechange}>
 						<span>${input.label}</span>
 				</xio-text-input>
 			`
@@ -150,8 +161,9 @@ export class XioProfileCard extends Component {
 						: {
 							label: "nickname",
 							readonly: false,
+							changes: this.changes,
 							validator: profileValidator.nickname,
-							ontextchange: this.handleChange,
+							onvaluechange: this.handleChange,
 						}
 				})}
 				${renderText({
@@ -162,22 +174,22 @@ export class XioProfileCard extends Component {
 						: {
 							label: "tagline",
 							readonly: false,
+							changes: this.changes,
 							validator: profileValidator.tagline,
-							ontextchange: this.handleChange,
+							onvaluechange: this.handleChange,
 						}
 				})}
 			</div>
-			${this.renderTags(user)}
 			<ul class="detail">
 				<li>user id: <span>${userId}</span></li>
 			</ul>
 			${this.readonly ? null : html`
 				<div class="buttonbar">
-					<button
+					<xio-button
 						?disabled=${!this.changedProfile || this.problems.length > 0}
-						@click=${this.handleSave}>
+						@press=${this.handleSave}>
 							<slot name=save-button>save profile</slot>
-					</button>
+					</xio-button>
 				</div>
 			`}
 		`)
