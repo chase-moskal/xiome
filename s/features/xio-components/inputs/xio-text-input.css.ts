@@ -87,7 +87,7 @@ textarea {
 .problems {
 	display: flex;
 	font: var(--problems-font);
-	padding: var(--pad) calc(2 * var(--pad));
+	padding: 0 calc(2 * var(--pad));
 	flex-direction: column;
 	justify-content: flex-start;
 	flex: 1 1 auto;
@@ -96,7 +96,7 @@ textarea {
 	color: var(--problems-color, var(--invalid-color));
 }
 
-.problems > li + li {
+.problems > li {
 	margin-top: 0.2em;
 }
 

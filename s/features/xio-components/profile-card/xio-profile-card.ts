@@ -51,6 +51,7 @@ export class XioProfileCard extends Component {
 		const {profile} = this.user
 		const clonedProfile = deepClone(profile)
 		const nicknameInput = this.getTextInputField("nickname")
+		if (!nicknameInput) return clonedProfile
 		const taglineInput = this.getTextInputField("tagline")
 		clonedProfile.nickname = nicknameInput.value
 		clonedProfile.tagline = taglineInput.value

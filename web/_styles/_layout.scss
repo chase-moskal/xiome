@@ -24,6 +24,9 @@ html {
 		--menu-margin: 1em 0 0 0;
 		--xio-button-hover-color: #fff;
 		--xio-button-hover-background: #333;
+		xiome-login-panel::part(buttonbar) {
+			text-align: right;
+		}
 	}
 }
 

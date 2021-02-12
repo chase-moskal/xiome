@@ -55,9 +55,12 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 			</slot>
 			${this["show-logout"]
 				? html`
-					<xio-button @press=${this.logout}>
-						Logout
-					</xio-button>`
+					<div part=buttonbar>
+						<xio-button class=logout-button @press=${this.logout}>
+							Logout
+						</xio-button>
+					</div>
+				`
 				: null}
 		`
 	}

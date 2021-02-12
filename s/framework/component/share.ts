@@ -1,12 +1,13 @@
 
 import {ConstructorFor} from "../../types.js"
+import {Component, WiredComponent} from "../component.js"
 
 export type Share = any
 
-export const share2 = <S extends {}, C extends ConstructorFor<{}>>(
+export const share2 = <S extends {}, C extends ConstructorFor<WiredComponent<S>>>(
 		Constructor: C,
 		object: S
-	) => class extends Constructor {
+	) => <ConstructorFor<WiredComponent<S>>>class extends (<any>Constructor) {
 
 	get share() {
 		return object
