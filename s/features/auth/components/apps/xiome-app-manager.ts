@@ -23,7 +23,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 
 	private readonly appRegistrationForm = makeAppForm({
 		clearOnSubmit: true,
-		submitButtonText: "register new app",
+		submitButtonText: "create community",
 		requestUpdate: () => this.requestUpdate(),
 		query: selector => (
 			this.shadowRoot
