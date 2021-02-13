@@ -4,7 +4,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {isPlatform} from "../tools/is-platform.js"
 import {throwProblems} from "./apps/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
-import {fetchAppStats} from "./apps/fetch-app-stats.js"
+import {concurrent} from "../../../toolbox/concurrent.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
 import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
@@ -17,7 +17,7 @@ export const appTopic = ({
 		config,
 	}: AuthOptions) => asTopic<PlatformUserAuth>()({
 
-	async listApps({tables}, {ownerUserId}: {
+	async listApps({tables, statsHub}, {ownerUserId}: {
 			ownerUserId: string
 		}): Promise<AppDisplay[]> {
 		const ownerships = await tables.appOwnership.read(find({userId: ownerUserId}))
@@ -33,7 +33,11 @@ export const appTopic = ({
 			home: row.home,
 			origins: originsFromDatabase(row.origins),
 			platform: isPlatform(row.appId, config),
-			stats: await fetchAppStats(row.appId),
+			stats: await concurrent({
+				users: statsHub.countUsers(row.appId),
+				usersActiveDaily: statsHub.countUsersActiveDaily(row.appId),
+				usersActiveMonthly: statsHub.countUsersActiveMonthly(row.appId),
+			}),
 		})))
 	},
 

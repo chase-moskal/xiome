@@ -4,11 +4,12 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
-import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../auth-types.js"
+import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, StatsHub} from "../auth-types.js"
 
-export function prepareAuthPolicies({verifyToken, getAuthTables}: {
+export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		verifyToken: VerifyToken
 		getAuthTables: GetTables<AuthTables>
+		getStatsHub: (userId: string) => StatsHub
 	}) {
 
 	const green: Policy<GreenMeta, GreenAuth> = {
@@ -30,7 +31,7 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 		processAuth: async({accessToken, ...anonMeta}, request) => {
 			const anonAuth = await anon.processAuth(anonMeta, request)
 			const access = await verifyToken<AccessPayload>(accessToken)
-			return {access, ...anonAuth}
+			return {...anonAuth, access}
 		},
 	}
 
@@ -39,7 +40,8 @@ export function prepareAuthPolicies({verifyToken, getAuthTables}: {
 			const userAuth = await user.processAuth(userMeta, request)
 			if (!userAuth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
-			return userAuth
+			const statsHub = getStatsHub(userAuth.access.user.userId)
+			return {...userAuth, statsHub}
 		},
 	}
 

@@ -1,6 +1,6 @@
 
 export interface AppStats {
 	users: number
-	activeMonthly: number
-	activeDaily: number
+	usersActiveDaily: number
+	usersActiveMonthly: number
 }

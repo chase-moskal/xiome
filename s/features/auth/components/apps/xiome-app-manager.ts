@@ -92,11 +92,11 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 							<span>users</span>
 						</div>
 						<div data-stat=monthly-active>
-							<span>${app.stats.activeMonthly.toLocaleString()}</span>
+							<span>${app.stats.usersActiveMonthly.toLocaleString()}</span>
 							<span>monthly active</span>
 						</div>
 						<div data-stat=active-last-day>
-							<span>${app.stats.activeDaily.toLocaleString()}</span>
+							<span>${app.stats.usersActiveDaily.toLocaleString()}</span>
 							<span>daily active</span>
 						</div>
 					</div>

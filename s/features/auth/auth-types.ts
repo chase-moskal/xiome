@@ -81,7 +81,15 @@ export interface UserAuth extends AnonAuth {
 
 export interface PlatformUserMeta extends UserMeta {}
 
-export interface PlatformUserAuth extends UserAuth {}
+export interface PlatformUserAuth extends UserAuth {
+	statsHub: StatsHub
+}
+
+export interface StatsHub {
+	countUsers: (appId: string) => Promise<number>
+	countUsersActiveDaily: (appId: string) => Promise<number>
+	countUsersActiveMonthly: (appId: string) => Promise<number>
+}
 
 export interface HardPermissionsBlueprint {
 	inherit?: HardPermissions

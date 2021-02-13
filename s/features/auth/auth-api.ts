@@ -3,6 +3,7 @@ import {apiContext} from "renraku/x/api/api-context.js"
 
 import {appTopic} from "./topics/app-topic.js"
 import {userTopic} from "./topics/user-topic.js"
+import {bakeStatsHub} from "./bake-stats-hub.js"
 import {loginTopic} from "./topics/login-topic.js"
 import {personalTopic} from "./topics/personal-topic.js"
 import {appTokenTopic} from "./topics/app-token-topic.js"
@@ -18,10 +19,8 @@ export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
 
 	const policies = prepareAuthPolicies({
 		verifyToken,
-		getAuthTables: bakeAuthTables({
-			config,
-			authTables,
-		}),
+		getStatsHub: bakeStatsHub({authTables}),
+		getAuthTables: bakeAuthTables({config, authTables}),
 	})
 
 	return {
