@@ -77,22 +77,53 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		const appForm = this.appListingForms.getAppForm(app)
 		return html`
 			<div class=app data-app-id=${app.appId}>
-				<div class=app-editor>
-					${appForm.render()}
+
+				<div class=app-header part=app-header>
+					<div class=title>
+						<h3>
+							<a part=link target=_blank href="${app.home}">
+								${app.label}
+							</a>
+						</h3>
+					</div>
+					<div class=stats>
+						<div data-stat=users>
+							<span>${(9999).toLocaleString()}</span>
+							<span>users</span>
+						</div>
+						<div data-stat=monthly-active>
+							<span>${(9999).toLocaleString()}</span>
+							<span>monthly active</span>
+						</div>
+						<div data-stat=active-last-day>
+							<span>${(9999).toLocaleString()}</span>
+							<span>daily active</span>
+						</div>
+					</div>
 				</div>
 
-				<div class=app-code>
-					<p>install html</p>
-					<code class=htmlcode>
-						${renderXiomeConfig(app.appId)}
-					</code>
+				<div class=twoside>
+					<div class=app-editor>
+						<h4>edit community details</h4>
+						${appForm.render()}
+					</div>
+					<div class="app-options">
+						<div class=app-code>
+							<h4>install with html</h4>
+							<code class=htmlcode>
+								${renderXiomeConfig(app.appId)}
+							</code>
+						</div>
+					</div>
 				</div>
 
-				<xio-button
-					class=delete-app-button
-					@press=${() => this.deleteApp(app.appId)}>
-						delete community
-				</xio-button>
+				<div class=finalbox>
+					<xio-button
+						class=delete-app-button
+						@press=${() => this.deleteApp(app.appId)}>
+							delete community
+					</xio-button>
+				</div>
 			</div>
 		`
 	}

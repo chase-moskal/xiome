@@ -2,6 +2,118 @@
 import {css} from "../../../../framework/component.js"
 export default css`
 
+.app-list {
+	margin-bottom: 2em;
+}
+
+.app {
+	margin-top: 0.5em;
+	border: 1px solid #fff1;
+	border-radius: 0.2em;
+	overflow: hidden;
+}
+
+.app > * + * {
+	margin-top: 0.3em;
+}
+
+.app + .app {
+	margin-top: 1.5em;
+}
+
+.app > * {
+	padding: 0.4em 1rem;
+}
+
+.app-header * {
+	Zoutline: 1px solid #ff02;
+}
+
+.app-header {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	padding: 0;
+	background: #0001;
+}
+
+.app-header .title {
+	max-width: 100%;
+	flex: 1 0 auto;
+	padding: 0.3em 1em;
+}
+
+.app-header .title h3 {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.app-header .title h3::before {
+	content: "🌐";
+	color: white;
+}
+
+.app-header .stats {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding: 0.2em;
+}
+
+.app-header .stats [data-stat] {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	max-width: 6em;
+	text-align: center;
+}
+
+.app-header .stats [data-stat] > span {
+	padding: 0.1em 0.6em;
+}
+
+.app-header .stats [data-stat] > span:nth-child(1) {
+	justify-self: flex-start;
+}
+
+.app-header .stats [data-stat] > span:nth-child(2) {
+	opacity: 0.3;
+	font-size: 0.6em;
+}
+
+.twoside {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.twoside > div {
+	flex: 1 0 50%;
+	padding-bottom: 1em;
+}
+
+.twoside > div:nth-child(1) {
+	padding-right: 1rem;
+}
+
+.app-editor {
+	min-width: 15em;
+}
+
+.app-form > * + * {
+	margin-top: 0.3em;
+}
+
+.app-form xio-button {
+	margin-top: 0.6em;
+}
+
+.app-options > * + * {
+	margin-top: 1em;
+}
+
 code {
 	display: inline-block;
 	font-size: 0.8em;
@@ -30,43 +142,10 @@ code.id {
 	margin-left: 1em;
 }
 
-.app-list {
-	margin-bottom: 2em;
-}
-
-.app {
-	padding: 0.4em 1rem;
-	margin: var(--app-margin, 0);
-	margin-top: 0.5em;
-}
-
-.app > * + * {
-	margin-top: 0.3em;
-}
-
-.app + .app {
-	margin-top: 1.5em;
-}
-
-.app-code {
-	margin: 1em 0 !important;
-}
-
 .app-code code {
+	display: block;
 	padding: 1em 2em;
-}
-
-.app-form > * + * {
-	margin-top: 0.3em;
-}
-
-.app-form xio-button {
-	margin-top: 0.6em;
-}
-
-.app {
-	border: 1px solid #fff1;
-	border-radius: 0.2em;
+	margin-top: 1em;
 }
 
 .delete-app-button {

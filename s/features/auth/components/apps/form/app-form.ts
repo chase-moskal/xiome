@@ -101,9 +101,10 @@ export function makeAppForm({
 			problems: appform-xiotextinput-problems,
 		`
 		const renderTextInput = <xValue = string>({
-				label, dataForm, initialText, showValidationWhenEmpty,
+				textarea, label, dataForm, initialText, showValidationWhenEmpty,
 				parser, validator,
 			}: {
+				textarea: boolean
 				label: string
 				dataForm: string
 				initialText: string
@@ -112,6 +113,7 @@ export function makeAppForm({
 				parser: TextInputParser<xValue>
 			}) => html`
 			<xio-text-input
+				?textarea=${textarea}
 				part=appform-xiotextinput
 				exportparts=${exportPartsTextInput}
 				data-form="${dataForm}"
@@ -132,6 +134,7 @@ export function makeAppForm({
 				<slot name=create-app-heading></slot>
 
 				${renderTextInput({
+					textarea: false,
 					dataForm: "label",
 					label: "community label",
 					initialText: initialValues.label,
@@ -141,6 +144,7 @@ export function makeAppForm({
 				})}
 
 				${renderTextInput({
+					textarea: false,
 					dataForm: "home",
 					label: "website homepage",
 					initialText: initialValues.home,
@@ -150,6 +154,7 @@ export function makeAppForm({
 				})}
 
 				${renderTextInput<string[]>({
+					textarea: true,
 					dataForm: "additional-origins",
 					label: "additional origins (optional)",
 					initialText: initialValues.additionalOrigins.join("\n"),
