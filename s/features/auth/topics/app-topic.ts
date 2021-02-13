@@ -4,6 +4,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {isPlatform} from "../tools/is-platform.js"
 import {throwProblems} from "./apps/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
+import {fetchAppStats} from "./apps/fetch-app-stats.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
 import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
@@ -32,6 +33,7 @@ export const appTopic = ({
 			home: row.home,
 			origins: originsFromDatabase(row.origins),
 			platform: isPlatform(row.appId, config),
+			stats: await fetchAppStats(row.appId),
 		})))
 	},
 
