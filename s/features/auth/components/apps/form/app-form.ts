@@ -66,7 +66,8 @@ export function makeAppForm({
 
 	function handleFormChange() {
 		state.problems = []
-		refreshAndValidateForm()
+		if (!state.formDisabled)
+			refreshAndValidateForm()
 	}
 
 	async function handleSubmitClick() {
