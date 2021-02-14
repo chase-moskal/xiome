@@ -9,8 +9,8 @@
   - [x] improved xio-text-input
   - [x] app ui, can update homepage
   - [x] refactor app creation forms
-  - [ ] profile display and editing
-  - [ ] app basic stats
+  - [x] profile display and editing
+  - [x] app basic stats
   - [ ] app admin management
   - [ ] app admin can ban users
 - [ ] port all metalshop features

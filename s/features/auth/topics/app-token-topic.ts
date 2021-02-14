@@ -2,10 +2,10 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
+import {isPlatform} from "../tools/is-platform.js"
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
-import {AuthOptions, AppToken, App, GreenAuth} from "../auth-types.js"
-import { isPlatform } from "../tools/is-platform.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
+import {AuthOptions, AppToken, App, GreenAuth} from "../auth-types.js"
 
 export const appTokenTopic = ({
 		config,
