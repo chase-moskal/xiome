@@ -1,9 +1,11 @@
 
 import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 
-import {makeAuthApi} from "./auth-api.js"
 import {Rando} from "../../toolbox/get-rando.js"
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
+
+import {makeAuthApi} from "./auth-api.js"
+import {namespaceKeyAppId} from "./tables/namespace-key-app-id.js"
 
 export * from "redcrypto/dist/types.js"
 
@@ -86,9 +88,9 @@ export interface PlatformUserAuth extends UserAuth {
 }
 
 export interface StatsHub {
-	countUsers: (appId: string) => Promise<number>
-	countUsersActiveDaily: (appId: string) => Promise<number>
-	countUsersActiveMonthly: (appId: string) => Promise<number>
+	countUsers(appId: string): Promise<number>
+	countUsersActiveDaily(appId: string): Promise<number>
+	countUsersActiveMonthly(appId: string): Promise<number>
 }
 
 export interface HardPermissionsBlueprint {
@@ -298,6 +300,7 @@ export type AuthTablesNamespaced = PermissionsTables & {
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
 	profile: DbbyTable<ProfileRow>
+	latestLogin: DbbyTable<LatestLoginRow>
 }
 
 export type AuthTablesGlobal = {
@@ -306,6 +309,9 @@ export type AuthTablesGlobal = {
 }
 
 export type AuthTables = AuthTablesNamespaced & AuthTablesGlobal
+
+export type ExposeTableNamespaceAppId<Row extends DbbyRow> =
+	DbbyTable<Row & {[namespaceKeyAppId]: string}>
 
 export type AppRow = {
 	appId: string
@@ -385,4 +391,12 @@ export type UserHasRoleRow = {
 export type RoleHasPrivilegeRow = {
 	roleId: string
 	privilegeId: string
+}
+
+// statistical
+//
+
+export type LatestLoginRow = {
+	time: number
+	userId: string
 }

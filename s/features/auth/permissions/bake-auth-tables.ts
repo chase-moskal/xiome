@@ -7,7 +7,7 @@ import {originsToDatabase} from "../topics/origins/origins-to-database.js"
 import {AuthTables, PlatformConfig, PermissionsTables, AppRow, AuthTablesGlobal} from "../auth-types.js"
 import {transformHardPermissionsToMemoryTables} from "./tables/transform-hard-permissions-to-memory-tables.js"
 
-const namespaceKeyAppId = "_appId"
+import {namespaceKeyAppId} from "../tables/namespace-key-app-id.js"
 
 export function bakeAuthTables({config, authTables}: {
 			config: PlatformConfig

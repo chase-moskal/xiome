@@ -44,6 +44,7 @@ export async function mockPrerequisites({
 			app: true,
 			appToken: true,
 			appOwnership: true,
+			latestLogin: true,
 		}),
 	}
 

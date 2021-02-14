@@ -36,11 +36,11 @@ export const loginTopic = ({
 	},
 
 	async authenticateViaLoginToken(
-			{tables},
+			{app, tables},
 			{loginToken}: {loginToken: string},
 		) {
 		const {userId} = await verifyToken<LoginPayload>(loginToken)
-		return signAuthTokens({
+		const authTokens = await signAuthTokens({
 			userId,
 			tables,
 			scope: {core: true},
@@ -48,10 +48,17 @@ export const loginTopic = ({
 			signToken,
 			generateNickname,
 		})
+
+		await tables.latestLogin.update({
+			...find({userId}),
+			upsert: {userId, time: Date.now()},
+		})
+
+		return authTokens
 	},
 
 	async authorize(
-			{tables},
+			{app, tables},
 			{scope, refreshToken}: {
 				scope: Scope
 				refreshToken: RefreshToken
@@ -63,6 +70,12 @@ export const loginTopic = ({
 			tables,
 			generateNickname,
 		})
+
+		await tables.latestLogin.update({
+			...find({userId}),
+			upsert: {userId, time: Date.now()},
+		})
+
 		return signToken<AccessPayload>({
 			payload: {user, scope, permit},
 			lifespan: config.tokens.lifespans.access,
