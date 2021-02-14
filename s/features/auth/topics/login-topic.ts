@@ -36,7 +36,7 @@ export const loginTopic = ({
 	},
 
 	async authenticateViaLoginToken(
-			{app, tables},
+			{tables},
 			{loginToken}: {loginToken: string},
 		) {
 		const {userId} = await verifyToken<LoginPayload>(loginToken)
@@ -58,7 +58,7 @@ export const loginTopic = ({
 	},
 
 	async authorize(
-			{app, tables},
+			{tables},
 			{scope, refreshToken}: {
 				scope: Scope
 				refreshToken: RefreshToken
