@@ -87,6 +87,11 @@ export interface PlatformUserAuth extends UserAuth {
 	statsHub: StatsHub
 }
 
+export interface UnconstrainedPlatformUserMeta extends PlatformUserMeta {}
+export interface UnconstrainedPlatformUserAuth extends PlatformUserAuth {
+	getAuthTables: GetTables<AuthTables>
+}
+
 export interface StatsHub {
 	countUsers(appId: string): Promise<number>
 	countUsersActiveDaily(appId: string): Promise<number>
@@ -383,8 +388,8 @@ export type PrivilegeRow = {
 export type UserHasRoleRow = {
 	userId: string
 	roleId: string
-	timeframeStart: number
-	timeframeEnd: number
+	timeframeStart: undefined | number
+	timeframeEnd: undefined | number
 	public: boolean
 }
 

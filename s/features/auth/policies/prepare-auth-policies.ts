@@ -5,6 +5,7 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
 import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, StatsHub} from "../auth-types.js"
+import { UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta } from "../../../types.js"
 
 export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		verifyToken: VerifyToken
@@ -45,5 +46,15 @@ export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		},
 	}
 
-	return {green, anon, user, platformUser}
+	const unconstrainedPlatformUser: Policy<
+			UnconstrainedPlatformUserMeta,
+			UnconstrainedPlatformUserAuth
+		> = {
+		processAuth: async(userMeta, request) => {
+			const platformAuth = await platformUser.processAuth(userMeta, request)
+			return {...platformAuth, getAuthTables}
+		},
+	}
+
+	return {green, anon, user, platformUser, unconstrainedPlatformUser}
 }
