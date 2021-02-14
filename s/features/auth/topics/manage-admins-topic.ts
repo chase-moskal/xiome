@@ -1,10 +1,8 @@
 
-import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {AuthOptions} from "../auth-types.js"
-import {find} from "../../../toolbox/dbby/dbby-mongo.js"
-import {findAll} from "../../../toolbox/dbby/dbby-helpers.js"
+import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {UnconstrainedPlatformUserAuth} from "../../../types.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {adminRoleId} from "../permissions/standard/build/ids/hard-role-ids.js"
@@ -24,7 +22,7 @@ export const appTopic = ({
 			roleId: adminRoleId
 		}))
 		const adminsViaEmail = await tablesForApp.accountViaEmail.read(
-			findAll(...usersWithAdminRole.map(({userId}) => ({userId})))
+			find(...usersWithAdminRole.map(({userId}) => ({userId})))
 		)
 		return adminsViaEmail.map(({userId, email}) => ({
 			userId,

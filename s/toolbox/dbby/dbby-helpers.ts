@@ -15,10 +15,6 @@ export function or<
 	return ["or", ...conditions]
 }
 
-export function find<Row extends DbbyRow>(row: Partial<Row>) {
-	return {conditions: and({equal: row})}
-}
-
-export function findAll<Row extends DbbyRow>(...rows: Partial<Row>[]) {
+export function find<Row extends DbbyRow>(...rows: Partial<Row>[]) {
 	return {conditions: or(...rows.map(row => ({equal: row})))}
 }
