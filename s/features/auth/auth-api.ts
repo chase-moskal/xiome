@@ -3,11 +3,11 @@ import {apiContext} from "renraku/x/api/api-context.js"
 
 import {appTopic} from "./topics/app-topic.js"
 import {userTopic} from "./topics/user-topic.js"
-import {bakeStatsHub} from "./bake-stats-hub.js"
 import {loginTopic} from "./topics/login-topic.js"
+import {bakeStatsHub} from "./tables/bake-stats-hub.js"
 import {personalTopic} from "./topics/personal-topic.js"
 import {appTokenTopic} from "./topics/app-token-topic.js"
-import {bakeAuthTables} from "./permissions/bake-auth-tables.js"
+import {bakeAuthTables} from "./tables/bake-auth-tables.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
 import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, AuthOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
 

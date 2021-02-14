@@ -5,9 +5,9 @@ import {dbbyHardcoded} from "../../../toolbox/dbby/dbby-hardcoded.js"
 import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
 import {originsToDatabase} from "../topics/origins/origins-to-database.js"
 import {AuthTables, PlatformConfig, PermissionsTables, AppRow, AuthTablesGlobal} from "../auth-types.js"
-import {transformHardPermissionsToMemoryTables} from "./tables/transform-hard-permissions-to-memory-tables.js"
+import {transformHardPermissionsToMemoryTables} from "../permissions/tables/transform-hard-permissions-to-memory-tables.js"
 
-import {namespaceKeyAppId} from "../tables/namespace-key-app-id.js"
+import {namespaceKeyAppId} from "./namespace-key-app-id.js"
 
 export function bakeAuthTables({config, authTables}: {
 			config: PlatformConfig
