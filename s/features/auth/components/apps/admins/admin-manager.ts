@@ -36,23 +36,25 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 	}
 
 	function renderAdminAssigner() {
+		const exportPartsTextInput = `
+			textinput: xiotextinput-textinput,
+			label: xiotextinput-label,
+			problems: xiotextinput-problems,
+		`
 		return html`
 			<div class=adminassigner>
-				<div>
-					<xio-text-input
-						part=textinput
-						.validator=${emailValidator}
-						@valuechange=${handleEmailChange}>
-							email
-					</xio-text-input>
-				</div>
-				<div>
-					<xio-button
-						?disabled=${!state.assignerDraft.email}
-						@press=${handleAssignButtonPress}>
-							grant
-					</xio-button>
-				</div>
+				<xio-text-input
+					part=adminmanager-xiotextinput
+					exportparts="${exportPartsTextInput}"
+					.validator=${emailValidator}
+					@valuechange=${handleEmailChange}>
+						email
+				</xio-text-input>
+				<xio-button
+					?disabled=${!state.assignerDraft.email}
+					@press=${handleAssignButtonPress}>
+						grant
+				</xio-button>
 			</div>
 		`
 	}

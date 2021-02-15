@@ -17,30 +17,26 @@ export function adminManagerControls({
 	}) {
 
 	const {appId} = app
+	const load = (promise: Promise<any> = Promise.resolve(undefined)) => (
+		actions.adminsLoadingActions.setLoadingUntil({
+			errorReason: "error in admin management",
+			promise: promise
+				.then(() => manageAdminsService.listAdmins({appId})),
+		})
+	)
 
 	async function listAdmins() {
-		await actions.adminsLoadingActions.setLoadingUntil({
-			errorReason: "failed loading admins",
-			promise: manageAdminsService.listAdmins({appId}),
-		})
+		await load()
 	}
 
 	async function assignAdmin() {
 		const {email} = state.assignerDraft
 		actions.setAssignerDraft({email: undefined})
-		await actions.adminsLoadingActions.setLoadingUntil({
-			errorReason: "failed assigned admin",
-			promise: manageAdminsService.assignAdmin({appId, email})
-				.then(() => manageAdminsService.listAdmins({appId})),
-		})
+		await load(manageAdminsService.assignAdmin({appId, email}))
 	}
 
 	async function revokeAdmin(userId: string) {
-		await actions.adminsLoadingActions.setLoadingUntil({
-			errorReason: "failed to revoke admin",
-			promise: manageAdminsService.revokeAdmin({appId, userId})
-				.then(() => manageAdminsService.listAdmins({appId})),
-		})
+		await load(manageAdminsService.revokeAdmin({appId, userId}))
 	}
 
 	return {listAdmins, assignAdmin, revokeAdmin}

@@ -20,15 +20,15 @@ html {
 
 html {
 	xiome-app-manager {
-		&::part(appform-xiotextinput-problems) {
+		&::part(xiotextinput-problems) {
 			font: 0.8em "Play", sans-serif;
 		}
-		&::part(appform-xiotextinput-textinput) {
+		&::part(xiotextinput-textinput) {
 			font-family: "Varela Round", sans-serif;
 			background: #00000008;
 			border: 1px solid #fff1;
 		}
-		&::part(appform-xiotextinput-label) {
+		&::part(xiotextinput-label) {
 			color: #fff6;
 			font-size: 0.8em;
 			font-family: "Play", sans-serif;

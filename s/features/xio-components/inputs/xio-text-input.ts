@@ -103,13 +103,13 @@ export class XioTextInput<xParsedValue = string> extends Component {
 			: null
 		return html`
 			<div class=container ?data-valid=${valid}>
-				<label for="textinput" part=label><slot></slot></label>
+				<label for=textinput part=label><slot></slot></label>
 				<div class=flexy>
-					<div class=inputbox>
+					<div class=inputbox part=inputbox>
 						${showValidation ? icon : null}
 						${textarea ? html`
 							<textarea
-								id="textinput"
+								id=textinput
 								part=textinput
 								.value="${draft}"
 								?disabled=${disabled}
@@ -121,7 +121,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 							></textarea>
 						` : html`
 							<input
-								id="textinput"
+								id=textinput
 								type=text
 								part=textinput
 								.value="${draft}"

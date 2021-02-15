@@ -1,5 +1,6 @@
 
 import {css} from "../../../../framework/component.js"
+import adminManagerCss from "./admins/admin-manager.css.js"
 export default css`
 
 .app-list {
@@ -23,10 +24,6 @@ export default css`
 
 .app > * {
 	padding: 0.4em 1rem;
-}
-
-.app-header * {
-	Zoutline: 1px solid #ff02;
 }
 
 .app-header {
@@ -154,5 +151,7 @@ code.id {
 	color: red;
 	--xio-button-hover-background: red;
 }
+
+${adminManagerCss}
 
 `

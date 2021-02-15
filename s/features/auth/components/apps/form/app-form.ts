@@ -97,9 +97,9 @@ export function makeAppForm({
 			|| formDisabled
 			|| problems.length > 0
 		const exportPartsTextInput = `
-			textinput: appform-xiotextinput-textinput,
-			label: appform-xiotextinput-label,
-			problems: appform-xiotextinput-problems,
+			textinput: xiotextinput-textinput,
+			label: xiotextinput-label,
+			problems: xiotextinput-problems,
 		`
 		const renderTextInput = <xValue = string>({
 				textarea, label, dataForm, initialText, showValidationWhenEmpty,
@@ -116,7 +116,7 @@ export function makeAppForm({
 			<xio-text-input
 				?textarea=${textarea}
 				part=appform-xiotextinput
-				exportparts=${exportPartsTextInput}
+				exportparts="${exportPartsTextInput}"
 				data-form="${dataForm}"
 				initial="${initialText}"
 				?disabled=${formDisabled}
