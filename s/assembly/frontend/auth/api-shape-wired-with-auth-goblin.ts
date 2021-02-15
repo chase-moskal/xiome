@@ -47,6 +47,17 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				updateApp: true,
 				registerApp: true,
 			},
+			manageAdminsService: {
+				[_augment]: {
+					getMeta: async() => ({
+						appToken: await authGoblin.getAppToken(),
+						accessToken: await authGoblin.getAccessToken(),
+					}),
+				},
+				listAdmins: true,
+				assignAdmin: true,
+				revokeAdmin: true,
+			},
 			personalService: {
 				[_augment]: {
 					getMeta: async() => ({

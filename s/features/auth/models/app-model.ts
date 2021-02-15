@@ -6,7 +6,11 @@ import {AppDraft} from "../auth-types.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
 
-export function makeAppModel({appService, getAccess}: AppModelOptions) {
+export function makeAppModel({
+		appService,
+		manageAdminsService,
+		getAccess,
+	}: AppModelOptions) {
 
 	const state = mobxify({
 		active: false,
@@ -51,6 +55,7 @@ export function makeAppModel({appService, getAccess}: AppModelOptions) {
 	}
 
 	return {
+		manageAdminsService,
 		get appListLoadingView() {
 			return state.appListLoading.view
 		},

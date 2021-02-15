@@ -2,13 +2,15 @@
 import styles from "./xiome-app-manager.css.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
+import {multistate} from "../../../../toolbox/multistate.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
 import {makeAppForm} from "./form/app-form.js"
-import {multipleAppForms} from "./form/multiple-app-forms.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
 import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
+
+import {makeAdminManager} from "./admins/admin-manager.js"
 
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
@@ -21,7 +23,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		this.share.appModel.loadAppList()
 	}
 
-	private readonly appRegistrationForm = makeAppForm({
+	private appRegistrationForm = makeAppForm({
 		clearOnSubmit: true,
 		submitButtonText: "create community",
 		requestUpdate: () => this.requestUpdate(),
@@ -36,23 +38,45 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		},
 	})
 
-	private readonly appListingForms = multipleAppForms({
-		configureNewAppForm: (app: AppDisplay) => makeAppForm({
-			clearOnSubmit: false,
-			submitButtonText: "save changes",
-			initialValues: appDisplayToFormDraft(app),
-			requestUpdate: () => this.requestUpdate(),
-			query: selector => (
-				this.shadowRoot
-					.querySelector(`.app[data-app-id="${app.appId}"] .app-editor`)
-					.querySelector(selector)
-			),
-			submit: async formDraft => {
-				const appDraft = formDraftToAppDraft(formDraft)
-				await this.share.appModel.updateApp(app.appId, appDraft)
-			},
-		})
-	})
+	private getAppForm = (multistate<
+			AppDisplay,
+			ReturnType<typeof makeAppForm>
+		>(
+			app => makeAppForm({
+				clearOnSubmit: false,
+				submitButtonText: "save changes",
+				initialValues: appDisplayToFormDraft(app),
+				requestUpdate: () => this.requestUpdate(),
+				query: selector => (
+					this.shadowRoot
+						.querySelector(`.app[data-app-id="${app.appId}"] .app-editor`)
+						.querySelector(selector)
+				),
+				submit: async formDraft => {
+					const appDraft = formDraftToAppDraft(formDraft)
+					await this.share.appModel.updateApp(app.appId, appDraft)
+				},
+			})
+		)
+	)
+
+	private getAdminManager = (multistate<
+			AppDisplay,
+			ReturnType<typeof makeAdminManager>
+		>(
+			app => {
+				const adminManager = makeAdminManager({
+					app,
+					manageAdminsService: this.share.appModel.manageAdminsService,
+					query: selector => this.shadowRoot
+						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
+						.querySelector(selector)
+				})
+				adminManager.controls.listAdmins()
+				return adminManager
+			}
+		)
+	)
 
 	private deleteApp = async(appId: string) => {
 		await this.share.appModel.deleteApp(appId)
@@ -74,7 +98,8 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 	}
 
 	private renderApp(app: AppDisplay) {
-		const appForm = this.appListingForms.getAppForm(app)
+		const appForm = this.getAppForm(app)
+		const adminManager = this.getAdminManager(app)
 		return html`
 			<div class=app data-app-id=${app.appId}>
 
@@ -107,12 +132,15 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 						<h4>edit community details</h4>
 						${appForm.render()}
 					</div>
-					<div class="app-options">
+					<div class=app-options>
 						<div class=app-code>
 							<h4>install with html</h4>
 							<code class=htmlcode>
 								${renderXiomeConfig(app.appId)}
 							</code>
+						</div>
+						<div class=adminmanager>
+							${adminManager.render()}
 						</div>
 					</div>
 				</div>

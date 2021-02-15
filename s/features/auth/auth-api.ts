@@ -8,8 +8,9 @@ import {bakeStatsHub} from "./tables/bake-stats-hub.js"
 import {personalTopic} from "./topics/personal-topic.js"
 import {appTokenTopic} from "./topics/app-token-topic.js"
 import {bakeAuthTables} from "./tables/bake-auth-tables.js"
+import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
-import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, AuthOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
+import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
 
 export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
 		authTables: AuthTables
@@ -37,6 +38,14 @@ export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
 		appService: apiContext<PlatformUserMeta, PlatformUserAuth>()({
 			policy: policies.platformUser,
 			expose: appTopic(options),
+		}),
+
+		manageAdminsService: apiContext<
+				UnconstrainedPlatformUserMeta,
+				UnconstrainedPlatformUserAuth
+			>()({
+			policy: policies.unconstrainedPlatformUser,
+			expose: manageAdminsTopic(options),
 		}),
 	
 		personalService: apiContext<UserMeta, UserAuth>()({

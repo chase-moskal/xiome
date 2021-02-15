@@ -2,13 +2,12 @@
 import styles from "./xiome-login-panel.css.js"
 import {AccessPayload} from "../../../../types.js"
 import {AuthModel} from "../../types/auth-model.js"
+import {email} from "../../../../toolbox/darkvalley.js"
 import {loading} from "../../../../framework/loading/loading.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {whenLoadingIsDone} from "../../../../framework/loading/when-loading-is-done.js"
-import {emailValidator} from "../../../xio-components/inputs/validators/email-validator.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
-import {WiredComponent, html, mixinStyles, property, query, maybe} from "../../../../framework/component.js"
-import {email} from "../../../../toolbox/darkvalley.js"
+import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {

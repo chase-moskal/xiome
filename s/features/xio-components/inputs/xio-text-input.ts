@@ -55,6 +55,15 @@ export class XioTextInput<xParsedValue = string> extends Component {
 			: undefined
 	}
 
+	get text() {
+		return this.draft
+	}
+
+	set text(value: string) {
+		this.input.value = value
+		this.updateFromRawInput()
+	}
+
 	setText(value: string) {
 		this.input.value = value
 		this.updateFromRawInput()
