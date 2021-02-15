@@ -34,7 +34,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private resetSentLoading() {
 		this.sentLoading.actions.setNone()
-		if (this.textInput) this.textInput.setText("")
+		if (this.textInput) this.textInput.text = ""
 	}
 
 	private logout() {

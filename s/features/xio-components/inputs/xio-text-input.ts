@@ -64,11 +64,6 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		this.updateFromRawInput()
 	}
 
-	setText(value: string) {
-		this.input.value = value
-		this.updateFromRawInput()
-	}
-
 	@query("#textinput")
 	private input: HTMLInputElement | HTMLTextAreaElement
 

@@ -48,9 +48,9 @@ export function makeAppForm({
 
 	function setFormValues(draft: AppFormDraft) {
 		const elements = getFormElements()
-		elements.home.setText(draft.home)
-		elements.label.setText(draft.label)
-		elements.additionalOrigins.setText(draft.additionalOrigins.join("\n"))
+		elements.home.text = draft.home
+		elements.label.text = draft.label
+		elements.additionalOrigins.text = draft.additionalOrigins.join("\n")
 	}
 
 	const refreshAndValidateForm = () => {
