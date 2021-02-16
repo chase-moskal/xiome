@@ -1,7 +1,7 @@
 
 import {Suite, expect} from "cynic"
 
-import {dbbyMemory} from "./dbby-memory.js"
+import {dbbyX} from "./dbby-x.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
 import {dbbyHardcoded} from "./dbby-hardcoded.js"
@@ -14,7 +14,7 @@ type DemoUser = {
 }
 
 async function setupThreeUserDemo() {
-	const dbby = dbbyMemory<DemoUser>()
+	const dbby = await dbbyX<DemoUser>()
 	await Promise.all([
 		dbby.create({userId: "u123", balance: 100, location: "america"}),
 		dbby.create({userId: "u124", balance: 0, location: "canada"}),
@@ -34,7 +34,7 @@ export default <Suite>{
 	"dbby-hardcoded": {
 		"read": async() => {
 			const actualTable = await setupThreeUserDemo()
-			const hardTable = dbbyMemory<DemoUser>()
+			const hardTable = await dbbyX<DemoUser>()
 			await hardTable.create({userId: "u92", balance: 92, location: "victoria"})
 			const combinedTable = dbbyHardcoded({actualTable, hardTable})
 			const result01 = await combinedTable.read({conditions: false})
@@ -45,7 +45,7 @@ export default <Suite>{
 	},
 	"dbby-constrain": {
 		"read all rows from constrained table": async() => {
-			const dbby = dbbyMemory<DemoUser>()
+			const dbby = await dbbyX<DemoUser>()
 			const alpha = constrainAppTable(dbby, "a1")
 			await alpha.create(
 				{userId: "u1", balance: 101, location: "canada"},
@@ -55,7 +55,7 @@ export default <Suite>{
 			expect(results.length).equals(2)
 		},
 		"apply app id constraint": async() => {
-			const dbby = dbbyMemory<DemoUser>()
+			const dbby = await dbbyX<DemoUser>()
 			const a1 = constrainAppTable(dbby, "a1")
 			const a2 = constrainAppTable(dbby, "a2")
 			await a1.create({userId: "u1", balance: 100, location: "america"})

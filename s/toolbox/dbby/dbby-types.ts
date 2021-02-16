@@ -94,10 +94,5 @@ export interface DbbyTable<Row extends DbbyRow> {
 	count(options: DbbyConditional<Row>): Promise<number>
 }
 
-export interface DbbyStorage<Row extends DbbyRow> {
-	save(table: Row[]): void
-	load(): Row[]
-}
-
 export type ConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}> =
 	(namespace: DbbyRow) => T

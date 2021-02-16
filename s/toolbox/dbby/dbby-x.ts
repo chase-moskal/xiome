@@ -1,27 +1,33 @@
 
-import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated, DbbyStorage, DbbyConditionTree, DbbyConditions} from "./dbby-types.js"
+import {FlexStorage} from "../flex-storage/types/flex-storage.js"
+import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated, DbbyConditionTree, DbbyConditions} from "./dbby-types.js"
 
 export {and, or, find} from "./dbby-helpers.js"
 
-export function dbbyMemory<Row extends DbbyRow>({
+export async function dbbyX<Row extends DbbyRow>({
 			rows,
-			dbbyStorage,
+			storage,
 		}: {
 			rows?: Row[]
-			dbbyStorage?: DbbyStorage<Row>
-		} = {}): DbbyTable<Row> {
+			storage?: {
+				tableName: string
+				flex: FlexStorage
+			}
+		} = {}): Promise<DbbyTable<Row>> {
 
-	let table: Row[] = dbbyStorage
-		? dbbyStorage.load() || []
+	const storageKey = `dbby-storage-${storage?.tableName ?? "unknown"}`
+
+	let table: Row[] = storage
+		? await storage.flex.read(storageKey) || []
 		: []
+
+	async function save() {
+		if (storage) await storage.flex.write(storageKey, table)
+	}
 
 	if (rows) {
 		for (const row of rows) insertCopy(row)
 		save()
-	}
-
-	function save() {
-		if (dbbyStorage) dbbyStorage.save(table)
 	}
 
 	function select(conditional: DbbyConditional<Row>): Row[] {
