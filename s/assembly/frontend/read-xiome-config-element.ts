@@ -8,7 +8,7 @@ export function readXiomeConfigElement(): XiomeConfig {
 	const fresh = {
 		mock: xiomeConfig.getAttribute("mock"),
 		appId: xiomeConfig.getAttribute("app"),
-		apiOrigin: xiomeConfig.getAttribute("api-origin"),
+		apiOrigin: xiomeConfig.getAttribute("api"),
 	}
 
 	const mock: undefined | "app" | "platform" =

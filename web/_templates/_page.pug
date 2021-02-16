@@ -13,13 +13,20 @@ head
 	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
 
 	if debug
-		xiome-config(mock="platform")
+		//- xiome-config(mock="platform")
+		xiome-config(
+			app="402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076"
+			api="http://localhost:4999"
+		)
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
 		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 	else
-		xiome-config(mock="platform")
+		xiome-config(
+			app="402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076"
+			api="http://localhost:4999"
+		)
 		script(src=`${base}/xiome.bundle.min.js`)
 
 	block head

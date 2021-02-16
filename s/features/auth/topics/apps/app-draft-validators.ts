@@ -1,6 +1,13 @@
 
 import {validator, one, branch, string, array, each, minLength, maxLength, notWhitespace, url, https, localhost, origin} from "../../../../toolbox/darkvalley.js"
 
+const validateAppOrigin = one(
+	string(),
+	maxLength(1000),
+	origin(),
+	branch(https(), localhost()),
+)
+
 export const appDraftValidators = Object.freeze({
 	home: validator<string>(one(
 		string(),
@@ -17,26 +24,12 @@ export const appDraftValidators = Object.freeze({
 	origins: validator<string[]>(one(
 		minLength(1),
 		maxLength(100),
-		each(one(
-			string(),
-			maxLength(1000),
-			one(
-				origin(),
-				branch(https(), localhost()),
-			),
-		)),
+		each(validateAppOrigin),
 	)),
 	additionalOrigins: validator<string[]>(one(
 		array(),
 		minLength(0),
 		maxLength(99),
-		each(one(
-			string(),
-			maxLength(1000),
-			one(
-				origin(),
-				branch(https(), localhost()),
-			),
-		)),
+		each(validateAppOrigin),
 	)),
 })

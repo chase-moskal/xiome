@@ -14,6 +14,7 @@ import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 
 import {User, Profile} from "../../auth/auth-types.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
+import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component {
@@ -66,6 +67,20 @@ export class XioProfileCard extends Component {
 		const changes = !deepEqual(profile, newProfile)
 		this.changedProfile = changes ? newProfile : undefined
 	})
+
+	private renderRoles(user: User) {
+		console.log(JSON.stringify(user.roles))
+		return user.roles.map(role => html`
+			<li>${role.label}</li>
+		`)
+	}
+
+	private renderDetails(user: User) {
+		return html`
+			<li>user id: <span>${user.userId}</span></li>
+			<li>joined: <span>${formatDate(user.stats.joined).date}</span></li>
+		`
+	}
 
 	// private renderTags(user: User) {
 	// 	const {readonly} = this
@@ -181,8 +196,11 @@ export class XioProfileCard extends Component {
 						}
 				})}
 			</div>
+			<ul class=roles>
+				${this.renderRoles(user)}
+			</ul>
 			<ul class="detail">
-				<li>user id: <span>${userId}</span></li>
+				${this.renderDetails(user)}
 			</ul>
 			${this.readonly ? null : html`
 				<div class="buttonbar">

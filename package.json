@@ -25,6 +25,7 @@
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
 		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
 		"watch": "run-p watch-tsc watch-pug watch-sass",
+		"start-server": "node x/server.js",
 		"start": "run-p start-platform start-mocksite",
 		"start-platform": "serve -l 5000",
 		"start-mocksite": "serve -l 5001",

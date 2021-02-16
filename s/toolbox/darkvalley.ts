@@ -118,9 +118,9 @@ export const url = (): Validator<string> => value => {
 }
 
 export const localhost = (): Validator<string> => value => {
-	return /^https?:\/\/localhost$/i.test(value)
+	return /^https?:\/\/localhost(|:\d{1,5})(|\/\S*)$/i.test(value)
 		? []
-		: ["must be 'http://localhost' or 'https://localhost'"]
+		: ["must be a localhost address"]
 }
 
 export const https = (): Validator<string> => value => {
