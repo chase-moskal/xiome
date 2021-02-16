@@ -25,12 +25,12 @@ export async function fetchPublicUserRoles({userId, tables}: {
 		return {...userRoleRow, ...roleRow}
 	})
 
-	combinedData.map(x => (<PublicUserRole>{
+	const roles = combinedData.map(x => (<PublicUserRole>{
 		roleId: x.roleId,
 		label: x.label,
 		timeframeEnd: x.timeframeEnd,
 		timeframeStart: x.timeframeStart,
 	}))
 
-	return combinedData
+	return roles
 }

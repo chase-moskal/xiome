@@ -18,6 +18,7 @@ export const appTokenTopic = ({
 
 		const tables = await getAuthTables({appId})
 		const appRow = await tables.app.one(find({appId}))
+		if (!appRow) throw new ApiError(400, "incorrect app id")
 		if (appRow.archived) throw new ApiError(403, "app has been archived")
 
 		return signToken<App>({

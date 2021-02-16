@@ -3,7 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
-import {AuthTables, PublicUserRole, User, UserStats} from "../../../auth-types.js"
+import {AuthTables, User, UserStats} from "../../../auth-types.js"
 
 import {profileFromRow} from "./profile-from-row.js"
 import {generateProfileRow} from "./generate-profile-row.js"

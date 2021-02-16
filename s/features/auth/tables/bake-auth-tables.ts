@@ -1,13 +1,13 @@
 
 import {isPlatform} from "../tools/is-platform.js"
 import {dbbyHardback} from "../../../toolbox/dbby/dbby-hardback.js"
-import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
 import {originsToDatabase} from "../topics/origins/origins-to-database.js"
+import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
 import {AuthTables, PlatformConfig, PermissionsTables, AppRow, AuthTablesGlobal} from "../auth-types.js"
 import {transformHardPermissionsToMemoryTables} from "../permissions/tables/transform-hard-permissions-to-memory-tables.js"
 
 import {namespaceKeyAppId} from "./namespace-key-app-id.js"
-import { dbbyMemory } from "../../../toolbox/dbby/dbby-memory.js"
+import {dbbyMemory} from "../../../toolbox/dbby/dbby-memory.js"
 
 export function bakeAuthTables({config, authTables}: {
 			config: PlatformConfig

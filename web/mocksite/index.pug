@@ -8,13 +8,13 @@ block variables
 head
 	meta(charset="utf-8")
 	meta(name="viewport" content="width=device-width,initial-scale=1")
-	title xiome.io#{pageSubtitle && " – " + pageSubtitle}
+	title xiome mocksite
 
 	script(defer type="importmap-shim" src=`${base}/../importmap.json`)
 	script(async defer type="module-shim" src=`${base}/../xiome.js`)
 	script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
 
-	<xiome-config app=3e7a713d4412644e5afa6a598337c8f2e53bdfefc8cb6626c31e69aa5df9a7cd api="http://localhost:4999"></xiome-config>
+	<xiome-config api="http://localhost:4999" app=4c9ea5dc7acb9a7ad1c77fa6289048d03fb623cdd1163d4896ff5d0b1ad05322></xiome-config>
 
 	style.
 		html, body {

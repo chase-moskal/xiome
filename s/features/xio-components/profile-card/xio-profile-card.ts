@@ -69,6 +69,7 @@ export class XioProfileCard extends Component {
 	})
 
 	private renderRoles(user: User) {
+		console.log(user)
 		return user.roles.map(role => html`
 			<li>${role.label}</li>
 		`)
