@@ -26,7 +26,7 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 
 		async read({order, offset = 0, limit = 10000, ...conditional}) {
 			const query = prepareQuery(conditional)
-			let cursor = collection.find<Row>(query)
+			let cursor = collection.find<Row>(query, undefined)
 			if (offset) cursor = cursor.skip(offset)
 			if (order) cursor = cursor.sort(orderToSort(order))
 			if (limit) cursor = cursor.limit(limit)
