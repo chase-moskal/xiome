@@ -20,7 +20,7 @@ export const manageAdminsTopic = ({
 				appId: string
 			}): Promise<AdminEmailDisplay[]> {
 		await requireUserIsAllowedToEditApp({appId, tables, access})
-		const tablesForApp = getAuthTables({appId})
+		const tablesForApp = await getAuthTables({appId})
 		const usersWithAdminRole = await tablesForApp.userHasRole.read(find({
 			roleId: adminRoleId
 		}))
@@ -41,7 +41,7 @@ export const manageAdminsTopic = ({
 		const problems = emailValidator(email)
 		if (problems.length)
 			throw new ApiError(400, "email failed validation: " + problems.join(";"))
-		const tablesForApp = getAuthTables({appId})
+		const tablesForApp = await getAuthTables({appId})
 		const {userId: adminUserId} = await assertEmailAccount({
 			rando,
 			config,
@@ -65,7 +65,7 @@ export const manageAdminsTopic = ({
 				userId: string
 			}): Promise<void> {
 		await requireUserIsAllowedToEditApp({appId, tables, access})
-		const tablesForApp = getAuthTables({appId})
+		const tablesForApp = await getAuthTables({appId})
 		await tablesForApp.userHasRole.delete(find({userId, roleId: adminRoleId}))
 	},
 })

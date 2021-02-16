@@ -1,16 +1,19 @@
 
-import { dbbyMemory } from "../../../toolbox/dbby/dbby-memory.js"
-import { makeDbbyStorage } from "../../../toolbox/dbby/dbby-storage.js"
-
+import {dbbyX} from "../../../toolbox/dbby/dbby-x.js"
 import {objectMap} from "../../../toolbox/object-map.js"
-import {SimpleStorage} from "../../../toolbox/json-storage.js"
+import {concurrent} from "../../../toolbox/concurrent.js"
+import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
+import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
-export function mockStorageTables<T extends {[key: string]: true}>(
-		storage: SimpleStorage,
-		blueprint: T,
-	) {
+export async function mockStorageTables<Tables extends {[key: string]: DbbyTable<DbbyRow>}>(
+		flexStorage: FlexStorage,
+		blueprint: {[P in keyof Tables]: true},
+	): Promise<Tables> {
 
-	return objectMap(blueprint, (value, key) => dbbyMemory({
-		dbbyStorage: makeDbbyStorage(storage, key)
-	}))
+	return <Tables><any>await concurrent(
+		objectMap(
+			blueprint,
+			async(value, key) => await dbbyX(flexStorage, key),
+		)
+	)
 }

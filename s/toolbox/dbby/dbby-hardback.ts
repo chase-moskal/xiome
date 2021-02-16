@@ -1,25 +1,25 @@
 
 import {DbbyConditional, DbbyRow, DbbyTable} from "./dbby-types.js"
 
-export function dbbyHardcoded<Row extends DbbyRow>({actualTable, hardTable}: {
-			hardTable: DbbyTable<Row>
-			actualTable: DbbyTable<Row>
+export function dbbyHardback<Row extends DbbyRow>({frontTable, backTable}: {
+			backTable: DbbyTable<Row>
+			frontTable: DbbyTable<Row>
 		}): DbbyTable<Row> {
 
 	async function one(options: DbbyConditional<Row>) {
-		return await hardTable.one(options) ?? await actualTable.one(options)
+		return await backTable.one(options) ?? await frontTable.one(options)
 	}
 
 	return {
 		one,
-		create: actualTable.create,
-		update: actualTable.update,
-		delete: actualTable.delete,
+		create: frontTable.create,
+		update: frontTable.update,
+		delete: frontTable.delete,
 
 		async read(options) {
 			const [hardRows, actualRows] = await Promise.all([
-				hardTable.read(options),
-				await actualTable.read(options),
+				backTable.read(options),
+				await frontTable.read(options),
 			])
 			return [...hardRows, ...actualRows]
 		},
@@ -28,15 +28,15 @@ export function dbbyHardcoded<Row extends DbbyRow>({actualTable, hardTable}: {
 			const row = await one(options)
 			return row || await (async() => {
 				const newRow = await options.make()
-				await actualTable.create(newRow)
+				await frontTable.create(newRow)
 				return newRow
 			})()
 		},
 
 		async count(options) {
 			const [hardCount, actualCount] = await Promise.all([
-				hardTable.count(options),
-				actualTable.count(options),
+				backTable.count(options),
+				frontTable.count(options),
 			])
 			return hardCount + actualCount
 		},

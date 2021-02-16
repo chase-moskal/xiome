@@ -16,7 +16,7 @@ export const appTokenTopic = ({
 			appId: string
 		}): Promise<AppToken> {
 
-		const tables = getAuthTables({appId})
+		const tables = await getAuthTables({appId})
 		const appRow = await tables.app.one(find({appId}))
 		if (appRow.archived) throw new ApiError(403, "app has been archived")
 

@@ -7,13 +7,13 @@ import {prepareSendLoginEmail} from "../../../features/auth/tools/emails/send-lo
 import {standardNicknameGenerator} from "../../../features/auth/tools/nicknames/standard-nickname-generator.js"
 
 import {SendEmail} from "../../../features/auth/auth-types.js"
-import {SimpleStorage} from "../../../toolbox/json-storage.js"
+import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockStandardBackend({
 		platformHome, tableStorage, sendEmail
 	}: {
 		platformHome: string
-		tableStorage: SimpleStorage
+		tableStorage: FlexStorage
 		sendEmail: SendEmail
 	}) {
 

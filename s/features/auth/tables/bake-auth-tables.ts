@@ -1,22 +1,22 @@
 
 import {isPlatform} from "../tools/is-platform.js"
-import {dbbyMemory} from "../../../toolbox/dbby/dbby-memory.js"
-import {dbbyHardcoded} from "../../../toolbox/dbby/dbby-hardcoded.js"
+import {dbbyHardback} from "../../../toolbox/dbby/dbby-hardback.js"
 import {prepareConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
 import {originsToDatabase} from "../topics/origins/origins-to-database.js"
 import {AuthTables, PlatformConfig, PermissionsTables, AppRow, AuthTablesGlobal} from "../auth-types.js"
 import {transformHardPermissionsToMemoryTables} from "../permissions/tables/transform-hard-permissions-to-memory-tables.js"
 
 import {namespaceKeyAppId} from "./namespace-key-app-id.js"
+import { dbbyMemory } from "../../../toolbox/dbby/dbby-memory.js"
 
 export function bakeAuthTables({config, authTables}: {
 			config: PlatformConfig
 			authTables: AuthTables
 		}) {
 
-	return function getTables({appId}: {appId: string}): AuthTables {
+	return async function getTables({appId}: {appId: string}): Promise<AuthTables> {
 		const hardTables: PermissionsTables = (
-			transformHardPermissionsToMemoryTables({
+			await transformHardPermissionsToMemoryTables({
 				appId,
 				namespaceKeyAppId,
 				hardPermissions: (
@@ -28,32 +28,32 @@ export function bakeAuthTables({config, authTables}: {
 		)
 
 		const platformApp = config.platform.appDetails
-		const hardAppTable = dbbyMemory<AppRow>({
-			rows: [{
-				appId: platformApp.appId,
-				home: platformApp.home,
-				label: platformApp.label,
-				origins: originsToDatabase(platformApp.origins),
-				archived: false,
-			}],
+
+		const hardAppTable = await dbbyMemory<AppRow>()
+		await hardAppTable.create({
+			appId: platformApp.appId,
+			home: platformApp.home,
+			label: platformApp.label,
+			origins: originsToDatabase(platformApp.origins),
+			archived: false,
 		})
 
 		const permissionsTables = {
-			role: dbbyHardcoded({
-				actualTable: authTables.role,
-				hardTable: hardTables.role,
+			role: dbbyHardback({
+				frontTable: authTables.role,
+				backTable: hardTables.role,
 			}),
-			userHasRole: dbbyHardcoded({
-				actualTable: authTables.userHasRole,
-				hardTable: hardTables.userHasRole,
+			userHasRole: dbbyHardback({
+				frontTable: authTables.userHasRole,
+				backTable: hardTables.userHasRole,
 			}),
-			privilege: dbbyHardcoded({
-				actualTable: authTables.privilege,
-				hardTable: hardTables.privilege,
+			privilege: dbbyHardback({
+				frontTable: authTables.privilege,
+				backTable: hardTables.privilege,
 			}),
-			roleHasPrivilege: dbbyHardcoded({
-				actualTable: authTables.roleHasPrivilege,
-				hardTable: hardTables.roleHasPrivilege,
+			roleHasPrivilege: dbbyHardback({
+				frontTable: authTables.roleHasPrivilege,
+				backTable: hardTables.roleHasPrivilege,
 			}),
 		}
 
@@ -64,9 +64,9 @@ export function bakeAuthTables({config, authTables}: {
 
 		const globalTables: AuthTablesGlobal = {
 			appOwnership: authTables.appOwnership,
-			app: dbbyHardcoded({
-				actualTable: authTables.app,
-				hardTable: hardAppTable,
+			app: dbbyHardback({
+				frontTable: authTables.app,
+				backTable: hardAppTable,
 			}),
 		}
 

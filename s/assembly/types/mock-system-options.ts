@@ -1,14 +1,14 @@
 
 import {Rando} from "../../toolbox/get-rando.js"
-import {SimpleStorage} from "../../toolbox/json-storage.js"
 import {SendLoginEmail} from "../../features/auth/auth-types.js"
+import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 
 export interface MockSystemOptions {
 	rando: Rando
 	platformHome: string
 	platformLabel: string
 	technicianEmail: string
-	tableStorage: SimpleStorage
+	tableStorage: FlexStorage
 	sendLoginEmail: SendLoginEmail
 	generateNickname: () => string
 }

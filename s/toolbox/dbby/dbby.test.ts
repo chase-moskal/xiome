@@ -1,10 +1,10 @@
 
 import {Suite, expect} from "cynic"
 
-import {dbbyX} from "./dbby-x.js"
+import {dbbyMemory} from "./dbby-memory.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
-import {dbbyHardcoded} from "./dbby-hardcoded.js"
+import {dbbyHardback} from "./dbby-hardback.js"
 import {DbbyRow, DbbyTable} from "./dbby-types.js"
 
 type DemoUser = {
@@ -14,7 +14,7 @@ type DemoUser = {
 }
 
 async function setupThreeUserDemo() {
-	const dbby = await dbbyX<DemoUser>()
+	const dbby = await dbbyMemory<DemoUser>()
 	await Promise.all([
 		dbby.create({userId: "u123", balance: 100, location: "america"}),
 		dbby.create({userId: "u124", balance: 0, location: "canada"}),
@@ -31,12 +31,12 @@ function constrainAppTable<Row extends DbbyRow>(
 }
 
 export default <Suite>{
-	"dbby-hardcoded": {
+	"dbby-hardback": {
 		"read": async() => {
-			const actualTable = await setupThreeUserDemo()
-			const hardTable = await dbbyX<DemoUser>()
-			await hardTable.create({userId: "u92", balance: 92, location: "victoria"})
-			const combinedTable = dbbyHardcoded({actualTable, hardTable})
+			const frontTable = await setupThreeUserDemo()
+			const backTable = await dbbyMemory<DemoUser>()
+			await backTable.create({userId: "u92", balance: 92, location: "victoria"})
+			const combinedTable = dbbyHardback({frontTable, backTable})
 			const result01 = await combinedTable.read({conditions: false})
 			const result02 = await combinedTable.read(find({userId: "u92"}))
 			expect(result01.length).equals(4)
@@ -45,7 +45,7 @@ export default <Suite>{
 	},
 	"dbby-constrain": {
 		"read all rows from constrained table": async() => {
-			const dbby = await dbbyX<DemoUser>()
+			const dbby = await dbbyMemory<DemoUser>()
 			const alpha = constrainAppTable(dbby, "a1")
 			await alpha.create(
 				{userId: "u1", balance: 101, location: "canada"},
@@ -55,7 +55,7 @@ export default <Suite>{
 			expect(results.length).equals(2)
 		},
 		"apply app id constraint": async() => {
-			const dbby = await dbbyX<DemoUser>()
+			const dbby = await dbbyMemory<DemoUser>()
 			const a1 = constrainAppTable(dbby, "a1")
 			const a2 = constrainAppTable(dbby, "a2")
 			await a1.create({userId: "u1", balance: 100, location: "america"})

@@ -2,8 +2,8 @@
 import {Await} from "../../../types/fancy.js"
 import {mockBackend} from "../../backend/mock-backend.js"
 import {mockRemote} from "../../frontend/mocks/mock-remote.js"
-import {SimpleStorage} from "../../../toolbox/json-storage.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
+import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockWiredRemote({
 		apiLink, appId, appWindowLink, tableStorage, backend,
@@ -11,7 +11,7 @@ export async function mockWiredRemote({
 		appId: string
 		apiLink: string
 		appWindowLink: string
-		tableStorage: SimpleStorage
+		tableStorage: FlexStorage
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
 

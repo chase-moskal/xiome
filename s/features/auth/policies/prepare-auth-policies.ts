@@ -4,13 +4,12 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
-import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, StatsHub} from "../auth-types.js"
-import { UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta } from "../../../types.js"
+import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta} from "../auth-types.js"
 
 export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		verifyToken: VerifyToken
 		getAuthTables: GetTables<AuthTables>
-		getStatsHub: (userId: string) => StatsHub
+		getStatsHub: GetStatsHub
 	}) {
 
 	const green: Policy<GreenMeta, GreenAuth> = {
@@ -23,7 +22,7 @@ export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		processAuth: async({appToken}, request) => {
 			const app = await verifyToken<App>(appToken)
 			throwInvalidOrigin(request, app)
-			const tables = getAuthTables({appId: app.appId})
+			const tables = await getAuthTables({appId: app.appId})
 			return {app, tables}
 		},
 	}
@@ -41,7 +40,7 @@ export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 			const userAuth = await user.processAuth(userMeta, request)
 			if (!userAuth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
-			const statsHub = getStatsHub(userAuth.access.user.userId)
+			const statsHub = await getStatsHub(userAuth.access.user.userId)
 			return {...userAuth, statsHub}
 		},
 	}

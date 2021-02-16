@@ -6,7 +6,9 @@ export function nodeSafeFileOperations(path: string) {
 
 	async function load(): Promise<Map<string, any>> {
 		try {
-			return new Map<string, any>(JSON.parse(await fsp.readFile(path, "utf8")))
+			const text = await fsp.readFile(path, "utf8")
+			const entries = JSON.parse(text)
+			return new Map<string, any>(entries)
 		}
 		catch (error) {
 			return new Map<string, any>()
@@ -14,7 +16,8 @@ export function nodeSafeFileOperations(path: string) {
 	}
 
 	async function save(map: Map<string, any>) {
-		const text = JSON.stringify(map.entries())
+		const entries = Array.from(map.entries())
+		const text = JSON.stringify(entries, undefined, "\t")
 		await fsp.writeFile(path, text, "utf8")
 	}
 

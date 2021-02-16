@@ -116,7 +116,8 @@ export type HardPermissions = {
 
 export type Tables = {[key: string]: DbbyTable<DbbyRow>}
 
-export type GetTables<T extends Tables> = ({}: {appId: string}) => T
+export type GetTables<T extends Tables> = ({}: {appId: string}) => Promise<T>
+export type GetStatsHub = (userId: string) => Promise<StatsHub>
 
 export type AuthProcessorPreparations<T extends Tables> = {
 	getTables: GetTables<T>

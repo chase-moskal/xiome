@@ -8,7 +8,7 @@ import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
 import {AuthTables, StatsHub, ExposeTableNamespaceAppId} from "../auth-types.js"
 
 export function bakeStatsHub({authTables}: {authTables: AuthTables}) {
-	return function getStatsHub(userId: string): StatsHub {
+	return async function getStatsHub(userId: string): Promise<StatsHub> {
 
 		async function throwForbiddenUser(appId: string) {
 			const row = await authTables.appOwnership.one(find({appId}))

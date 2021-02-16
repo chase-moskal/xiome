@@ -1,12 +1,12 @@
 
 import {pubsub} from "../../../toolbox/pubsub.js"
-import {memoryStorage} from "../../../toolbox/json-storage.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
+import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 
 type TokenStorageListener = (iframeId: number) => void | Promise<void>
 
 export function mockApiOrigin() {
-	const storage = memoryStorage()
+	const storage = memoryFlexStorage()
 	const tokenChangeEvent = pubsub<TokenStorageListener>()
 
 	let iframeCount = 0

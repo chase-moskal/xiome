@@ -2,6 +2,7 @@
 import {makeRemote} from "./make-remote.js"
 import {XiomeConfigConnected} from "./types/xiome-config-connected.js"
 import {makeTokenStore2} from "../../features/auth/goblin/token-store2.js"
+import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 
 export async function connect({
 		appId,
@@ -13,7 +14,7 @@ export async function connect({
 	const broadcast = () => channel.postMessage(undefined)
 	const tokenStore = makeTokenStore2({
 		appId,
-		storage: window.localStorage,
+		storage: simpleFlexStorage(window.localStorage),
 		publishAppTokenChange: broadcast,
 		publishAuthTokenChange: broadcast,
 	})
