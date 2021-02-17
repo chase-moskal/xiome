@@ -9,7 +9,7 @@ class XioPlayground extends Component {
 	render() {
 
 		const user: User = {
-			userId: "abc123",
+			userId: "99ec48f8c4d4cc603c590a889d862a207fcfdcf561b3945de56bab22f51ce621",
 			profile: {
 				avatar: "",
 				nickname: "Original Ostrich",
@@ -28,7 +28,10 @@ class XioPlayground extends Component {
 		}
 
 		return html`
-			<p>xio-profile-card</p>
+			<p>xio-profile-card: readonly</p>
+			<xio-profile-card .user=${user}></xio-profile-card>
+
+			<p>xio-profile-card: editable</p>
 			<xio-profile-card
 				.user=${user}
 				.saveProfile=${saveProfile}

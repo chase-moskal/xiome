@@ -68,51 +68,6 @@ export class XioProfileCard extends Component {
 		this.changedProfile = changes ? newProfile : undefined
 	})
 
-	private renderRoles(user: User) {
-		console.log(user)
-		return user.roles.map(role => html`
-			<li>${role.label}</li>
-		`)
-	}
-
-	private renderDetails(user: User) {
-		return html`
-			<li>user id: <span>${user.userId}</span></li>
-			<li>joined: <span>${formatDate(user.stats.joined).date}</span></li>
-		`
-	}
-
-	// private renderTags(user: User) {
-	// 	const {readonly} = this
-
-	// 	const staffRole = user.roles.find(role => role.label === "staff")
-	// 	const bannedRole = user.roles.find(role => role.label === "banned")
-	// 	const premiumRole = user.roles.find(role => role.label === "premium")
-
-	// 	const renderTag = (tag: string, title?: string) =>
-	// 		html`<li data-tag=${tag} title=${title || ""}>${tag}</li>`
-
-	// 	let items = []
-	// 	if (bannedRole)
-	// 		items.push(renderTag(
-	// 			"banned",
-	// 			`banned until ${formatDate(bannedRole.timeframeEnd).date}`
-	// 		))
-	// 	if (staffRole)
-	// 		items.push(renderTag("staff"))
-	// 	if (premiumRole)
-	// 		items.push(renderTag(
-	// 			"premium",
-	// 			readonly
-	// 				? undefined
-	// 				: `premium until ${formatDate(premiumRole.timeframeEnd).date}`
-	// 		))
-
-	// 	return items.length
-	// 		? html`<ol class="tags">${items}</ol>`
-	// 		: null
-	// }
-
 	private handleSave = async() => {
 		const profile = this.changedProfile
 		this.busy2.actions.setLoadingUntil({
@@ -128,10 +83,28 @@ export class XioProfileCard extends Component {
 		this.busy2.actions.setReady()
 	}
 
+	private renderRoles(user: User) {
+		return user.roles.map(role => html`
+			<li data-role-label="${role.label}">${role.label}</li>
+		`)
+	}
+
+	private renderDetails(user: User) {
+		return html`
+			<li>
+				<span>joined:</span>
+				<span>${formatDate(user.stats.joined).date}</span>
+			</li>
+			<li>
+				<span>user id:</span>
+				<code>${user.userId}</code>
+			</li>
+		`
+	}
+
 	render() {
 		const {user} = this
 		if (!user) return null
-		const {userId, profile} = user
 
 		const renderText = (({field, text, input}: {
 				field: string
@@ -171,7 +144,7 @@ export class XioProfileCard extends Component {
 			<div class=textfields ?data-readonly=${this.readonly}>
 				${renderText({
 					field: "nickname",
-					text: profile.nickname,
+					text: user.profile.nickname,
 					input: this.readonly
 						? undefined
 						: {
@@ -184,7 +157,7 @@ export class XioProfileCard extends Component {
 				})}
 				${renderText({
 					field: "tagline",
-					text: profile.tagline,
+					text: user.profile.tagline,
 					input: this.readonly
 						? undefined
 						: {
