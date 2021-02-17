@@ -5,6 +5,7 @@ import {share2, themeComponents} from "../../framework/component.js"
 
 import theme from "../../framework/theme.css.js"
 
+import {XioModal} from "../../features/xio-components/modal/xio-modal.js"
 import {XioButton} from "../../features/xio-components/button/xio-button.js"
 import {XioExample} from "../../features/xio-components/example/xio-example.js"
 import {XioLoading} from "../../features/xio-components/loading/xio-loading.js"
@@ -18,6 +19,7 @@ import {XiomeLoginPanel} from "../../features/auth/components/login-panel/xiome-
 export function getComponents(models: Await<ReturnType<typeof assembleModels>>) {
 	const {authModel, appModel, personalModel} = models
 	return themeComponents(theme, {
+		XioModal,
 		XioButton,
 		XioExample,
 		XioLoading,
