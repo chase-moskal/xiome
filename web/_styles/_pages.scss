@@ -1,22 +1,17 @@
 
 .page-learn {
-	max-width: 700px;
 	ul {
 		list-style: none;
 		margin-left: 0.5em;
-		> li + li {
-			margin-top: 0.8em;
-		}
-	}
-	ol {
-		margin-top: 0.8em;
 	}
 }
 
 .page-setup {
+	xiome-app-manager {
+		margin-top: 1em;
+	}
 	.plate {
 		margin-top: 1em;
-		max-width: 700px;
 		p + p {
 			margin-top: 0.5em;
 		}

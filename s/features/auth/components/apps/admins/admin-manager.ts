@@ -37,9 +37,13 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 
 	function renderAdminAssigner() {
 		const exportPartsTextInput = `
-			textinput: xiotextinput-textinput,
 			label: xiotextinput-label,
+			textinput: xiotextinput-textinput,
 			problems: xiotextinput-problems,
+
+			label: adminmanager-xiotextinput-label,
+			textinput: adminmanager-xiotextinput-textinput,
+			problems: adminmanager-xiotextinput-problems,
 		`
 		return html`
 			<div class=adminassigner>

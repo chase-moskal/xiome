@@ -33,7 +33,9 @@ head
 
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div
-		h1 Xiome
+		h1
+			span Xiome
+			span.prerelease alpha
 		nav
 			a(href=`${base}/`) learn
 			a(href=`${base}/setup`) setup
@@ -46,6 +48,7 @@ header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 					h3 your account
 
 main
+	p.content.prerelease-notice #[span.prerelease alpha] prerelease warning: #[strong we wipe all data regularly,] and some features are missing. right now, xiome is only suitable for experimentation and feedback
 	block maincontent
 
 footer.sitefooter

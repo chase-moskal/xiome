@@ -90,16 +90,20 @@ export function makeAppForm({
 		}
 	}
 
-	function render() {
+	function render({partNamespace}: {partNamespace: string}) {
 		const {formDisabled, draft, problems} = state
 		const changes = !deepEqual(initialValues, draft)
 		const submitButtonDisabled = !changes
 			|| formDisabled
 			|| problems.length > 0
 		const exportPartsTextInput = `
-			textinput: xiotextinput-textinput,
 			label: xiotextinput-label,
+			textinput: xiotextinput-textinput,
 			problems: xiotextinput-problems,
+
+			label: ${partNamespace}-appform-xiotextinput-label,
+			textinput: ${partNamespace}-appform-xiotextinput-textinput,
+			problems: ${partNamespace}-appform-xiotextinput-problems,
 		`
 		const renderTextInput = <xValue = string>({
 				textarea, label, dataForm, initialText, showValidationWhenEmpty,
@@ -115,7 +119,7 @@ export function makeAppForm({
 			}) => html`
 			<xio-text-input
 				?textarea=${textarea}
-				part=appform-xiotextinput
+				part="${partNamespace}-appform-xiotextinput"
 				exportparts="${exportPartsTextInput}"
 				data-form="${dataForm}"
 				initial="${initialText}"

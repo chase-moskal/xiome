@@ -21,7 +21,7 @@ html {
 .siteheader {
 	position: relative;
 	menu-system {
-		--menu-margin: 1em 0 0 0;
+		--menu-margin: 0.4em 0 0 0;
 		--xio-button-hover-color: #fff;
 		--xio-button-hover-background: #333;
 		xiome-login-panel::part(buttonbar) {
@@ -34,14 +34,24 @@ html {
 	width: 90%;
 	max-width: 1600px;
 	margin: auto;
-	padding: 0.5rem 1rem;
+	padding: 0 1rem;
 }
 
 .siteheader {
 	@extend .slice;
+	margin-top: 1em;
 	> div:nth-child(1) {
 		display: inline-flex;
 		flex-direction: column;
+	}
+	h1 {
+		span {
+			display: inline-block;
+			vertical-align: middle;
+			&:first-child {
+				letter-spacing: 0.2em;
+			}
+		}
 	}
 	nav {
 		display: flex;
@@ -58,7 +68,15 @@ html {
 
 main {
 	@extend .slice;
-	padding: 0.5rem 1rem;
+	margin-top: 1em;
+}
+
+.prerelease {
+	margin-top: 0;
+	font-size: 0.7rem;
+	padding: 0.2em 0.5em;
+	border-radius: 2em;
+	text-transform: uppercase;
 }
 
 code {
@@ -67,12 +85,17 @@ code {
 	border-radius: 0.3em;
 }
 
+* + .content {
+	margin-top: 1em;
+}
+
 .content {
+	max-width: 700px;
 	* + p,
 	* + ol,
 	* + ul,
 	* + li {
-		margin-top: 0.3em;
+		margin-top: 0.4em;
 	}
 	* + h1,
 	* + h2,
@@ -80,22 +103,13 @@ code {
 	* + h4,
 	* + h5,
 	* + h6 {
-		margin-top: 0.8em;
+		margin-top: 1rem;
 	}
 	h1, h2, h3, h4, h5, h6 {
 		font-weight: normal;
 	}
 	ol, ul {
 		margin-left: 1.5em;
-		&.extra-space {
-			li + li {
-				margin-top: 1em;
-			}
-		}
-		&.no-bullets {
-			margin-left: 0.5em;
-			list-style: none;
-		}
 	}
 	h2 { font-size: 1.3em; }
 	h3 { font-size: 1.2em; }

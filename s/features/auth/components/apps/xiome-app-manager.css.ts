@@ -3,6 +3,10 @@ import {css} from "../../../../framework/component.js"
 import adminManagerCss from "./admins/admin-manager.css.js"
 export default css`
 
+:host {
+	display: block;
+}
+
 .app-list {
 	margin-bottom: 2em;
 }

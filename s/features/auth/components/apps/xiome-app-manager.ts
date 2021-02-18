@@ -130,7 +130,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 				<div class=twoside>
 					<div class=app-editor>
 						<h4>edit community details</h4>
-						${appForm.render()}
+						${appForm.render({partNamespace: "appeditor"})}
 					</div>
 					<div class=app-options>
 						<div class=app-code>
@@ -164,7 +164,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 				: this.renderNoApps())}
 			<div class=app-registration>
 				<slot name="register-app-heading"></slot>
-				${this.appRegistrationForm.render()}
+				${this.appRegistrationForm.render({partNamespace: "appregistration"})}
 			</div>
 		`
 	}
