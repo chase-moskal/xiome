@@ -11,13 +11,13 @@ import {ModalSystem} from "./types/modal-system.js"
 import {PopupOptions} from "./types/modal-options.js"
 import {ModalControls} from "./types/modal-controls.js"
 
-export function installModalSystem() {
+export function setupModalSystem() {
 	let count = 0
 	const modals = new Map<number, Modal>()
 	const listModals = () => Array.from(modals.values())
 	const {rerender, element} = prepareModalSystemRendering(listModals)
 
-	function popup({renderContent, onBlanketClick}: PopupOptions) {
+	function popup({renderContent, onBlanketClick, focusNthElement}: PopupOptions) {
 		const id = count++
 		const controls: ModalControls = {
 			close: () => {
@@ -44,8 +44,7 @@ export function installModalSystem() {
 		})
 		rerender()
 		const modal = element.querySelector<HTMLElement>(`[data-modal="${id}"]`)
-		modal.focus()
-		trapFocus(modal)
+		trapFocus(modal, focusNthElement)
 		return controls
 	}
 

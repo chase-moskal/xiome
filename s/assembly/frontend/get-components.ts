@@ -1,9 +1,9 @@
 
 import {Await} from "../../types/fancy.js"
-import {assembleModels} from "./assemble-models.js"
-import {share2, themeComponents} from "../../framework/component.js"
-
 import theme from "../../framework/theme.css.js"
+import {assembleModels} from "./assemble-models.js"
+import {ModalSystem} from "./modal/types/modal-system.js"
+import {share2, themeComponents} from "../../framework/component.js"
 
 import {XioButton} from "../../features/xio-components/button/xio-button.js"
 import {XioExample} from "../../features/xio-components/example/xio-example.js"
@@ -16,7 +16,11 @@ import {XioProfileCard} from "../../features/xio-components/profile-card/xio-pro
 import {XiomeLoginPanel} from "../../features/auth/components/login-panel/xiome-login-panel.js"
 import {XiomePermissions} from "../../features/auth/components/permissions/xiome-permissions.js"
 
-export function getComponents(models: Await<ReturnType<typeof assembleModels>>) {
+
+export function getComponents({models, modals}: {
+		modals: ModalSystem
+		models: Await<ReturnType<typeof assembleModels>>
+	}) {
 	const {authModel, appModel, personalModel, permissionsModel} = models
 	return themeComponents(theme, {
 		XioButton,
@@ -25,7 +29,7 @@ export function getComponents(models: Await<ReturnType<typeof assembleModels>>) 
 		XioTextInput,
 		XioProfileCard,
 		XiomeMyAvatar: share2(XiomeMyAvatar, {authModel}),
-		XiomeAppManager: share2(XiomeAppManager, {appModel}),
+		XiomeAppManager: share2(XiomeAppManager, {appModel, modals}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel}),
 		XiomePermissions: share2(XiomePermissions, {authModel, permissionsModel}),
 		XiomeMyAccount: share2(XiomeMyAccount, {authModel, personalModel}),

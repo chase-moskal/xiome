@@ -7,14 +7,20 @@ export function preparePrompt(popup: ModalSystem["popup"]): ModalSystem["prompt"
 			input,
 			title,
 			body = null,
-			yes = "yes",
-			no = "no",
+			yes = {label: "okay", vibe: "positive"},
+			no = {label: "nevermind", vibe: "neutral"},
+			focusNthElement = 1,
+			blanketClickMeansNo = true,
 		}) => new Promise<{}>(resolve => {
+		console.warn("TODO implement")
 		popup({
-			onBlanketClick: controls => {
-				controls.close()
-				resolve(false)
-			},
+			focusNthElement,
+			onBlanketClick: blanketClickMeansNo
+				? controls => {
+					controls.close()
+					resolve(false)
+				}
+				: () => {},
 			renderContent: controls => {
 				const onYes = () => { controls.close(); resolve(true) }
 				const onNo = () => { controls.close(); resolve(false) }

@@ -1,10 +1,16 @@
 
-export function trapFocus(element: HTMLElement) {
+export function trapFocus(element: HTMLElement, focusNth: number) {
 
 	const focusable = Array.from(element.querySelectorAll<HTMLElement>(`[tabindex]:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])`))
 
+	if (focusable.length === 0)
+		throw new Error("cannot trap focus: no focusable element")
+
 	const firstFocusable = focusable[0]
 	const lastFocusable = focusable[focusable.length - 1]
+	const nthFocusable = focusable[focusNth - 1]
+
+	setTimeout(() => nthFocusable.focus(), 0)
 
 	element.onkeydown = event => {
 		if (event.key === "Tab") {

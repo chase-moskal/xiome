@@ -14,9 +14,13 @@ import {makeAdminManager} from "./admins/admin-manager.js"
 
 import {AppModel} from "../../types/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 
 @mixinStyles(styles)
-export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
+export class XiomeAppManager extends WiredComponent<{
+		appModel: AppModel
+		modals: ModalSystem
+	}> {
 
 	firstUpdated(changes: any) {
 		super.firstUpdated(changes)
@@ -78,8 +82,15 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 		)
 	)
 
-	private deleteApp = async(appId: string) => {
-		await this.share.appModel.deleteApp(appId)
+	private deleteApp = async(app: AppDisplay) => {
+		const userIsSure = await this.share.modals.confirm({
+			title: "are you certain?",
+			body: `you really want to delete your community "${app.label}"?`,
+			yes: {label: "delete whole community", vibe: "negative"},
+			no: {label: "nevermind", vibe: "neutral"},
+			focusNthElement: 2,
+		})
+		if (userIsSure) await this.share.appModel.deleteApp(app.appId)
 	}
 
 	private renderNoApps() {
@@ -148,7 +159,7 @@ export class XiomeAppManager extends WiredComponent<{appModel: AppModel}> {
 				<div class=finalbox>
 					<xio-button
 						class=delete-app-button
-						@press=${() => this.deleteApp(app.appId)}>
+						@press=${() => this.deleteApp(app)}>
 							delete community
 					</xio-button>
 				</div>

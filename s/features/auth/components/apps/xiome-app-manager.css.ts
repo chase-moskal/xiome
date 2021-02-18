@@ -152,7 +152,6 @@ code.id {
 .delete-app-button {
 	display: block;
 	text-align: right;
-	color: red;
 	--xio-button-hover-background: red;
 }
 

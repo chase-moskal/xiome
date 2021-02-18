@@ -38,8 +38,8 @@ export default css`
 	min-height: 1em;
 	margin: 2em auto;
 
-	background: white;
-	color: #666;
+	background: linear-gradient(to bottom right, #fff, #ccc);
+	color: #444;
 }
 
 [data-modal-system] [data-content]:focus {
@@ -55,15 +55,21 @@ export default css`
 	text-align: right;
 }
 
-[data-modal-system] [data-button=yes] {
+[data-modal-system] [data-button] {
+	--xio-button-hover-color: white;
+	--xio-button-hover-background: #666;
+}
+
+[data-modal-system] [data-vibe=positive] {
 	color: green;
 	--xio-button-hover-color: white;
 	--xio-button-hover-background: green;
 }
 
-[data-modal-system] [data-button=no] {
+[data-modal-system] [data-vibe=negative] {
+	color: #a00;
 	--xio-button-hover-color: white;
-	--xio-button-hover-background: #666;
+	--xio-button-hover-background: #a00;
 }
 
 `
