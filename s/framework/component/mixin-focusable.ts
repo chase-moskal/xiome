@@ -16,14 +16,10 @@ export function mixinFocusable<C extends ConstructorFor<LitElement>>(
 	): C {
 	return mixinStyles(styles)(class FocusableComponent extends Constructor {
 
-		static get properties() {
-			return {
-				...(<typeof LitElement><any>Constructor).properties,
-				tabindex: {type: Number, reflect: true},
-			}
+		constructor(...args: any[]) {
+			super(...args)
+			this.setAttribute("tabindex", "0")
 		}
-
-		tabindex=0
 
 		createRenderRoot() {
 			return this.attachShadow({mode: "open", delegatesFocus: true})
