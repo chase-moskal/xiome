@@ -83,7 +83,7 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 }
 
 function prepareQuery<Row extends DbbyRow>({conditions}: DbbyConditional<Row>): FilterQuery<{}> {
-	if (typeof conditions === "boolean") return {}
+	if (!conditions) return {}
 
 	function recurse(tree: DbbyConditionTree<Row>): FilterQuery<{}> {
 		const [operator, ...conds] = tree
@@ -143,9 +143,9 @@ const mongoloids: {[key: string]: (value: any) => any} = {
 }
 
 function conditionsToMongoQuery<Row extends DbbyRow>(
-			conditions: boolean | DbbyCondition<Row>
+			conditions: false | DbbyCondition<Row>
 		): FilterQuery<Row> {
-	return typeof conditions !== "boolean"
+	return conditions
 		? <any>{
 			$and: [
 				mapwise(conditions.set, mongoloids.set),

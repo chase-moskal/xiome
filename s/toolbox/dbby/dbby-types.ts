@@ -49,7 +49,7 @@ export type DbbyConditionTree<Row extends DbbyRow> =
 	| DbbyConditionBranch<"and", Row>
 	| DbbyConditionBranch<"or", Row>
 
-export type DbbyConditions<Row extends DbbyRow> = boolean | DbbyConditionTree<Row>
+export type DbbyConditions<Row extends DbbyRow> = false | DbbyConditionTree<Row>
 
 function main<Row extends DbbyRow>(cond: DbbyConditions<Row>) {}
 main<{a: boolean}>(["or", {equal: {a: true}}])

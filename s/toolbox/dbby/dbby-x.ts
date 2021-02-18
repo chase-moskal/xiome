@@ -140,7 +140,7 @@ function rowVersusConditional<Row extends {}>(
 	): boolean {
 
 	function crawl(conditions: DbbyConditions<Row>) {
-		if (typeof conditions === "boolean") return true
+		if (conditions === false) return true
 		const [operation, ...conds] = conditions
 		const and = operation === "and"
 		let valid = and
@@ -149,7 +149,7 @@ function rowVersusConditional<Row extends {}>(
 				? valid && result
 				: valid || result
 		for (const condition of conds) {
-			if (typeof condition === "boolean" || Array.isArray(condition)) {
+			if (condition === false || Array.isArray(condition)) {
 				applyResult(crawl(<DbbyConditionTree<Row>>condition))
 			}
 			else {
