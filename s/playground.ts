@@ -1,7 +1,7 @@
 
+import {nap} from "./toolbox/nap.js"
 import {User} from "./features/auth/auth-types.js"
 import {Component, mixinLightDom, registerComponents, html} from "./framework/component.js"
-import { nap } from "./toolbox/nap.js"
 
 @mixinLightDom
 class XioPlayground extends Component {

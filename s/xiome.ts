@@ -9,6 +9,7 @@ import {readXiomeConfigElement} from "./assembly/frontend/read-xiome-config-elem
 
 void async function xiome() {
 	const xiome = await assembleXiome(readXiomeConfigElement())
+	document.body.prepend(xiome.modalsElement)
 	registerComponents(xiome.components)
 	window.xiome = xiome
 }()
