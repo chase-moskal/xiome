@@ -70,7 +70,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				createRole: true,
 				deletePrivilege: true,
 				deleteRole: true,
-				fetchAllPermissions: true,
+				fetchPermissions: true,
 				grantRole: true,
 				revokeRole: true,
 				unassignPrivilege: true,

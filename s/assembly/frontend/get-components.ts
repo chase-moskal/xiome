@@ -17,7 +17,7 @@ import {XiomeLoginPanel} from "../../features/auth/components/login-panel/xiome-
 import {XiomePermissions} from "../../features/auth/components/permissions/xiome-permissions.js"
 
 export function getComponents(models: Await<ReturnType<typeof assembleModels>>) {
-	const {authModel, appModel, personalModel} = models
+	const {authModel, appModel, personalModel, permissionsModel} = models
 	return themeComponents(theme, {
 		XioButton,
 		XioExample,
@@ -27,7 +27,7 @@ export function getComponents(models: Await<ReturnType<typeof assembleModels>>) 
 		XiomeMyAvatar: share2(XiomeMyAvatar, {authModel}),
 		XiomeAppManager: share2(XiomeAppManager, {appModel}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel}),
-		XiomePermissions: share2(XiomePermissions, {authModel}),
+		XiomePermissions: share2(XiomePermissions, {authModel, permissionsModel}),
 		XiomeMyAccount: share2(XiomeMyAccount, {authModel, personalModel}),
 	})
 }

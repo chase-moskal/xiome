@@ -2,17 +2,32 @@
 import {UserAuth, AuthOptions} from "../auth-types.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
+import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
 
 export const permissionsTopic = ({}: AuthOptions) => asTopic<UserAuth>()({
 
-	async fetchAllPermissions({tables}) {
+	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
 		const all: {conditions: false} = {conditions: false}
-		const allPermissions = await concurrent({
-			roles: tables.role.read(all),
-			privileges: tables.privilege.read(all),
-			rolesHavePrivileges: tables.roleHasPrivilege.read(all),
+		return concurrent({
+			roles: tables.role.read(all).then(
+				rows => rows.map(row => ({
+					roleId: row.roleId,
+					label: row.label,
+				}))
+			),
+			privileges: tables.privilege.read(all).then(
+				rows => rows.map(row => ({
+					privilegeId: row.privilegeId,
+					label: row.label,
+				}))
+			),
+			rolesHavePrivileges: tables.roleHasPrivilege.read(all).then(
+				rows => rows.map(row => ({
+					privilegeId: row.privilegeId,
+					roleId: row.roleId,
+				}))
+			),
 		})
-		return allPermissions
 	},
 
 	async createRole({}, {}: {label: string}) {

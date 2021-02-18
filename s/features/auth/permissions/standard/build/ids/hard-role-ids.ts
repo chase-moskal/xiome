@@ -1,2 +1,3 @@
 
 export const adminRoleId = "ba4fa5096eb935e820732c42515c9b2f5d12881f641d26e0838c5e9680590e9f"
+export const technicianRoleId = "00dd53e8390b79d425840d08a88d997390fcb5ed7b805e98c9c5e9f284a6f759"

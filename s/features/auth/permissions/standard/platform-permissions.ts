@@ -2,6 +2,7 @@
 import {powerPrivileges} from "./power-privileges.js"
 import {universalPermissions} from "./universal-permissions.js"
 import {buildHardPermissions} from "./build/build-hard-permissions.js"
+import { technicianRoleId } from "./build/ids/hard-role-ids.js"
 
 export const platformPermissions = buildHardPermissions({
 	inherit: universalPermissions,
@@ -11,7 +12,7 @@ export const platformPermissions = buildHardPermissions({
 	},
 	roles: {
 		"technician": {
-			roleId: "00dd53e8390b79d425840d08a88d997390fcb5ed7b805e98c9c5e9f284a6f759",
+			roleId: technicianRoleId,
 			privileges: [
 				...powerPrivileges,
 				"write_any_app",
