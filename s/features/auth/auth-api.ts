@@ -8,6 +8,7 @@ import {bakeStatsHub} from "./tables/bake-stats-hub.js"
 import {personalTopic} from "./topics/personal-topic.js"
 import {appTokenTopic} from "./topics/app-token-topic.js"
 import {bakeAuthTables} from "./tables/bake-auth-tables.js"
+import {permissionsTopic} from "./topics/permissions-topic.js"
 import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
 import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
@@ -19,6 +20,7 @@ export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
 	const {verifyToken, config} = options
 
 	const policies = prepareAuthPolicies({
+		config,
 		verifyToken,
 		getStatsHub: bakeStatsHub({authTables}),
 		getAuthTables: bakeAuthTables({config, authTables}),
@@ -56,6 +58,11 @@ export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
 		userService: apiContext<UserMeta, UserAuth>()({
 			policy: policies.user,
 			expose: userTopic(options),
+		}),
+
+		permissionsService: apiContext<UserMeta, UserAuth>()({
+			policy: policies.userWhoManagesPermissions,
+			expose: permissionsTopic(options),
 		}),
 	}
 }

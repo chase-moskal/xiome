@@ -4,9 +4,17 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
-import {AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta} from "../auth-types.js"
+import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta} from "../auth-types.js"
+import { requireUserCanManagePermissions } from "../topics/permissions/require-user-can-manage-permissions.js"
+import { userHasHardPrivilege } from "../topics/permissions/user-has-hard-privilege.js"
 
-export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
+export function prepareAuthPolicies({
+		config,
+		verifyToken,
+		getAuthTables,
+		getStatsHub,
+	}: {
+		config: PlatformConfig
 		verifyToken: VerifyToken
 		getAuthTables: GetTables<AuthTables>
 		getStatsHub: GetStatsHub
@@ -45,6 +53,19 @@ export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		},
 	}
 
+	const userWhoManagesPermissions: Policy<UserMeta, UserAuth> = {
+		processAuth: async(userMeta, request) => {
+			const userAuth = await user.processAuth(userMeta, request)
+			if (!userHasHardPrivilege({
+					config,
+					access: userAuth.access,
+					privilegeLabel: "manage_permissions",
+				}))
+				throw new ApiError(403, "forbidden: not allowed to manage permissions")
+			return userAuth
+		},
+	}
+
 	const unconstrainedPlatformUser: Policy<
 			UnconstrainedPlatformUserMeta,
 			UnconstrainedPlatformUserAuth
@@ -55,5 +76,5 @@ export function prepareAuthPolicies({verifyToken, getAuthTables, getStatsHub}: {
 		},
 	}
 
-	return {green, anon, user, platformUser, unconstrainedPlatformUser}
+	return {green, anon, user, platformUser, userWhoManagesPermissions, unconstrainedPlatformUser}
 }

@@ -14,6 +14,7 @@ import {XiomeMyAvatar} from "../../features/auth/components/my-avatar/xiome-my-a
 import {XiomeMyAccount} from "../../features/auth/components/my-account/xiome-my-account.js"
 import {XioProfileCard} from "../../features/xio-components/profile-card/xio-profile-card.js"
 import {XiomeLoginPanel} from "../../features/auth/components/login-panel/xiome-login-panel.js"
+import {XiomePermissions} from "../../features/auth/components/permissions/xiome-permissions.js"
 
 export function getComponents(models: Await<ReturnType<typeof assembleModels>>) {
 	const {authModel, appModel, personalModel} = models
@@ -26,6 +27,7 @@ export function getComponents(models: Await<ReturnType<typeof assembleModels>>) 
 		XiomeMyAvatar: share2(XiomeMyAvatar, {authModel}),
 		XiomeAppManager: share2(XiomeAppManager, {appModel}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel}),
+		XiomePermissions: share2(XiomePermissions, {authModel}),
 		XiomeMyAccount: share2(XiomeMyAccount, {authModel, personalModel}),
 	})
 }

@@ -17,6 +17,13 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 
 	let authGoblin: AuthGoblin
 
+	const augmentWithAppAndAccessTokens = {
+		getMeta: async() => ({
+			appToken: await authGoblin.getAppToken(),
+			accessToken: await authGoblin.getAccessToken(),
+		})
+	}
+
 	const shape = asShape<SystemApi>({
 		auth: {
 			appTokenService: {
@@ -36,45 +43,37 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				sendLoginLink: true,
 			},
 			appService: {
-				[_augment]: {
-					getMeta: async() => ({
-						appToken: await authGoblin.getAppToken(),
-						accessToken: await authGoblin.getAccessToken(),
-					}),
-				},
+				[_augment]: augmentWithAppAndAccessTokens,
 				listApps: true,
 				deleteApp: true,
 				updateApp: true,
 				registerApp: true,
 			},
 			manageAdminsService: {
-				[_augment]: {
-					getMeta: async() => ({
-						appToken: await authGoblin.getAppToken(),
-						accessToken: await authGoblin.getAccessToken(),
-					}),
-				},
+				[_augment]: augmentWithAppAndAccessTokens,
 				listAdmins: true,
 				assignAdmin: true,
 				revokeAdmin: true,
 			},
 			personalService: {
-				[_augment]: {
-					getMeta: async() => ({
-						appToken: await authGoblin.getAppToken(),
-						accessToken: await authGoblin.getAccessToken(),
-					}),
-				},
+				[_augment]: augmentWithAppAndAccessTokens,
 				setProfile: true,
 			},
 			userService: {
-				[_augment]: {
-					getMeta: async() => ({
-						appToken: await authGoblin.getAppToken(),
-						accessToken: await authGoblin.getAccessToken(),
-					}),
-				},
+				[_augment]: augmentWithAppAndAccessTokens,
 				getUser: true,
+			},
+			permissionsService: {
+				[_augment]: augmentWithAppAndAccessTokens,
+				assignPrivilege: true,
+				createPrivilege: true,
+				createRole: true,
+				deletePrivilege: true,
+				deleteRole: true,
+				fetchAllPermissions: true,
+				grantRole: true,
+				revokeRole: true,
+				unassignPrivilege: true,
 			},
 		},
 	})
