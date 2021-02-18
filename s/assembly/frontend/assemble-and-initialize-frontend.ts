@@ -28,5 +28,5 @@ export async function assembleAndInitializeFrontend({authGoblin, remote}: {
 		link: window.location.toString(),
 	})
 
-	return {components, models, modalsElement}
+	return {components, models, modals, modalsElement}
 }

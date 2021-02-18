@@ -22,8 +22,8 @@ export function prepareConfirm(popup: ModalSystem["popup"]) {
 						${typeof title == "string" ? html`<h2>${title}</h2>` : title}
 						${typeof body == "string" ? html`<p>${body}</p>` : body}
 						<div data-buttons>
-							<xio-button data-button=yes @press=${onYes}>${yes}</xio-button>
-							<xio-button data-button=no @press=${onNo}>${no}</xio-button>
+							<xio-button data-button=yes tabindex=0 @press=${onYes}>${yes}</xio-button>
+							<xio-button data-button=no tabindex=0 @press=${onNo}>${no}</xio-button>
 						</div>
 					</div>
 				`

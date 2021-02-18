@@ -1,14 +1,15 @@
 
 import {html} from "lit-html"
 
+import {trapFocus} from "./utils/trap-focus.js"
+import {preparePrompt} from "./prefabs/prompt.js"
+import {prepareConfirm} from "./prefabs/confirm.js"
+import {prepareModalSystemRendering} from "./utils/prepare-modal-system-rendering.js"
+
 import {Modal} from "./types/modal.js"
 import {ModalSystem} from "./types/modal-system.js"
 import {PopupOptions} from "./types/modal-options.js"
 import {ModalControls} from "./types/modal-controls.js"
-
-import {preparePrompt} from "./prefabs/prompt.js"
-import {prepareConfirm} from "./prefabs/confirm.js"
-import {prepareModalSystemRendering} from "./utils/prepare-modal-system-rendering.js"
 
 export function installModalSystem() {
 	let count = 0
@@ -42,6 +43,9 @@ export function installModalSystem() {
 			},
 		})
 		rerender()
+		const modal = element.querySelector<HTMLElement>(`[data-modal="${id}"]`)
+		modal.focus()
+		trapFocus(modal)
 		return controls
 	}
 
