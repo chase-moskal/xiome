@@ -26,8 +26,11 @@ export class XioButton extends Component {
 
 	render() {
 		return html`
-			<button @click=${this.handleClick} ?disabled=${this.disabled}>
-				<slot></slot>
+			<button
+				part=button
+				@click=${this.handleClick}
+				?disabled=${this.disabled}>
+					<slot></slot>
 			</button>
 		`
 	}
