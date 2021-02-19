@@ -78,6 +78,7 @@ slot {
 	background: var(--background);
 	border: var(--border);
 	border-radius: var(--border-radius);
+	text-overflow: ellipsis;
 }
 
 textarea {
