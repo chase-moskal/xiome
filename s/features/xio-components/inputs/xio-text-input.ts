@@ -38,6 +38,10 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	@property({type: Number})
 	["debounce"] = 200
 
+	focus() {
+		this.shadowRoot.querySelector<HTMLElement>("#textinput").focus()
+	}
+
 	@property({type: Function})
 	parser: undefined | TextInputParser<xParsedValue>
 

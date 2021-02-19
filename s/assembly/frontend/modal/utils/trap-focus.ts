@@ -1,7 +1,23 @@
 
 export function trapFocus(element: HTMLElement, focusNth: number) {
+	const blueprint = `
+		[focusable]:not([disabled])
+		[tabindex]:not([disabled])
+		a[href]:not([disabled])
+		button:not([disabled])
+		textarea:not([disabled])
+		input[type="text"]:not([disabled])
+		input[type="radio"]:not([disabled])
+		input[type="checkbox"]:not([disabled])
+		select:not([disabled])
+	`
+	const selector = blueprint
+		.split("\n")
+		.map(l => l.trim())
+		.filter(l => l.length)
+		.join(", ")
 
-	const focusable = Array.from(element.querySelectorAll<HTMLElement>(`[tabindex]:not([disabled]), a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])`))
+	const focusable = Array.from(element.querySelectorAll<HTMLElement>(selector))
 
 	if (focusable.length === 0)
 		throw new Error("cannot trap focus: no focusable element")

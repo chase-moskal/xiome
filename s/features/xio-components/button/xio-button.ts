@@ -13,6 +13,10 @@ export class XioButton extends Component {
 	@property({type: Function})
 	onpress: (event: PressEvent) => void
 
+	focus() {
+		this.shadowRoot.querySelector("button").focus()
+	}
+
 	private handleClick = () => {
 		const event = new PressEvent(this)
 		if (this.onpress) this.onpress(event)
