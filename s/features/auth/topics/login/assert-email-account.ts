@@ -29,6 +29,7 @@ export async function assertEmailAccount({rando, tables, email, config}: {
 					public: true,
 					timeframeStart: undefined,
 					timeframeEnd: undefined,
+					hard: true,
 				})
 				: Promise.resolve()
 

@@ -12,7 +12,11 @@ export function buildRoleHasPrivileges(
 		.map(([,{roleId, privileges: privilegeLabels}]) => privilegeLabels.map(label => {
 			const privilege = privileges.find(row => row.label === label)
 			if (!privilege) throw new Error(`hardcoded permission label not found "${label}"`)
-			return {roleId, privilegeId: privilege.privilegeId}
+			return {
+				roleId,
+				privilegeId: privilege.privilegeId,
+				hard: true,
+			}
 		}))
 		.flat()
 

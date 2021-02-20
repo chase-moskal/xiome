@@ -8,9 +8,11 @@ export interface PermissionsDisplay {
 	privileges: {
 		privilegeId: string
 		label: string
+		hard: boolean
 	}[]
 	rolesHavePrivileges: {
 		roleId: string
 		privilegeId: string
+		hard: boolean
 	}[]
 }

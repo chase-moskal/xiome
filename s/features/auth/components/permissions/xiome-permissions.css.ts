@@ -43,6 +43,10 @@ export default css`
 	margin: 0.2em 0.1em;
 }
 
+[part=plate] xio-button[data-hard] {
+	color: blue;
+}
+
 [part=plate] xio-button[disabled]::part(button) {
 	border: 1px solid lime;
 	background: yellow;

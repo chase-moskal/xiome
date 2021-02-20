@@ -385,6 +385,7 @@ export type RoleRow = {
 export type PrivilegeRow = {
 	privilegeId: string
 	label: string
+	hard: boolean
 }
 
 export type UserHasRoleRow = {
@@ -393,11 +394,13 @@ export type UserHasRoleRow = {
 	timeframeStart: undefined | number
 	timeframeEnd: undefined | number
 	public: boolean
+	hard: boolean
 }
 
 export type RoleHasPrivilegeRow = {
 	roleId: string
 	privilegeId: string
+	hard: boolean
 }
 
 // statistical

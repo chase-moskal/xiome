@@ -53,6 +53,7 @@ export const manageAdminsTopic = ({
 			make: async() => ({
 				userId: adminUserId,
 				roleId: adminRoleId,
+				hard: false,
 				public: true,
 				timeframeEnd: undefined,
 				timeframeStart: undefined,

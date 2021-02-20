@@ -35,9 +35,9 @@ export async function assembleModels({
 		permissionsService: remote.auth.permissionsService,
 	})
 
-	authModel.onAccessChange(() => {
+	authModel.onAccessChange(access => {
 		appModel.accessChange()
-		permissionsModel.accessChange()
+		permissionsModel.accessChange(access)
 	})
 
 	return {

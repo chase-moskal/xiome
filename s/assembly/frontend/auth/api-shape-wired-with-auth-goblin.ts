@@ -18,10 +18,14 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 	let authGoblin: AuthGoblin
 
 	const augmentWithAppAndAccessTokens = {
-		getMeta: async() => ({
-			appToken: await authGoblin.getAppToken(),
-			accessToken: await authGoblin.getAccessToken(),
-		})
+		getMeta: async() => {
+			const meta = ({
+				appToken: await authGoblin.getAppToken(),
+				accessToken: await authGoblin.getAccessToken(),
+			})
+			return meta
+
+		}
 	}
 
 	const shape = asShape<SystemApi>({

@@ -4,9 +4,8 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {throwInvalidOrigin} from "./routines/throw-invalid-origin.js"
+import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
 import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, App, AuthTables, GetTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta} from "../auth-types.js"
-import { requireUserCanManagePermissions } from "../topics/permissions/require-user-can-manage-permissions.js"
-import { userHasHardPrivilege } from "../topics/permissions/user-has-hard-privilege.js"
 
 export function prepareAuthPolicies({
 		config,

@@ -56,6 +56,7 @@ export class XiomePermissions extends WiredComponent<{
 					<div part=plate>
 						${permissions.roles.map(role => html`
 							<xio-button
+								?data-hard=${role.hard}
 								title="${role.roleId}"
 								?disabled=${
 									this.roleSelected &&
@@ -82,8 +83,8 @@ export class XiomePermissions extends WiredComponent<{
 					</p>
 					<div part=plate>
 						${assignedPrivileges &&
-							assignedPrivileges.map(({privilegeId, label}) => html`
-								<xio-button title="${privilegeId}">
+							assignedPrivileges.map(({privilegeId, label, hard}) => html`
+								<xio-button title="${privilegeId}" ?data-hard=${hard}>
 									${label}
 								</xio-button>
 							`)}
@@ -92,8 +93,8 @@ export class XiomePermissions extends WiredComponent<{
 				<div class=available>
 					<p>privileges available</p>
 					<div part=plate>
-						${availablePrivileges.map(({privilegeId, label}) => html`
-							<xio-button title="${privilegeId}">
+						${availablePrivileges.map(({privilegeId, label, hard}) => html`
+							<xio-button title="${privilegeId}" ?data-hard=${hard}>
 								${label}
 							</xio-button>
 						`)}
