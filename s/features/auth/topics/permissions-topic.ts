@@ -13,6 +13,7 @@ export const permissionsTopic = ({}: AuthOptions) => asTopic<UserAuth>()({
 				rows => rows.map(row => ({
 					roleId: row.roleId,
 					label: row.label,
+					hard: !!row.hard,
 				}))
 			),
 			privileges: tables.privilege.read(all).then(

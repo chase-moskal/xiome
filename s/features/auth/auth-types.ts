@@ -379,6 +379,7 @@ export type SettingsRow = {
 export type RoleRow = {
 	roleId: string
 	label: string
+	hard: boolean
 }
 
 export type PrivilegeRow = {

@@ -2,6 +2,7 @@
 import styles from "./xiome-permissions.css.js"
 import {AuthModel} from "../../types/auth-model.js"
 import {makePermissionsModel} from "../../models/permissions-model.js"
+import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
@@ -27,9 +28,28 @@ export class XiomePermissions extends WiredComponent<{
 		this.roleSelected = role
 	}
 
-	render() {
-		const {permissionsLoadingView} = this.share.permissionsModel
-		return renderWrappedInLoading(permissionsLoadingView, permissions => html`
+	private getAssignedPrivileges(permissions: PermissionsDisplay) {
+		const {roleSelected} = this
+		if (!roleSelected) return null
+
+		const assignedPrivilegeIds = permissions.rolesHavePrivileges
+			.filter(({roleId}) => roleId === roleSelected.roleId)
+			.map(({privilegeId}) => privilegeId)
+
+		return permissions.privileges
+			.filter(({privilegeId}) =>
+				assignedPrivilegeIds.includes(privilegeId))
+	}
+
+	private renderPermissions(permissions: PermissionsDisplay) {
+		const assignedPrivileges = this.getAssignedPrivileges(permissions)
+		const availablePrivileges = this.roleSelected
+			? permissions.privileges
+				.filter(privilege => !assignedPrivileges
+					.find(priv => priv.privilegeId === privilege.privilegeId)
+				)
+			: permissions.privileges
+		return html`
 			<div class=container>
 				<div class=roles>
 					<p>roles</p>
@@ -61,33 +81,33 @@ export class XiomePermissions extends WiredComponent<{
 						}
 					</p>
 					<div part=plate>
-						${(() => {
-							const {roleSelected} = this
-							if (!roleSelected) return null
-	
-							const assignedPrivilegeIds = permissions.rolesHavePrivileges
-								.filter(({roleId}) => roleId === roleSelected.roleId)
-								.map(({privilegeId}) => privilegeId)
-
-							const assignedPrivileges = permissions.privileges
-								.filter(({privilegeId}) =>
-									assignedPrivilegeIds.includes(privilegeId))
-
-							return assignedPrivileges.map(({privilegeId, label}) => html`
+						${assignedPrivileges &&
+							assignedPrivileges.map(({privilegeId, label}) => html`
 								<xio-button title="${privilegeId}">
 									${label}
 								</xio-button>
-							`)
-						})()}
+							`)}
 					</div>
 				</div>
 				<div class=available>
 					<p>privileges available</p>
 					<div part=plate>
-						...
+						${availablePrivileges.map(({privilegeId, label}) => html`
+							<xio-button title="${privilegeId}">
+								${label}
+							</xio-button>
+						`)}
 					</div>
 				</div>
 			</div>
-		`)
+		`
+	}
+
+	render() {
+		const {permissionsLoadingView} = this.share.permissionsModel
+		return renderWrappedInLoading(
+			permissionsLoadingView,
+			this.renderPermissions.bind(this),
+		)
 	}
 }

@@ -54,13 +54,4 @@ export default css`
 	color: orange;
 }
 
-.roles {
-}
-
-.assigned {
-}
-
-.available {
-}
-
 `
