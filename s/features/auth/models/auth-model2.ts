@@ -50,6 +50,7 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 			}
 			catch (error) {
 				state.accessLoading.actions.setError("error with login")
+				console.error(error)
 			}
 		},
 
