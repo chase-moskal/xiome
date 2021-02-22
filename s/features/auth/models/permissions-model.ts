@@ -32,6 +32,14 @@ export function makePermissionsModel({
 		deactivate() {
 			state.active = false
 		},
+		reloadAfter<xAction extends (...args: any[]) => Promise<void>>(action: xAction) {
+			state.permissionsLoading.actions.setLoading()
+			return <xAction>async function(...args: any[]) {
+				const result = await action(...args)
+				await actions.reload()
+				return result
+			}
+		},
 	})
 
 	return {
@@ -45,5 +53,26 @@ export function makePermissionsModel({
 				await actions.reload()
 			}
 		},
+		createRole: actions.reloadAfter(async(label: string) => {
+			await permissionsService.createRole({label})
+		}),
+		assignPrivilege: actions.reloadAfter(async({roleId, privilegeId}: {
+				roleId: string
+				privilegeId: string
+			}) => {
+			await permissionsService.assignPrivilege({
+				roleId,
+				privilegeId,
+			})
+		}),
+		unassignPrivilege: actions.reloadAfter(async({roleId, privilegeId}: {
+				roleId: string
+				privilegeId: string
+			}) => {
+			await permissionsService.unassignPrivilege({
+				roleId,
+				privilegeId,
+			})
+		}),
 	}
 }

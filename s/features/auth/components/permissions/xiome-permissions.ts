@@ -5,9 +5,9 @@ import {makePermissionsModel} from "../../models/permissions-model.js"
 import {RoleDisplay} from "../../topics/permissions/types/role-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
+import {roleLabelValidator} from "../../topics/permissions/validators/role-label-validator.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
-import {maxLength, minLength, notWhitespace, one, string} from "../../../../toolbox/darkvalley.js"
 
 @mixinStyles(styles)
 export class XiomePermissions extends WiredComponent<{
@@ -41,19 +41,34 @@ export class XiomePermissions extends WiredComponent<{
 	}
 
 	private clickNewRole = async() => {
-		const result = await this.share.modals.prompt<string>({
+		const {modals, permissionsModel} = this.share
+		const result = await modals.prompt<string>({
 			title: "enter a name for your new custom role",
 			input: {
 				label: "role name",
-				validator: one(string(), minLength(1), maxLength(16), notWhitespace()),
+				validator: roleLabelValidator,
 			},
 		})
-		if (result) {
-			console.log("NEW ROLE!", result)
-		}
-		else {
-			console.log("new role canceled")
-		}
+		if (result)
+			await permissionsModel.createRole(result.value)
+	}
+
+	private clickAvailablePrivilege = (privilegeId: string) => async() => {
+		const {roleSelected} = this
+		if (roleSelected)
+			await this.share.permissionsModel.assignPrivilege({
+				privilegeId,
+				roleId: roleSelected.roleId,
+			})
+	}
+
+	private clickAssignedPrivilege = (privilegeId: string) => async() => {
+		const {roleSelected} = this
+		if (roleSelected)
+			await this.share.permissionsModel.unassignPrivilege({
+				privilegeId,
+				roleId: roleSelected.roleId,
+			})
 	}
 
 	private renderPermissions(permissions: PermissionsDisplay) {
@@ -73,8 +88,8 @@ export class XiomePermissions extends WiredComponent<{
 							<xio-button
 								?data-hard=${role.hard}
 								title="${role.roleId}"
-								?disabled=${this.roleSelected
-									&& role.roleId === this.roleSelected.roleId}
+								?disabled=${this.roleSelected &&
+									role.roleId === this.roleSelected.roleId}
 								@click=${this.clickRole(role)}>
 									${role.label}
 							</xio-button>
@@ -98,7 +113,10 @@ export class XiomePermissions extends WiredComponent<{
 					<div part=plate>
 						${assignedPrivileges &&
 							assignedPrivileges.map(({privilegeId, label, hard}) => html`
-								<xio-button title="${privilegeId}" ?data-hard=${hard}>
+								<xio-button
+									title="${privilegeId}"
+									?data-hard=${hard}
+									@press=${this.clickAssignedPrivilege(privilegeId)}>
 									${label}
 								</xio-button>
 							`)}
@@ -109,8 +127,11 @@ export class XiomePermissions extends WiredComponent<{
 					<p>privileges available</p>
 					<div part=plate>
 						${availablePrivileges.map(({privilegeId, label, hard}) => html`
-							<xio-button title="${privilegeId}" ?data-hard=${hard}>
-								${label}
+							<xio-button
+								title="${privilegeId}"
+								?data-hard=${hard}
+								@press=${this.clickAvailablePrivilege(privilegeId)}>
+									${label}
 							</xio-button>
 						`)}
 					</div>

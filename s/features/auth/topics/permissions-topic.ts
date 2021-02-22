@@ -1,10 +1,13 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
 import {UserAuth, AuthOptions} from "../auth-types.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
+import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
+import {find} from "../../../toolbox/dbby/dbby-x.js"
 
-export const permissionsTopic = ({}: AuthOptions) => asTopic<UserAuth>()({
+export const permissionsTopic = ({rando}: AuthOptions) => asTopic<UserAuth>()({
 
 	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
 		const all: {conditions: false} = {conditions: false}
@@ -33,8 +36,17 @@ export const permissionsTopic = ({}: AuthOptions) => asTopic<UserAuth>()({
 		})
 	},
 
-	async createRole({}, {}: {label: string}) {
-		console.log("TODO: createRole")
+	async createRole({tables}, {label}: {label: string}) {
+		const problems = roleLabelValidator(label)
+		if (problems.length) throw new ApiError(
+			400,
+			`validation error on label: ${problems.join("; ")}`
+		)
+		await tables.role.create({
+			hard: false,
+			label,
+			roleId: rando.randomId(),
+		})
 	},
 
 	async deleteRole({}, {}: {roleId: string}) {
@@ -49,18 +61,26 @@ export const permissionsTopic = ({}: AuthOptions) => asTopic<UserAuth>()({
 		console.log("TODO: deletePrivilege")
 	},
 
-	async assignPrivilege({}, {}: {
+	async assignPrivilege({tables}, {roleId, privilegeId}: {
 			roleId: string
 			privilegeId: string
 		}) {
-		console.log("TODO: assignPrivilege")
+		await tables.roleHasPrivilege.create({
+			hard: false,
+			roleId,
+			privilegeId,
+		})
 	},
 
-	async unassignPrivilege({}, {}: {
+	async unassignPrivilege({tables}, {roleId, privilegeId}: {
 			roleId: string
 			privilegeId: string
 		}) {
-		console.log("TODO: unassignPrivilege")
+		await tables.roleHasPrivilege.delete(find({
+			hard: false,
+			roleId,
+			privilegeId,
+		}))
 	},
 
 	async grantRole({}, {}: {
