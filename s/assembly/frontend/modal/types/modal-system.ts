@@ -5,7 +5,11 @@ import {PromptOptions} from "./prompt-options.js"
 import {ConfirmOptions} from "./confirm-options.js"
 
 export interface ModalSystem {
-	popup({}: PopupOptions): ModalControls
+	popup({}: PopupOptions): {
+		modal: HTMLElement
+		controls: ModalControls
+	}
 	confirm({}: ConfirmOptions): Promise<boolean>
-	prompt({}: PromptOptions): Promise<{}>
+	prompt<xValue>({}: PromptOptions<xValue>):
+		Promise<undefined | {value: xValue}>
 }

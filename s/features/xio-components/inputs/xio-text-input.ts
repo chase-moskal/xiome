@@ -1,7 +1,6 @@
 
 import styles from "./xio-text-input.css.js"
 import {nullParser} from "./parsing/null-parser.js"
-import {debounce2} from "../../../toolbox/debounce2.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
@@ -9,6 +8,7 @@ import {Component, html, mixinStyles, mixinFocusable, property, query, maybe} fr
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import {EnterPressEvent} from "./events/enter-press.js"
 
  @mixinFocusable
  @mixinStyles(styles)
@@ -34,9 +34,6 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	@property({type: String, reflect: true})
 	["placeholder"]: string = ""
-
-	@property({type: Number})
-	["debounce"] = 200
 
 	focus() {
 		this.shadowRoot.querySelector<HTMLElement>("#textinput").focus()
@@ -69,30 +66,55 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		this.updateFromRawInput()
 	}
 
+	onvaluechange: (event: ValueChangeEvent<xParsedValue>) => void =
+		() => {}
+
+	onenterpress: (event: EnterPressEvent) => void =
+		() => {}
+
 	@query("#textinput")
 	private input: HTMLInputElement | HTMLTextAreaElement
 
 	@property({type: String})
 	private draft: string = ""
 
-	private updateFromRawInput = () => {
-		this.draft = this.input.value
+	private dispatchValueChange = () => {
 		this.dispatchEvent(new ValueChangeEvent(this.value))
 	}
 
-	private handleInputChange = debounce2(
-		this["debounce"],
-		this.updateFromRawInput,
-	)
+	private dispatchEnterPress = () => {
+		this.dispatchEvent(new EnterPressEvent())
+	}
+
+	private updateFromRawInput = () => {
+		this.draft = this.input.value
+	}
+
+	private handleInputKeyUp = (event: KeyboardEvent) => {
+		this.updateFromRawInput()
+		if (!this.textarea && event.key === "Enter") {
+			this.dispatchEnterPress()
+		}
+		else {
+			this.dispatchValueChange()
+		}
+	}
+
+	private handleInputChange = () => {
+		this.updateFromRawInput()
+		this.dispatchValueChange()
+	}
 
 	firstUpdated() {
 		this.draft = this.initial
+		this.addEventListener("valuechange", this.onvaluechange)
+		this.addEventListener("enterpress", this.onenterpress)
 	}
 
 	render() {
 		const {
 			readonly, disabled, problems, draft, placeholder, textarea,
-			validator, handleInputChange,
+			validator, handleInputKeyUp, handleInputChange,
 		} = this
 		const valid = problems.length === 0
 		const showValidation = !this["hide-validation"] && !readonly && validator && (
@@ -121,8 +143,8 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
+								@keyup=${handleInputKeyUp}
 								@change=${handleInputChange}
-								@keyup=${handleInputChange}
 							></textarea>
 						` : html`
 							<input
@@ -134,8 +156,9 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
+								@keyup=${handleInputKeyUp}
 								@change=${handleInputChange}
-								@keyup=${handleInputChange}/>
+								/>
 						`}
 					</div>
 					<ol class=problems part=problems>

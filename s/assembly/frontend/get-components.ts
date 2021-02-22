@@ -29,9 +29,9 @@ export function getComponents({models, modals}: {
 		XioTextInput,
 		XioProfileCard,
 		XiomeMyAvatar: share2(XiomeMyAvatar, {authModel}),
-		XiomeAppManager: share2(XiomeAppManager, {appModel, modals}),
 		XiomeLoginPanel: share2(XiomeLoginPanel, {authModel}),
-		XiomePermissions: share2(XiomePermissions, {authModel, permissionsModel}),
+		XiomeAppManager: share2(XiomeAppManager, {appModel, modals}),
 		XiomeMyAccount: share2(XiomeMyAccount, {authModel, personalModel}),
+		XiomePermissions: share2(XiomePermissions, {authModel, modals, permissionsModel}),
 	})
 }

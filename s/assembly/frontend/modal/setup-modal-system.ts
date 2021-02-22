@@ -20,6 +20,7 @@ export function setupModalSystem() {
 	function popup({renderContent, onBlanketClick, focusNthElement}: PopupOptions) {
 		const id = count++
 		const controls: ModalControls = {
+			rerender,
 			close: () => {
 				modals.delete(id)
 				rerender()
@@ -45,7 +46,7 @@ export function setupModalSystem() {
 		rerender()
 		const modal = element.querySelector<HTMLElement>(`[data-modal="${id}"]`)
 		trapFocus(modal, focusNthElement)
-		return controls
+		return {controls, modal}
 	}
 
 	return {

@@ -6,8 +6,8 @@ export function mixinFocusable<C extends ConstructorFor<LitElement>>(
 		Constructor: C
 	): C {
 	return class FocusableComponent extends Constructor {
-		constructor(...args: any[]) {
-			super(...args)
+		connectedCallback() {
+			super.connectedCallback()
 			this.setAttribute("focusable", "")
 		}
 	}
