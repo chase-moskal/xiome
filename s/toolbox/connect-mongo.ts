@@ -1,5 +1,5 @@
 
-// import {MongoConfig} from "../types.js"
+// import {MongoConfig} from "../features/auth/auth-types.js"
 // import {DbbyRow} from "./dbby/dbby-types.js"
 // import {dbbyMongo} from "./dbby/dbby-mongo.js"
 // import {MongoClient} from "../commonjs/mongodb.js"

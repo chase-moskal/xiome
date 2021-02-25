@@ -1,7 +1,7 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 import {find} from "../../../../toolbox/dbby/dbby-mongo.js"
-import {AccessPayload, AuthTables} from "../../../../types.js"
+import {AccessPayload, AuthTables} from "../../../../features/auth/auth-types.js"
 
 export async function requireUserIsAllowedToEditApp({appId, tables, access}: {
 		appId: string

@@ -1,5 +1,5 @@
 
-import {ConstructorFor} from "../../types.js"
+import {ConstructorFor} from "../../types/fancy.js"
 import {Component, WiredComponent} from "../component.js"
 
 export type Share = any

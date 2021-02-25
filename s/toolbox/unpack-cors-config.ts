@@ -1,5 +1,5 @@
 
-// import {JsonRegex, CorsConfig} from "../types.js"
+// import {JsonRegex, CorsConfig} from "../features/auth/auth-types.js"
 
 // export const unpackCorsConfig = ({allowed, forbidden}: CorsConfig) => ({
 // 	allowed: unpackRegex(allowed),

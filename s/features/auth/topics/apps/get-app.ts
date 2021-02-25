@@ -1,6 +1,6 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
-import {AppRow, AuthTables} from "../../../../types.js"
+import {AppRow, AuthTables} from "../../../../features/auth/auth-types.js"
 import {find} from "../../../../toolbox/dbby/dbby-mongo.js"
 
 export async function getApp(tables: AuthTables, appId: string): Promise<AppRow> {

@@ -1,6 +1,6 @@
 
 import {LitElement} from "lit-element"
-import {ConstructorFor} from "../../types.js"
+import {ConstructorFor} from "../../types/fancy.js"
 import {autorun, IReactionDisposer, IReactionPublic} from "mobx"
 
 const _autorunClear = Symbol("_autorunClear")

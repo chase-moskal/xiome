@@ -1,9 +1,9 @@
 
 import styles from "./xiome-login-panel.css.js"
-import {AccessPayload} from "../../../../types.js"
 import {AuthModel} from "../../types/auth-model.js"
 import {email} from "../../../../toolbox/darkvalley.js"
 import {loading} from "../../../../framework/loading/loading.js"
+import {AccessPayload} from "../../../../features/auth/auth-types.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {whenLoadingIsDone} from "../../../../framework/loading/when-loading-is-done.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"

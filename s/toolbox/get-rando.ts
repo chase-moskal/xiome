@@ -1,6 +1,6 @@
 
-import {Await} from "../types.js"
 import {encodeHex} from "./bytes.js"
+import {Await} from "../types/fancy.js"
 import {isNode as stockIsNode} from "./is-node.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
