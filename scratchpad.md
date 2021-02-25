@@ -1,4 +1,9 @@
 
+## payments and premium
+
+- [ ] link sub stripe accounts
+  - [ ] 
+
 ## todo
 
 - [x] theory: advanced privileges and claims
@@ -11,7 +16,7 @@
   - [x] refactor app creation forms
   - [x] profile display and editing
   - [x] app basic stats
-  - [ ] app admin management
+  - [x] app admin management
   - [ ] app admin can ban users
 - [ ] port all metalshop features
 - [ ] separate platform repo and establish orchestration and ci/cd

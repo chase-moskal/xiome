@@ -11,9 +11,9 @@ import {bakeAuthTables} from "./tables/bake-auth-tables.js"
 import {permissionsTopic} from "./topics/permissions-topic.js"
 import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
-import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
+import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthApiOptions, AuthTables, GreenAuth, GreenMeta} from "./auth-types.js"
 
-export const makeAuthApi = ({authTables, ...options}: AuthOptions & {
+export const makeAuthApi = ({authTables, ...options}: AuthApiOptions & {
 		authTables: AuthTables
 	}) => {
 

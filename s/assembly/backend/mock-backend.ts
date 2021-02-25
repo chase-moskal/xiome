@@ -1,10 +1,18 @@
 
-import {assembleApi} from "./assemble-api.js"
-import {mockBrowser} from "../frontend/mocks/mock-browser.js"
-import {mockPrerequisites} from "./mock-prerequisites.js"
+import {asApi} from "renraku/x/identities/as-api"
+import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
+import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-import {LoginEmailDetails} from "../../features/auth/auth-types.js"
-import {MockSystemOptions} from "../types/mock-system-options.js"
+import {payApi} from "../../features/pay/api/pay-api.js"
+import {BackendOptions} from "./types/backend-options.js"
+import {makeAuthApi} from "../../features/auth/auth-api.js"
+import {AuthTables} from "../../features/auth/auth-types.js"
+import {mockBrowser} from "../frontend/mocks/mock-browser.js"
+import {mockStorageTables} from "./tools/mock-storage-tables.js"
+import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
+import {PayTables} from "../../features/pay/api/types/tables/pay-tables.js"
+import {mockStripeLiaison} from "../../features/pay/stripe/mock-stripe-liaison.js"
+import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
 
 export async function mockBackend({
 		rando,
@@ -14,35 +22,55 @@ export async function mockBackend({
 		technicianEmail,
 		sendLoginEmail,
 		generateNickname,
-	}: MockSystemOptions) {
+	}: BackendOptions) {
 
-	const {
-		config,
-		tables,
-		signToken,
-		verifyToken,
-	} = await mockPrerequisites({
-		rando,
-		tableStorage,
+	const config = mockPlatformConfig({
 		platformHome,
 		platformLabel,
 		technicianEmail,
 	})
+	const signToken = mockSignToken()
+	const verifyToken = mockVerifyToken()
 
-	let latestLoginEmail: LoginEmailDetails
-	const getLatestLoginEmail = () => latestLoginEmail
+	const tables = {
+		auth: await mockStorageTables<AuthTables>(tableStorage, {
+			role: true,
+			account: true,
+			profile: true,
+			privilege: true,
+			userHasRole: true,
+			accountViaEmail: true,
+			accountViaGoogle: true,
+			roleHasPrivilege: true,
+			app: true,
+			appOwnership: true,
+			latestLogin: true,
+		}),
+		pay: await mockStorageTables<PayTables>(tableStorage, {
+			stripeAccounts: true,
+		}),
+	}
 
-	const api = assembleApi({
-		rando,
-		config,
-		tables,
-		signToken,
-		verifyToken,
-		generateNickname,
-		sendLoginEmail: async details => {
-			latestLoginEmail = details
-			await sendLoginEmail(details)
-		},
+	const {fakeSendLoginEmail, getLatestLoginEmail} = mockSendLoginEmail(
+		sendLoginEmail
+	)
+
+	const api = asApi({
+		auth: makeAuthApi({
+			rando,
+			config,
+			authTables: tables.auth,
+			signToken,
+			verifyToken,
+			generateNickname,
+			sendLoginEmail: fakeSendLoginEmail,
+		}),
+		pay: payApi({
+			rando,
+			rawPayTables: tables.pay,
+			stripeLiaison: mockStripeLiaison({rando}),
+			verifyToken,
+		}),
 	})
 
 	return {

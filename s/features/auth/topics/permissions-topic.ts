@@ -1,13 +1,13 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
-import {UserAuth, AuthOptions} from "../auth-types.js"
+import {UserAuth, AuthApiOptions} from "../auth-types.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
 import {find} from "../../../toolbox/dbby/dbby-x.js"
 
-export const permissionsTopic = ({rando}: AuthOptions) => asTopic<UserAuth>()({
+export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
 	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
 		const all: {conditions: false} = {conditions: false}

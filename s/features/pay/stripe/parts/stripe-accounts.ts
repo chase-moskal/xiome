@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 
-export function stripeAccountLiaison({stripe, reauthLink, returnLink}: {
+export function stripeAccounts({stripe, reauthLink, returnLink}: {
 		stripe: Stripe
 		reauthLink: string
 		returnLink: string

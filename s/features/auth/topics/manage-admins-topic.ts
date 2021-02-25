@@ -2,7 +2,7 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
-import {AuthOptions} from "../auth-types.js"
+import {AuthApiOptions} from "../auth-types.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {UnconstrainedPlatformUserAuth} from "../../../types.js"
@@ -14,7 +14,7 @@ import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-e
 export const manageAdminsTopic = ({
 			rando,
 			config,
-		}: AuthOptions) => asTopic<UnconstrainedPlatformUserAuth>()({
+		}: AuthApiOptions) => asTopic<UnconstrainedPlatformUserAuth>()({
 
 	async listAdmins({access, tables, getAuthTables}, {appId}: {
 				appId: string

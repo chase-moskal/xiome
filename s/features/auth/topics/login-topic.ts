@@ -5,7 +5,7 @@ import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
-import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthOptions} from "../auth-types.js"
+import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthApiOptions} from "../auth-types.js"
 
 export const loginTopic = ({
 		rando,
@@ -14,7 +14,7 @@ export const loginTopic = ({
 		verifyToken,
 		sendLoginEmail,
 		generateNickname,
-	}: AuthOptions) => asTopic<AnonAuth>()({
+	}: AuthApiOptions) => asTopic<AnonAuth>()({
 
 	async sendLoginLink(
 			{app, tables},

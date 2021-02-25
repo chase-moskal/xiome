@@ -50,7 +50,7 @@ export interface PlatformConfig {
 	}
 }
 
-export interface AuthOptions {
+export interface AuthApiOptions {
 	rando: Rando
 	config: PlatformConfig
 	signToken: SignToken

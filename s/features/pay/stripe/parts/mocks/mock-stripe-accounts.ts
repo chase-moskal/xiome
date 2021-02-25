@@ -1,14 +1,14 @@
 
-import {Rando} from "../../../../toolbox/get-rando.js"
-import {StripeAccountLiaison} from "../types/stripe-account-liaison.js"
+import {Rando} from "../../../../../toolbox/get-rando.js"
+import {StripeAccounts} from "../types/stripe-accounts.js"
 
-export function mockStripeAccountLiaison({
+export function mockStripeAccounts({
 			rando,
 			mockStripeAccountLink,
 		}: {
 			rando: Rando
 			mockStripeAccountLink: string
-		}): StripeAccountLiaison {
+		}): StripeAccounts {
 
 	return {
 		async createStripeAccount() {

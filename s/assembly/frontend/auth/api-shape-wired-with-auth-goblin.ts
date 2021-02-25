@@ -18,14 +18,10 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 	let authGoblin: AuthGoblin
 
 	const augmentWithAppAndAccessTokens = {
-		getMeta: async() => {
-			const meta = ({
-				appToken: await authGoblin.getAppToken(),
-				accessToken: await authGoblin.getAccessToken(),
-			})
-			return meta
-
-		}
+		getMeta: async() => ({
+			appToken: await authGoblin.getAppToken(),
+			accessToken: await authGoblin.getAccessToken(),
+		})
 	}
 
 	const shape = asShape<SystemApi>({
@@ -80,6 +76,16 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				unassignPrivilege: true,
 			},
 		},
+		pay: {
+			stripeAccountsService: {
+				[_augment]: augmentWithAppAndAccessTokens,
+				createAccountPopup: true,
+			},
+			premiumService: {
+				[_augment]: augmentWithAppAndAccessTokens,
+				lol: true,
+			},
+		}
 	})
 
 	function installAuthGoblin({loginService, appTokenService}: {
