@@ -1,6 +1,6 @@
 
-import Stripe from "stripe"
-import {DbbyRow} from "../../../../../../toolbox/dbby/dbby-types.js"
+import {Stripe} from "stripe"
+import {DbbyRow} from "../../../../../../../toolbox/dbby/dbby-types.js"
 
 export type MockSetupIntent = DbbyRow & Partial<Stripe.SetupIntent> & {
 	id: string

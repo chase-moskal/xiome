@@ -6,12 +6,12 @@ import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {toPaymentDetails} from "../helpers/to-payment-details.js"
 import {StripeSubscriptions} from "../types/stripe-subscriptions.js"
 import {StripeWebhooks} from "../../webhooks/types/stripe-webhooks.js"
-import {MockCustomer} from "../../../mocks/types/tables/mock-customer.js"
-import {MockStripeTables} from "../../../mocks/types/mock-stripe-tables.js"
+import {MockCustomer} from "../../../mocks/tables/types/tables/mock-customer.js"
+import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.js"
 import {toSubscriptionDetails} from "../helpers/to-subscription-details.js"
-import {MockSetupIntent} from "../../../mocks/types/tables/mock-setup-intent.js"
-import {MockSubscription} from "../../../mocks/types/tables/mock-subscription.js"
-import {MockPaymentMethod} from "../../../mocks/types/tables/mock-payment-method.js"
+import {MockSetupIntent} from "../../../mocks/tables/types/tables/mock-setup-intent.js"
+import {MockSubscription} from "../../../mocks/tables/types/tables/mock-subscription.js"
+import {MockPaymentMethod} from "../../../mocks/tables/types/tables/mock-payment-method.js"
 
 const numbers = [..."1234567890"]
 
