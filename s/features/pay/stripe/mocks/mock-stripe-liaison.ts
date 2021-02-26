@@ -1,6 +1,6 @@
 
-import {Rando} from "../../../toolbox/get-rando.js"
-import {mockStripeAccounts} from "./parts/mocks/mock-stripe-accounts.js"
+import {Rando} from "../../../../toolbox/get-rando.js"
+import {mockStripeAccounts} from "../parts/accounts/mocks/mock-stripe-accounts.js"
 
 export async function mockStripeLiaison({rando}: {rando: Rando}) {
 	const accounts = mockStripeAccounts({

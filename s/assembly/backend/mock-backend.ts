@@ -11,7 +11,7 @@ import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {mockStorageTables} from "./tools/mock-storage-tables.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {PayTables} from "../../features/pay/api/types/tables/pay-tables.js"
-import {mockStripeLiaison} from "../../features/pay/stripe/mock-stripe-liaison.js"
+import {mockStripeLiaison} from "../../features/pay/stripe/mocks/mock-stripe-liaison.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
 
 export async function mockBackend({
@@ -48,6 +48,8 @@ export async function mockBackend({
 		}),
 		pay: await mockStorageTables<PayTables>(tableStorage, {
 			stripeAccounts: true,
+			stripeCustomers: true,
+			stripePremiums: true,
 		}),
 	}
 

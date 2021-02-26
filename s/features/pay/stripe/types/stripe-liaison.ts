@@ -1,4 +1,4 @@
 
-import {mockStripeLiaison} from "../mock-stripe-liaison.js"
+import {mockStripeLiaison} from "../mocks/mock-stripe-liaison.js"
 
 export type StripeLiaison = ReturnType<typeof mockStripeLiaison>
