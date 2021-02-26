@@ -4,11 +4,10 @@ import {PayTopicOptions} from "./types/pay-topic-options.js"
 import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
 
 export const premiumTopic = ({
-		rando,
-		stripeLiaison,
-	}: PayTopicOptions) => asTopic<PayUserAuth>()({
+			rando,
+		}: PayTopicOptions) => asTopic<PayUserAuth>()({
 
-	async lol({tables}, {userId}: {userId: string}) {
+	async lol({payTables, stripeLiaison}, {userId}: {userId: string}) {
 		return true
 	},
 })

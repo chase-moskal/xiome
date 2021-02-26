@@ -5,10 +5,9 @@ import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
 
 export const stripeAccountsTopic = ({
 			rando,
-			stripeLiaison,
 		}: PayTopicOptions) => asTopic<PayUserAuth>()({
 
-	async createAccountPopup({tables, access}): Promise<{
+	async createAccountPopup({payTables, access, stripeLiaison}): Promise<{
 			popupUrl: string
 		}> {
 

@@ -13,6 +13,8 @@ import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {PayTables} from "../../features/pay/api/types/tables/pay-tables.js"
 import {mockStripeLiaison} from "../../features/pay/stripe/mocks/mock-stripe-liaison.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
+import {prepareStripeLiaison} from "../../features/pay/stripe/prepare-stripe-liaison.js"
+import {prepareMockStripeLiaison} from "../../features/pay/stripe/prepare-mock-stripe-liaison.js"
 
 export async function mockBackend({
 		rando,
@@ -70,8 +72,8 @@ export async function mockBackend({
 		pay: payApi({
 			rando,
 			rawPayTables: tables.pay,
-			stripeLiaison: mockStripeLiaison({rando}),
 			verifyToken,
+			makeStripeLiaison: prepareMockStripeLiaison({rando}),
 		}),
 	})
 

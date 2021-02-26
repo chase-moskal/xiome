@@ -1,4 +1,5 @@
 
-import {mockStripeLiaison} from "../mocks/mock-stripe-liaison.js"
+import {Await} from "../../../../types/fancy.js"
+import {stripeLiaison} from "../stripe-liaison.js"
 
-export type StripeLiaison = ReturnType<typeof mockStripeLiaison>
+export type StripeLiaison = Await<ReturnType<typeof stripeLiaison>>

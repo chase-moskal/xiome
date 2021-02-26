@@ -1,11 +1,31 @@
 
 import {Stripe} from "stripe"
-import {StripeLiaison} from "./types/stripe-liaison.js"
+import {payDatalayer} from "./parts/pay-datalayer.js"
+import {PayTables} from "../api/types/tables/pay-tables.js"
+import {stripeWebhooks} from "./parts/webhooks/stripe-webhooks.js"
+import {stripeAccounts} from "./parts/accounts/stripe-accounts.js"
+import {stripeSubscriptions} from "./parts/subscriptions/stripe-subscriptions.js"
 
-export function stripeLiaison({stripe}: {
+export async function stripeLiaison({stripe, payTables}: {
 		stripe: Stripe
-	}): StripeLiaison {
+		payTables: PayTables
+	}) {
 
-	throw new Error("TODO implement")
-	return undefined
+	const accounts = stripeAccounts({
+		stripe,
+		reauthLink: "fake-reauth-link-lol",
+		returnLink: "fake-return-link-lol",
+	})
+
+	const subscriptions = stripeSubscriptions({
+		stripe,
+	})
+
+	const webhooks = stripeWebhooks({
+		logger: console,
+		subscriptions,
+		payDatalayer: payDatalayer({payTables}),
+	})
+
+	return {accounts, subscriptions, webhooks}
 }

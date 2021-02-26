@@ -13,8 +13,10 @@ export function payPolicies(options: PayPolicyOptions) {
 	const payUser: Policy<PayUserMeta, PayUserAuth> = {
 		processAuth: async(meta, request) => {
 			const baseAuth = await baseUser.processAuth(meta, request)
-			const tables = bakePayTables(baseAuth.app.appId)
-			return {...baseAuth, tables}
+			const {appId} = baseAuth.app
+			const payTables = bakePayTables(appId)
+			const stripeLiaison = await options.makeStripeLiaison({payTables})
+			return {...baseAuth, payTables, stripeLiaison}
 		},
 	}
 

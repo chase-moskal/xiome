@@ -1,14 +1,12 @@
 
 import {Stripe} from "stripe"
 
-import {UserHasRoleRow} from "../../../../auth/auth-types.js"
+import {PayDatalayer} from "./types/pay-datalayer.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {Logger} from "../../../../../toolbox/logger/interfaces.js"
 import {getStripeId} from "../subscriptions/helpers/get-stripe-id.js"
 import {SetupMetadata} from "../subscriptions/types/setup-metadata.js"
 import {StripeSubscriptions} from "../subscriptions/types/stripe-subscriptions.js"
-import {StripePremiumRow} from "../../../api/types/tables/rows/stripe-premium-row.js"
-import {StripeCustomerRow} from "../../../api/types/tables/rows/stripe-customer-row.js"
 
 export class StripeWebhookError extends Error {
 	name = this.constructor.name
@@ -25,21 +23,14 @@ function biggest(...args: number[]) {
 }
 
 export function stripeWebhooks({
-		xiome,
-		logger,
-		stripeSubscriptions,
-	}: {
-		logger: Logger
-		stripeSubscriptions: StripeSubscriptions
-		xiome: {
-			getUserHasPremiumRole: (userId: string) => Promise<UserHasRoleRow>
-			getStripeCustomerByCustomerId: (stripeCustomerId: string) => Promise<StripeCustomerRow>
-			upsertStripePremiumRow: (row: StripePremiumRow) => Promise<void>
-			deleteStripePremiumRow: (userId: string) => Promise<void>
-			getStripePremiumRow: (userId: string) => Promise<StripePremiumRow>
-			grantPremiumRoleUntil: (userId: string, timeframeEnd: number) => Promise<void>
-		}
-	}) {
+			logger,
+			payDatalayer,
+			subscriptions,
+		}: {
+			logger: Logger
+			payDatalayer: PayDatalayer
+			subscriptions: StripeSubscriptions
+		}) {
 
 	async function evaluatePremium({
 			userId,
@@ -52,7 +43,7 @@ export function stripeWebhooks({
 		}) {
 
 		const {timeframeEnd: previousTimeframeEnd}
-			= await xiome.getUserHasPremiumRole(userId)
+			= await payDatalayer.getUserHasPremiumRole(userId)
 
 		const active = false
 			|| subscriptionStatus === "active"
@@ -66,17 +57,14 @@ export function stripeWebhooks({
 		return {active, timeframeEnd}
 	}
 
-	/**
-	 * action to fulfill a purchased subscription
-	 */
 	async function fulfillSubscription({userId, session}: {
 			userId: string
 			session: Stripe.Checkout.Session
 		}) {
 		const stripeSubscriptionId = getStripeId(session.subscription)
 		const {subscription, payment} = await concurrent({
-			subscription: stripeSubscriptions.fetchSubscriptionDetails(stripeSubscriptionId),
-			payment: stripeSubscriptions.fetchPaymentDetailsBySubscriptionId(stripeSubscriptionId),
+			subscription: subscriptions.fetchSubscriptionDetails(stripeSubscriptionId),
+			payment: subscriptions.fetchPaymentDetailsBySubscriptionId(stripeSubscriptionId),
 		})
 		const {card} = payment
 
@@ -87,51 +75,45 @@ export function stripeWebhooks({
 		})
 
 		await Promise.all([
-			xiome.upsertStripePremiumRow({
+			payDatalayer.upsertStripePremiumRow({
 				...card,
 				userId,
 				stripeSubscriptionId,
 			}),
-			xiome.grantPremiumRoleUntil(userId, timeframeEnd),
+			payDatalayer.grantPremiumRoleUntil(userId, timeframeEnd),
 		])
 	}
 
-	/**
-	 * action to update the payment method used on an active subscription
-	 */
 	async function updatePremiumSubscription({userId, session}: {
 			userId: string
 			session: Stripe.Checkout.Session
 		}) {
-		const {stripeSubscriptionId} = await xiome.getStripePremiumRow(userId)
+		const {stripeSubscriptionId} = await payDatalayer.getStripePremiumRow(userId)
 		const stripeIntentId = getStripeId(session.setup_intent)
-		const {card, stripePaymentMethodId} = await stripeSubscriptions.fetchPaymentDetailsByIntentId(stripeIntentId)
-		await stripeSubscriptions.updateSubscriptionPaymentMethod({
+		const {card, stripePaymentMethodId} = await subscriptions.fetchPaymentDetailsByIntentId(stripeIntentId)
+		await subscriptions.updateSubscriptionPaymentMethod({
 			stripePaymentMethodId,
 			stripeSubscriptionId,
 		})
-		await xiome.upsertStripePremiumRow({
+		await payDatalayer.upsertStripePremiumRow({
 			...card,
 			userId,
 			stripeSubscriptionId,
 		})
 	}
 
-	/**
-	 * action to unfulfill or refulfill expiring/canceled/defunct subscriptions
-	 */
 	async function respectSubscriptionChange({stripeCustomerId, subscription}: {
 			stripeCustomerId: string
 			subscription: Stripe.Subscription
 		}) {
-		const {userId} = await xiome.getStripeCustomerByCustomerId(stripeCustomerId)
+		const {userId} = await payDatalayer.getStripeCustomerByCustomerId(stripeCustomerId)
 		const {active, timeframeEnd} = await evaluatePremium({
 			userId,
 			subscriptionStatus: subscription.status,
 			subscriptionEnd: subscription.current_period_end,
 		})
-		await xiome.grantPremiumRoleUntil(userId, timeframeEnd)
-		if (!active) await xiome.deleteStripePremiumRow(userId)
+		await payDatalayer.grantPremiumRoleUntil(userId, timeframeEnd)
+		if (!active) await payDatalayer.deleteStripePremiumRow(userId)
 	}
 
 	//
