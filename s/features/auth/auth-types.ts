@@ -6,6 +6,10 @@ import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 
 import {makeAuthApi} from "./auth-api.js"
 import {namespaceKeyAppId} from "./tables/namespace-key-app-id.js"
+import {BaseAnonMeta} from "./policies/base/types/contexts/base-anon-meta.js"
+import {BaseAnonAuth} from "./policies/base/types/contexts/base-anon-auth.js"
+import {BaseUserMeta} from "./policies/base/types/contexts/base-user-meta.js"
+import {BaseUserAuth} from "./policies/base/types/contexts/base-user-auth.js"
 
 export * from "redcrypto/dist/types.js"
 
@@ -61,35 +65,30 @@ export interface AuthApiOptions {
 
 export type GreenMeta = undefined
 export type GreenAuth = {
-	getAuthTables: GetTables<AuthTables>
+	bakeAppTables: (appId: string) => Promise<AppTables>
 }
 
-export interface AnonMeta {
-	appToken: AppToken
-}
-
-export interface AnonAuth {
+export interface AnonMeta extends BaseAnonMeta {}
+export interface AnonAuth extends BaseAnonAuth {
 	app: App
-	tables: AuthTables
+	appTables: AppTables
+	authTables: AuthTables
+	permissionsTables: PermissionsTables
 }
 
-export interface UserMeta extends AnonMeta {
-	accessToken: AccessToken
-}
-
-export interface UserAuth extends AnonAuth {
-	access: AccessPayload
-}
+export interface UserMeta extends BaseUserMeta {}
+export interface UserAuth extends BaseUserAuth {}
 
 export interface PlatformUserMeta extends UserMeta {}
-
 export interface PlatformUserAuth extends UserAuth {
 	statsHub: StatsHub
 }
 
 export interface UnconstrainedPlatformUserMeta extends PlatformUserMeta {}
 export interface UnconstrainedPlatformUserAuth extends PlatformUserAuth {
-	getAuthTables: GetTables<AuthTables>
+	appTables: AppTables
+	namespaceAuthTables: (appId: string) => AuthTables
+	namespacePermissionsTables: (appId: string) => PermissionsTables
 }
 
 export interface StatsHub {
@@ -301,7 +300,7 @@ export type PermissionsTables = {
 	roleHasPrivilege: DbbyTable<RoleHasPrivilegeRow>
 }
 
-export type AuthTablesNamespaced = PermissionsTables & {
+export type AuthTables = {
 	account: DbbyTable<AccountRow>
 	accountViaEmail: DbbyTable<AccountViaEmailRow>
 	accountViaGoogle: DbbyTable<AccountViaGoogleRow>
@@ -309,12 +308,10 @@ export type AuthTablesNamespaced = PermissionsTables & {
 	latestLogin: DbbyTable<LatestLoginRow>
 }
 
-export type AuthTablesGlobal = {
+export type AppTables = {
 	app: DbbyTable<AppRow>
 	appOwnership: DbbyTable<AppOwnershipRow>
 }
-
-export type AuthTables = AuthTablesNamespaced & AuthTablesGlobal
 
 export type ExposeTableNamespaceAppId<Row extends DbbyRow> =
 	DbbyTable<Row & {[namespaceKeyAppId]: string}>

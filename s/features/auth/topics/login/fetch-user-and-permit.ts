@@ -15,7 +15,7 @@ export async function fetchUserAndPermit({
 			generateNickname: () => string
 		}) {
 	return concurrent({
-		user: await fetchUser({userId, tables, generateNickname}),
+		user: await fetchUser({userId, authTables: tables, generateNickname}),
 		permit: await fetchPermit({userId, tables}),
 	})
 }

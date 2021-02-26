@@ -1,18 +1,24 @@
 
 import {Rando} from "../../../../toolbox/get-rando.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables, PlatformConfig} from "../../auth-types.js"
-
 import {generateAccountRow} from "./generate-account-row.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {AuthTables, PermissionsTables, PlatformConfig} from "../../auth-types.js"
 
-export async function assertEmailAccount({rando, tables, email, config}: {
+export async function assertEmailAccount({
+			rando,
+			email,
+			config,
+			authTables,
+			permissionsTables,
+		}: {
 			rando: Rando
 			email: string
-			tables: AuthTables
 			config: PlatformConfig
+			authTables: AuthTables
+			permissionsTables: PermissionsTables
 		}) {
 
-	const {userId} = await tables.accountViaEmail.assert({
+	const {userId} = await authTables.accountViaEmail.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
@@ -21,9 +27,9 @@ export async function assertEmailAccount({rando, tables, email, config}: {
 			const account = generateAccountRow({rando})
 			const {userId} = account
 
-			const operationCreatesAccount = tables.account.create(account)
+			const operationCreatesAccount = authTables.account.create(account)
 			const operationCreatesTechnicianUserRole = isTechnician
-				? tables.userHasRole.create({
+				? permissionsTables.userHasRole.create({
 					userId,
 					roleId,
 					public: true,

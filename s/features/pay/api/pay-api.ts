@@ -12,7 +12,7 @@ export const payApi = ({rando, makeStripeLiaison, rawPayTables, verifyToken}: Pa
 
 	return {
 		stripeAccountsService: apiContext<PayUserMeta, PayUserAuth>()({
-			policy: policies.payUser,
+			policy: policies.payPlatformUser,
 			expose: stripeAccountsTopic({
 				rando,
 			}),

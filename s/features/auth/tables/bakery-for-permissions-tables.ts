@@ -1,0 +1,51 @@
+
+import {isPlatform} from "../tools/is-platform.js"
+import {namespaceKeyAppId} from "./namespace-key-app-id.js"
+import {dbbyHardback} from "../../../toolbox/dbby/dbby-hardback.js"
+import {PlatformConfig, PermissionsTables} from "../auth-types.js"
+import {prepareTableNamespacer} from "./prepare-table-namespacer.js"
+import {transformHardPermissionsToMemoryTables} from "../permissions/tables/transform-hard-permissions-to-memory-tables.js"
+
+export function bakeryForPermissionsTables({config, permissionsTables}: {
+			config: PlatformConfig
+			permissionsTables: PermissionsTables
+		}) {
+
+	return async function bakePermissionsTables(
+				appId: string
+			): Promise<PermissionsTables> {
+
+		const hardPermissionsTables: PermissionsTables = (
+			await transformHardPermissionsToMemoryTables({
+				appId,
+				namespaceKeyAppId,
+				hardPermissions: (
+					isPlatform(appId, config)
+						? config.permissions.platform
+						: config.permissions.app
+				),
+			})
+		)
+
+		const hardbackedPermissionsTables = {
+			role: dbbyHardback({
+				frontTable: permissionsTables.role,
+				backTable: hardPermissionsTables.role,
+			}),
+			userHasRole: dbbyHardback({
+				frontTable: permissionsTables.userHasRole,
+				backTable: hardPermissionsTables.userHasRole,
+			}),
+			privilege: dbbyHardback({
+				frontTable: permissionsTables.privilege,
+				backTable: hardPermissionsTables.privilege,
+			}),
+			roleHasPrivilege: dbbyHardback({
+				frontTable: permissionsTables.roleHasPrivilege,
+				backTable: hardPermissionsTables.roleHasPrivilege,
+			}),
+		}
+
+		return prepareTableNamespacer(hardbackedPermissionsTables)(appId)
+	}
+}

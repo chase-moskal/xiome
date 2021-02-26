@@ -25,7 +25,7 @@ export async function signAuthTokens({
 		}) {
 
 	const {user, permit} = await concurrent({
-		user: fetchUser({userId, tables, generateNickname}),
+		user: fetchUser({userId, authTables: tables, generateNickname}),
 		permit: fetchPermit({userId, tables}),
 	})
 

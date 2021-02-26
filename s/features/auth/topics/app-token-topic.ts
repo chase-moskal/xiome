@@ -8,18 +8,22 @@ import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {AuthApiOptions, AppToken, App, GreenAuth} from "../auth-types.js"
 
 export const appTokenTopic = ({
-		config,
-		signToken,
-	}: AuthApiOptions) => asTopic<GreenAuth>()({
+			config,
+			signToken,
+		}: AuthApiOptions) => asTopic<GreenAuth>()({
 
-	async authorizeApp({getAuthTables}, {appId}: {
-			appId: string
-		}): Promise<AppToken> {
+	async authorizeApp({bakeAppTables}, {appId}: {
+				appId: string
+			}): Promise<AppToken> {
 
-		const tables = await getAuthTables({appId})
-		const appRow = await tables.app.one(find({appId}))
-		if (!appRow) throw new ApiError(400, "incorrect app id")
-		if (appRow.archived) throw new ApiError(403, "app has been archived")
+		const appTables = await bakeAppTables(appId)
+		const appRow = await appTables.app.one(find({appId}))
+
+		if (!appRow)
+			throw new ApiError(400, "incorrect app id")
+
+		if (appRow.archived)
+			throw new ApiError(403, "app has been archived")
 
 		return signToken<App>({
 			lifespan: config.tokens.lifespans.app,

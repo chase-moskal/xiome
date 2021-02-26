@@ -1,22 +1,22 @@
 
-import {AuthTables, PublicUserRole} from "../../../../auth-types.js"
 import {find, or} from "../../../../../../toolbox/dbby/dbby-mongo.js"
+import {PermissionsTables, PublicUserRole} from "../../../../auth-types.js"
 import {isCurrentlyWithinTimeframe} from "./is-currently-within-timeframe.js"
 
-export async function fetchPublicUserRoles({userId, tables}: {
-		userId: string
-		tables: AuthTables
-	}): Promise<PublicUserRole[]> {
+export async function fetchPublicUserRoles({userId, permissionsTables}: {
+			userId: string
+			permissionsTables: PermissionsTables
+		}): Promise<PublicUserRole[]> {
 
 	const isPublic = (row: {public: boolean}) => row.public
 
-	const userHasRoleRows = await tables.userHasRole.read(find({userId}))
+	const userHasRoleRows = await permissionsTables.userHasRole.read(find({userId}))
 	const roleIds = userHasRoleRows
 		.filter(isCurrentlyWithinTimeframe)
 		.filter(isPublic)
 		.map(row => row.roleId)
 
-	const roleRows = await tables.role.read({
+	const roleRows = await permissionsTables.role.read({
 		conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
 	})
 

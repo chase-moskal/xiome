@@ -9,10 +9,12 @@ import {stripeWebhooks} from "../parts/webhooks/stripe-webhooks.js"
 import {StripeWebhooks} from "../parts/webhooks/types/stripe-webhooks.js"
 import {mockStripeAccounts} from "../parts/accounts/mocks/mock-stripe-accounts.js"
 import {mockStripeSubscriptions} from "../parts/subscriptions/mocks/mock-stripe-subscriptions.js"
+import {PermissionsTables} from "../../../auth/auth-types.js"
 
-export async function mockStripeLiaison({rando, payTables}: {
+export async function mockStripeLiaison({rando, payTables, permissionsTables}: {
 		rando: Rando
 		payTables: PayTables
+		permissionsTables: PermissionsTables
 	}): Promise<StripeLiaison> {
 
 	// create pubsub contexts for each webhook
@@ -42,7 +44,7 @@ export async function mockStripeLiaison({rando, payTables}: {
 	// create genuine webhook instance, which uses mocks
 	const webhooks = stripeWebhooks({
 		logger: console,
-		payDatalayer: payDatalayer({payTables}),
+		payDatalayer: payDatalayer({payTables, permissionsTables}),
 		subscriptions,
 	})
 

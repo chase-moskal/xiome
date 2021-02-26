@@ -1,5 +1,5 @@
 
-import Stripe from "stripe"
+import {Stripe} from "stripe"
 import {stripeLiaison} from "./stripe-liaison.js"
 import {MakeStripeLiaison} from "./types/make-stripe-liaison.js"
 

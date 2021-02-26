@@ -1,7 +1,7 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
-import {ApiError} from "renraku/x/api/api-error.js"
 import {App, AccessPayload} from "../../auth-types.js"
 import {isOriginValid} from "./validation/is-origin-valid.js"
 import {BaseAnonAuth} from "./types/contexts/base-anon-auth.js"
@@ -23,9 +23,9 @@ export function basePolicies({verifyToken}: BasePolicyOptions) {
 
 	const baseUser: Policy<BaseUserMeta, BaseUserAuth> = {
 		processAuth: async({accessToken, ...anonMeta}, request) => {
-			const anonAuth = await baseAnon.processAuth(anonMeta, request)
+			const auth = await baseAnon.processAuth(anonMeta, request)
 			const access = await verifyToken<AccessPayload>(accessToken)
-			return {...anonAuth, access}
+			return {...auth, access}
 		}
 	}
 

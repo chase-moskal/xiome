@@ -6,14 +6,12 @@ import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 import {payApi} from "../../features/pay/api/pay-api.js"
 import {BackendOptions} from "./types/backend-options.js"
 import {makeAuthApi} from "../../features/auth/auth-api.js"
-import {AuthTables} from "../../features/auth/auth-types.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {mockStorageTables} from "./tools/mock-storage-tables.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {PayTables} from "../../features/pay/api/types/tables/pay-tables.js"
-import {mockStripeLiaison} from "../../features/pay/stripe/mocks/mock-stripe-liaison.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
-import {prepareStripeLiaison} from "../../features/pay/stripe/prepare-stripe-liaison.js"
+import {AppTables, AuthTables, PermissionsTables} from "../../features/auth/auth-types.js"
 import {prepareMockStripeLiaison} from "../../features/pay/stripe/prepare-mock-stripe-liaison.js"
 
 export async function mockBackend({
@@ -35,17 +33,21 @@ export async function mockBackend({
 	const verifyToken = mockVerifyToken()
 
 	const tables = {
-		auth: await mockStorageTables<AuthTables>(tableStorage, {
-			role: true,
-			account: true,
-			profile: true,
-			privilege: true,
-			userHasRole: true,
-			accountViaEmail: true,
-			accountViaGoogle: true,
-			roleHasPrivilege: true,
+		app: await mockStorageTables<AppTables>(tableStorage, {
 			app: true,
 			appOwnership: true,
+		}),
+		permissions: await mockStorageTables<PermissionsTables>(tableStorage, {
+			role: true,
+			privilege: true,
+			userHasRole: true,
+			roleHasPrivilege: true,
+		}),
+		auth: await mockStorageTables<AuthTables>(tableStorage, {
+			account: true,
+			profile: true,
+			accountViaEmail: true,
+			accountViaGoogle: true,
 			latestLogin: true,
 		}),
 		pay: await mockStorageTables<PayTables>(tableStorage, {
@@ -55,15 +57,16 @@ export async function mockBackend({
 		}),
 	}
 
-	const {fakeSendLoginEmail, getLatestLoginEmail} = mockSendLoginEmail(
-		sendLoginEmail
-	)
+	const {fakeSendLoginEmail, getLatestLoginEmail} =
+		mockSendLoginEmail(sendLoginEmail)
 
 	const api = asApi({
 		auth: makeAuthApi({
 			rando,
 			config,
+			appTables: tables.app,
 			authTables: tables.auth,
+			permissionsTables: tables.permissions,
 			signToken,
 			verifyToken,
 			generateNickname,

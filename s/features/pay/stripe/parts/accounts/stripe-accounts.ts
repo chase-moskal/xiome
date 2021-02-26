@@ -24,6 +24,14 @@ export function stripeAccounts({stripe, reauthLink, returnLink}: {
 	}
 
 	return {
+		async getStripeAccount(id: string) {
+			const account = await stripe.accounts.retrieve(id)
+			return {
+				id,
+				charges_enabled: account.charges_enabled,
+				payouts_enabled: account.payouts_enabled,
+			}
+		},
 		async createStripeAccount(): Promise<{stripeAccountId: string}> {
 			const {id} = await stripe.accounts.create({type: "standard"})
 			return {stripeAccountId: id}

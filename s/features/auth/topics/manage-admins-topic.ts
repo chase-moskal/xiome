@@ -16,15 +16,21 @@ export const manageAdminsTopic = ({
 			config,
 		}: AuthApiOptions) => asTopic<UnconstrainedPlatformUserAuth>()({
 
-	async listAdmins({access, tables, getAuthTables}, {appId}: {
-				appId: string
-			}): Promise<AdminEmailDisplay[]> {
-		await requireUserIsAllowedToEditApp({appId, tables, access})
-		const tablesForApp = await getAuthTables({appId})
-		const usersWithAdminRole = await tablesForApp.userHasRole.read(find({
+	async listAdmins({
+				access,
+				appTables,
+				namespaceAuthTables,
+				namespacePermissionsTables,
+			}, {appId}: {appId: string}): Promise<AdminEmailDisplay[]> {
+
+		await requireUserIsAllowedToEditApp({appId, access, appTables})
+		const authTables = namespaceAuthTables(appId)
+		const permissionsTables = namespacePermissionsTables(appId)
+
+		const usersWithAdminRole = await permissionsTables.userHasRole.read(find({
 			roleId: adminRoleId
 		}))
-		const adminsViaEmail = await tablesForApp.accountViaEmail.read(
+		const adminsViaEmail = await authTables.accountViaEmail.read(
 			find(...usersWithAdminRole.map(({userId}) => ({userId})))
 		)
 		return adminsViaEmail.map(({userId, email}) => ({
@@ -33,22 +39,35 @@ export const manageAdminsTopic = ({
 		}))
 	},
 
-	async assignAdmin({access, tables, getAuthTables}, {appId, email}: {
+	async assignAdmin({
+				access,
+				appTables,
+				namespaceAuthTables,
+				namespacePermissionsTables,
+			}, {
+				appId,
+				email,
+			}: {
 				appId: string
 				email: string
 			}): Promise<void> {
-		await requireUserIsAllowedToEditApp({appId, tables, access})
+
+		await requireUserIsAllowedToEditApp({appId, access, appTables})
+		const authTables = namespaceAuthTables(appId)
+		const permissionsTables = namespacePermissionsTables(appId)
+
 		const problems = emailValidator(email)
 		if (problems.length)
 			throw new ApiError(400, "email failed validation: " + problems.join(";"))
-		const tablesForApp = await getAuthTables({appId})
+
 		const {userId: adminUserId} = await assertEmailAccount({
 			rando,
 			config,
 			email,
-			tables: tablesForApp,
+			authTables,
+			permissionsTables,
 		})
-		await tablesForApp.userHasRole.assert({
+		await permissionsTables.userHasRole.assert({
 			...find({userId: adminUserId, roleId: adminRoleId}),
 			make: async() => ({
 				userId: adminUserId,
@@ -61,12 +80,23 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async revokeAdmin({access, tables, getAuthTables}, {appId, userId}: {
+	async revokeAdmin({
+				access,
+				appTables,
+				namespacePermissionsTables,
+			}, {
+				appId,
+				userId,
+			}: {
 				appId: string
 				userId: string
 			}): Promise<void> {
-		await requireUserIsAllowedToEditApp({appId, tables, access})
-		const tablesForApp = await getAuthTables({appId})
-		await tablesForApp.userHasRole.delete(find({userId, roleId: adminRoleId}))
+
+		await requireUserIsAllowedToEditApp({appId, access, appTables})
+		const permissionsTables = namespacePermissionsTables(appId)
+		await permissionsTables.userHasRole.delete(find({
+			userId,
+			roleId: adminRoleId,
+		}))
 	},
 })
