@@ -20,8 +20,8 @@ export const appTopic = ({
 	async listApps({tables, statsHub}, {ownerUserId}: {
 			ownerUserId: string
 		}): Promise<AppDisplay[]> {
-		const ownerships = await tables.appOwnership.read(find({userId: ownerUserId}))
-		const appRows = await tables.app.read({
+		const ownerships = await tables.app.appOwnership.read(find({userId: ownerUserId}))
+		const appRows = await tables.app.app.read({
 			conditions: and(
 				{equal: {archived: false}},
 				or(...ownerships.map(own => ({equal: {appId: own.appId}})))
@@ -48,14 +48,14 @@ export const appTopic = ({
 		throwProblems(validateAppDraft(appDraft))
 		const appId = rando.randomId()
 		await Promise.all([
-			tables.app.create({
+			tables.app.app.create({
 				appId,
 				label: appDraft.label,
 				home: appDraft.home,
 				origins: originsToDatabase(appDraft.origins),
 				archived: false,
 			}),
-			tables.appOwnership.create({
+			tables.app.appOwnership.create({
 				appId,
 				userId: ownerUserId,
 			}),
@@ -69,7 +69,7 @@ export const appTopic = ({
 		}) {
 		await requireUserIsAllowedToEditApp({tables, access, appId})
 		throwProblems(validateAppDraft(appDraft))
-		await tables.app.update({
+		await tables.app.app.update({
 			...find({appId}),
 			whole: {
 				appId,
@@ -85,7 +85,7 @@ export const appTopic = ({
 			appId: string
 		}) {
 		await requireUserIsAllowedToEditApp({tables, access, appId})
-		await tables.app.update({
+		await tables.app.app.update({
 			...find({appId}),
 			write: {archived: true},
 		})

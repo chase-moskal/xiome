@@ -5,7 +5,7 @@ import {PayUserMeta} from "./types/contexts/pay-user-meta.js"
 import {PayUserAuth} from "./types/contexts/pay-user-auth.js"
 import {PayPolicyOptions} from "./types/pay-policy-options.js"
 import {basePolicies} from "../../../auth/policies/base/base-policies.js"
-import {prepareTableNamespacer} from "../../../auth/tables/prepare-table-namespacer.js"
+import {prepareTableNamespacer} from "../../../auth/tables/baking/generic/prepare-table-namespacer.js"
 
 export function payPolicies(options: PayPolicyOptions) {
 	const base = basePolicies(options)

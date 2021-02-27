@@ -1,5 +1,6 @@
 
-import {AccessPayload, App, AuthTables, PlatformConfig} from "../../auth-types.js";
+import {AuthTables} from "../../tables/types/auth-tables.js"
+import {AccessPayload, App, PlatformConfig} from "../../auth-types.js";
 
 export function isUserAllowedToEditProfile({app, access}: {
 		app: App
@@ -7,6 +8,8 @@ export function isUserAllowedToEditProfile({app, access}: {
 		access: AccessPayload
 		config: PlatformConfig
 	}) {
+
+	console.warn("TODO implement isUserAllowedToEditProfile")
 
 	// TODO implement
 	return true

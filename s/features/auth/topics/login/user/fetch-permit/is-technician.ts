@@ -1,10 +1,10 @@
 
 import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables, PlatformConfig} from "../../../../auth-types.js"
+import {UserTables, PlatformConfig} from "../../../../auth-types.js"
 
 export async function isTechnician({userId, tables, technician}: {
 			userId: string
-			tables: AuthTables
+			tables: UserTables
 			technician: PlatformConfig["platform"]["technician"]
 		}) {
 	if (!technician.email) throw new Error("technician email must be configured")

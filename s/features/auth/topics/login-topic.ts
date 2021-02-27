@@ -17,12 +17,12 @@ export const loginTopic = ({
 	}: AuthApiOptions) => asTopic<AnonAuth>()({
 
 	async sendLoginLink(
-			{app, appTables, authTables, permissionsTables},
+			{app, tables},
 			{email}: {email: string},
 		) {
-		const appRow = await appTables.app.one(find({appId: app.appId}))
+		const appRow = await tables.app.app.one(find({appId: app.appId}))
 		const {userId} = await assertEmailAccount({
-			rando, email, config, authTables, permissionsTables,
+			rando, email, config, tables,
 		})
 		await sendLoginEmail({
 			appHome: appRow.home,
@@ -38,7 +38,7 @@ export const loginTopic = ({
 	},
 
 	async authenticateViaLoginToken(
-			{authTables, permissionsTables, appTables},
+			{tables},
 			{loginToken}: {loginToken: string},
 		) {
 		const {userId} = await verifyToken<LoginPayload>(loginToken)
@@ -51,7 +51,7 @@ export const loginTopic = ({
 			generateNickname,
 		})
 
-		await tables.latestLogin.update({
+		await tables.user.latestLogin.update({
 			...find({userId}),
 			upsert: {userId, time: Date.now()},
 		})
@@ -73,7 +73,7 @@ export const loginTopic = ({
 			generateNickname,
 		})
 
-		await tables.latestLogin.update({
+		await tables.user.latestLogin.update({
 			...find({userId}),
 			upsert: {userId, time: Date.now()},
 		})

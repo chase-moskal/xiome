@@ -16,45 +16,32 @@ export const manageAdminsTopic = ({
 			config,
 		}: AuthApiOptions) => asTopic<UnconstrainedPlatformUserAuth>()({
 
-	async listAdmins({
-				access,
-				appTables,
-				namespaceAuthTables,
-				namespacePermissionsTables,
-			}, {appId}: {appId: string}): Promise<AdminEmailDisplay[]> {
+	async listAdmins(auth, {appId}: {
+				appId: string
+			}): Promise<AdminEmailDisplay[]> {
 
-		await requireUserIsAllowedToEditApp({appId, access, appTables})
-		const authTables = namespaceAuthTables(appId)
-		const permissionsTables = namespacePermissionsTables(appId)
+		const specialTables = await speciallyAccessTables(auth, appId)
 
-		const usersWithAdminRole = await permissionsTables.userHasRole.read(find({
-			roleId: adminRoleId
-		}))
-		const adminsViaEmail = await authTables.accountViaEmail.read(
-			find(...usersWithAdminRole.map(({userId}) => ({userId})))
-		)
+		const usersWithAdminRole = await specialTables
+			.permissions.userHasRole.read(find({roleId: adminRoleId}))
+
+		const adminsViaEmail = await specialTables
+			.user.accountViaEmail.read(
+				find(...usersWithAdminRole.map(({userId}) => ({userId})))
+			)
+
 		return adminsViaEmail.map(({userId, email}) => ({
 			userId,
 			email,
 		}))
 	},
 
-	async assignAdmin({
-				access,
-				appTables,
-				namespaceAuthTables,
-				namespacePermissionsTables,
-			}, {
-				appId,
-				email,
-			}: {
+	async assignAdmin(auth, {appId, email}: {
 				appId: string
 				email: string
 			}): Promise<void> {
 
-		await requireUserIsAllowedToEditApp({appId, access, appTables})
-		const authTables = namespaceAuthTables(appId)
-		const permissionsTables = namespacePermissionsTables(appId)
+		const specialTables = await speciallyAccessTables(auth, appId)
 
 		const problems = emailValidator(email)
 		if (problems.length)
@@ -62,12 +49,12 @@ export const manageAdminsTopic = ({
 
 		const {userId: adminUserId} = await assertEmailAccount({
 			rando,
-			config,
 			email,
-			authTables,
-			permissionsTables,
+			config,
+			tables: specialTables,
 		})
-		await permissionsTables.userHasRole.assert({
+
+		await specialTables.permissions.userHasRole.assert({
 			...find({userId: adminUserId, roleId: adminRoleId}),
 			make: async() => ({
 				userId: adminUserId,
@@ -80,23 +67,25 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async revokeAdmin({
-				access,
-				appTables,
-				namespacePermissionsTables,
-			}, {
-				appId,
-				userId,
-			}: {
+	async revokeAdmin(auth, {appId, userId}: {
 				appId: string
 				userId: string
 			}): Promise<void> {
 
-		await requireUserIsAllowedToEditApp({appId, access, appTables})
-		const permissionsTables = namespacePermissionsTables(appId)
-		await permissionsTables.userHasRole.delete(find({
+		const specialTables = await speciallyAccessTables(auth, appId)
+
+		await specialTables.permissions.userHasRole.delete(find({
 			userId,
 			roleId: adminRoleId,
 		}))
 	},
 })
+
+async function speciallyAccessTables(
+			auth: UnconstrainedPlatformUserAuth,
+			appId: string,
+		) {
+	const {access, tables, bakeTables} = auth
+	await requireUserIsAllowedToEditApp({appId, access, tables})
+	return bakeTables(appId)
+}

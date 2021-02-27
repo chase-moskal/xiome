@@ -1,15 +1,15 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 
-import {namespaceKeyAppId} from "./namespace-key-app-id.js"
-import {and, find} from "../../../toolbox/dbby/dbby-mongo.js"
-import {day, month} from "../../../toolbox/goodtimes/times.js"
-import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
-import {AuthTables, StatsHub, ExposeTableNamespaceAppId, AppTables} from "../auth-types.js"
+import {namespaceKeyAppId} from "./tables/constants/namespace-key-app-id.js"
+import {and, find} from "../../toolbox/dbby/dbby-mongo.js"
+import {day, month} from "../../toolbox/goodtimes/times.js"
+import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
+import {UserTables, StatsHub, ExposeTableNamespaceAppId, AppTables} from "./auth-types.js"
 
-export function prepareStatsHub({appTables, authTables}: {
+export function prepareStatsHub({appTables, userTables}: {
 			appTables: AppTables
-			authTables: AuthTables
+			userTables: UserTables
 		}) {
 	return async function getStatsHub(userId: string): Promise<StatsHub> {
 
@@ -28,13 +28,13 @@ export function prepareStatsHub({appTables, authTables}: {
 		return {
 			countUsers: async appId => {
 				await throwForbiddenUser(appId)
-				return exposeNamespacing(authTables.account)
+				return exposeNamespacing(userTables.account)
 					.count(find({[namespaceKeyAppId]: appId}))
 			},
 			countUsersActiveDaily: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - day
-				return exposeNamespacing(authTables.latestLogin)
+				return exposeNamespacing(userTables.latestLogin)
 					.count({
 						conditions: and(
 							{equal: {_appId: appId}},
@@ -45,7 +45,7 @@ export function prepareStatsHub({appTables, authTables}: {
 			countUsersActiveMonthly: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - month
-				return exposeNamespacing(authTables.latestLogin)
+				return exposeNamespacing(userTables.latestLogin)
 					.count({
 						conditions: and(
 							{equal: {_appId: appId}},

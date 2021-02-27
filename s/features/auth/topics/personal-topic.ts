@@ -8,7 +8,7 @@ import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-pro
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async setProfile({access, app: app, tables}, {userId, profile}: {
+	async setProfile({access, app, tables}, {userId, profile}: {
 			userId: string
 			profile: Profile
 		}) {
@@ -24,7 +24,7 @@ export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 		const {problems} = validateProfile(profile)
 		if (problems.length) throw new Error(`invalid profile: ${problems.join("; ")}`)
 
-		await tables.profile.update({
+		await tables.user.profile.update({
 			...find({userId}),
 			write: profile,
 		})

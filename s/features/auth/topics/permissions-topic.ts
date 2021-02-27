@@ -12,21 +12,21 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
 		const all: {conditions: false} = {conditions: false}
 		return concurrent({
-			roles: tables.role.read(all).then(
+			roles: tables.permissions.role.read(all).then(
 				rows => rows.map(row => ({
 					roleId: row.roleId,
 					label: row.label,
 					hard: !!row.hard,
 				}))
 			),
-			privileges: tables.privilege.read(all).then(
+			privileges: tables.permissions.privilege.read(all).then(
 				rows => rows.map(row => ({
 					privilegeId: row.privilegeId,
 					label: row.label,
 					hard: !!row.hard,
 				}))
 			),
-			rolesHavePrivileges: tables.roleHasPrivilege.read(all).then(
+			rolesHavePrivileges: tables.permissions.roleHasPrivilege.read(all).then(
 				rows => rows.map(row => ({
 					privilegeId: row.privilegeId,
 					roleId: row.roleId,
@@ -42,7 +42,7 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			400,
 			`validation error on label: ${problems.join("; ")}`
 		)
-		await tables.role.create({
+		await tables.permissions.role.create({
 			hard: false,
 			label,
 			roleId: rando.randomId(),
@@ -65,7 +65,7 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			roleId: string
 			privilegeId: string
 		}) {
-		await tables.roleHasPrivilege.create({
+		await tables.permissions.roleHasPrivilege.create({
 			hard: false,
 			roleId,
 			privilegeId,
@@ -76,7 +76,7 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			roleId: string
 			privilegeId: string
 		}) {
-		await tables.roleHasPrivilege.delete(find({
+		await tables.permissions.roleHasPrivilege.delete(find({
 			hard: false,
 			roleId,
 			privilegeId,

@@ -4,36 +4,35 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {basePolicies} from "./base/base-policies.js"
-import {prepareStatsHub} from "../tables/prepare-stats-hub.js"
-import {bakeryForAppTables} from "../tables/bakery-for-app-tables.js"
-import {prepareTableNamespacer} from "../tables/prepare-table-namespacer.js"
+import {prepareStatsHub} from "../prepare-stats-hub.js"
+import {AuthTables} from "../tables/types/auth-tables.js"
+import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
-import {bakeryForPermissionsTables} from "../tables/bakery-for-permissions-tables.js"
-import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, AuthTables, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AppTables, PermissionsTables} from "../auth-types.js"
+import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AppTables, PermissionsTables} from "../auth-types.js"
 
 export function prepareAuthPolicies({
 			config,
-			appTables,
 			authTables,
-			permissionsTables,
 			verifyToken,
 		}: {
 			config: PlatformConfig
-			appTables: AppTables
 			authTables: AuthTables
-			permissionsTables: PermissionsTables
 			verifyToken: VerifyToken
 		}) {
 
 	const base = basePolicies({verifyToken})
-	const getStatsHub = prepareStatsHub({appTables, authTables})
-	const bakeAppTables = bakeryForAppTables({config, appTables})
-	const namespaceAuthTables = prepareTableNamespacer(authTables)
-	const bakePermissionsTables = bakeryForPermissionsTables({config, permissionsTables})
+	const bakeTables = authTablesBakery({config, authTables})
+	const getStatsHub = prepareStatsHub({
+		appTables: authTables.app,
+		userTables: authTables.user,
+	})
 
 	const green: Policy<GreenMeta, GreenAuth> = {
 		processAuth: async(meta, request) => {
-			return {bakeAppTables}
+			return {
+				bakeAppTables: async(appId: string) =>
+					(await bakeTables(appId)).app
+			}
 		},
 	}
 
@@ -43,9 +42,7 @@ export function prepareAuthPolicies({
 			const {appId} = auth.app
 			return {
 				...auth,
-				appTables: await bakeAppTables(appId),
-				authTables: namespaceAuthTables(appId),
-				permissionsTables: await bakePermissionsTables(appId),
+				tables: await bakeTables(appId),
 			}
 		},
 	}
@@ -88,12 +85,7 @@ export function prepareAuthPolicies({
 		> = {
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
-			return {
-				...auth,
-				appTables,
-				namespaceAuthTables: prepareTableNamespacer(authTables),
-				namespacePermissionsTables: prepareTableNamespacer(permissionsTables),
-			}
+			return {...auth, bakeTables}
 		},
 	}
 

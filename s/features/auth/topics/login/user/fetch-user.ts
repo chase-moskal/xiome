@@ -1,22 +1,22 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 
+import {User, UserStats} from "../../../auth-types.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
-import {AuthTables, PermissionsTables, User, UserStats} from "../../../auth-types.js"
 
 import {profileFromRow} from "./profile-from-row.js"
 import {generateProfileRow} from "./generate-profile-row.js"
 import {fetchPublicUserRoles} from "./utils/fetch-public-user-roles.js"
+import {AuthTables} from "../../../tables/types/auth-tables.js"
 
-export async function fetchUser({userId, authTables, permissionsTables, generateNickname}: {
+export async function fetchUser({userId, tables, generateNickname}: {
 			userId: string
-			authTables: AuthTables
-			permissionsTables: PermissionsTables
+			tables: AuthTables
 			generateNickname: () => string
 		}): Promise<User> {
 
-	const account = await authTables.account.one({conditions: and({equal: {userId}})})
+	const account = await tables.user.account.one({conditions: and({equal: {userId}})})
 	if (!account) throw new ApiError(500, "user account not found")
 
 	const stats: UserStats = {
@@ -24,9 +24,9 @@ export async function fetchUser({userId, authTables, permissionsTables, generate
 	}
 
 	const {roles, profile} = await concurrent({
-		roles: await fetchPublicUserRoles({userId, permissionsTables}),
+		roles: await fetchPublicUserRoles({userId, tables}),
 		profile: profileFromRow(
-			await authTables.profile.assert({
+			await tables.user.profile.assert({
 				conditions: and({equal: {userId}}),
 				make: async() => generateProfileRow({userId, generateNickname}),
 			})

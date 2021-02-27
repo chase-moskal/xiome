@@ -7,11 +7,9 @@ import {payApi} from "../../features/pay/api/pay-api.js"
 import {BackendOptions} from "./types/backend-options.js"
 import {makeAuthApi} from "../../features/auth/auth-api.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
-import {mockStorageTables} from "./tools/mock-storage-tables.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
-import {PayTables} from "../../features/pay/api/types/tables/pay-tables.js"
+import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
-import {AppTables, AuthTables, PermissionsTables} from "../../features/auth/auth-types.js"
 import {prepareMockStripeLiaison} from "../../features/pay/stripe/prepare-mock-stripe-liaison.js"
 
 export async function mockBackend({
@@ -32,30 +30,7 @@ export async function mockBackend({
 	const signToken = mockSignToken()
 	const verifyToken = mockVerifyToken()
 
-	const tables = {
-		app: await mockStorageTables<AppTables>(tableStorage, {
-			app: true,
-			appOwnership: true,
-		}),
-		permissions: await mockStorageTables<PermissionsTables>(tableStorage, {
-			role: true,
-			privilege: true,
-			userHasRole: true,
-			roleHasPrivilege: true,
-		}),
-		auth: await mockStorageTables<AuthTables>(tableStorage, {
-			account: true,
-			profile: true,
-			accountViaEmail: true,
-			accountViaGoogle: true,
-			latestLogin: true,
-		}),
-		pay: await mockStorageTables<PayTables>(tableStorage, {
-			stripeAccounts: true,
-			stripeCustomers: true,
-			stripePremiums: true,
-		}),
-	}
+	const authTables = await mockAuthTables(tableStorage)
 
 	const {fakeSendLoginEmail, getLatestLoginEmail} =
 		mockSendLoginEmail(sendLoginEmail)
@@ -64,9 +39,7 @@ export async function mockBackend({
 		auth: makeAuthApi({
 			rando,
 			config,
-			appTables: tables.app,
-			authTables: tables.auth,
-			permissionsTables: tables.permissions,
+			authTables,
 			signToken,
 			verifyToken,
 			generateNickname,
@@ -74,7 +47,7 @@ export async function mockBackend({
 		}),
 		pay: payApi({
 			rando,
-			rawPayTables: tables.pay,
+			rawPayTables: authTables.pay,
 			verifyToken,
 			makeStripeLiaison: prepareMockStripeLiaison({rando}),
 		}),
@@ -83,7 +56,7 @@ export async function mockBackend({
 	return {
 		api,
 		config,
-		tables,
+		authTables,
 		platformAppId: config.platform.appDetails.appId,
 		getLatestLoginEmail,
 		mockBrowser: async() => mockBrowser({api}),

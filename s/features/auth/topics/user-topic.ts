@@ -7,6 +7,6 @@ import {AnonAuth, AuthApiOptions} from "../auth-types.js"
 export const userTopic = ({generateNickname}: AuthApiOptions) => asTopic<AnonAuth>()({
 
 	async getUser({tables}, {userId}: {userId: string}) {
-		return await fetchUser({userId, authTables: tables, generateNickname})
+		return await fetchUser({userId, tables, generateNickname})
 	},
 })
