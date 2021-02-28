@@ -9,8 +9,8 @@ import {stripeAccountsTopic} from "../topics/stripe-accounts-topic.js"
 
 export const payApi = ({
 			rando,
-			tables,
 			config,
+			tables,
 			verifyToken,
 			makeStripeLiaison,
 		}: PayApiOptions) => {

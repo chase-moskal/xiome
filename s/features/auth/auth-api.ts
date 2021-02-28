@@ -12,14 +12,14 @@ import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
 import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthApiOptions, UserTables, GreenAuth, GreenMeta, PermissionsTables, AppTables} from "./auth-types.js"
 
-export const makeAuthApi = ({authTables, ...options}:
-		AuthApiOptions & {authTables: AuthTables}) => {
+export const makeAuthApi = ({tables, ...options}:
+		AuthApiOptions & {tables: AuthTables}) => {
 
 	const {verifyToken, config} = options
 
 	const policies = prepareAuthPolicies({
 		config,
-		authTables,
+		tables,
 		verifyToken,
 	})
 

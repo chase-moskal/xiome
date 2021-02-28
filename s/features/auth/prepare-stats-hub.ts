@@ -7,14 +7,16 @@ import {day, month} from "../../toolbox/goodtimes/times.js"
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
 import {UserTables, StatsHub, ExposeTableNamespaceAppId, AppTables} from "./auth-types.js"
 
-export function prepareStatsHub({appTables, userTables}: {
-			appTables: AppTables
-			userTables: UserTables
+export function prepareStatsHub({tables}: {
+			tables: {
+				app: AppTables
+				user: UserTables
+			}
 		}) {
 	return async function getStatsHub(userId: string): Promise<StatsHub> {
 
 		async function throwForbiddenUser(appId: string) {
-			const row = await appTables.appOwnership.one(find({appId}))
+			const row = await tables.app.appOwnership.one(find({appId}))
 			if (row.userId !== userId)
 				throw new ApiError(403, "forbidden")
 		}
@@ -28,13 +30,13 @@ export function prepareStatsHub({appTables, userTables}: {
 		return {
 			countUsers: async appId => {
 				await throwForbiddenUser(appId)
-				return exposeNamespacing(userTables.account)
+				return exposeNamespacing(tables.user.account)
 					.count(find({[namespaceKeyAppId]: appId}))
 			},
 			countUsersActiveDaily: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - day
-				return exposeNamespacing(userTables.latestLogin)
+				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
 							{equal: {_appId: appId}},
@@ -45,7 +47,7 @@ export function prepareStatsHub({appTables, userTables}: {
 			countUsersActiveMonthly: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - month
-				return exposeNamespacing(userTables.latestLogin)
+				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
 							{equal: {_appId: appId}},

@@ -32,7 +32,7 @@ export async function mockBackend({
 	const verifyToken = mockVerifyToken()
 
 	const authTables = await mockAuthTables(tableStorage)
-	const payTables = await mockPayTables(tableStorage, authTables)
+	const payTables = await mockPayTables(tableStorage)
 
 	const {fakeSendLoginEmail, getLatestLoginEmail} =
 		mockSendLoginEmail(sendLoginEmail)
@@ -41,7 +41,7 @@ export async function mockBackend({
 		auth: makeAuthApi({
 			rando,
 			config,
-			authTables,
+			tables: authTables,
 			signToken,
 			verifyToken,
 			generateNickname,
@@ -50,7 +50,7 @@ export async function mockBackend({
 		pay: payApi({
 			rando,
 			config,
-			tables: payTables,
+			tables: {...authTables, ...payTables},
 			verifyToken,
 			makeStripeLiaison: prepareMockStripeLiaison({rando}),
 		}),

@@ -6,13 +6,14 @@ import {pubsub, pubsubs} from "../../../../toolbox/pubsub.js"
 import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {mockStripeTables} from "./tables/mock-stripe-tables.js"
 import {stripeWebhooks} from "../parts/webhooks/stripe-webhooks.js"
+import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {StripeWebhooks} from "../parts/webhooks/types/stripe-webhooks.js"
 import {mockStripeAccounts} from "../parts/accounts/mocks/mock-stripe-accounts.js"
 import {mockStripeSubscriptions} from "../parts/subscriptions/mocks/mock-stripe-subscriptions.js"
 
 export async function mockStripeLiaison({rando, tables}: {
 		rando: Rando
-		tables: PayTables
+		tables: AuthTables & PayTables
 	}): Promise<StripeLiaison> {
 
 	// create pubsub contexts for each webhook

@@ -12,20 +12,17 @@ import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, GreenAuth, GreenMeta,
 
 export function prepareAuthPolicies({
 			config,
-			authTables,
+			tables,
 			verifyToken,
 		}: {
+			tables: AuthTables
 			config: PlatformConfig
-			authTables: AuthTables
 			verifyToken: VerifyToken
 		}) {
 
 	const base = basePolicies({verifyToken})
-	const bakeTables = authTablesBakery({config, authTables})
-	const getStatsHub = prepareStatsHub({
-		appTables: authTables.app,
-		userTables: authTables.user,
-	})
+	const bakeTables = authTablesBakery({config, tables})
+	const getStatsHub = prepareStatsHub({tables})
 
 	const green: Policy<GreenMeta, GreenAuth> = {
 		processAuth: async(meta, request) => {

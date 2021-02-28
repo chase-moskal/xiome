@@ -11,7 +11,7 @@ export function payPolicies(options: PayPolicyOptions) {
 
 	const authPolicies = prepareAuthPolicies({
 		config: options.config,
-		authTables: options.tables,
+		tables: options.tables,
 		verifyToken: options.verifyToken,
 	})
 

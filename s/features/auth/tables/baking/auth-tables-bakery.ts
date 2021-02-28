@@ -5,19 +5,19 @@ import {bakeryForAppTables} from "./bespoke/bakery-for-app-tables.js"
 import {prepareNamespacerForTables} from "./generic/prepare-namespacer-for-tables.js"
 import {bakeryForPermissionsTables} from "./bespoke/bakery-for-permissions-tables.js"
 
-export function authTablesBakery({config, authTables}: {
+export function authTablesBakery({config, tables}: {
 			config: PlatformConfig
-			authTables: AuthTables
+			tables: AuthTables
 		}) {
 
-	const bakeUserTables = prepareNamespacerForTables(authTables.user)
+	const bakeUserTables = prepareNamespacerForTables(tables.user)
 	const bakeAppTables = bakeryForAppTables({
 		config,
-		appTables: authTables.app,
+		appTables: tables.app,
 	})
 	const bakePermissionsTables = bakeryForPermissionsTables({
 		config,
-		permissionsTables: authTables.permissions,
+		permissionsTables: tables.permissions,
 	})
 
 	return async function bakeTables(appId: string): Promise<AuthTables> {
