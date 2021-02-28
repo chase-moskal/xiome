@@ -12,12 +12,12 @@ export const appTokenTopic = ({
 			signToken,
 		}: AuthApiOptions) => asTopic<GreenAuth>()({
 
-	async authorizeApp({bakeAppTables}, {appId}: {
+	async authorizeApp({bakeTables}, {appId}: {
 				appId: string
 			}): Promise<AppToken> {
 
-		const appTables = await bakeAppTables(appId)
-		const appRow = await appTables.app.one(find({appId}))
+		const tables = await bakeTables(appId)
+		const appRow = await tables.app.app.one(find({appId}))
 
 		if (!appRow)
 			throw new ApiError(400, "incorrect app id")

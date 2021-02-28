@@ -66,7 +66,7 @@ export interface AuthApiOptions {
 
 export type GreenMeta = undefined
 export type GreenAuth = {
-	bakeAppTables: (appId: string) => Promise<AppTables>
+	bakeTables: (appId: string) => Promise<AuthTables>
 }
 
 export interface AnonMeta extends BaseAnonMeta {}

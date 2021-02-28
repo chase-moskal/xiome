@@ -1,20 +1,17 @@
 
 import {dbbyMemory} from "../../../../../toolbox/dbby/dbby-memory.js"
-import {PlatformConfig, AppRow, AppTables} from "../../../auth-types.js"
+import {AppRow, AppTables, PlatformConfig} from "../../../auth-types.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"
 import {originsToDatabase} from "../../../topics/origins/origins-to-database.js"
-import {prepareTableNamespacer} from "../generic/prepare-table-namespacer.js"
 
 export function bakeryForAppTables({config, appTables}: {
 			config: PlatformConfig
 			appTables: AppTables
 		}) {
 
-	return async function bakeAppTables(appId: string): Promise<AppTables> {
+	return async function bakeAppTables(): Promise<AppTables> {
 		const platformApp = config.platform.appDetails
-
-		return prepareTableNamespacer({
-			appOwnership: appTables.appOwnership,
+		return {
 			app: dbbyHardback({
 				frontTable: appTables.app,
 				backTable: await dbbyMemory<AppRow>([
@@ -26,7 +23,8 @@ export function bakeryForAppTables({config, appTables}: {
 						archived: false,
 					}
 				]),
-			})
-		})(appId)
+			}),
+			appOwnership: appTables.appOwnership,
+		}
 	}
 }

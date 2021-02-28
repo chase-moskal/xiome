@@ -29,10 +29,7 @@ export function prepareAuthPolicies({
 
 	const green: Policy<GreenMeta, GreenAuth> = {
 		processAuth: async(meta, request) => {
-			return {
-				bakeAppTables: async(appId: string) =>
-					(await bakeTables(appId)).app
-			}
+			return {bakeTables}
 		},
 	}
 

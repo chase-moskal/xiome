@@ -5,7 +5,7 @@ import {PayUserMeta} from "./types/contexts/pay-user-meta.js"
 import {PayUserAuth} from "./types/contexts/pay-user-auth.js"
 import {PayPolicyOptions} from "./types/pay-policy-options.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {prepareTableNamespacer} from "../../../auth/tables/baking/generic/prepare-table-namespacer.js"
+import {prepareNamespacerForTables} from "../../../auth/tables/baking/generic/prepare-namespacer-for-tables.js"
 
 export function payPolicies(options: PayPolicyOptions) {
 
@@ -15,7 +15,7 @@ export function payPolicies(options: PayPolicyOptions) {
 		verifyToken: options.verifyToken,
 	})
 
-	const bakeBillingTables = prepareTableNamespacer(options.tables.billing)
+	const bakeBillingTables = prepareNamespacerForTables(options.tables.billing)
 
 	const user: Policy<PayUserMeta, PayUserAuth> = {
 		processAuth: async(meta, request) => {

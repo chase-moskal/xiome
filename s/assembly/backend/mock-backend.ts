@@ -1,5 +1,5 @@
 
-import {asApi} from "renraku/x/identities/as-api"
+import {asApi} from "renraku/x/identities/as-api.js"
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
