@@ -4,36 +4,40 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 import {PayUserMeta} from "./types/contexts/pay-user-meta.js"
 import {PayUserAuth} from "./types/contexts/pay-user-auth.js"
 import {PayPolicyOptions} from "./types/pay-policy-options.js"
-import {basePolicies} from "../../../auth/policies/base/base-policies.js"
+import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 import {prepareTableNamespacer} from "../../../auth/tables/baking/generic/prepare-table-namespacer.js"
 
 export function payPolicies(options: PayPolicyOptions) {
-	const base = basePolicies(options)
-	const namespacePayTables = prepareTableNamespacer(options.rawPayTables)
-	const namespacePermissionsTables = prepareTableNamespacer(options.rawPermissionsTables)
 
-	const payUser: Policy<PayUserMeta, PayUserAuth> = {
+	const authPolicies = prepareAuthPolicies({
+		config: options.config,
+		authTables: options.tables,
+		verifyToken: options.verifyToken,
+	})
+
+	const bakeBillingTables = prepareTableNamespacer(options.tables.billing)
+
+	const user: Policy<PayUserMeta, PayUserAuth> = {
 		processAuth: async(meta, request) => {
-			const auth = await base.baseUser.processAuth(meta, request)
+			const auth = await authPolicies.user.processAuth(meta, request)
 			const {appId} = auth.app
-			const payTables = namespacePayTables(appId)
-			const permissionsTables = namespacePermissionsTables(appId)
-			const stripeLiaison = await options.makeStripeLiaison({
-				payTables,
-				permissionsTables,
-			})
-			return {...auth, payTables, stripeLiaison}
+			const tables = {
+				...auth.tables,
+				billing: await bakeBillingTables(appId),
+			}
+			const stripeLiaison = await options.makeStripeLiaison({tables})
+			return {...auth, tables, stripeLiaison}
 		},
 	}
 
-	const payPlatformUser: Policy<PayUserMeta, PayUserAuth> = {
+	const platformUser: Policy<PayUserMeta, PayUserAuth> = {
 		processAuth: async(meta, request) => {
-			const auth = await payUser.processAuth(meta, request)
+			const auth = await user.processAuth(meta, request)
 			if (!auth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
 			return auth
 		}
 	}
 
-	return {payUser, payPlatformUser}
+	return {user, platformUser}
 }

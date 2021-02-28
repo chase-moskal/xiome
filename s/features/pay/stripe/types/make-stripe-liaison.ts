@@ -1,9 +1,7 @@
 
 import {StripeLiaison} from "./stripe-liaison.js"
-import {PermissionsTables} from "../../../auth/auth-types.js"
-import {PayTables} from "../../api/types/tables/pay-tables.js"
+import {PayTables} from "../../api/tables/types/pay-tables.js"
 
 export type MakeStripeLiaison = ({}: {
-	payTables: PayTables
-	permissionsTables: PermissionsTables
+	tables: PayTables
 }) => Promise<StripeLiaison>

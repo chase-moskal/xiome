@@ -9,6 +9,7 @@ import {makeAuthApi} from "../../features/auth/auth-api.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
+import {mockPayTables} from "../../features/pay/api/tables/mock-pay-tables.js"
 import {mockPlatformConfig} from "../../features/auth/mocks/mock-platform-config.js"
 import {prepareMockStripeLiaison} from "../../features/pay/stripe/prepare-mock-stripe-liaison.js"
 
@@ -31,6 +32,7 @@ export async function mockBackend({
 	const verifyToken = mockVerifyToken()
 
 	const authTables = await mockAuthTables(tableStorage)
+	const payTables = await mockPayTables(tableStorage, authTables)
 
 	const {fakeSendLoginEmail, getLatestLoginEmail} =
 		mockSendLoginEmail(sendLoginEmail)
@@ -47,7 +49,8 @@ export async function mockBackend({
 		}),
 		pay: payApi({
 			rando,
-			rawPayTables: authTables.pay,
+			config,
+			tables: payTables,
 			verifyToken,
 			makeStripeLiaison: prepareMockStripeLiaison({rando}),
 		}),
@@ -56,7 +59,7 @@ export async function mockBackend({
 	return {
 		api,
 		config,
-		authTables,
+		tables: {...authTables, ...payTables},
 		platformAppId: config.platform.appDetails.appId,
 		getLatestLoginEmail,
 		mockBrowser: async() => mockBrowser({api}),

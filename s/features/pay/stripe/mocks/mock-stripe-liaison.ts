@@ -3,18 +3,16 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {payDatalayer} from "../parts/pay-datalayer.js"
 import {StripeLiaison} from "../types/stripe-liaison.js"
 import {pubsub, pubsubs} from "../../../../toolbox/pubsub.js"
-import {PayTables} from "../../api/types/tables/pay-tables.js"
+import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {mockStripeTables} from "./tables/mock-stripe-tables.js"
 import {stripeWebhooks} from "../parts/webhooks/stripe-webhooks.js"
 import {StripeWebhooks} from "../parts/webhooks/types/stripe-webhooks.js"
 import {mockStripeAccounts} from "../parts/accounts/mocks/mock-stripe-accounts.js"
 import {mockStripeSubscriptions} from "../parts/subscriptions/mocks/mock-stripe-subscriptions.js"
-import {PermissionsTables} from "../../../auth/auth-types.js"
 
-export async function mockStripeLiaison({rando, payTables, permissionsTables}: {
+export async function mockStripeLiaison({rando, tables}: {
 		rando: Rando
-		payTables: PayTables
-		permissionsTables: PermissionsTables
+		tables: PayTables
 	}): Promise<StripeLiaison> {
 
 	// create pubsub contexts for each webhook
@@ -43,9 +41,9 @@ export async function mockStripeLiaison({rando, payTables, permissionsTables}: {
 
 	// create genuine webhook instance, which uses mocks
 	const webhooks = stripeWebhooks({
-		logger: console,
-		payDatalayer: payDatalayer({payTables, permissionsTables}),
 		subscriptions,
+		logger: console,
+		payDatalayer: payDatalayer({tables}),
 	})
 
 	// finally register each genuine webhook as a subscriber to the pubsub

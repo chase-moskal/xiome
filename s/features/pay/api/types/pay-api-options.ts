@@ -1,12 +1,14 @@
 
-import {PayTables} from "./tables/pay-tables.js"
 import {VerifyToken} from "redcrypto/dist/types.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
+import {PayTables} from "../tables/types/pay-tables.js"
+import {PlatformConfig} from "../../../auth/auth-types.js"
 import {MakeStripeLiaison} from "../../stripe/types/make-stripe-liaison.js"
 
 export interface PayApiOptions {
 	rando: Rando
-	rawPayTables: PayTables
+	tables: PayTables
+	config: PlatformConfig
 	verifyToken: VerifyToken
 	makeStripeLiaison: MakeStripeLiaison
 }

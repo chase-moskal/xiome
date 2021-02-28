@@ -25,7 +25,6 @@ export function authTablesBakery({config, authTables}: {
 			app: await bakeAppTables(appId),
 			user: await bakeUserTables(appId),
 			permissions: await bakePermissionsTables(appId),
-			pay: authTables.pay,
 		}
 	}
 }

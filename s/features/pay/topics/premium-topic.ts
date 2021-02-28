@@ -7,7 +7,7 @@ export const premiumTopic = ({
 			rando,
 		}: PayTopicOptions) => asTopic<PayUserAuth>()({
 
-	async lol({payTables, stripeLiaison}, {userId}: {userId: string}) {
+	async lol({tables: payTables, stripeLiaison}, {userId}: {userId: string}) {
 		return true
 	},
 })

@@ -1,16 +1,14 @@
 
 import {Stripe} from "stripe"
 import {payDatalayer} from "./parts/pay-datalayer.js"
-import {PayTables} from "../api/types/tables/pay-tables.js"
+import {PayTables} from "../api/tables/types/pay-tables.js"
 import {stripeWebhooks} from "./parts/webhooks/stripe-webhooks.js"
 import {stripeAccounts} from "./parts/accounts/stripe-accounts.js"
 import {stripeSubscriptions} from "./parts/subscriptions/stripe-subscriptions.js"
-import {PermissionsTables} from "../../auth/auth-types.js"
 
-export async function stripeLiaison({stripe, payTables, permissionsTables}: {
+export async function stripeLiaison({stripe, tables}: {
 		stripe: Stripe
-		payTables: PayTables
-		permissionsTables: PermissionsTables
+		tables: PayTables
 	}) {
 
 	const accounts = stripeAccounts({
@@ -26,7 +24,7 @@ export async function stripeLiaison({stripe, payTables, permissionsTables}: {
 	const webhooks = stripeWebhooks({
 		logger: console,
 		subscriptions,
-		payDatalayer: payDatalayer({payTables, permissionsTables}),
+		payDatalayer: payDatalayer({tables}),
 	})
 
 	return {accounts, subscriptions, webhooks}

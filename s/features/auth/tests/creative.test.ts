@@ -57,7 +57,7 @@ export default <Suite>{
 			origins: [appOrigin],
 		})
 		assert(platformAppModel.appListLoadingView.payload.length === 1, "should now have one app")
-		const appRow = await system.tables.auth.app.read(find({appId}))
+		const appRow = await system.tables.app.app.read(find({appId}))
 		assert(appRow, "app row must be present")
 		const app = platformAppModel.appListLoadingView.payload[0]
 		assert(app, "app must be present")

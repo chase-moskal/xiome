@@ -7,18 +7,25 @@ import {PayUserAuth} from "./policies/types/contexts/pay-user-auth.js"
 import {PayUserMeta} from "./policies/types/contexts/pay-user-meta.js"
 import {stripeAccountsTopic} from "../topics/stripe-accounts-topic.js"
 
-export const payApi = ({rando, makeStripeLiaison, rawPayTables, verifyToken}: PayApiOptions) => {
-	const policies = payPolicies({rawPayTables, makeStripeLiaison, verifyToken})
+export const payApi = ({
+			rando,
+			tables,
+			config,
+			verifyToken,
+			makeStripeLiaison,
+		}: PayApiOptions) => {
+
+	const policies = payPolicies({tables, config, makeStripeLiaison, verifyToken})
 
 	return {
 		stripeAccountsService: apiContext<PayUserMeta, PayUserAuth>()({
-			policy: policies.payPlatformUser,
+			policy: policies.platformUser,
 			expose: stripeAccountsTopic({
 				rando,
 			}),
 		}),
 		premiumService: apiContext<PayUserMeta, PayUserAuth>()({
-			policy: policies.payUser,
+			policy: policies.user,
 			expose: premiumTopic({
 				rando,
 			}),

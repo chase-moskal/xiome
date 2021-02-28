@@ -1,7 +1,7 @@
 
 import {UserHasRoleRow} from "../../../../../auth/auth-types.js"
-import {StripePremiumRow} from "../../../../api/types/tables/rows/stripe-premium-row.js"
-import {StripeCustomerRow} from "../../../../api/types/tables/rows/stripe-customer-row.js"
+import {StripePremiumRow} from "../../../../api/tables/types/rows/stripe-premium-row.js"
+import {StripeCustomerRow} from "../../../../api/tables/types/rows/stripe-customer-row.js"
 
 export interface PayDatalayer {
 	getUserHasPremiumRole: (userId: string) => Promise<UserHasRoleRow>
