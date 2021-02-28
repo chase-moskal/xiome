@@ -4,14 +4,15 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {PayTopicOptions} from "./types/pay-topic-options.js"
 import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
 
-export const stripeAccountsTopic = ({
-			rando,
-		}: PayTopicOptions) => asTopic<PayUserAuth>()({
+export const stripeAccountsTopic = ({}: PayTopicOptions = {}) =>
+		asTopic<PayUserAuth>()({
 
 	async getStripeAccountDetails({tables, access, stripeLiaison}) {
 		const {userId} = access.user
-		const {stripeAccountId} = await tables.billing.stripeAccounts.one(find({userId}))
-		const details = await stripeLiaison.accounts.getStripeAccount(stripeAccountId)
+		const {stripeAccountId} = await tables.billing.stripeAccounts
+			.one(find({userId}))
+		const details = await stripeLiaison.accounts
+			.getStripeAccount(stripeAccountId)
 		return details
 	},
 
@@ -25,7 +26,8 @@ export const stripeAccountsTopic = ({
 		const {stripeAccountId} = await tables.billing.stripeAccounts.assert({
 			...find({userId}),
 			make: async() => {
-				const {stripeAccountId} = await stripeLiaison.accounts.createStripeAccount()
+				const {stripeAccountId} = await stripeLiaison.accounts
+					.createStripeAccount()
 				return {userId, stripeAccountId, appId}
 			},
 		})

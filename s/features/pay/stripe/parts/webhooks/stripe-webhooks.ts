@@ -106,7 +106,7 @@ export function stripeWebhooks({
 			stripeCustomerId: string
 			subscription: Stripe.Subscription
 		}) {
-		const {userId} = await payDatalayer.getStripeCustomerByCustomerId(stripeCustomerId)
+		const {userId} = await payDatalayer.getStripeCustomerById(stripeCustomerId)
 		const {active, timeframeEnd} = await evaluatePremium({
 			userId,
 			subscriptionStatus: subscription.status,
