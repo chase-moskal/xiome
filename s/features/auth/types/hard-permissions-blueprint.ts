@@ -1,4 +1,4 @@
-import {HardPermissions} from "./HardPermissions"
+import {HardPermissions} from "./hard-permissions"
 
 
 export interface HardPermissionsBlueprint {

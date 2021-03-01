@@ -1,5 +1,5 @@
 
-import {PublicUserRole} from "../../../../types/PublicUserRole"
+import {PublicUserRole} from "../../../../types/public-user-row"
 import {AuthTables} from "../../../../tables/types/auth-tables.js"
 import {find, or} from "../../../../../../toolbox/dbby/dbby-mongo.js"
 import {isCurrentlyWithinTimeframe} from "./is-currently-within-timeframe.js"

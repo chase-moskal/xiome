@@ -1,5 +1,5 @@
 
-import {App} from "../../../../types/App"
+import {App} from "../../../../types/app"
 
 export interface BaseAnonAuth {
 	app: App

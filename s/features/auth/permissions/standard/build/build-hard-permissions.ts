@@ -1,6 +1,6 @@
 
-import {HardPermissions} from "../../../types/HardPermissions"
-import {HardPermissionsBlueprint} from "../../../types/HardPermissionsBlueprint"
+import {HardPermissions} from "../../../types/hard-permissions"
+import {HardPermissionsBlueprint} from "../../../types/hard-permissions-blueprint"
 
 import {buildRoles} from "./builders/build-roles.js"
 import {buildPrivileges} from "./builders/build-privileges.js"

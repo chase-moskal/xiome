@@ -5,10 +5,10 @@ import {namespaceKeyAppId} from "./tables/constants/namespace-key-app-id.js"
 import {and, find} from "../../toolbox/dbby/dbby-mongo.js"
 import {day, month} from "../../toolbox/goodtimes/times.js"
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
-import {ExposeTableNamespaceAppId} from "./types/ExposeTableNamespaceAppId.js"
-import {AppTables} from "./types/AppTables"
-import {UserTables} from "./types/UserTables"
-import {StatsHub} from "./types/StatsHub.js"
+import {ExposeTableNamespaceAppId} from "./types/expose-table-namespace-app-id.js"
+import {AppTables} from "./types/app-tables"
+import {UserTables} from "./types/user-tables"
+import {StatsHub} from "./types/stats-hub.js"
 
 export function prepareStatsHub({tables}: {
 			tables: {

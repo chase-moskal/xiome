@@ -1,5 +1,5 @@
 
-import {App} from "../../../types/App"
+import {App} from "../../../types/app"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
 export function isOriginValid(request: HttpRequest, app: App): boolean {

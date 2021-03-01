@@ -1,6 +1,6 @@
 
-import {RoleRow} from "../../../../types/RoleRow"
-import {HardPermissionsBlueprint} from "../../../../types/HardPermissionsBlueprint"
+import {RoleRow} from "../../../../types/role-row"
+import {HardPermissionsBlueprint} from "../../../../types/hard-permissions-blueprint"
 
 export function buildRoles(blueprint: HardPermissionsBlueprint): RoleRow[] {
 	const inheritedRoles = blueprint.inherit?.roles ?? []

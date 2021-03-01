@@ -1,5 +1,5 @@
 
-import {GoogleResult} from "../types/GoogleResult"
+import {GoogleResult} from "../types/google-result"
 
 export async function mockSignGoogleToken(
 			googleResult: GoogleResult

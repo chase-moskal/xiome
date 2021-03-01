@@ -1,5 +1,5 @@
 
-import {SendEmail} from "../../types/SendEmail"
+import {SendEmail} from "../../types/send-email"
 
 export const sendEmail: SendEmail = async email => console.log(`
 

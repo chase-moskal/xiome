@@ -1,5 +1,5 @@
 
-import {AppToken} from "../../../../types/AppToken"
+import {AppToken} from "../../../../types/app-token"
 
 export interface BaseAnonMeta {
 	appToken: AppToken

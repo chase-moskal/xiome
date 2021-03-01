@@ -1,7 +1,7 @@
 import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 import {Rando} from "../../../toolbox/get-rando.js"
-import {PlatformConfig} from "./PlatformConfig.js"
-import {SendLoginEmail} from "./SendLoginEmail.js"
+import {PlatformConfig} from "./platform-config.js"
+import {SendLoginEmail} from "./send-login-email.js"
 
 
 export interface AuthApiOptions {

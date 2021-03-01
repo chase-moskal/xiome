@@ -1,5 +1,5 @@
-import {PublicUserRole} from "./PublicUserRole.js"
-import {Profile} from "./Profile.js"
+import {PublicUserRole} from "./public-user-row.js"
+import {Profile} from "./profile.js"
 
 // auth types
 //

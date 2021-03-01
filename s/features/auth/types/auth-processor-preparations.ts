@@ -1,6 +1,6 @@
 import {VerifyToken} from "redcrypto/dist/types.js"
-import {GetTables} from "./GetTables"
-import {Tables} from "./Tables"
+import {GetTables} from "./get-tables"
+import {Tables} from "./tables"
 
 
 export type AuthProcessorPreparations<T extends Tables> = {

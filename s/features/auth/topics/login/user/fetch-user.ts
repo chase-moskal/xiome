@@ -1,8 +1,8 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 
-import {UserStats} from "../../../types/UserStats"
-import {User} from "../../../types/User"
+import {UserStats} from "../../../types/user-stats"
+import {User} from "../../../types/user"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 

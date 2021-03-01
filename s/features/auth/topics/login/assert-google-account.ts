@@ -3,9 +3,9 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 
 import {generateAccountRow} from "./generate-account-row.js"
-import {AccountRow} from "../../types/AccountRow"
-import {UserTables} from "../../types/UserTables"
-import {GoogleResult} from "../../types/GoogleResult"
+import {AccountRow} from "../../types/account-row"
+import {UserTables} from "../../types/user-tables"
+import {GoogleResult} from "../../types/google-result"
 
 export async function assertGoogleAccount({rando, tables, googleResult}: {
 			rando: Rando

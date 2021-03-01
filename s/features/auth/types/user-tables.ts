@@ -1,9 +1,9 @@
 import {DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
-import {LatestLoginRow} from "./LatestLoginRow.js"
-import {ProfileRow} from "./ProfileRow.js"
-import {AccountViaGoogleRow} from "./AccountViaGoogleRow.js"
-import {AccountViaEmailRow} from "./AccountViaEmailRow.js"
-import {AccountRow} from "./AccountRow.js"
+import {LatestLoginRow} from "./latest-login-row.js"
+import {ProfileRow} from "./profile-row.js"
+import {AccountViaGoogleRow} from "./account-via-google-row.js"
+import {AccountViaEmailRow} from "./account-via-email-row.js"
+import {AccountRow} from "./account-row.js"
 
 
 export type UserTables = {

@@ -1,5 +1,5 @@
 import {BaseUserMeta} from "../policies/base/types/contexts/base-user-meta.js"
-import {AnonMeta} from "./AnonMeta.js"
+import {AnonMeta} from "./anon-meta.js"
 
 
 export interface UserMeta extends AnonMeta, BaseUserMeta {}

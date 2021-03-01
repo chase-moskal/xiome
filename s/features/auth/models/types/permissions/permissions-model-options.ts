@@ -1,5 +1,5 @@
 
-import {AccessPayload} from "../../../types/AccessPayload"
+import {AccessPayload} from "../../../types/access-payload"
 import {Service} from "../../../../../types/service.js"
 import {permissionsTopic} from "../../../topics/permissions-topic.js"
 

@@ -1,5 +1,5 @@
-import {User} from "./User.js"
-import {AccessToken} from "./AccessToken.js"
+import {User} from "./user.js"
+import {AccessToken} from "./access-token.js"
 
 
 export type AuthContext = {

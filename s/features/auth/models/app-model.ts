@@ -2,7 +2,7 @@
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 
-import {AppDraft} from "../types/AppDraft"
+import {AppDraft} from "../types/app-draft"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
 

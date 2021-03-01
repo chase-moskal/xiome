@@ -1,6 +1,6 @@
 
-import {Settings} from "../../../types/Settings"
-import {User} from "../../../types/User"
+import {Settings} from "../../../types/settings"
+import {User} from "../../../types/user"
 
 export interface Persona {
 	user: User

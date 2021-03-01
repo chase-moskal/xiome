@@ -1,4 +1,4 @@
-import {EmailDetails} from "./EmailDetails"
+import {EmailDetails} from "./email-details"
 
 
 export type SendEmail = ({}: EmailDetails) => Promise<void>

@@ -1,7 +1,7 @@
 
-import {AppTables} from "../types/AppTables"
-import {UserTables} from "../types/UserTables"
-import {PermissionsTables} from "../types/PermissionsTables"
+import {AppTables} from "../types/app-tables"
+import {UserTables} from "../types/user-tables"
+import {PermissionsTables} from "../types/permissions-tables"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 

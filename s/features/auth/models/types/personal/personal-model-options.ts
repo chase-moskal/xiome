@@ -1,7 +1,7 @@
 
 import {personalTopic} from "../../../topics/personal-topic.js"
 
-import {AccessPayload} from "../../../types/AccessPayload"
+import {AccessPayload} from "../../../types/access-payload"
 import {Service} from "../../../../../types/service.js"
 
 export interface PersonalModelOptions {
