@@ -1,6 +1,6 @@
 
 import {apiOrigin} from "../constants.js"
-import {SendEmail} from "../../features/auth/types/auth-types.js"
+import {SendEmail} from "../../features/auth/types/SendEmail"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockStandardBackend} from "./common/mock-standard-backend.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"

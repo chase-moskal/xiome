@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../../../../types/auth-types.js"
+import {AppDraft} from "../../../../types/AppDraft"
 import {AppFormDraft} from "../types/app-form-draft.js"
 import {dedupe} from "../../../../../../toolbox/dedupe.js"
 

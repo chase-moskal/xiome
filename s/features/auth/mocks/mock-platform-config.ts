@@ -1,5 +1,5 @@
 
-import {PlatformConfig} from "../types/auth-types.js"
+import {PlatformConfig} from "../types/PlatformConfig"
 import {second, minute, day, year} from "../../../toolbox/goodtimes/times.js"
 
 import {hardPermissions} from "../permissions/hard-permissions.js"

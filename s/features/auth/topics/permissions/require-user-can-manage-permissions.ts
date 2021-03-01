@@ -1,7 +1,8 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 import {userHasHardPrivilege} from "./user-has-hard-privilege.js"
-import {AccessPayload, PlatformConfig} from "../../types/auth-types.js"
+import {AccessPayload} from "../../types/AccessPayload"
+import {PlatformConfig} from "../../types/PlatformConfig"
 
 export function requireUserCanManagePermissions({config, access}: {
 		config: PlatformConfig,

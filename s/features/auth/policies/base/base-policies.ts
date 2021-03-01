@@ -2,7 +2,8 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
-import {App, AccessPayload} from "../../types/auth-types.js"
+import {AccessPayload} from "../../types/AccessPayload"
+import {App} from "../../types/App"
 import {isOriginValid} from "./validation/is-origin-valid.js"
 import {BaseAnonAuth} from "./types/contexts/base-anon-auth.js"
 import {BaseAnonMeta} from "./types/contexts/base-anon-meta.js"

@@ -1,5 +1,6 @@
 
-import {AccessPayload, PlatformConfig} from "../../types/auth-types.js"
+import {AccessPayload} from "../../types/AccessPayload"
+import {PlatformConfig} from "../../types/PlatformConfig"
 
 export function userHasHardPrivilege({config, access, privilegeLabel}: {
 		config: PlatformConfig,

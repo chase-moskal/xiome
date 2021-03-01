@@ -1,6 +1,6 @@
 
 import {apiOrigin} from "../constants.js"
-import {SendEmail} from "../../features/auth/types/auth-types.js"
+import {SendEmail} from "../../features/auth/types/SendEmail"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {makeEmailController} from "./common/email-controller.js"

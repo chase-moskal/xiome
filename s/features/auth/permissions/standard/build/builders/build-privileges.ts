@@ -1,5 +1,6 @@
 
-import {HardPermissionsBlueprint, PrivilegeRow} from "../../../../types/auth-types.js"
+import {PrivilegeRow} from "../../../../types/PrivilegeRow"
+import {HardPermissionsBlueprint} from "../../../../types/HardPermissionsBlueprint"
 
 export function buildPrivileges(blueprint: HardPermissionsBlueprint): PrivilegeRow[] {
 	const inheritedPrivileges = blueprint.inherit?.privileges ?? []

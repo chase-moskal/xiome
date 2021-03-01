@@ -3,7 +3,9 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {validateProfile} from "./personal/validate-profile.js"
-import {UserAuth, AuthApiOptions, Profile} from "../types/auth-types.js"
+import {Profile} from "../types/Profile"
+import {UserAuth} from "../types/UserAuth"
+import {AuthApiOptions} from "../types/AuthApiOptions"
 import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-profile.js"
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({

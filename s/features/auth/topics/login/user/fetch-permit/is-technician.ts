@@ -1,6 +1,7 @@
 
 import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
-import {UserTables, PlatformConfig} from "../../../../types/auth-types.js"
+import {UserTables} from "../../../../types/UserTables"
+import {PlatformConfig} from "../../../../types/PlatformConfig"
 
 export async function isTechnician({userId, tables, technician}: {
 			userId: string

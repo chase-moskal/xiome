@@ -1,5 +1,6 @@
 
-import {UserTables, Permit} from "../../../types/auth-types.js"
+import {UserTables} from "../../../types/UserTables"
+import {Permit} from "../../../types/Permit"
 import {find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 
 import {isCurrentlyWithinTimeframe} from "./utils/is-currently-within-timeframe.js"

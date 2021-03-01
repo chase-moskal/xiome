@@ -1,5 +1,5 @@
 
-import {SendEmail} from "../../types/auth-types.js"
+import {SendEmail} from "../../types/SendEmail"
 
 export const sendEmail: SendEmail = async email => console.log(`
 

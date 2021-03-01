@@ -9,7 +9,9 @@ import {validateAppDraft} from "./apps/validate-app-draft.js"
 import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
-import {PlatformUserAuth, AuthApiOptions, AppDraft} from "../types/auth-types.js"
+import {AppDraft} from "../types/AppDraft"
+import {PlatformUserAuth} from "../types/PlatformUserAuth"
+import {AuthApiOptions} from "../types/AuthApiOptions"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
 export const appTopic = ({

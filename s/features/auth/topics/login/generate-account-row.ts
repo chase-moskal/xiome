@@ -1,5 +1,5 @@
 
-import {AccountRow} from "../../types/auth-types.js"
+import {AccountRow} from "../../types/AccountRow"
 import {Rando} from "../../../../toolbox/get-rando.js"
 
 export function generateAccountRow({rando}: {rando: Rando}): AccountRow {

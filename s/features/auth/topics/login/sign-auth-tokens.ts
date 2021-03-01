@@ -1,6 +1,9 @@
 
+import {SignToken} from "redcrypto/dist/types.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {SignToken, Scope, AccessPayload, RefreshPayload} from "../../types/auth-types.js"
+import {RefreshPayload} from "../../types/RefreshPayload.js"
+import {AccessPayload} from "../../types/AccessPayload.js"
+import {Scope} from "../../types/Scope.js"
 
 import {fetchUser} from "./user/fetch-user.js"
 import {fetchPermit} from "./user/fetch-permit.js"

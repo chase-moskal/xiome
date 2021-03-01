@@ -5,7 +5,13 @@ import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
-import {AnonAuth, AccessPayload, LoginPayload, RefreshPayload, RefreshToken, Scope, AuthApiOptions} from "../types/auth-types.js"
+import {RefreshPayload} from "../types/RefreshPayload"
+import {AccessPayload} from "../types/AccessPayload"
+import {LoginPayload} from "../types/LoginPayload"
+import {Scope} from "../types/Scope"
+import {RefreshToken} from "../types/RefreshToken"
+import {AnonAuth} from "../types/AnonAuth"
+import {AuthApiOptions} from "../types/AuthApiOptions"
 
 export const loginTopic = ({
 		rando,

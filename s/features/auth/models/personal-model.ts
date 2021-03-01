@@ -2,7 +2,7 @@
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 
-import {Profile} from "../types/auth-types.js"
+import {Profile} from "../types/Profile"
 import {PersonalModelOptions} from "./types/personal/personal-model-options.js"
 
 export function makePersonalModel({

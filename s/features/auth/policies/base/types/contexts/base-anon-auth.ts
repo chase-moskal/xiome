@@ -1,5 +1,5 @@
 
-import {App} from "../../../../types/auth-types.js"
+import {App} from "../../../../types/App"
 
 export interface BaseAnonAuth {
 	app: App

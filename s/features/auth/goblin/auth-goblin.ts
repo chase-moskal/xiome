@@ -11,7 +11,10 @@ import {Service} from "../../../types/service.js"
 import {appTokenTopic} from "../topics/app-token-topic.js"
 import {decodeAppToken} from "../tools/tokens/decode-app-token.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
-import {AccessPayload, AccessToken, AuthTokens, RefreshToken} from "../types/auth-types.js"
+import {AccessPayload} from "../types/AccessPayload"
+import {AuthTokens} from "../types/AuthTokens"
+import {RefreshToken} from "../types/RefreshToken"
+import {AccessToken} from "../types/AccessToken"
 
 export function makeAuthGoblin({appId, tokenStore, authorize, authorizeApp}: {
 		appId: string

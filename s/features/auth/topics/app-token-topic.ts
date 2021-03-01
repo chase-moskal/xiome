@@ -5,7 +5,10 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {isPlatform} from "../tools/is-platform.js"
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
-import {AuthApiOptions, AppToken, App, GreenAuth} from "../types/auth-types.js"
+import {App} from "../types/App"
+import {AppToken} from "../types/AppToken"
+import {GreenAuth} from "../types/GreenAuth"
+import {AuthApiOptions} from "../types/AuthApiOptions"
 
 export const appTokenTopic = ({
 			config,

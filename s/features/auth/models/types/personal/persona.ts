@@ -1,5 +1,6 @@
 
-import {User, Settings} from "../../../types/auth-types.js"
+import {Settings} from "../../../types/Settings"
+import {User} from "../../../types/User"
 
 export interface Persona {
 	user: User
