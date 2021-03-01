@@ -1,6 +1,6 @@
 
-import {SendLoginEmail} from "../../../features/auth/types/send-login-email.js"
-import {LoginEmailDetails} from "../../../features/auth/types/login-email-details"
+import {SendLoginEmail} from "../../../features/auth/types/emails/send-login-email.js"
+import {LoginEmailDetails} from "../../../features/auth/types/emails/login-email-details.js"
 
 export function mockSendLoginEmail(sendLoginEmail: SendLoginEmail) {
 	let latestLoginEmail: LoginEmailDetails

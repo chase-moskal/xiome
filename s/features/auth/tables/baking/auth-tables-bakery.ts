@@ -1,5 +1,5 @@
 
-import {PlatformConfig} from "../../types/platform-config.js"
+import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 import {AuthTables} from "../types/auth-tables.js"
 import {bakeryForAppTables} from "./bespoke/bakery-for-app-tables.js"
 import {prepareNamespacerForTables} from "./generic/prepare-namespacer-for-tables.js"

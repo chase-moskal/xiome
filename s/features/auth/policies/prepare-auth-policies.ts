@@ -10,7 +10,7 @@ import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privileg
 
 import {AccessPayload} from "../types/tokens/access-payload.js"
 import {AuthTables} from "../tables/types/auth-tables.js"
-import {PlatformConfig} from "../types/platform-config.js"
+import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
 
 import {GreenAuth} from "./types/green-auth.js"
 import {GreenMeta} from "./types/green-meta.js"

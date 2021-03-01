@@ -1,5 +1,5 @@
 
-import {Await} from "../../types/fancy.js"
+import {Await} from "../../types/await.js"
 import theme from "../../framework/theme.css.js"
 import {assembleModels} from "./assemble-models.js"
 import {ModalSystem} from "./modal/types/modal-system.js"

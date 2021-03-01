@@ -1,6 +1,6 @@
 
 import {AccessPayload} from "../../types/tokens/access-payload.js"
-import {PlatformConfig} from "../../types/platform-config.js"
+import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 
 export function userHasHardPrivilege({config, access, privilegeLabel}: {
 		config: PlatformConfig,

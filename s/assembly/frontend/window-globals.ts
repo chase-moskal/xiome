@@ -1,5 +1,5 @@
 
-import {Await} from "../../types/fancy.js"
+import {Await} from "../../types/await.js"
 import {assembleXiome} from "../assemble-xiome.js"
 
 declare global {

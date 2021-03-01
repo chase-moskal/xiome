@@ -1,7 +1,7 @@
 
 import {Rando} from "../../../toolbox/get-rando.js"
-import {SendLoginEmail} from "../../../features/auth/types/send-login-email.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {SendLoginEmail} from "../../../features/auth/types/emails/send-login-email.js"
 
 export interface BackendOptions {
 	rando: Rando

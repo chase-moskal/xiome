@@ -1,5 +1,5 @@
 
-import {Await} from "../../../types/fancy.js"
+import {Await} from "../../../types/await.js"
 import {mockBackend} from "../../backend/mock-backend.js"
 import {mockRemote} from "../../frontend/mocks/mock-remote.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"

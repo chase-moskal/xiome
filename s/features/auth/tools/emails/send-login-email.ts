@@ -1,8 +1,8 @@
 
 import {makeLoginLink} from "./make-login-link.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
-import {SendLoginEmail} from "../../types/send-login-email.js"
-import {SendEmail} from "../../types/send-email.js"
+import {SendLoginEmail} from "../../types/emails/send-login-email.js"
+import {SendEmail} from "../../types/emails/send-email.js"
 
 export function prepareSendLoginEmail({sendEmail}: {
 		sendEmail: SendEmail

@@ -1,5 +1,5 @@
 
-import {ConstructorFor} from "../../types/fancy.js"
+import {ConstructorFor} from "../../types/constructor-for.js"
 import {LitElement, CSSResult, CSSResultArray} from "lit-element"
 
 export type CSS = CSSResult | CSSResultArray | CSSStyleSheet

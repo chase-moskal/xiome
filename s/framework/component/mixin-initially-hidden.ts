@@ -1,6 +1,6 @@
 
 import {LitElement} from "lit-element"
-import {ConstructorFor} from "../../types/fancy.js"
+import {ConstructorFor} from "../../types/constructor-for.js"
 
 export function mixinInitiallyHidden<C extends ConstructorFor<LitElement>>(
 		Constructor: C

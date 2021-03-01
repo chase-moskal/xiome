@@ -1,12 +1,11 @@
 
 import {Profile} from "./profile.js"
-import {PublicUserRole} from "../tables/types/rows/public-user-row.js"
+import {UserStats} from "./user-stats.js"
+import {PublicUserRole} from "./public-user-role.js"
 
 export type User = {
 	userId: string
 	profile: Profile
 	roles: PublicUserRole[]
-	stats: {
-		joined: number
-	}
+	stats: UserStats
 }

@@ -1,5 +1,5 @@
 
-import {HardPermissions} from "./hard-permissions.js"
+import {HardPermissions} from "../../../features/auth/permissions/types/hard-permissions.js"
 
 export interface PlatformConfig {
 	mongo: {

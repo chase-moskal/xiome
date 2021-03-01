@@ -1,6 +1,6 @@
 
 import {LitElement} from "lit-element"
-import {ConstructorFor} from "../../types/fancy.js"
+import {ConstructorFor} from "../../types/constructor-for.js"
 
 const _unsubscribe = Symbol("_unsubscribe")
 
