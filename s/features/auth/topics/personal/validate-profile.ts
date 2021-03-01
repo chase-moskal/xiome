@@ -1,5 +1,5 @@
 
-import {Profile} from "../../auth-types.js"
+import {Profile} from "../../types/auth-types.js"
 
 export const nicknameMax = 21
 export const taglineMax = 32

@@ -10,7 +10,7 @@ import {appTokenTopic} from "./topics/app-token-topic.js"
 import {permissionsTopic} from "./topics/permissions-topic.js"
 import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
-import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthApiOptions, UserTables, GreenAuth, GreenMeta, PermissionsTables, AppTables} from "./auth-types.js"
+import {AnonMeta, AnonAuth, UserMeta, UserAuth, PlatformUserMeta, PlatformUserAuth, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AuthApiOptions, UserTables, GreenAuth, GreenMeta, PermissionsTables, AppTables} from "./types/auth-types.js"
 
 export const makeAuthApi = ({tables, ...options}:
 		AuthApiOptions & {tables: AuthTables}) => {

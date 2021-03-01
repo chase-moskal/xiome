@@ -1,16 +1,16 @@
 
 import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
 
-import {Rando} from "../../toolbox/get-rando.js"
-import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
+import {Rando} from "../../../toolbox/get-rando.js"
+import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
 
-import {makeAuthApi} from "./auth-api.js"
-import {namespaceKeyAppId} from "./tables/constants/namespace-key-app-id.js"
-import {BaseAnonMeta} from "./policies/base/types/contexts/base-anon-meta.js"
-import {BaseAnonAuth} from "./policies/base/types/contexts/base-anon-auth.js"
-import {BaseUserMeta} from "./policies/base/types/contexts/base-user-meta.js"
-import {BaseUserAuth} from "./policies/base/types/contexts/base-user-auth.js"
-import {AuthTables} from "./tables/types/auth-tables.js"
+import {makeAuthApi} from "../auth-api.js"
+import {namespaceKeyAppId} from "../tables/constants/namespace-key-app-id.js"
+import {BaseAnonMeta} from "../policies/base/types/contexts/base-anon-meta.js"
+import {BaseAnonAuth} from "../policies/base/types/contexts/base-anon-auth.js"
+import {BaseUserMeta} from "../policies/base/types/contexts/base-user-meta.js"
+import {BaseUserAuth} from "../policies/base/types/contexts/base-user-auth.js"
+import {AuthTables} from "../tables/types/auth-tables.js"
 
 export * from "redcrypto/dist/types.js"
 

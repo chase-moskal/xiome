@@ -12,7 +12,7 @@ import {Validator} from "../../../toolbox/darkvalley.js"
 import {profileValidator} from "./validators/profile-validator.js"
 import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 
-import {User, Profile} from "../../auth/auth-types.js"
+import {User, Profile} from "../../auth/types/auth-types.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 

@@ -1,5 +1,5 @@
 
-import {PlatformConfig} from "../../auth-types.js"
+import {PlatformConfig} from "../../types/auth-types.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"

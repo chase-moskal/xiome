@@ -2,13 +2,13 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
-import {AuthApiOptions} from "../auth-types.js"
+import {AuthApiOptions} from "../types/auth-types.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {adminRoleId} from "../permissions/standard/build/ids/hard-role-ids.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
-import {UnconstrainedPlatformUserAuth} from "../../../features/auth/auth-types.js"
+import {UnconstrainedPlatformUserAuth} from "../types/auth-types.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
 export const manageAdminsTopic = ({

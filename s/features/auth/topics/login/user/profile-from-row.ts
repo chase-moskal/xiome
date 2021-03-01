@@ -1,5 +1,5 @@
 
-import {ProfileRow, Profile} from "../../../auth-types.js"
+import {ProfileRow, Profile} from "../../../types/auth-types.js"
 
 export const profileFromRow = ({
 			avatar,

@@ -5,7 +5,7 @@ import {namespaceKeyAppId} from "./tables/constants/namespace-key-app-id.js"
 import {and, find} from "../../toolbox/dbby/dbby-mongo.js"
 import {day, month} from "../../toolbox/goodtimes/times.js"
 import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
-import {UserTables, StatsHub, ExposeTableNamespaceAppId, AppTables} from "./auth-types.js"
+import {UserTables, StatsHub, ExposeTableNamespaceAppId, AppTables} from "./types/auth-types.js"
 
 export function prepareStatsHub({tables}: {
 			tables: {

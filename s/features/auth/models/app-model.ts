@@ -2,7 +2,7 @@
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 
-import {AppDraft} from "../auth-types.js"
+import {AppDraft} from "../types/auth-types.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
 

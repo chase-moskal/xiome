@@ -1,7 +1,7 @@
 
 import {personalTopic} from "../../../topics/personal-topic.js"
 
-import {AccessPayload} from "../../../auth-types.js"
+import {AccessPayload} from "../../../types/auth-types.js"
 import {Service} from "../../../../../types/service.js"
 
 export interface PersonalModelOptions {

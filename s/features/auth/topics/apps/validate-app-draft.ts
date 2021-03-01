@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../../../../features/auth/auth-types.js"
+import {AppDraft} from "../../types/auth-types.js"
 import {appDraftValidators} from "./app-draft-validators.js"
 
 export function validateAppDraft(appDraft: AppDraft) {

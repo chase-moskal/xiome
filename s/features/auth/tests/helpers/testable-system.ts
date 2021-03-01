@@ -1,5 +1,5 @@
 
-import {LoginEmailDetails} from "../../auth-types.js"
+import {LoginEmailDetails} from "../../types/auth-types.js"
 import {getRando} from "../../../../toolbox/get-rando.js"
 import {mockBackend} from "../../../../assembly/backend/mock-backend.js"
 import {platformLink, technicianEmail, platformAppLabel} from "./constants.js"

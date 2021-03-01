@@ -1,5 +1,5 @@
 
-import {AppTables, UserTables, PermissionsTables} from "../auth-types.js"
+import {AppTables, UserTables, PermissionsTables} from "../types/auth-types.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 

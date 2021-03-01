@@ -1,5 +1,5 @@
 
-import {EmailDetails, SendEmail} from "../../../features/auth/auth-types.js"
+import {EmailDetails, SendEmail} from "../../../features/auth/types/auth-types.js"
 
 export function makeEmailController(sendEmailActual: SendEmail) {
 	const disabled = async() => {}

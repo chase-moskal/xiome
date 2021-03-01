@@ -1,5 +1,5 @@
 
-import {AccessPayload} from "../auth-types.js"
+import {AccessPayload} from "../types/auth-types.js"
 import {onesie} from "../../../toolbox/onesie.js"
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"

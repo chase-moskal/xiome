@@ -1,4 +1,4 @@
 
-import {AccessPayload} from "../../auth-types.js"
+import {AccessPayload} from "../../types/auth-types.js"
 
 export type AccessEventListener = (access: AccessPayload) => void | Promise<void>

@@ -1,5 +1,5 @@
 
-import {ProfileRow} from "../../../auth-types.js"
+import {ProfileRow} from "../../../types/auth-types.js"
 
 export const generateProfileRow = ({userId, generateNickname}: {
 			userId: string

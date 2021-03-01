@@ -2,7 +2,7 @@
 import {appTopic} from "../../../topics/app-topic.js"
 import {manageAdminsTopic} from "../../../topics/manage-admins-topic.js"
 
-import {AccessPayload} from "../../../auth-types.js"
+import {AccessPayload} from "../../../types/auth-types.js"
 import {Service} from "../../../../../types/service.js"
 
 export interface AppModelOptions {

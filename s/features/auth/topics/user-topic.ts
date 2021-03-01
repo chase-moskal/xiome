@@ -2,7 +2,7 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {fetchUser} from "./login/user/fetch-user.js"
-import {AnonAuth, AuthApiOptions} from "../auth-types.js"
+import {AnonAuth, AuthApiOptions} from "../types/auth-types.js"
 
 export const userTopic = ({generateNickname}: AuthApiOptions) => asTopic<AnonAuth>()({
 

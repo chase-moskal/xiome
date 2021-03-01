@@ -1,6 +1,6 @@
 
 import {isPlatform} from "../../../tools/is-platform.js"
-import {PlatformConfig, PermissionsTables} from "../../../auth-types.js"
+import {PlatformConfig, PermissionsTables} from "../../../types/auth-types.js"
 import {namespaceKeyAppId} from "../../constants/namespace-key-app-id.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"
 import {prepareNamespacerForTables} from "../generic/prepare-namespacer-for-tables.js"

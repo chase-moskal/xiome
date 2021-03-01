@@ -1,6 +1,6 @@
 
 import {AuthTables} from "../../tables/types/auth-tables.js"
-import {AccessPayload, App, PlatformConfig} from "../../auth-types.js";
+import {AccessPayload, App, PlatformConfig} from "../../types/auth-types.js";
 
 export function isUserAllowedToEditProfile({app, access}: {
 		app: App

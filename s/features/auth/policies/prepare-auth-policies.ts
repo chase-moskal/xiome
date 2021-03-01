@@ -8,7 +8,7 @@ import {prepareStatsHub} from "../prepare-stats-hub.js"
 import {AuthTables} from "../tables/types/auth-tables.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
-import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AppTables, PermissionsTables} from "../auth-types.js"
+import {PlatformConfig, AccessPayload, AnonAuth, AnonMeta, GreenAuth, GreenMeta, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta, GetStatsHub, UnconstrainedPlatformUserAuth, UnconstrainedPlatformUserMeta, AppTables, PermissionsTables} from "../types/auth-types.js"
 
 export function prepareAuthPolicies({
 			config,

@@ -3,7 +3,7 @@ import {addAppIdsToRows} from "./add-app-ids-to-rows.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
 import {DbbyRow} from "../../../../toolbox/dbby/dbby-types.js"
 import {dbbyMemory} from "../../../../toolbox/dbby/dbby-memory.js"
-import {PermissionsTables, HardPermissions} from "../../auth-types.js"
+import {PermissionsTables, HardPermissions} from "../../types/auth-types.js"
 
 export async function transformHardPermissionsToMemoryTables({
 		appId,

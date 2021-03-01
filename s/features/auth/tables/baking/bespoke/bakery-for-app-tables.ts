@@ -1,6 +1,6 @@
 
 import {dbbyMemory} from "../../../../../toolbox/dbby/dbby-memory.js"
-import {AppRow, AppTables, PlatformConfig} from "../../../auth-types.js"
+import {AppRow, AppTables, PlatformConfig} from "../../../types/auth-types.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"
 import {originsToDatabase} from "../../../topics/origins/origins-to-database.js"
 
