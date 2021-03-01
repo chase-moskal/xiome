@@ -3,7 +3,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 
 import {generateAccountRow} from "./generate-account-row.js"
-import {AccountRow} from "../../types/account-row.js"
+import {AccountRow} from "../../tables/types/rows/account-row.js"
 import {UserTables} from "../../types/user-tables"
 import {GoogleResult} from "../../types/google-result.js"
 

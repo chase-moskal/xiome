@@ -1,6 +1,6 @@
 
 import {dbbyMemory} from "../../../../../toolbox/dbby/dbby-memory.js"
-import {AppRow} from "../../../types/app-row.js"
+import {AppRow} from "../../types/rows/app-row.js"
 import {AppTables} from "../../../types/app-tables"
 import {PlatformConfig} from "../../../types/platform-config.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"

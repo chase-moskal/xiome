@@ -1,8 +1,8 @@
 
-import {RoleRow} from "./role-row.js"
-import {PrivilegeRow} from "./privilege-row.js"
-import {UserHasRoleRow} from "./user-has-role-row.js"
-import {RoleHasPrivilegeRow} from "./role-has-privilege-row.js"
+import {RoleRow} from "../tables/types/rows/role-row.js"
+import {PrivilegeRow} from "../tables/types/rows/privilege-row.js"
+import {UserHasRoleRow} from "../tables/types/rows/user-has-role-row.js"
+import {RoleHasPrivilegeRow} from "../tables/types/rows/role-has-privilege-row.js"
 
 export type HardPermissions = {
 	roles: RoleRow[]

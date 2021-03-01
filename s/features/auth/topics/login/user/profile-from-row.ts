@@ -1,5 +1,5 @@
 
-import {ProfileRow} from "../../../types/profile-row.js"
+import {ProfileRow} from "../../../tables/types/rows/profile-row.js"
 import {Profile} from "../../../types/profile.js"
 
 export const profileFromRow = ({
