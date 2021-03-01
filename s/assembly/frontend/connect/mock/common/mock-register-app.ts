@@ -1,6 +1,6 @@
 
-import {Await} from "../../../types/await.js"
-import {mockBackend} from "../../backend/mock-backend.js"
+import {Await} from "../../../../../types/await.js"
+import {mockBackend} from "../../../../backend/mock-backend.js"
 
 export async function mockRegisterApp({appOrigins, apiLink, backend}: {
 		apiLink: string

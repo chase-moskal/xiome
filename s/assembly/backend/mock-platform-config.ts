@@ -1,8 +1,8 @@
 
-import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
-import {second, minute, day, year} from "../../../toolbox/goodtimes/times.js"
+import {PlatformConfig} from "./types/platform-config.js"
+import {second, minute, day, year} from "../../toolbox/goodtimes/times.js"
 
-import {hardPermissions} from "../permissions/hard-permissions.js"
+import {hardPermissions} from "../../features/auth/permissions/hard-permissions.js"
 
 export function mockPlatformConfig({
 		platformHome,

@@ -20,7 +20,7 @@ import {AnonAuth} from "./policies/types/anon-auth.js"
 import {AnonMeta} from "./policies/types/anon-meta.js"
 import {GreenAuth} from "./policies/types/green-auth.js"
 import {GreenMeta} from "./policies/types/green-meta.js"
-import {AuthApiOptions} from "./types/auth-api-options"
+import {AuthApiOptions} from "./types/auth-api-options.js"
 
 export const makeAuthApi = ({tables, ...options}:
 		AuthApiOptions & {tables: AuthTables}) => {

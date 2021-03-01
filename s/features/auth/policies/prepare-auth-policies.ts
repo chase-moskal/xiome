@@ -4,7 +4,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {basePolicies} from "./base/base-policies.js"
-import {prepareStatsHub} from "../prepare-stats-hub.js"
+import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
 

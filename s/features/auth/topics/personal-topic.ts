@@ -5,7 +5,7 @@ import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {validateProfile} from "./personal/validate-profile.js"
 import {Profile} from "../types/profile.js"
 import {UserAuth} from "../policies/types/user-auth.js"
-import {AuthApiOptions} from "../types/auth-api-options"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-profile.js"
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({

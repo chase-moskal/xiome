@@ -8,7 +8,7 @@ import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {App} from "../types/tokens/app.js"
 import {AppToken} from "../types/tokens/app-token.js"
 import {GreenAuth} from "../policies/types/green-auth.js"
-import {AuthApiOptions} from "../types/auth-api-options"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 
 export const appTokenTopic = ({
 			config,

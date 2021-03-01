@@ -11,7 +11,7 @@ import {LoginPayload} from "../types/tokens/login-payload.js"
 import {Scope} from "../types/tokens/scope.js"
 import {RefreshToken} from "../types/tokens/refresh-token.js"
 import {AnonAuth} from "../policies/types/anon-auth.js"
-import {AuthApiOptions} from "../types/auth-api-options"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 
 export const loginTopic = ({
 		rando,

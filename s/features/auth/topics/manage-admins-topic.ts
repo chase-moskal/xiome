@@ -2,7 +2,7 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
-import {AuthApiOptions} from "../types/auth-api-options"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"

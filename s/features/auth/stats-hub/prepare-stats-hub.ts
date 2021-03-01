@@ -1,14 +1,15 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 
-import {namespaceKeyAppId} from "./tables/constants/namespace-key-app-id.js"
-import {and, find} from "../../toolbox/dbby/dbby-mongo.js"
-import {day, month} from "../../toolbox/goodtimes/times.js"
-import {DbbyRow, DbbyTable} from "../../toolbox/dbby/dbby-types.js"
-import {ExposeTableNamespaceAppId} from "./tables/types/utils/expose-table-namespace-app-id.js"
-import {AppTables} from "./tables/types/table-groups/app-tables"
-import {UserTables} from "./tables/types/table-groups/user-tables"
+import {and, find} from "../../../toolbox/dbby/dbby-mongo.js"
+import {day, month} from "../../../toolbox/goodtimes/times.js"
+import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
+
 import {StatsHub} from "./types/stats-hub.js"
+import {AppTables} from "../tables/types/table-groups/app-tables.js"
+import {UserTables} from "../tables/types/table-groups/user-tables.js"
+import {namespaceKeyAppId} from "../tables/constants/namespace-key-app-id.js"
+import {ExposeTableNamespaceAppId} from "../tables/types/utils/expose-table-namespace-app-id.js"
 
 export function prepareStatsHub({tables}: {
 			tables: {

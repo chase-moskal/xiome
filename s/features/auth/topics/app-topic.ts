@@ -11,7 +11,7 @@ import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {AppDraft} from "../types/apps/app-draft.js"
 import {PlatformUserAuth} from "../policies/types/platform-user-auth.js"
-import {AuthApiOptions} from "../types/auth-api-options"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
 export const appTopic = ({
