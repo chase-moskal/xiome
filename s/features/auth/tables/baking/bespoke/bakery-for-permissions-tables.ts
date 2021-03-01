@@ -1,6 +1,6 @@
 
 import {isPlatform} from "../../../tools/is-platform.js"
-import {PermissionsTables} from "../../../types/permissions-tables"
+import {PermissionsTables} from "../../types/table-groups/permissions-tables"
 import {PlatformConfig} from "../../../types/platform-config.js"
 import {namespaceKeyAppId} from "../../constants/namespace-key-app-id.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"

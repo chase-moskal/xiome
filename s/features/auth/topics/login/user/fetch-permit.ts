@@ -1,5 +1,5 @@
 
-import {UserTables} from "../../../types/user-tables"
+import {UserTables} from "../../../tables/types/table-groups/user-tables"
 import {Permit} from "../../../types/permit.js"
 import {find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 

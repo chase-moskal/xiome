@@ -4,7 +4,7 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {isOriginValid} from "./validation/is-origin-valid.js"
 
-import {App} from "../../types/app.js"
+import {App} from "../../types/tokens/app.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
 import {BaseAnonAuth} from "./types/contexts/base-anon-auth.js"
 import {BaseAnonMeta} from "./types/contexts/base-anon-meta.js"

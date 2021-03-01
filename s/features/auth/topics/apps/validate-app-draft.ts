@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../../types/app-draft.js"
+import {AppDraft} from "../../types/apps/app-draft.js"
 import {appDraftValidators} from "./app-draft-validators.js"
 
 export function validateAppDraft(appDraft: AppDraft) {
