@@ -8,7 +8,7 @@ import {prepareStatsHub} from "../prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
 
-import {AccessPayload} from "../types/access-payload.js"
+import {AccessPayload} from "../types/tokens/access-payload.js"
 import {AuthTables} from "../tables/types/auth-tables.js"
 import {PlatformConfig} from "../types/platform-config.js"
 

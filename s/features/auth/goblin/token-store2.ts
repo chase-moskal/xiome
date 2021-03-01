@@ -1,7 +1,7 @@
 
 import {emptyTokens} from "./empty-tokens.js"
-import {AuthTokens} from "../types/auth-token.js"
-import {AppToken} from "../types/app-token.js"
+import {AuthTokens} from "../types/tokens/auth-token.js"
+import {AppToken} from "../types/tokens/app-token.js"
 import {TokenStoreOptions} from "./types/token-store-options.js"
 
 export function makeTokenStore2({

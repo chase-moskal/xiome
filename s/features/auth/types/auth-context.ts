@@ -1,6 +1,6 @@
 
 import {User} from "./user.js"
-import {AccessToken} from "./access-token.js"
+import {AccessToken} from "./tokens/access-token.js"
 
 export type AuthContext = {
 	user: User

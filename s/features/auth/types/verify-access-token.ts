@@ -1,6 +1,6 @@
 
-import {AccessToken} from "./access-token.js"
-import {AccessPayload} from "./access-payload.js"
+import {AccessToken} from "./tokens/access-token.js"
+import {AccessPayload} from "./tokens/access-payload.js"
 
 export type VerifyAccessToken = (
 	accessToken: AccessToken
