@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../../../../types/app-draft"
+import {AppDraft} from "../../../../types/app-draft.js"
 import {AppFormDraft} from "../types/app-form-draft.js"
 import {dedupe} from "../../../../../../toolbox/dedupe.js"
 

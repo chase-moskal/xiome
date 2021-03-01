@@ -12,8 +12,8 @@ import {Validator} from "../../../toolbox/darkvalley.js"
 import {profileValidator} from "./validators/profile-validator.js"
 import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 
-import {Profile} from "../../auth/types/profile"
-import {User} from "../../auth/types/user"
+import {Profile} from "../../auth/types/profile.js"
+import {User} from "../../auth/types/user.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 

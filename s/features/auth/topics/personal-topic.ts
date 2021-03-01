@@ -3,8 +3,8 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {validateProfile} from "./personal/validate-profile.js"
-import {Profile} from "../types/profile"
-import {UserAuth} from "../types/user-auth"
+import {Profile} from "../types/profile.js"
+import {UserAuth} from "../policies/types/user-auth.js"
 import {AuthApiOptions} from "../types/auth-api-options"
 import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-profile.js"
 

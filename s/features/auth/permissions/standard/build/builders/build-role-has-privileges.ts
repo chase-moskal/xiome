@@ -1,7 +1,7 @@
 
-import {RoleHasPrivilegeRow} from "../../../../types/role-has-privilege-row"
-import {PrivilegeRow} from "../../../../types/privilege-row"
-import {HardPermissionsBlueprint} from "../../../../types/hard-permissions-blueprint"
+import {RoleHasPrivilegeRow} from "../../../../types/role-has-privilege-row.js"
+import {PrivilegeRow} from "../../../../types/privilege-row.js"
+import {HardPermissionsBlueprint} from "../../../../types/hard-permissions-blueprint.js"
 
 export function buildRoleHasPrivileges(
 			blueprint: HardPermissionsBlueprint,

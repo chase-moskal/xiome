@@ -1,6 +1,6 @@
 
-import {ProfileRow} from "../../../types/profile-row"
-import {Profile} from "../../../types/profile"
+import {ProfileRow} from "../../../types/profile-row.js"
+import {Profile} from "../../../types/profile.js"
 
 export const profileFromRow = ({
 			avatar,

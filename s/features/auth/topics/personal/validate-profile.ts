@@ -1,5 +1,5 @@
 
-import {Profile} from "../../types/profile"
+import {Profile} from "../../types/profile.js"
 
 export const nicknameMax = 21
 export const taglineMax = 32

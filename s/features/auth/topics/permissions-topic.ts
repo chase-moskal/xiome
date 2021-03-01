@@ -1,6 +1,6 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
-import {UserAuth} from "../types/user-auth"
+import {UserAuth} from "../policies/types/user-auth.js"
 import {AuthApiOptions} from "../types/auth-api-options"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {concurrent} from "../../../toolbox/concurrent.js"

@@ -1,5 +1,5 @@
 
-import {SendLoginEmail} from "../../../features/auth/types/send-login-email"
+import {SendLoginEmail} from "../../../features/auth/types/send-login-email.js"
 import {LoginEmailDetails} from "../../../features/auth/types/login-email-details"
 
 export function mockSendLoginEmail(sendLoginEmail: SendLoginEmail) {

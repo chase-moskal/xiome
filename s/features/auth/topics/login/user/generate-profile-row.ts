@@ -1,5 +1,5 @@
 
-import {ProfileRow} from "../../../types/profile-row"
+import {ProfileRow} from "../../../types/profile-row.js"
 
 export const generateProfileRow = ({userId, generateNickname}: {
 			userId: string

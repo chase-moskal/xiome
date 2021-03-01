@@ -2,8 +2,8 @@
 import {loading} from "../../../framework/loading/loading.js"
 import {mobxify} from "../../../framework/mobxify.js"
 
-import {AccessPayload} from "../types/access-payload"
-import {LoginToken} from "../types/login-token"
+import {AccessPayload} from "../types/access-payload.js"
+import {LoginToken} from "../types/login-token.js"
 import {isTokenValid} from "../tools/tokens/is-token-valid.js"
 import {AuthModelOptions} from "./types/auth/auth-model-options.js"
 

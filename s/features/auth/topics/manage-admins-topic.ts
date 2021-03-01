@@ -8,7 +8,7 @@ import {emailValidator} from "./apps/admin-email-validator.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {adminRoleId} from "../permissions/standard/build/ids/hard-role-ids.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
-import {UnconstrainedPlatformUserAuth} from "../types/unconstrained-platform-user-auth"
+import {UnconstrainedPlatformUserAuth} from "../policies/types/unconstrained-platform-user-auth.js"
 import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-edit-app.js"
 
 export const manageAdminsTopic = ({

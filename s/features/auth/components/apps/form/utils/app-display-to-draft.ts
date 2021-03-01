@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../../../../types/app-draft"
+import {AppDraft} from "../../../../types/app-draft.js"
 import {originsMinusHome} from "./origins-minus-home.js"
 import {AppDisplay} from "../../../../types/apps/app-display.js"
 

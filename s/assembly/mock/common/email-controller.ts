@@ -1,5 +1,5 @@
 
-import {SendEmail} from "../../../features/auth/types/send-email"
+import {SendEmail} from "../../../features/auth/types/send-email.js"
 import {EmailDetails} from "../../../features/auth/types/email-details"
 
 export function makeEmailController(sendEmailActual: SendEmail) {

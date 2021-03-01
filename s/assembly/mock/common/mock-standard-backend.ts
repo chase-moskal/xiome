@@ -6,7 +6,7 @@ import {platformLabel, technicianEmail} from "../../constants.js"
 import {prepareSendLoginEmail} from "../../../features/auth/tools/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/tools/nicknames/standard-nickname-generator.js"
 
-import {SendEmail} from "../../../features/auth/types/send-email"
+import {SendEmail} from "../../../features/auth/types/send-email.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockStandardBackend({

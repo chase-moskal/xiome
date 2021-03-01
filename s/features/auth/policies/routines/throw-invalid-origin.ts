@@ -1,5 +1,5 @@
 
-import {App} from "../../types/app"
+import {App} from "../../types/app.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 

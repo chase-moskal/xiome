@@ -1,7 +1,7 @@
 
 import styles from "./xiome-my-account.css.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
-import {Profile} from "../../types/profile"
+import {Profile} from "../../types/profile.js"
 import {PersonalModel} from "../../models/types/personal/personal-model.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"

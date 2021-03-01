@@ -1,4 +1,4 @@
 
-import {UserMeta} from "../../../../../auth/types/user-meta"
+import {UserMeta} from "../../../../../auth/policies/types/user-meta.js"
 
 export interface PayUserMeta extends UserMeta {}
