@@ -12,7 +12,7 @@ import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 
 import {makeAdminManager} from "./admins/admin-manager.js"
 
-import {AppModel} from "../../types/app-model.js"
+import {AppModel} from "../../models/types/app/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 

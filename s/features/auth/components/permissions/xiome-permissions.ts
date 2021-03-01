@@ -1,6 +1,6 @@
 
 import styles from "./xiome-permissions.css.js"
-import {AuthModel} from "../../types/auth-model.js"
+import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {makePermissionsModel} from "../../models/permissions-model.js"
 import {RoleDisplay} from "../../topics/permissions/types/role-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"

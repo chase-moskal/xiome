@@ -1,6 +1,6 @@
 
 import styles from "./xiome-my-avatar.css.js"
-import {AuthModel} from "../../types/auth-model.js"
+import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {WiredComponent, html, mixinStyles, property, query, maybe} from "../../../../framework/component.js"
 
 import svgSilhouette from "../../../../framework/icons/silhouette.svg.js"

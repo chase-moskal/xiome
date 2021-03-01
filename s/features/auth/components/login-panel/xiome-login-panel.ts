@@ -1,6 +1,6 @@
 
 import styles from "./xiome-login-panel.css.js"
-import {AuthModel} from "../../types/auth-model.js"
+import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {email} from "../../../../toolbox/darkvalley.js"
 import {loading} from "../../../../framework/loading/loading.js"
 import {AccessPayload} from "../../../../features/auth/auth-types.js"
