@@ -1,6 +1,6 @@
-import {AccessToken} from "./access-token.js"
-import {User} from "./user.js"
 
+import {User} from "./user.js"
+import {AccessToken} from "./access-token.js"
 
 export type Authorizer = (
 	accessToken: AccessToken

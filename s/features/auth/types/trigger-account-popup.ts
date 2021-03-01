@@ -1,4 +1,4 @@
-import {AuthTokens} from "./auth-token"
 
+import {AuthTokens} from "./auth-token.js"
 
 export type TriggerAccountPopup = () => Promise<AuthTokens>

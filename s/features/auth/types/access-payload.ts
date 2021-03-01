@@ -1,7 +1,7 @@
-import {Permit} from "./permit.js"
-import {Scope} from "./scope.js"
-import {User} from "./user.js"
 
+import {User} from "./user.js"
+import {Scope} from "./scope.js"
+import {Permit} from "./permit.js"
 
 export interface AccessPayload {
 	user: User

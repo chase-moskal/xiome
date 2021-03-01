@@ -1,8 +1,6 @@
-import {PublicUserRole} from "./public-user-row.js"
-import {Profile} from "./profile.js"
 
-// auth types
-//
+import {Profile} from "./profile.js"
+import {PublicUserRole} from "./public-user-row.js"
 
 export type User = {
 	userId: string

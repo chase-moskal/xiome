@@ -1,5 +1,3 @@
-// statistical
-//
 
 export type LatestLoginRow = {
 	time: number

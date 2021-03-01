@@ -1,6 +1,6 @@
-import {RefreshPayload} from "./refresh-payload.js"
-import {RefreshToken} from "./refresh-token.js"
 
+import {RefreshToken} from "./refresh-token.js"
+import {RefreshPayload} from "./refresh-payload.js"
 
 export type VerifyRefreshToken = (
 	refreshToken: RefreshToken

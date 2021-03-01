@@ -1,5 +1,3 @@
-// roles and permissions
-//
 
 export type RoleRow = {
 	roleId: string
