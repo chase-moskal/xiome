@@ -3,12 +3,12 @@ import {payPolicies} from "./policies/pay-policies.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 import {premiumTopic} from "../topics/premium-topic.js"
 import {PayApiOptions} from "./types/pay-api-options.js"
+import {UserMeta} from "../../auth/policies/types/user-meta.js"
 import {PayUserAuth} from "./policies/types/contexts/pay-user-auth.js"
-import {PayUserMeta} from "./policies/types/contexts/pay-user-meta.js"
 import {stripeAccountsTopic} from "../topics/stripe-accounts-topic.js"
+import {PayAppOwnerAuth} from "./policies/types/contexts/pay-app-owner-auth.js"
 
 export const payApi = ({
-			rando,
 			config,
 			tables,
 			verifyToken,
@@ -18,17 +18,13 @@ export const payApi = ({
 	const policies = payPolicies({tables, config, makeStripeLiaison, verifyToken})
 
 	return {
-		stripeAccountsService: apiContext<PayUserMeta, PayUserAuth>()({
-			policy: policies.platformUser,
-			expose: stripeAccountsTopic({
-				rando,
-			}),
+		stripeAccountsService: apiContext<UserMeta, PayAppOwnerAuth>()({
+			policy: policies.appOwner,
+			expose: stripeAccountsTopic(),
 		}),
-		premiumService: apiContext<PayUserMeta, PayUserAuth>()({
+		premiumService: apiContext<UserMeta, PayUserAuth>()({
 			policy: policies.user,
-			expose: premiumTopic({
-				rando,
-			}),
+			expose: premiumTopic(),
 		}),
 	}
 }

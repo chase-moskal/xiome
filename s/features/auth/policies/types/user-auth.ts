@@ -1,5 +1,7 @@
 
 import {AnonAuth} from "./anon-auth.js"
-import {BaseUserAuth} from "../base/types/contexts/base-user-auth.js"
+import {AccessPayload} from "../../types/tokens/access-payload.js"
 
-export interface UserAuth extends AnonAuth, BaseUserAuth {}
+export interface UserAuth extends AnonAuth {
+	access: AccessPayload
+}

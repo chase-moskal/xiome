@@ -4,6 +4,8 @@ import {DbbyRow} from "../../../../../../../toolbox/dbby/dbby-types.js"
 
 export type MockAccount = DbbyRow & Partial<Stripe.Account> & {
 	id: string
-	charges_enabled: boolean,
-	payouts_enabled: boolean,
+	email: string
+	charges_enabled: boolean
+	payouts_enabled: boolean
+	details_submitted: boolean
 }

@@ -1,4 +1,6 @@
 
-import {BaseAnonMeta} from "../base/types/contexts/base-anon-meta.js"
+import {AppToken} from "../../types/tokens/app-token.js"
 
-export interface AnonMeta extends BaseAnonMeta {}
+export interface AnonMeta {
+	appToken: AppToken
+}

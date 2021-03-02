@@ -1,5 +1,7 @@
 
 import {AnonMeta} from "./anon-meta.js"
-import {BaseUserMeta} from "../base/types/contexts/base-user-meta.js"
+import {AccessToken} from "../../types/tokens/access-token.js"
 
-export interface UserMeta extends AnonMeta, BaseUserMeta {}
+export interface UserMeta extends AnonMeta {
+	accessToken: AccessToken
+}

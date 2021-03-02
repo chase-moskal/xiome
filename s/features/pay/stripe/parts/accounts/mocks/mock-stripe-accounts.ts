@@ -6,24 +6,26 @@ import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.j
 
 export function mockStripeAccounts({
 			rando,
-			tables,
+			mockStripeTables,
 			mockStripeAccountLink,
 		}: {
 			rando: Rando
-			tables: MockStripeTables
+			mockStripeTables: MockStripeTables
 			mockStripeAccountLink: string
 		}): StripeAccounts {
 
 	return {
 		async getStripeAccount(id: string) {
-			return tables.accounts.one(find({id}))
+			return mockStripeTables.accounts.one(find({id}))
 		},
 		async createStripeAccount() {
 			const id = rando.randomId()
-			await tables.accounts.create({
+			await mockStripeTables.accounts.create({
 				id,
+				email: "fake-stripe-email@xiome.io",
 				charges_enabled: false,
 				payouts_enabled: false,
+				details_submitted: false,
 			})
 			return {stripeAccountId: rando.randomId()}
 		},

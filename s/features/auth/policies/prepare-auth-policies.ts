@@ -3,11 +3,12 @@ import {VerifyToken} from "redcrypto/dist/types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
-import {basePolicies} from "./base/base-policies.js"
+import {isOriginValid} from "./routines/is-origin-valid.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
 
+import {App} from "../types/tokens/app.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
 import {AuthTables} from "../tables/types/auth-tables.js"
 import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
@@ -20,8 +21,9 @@ import {UserAuth} from "./types/user-auth.js"
 import {UserMeta} from "./types/user-meta.js"
 import {PlatformUserAuth} from "./types/platform-user-auth.js"
 import {PlatformUserMeta} from "../policies/types/platform-user-meta.js"
-import {UnconstrainedPlatformUserAuth} from "./types/unconstrained-platform-user-auth.js"
-import {UnconstrainedPlatformUserMeta} from "./types/unconstrained-platform-user-meta.js"
+import {requireUserIsAllowedToEditApp} from "../topics/apps/require-user-is-allowed-to-edit-app.js"
+import {AppOwnerMeta} from "./types/app-owner-meta.js"
+import {AppOwnerAuth} from "./types/app-owner-auth.js"
 
 export function prepareAuthPolicies({
 			config,
@@ -33,7 +35,6 @@ export function prepareAuthPolicies({
 			verifyToken: VerifyToken
 		}) {
 
-	const base = basePolicies({verifyToken})
 	const bakeTables = authTablesBakery({config, tables})
 	const getStatsHub = prepareStatsHub({tables})
 
@@ -45,11 +46,12 @@ export function prepareAuthPolicies({
 
 	const anon: Policy<AnonMeta, AnonAuth> = {
 		processAuth: async(meta, request) => {
-			const auth = await base.baseAnon.processAuth(meta, request)
-			const {appId} = auth.app
+			const app = await verifyToken<App>(meta.appToken)
+			if (!isOriginValid(request, app))
+				throw new ApiError(403, "invalid origin")
 			return {
-				...auth,
-				tables: await bakeTables(appId),
+				app,
+				tables: await bakeTables(app.appId),
 			}
 		},
 	}
@@ -86,13 +88,21 @@ export function prepareAuthPolicies({
 		},
 	}
 
-	const unconstrainedPlatformUser: Policy<
-			UnconstrainedPlatformUserMeta,
-			UnconstrainedPlatformUserAuth
+	const appOwner: Policy<
+			AppOwnerMeta,
+			AppOwnerAuth
 		> = {
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
-			return {...auth, bakeTables}
+			async function getTablesNamespacedForApp(appId: string) {
+				await requireUserIsAllowedToEditApp({
+					appId,
+					tables,
+					access: auth.access,
+				})
+				return bakeTables(appId)
+			}
+			return {...auth, getTablesNamespacedForApp}
 		},
 	}
 
@@ -100,8 +110,8 @@ export function prepareAuthPolicies({
 		green,
 		anon,
 		user,
+		appOwner,
 		platformUser,
 		userWhoManagesPermissions,
-		unconstrainedPlatformUser,
 	}
 }

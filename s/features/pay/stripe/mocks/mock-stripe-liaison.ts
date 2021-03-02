@@ -29,7 +29,7 @@ export async function mockStripeLiaison({rando, tables}: {
 
 	const accounts = mockStripeAccounts({
 		rando,
-		tables: stripeTables,
+		mockStripeTables: stripeTables,
 		mockStripeAccountLink: "https://example.xiome.io/stripe",
 	})
 

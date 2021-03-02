@@ -1,25 +1,33 @@
 
 import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
-import {PayTopicOptions} from "./types/pay-topic-options.js"
 import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
 
-export const stripeAccountsTopic = ({}: PayTopicOptions = {}) =>
-		asTopic<PayUserAuth>()({
+export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
 
 	async getStripeAccountDetails({tables, access, stripeLiaison}) {
 		const {userId} = access.user
-		const {stripeAccountId} = await tables.billing.stripeAccounts
+
+		const existingAssociatedStripeAcocunt = await tables.billing.stripeAccounts
 			.one(find({userId}))
-		const details = await stripeLiaison.accounts
-			.getStripeAccount(stripeAccountId)
-		return details
+
+		if (existingAssociatedStripeAcocunt) {
+			const account = await stripeLiaison.accounts
+				.getStripeAccount(existingAssociatedStripeAcocunt.stripeAccountId)
+
+			return {
+				stripeAccountId: account.id,
+				email: account.email,
+				payoutsEnabled: account.payouts_enabled,
+				detailsSubmitted: account.details_submitted,
+			}
+		}
+		else {
+			return undefined
+		}
 	},
 
-	async createAccountPopup({tables, access, app, stripeLiaison}): Promise<{
-			popupUrl: string
-		}> {
-
+	async createAccountPopup({tables, access, app, stripeLiaison}) {
 		const {appId} = app
 		const {userId} = access.user
 
@@ -36,8 +44,6 @@ export const stripeAccountsTopic = ({}: PayTopicOptions = {}) =>
 			await stripeLiaison.accounts
 				.createAccountOnboardingLink({stripeAccountId})
 
-		return {
-			popupUrl: stripeAccountLink,
-		}
+		return {stripeAccountLink}
 	},
 })

@@ -10,8 +10,6 @@ import {appTokenTopic} from "./topics/app-token-topic.js"
 import {permissionsTopic} from "./topics/permissions-topic.js"
 import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
-import {UnconstrainedPlatformUserAuth} from "./policies/types/unconstrained-platform-user-auth.js"
-import {UnconstrainedPlatformUserMeta} from "./policies/types/unconstrained-platform-user-meta.js"
 import {PlatformUserAuth} from "./policies/types/platform-user-auth.js"
 import {PlatformUserMeta} from "./policies/types/platform-user-meta.js"
 import {UserAuth} from "./policies/types/user-auth.js"
@@ -21,6 +19,8 @@ import {AnonMeta} from "./policies/types/anon-meta.js"
 import {GreenAuth} from "./policies/types/green-auth.js"
 import {GreenMeta} from "./policies/types/green-meta.js"
 import {AuthApiOptions} from "./types/auth-api-options.js"
+import {AppOwnerMeta} from "./policies/types/app-owner-meta.js"
+import {AppOwnerAuth} from "./policies/types/app-owner-auth.js"
 
 export const makeAuthApi = ({tables, ...options}:
 		AuthApiOptions & {tables: AuthTables}) => {
@@ -49,11 +49,8 @@ export const makeAuthApi = ({tables, ...options}:
 			expose: appTopic(options),
 		}),
 
-		manageAdminsService: apiContext<
-				UnconstrainedPlatformUserMeta,
-				UnconstrainedPlatformUserAuth
-			>()({
-			policy: policies.unconstrainedPlatformUser,
+		manageAdminsService: apiContext<AppOwnerMeta, AppOwnerAuth>()({
+			policy: policies.appOwner,
 			expose: manageAdminsTopic(options),
 		}),
 
