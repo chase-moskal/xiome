@@ -1,5 +1,4 @@
 
-import {VerifyToken} from "redcrypto/dist/types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
@@ -7,11 +6,10 @@ import {isOriginValid} from "./routines/is-origin-valid.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
+import {requireUserIsAllowedToEditApp} from "../topics/apps/require-user-is-allowed-to-edit-app.js"
 
 import {App} from "../types/tokens/app.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
-import {AuthTables} from "../tables/types/auth-tables.js"
-import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
 
 import {GreenAuth} from "./types/green-auth.js"
 import {GreenMeta} from "./types/green-meta.js"
@@ -20,20 +18,16 @@ import {AnonMeta} from "./types/anon-meta.js"
 import {UserAuth} from "./types/user-auth.js"
 import {UserMeta} from "./types/user-meta.js"
 import {PlatformUserAuth} from "./types/platform-user-auth.js"
-import {PlatformUserMeta} from "../policies/types/platform-user-meta.js"
-import {requireUserIsAllowedToEditApp} from "../topics/apps/require-user-is-allowed-to-edit-app.js"
+import {PlatformUserMeta} from "./types/platform-user-meta.js"
 import {AppOwnerMeta} from "./types/app-owner-meta.js"
 import {AppOwnerAuth} from "./types/app-owner-auth.js"
+import {AuthPolicyOptions} from "./types/auth-policy-options.js"
 
 export function prepareAuthPolicies({
 			config,
 			tables,
 			verifyToken,
-		}: {
-			tables: AuthTables
-			config: PlatformConfig
-			verifyToken: VerifyToken
-		}) {
+		}: AuthPolicyOptions) {
 
 	const bakeTables = authTablesBakery({config, tables})
 	const getStatsHub = prepareStatsHub({tables})

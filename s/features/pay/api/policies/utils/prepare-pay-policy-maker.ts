@@ -26,22 +26,25 @@ export function preparePayPolicyMaker(options: PayPolicyOptions) {
 	return function preparePayAuthPolicy<
 				xMeta extends UserMeta,
 				xInAuth extends UserAuth,
-				xOutAuth extends xInAuth & PayAuthSpecifics
-			>(
-				policy: Policy<xMeta, xInAuth>,
-				workOnAuth: (
-						meta: xMeta,
-						auth: xInAuth & PayAuthSpecifics,
-						request: HttpRequest,
-					) => Promise<xOutAuth>
-						= async(meta, auth, request) => <xOutAuth>auth,
-			): Policy<xMeta, xOutAuth> {
-		return {
-			processAuth: async(meta, request) => {
-				const auth = await policy.processAuth(meta, request)
-				const auth2 = await processPayAuth<xInAuth>(auth)
-				return workOnAuth(meta, auth2, request)
-			},
+			>() {
+		return function preparePayAuthPolicy2<
+					xOutAuth extends xInAuth & PayAuthSpecifics
+				>(
+					policy: Policy<xMeta, xInAuth>,
+					workOnAuth: (
+							meta: xMeta,
+							auth: xInAuth & PayAuthSpecifics,
+							request: HttpRequest,
+						) => Promise<xOutAuth>
+							= async(meta, auth, request) => <xOutAuth>auth,
+				): Policy<xMeta, xOutAuth> {
+			return {
+				processAuth: async(meta, request) => {
+					const auth = await policy.processAuth(meta, request)
+					const auth2 = await processPayAuth<xInAuth>(auth)
+					return workOnAuth(meta, auth2, request)
+				},
+			}
 		}
 	}
 }

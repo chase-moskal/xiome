@@ -1,12 +1,10 @@
 
 import {PayTables} from "../../tables/types/pay-tables.js"
-import {PlatformConfig} from "../../../../../assembly/backend/types/platform-config.js"
 import {AuthTables} from "../../../../auth/tables/types/auth-tables.js"
 import {MakeStripeLiaison} from "../../../stripe/types/make-stripe-liaison.js"
-import {BasePolicyOptions} from "../../../../auth/policies/base/types/base-policy-options.js"
+import {AuthPolicyOptions} from "../../../../auth/policies/types/auth-policy-options.js"
 
-export interface PayPolicyOptions extends BasePolicyOptions {
-	config: PlatformConfig
+export interface PayPolicyOptions extends AuthPolicyOptions {
 	tables: AuthTables & PayTables
 	makeStripeLiaison: MakeStripeLiaison
 }

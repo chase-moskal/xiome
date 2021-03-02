@@ -1,6 +1,7 @@
 
-import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
+
+import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
 
 export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
@@ -14,7 +15,6 @@ export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
 		if (existingAssociatedStripeAcocunt) {
 			const account = await stripeLiaison.accounts
 				.getStripeAccount(existingAssociatedStripeAcocunt.stripeAccountId)
-
 			return {
 				stripeAccountId: account.id,
 				email: account.email,
@@ -40,9 +40,8 @@ export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
 			},
 		})
 
-		const {stripeAccountLink} =
-			await stripeLiaison.accounts
-				.createAccountOnboardingLink({stripeAccountId})
+		const {stripeAccountLink} = await stripeLiaison.accounts
+			.createAccountOnboardingLink({stripeAccountId})
 
 		return {stripeAccountLink}
 	},
