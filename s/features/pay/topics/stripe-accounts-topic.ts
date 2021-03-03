@@ -16,7 +16,7 @@ export const stripeAccountsTopic = () => asTopic<PayAppOwnerAuth>()({
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const existingAssociatedStripeAcocunt = await namespacedTables.billing.stripeAccounts
+		const existingAssociatedStripeAcocunt = await namespacedTables.merchant.stripeAccounts
 			.one(find({userId}))
 
 		if (existingAssociatedStripeAcocunt) {
@@ -40,7 +40,7 @@ export const stripeAccountsTopic = () => asTopic<PayAppOwnerAuth>()({
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const {stripeAccountId} = await namespacedTables.billing.stripeAccounts.assert({
+		const {stripeAccountId} = await namespacedTables.merchant.stripeAccounts.assert({
 			...find({userId}),
 			make: async() => {
 				const {stripeAccountId} = await stripeLiaison.accounts

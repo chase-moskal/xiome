@@ -1,11 +1,10 @@
 
 import {asTopic} from "renraku/x/identities/as-topic.js"
-import {PayTopicOptions} from "./types/pay-topic-options.js"
-import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
+import {CustomerAuth} from "../api/policies/types/contexts/customer-auth.js"
 
-export const premiumTopic = () => asTopic<PayUserAuth>()({
+export const premiumTopic = () => asTopic<CustomerAuth>()({
 
-	async lol({tables: payTables, stripeLiaison}, {userId}: {userId: string}) {
+	async lol({tables, stripeLiaison}, {userId}: {userId: string}) {
 		return true
 	},
 })
