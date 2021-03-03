@@ -12,9 +12,8 @@ import {PayAuthSpecifics} from "../types/contexts/specifics/pay-auth-specifics.j
 export function preparePayPolicyMaker(options: PayPolicyOptions) {
 	const bakeBillingTables = prepareNamespacerForTables(options.tables.billing)
 
-	async function processPayAuth<xAuth extends UserAuth>(auth: xAuth):
+	async function processPayAuth<xAuth extends UserAuth>(auth: xAuth, appId: string):
 			Promise<xAuth & PayAuthSpecifics> {
-		const {appId} = auth.app
 		const tables = {
 			...auth.tables,
 			billing: await bakeBillingTables(appId),
@@ -23,28 +22,27 @@ export function preparePayPolicyMaker(options: PayPolicyOptions) {
 		return {...auth, tables, stripeLiaison}
 	}
 
-	return function preparePayAuthPolicy<
+	function preparePayPolicy<
 				xMeta extends UserMeta,
 				xInAuth extends UserAuth,
-			>() {
-		return function preparePayAuthPolicy2<
-					xOutAuth extends xInAuth & PayAuthSpecifics
-				>(
-					policy: Policy<xMeta, xInAuth>,
-					workOnAuth: (
-							meta: xMeta,
-							auth: xInAuth & PayAuthSpecifics,
-							request: HttpRequest,
-						) => Promise<xOutAuth>
-							= async(meta, auth, request) => <xOutAuth>auth,
-				): Policy<xMeta, xOutAuth> {
-			return {
-				processAuth: async(meta, request) => {
-					const auth = await policy.processAuth(meta, request)
-					const auth2 = await processPayAuth<xInAuth>(auth)
-					return workOnAuth(meta, auth2, request)
-				},
-			}
+				xOutAuth extends PayAuthSpecifics & xInAuth
+			>(
+				policy: Policy<xMeta, xInAuth>,
+				workOnAuth: (
+						meta: xMeta,
+						auth: PayAuthSpecifics & xInAuth,
+						request: HttpRequest,
+					) => Promise<xOutAuth>
+						= async(meta, auth, request) => <xOutAuth>auth,
+			): Policy<xMeta, xOutAuth> {
+		return {
+			processAuth: async(meta, request) => {
+				const auth = await policy.processAuth(meta, request)
+				const auth2 = await processPayAuth<xInAuth>(auth, auth.app.appId)
+				return workOnAuth(meta, auth2, request)
+			},
 		}
 	}
+
+	return {preparePayPolicy, bakeBillingTables}
 }

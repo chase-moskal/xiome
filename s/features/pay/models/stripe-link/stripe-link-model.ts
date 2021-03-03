@@ -12,8 +12,8 @@ export function stripeLinkModel({
 		}) {
 
 	return {
-		async fetchDetails(appId: string) {
-			return stripeAccountsService.getStripeAccountDetails()
+		async getStripeAccountDetails(appId: string) {
+			return stripeAccountsService.getStripeAccountDetails({appId})
 		},
 	}
 }

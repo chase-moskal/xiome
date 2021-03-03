@@ -2,14 +2,21 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-x.js"
-import {PayUserAuth} from "../api/policies/types/contexts/pay-user-auth.js"
+import {PayAppOwnerAuth} from "../api/policies/types/contexts/pay-app-owner-auth.js"
 
-export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
+export const stripeAccountsTopic = () => asTopic<PayAppOwnerAuth>()({
 
-	async getStripeAccountDetails({tables, access, stripeLiaison}) {
+	async getStripeAccountDetails({
+				access,
+				stripeLiaison,
+				getTablesNamespacedForApp,
+			},
+			{appId}: {appId: string}
+		) {
 		const {userId} = access.user
+		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const existingAssociatedStripeAcocunt = await tables.billing.stripeAccounts
+		const existingAssociatedStripeAcocunt = await namespacedTables.billing.stripeAccounts
 			.one(find({userId}))
 
 		if (existingAssociatedStripeAcocunt) {
@@ -27,11 +34,13 @@ export const stripeAccountsTopic = () => asTopic<PayUserAuth>()({
 		}
 	},
 
-	async createAccountPopup({tables, access, app, stripeLiaison}) {
-		const {appId} = app
+	async createAccountPopup({access, stripeLiaison, getTablesNamespacedForApp}, {appId}: {
+				appId: string
+			}) {
 		const {userId} = access.user
+		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const {stripeAccountId} = await tables.billing.stripeAccounts.assert({
+		const {stripeAccountId} = await namespacedTables.billing.stripeAccounts.assert({
 			...find({userId}),
 			make: async() => {
 				const {stripeAccountId} = await stripeLiaison.accounts
