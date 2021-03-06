@@ -1,9 +1,6 @@
 
 import {Policy} from "renraku/x/types/primitives/policy"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {UserAuth} from "../../../auth/policies/types/user-auth.js"
-import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
-import {PayTables} from "../tables/types/pay-tables.js"
 import {payTablesBakery} from "./bakery/pay-tables-bakery.js"
 import {CustomerAuth} from "./types/contexts/customer-auth.js"
 import {CustomerMeta} from "./types/contexts/customer-meta.js"
