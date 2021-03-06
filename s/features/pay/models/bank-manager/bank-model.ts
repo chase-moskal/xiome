@@ -3,17 +3,16 @@ import {Service} from "../../../../types/service.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {stripeAccountsTopic} from "../../topics/stripe-accounts-topic.js"
 
-export function stripeLinkModel({
-			stripeAccountsService,
-			getAccess,
-		}: {
+export function bankModel({stripeAccountsService}: {
 			stripeAccountsService: Service<typeof stripeAccountsTopic>
-			getAccess: () => Promise<AccessPayload>
 		}) {
 
 	return {
 		async getStripeAccountDetails(appId: string) {
 			return stripeAccountsService.getStripeAccountDetails({appId})
+		},
+		async createStripeAccountPopup(appId: string) {
+			return stripeAccountsService.createAccountPopup({appId})
 		},
 	}
 }
