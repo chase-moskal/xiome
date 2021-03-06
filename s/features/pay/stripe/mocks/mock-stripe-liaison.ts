@@ -10,11 +10,13 @@ import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {StripeWebhooks} from "../parts/webhooks/types/stripe-webhooks.js"
 import {mockStripeAccounts} from "../parts/accounts/mocks/mock-stripe-accounts.js"
 import {mockStripeSubscriptions} from "../parts/subscriptions/mocks/mock-stripe-subscriptions.js"
+import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
-export async function mockStripeLiaison({rando, tables}: {
-		rando: Rando
-		tables: AuthTables & PayTables
-	}): Promise<StripeLiaison> {
+export async function mockStripeLiaison({rando, tableStorage, tables}: {
+			rando: Rando
+			tableStorage: FlexStorage
+			tables: AuthTables & PayTables
+		}): Promise<StripeLiaison> {
 
 	// create pubsub contexts for each webhook
 	const {
@@ -25,7 +27,7 @@ export async function mockStripeLiaison({rando, tables}: {
 		["customer.subscription.updated"]: pubsub(),
 	})
 
-	const stripeTables = await mockStripeTables()
+	const stripeTables = await mockStripeTables(tableStorage)
 
 	const accounts = mockStripeAccounts({
 		rando,

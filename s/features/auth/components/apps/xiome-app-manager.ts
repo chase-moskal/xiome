@@ -151,10 +151,11 @@ export class XiomeAppManager extends WiredComponent<{
 							</code>
 						</div>
 						<div class=adminmanager>
+							<h4>manage admins</h4>
 							${adminManager.render()}
 						</div>
 						<div>
-							<h4>bank connect to receive payouts</h4>
+							<h4>bank link to receive payouts</h4>
 							<xiome-bank-connect .appId=${app.appId}></xiome-bank-connect>
 						</div>
 					</div>

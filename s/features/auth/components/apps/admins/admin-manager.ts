@@ -84,7 +84,6 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 
 	function render() {
 		return html`
-			<h4>manage admins</h4>
 			${renderAdminAssigner()}
 			${renderAdminList()}
 		`

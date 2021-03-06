@@ -52,7 +52,7 @@ export async function mockBackend({
 			config,
 			tables: {...authTables, ...payTables},
 			verifyToken,
-			makeStripeLiaison: prepareMockStripeLiaison({rando}),
+			makeStripeLiaison: prepareMockStripeLiaison({rando, tableStorage}),
 		}),
 	})
 

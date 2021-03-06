@@ -1,7 +1,7 @@
 
 import {StripeAccounts} from "../types/stripe-accounts.js"
 import {Rando} from "../../../../../../toolbox/get-rando.js"
-import {find} from "../../../../../../toolbox/dbby/dbby-x.js"
+import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
 import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.js"
 
 export function mockStripeAccounts({
@@ -27,7 +27,7 @@ export function mockStripeAccounts({
 				payouts_enabled: false,
 				details_submitted: false,
 			})
-			return {stripeAccountId: rando.randomId()}
+			return {stripeAccountId: id}
 		},
 		async createAccountOnboardingLink() {
 			return {stripeAccountLink: mockStripeAccountLink}
