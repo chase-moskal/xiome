@@ -2,9 +2,9 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-x.js"
-import {PayAppOwnerAuth} from "../api/policies/types/contexts/pay-app-owner-auth.js"
+import {MerchantAuth} from "../api/policies/types/contexts/merchant-auth.js"
 
-export const stripeAccountsTopic = () => asTopic<PayAppOwnerAuth>()({
+export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 
 	async getStripeAccountDetails({
 				access,
