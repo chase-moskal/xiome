@@ -1,0 +1,12 @@
+
+extends ../_templates/_popup.pug
+
+block append variables
+	- base = ".."
+	- pageSubtitle = "bank connect"
+
+block append head
+	script(type="module-shim" src="../features/pay/popups/bank-popup-script.js")
+
+block body
+	h1 xiome bank connection

@@ -8,6 +8,7 @@ import {mobxify} from "../../../../framework/mobxify.js"
 import {loading} from "../../../../framework/loading/loading.js"
 import {StripeAccountDetails} from "../../topics/types/stripe-account-details.js"
 import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
+import {onesie} from "../../../../toolbox/onesie.js"
 
 @mixinStyles(styles)
 export class XiomeBankConnect extends WiredComponent<{
@@ -23,7 +24,7 @@ export class XiomeBankConnect extends WiredComponent<{
 		stripeAccountDetailsLoading: loading<StripeAccountDetails>()
 	})
 
-	async firstUpdated() {
+	private refreshStripeAccountDetails = onesie(async() => {
 		const loadingActions = this.state.stripeAccountDetailsLoading.actions
 		if (this.appId) {
 			loadingActions.setLoadingUntil({
@@ -36,12 +37,16 @@ export class XiomeBankConnect extends WiredComponent<{
 			loadingActions.setError(errorReason)
 			console.warn(errorReason)
 		}
+	})
+
+	async firstUpdated() {
+		await this.refreshStripeAccountDetails()
 	}
 
 	// TODO implement
 	private async clickSetupPayouts() {
-		const links = await this.share.bankModel.createStripeAccountPopup(this.appId)
-		console.log("links!", links)
+		await this.share.bankModel.setupStripeAccountPopup(this.appId)
+		await this.refreshStripeAccountDetails()
 	}
 
 	private renderCreateOrEditAccount() {
