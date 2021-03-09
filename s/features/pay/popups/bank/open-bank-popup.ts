@@ -1,6 +1,7 @@
 
-import {BankPopupResult} from "./types/bank-popup-result.js"
+import {BankPopupPayload} from "./types/bank-popup-payload.js"
 import {openPopup} from "../../../../toolbox/popups/open-popup.js"
+import {bankPopupNamespace} from "./common/bank-popup-namespace.js"
 import {BankPopupParameters} from "./types/bank-popup-parameters.js"
 
 export function openBankPopup({
@@ -13,9 +14,9 @@ export function openBankPopup({
 			stripeAccountSetupLink: string
 		}) {
 
-	return openPopup<BankPopupParameters, BankPopupResult>({
+	return openPopup<BankPopupParameters, BankPopupPayload>({
 		popupLink,
-		namespace: "xiome-bank-poup",
+		namespace: bankPopupNamespace,
 		parameters: {stripeAccountId, stripeAccountSetupLink},
 	})
 }
