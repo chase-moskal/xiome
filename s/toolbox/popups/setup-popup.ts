@@ -1,9 +1,7 @@
 
-import {CorsPermissions} from "crosscall/dist/types.js"
-
 import {PopupFlag} from "./types/popup-flag.js"
 import {PopupMessage} from "./types/popup-message.js"
-import {validateRequest} from "./validate-request.js"
+import {validateRequest} from "./validation/validate-request.js"
 import {PopupMessageEvent} from "./types/popup-message-event.js"
 import {PopupGoRequest} from "./types/requests/popup-go-request.js"
 import {PopupReadyResponse} from "./types/responses/popup-ready-response.js"
@@ -11,12 +9,12 @@ import {PopupErrorResponse} from "./types/responses/popup-error-response.js"
 import {PopupPayloadResponse} from "./types/responses/popup-payload-response.js"
 
 export function setupPopup<Parameters, Payload>({
-			cors,
-			action,
 			namespace,
+			allowedOrigins,
+			action,
 		}: {
 			namespace: string
-			cors: CorsPermissions
+			allowedOrigins: string[]
 			action: (parameters: Parameters) => Promise<Payload>
 		}) {
 
@@ -29,57 +27,39 @@ export function setupPopup<Parameters, Payload>({
 		return
 	}
 
-	function broadcastReadyResponse(response: PopupReadyResponse) {
-		opener.postMessage(response, "*")
-	}
-
-	// send the ready response
-	broadcastReadyResponse({
+	opener.postMessage(<PopupReadyResponse>{
 		namespace,
-		flag: PopupFlag.ReadyResponse
-	})
+		flag: PopupFlag.ReadyResponse,
+	}, "*")
 
-	// listen for the go request from the host page, and trigger the action
 	window.addEventListener("message", async function goListener(
-		event: PopupMessageEvent<PopupGoRequest<Parameters>>
-	) {
+				event: PopupMessageEvent<PopupGoRequest<Parameters>>
+			) {
 
-		// don't continue unless the request is validated
-		if (!validateRequest({namespace, event, cors})) return null
+		if (!validateRequest({namespace, event, allowedOrigins}))
+			return null
 
 		// stop listening (only listen once, it's a one-off)
 		window.removeEventListener("message", goListener)
-
-		// extract parameters out of the go request
-		const {parameters} = event.data
 
 		function sendResponse<Response extends PopupMessage>(message: Response) {
 			opener.postMessage(message, event.origin)
 		}
 
-		function sendPayload(payload: Payload) {
+		try {
 			sendResponse<PopupPayloadResponse<Payload>>({
-				payload,
 				namespace,
+				payload: await action(event.data.parameters),
 				flag: PopupFlag.PayloadResponse,
 			})
 		}
-
-		function sendError(error: Error) {
+		catch (error) {
+			console.warn(error)
 			sendResponse<PopupErrorResponse>({
 				error,
 				namespace,
 				flag: PopupFlag.ErrorResponse,
 			})
-		}
-
-		// run the action, send back the payload or the error
-		try {
-			sendPayload(await action(parameters))
-		}
-		catch (error) {
-			console.warn(error)
-			sendError(error)
 		}
 	})
 }
