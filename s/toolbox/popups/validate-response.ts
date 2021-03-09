@@ -1,5 +1,6 @@
 
-import {PopupMessageEvent, PopupMessage} from "./interfaces.js"
+import {PopupMessage} from "./types/popup-message.js"
+import {PopupMessageEvent} from "./types/popup-message-event.js"
 
 export function validateResponse({
 	event,

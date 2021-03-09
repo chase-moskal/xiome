@@ -1,7 +1,8 @@
 
 // import {verifyCors} from "renraku/dist/verify-cors.js"
 import {CorsPermissions} from "crosscall/dist/types.js"
-import {PopupMessageEvent, PopupMessage} from "./interfaces.js"
+import {PopupMessageEvent} from "./types/popup-message-event.js"
+import {PopupMessage} from "./types/popup-message.js"
 
 function verifyCors(options: any): boolean {
 	throw new Error("TODO implement verifyCors")

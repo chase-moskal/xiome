@@ -1,18 +1,27 @@
 
-import {validateRequest} from "./validate-request.js"
 import {CorsPermissions} from "crosscall/dist/types.js"
-import {PopupMessage, PopupReadyResponse, PopupFlag, PopupMessageEvent, PopupGoRequest, PopupPayloadResponse, PopupErrorResponse} from "./interfaces.js"
+
+import {PopupFlag} from "./types/popup-flag.js"
+import {PopupMessage} from "./types/popup-message.js"
+import {validateRequest} from "./validate-request.js"
+import {PopupMessageEvent} from "./types/popup-message-event.js"
+import {PopupGoRequest} from "./types/requests/popup-go-request.js"
+import {PopupReadyResponse} from "./types/responses/popup-ready-response.js"
+import {PopupErrorResponse} from "./types/responses/popup-error-response.js"
+import {PopupPayloadResponse} from "./types/responses/popup-payload-response.js"
 
 export function setupPopup<Parameters, Payload>({
-	cors,
-	action,
-	namespace,
-}: {
-	namespace: string
-	cors: CorsPermissions
-	action: (parameters: Parameters) => Promise<Payload>
-}) {
+			cors,
+			action,
+			namespace,
+		}: {
+			namespace: string
+			cors: CorsPermissions
+			action: (parameters: Parameters) => Promise<Payload>
+		}) {
+
 	const opener: Window = window.opener
+
 	if (!opener) {
 		console.log("popup running in standalone debug mode")
 		window["action"] = action

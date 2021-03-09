@@ -1,22 +1,25 @@
 
+import {PopupFlag} from "./types/popup-flag.js"
+import {PopupHandler} from "./types/popup-handler.js"
+import {PopupMessage} from "./types/popup-message.js"
 import {validateResponse} from "./validate-response.js"
+import {PopupMessageEvent} from "./types/popup-message-event.js"
 import {centeredPopupFeatures} from "./centered-popup-features.js"
-import {PopupHandler, PopupErrorResponse, PopupFlag, PopupMessage, PopupMessageEvent, PopupGoRequest, PopupPayloadResponse} from "./interfaces.js"
+import {PopupGoRequest} from "./types/requests/popup-go-request.js"
+import {PopupErrorResponse} from "./types/responses/popup-error-response.js"
+import {PopupPayloadResponse} from "./types/responses/popup-payload-response.js"
 
 export function openPopup<Parameters, Payload>({
-	namespace,
-	popupPath,
-	parameters,
-	popupOrigin,
-}: {
-	namespace: string
-	popupPath: string
-	popupOrigin: string
-	parameters: Parameters
-}): PopupHandler<Payload> {
+			popupLink,
+			namespace,
+			parameters,
+		}: {
+			popupLink: string
+			namespace: string
+			parameters: Parameters
+		}): PopupHandler<Payload> {
 
-	// chop the leading slash off the path
-	if (popupPath.startsWith("/")) popupPath = popupPath.slice(1)
+	const popupOrigin = new URL(popupLink).origin
 
 	// scope these variables high up, so we can return closePopup
 	let popup: Window
@@ -80,10 +83,9 @@ export function openPopup<Parameters, Payload>({
 
 	// open the popup
 	popup = window.open(
-		`${popupOrigin}/${popupPath}`,
+		popupLink,
 		namespace,
 		centeredPopupFeatures(),
-		true,
 	)
 
 	// shift user focus onto the popup, of course
