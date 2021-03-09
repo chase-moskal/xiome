@@ -7,11 +7,11 @@ import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.j
 export function mockStripeAccounts({
 			rando,
 			mockStripeTables,
-			mockStripeAccountLink,
+			mockStripeAccountSetupLink
 		}: {
 			rando: Rando
 			mockStripeTables: MockStripeTables
-			mockStripeAccountLink: string
+			mockStripeAccountSetupLink: string
 		}): StripeAccounts {
 
 	return {
@@ -30,10 +30,10 @@ export function mockStripeAccounts({
 			return {stripeAccountId: id}
 		},
 		async createAccountOnboardingLink() {
-			return {stripeAccountLink: mockStripeAccountLink}
+			return {stripeAccountSetupLink: mockStripeAccountSetupLink}
 		},
 		async createAccountUpdateLink() {
-			return {stripeAccountLink: mockStripeAccountLink}
+			return {stripeAccountSetupLink: mockStripeAccountSetupLink}
 		},
 	}
 }

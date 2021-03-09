@@ -19,7 +19,7 @@ export function stripeAccounts({stripe, reauthLink, returnLink}: {
 				refresh_url: reauthLink,
 				return_url: returnLink,
 			})
-			return {stripeAccountLink: url}
+			return {stripeAccountSetupLink: url}
 		}
 	}
 

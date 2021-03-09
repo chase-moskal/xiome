@@ -1,10 +1,11 @@
 
 import {apiOrigin} from "../../../constants.js"
-import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
+import {mockPopups} from "./common/mock-popups.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {makeEmailController} from "./common/email-controller.js"
 import {mockStandardBackend} from "./common/mock-standard-backend.js"
+import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectApp({
@@ -43,5 +44,9 @@ export async function mockConnectApp({
 		appWindowLink,
 	})
 
-	return {remote, authGoblin, backend}
+	const popups = mockPopups({
+		mockStripeOperations: backend.mockStripeOperations,
+	})
+
+	return {remote, authGoblin, backend, popups}
 }

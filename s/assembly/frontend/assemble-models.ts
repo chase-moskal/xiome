@@ -10,6 +10,7 @@ export async function assembleModels({
 		modals,
 		remote,
 		authGoblin,
+		popups,
 	}: AssembleModelsOptions) {
 
 	const authModel = makeAuthModel({
@@ -48,6 +49,7 @@ export async function assembleModels({
 		permissionsModel,
 		bankModel: bankModel({
 			stripeAccountsService: remote.pay.stripeAccountsService,
+			triggerBankPopup: popups.triggerBankPopup,
 		})
 	}
 }

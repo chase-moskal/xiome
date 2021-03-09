@@ -32,10 +32,14 @@ export async function mockBackend({
 	const verifyToken = mockVerifyToken()
 
 	const authTables = await mockAuthTables(tableStorage)
-	const payTables = await mockPayTables(tableStorage)
+	const payTablesSpecifically = await mockPayTables(tableStorage)
 
 	const {fakeSendLoginEmail, getLatestLoginEmail} =
 		mockSendLoginEmail(sendLoginEmail)
+
+	const payTables = {...authTables, ...payTablesSpecifically}
+	const mockStripeLiaison = prepareMockStripeLiaison({rando, tableStorage})
+	const {mockStripeOperations} = await mockStripeLiaison({tables: payTables})
 
 	const api = asApi({
 		auth: makeAuthApi({
@@ -50,18 +54,22 @@ export async function mockBackend({
 		pay: payApi({
 			rando,
 			config,
-			tables: {...authTables, ...payTables},
+			tables: {...authTables, ...payTablesSpecifically},
 			verifyToken,
-			makeStripeLiaison: prepareMockStripeLiaison({rando, tableStorage}),
+			makeStripeLiaison: async({tables}) => {
+				const {stripeLiaison} = await mockStripeLiaison({tables})
+				return stripeLiaison
+			}
 		}),
 	})
 
 	return {
 		api,
 		config,
-		tables: {...authTables, ...payTables},
+		tables: {...authTables, ...payTablesSpecifically},
 		platformAppId: config.platform.appDetails.appId,
+		mockStripeOperations,
 		getLatestLoginEmail,
-		mockBrowser: async() => mockBrowser({api}),
+		mockBrowser: async() => mockBrowser({api, mockStripeOperations}),
 	}
 }

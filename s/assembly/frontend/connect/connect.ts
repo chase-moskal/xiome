@@ -1,5 +1,6 @@
 
 import {makeRemote} from "../make-remote.js"
+import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfigConnected} from "../types/xiome-config-connected.js"
 import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
 import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"
@@ -7,6 +8,7 @@ import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-stora
 export async function connect({
 		appId,
 		apiOrigin = "https://api.xiome.io",
+		popupsBase = "https://xiome.io/popups"
 	}: XiomeConfigConnected) {
 
 	const apiLink = apiOrigin + "/"
@@ -27,5 +29,7 @@ export async function connect({
 
 	channel.onmessage = authGoblin.refreshFromStorage
 
-	return {remote, authGoblin}
+	const popups = systemPopups({popupsBase})
+
+	return {remote, authGoblin, popups}
 }

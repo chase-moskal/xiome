@@ -1,12 +1,11 @@
 
 import {Service} from "../../../../types/service.js"
+import {TriggerBankPopup} from "./types/trigger-bank-popup.js"
 import {stripeAccountsTopic} from "../../topics/stripe-accounts-topic.js"
 
 export function bankModel({stripeAccountsService, triggerBankPopup}: {
 			stripeAccountsService: Service<typeof stripeAccountsTopic>
-			triggerBankPopup: ({stripeAccountLink}: {
-				stripeAccountLink: string
-			}) => Promise<void>
+			triggerBankPopup: TriggerBankPopup
 		}) {
 
 	return {
@@ -14,8 +13,8 @@ export function bankModel({stripeAccountsService, triggerBankPopup}: {
 			return stripeAccountsService.getStripeAccountDetails({appId})
 		},
 		async setupStripeAccountPopup(appId: string) {
-			const {stripeAccountLink} = await stripeAccountsService.createAccountPopup({appId})
-			await triggerBankPopup({stripeAccountLink})
+			const {stripeAccountId, stripeAccountSetupLink} = await stripeAccountsService.createAccountPopup({appId})
+			await triggerBankPopup({stripeAccountId, stripeAccountSetupLink})
 		},
 	}
 }

@@ -3,10 +3,10 @@ import {Await} from "../../../../../types/await.js"
 import {mockBackend} from "../../../../backend/mock-backend.js"
 
 export async function mockRegisterApp({appOrigins, apiLink, backend}: {
-		apiLink: string
-		appOrigins: string[]
-		backend: Await<ReturnType<typeof mockBackend>>
-	}) {
+			apiLink: string
+			appOrigins: string[]
+			backend: Await<ReturnType<typeof mockBackend>>
+		}) {
 
 	const mockBrowserForPlatform = await backend.mockBrowser()
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
@@ -24,7 +24,7 @@ export async function mockRegisterApp({appOrigins, apiLink, backend}: {
 	const {appId} = await appModel.registerApp({
 		label: "Mock App",
 		home: window.location.href,
-		origins: []
+		origins: appOrigins,
 	})
 
 	return appId

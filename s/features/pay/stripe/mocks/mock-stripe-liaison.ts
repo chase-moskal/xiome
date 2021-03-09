@@ -2,6 +2,7 @@
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {payDatalayer} from "../parts/pay-datalayer.js"
 import {StripeLiaison} from "../types/stripe-liaison.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {pubsub, pubsubs} from "../../../../toolbox/pubsub.js"
 import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {mockStripeTables} from "./tables/mock-stripe-tables.js"
@@ -16,7 +17,7 @@ export async function mockStripeLiaison({rando, tableStorage, tables}: {
 			rando: Rando
 			tableStorage: FlexStorage
 			tables: AuthTables & PayTables
-		}): Promise<StripeLiaison> {
+		}) {
 
 	// create pubsub contexts for each webhook
 	const {
@@ -32,7 +33,7 @@ export async function mockStripeLiaison({rando, tableStorage, tables}: {
 	const accounts = mockStripeAccounts({
 		rando,
 		mockStripeTables: stripeTables,
-		mockStripeAccountLink: "https://example.xiome.io/stripe",
+		mockStripeAccountSetupLink: "https://example.xiome.io/stripe",
 	})
 
 	// give webhook publishes to the mocks
@@ -54,5 +55,20 @@ export async function mockStripeLiaison({rando, tableStorage, tables}: {
 		subscribe(webhooks[key].bind(webhooks))
 	}
 
-	return {accounts, subscriptions, webhooks}
+	const mockStripeOperations = {
+		linkBankWithExistingStripeAccount: async(stripeAccountId: string) => {
+			stripeTables.accounts.update({
+				...find({id: stripeAccountId}),
+				write: {
+					charges_enabled: true,
+					payouts_enabled: true,
+				},
+			})
+		},
+	}
+
+	return {
+		stripeLiaison: <StripeLiaison>{accounts, subscriptions, webhooks},
+		mockStripeOperations,
+	}
 }

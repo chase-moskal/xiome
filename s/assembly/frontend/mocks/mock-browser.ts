@@ -2,13 +2,18 @@
 import {mockRemote} from "./mock-remote.js"
 import {mockApiOrigin} from "./mock-api-origin.js"
 import {assembleModels} from "../assemble-models.js"
+import {SystemApi} from "../../backend/types/system-api.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
+import {mockPopups} from "../connect/mock/common/mock-popups.js"
 import {MockLatency} from "../../../framework/add-mock-latency.js"
+import {MockStripeOperations} from "../../../features/pay/stripe/mocks/types/mock-stripe-operations.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "../auth/login-with-link-token-or-use-existing-login.js"
 
-import {SystemApi} from "../../backend/types/system-api.js"
 
-export async function mockBrowser({api}: {api: SystemApi}) {
+export async function mockBrowser({api, mockStripeOperations}: {
+			api: SystemApi
+			mockStripeOperations: MockStripeOperations
+		}) {
 	const {mockTokenIframe} = mockApiOrigin()
 
 	async function mockAppWindow({
@@ -39,6 +44,7 @@ export async function mockBrowser({api}: {api: SystemApi}) {
 			modals,
 			remote,
 			authGoblin,
+			popups: mockPopups({mockStripeOperations}),
 		})
 
 		await loginWithLinkTokenOrUseExistingLogin({
