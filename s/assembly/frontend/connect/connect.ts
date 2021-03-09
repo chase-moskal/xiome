@@ -8,10 +8,12 @@ import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-stora
 export async function connect({
 		appId,
 		apiOrigin = "https://api.xiome.io",
-		popupsBase = "https://xiome.io/popups"
+		platformOrigin = "https://xiome.io"
 	}: XiomeConfigConnected) {
 
-	const apiLink = apiOrigin + "/"
+	const apiLink = `${apiOrigin}/`
+	const popupsBase = `${platformOrigin}/popups`
+
 	const channel = new BroadcastChannel("tokenChangeEvent")
 	const broadcast = () => channel.postMessage(undefined)
 	const tokenStore = makeTokenStore2({

@@ -9,6 +9,7 @@ export function readXiomeConfigElement(): XiomeConfig {
 		mock: xiomeConfig.getAttribute("mock"),
 		appId: xiomeConfig.getAttribute("app"),
 		apiOrigin: xiomeConfig.getAttribute("api"),
+		platformOrigin: xiomeConfig.getAttribute("platform"),
 	}
 
 	const mock: undefined | "app" | "platform" =
@@ -23,5 +24,6 @@ export function readXiomeConfigElement(): XiomeConfig {
 		: {
 			appId: fresh.appId,
 			apiOrigin: fresh.apiOrigin,
+			platformOrigin: fresh.platformOrigin,
 		}
 }
