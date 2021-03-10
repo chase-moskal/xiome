@@ -10,7 +10,13 @@ export async function dbbyX<Row extends DbbyRow>(
 
 	const storageKey = `dbby-storage-${tableName}`
 
-	let table: Row[] = await flexStorage.read(storageKey) || []
+	let table: Row[] = []
+
+	async function load() {
+		table = await flexStorage.read(storageKey) || []
+	}
+
+	await load()
 
 	async function save() {
 		if (flexStorage) await flexStorage.write(storageKey, table)
@@ -47,11 +53,13 @@ export async function dbbyX<Row extends DbbyRow>(
 	return {
 
 		async create(...rows) {
+			await load()
 			for (const row of rows) insertCopy(row)
-			save()
+			await save()
 		},
 
 		async read({order, offset = 0, limit = 1000, ...conditional}) {
+			await load()
 			const rows = copy(select(conditional))
 			if (order) {
 				for (const [key, value] of Object.entries(order)) {
@@ -66,26 +74,29 @@ export async function dbbyX<Row extends DbbyRow>(
 		},
 
 		async one(conditional) {
+			await load()
 			return copy(selectOne(conditional))
 		},
 
 		async assert({make, ...conditional}) {
+			await load()
 			let row = copy(selectOne(conditional))
 			if (!row) {
 				const made = await make()
 				insertCopy(made)
 				row = copy(made)
-				save()
+				await save()
 			}
 			return row
 		},
 
 		async update({
-				write,
-				whole,
-				upsert,
-				...conditional
-			}: DbbyUpdateAmbiguated<Row>) {
+					write,
+					whole,
+					upsert,
+					...conditional
+				}: DbbyUpdateAmbiguated<Row>) {
+			await load()
 			const rows = select(conditional)
 			if (write && rows.length) {
 				updateRow(rows, write)
@@ -99,15 +110,17 @@ export async function dbbyX<Row extends DbbyRow>(
 				insertCopy(whole)
 			}
 			else throw new Error("invalid update")
-			save()
+			await save()
 		},
 
 		async delete(conditional) {
+			await load()
 			eliminateRow(conditional)
-			save()
+			await save()
 		},
 
 		async count(conditional) {
+			await load()
 			return select(conditional).length
 		},
 	}
