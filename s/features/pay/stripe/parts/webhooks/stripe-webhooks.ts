@@ -1,26 +1,16 @@
 
 import {Stripe} from "stripe"
 
+import {biggest} from "./utils/biggest.js"
 import {PayDatalayer} from "./types/pay-datalayer.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {Logger} from "../../../../../toolbox/logger/interfaces.js"
+import {StripeWebhookError} from "./errors/stripe-webhook-error.js"
 import {getStripeId} from "../subscriptions/helpers/get-stripe-id.js"
 import {SetupMetadata} from "../subscriptions/types/setup-metadata.js"
 import {StripeSubscriptions} from "../subscriptions/types/stripe-subscriptions.js"
 
-export class StripeWebhookError extends Error {
-	name = this.constructor.name
-}
-
 const err = (message: string) => new StripeWebhookError(message)
-
-function biggest(...args: number[]) {
-	let x = 0
-	for (const y of args) {
-		if (y > x) x = y
-	}
-	return x
-}
 
 export function stripeWebhooks({
 			logger,

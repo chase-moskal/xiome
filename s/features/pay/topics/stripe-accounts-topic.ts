@@ -13,7 +13,7 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 					getTablesNamespacedForApp,
 				},
 				{appId}: {appId: string}
-			): Promise<StripeAccountDetails> {
+			): Promise<undefined | StripeAccountDetails> {
 
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)
@@ -36,7 +36,7 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 		}
 	},
 
-	async createAccountPopup({access, stripeLiaison, getTablesNamespacedForApp}, {appId}: {
+	async generateAccountSetupLink({access, stripeLiaison, getTablesNamespacedForApp}, {appId}: {
 				appId: string
 			}) {
 
@@ -48,6 +48,11 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 			make: async() => {
 				const {stripeAccountId} = await stripeLiaison.accounts
 					.createStripeAccount()
+				await namespacedTables.merchant.stripeAccounts.create({
+					appId,
+					userId,
+					stripeAccountId,
+				})
 				return {userId, stripeAccountId, appId}
 			},
 		})

@@ -45,7 +45,7 @@ export class XiomeBankConnect extends WiredComponent<{
 
 	// TODO implement
 	private async clickSetupPayouts() {
-		await this.share.bankModel.setupStripeAccountPopup(this.appId)
+		await this.share.bankModel.setupStripeAccount(this.appId)
 		await this.refreshStripeAccountDetails()
 	}
 

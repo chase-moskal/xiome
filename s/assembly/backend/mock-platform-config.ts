@@ -36,8 +36,8 @@ export function mockPlatformConfig({
 			clientId: "mock-google-token",
 		},
 		stripe: {
-			apiKey: "mock-stripe-api-key",
-			secret: "mock-stripe-secret",
+			apiKey: "pk_test_NEDtuftU6ziXyM4Y6PDrifPl00g6q5efYe",
+			secret: "sk_test_Pj55B8JGeQyJeMxhcRc3ljEs00V9zwM3FA",
 			webhookSecret: "mock-stripe-webhook-secret",
 		},
 		tokens: {

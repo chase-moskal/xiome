@@ -57,11 +57,11 @@ export async function mockStripeLiaison({rando, tableStorage, tables}: {
 
 	const mockStripeOperations = {
 		linkBankWithExistingStripeAccount: async(stripeAccountId: string) => {
-			stripeTables.accounts.update({
+			await stripeTables.accounts.update({
 				...find({id: stripeAccountId}),
 				write: {
-					charges_enabled: true,
 					payouts_enabled: true,
+					details_submitted: true,
 				},
 			})
 		},
