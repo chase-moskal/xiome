@@ -1,4 +1,21 @@
 
+## current payment works
+
+bank account linking
+- [ ] complete the popup/return workflow
+- [ ] test it
+
+subscription system
+- [ ] create and manage subscription plans
+  - entirely disabled until successful stripe link
+  - a subscription plan is associated with one role
+
+features for premium
+- [ ] permissions
+  - features can declare hard-coded permissions
+
+------
+
 ## payments and premium
 
 - [ ] link sub stripe accounts

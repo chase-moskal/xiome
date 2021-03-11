@@ -8,7 +8,7 @@ import {PopupReadyResponse} from "./types/responses/popup-ready-response.js"
 import {PopupErrorResponse} from "./types/responses/popup-error-response.js"
 import {PopupPayloadResponse} from "./types/responses/popup-payload-response.js"
 
-export function setupPopup<Parameters, Payload>({
+export function setupSimplePopup<Parameters, Payload>({
 			namespace,
 			allowedOrigins,
 			action,

@@ -15,8 +15,8 @@ export async function stripeLiaison({stripe, bankPopupLink, tables}: {
 
 	const accounts = stripeAccounts({
 		stripe,
-		reauthLink: bankPopupLink,
-		returnLink: bankPopupLink,
+		returnLink: `${bankPopupLink}#stripe-return`,
+		refreshLink: `${bankPopupLink}#stripe-refresh`,
 	})
 
 	const subscriptions = stripeSubscriptions({

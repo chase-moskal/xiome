@@ -58,7 +58,7 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 		})
 
 		const {stripeAccountSetupLink} = await stripeLiaison.accounts
-			.createAccountOnboardingLink({stripeAccountId})
+			.createAccountUpdateLink({stripeAccountId})
 
 		return {stripeAccountId, stripeAccountSetupLink}
 	},

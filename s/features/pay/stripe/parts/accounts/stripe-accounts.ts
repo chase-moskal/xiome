@@ -1,10 +1,10 @@
 
 import {Stripe} from "stripe"
 
-export function stripeAccounts({stripe, reauthLink, returnLink}: {
+export function stripeAccounts({stripe, returnLink, refreshLink}: {
 		stripe: Stripe
-		reauthLink: string
 		returnLink: string
+		refreshLink: string
 	}) {
 
 	function prepareCreateAccountLink(
@@ -16,8 +16,9 @@ export function stripeAccounts({stripe, reauthLink, returnLink}: {
 			const {url} = await stripe.accountLinks.create({
 				type,
 				account: stripeAccountId,
-				refresh_url: reauthLink,
 				return_url: returnLink,
+				refresh_url: refreshLink,
+				collect: "eventually_due",
 			})
 			return {stripeAccountSetupLink: url}
 		}

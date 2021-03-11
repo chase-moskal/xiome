@@ -1,15 +1,35 @@
-import {nap} from "../../../../toolbox/nap.js"
-import {setupBankPopup} from "./setup-bank-popup.js"
+
+import {bankPopupNamespace} from "./common/bank-popup-namespace.js"
+import {popupTrustedOrigins} from "../../../../assembly/constants.js"
+import {setupManualPopup} from "../../../../toolbox/popups/setup-manual-popup.js"
+import {BankPopupParameters} from "./types/bank-popup-parameters.js"
+import {BankPopupPayload} from "./types/bank-popup-payload.js"
 
 void async function main() {
-	setupBankPopup({
-		allowedOrigins: [
-			"https://xiome.io",
-			"http://localhost:5000",
-		],
-		action: async function({stripeAccountId, stripeAccountSetupLink}) {
-			console.log({stripeAccountId, stripeAccountSetupLink})
-			await nap(1000 * 60 * 60 * 24)
-		},
+	const {hash} = window.location
+
+	const popupControls = setupManualPopup<BankPopupParameters, BankPopupPayload>({
+		namespace: bankPopupNamespace,
+		allowedOrigins: popupTrustedOrigins,
 	})
+
+	popupControls.sendReadyAndListenForGo(
+		(targetOrigin, {stripeAccountSetupLink}) => {
+			if (hash === "") {
+				window.location.href = stripeAccountSetupLink
+			}
+			else if (hash === "#stripe-return") {
+				popupControls.respondPayload(targetOrigin, undefined)
+			}
+			else if (hash === "#stripe-refresh") {
+				popupControls.respondPayload(targetOrigin, undefined)
+			}
+			else {
+				popupControls.respondError(
+					targetOrigin,
+					new Error("unknown popup context"),
+				)
+			}
+		}
+	)
 }()
