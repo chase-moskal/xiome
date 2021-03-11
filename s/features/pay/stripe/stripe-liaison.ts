@@ -7,15 +7,16 @@ import {stripeWebhooks} from "./parts/webhooks/stripe-webhooks.js"
 import {stripeAccounts} from "./parts/accounts/stripe-accounts.js"
 import {stripeSubscriptions} from "./parts/subscriptions/stripe-subscriptions.js"
 
-export async function stripeLiaison({stripe, tables}: {
+export async function stripeLiaison({stripe, bankPopupLink, tables}: {
 		stripe: Stripe
+		bankPopupLink: string
 		tables: AuthTables & PayTables
 	}) {
 
 	const accounts = stripeAccounts({
 		stripe,
-		reauthLink: "fake-reauth-link-lol",
-		returnLink: "fake-return-link-lol",
+		reauthLink: bankPopupLink,
+		returnLink: bankPopupLink,
 	})
 
 	const subscriptions = stripeSubscriptions({
