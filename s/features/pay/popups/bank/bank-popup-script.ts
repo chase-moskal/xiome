@@ -1,9 +1,9 @@
 
+import {BankPopupPayload} from "./types/bank-popup-payload.js"
 import {bankPopupNamespace} from "./common/bank-popup-namespace.js"
+import {BankPopupParameters} from "./types/bank-popup-parameters.js"
 import {popupTrustedOrigins} from "../../../../assembly/constants.js"
 import {setupManualPopup} from "../../../../toolbox/popups/setup-manual-popup.js"
-import {BankPopupParameters} from "./types/bank-popup-parameters.js"
-import {BankPopupPayload} from "./types/bank-popup-payload.js"
 
 void async function main() {
 	const {hash} = window.location
