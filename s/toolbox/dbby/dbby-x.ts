@@ -8,7 +8,7 @@ export async function dbbyX<Row extends DbbyRow>(
 		tableName: string,
 	): Promise<DbbyTable<Row>> {
 
-	const storageKey = `dbby-storage-${tableName}`
+	const storageKey = `dbby-${tableName}`
 
 	let table: Row[] = []
 

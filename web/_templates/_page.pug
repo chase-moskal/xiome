@@ -13,12 +13,12 @@ head
 	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
 
 	if debug
-		xiome-config(mock="platform")
-		//- xiome-config(
-		//- 	app="402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076"
-		//- 	api="http://localhost:4999"
-		//- 	platform="http://localhost:5000/x"
-		//- )
+		//- xiome-config(mock="platform")
+		xiome-config(
+			app="402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076"
+			api="http://localhost:4999"
+			platform="http://localhost:5000/x"
+		)
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)

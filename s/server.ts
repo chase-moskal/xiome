@@ -10,7 +10,7 @@ import {prepareSendLoginEmail} from "./features/auth/tools/emails/send-login-ema
 import {standardNicknameGenerator} from "./features/auth/tools/nicknames/standard-nickname-generator.js"
 
 const port = 4999
-const tableStorageFile = "./x/table-storage.json"
+const mockDatabaseFile = "./mock-database.json"
 
 void async function main() {
 	console.log("starting server in mock mode")
@@ -21,7 +21,7 @@ void async function main() {
 		platformHome: "http://localhost:5000/",
 		technicianEmail: "chasemoskal@gmail.com",
 		platformLabel: "Xiome Platform",
-		tableStorage: nodeFileFlexStorage(tableStorageFile),
+		tableStorage: nodeFileFlexStorage(mockDatabaseFile),
 		sendLoginEmail: prepareSendLoginEmail({sendEmail}),
 		generateNickname: standardNicknameGenerator({rando}),
 	})
