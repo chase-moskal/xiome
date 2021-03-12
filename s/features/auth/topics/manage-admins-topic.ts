@@ -2,11 +2,11 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
-import {AuthApiOptions} from "../types/auth-api-options.js"
+import {appointAdmin} from "./admins/appoint-admin.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
-import {assertEmailAccount} from "./login/assert-email-account.js"
 import {adminRoleId} from "../permissions/standard/build/ids/hard-role-ids.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
 
@@ -33,6 +33,28 @@ export const manageAdminsTopic = ({
 		}))
 	},
 
+	async assignPlatformUserAsAdmin(auth, {appId, platformUserId}: {
+			appId: string
+			platformUserId: string
+		}) {
+		const tablesForPlatform = auth.tables
+		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
+
+		const platformAccount = await tablesForPlatform.user.accountViaEmail
+			.one(find({userId: platformUserId}))
+
+		if (!platformAccount)
+			throw new ApiError(404, "platform email account not found")
+
+		const {email} = platformAccount
+		await appointAdmin({
+			rando,
+			config,
+			email,
+			tablesForApp,
+		})
+	},
+
 	async assignAdmin(auth, {appId, email}: {
 				appId: string
 				email: string
@@ -44,23 +66,11 @@ export const manageAdminsTopic = ({
 		if (problems.length)
 			throw new ApiError(400, "email failed validation: " + problems.join(";"))
 
-		const {userId: adminUserId} = await assertEmailAccount({
+		await appointAdmin({
 			rando,
-			email,
 			config,
-			tables: tablesForApp,
-		})
-
-		await tablesForApp.permissions.userHasRole.assert({
-			...find({userId: adminUserId, roleId: adminRoleId}),
-			make: async() => ({
-				userId: adminUserId,
-				roleId: adminRoleId,
-				hard: false,
-				public: true,
-				timeframeEnd: undefined,
-				timeframeStart: undefined,
-			})
+			email,
+			tablesForApp,
 		})
 	},
 

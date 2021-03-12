@@ -54,6 +54,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				listAdmins: true,
 				assignAdmin: true,
 				revokeAdmin: true,
+				assignPlatformUserAsAdmin: true,
 			},
 			personalService: {
 				[_augment]: augmentWithAppAndAccessTokens,

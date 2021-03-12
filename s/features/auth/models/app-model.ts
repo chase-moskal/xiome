@@ -68,10 +68,17 @@ export function makeAppModel({
 			const userId = await getUserId()
 			const result = await loadingOperation({
 				errorReason: "failed to register app",
-				promise: appService.registerApp({
-					appDraft,
-					ownerUserId: userId,
-				}),
+				promise: (async() => {
+					const result = await appService.registerApp({
+						appDraft,
+						ownerUserId: userId,
+					})
+					await manageAdminsService.assignPlatformUserAsAdmin({
+						appId: result.appId,
+						platformUserId: userId,
+					})
+					return result
+				})(),
 			})
 			return result
 		},
