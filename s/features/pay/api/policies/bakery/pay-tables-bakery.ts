@@ -6,11 +6,11 @@ export function payTablesBakery({config, tables}: {
 		config: PlatformConfig
 		tables: PayTables
 	}) {
-	
+
 	return async function bakePayTables(appId: string): Promise<PayTables> {
 		return {
-			merchant: tables.merchant,
 			billing: await prepareNamespacerForTables(tables.billing)(appId),
+			merchant: await prepareNamespacerForTables(tables.merchant)(appId),
 		}
 	}
 }

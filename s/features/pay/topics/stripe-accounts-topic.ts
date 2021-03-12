@@ -49,7 +49,6 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 				const {stripeAccountId} = await stripeLiaison.accounts
 					.createStripeAccount()
 				await namespacedTables.merchant.stripeAccounts.create({
-					appId,
 					userId,
 					stripeAccountId,
 				})
