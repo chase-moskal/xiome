@@ -1,7 +1,8 @@
 
 import {CardClues} from "../../../../stripe/parts/subscriptions/types/card-clues.js"
 
-export type StripePremiumRow = CardClues & {
+export type StripeSubscriptionRow = {
 	userId: string
-	stripeSubscriptionId: string
-}
+	renewalTime: number
+	subscriptionPlanId: string
+} & CardClues

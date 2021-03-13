@@ -2,8 +2,9 @@
 import {find} from "../../../../toolbox/dbby/dbby-x.js"
 import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
-import {StripePremiumRow} from "../../api/tables/types/rows/stripe-premium-row.js"
-import {adminRoleId} from "../../../auth/permissions/build/ids/hard-role-ids.js.js"
+import {StripeSubscriptionRow} from "../../api/tables/types/rows/stripe-premium-row.js"
+
+const adminRoleId = undefined
 
 export function payDatalayer({tables}: {
 			tables: AuthTables & PayTables
@@ -18,7 +19,7 @@ export function payDatalayer({tables}: {
 			return tables.billing.stripeCustomers.one(find({stripeCustomerId}))
 		},
 
-		async upsertStripePremiumRow(row: StripePremiumRow) {
+		async upsertStripePremiumRow(row: StripeSubscriptionRow) {
 			return tables.billing.stripePremiums.update({
 				...find({userId: row.userId}),
 				upsert: row,
@@ -33,7 +34,7 @@ export function payDatalayer({tables}: {
 			return tables.billing.stripePremiums.one(find({userId}))
 		},
 
-		async grantPremiumRoleUntil(userId: string, timeframeEnd) {
+		async grantPremiumRoleUntil(userId: string, timeframeEnd: number) {
 			const userHasAdmin = await tables.permissions.userHasRole
 				.one(find({userId, roleId: adminRoleId}))
 			if (userHasAdmin) {

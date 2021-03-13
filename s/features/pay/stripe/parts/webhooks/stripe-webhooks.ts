@@ -26,9 +26,11 @@ export function stripeWebhooks({
 			userId,
 			subscriptionEnd,
 			subscriptionStatus,
+			stripeSubscriptionId,
 		}: {
 			userId: string
 			subscriptionEnd: number
+			stripeSubscriptionId: string
 			subscriptionStatus: Stripe.Subscription.Status
 		}) {
 
@@ -60,6 +62,7 @@ export function stripeWebhooks({
 
 		const {timeframeEnd} = await evaluatePremium({
 			userId,
+			stripeSubscriptionId,
 			subscriptionStatus: subscription.status,
 			subscriptionEnd: subscription.current_period_end,
 		})

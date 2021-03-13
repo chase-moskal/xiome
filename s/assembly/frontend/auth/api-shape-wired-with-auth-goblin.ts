@@ -83,9 +83,17 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				generateAccountSetupLink: true,
 				getStripeAccountDetails: true,
 			},
-			buySubscriptionsService: {
+			subscriptionsShopService: {
 				[_augment]: augmentWithAppAndAccessTokens,
-				lol: true,
+				buySubscription: true,
+				updateSubscription: true,
+				cancelSubscription: true,
+			},
+			subscriptionsManagementService: {
+				[_augment]: augmentWithAppAndAccessTokens,
+				createSubscriptionPlan: true,
+				updateSubscriptionPlan: true,
+				deleteSubscriptionPlan: true,
 			},
 		}
 	})
