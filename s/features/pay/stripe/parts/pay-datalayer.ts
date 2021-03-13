@@ -3,7 +3,7 @@ import {find} from "../../../../toolbox/dbby/dbby-x.js"
 import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {StripePremiumRow} from "../../api/tables/types/rows/stripe-premium-row.js"
-import {adminRoleId} from "../../../auth/permissions/standard/build/ids/hard-role-ids.js"
+import {adminRoleId} from "../../../auth/permissions/build/ids/hard-role-ids.js.js"
 
 export function payDatalayer({tables}: {
 			tables: AuthTables & PayTables
