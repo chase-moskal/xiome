@@ -1,5 +1,5 @@
 
-import {powerPrivileges} from "./groups/power-privileges.js"
+import {powerPrivileges} from "./privilege-groups/power-privileges.js"
 
 export const universalPrivileges = {
 	...powerPrivileges,

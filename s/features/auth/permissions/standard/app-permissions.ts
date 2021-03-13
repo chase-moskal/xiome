@@ -1,8 +1,10 @@
 
-import {appRoles} from "./roles/app-roles.js"
-import {appPrivileges} from "./privileges/app-privileges.js"
+import {appRoles} from "./app/app-roles.js"
+import {appPrivileges} from "./app/app-privileges.js"
+import {universalRoles} from "./universal/universal-roles.js"
+import {universalPrivileges} from "./universal/universal-privileges.js"
 
 export const appPermissions = {
-	roles: appRoles,
-	privileges: appPrivileges,
+	roles: {...universalRoles, ...appRoles},
+	privileges: {...universalPrivileges, ...appPrivileges},
 }
