@@ -10,6 +10,7 @@ import {ShopkeeperMeta} from "./types/contexts/shopkeeper-meta.js"
 import {ShopkeeperAuth} from "./types/contexts/shopkeeper-auth.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 import {ApiError} from "renraku/x/api/api-error"
+import {appPermissions} from "../../../auth/permissions/standard/app-permissions.js"
 
 export function payPolicies(options: PayPolicyOptions) {
 	const authPolicies = prepareAuthPolicies({
@@ -35,8 +36,12 @@ export function payPolicies(options: PayPolicyOptions) {
 	const shopkeeper: Policy<ShopkeeperMeta, ShopkeeperAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
-			if (!auth.access.permit.privileges.includes())
-				throw new ApiError(403, "must have shopkeeper privilege")
+
+			if (!auth.access.permit.privileges.includes(
+					appPermissions.privileges["customize subscription offerings"]
+				))
+				throw new ApiError(403, "insufficient privileges")
+
 			return auth
 		}
 	}
