@@ -1,13 +1,8 @@
 
-import {HardPermissions} from "./hard-permissions.js"
+import {RolesBlueprint} from "./roles-blueprint.js"
+import {PrivilegesBlueprint} from "./privilege-blueprint.js"
 
 export interface HardPermissionsBlueprint {
-	inherit?: HardPermissions
-	privileges: {[label: string]: string}
-	roles: {
-		[label: string]: {
-			roleId: string
-			privileges: string[]
-		}
-	}
+	roles: RolesBlueprint
+	privileges: PrivilegesBlueprint
 }

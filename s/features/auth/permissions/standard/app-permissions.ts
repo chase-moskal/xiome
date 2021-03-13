@@ -1,20 +1,8 @@
 
-import {powerPrivileges} from "./power-privileges.js"
-import {universalPermissions} from "./universal-permissions.js"
-import {buildHardPermissions} from "./build/build-hard-permissions.js"
-import {adminRoleId, technicianRoleId} from "./build/ids/hard-role-ids.js"
+import {appRoles} from "./roles/app-roles.js"
+import {appPrivileges} from "./privileges/app-privileges.js"
 
-export const appPermissions = buildHardPermissions({
-	inherit: universalPermissions,
-	privileges: {},
-	roles: {
-		"admin": {
-			roleId: adminRoleId,
-			privileges: powerPrivileges,
-		},
-		"technician": {
-			roleId: technicianRoleId,
-			privileges: powerPrivileges,
-		},
-	},
-})
+export const appPermissions = {
+	roles: appRoles,
+	privileges: appPrivileges,
+}
