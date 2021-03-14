@@ -2,7 +2,7 @@
 import {find} from "../../../../toolbox/dbby/dbby-x.js"
 import {PayTables} from "../../api/tables/types/pay-tables.js"
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
-import {StripeSubscriptionRow} from "../../api/tables/types/rows/stripe-premium-row.js"
+import {StripeSubscriptionRow} from "../../api/tables/types/rows/stripe-subscription-row.js"
 
 const adminRoleId = undefined
 

@@ -25,6 +25,10 @@ export function payPolicies(options: PayPolicyOptions) {
 		return {tables, stripeLiaison}
 	}
 
+	/**
+	 * a merchant is the owner of an app, on the platform, who links their
+	 * stripe account to receive payouts
+	 */
 	const merchant: Policy<MerchantMeta, MerchantAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.appOwner.processAuth(meta, request)
@@ -38,6 +42,9 @@ export function payPolicies(options: PayPolicyOptions) {
 		}
 	}
 
+	/**
+	 * a customer is an app's end-user who might buy things
+	 */
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
@@ -46,12 +53,15 @@ export function payPolicies(options: PayPolicyOptions) {
 		}
 	}
 
+	/**
+	 * a store manager is an app user who can edit products and offerings
+	 */
 	const subscriptionsManager: Policy<SubscriptionsManagerMeta, SubscriptionsManagerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
 
 			if (!auth.access.permit.privileges.includes(
-					appPermissions.privileges["customize subscription plans"]
+					appPermissions.privileges["edit products and subscription plans"]
 				))
 				throw new ApiError(403, "insufficient privileges")
 

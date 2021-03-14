@@ -1,6 +1,41 @@
 
 # big picture
 
+how the store works
+- subscriptions
+  - subscriptions are tied to the core permissions system
+  - each subscription plan is bould to a role
+  - all subscription-oriented roles are marked as "hard" as they must be managed by the system
+- products
+  - digital product ownership is kept separately by the store system
+
+store feature refactor
+- [ ] big braining
+  - roles/userhasroles/userhasprivileges should be marked `hard`, because they are being managed by the system, they may not be directly manipulated by admins or other app staff
+- [ ] rename 'pay' feature to 'store'
+- [ ] policies
+  - merchant
+  - customer
+  - manager
+- [ ] liaisons
+  - platform stripe liaison (for linking accounts)
+  - app stripe liaison (for store management and purchases)
+- [ ] topics
+  - merchant link topic
+    - getLinkedAccount
+    - createAccountOnboardingLink
+    - createAccountUpdateLink
+  - store manager topic
+    - createSubscriptionPlan
+    - updateSubscriptionPlan
+    - deleteSubscriptionPlan
+  - store customer topic
+    - buySubscription
+    - updateSubscription
+    - endSubscription
+  - gifting topic
+    - giftSubscription
+
 ALPHA 10
 
 - [ ] cash money 3
