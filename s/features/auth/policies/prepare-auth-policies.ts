@@ -22,6 +22,9 @@ import {PlatformUserMeta} from "./types/platform-user-meta.js"
 import {AppOwnerMeta} from "./types/app-owner-meta.js"
 import {AppOwnerAuth} from "./types/app-owner-auth.js"
 import {AuthPolicyOptions} from "./types/auth-policy-options.js"
+import {makePrivilegeChecker} from "../tools/permissions/make-privilege-checker.js"
+import {appPrivileges} from "../../../assembly/backend/permissions/standard/app/app-privileges.js"
+import {platformPrivileges} from "../../../assembly/backend/permissions/standard/platform/platform-privileges.js"
 
 export function prepareAuthPolicies({
 			config,
@@ -54,7 +57,8 @@ export function prepareAuthPolicies({
 		processAuth: async({accessToken, ...meta}, request) => {
 			const auth = await anon.processAuth(meta, request)
 			const access = await verifyToken<AccessPayload>(accessToken)
-			return {...auth, access}
+			const checker = makePrivilegeChecker(access.permit, appPrivileges)
+			return {...auth, access, checker}
 		},
 	}
 
@@ -64,6 +68,7 @@ export function prepareAuthPolicies({
 			if (!auth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
 			const statsHub = await getStatsHub(auth.access.user.userId)
+			const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
 			return {...auth, statsHub}
 		},
 	}

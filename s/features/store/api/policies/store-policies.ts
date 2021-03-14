@@ -1,5 +1,4 @@
 
-import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 import {payTablesBakery} from "./bakery/store-tables-bakery.js"
 import {CustomerAuth} from "./types/contexts/customer-auth.js"
@@ -8,7 +7,6 @@ import {MerchantAuth} from "./types/contexts/merchant-auth.js"
 import {MerchantMeta} from "./types/contexts/merchant-meta.js"
 import {StorePolicyOptions} from "./types/store-policy-options.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {appPermissions} from "../../../../assembly/backend/permissions/standard/app-permissions.js"
 import {SubscriptionsManagerMeta} from "./types/contexts/subscriptions-manager-meta.js"
 import {SubscriptionsManagerAuth} from "./types/contexts/subscriptions-manager-auth.js"
 
@@ -59,12 +57,7 @@ export function payPolicies(options: StorePolicyOptions) {
 	const manager: Policy<SubscriptionsManagerMeta, SubscriptionsManagerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
-
-			if (!auth.access.permit.privileges.includes(
-					appPermissions.privileges["edit products and subscription plans"]
-				))
-				throw new ApiError(403, "insufficient privileges")
-
+			auth.checker.requirePrivilege("manage products and subscription plans")
 			return auth
 		}
 	}
