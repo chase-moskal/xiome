@@ -77,7 +77,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				unassignPrivilege: true,
 			},
 		},
-		pay: {
+		store: {
 			stripeAccountsService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				generateAccountSetupLink: true,

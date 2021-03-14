@@ -6,7 +6,7 @@ import {SystemApi} from "../../backend/types/system-api.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"
 import {MockLatency} from "../../../framework/add-mock-latency.js"
-import {MockStripeOperations} from "../../../features/pay/stripe/mocks/types/mock-stripe-operations.js"
+import {MockStripeOperations} from "../../../features/store/stripe/mocks/types/mock-stripe-operations.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "../auth/login-with-link-token-or-use-existing-login.js"
 
 

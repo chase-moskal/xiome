@@ -3,7 +3,7 @@ import {makeAppModel} from "../../features/auth/models/app-model.js"
 import {AssembleModelsOptions} from "./types/system-models-options.js"
 import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
-import {bankModel} from "../../features/pay/models/bank-manager/bank-model.js"
+import {bankModel} from "../../features/store/models/bank-manager/bank-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
 
 export async function assembleModels({
@@ -48,7 +48,7 @@ export async function assembleModels({
 		personalModel,
 		permissionsModel,
 		bankModel: bankModel({
-			stripeAccountsService: remote.pay.stripeAccountsService,
+			stripeAccountsService: remote.store.stripeAccountsService,
 			triggerBankPopup: popups.triggerBankPopup,
 		})
 	}

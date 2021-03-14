@@ -10,9 +10,9 @@ how the store works
   - digital product ownership is kept separately by the store system
 
 store feature refactor
-- [ ] big braining
+- [x] big braining
   - roles/userhasroles/userhasprivileges should be marked `hard`, because they are being managed by the system, they may not be directly manipulated by admins or other app staff
-- [ ] rename 'pay' feature to 'store'
+- [x] rename 'pay' feature to 'store'
 - [ ] policies
   - merchant
   - customer
