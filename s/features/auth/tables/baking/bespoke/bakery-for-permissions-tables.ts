@@ -5,7 +5,7 @@ import {PlatformConfig} from "../../../../../assembly/backend/types/platform-con
 import {namespaceKeyAppId} from "../../constants/namespace-key-app-id.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"
 import {prepareNamespacerForTables} from "../generic/prepare-namespacer-for-tables.js"
-import {transformHardPermissionsToMemoryTables} from "../../../permissions/tables/transform-hard-permissions-to-memory-tables.js"
+import {transformHardPermissionsToMemoryTables} from "../../../../../assembly/backend/permissions/tables/transform-hard-permissions-to-memory-tables.js"
 
 export function bakeryForPermissionsTables({config, permissionsTables}: {
 			config: PlatformConfig

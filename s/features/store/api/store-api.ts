@@ -33,7 +33,7 @@ export const storeApi = ({
 			expose: stripeAccountsTopic(),
 		}),
 		subscriptionsManagementService: apiContext<CustomerMeta, CustomerAuth>()({
-			policy: policies.subscriptionsManager,
+			policy: policies.manager,
 			expose: subscriptionsManagementTopic(),
 		}),
 		subscriptionsShopService: apiContext<CustomerMeta, CustomerAuth>()({

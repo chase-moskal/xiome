@@ -8,7 +8,7 @@ import {MerchantAuth} from "./types/contexts/merchant-auth.js"
 import {MerchantMeta} from "./types/contexts/merchant-meta.js"
 import {StorePolicyOptions} from "./types/store-policy-options.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {appPermissions} from "../../../auth/permissions/standard/app-permissions.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard/app-permissions.js"
 import {SubscriptionsManagerMeta} from "./types/contexts/subscriptions-manager-meta.js"
 import {SubscriptionsManagerAuth} from "./types/contexts/subscriptions-manager-auth.js"
 
@@ -56,7 +56,7 @@ export function payPolicies(options: StorePolicyOptions) {
 	/**
 	 * a store manager is an app user who can edit products and offerings
 	 */
-	const subscriptionsManager: Policy<SubscriptionsManagerMeta, SubscriptionsManagerAuth> = {
+	const manager: Policy<SubscriptionsManagerMeta, SubscriptionsManagerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
 
@@ -69,5 +69,5 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
-	return {merchant, customer, subscriptionsManager}
+	return {merchant, customer, manager}
 }

@@ -3,7 +3,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {assertEmailAccount} from "../login/assert-email-account.js"
-import {adminRoleId} from "../../permissions/build/ids/hard-role-ids.js.js"
+import {adminRoleId} from "../../../../assembly/backend/permissions/build/ids/hard-role-ids.js.js.js"
 import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 
 export async function appointAdmin({email, tablesForApp, rando, config}: {

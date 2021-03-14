@@ -1,6 +1,6 @@
 
 import {RolesBlueprint} from "../../types/roles-blueprint.js"
-import {RoleHasPrivilegeRow} from "../../../tables/types/rows/role-has-privilege-row.js"
+import {RoleHasPrivilegeRow} from "../../../../../features/auth/tables/types/rows/role-has-privilege-row.js"
 
 export function buildRoleHasPrivileges(
 			roles: RolesBlueprint

@@ -1,6 +1,6 @@
 
 import {PrivilegesBlueprint} from "../../types/privilege-blueprint.js"
-import {PrivilegeRow} from "../../../tables/types/rows/privilege-row.js"
+import {PrivilegeRow} from "../../../../../features/auth/tables/types/rows/privilege-row.js"
 
 export function buildPrivileges(
 			privileges: PrivilegesBlueprint

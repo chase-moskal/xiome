@@ -7,7 +7,7 @@ import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
-import {adminRoleId} from "../permissions/build/ids/hard-role-ids.js.js"
+import {adminRoleId} from "../../../assembly/backend/permissions/build/ids/hard-role-ids.js.js.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
 
 export const manageAdminsTopic = ({
