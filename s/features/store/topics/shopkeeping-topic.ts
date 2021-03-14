@@ -1,8 +1,8 @@
 
 import {asTopic} from "renraku/x/identities/as-topic.js"
-import {SubscriptionsManagerAuth} from "../api/policies/types/contexts/subscriptions-manager-auth.js"
+import {ClerkAuth} from "../api/policies/types/contexts/clerk-auth.js"
 
-export const subscriptionsManagementTopic = () => asTopic<SubscriptionsManagerAuth>()({
+export const shopkeepingTopic = () => asTopic<ClerkAuth>()({
 
 	async createSubscriptionPlan(
 			{tables, stripeLiaison},

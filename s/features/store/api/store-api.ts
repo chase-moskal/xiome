@@ -7,11 +7,11 @@ import {MerchantMeta} from "./policies/types/contexts/merchant-meta.js"
 import {CustomerMeta} from "./policies/types/contexts/customer-meta.js"
 import {CustomerAuth} from "./policies/types/contexts/customer-auth.js"
 
-import {stripeAccountsTopic} from "../topics/stripe-accounts-topic.js"
-import {subscriptionsShopTopic} from "../topics/subscriptions-shop-topic.js"
+import {stripeConnectTopic} from "../topics/stripe-connect-topic.js"
+import {shoppingTopic} from "../topics/shopping-topic.js"
 
 import {PayApiOptions} from "./types/store-api-options.js"
-import {subscriptionsManagementTopic} from "../topics/subscriptions-management-topic.js"
+import {shopkeepingTopic} from "../topics/shopkeeping-topic.js"
 
 export const storeApi = ({
 			config,
@@ -28,17 +28,17 @@ export const storeApi = ({
 	})
 
 	return {
-		stripeAccountsService: apiContext<MerchantMeta, MerchantAuth>()({
+		stripeConnectService: apiContext<MerchantMeta, MerchantAuth>()({
 			policy: policies.merchant,
-			expose: stripeAccountsTopic(),
+			expose: stripeConnectTopic(),
 		}),
-		subscriptionsManagementService: apiContext<CustomerMeta, CustomerAuth>()({
-			policy: policies.manager,
-			expose: subscriptionsManagementTopic(),
+		shopkeepingService: apiContext<CustomerMeta, CustomerAuth>()({
+			policy: policies.clerk,
+			expose: shopkeepingTopic(),
 		}),
-		subscriptionsShopService: apiContext<CustomerMeta, CustomerAuth>()({
+		shoppingService: apiContext<CustomerMeta, CustomerAuth>()({
 			policy: policies.customer,
-			expose: subscriptionsShopTopic(),
+			expose: shoppingTopic(),
 		}),
 	}
 }

@@ -48,7 +48,7 @@ export async function assembleModels({
 		personalModel,
 		permissionsModel,
 		bankModel: bankModel({
-			stripeAccountsService: remote.store.stripeAccountsService,
+			stripeAccountsService: remote.store.stripeConnectService,
 			triggerBankPopup: popups.triggerBankPopup,
 		})
 	}

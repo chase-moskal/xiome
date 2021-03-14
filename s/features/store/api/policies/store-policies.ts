@@ -7,8 +7,8 @@ import {MerchantAuth} from "./types/contexts/merchant-auth.js"
 import {MerchantMeta} from "./types/contexts/merchant-meta.js"
 import {StorePolicyOptions} from "./types/store-policy-options.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {SubscriptionsManagerMeta} from "./types/contexts/subscriptions-manager-meta.js"
-import {SubscriptionsManagerAuth} from "./types/contexts/subscriptions-manager-auth.js"
+import {ClerkMeta} from "./types/contexts/clerk-meta.js"
+import {ClerkAuth} from "./types/contexts/clerk-auth.js"
 
 export function payPolicies(options: StorePolicyOptions) {
 	const authPolicies = prepareAuthPolicies({
@@ -23,10 +23,7 @@ export function payPolicies(options: StorePolicyOptions) {
 		return {tables, stripeLiaison}
 	}
 
-	/**
-	 * a merchant is the owner of an app, on the platform, who links their
-	 * stripe account to receive payouts
-	 */
+	/** a merchant owns apps, and links stripe accounts */
 	const merchant: Policy<MerchantMeta, MerchantAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.appOwner.processAuth(meta, request)
@@ -40,9 +37,7 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
-	/**
-	 * a customer is an app's end-user who might buy things
-	 */
+	/** a customer is a user who buys things */
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
@@ -51,10 +46,8 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
-	/**
-	 * a store manager is an app user who can edit products and offerings
-	 */
-	const manager: Policy<SubscriptionsManagerMeta, SubscriptionsManagerAuth> = {
+	/** a clerk edits products and subscriptions */
+	const clerk: Policy<ClerkMeta, ClerkAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
 			auth.checker.requirePrivilege("manage products and subscription plans")
@@ -62,5 +55,5 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
-	return {merchant, customer, manager}
+	return {merchant, customer, clerk}
 }

@@ -5,14 +5,11 @@ import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {StripeAccountDetails} from "./types/stripe-account-details.js"
 import {MerchantAuth} from "../api/policies/types/contexts/merchant-auth.js"
 
-export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
+export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 
-	async getStripeAccountDetails({
-					access,
-					stripeLiaison,
-					getTablesNamespacedForApp,
-				},
-				{appId}: {appId: string}
+	async getConnectDetails(
+				{access, stripeLiaison, getTablesNamespacedForApp},
+				{appId}: {appId: string},
 			): Promise<undefined | StripeAccountDetails> {
 
 		const {userId} = access.user
@@ -36,9 +33,10 @@ export const stripeAccountsTopic = () => asTopic<MerchantAuth>()({
 		}
 	},
 
-	async generateAccountSetupLink({access, stripeLiaison, getTablesNamespacedForApp}, {appId}: {
-				appId: string
-			}) {
+	async generateConnectSetupLink(
+				{access, stripeLiaison, getTablesNamespacedForApp},
+				{appId}: {appId: string}
+			) {
 
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)

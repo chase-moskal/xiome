@@ -78,18 +78,18 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			},
 		},
 		store: {
-			stripeAccountsService: {
+			stripeConnectService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				generateAccountSetupLink: true,
-				getStripeAccountDetails: true,
+				getConnectDetails: true,
 			},
-			subscriptionsShopService: {
+			shoppingService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				buySubscription: true,
 				updateSubscription: true,
-				cancelSubscription: true,
+				endSubscription: true,
 			},
-			subscriptionsManagementService: {
+			shopkeepingService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,

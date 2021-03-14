@@ -2,7 +2,7 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {CustomerAuth} from "../api/policies/types/contexts/customer-auth.js"
 
-export const subscriptionsShopTopic = () => asTopic<CustomerAuth>()({
+export const shoppingTopic = () => asTopic<CustomerAuth>()({
 
 	async buySubscription(
 			{tables, stripeLiaison},
@@ -20,7 +20,7 @@ export const subscriptionsShopTopic = () => asTopic<CustomerAuth>()({
 		return true
 	},
 
-	async cancelSubscription(
+	async endSubscription(
 			{tables, stripeLiaison},
 			{subscriptionId}: {
 				subscriptionId: string

@@ -1,6 +1,21 @@
 
 # big picture
 
+what happens stories
+- when a user buys a subscription
+- when a user updates their subscription
+- when a user ends their subscription
+- when an admin assigns a subscription role to a user
+- when an admin deletes a subscription role, or unassigns a user
+- when an admin assigns privileges to a subscription role
+
+questions
+- what is a subscription role?
+
+
+
+
+
 how the store works
 - subscriptions
   - subscriptions are tied to the core permissions system
@@ -13,28 +28,25 @@ store feature refactor
 - [x] big braining
   - roles/userhasroles/userhasprivileges should be marked `hard`, because they are being managed by the system, they may not be directly manipulated by admins or other app staff
 - [x] rename 'pay' feature to 'store'
-- [ ] policies
+- [x] policies
   - merchant
+  - clerk
   - customer
-  - manager
 - [ ] liaisons
   - platform stripe liaison (for linking accounts)
   - app stripe liaison (for store management and purchases)
-- [ ] topics
-  - merchant link topic
-    - getLinkedAccount
-    - createAccountOnboardingLink
-    - createAccountUpdateLink
-  - store manager topic
+- [ ] store topics
+  - stripe-connect-topic
+    - getStripeConnect
+    - generateStripeConnectSetupLink
+  - management-topic
     - createSubscriptionPlan
     - updateSubscriptionPlan
     - deleteSubscriptionPlan
-  - store customer topic
+  - storefront-topic
     - buySubscription
     - updateSubscription
     - endSubscription
-  - gifting topic
-    - giftSubscription
 
 ALPHA 10
 
