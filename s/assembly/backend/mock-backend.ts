@@ -11,7 +11,7 @@ import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
 import {mockStoreTables} from "../../features/store/api/tables/mock-store-tables.js"
-import {prepareMockStripeLiaison} from "../../features/store/stripe/prepare-mock-stripe-liaison.js"
+import {prepareMockStripeComplex} from "../../features/store/stripe/prepare-mock-stripe-complex.js"
 
 export async function mockBackend({
 		rando,
@@ -38,7 +38,8 @@ export async function mockBackend({
 		mockSendLoginEmail(sendLoginEmail)
 
 	const storeTables = {...authTables, ...storeTablesSpecifically}
-	const mockStripeLiaison = prepareMockStripeLiaison({rando, tableStorage})
+
+	const mockStripeLiaison = prepareMockStripeComplex({rando, tableStorage})
 	const {mockStripeOperations} = await mockStripeLiaison({tables: storeTables})
 
 	const api = asApi({

@@ -2,12 +2,15 @@
 # big picture
 
 what happens stories
-- when a user buys a subscription
-- when a user updates their subscription
-- when a user ends their subscription
-- when an admin assigns a subscription role to a user
-- when an admin deletes a subscription role, or unassigns a user
-- when an admin assigns privileges to a subscription role
+- when a clerk creates a subscription plan
+- when a clerk updates a subscription plan
+- when a clerk deletes a subscription plan
+- when a customer buys a subscription
+- when a customer updates their subscription
+- when a customer ends their subscription
+- when a clerk assigns a subscription role to a user
+- when a clerk deletes a subscription role, or unassigns a user
+- when a clerk assigns privileges to a subscription role
 
 questions
 - what is a subscription role?

@@ -10,7 +10,8 @@ import {stripeSubscriptions} from "./parts/subscriptions/stripe-subscriptions.js
 export async function stripeLiaison({stripe, bankPopupLink, tables}: {
 		stripe: Stripe
 		bankPopupLink: string
-		tables: AuthTables & PayTables
+		tables: PayTables & AuthTables
+		stripeConnectAccountId: string
 	}) {
 
 	const accounts = stripeAccounts({
