@@ -6,26 +6,26 @@ import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {toPaymentDetails} from "../helpers/to-payment-details.js"
 import {StripeSubscriptions} from "../types/stripe-subscriptions.js"
 import {StripeWebhooks} from "../../webhooks/types/stripe-webhooks.js"
-import {MockCustomer} from "../../../mocks/tables/types/tables/mock-customer.js"
-import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.js"
 import {toSubscriptionDetails} from "../helpers/to-subscription-details.js"
-import {MockSetupIntent} from "../../../mocks/tables/types/tables/mock-setup-intent.js"
-import {MockSubscription} from "../../../mocks/tables/types/tables/mock-subscription.js"
-import {MockPaymentMethod} from "../../../mocks/tables/types/tables/mock-payment-method.js"
+import {MockCustomer} from "../../../mocks/tables/types/rows/mock-customer.js"
+import {ConnectedTables} from "../../../mocks/tables/types/connected-tables.js"
+import {MockSetupIntent} from "../../../mocks/tables/types/rows/mock-setup-intent.js"
+import {MockSubscription} from "../../../mocks/tables/types/rows/mock-subscription.js"
+import {MockPaymentMethod} from "../../../mocks/tables/types/rows/mock-payment-method.js"
 
 const numbers = [..."1234567890"]
 
 const days = (n: number) => n * (1000 * 60 * 60 * 24)
 
 export function mockStripeSubscriptions({
-		rando,
-		tables,
-		webhooks,
-	}: {
-		rando: Rando
-		tables: MockStripeTables
-		webhooks: StripeWebhooks
-	}): StripeSubscriptions {
+			rando,
+			webhooks,
+			connectedTables,
+		}: {
+			rando: Rando
+			webhooks: StripeWebhooks
+			connectedTables: ConnectedTables
+		}): StripeSubscriptions {
 
 	const generateId = () => rando.randomId()
 
@@ -34,35 +34,35 @@ export function mockStripeSubscriptions({
 	//
 
 	async function insertCustomer(customer: MockCustomer) {
-		await tables.customers.create(customer)
+		await connectedTables.customers.create(customer)
 	}
 
 	async function insertSetupIntent(setupIntent: MockSetupIntent) {
-		await tables.setupIntents.create(setupIntent)
+		await connectedTables.setupIntents.create(setupIntent)
 	}
 
 	async function insertSubscription(subscription: MockSubscription) {
-		await tables.subscriptions.create(subscription)
+		await connectedTables.subscriptions.create(subscription)
 	}
 
 	async function insertPaymentMethod(paymentMethod: MockPaymentMethod) {
-		await tables.paymentMethods.create(paymentMethod)
+		await connectedTables.paymentMethods.create(paymentMethod)
 	}
 
 	async function fetchCustomer(id: string) {
-		return tables.customers.one({conditions: and({equal: {id}})})
+		return connectedTables.customers.one({conditions: and({equal: {id}})})
 	}
 
 	async function fetchSubscription(id: string) {
-		return tables.subscriptions.one({conditions: and({equal: {id}})})
+		return connectedTables.subscriptions.one({conditions: and({equal: {id}})})
 	}
 
 	async function fetchPaymentMethod(id: string) {
-		return tables.paymentMethods.one({conditions: and({equal: {id}})})
+		return connectedTables.paymentMethods.one({conditions: and({equal: {id}})})
 	}
 
 	async function fetchSetupIntent(id: string) {
-		return tables.setupIntents.one({conditions: and({equal: {id}})})
+		return connectedTables.setupIntents.one({conditions: and({equal: {id}})})
 	}
 
 	//

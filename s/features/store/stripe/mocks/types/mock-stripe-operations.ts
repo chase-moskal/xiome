@@ -1,5 +1,6 @@
+
 import {Await} from "../../../../../types/await.js"
-import {mockStripeLiaison} from "../mock-stripe-liaison.js"
+import {mockStripeComplex} from "../../mock-stripe-complex.js"
 
 export type MockStripeOperations =
-	Await<ReturnType<typeof mockStripeLiaison>>["mockStripeOperations"]
+	Await<ReturnType<typeof mockStripeComplex>>["mockStripeOperations"]

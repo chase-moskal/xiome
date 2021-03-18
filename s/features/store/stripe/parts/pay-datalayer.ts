@@ -1,13 +1,13 @@
 
 import {find} from "../../../../toolbox/dbby/dbby-x.js"
-import {PayTables} from "../../api/tables/types/store-tables.js"
+import {StoreTables} from "../../api/tables/types/store-tables.js"
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {StripeSubscriptionRow} from "../../api/tables/types/rows/stripe-subscription-row.js"
 
 const adminRoleId = undefined
 
 export function payDatalayer({tables}: {
-			tables: AuthTables & PayTables
+			tables: StoreTables & AuthTables
 		}) {
 
 	return {

@@ -1,26 +1,26 @@
 
-import {StripeAccounts} from "../types/stripe-accounts.js"
+import {StripeAccounting} from "../types/stripe-accounting.js"
 import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
-import {MockStripeTables} from "../../../mocks/tables/types/mock-stripe-tables.js"
+import {AccountingTables} from "../../../mocks/tables/types/accounting-tables.js"
 
-export function mockStripeAccounts({
+export function mockStripeAccounting({
 			rando,
-			mockStripeTables,
-			mockStripeAccountSetupLink
+			mockSetupLink,
+			accountingTables,
 		}: {
 			rando: Rando
-			mockStripeTables: MockStripeTables
-			mockStripeAccountSetupLink: string
-		}): StripeAccounts {
+			mockSetupLink: string
+			accountingTables: AccountingTables
+		}): StripeAccounting {
 
 	return {
 		async getStripeAccount(id: string) {
-			return mockStripeTables.accounts.one(find({id}))
+			return accountingTables.accounts.one(find({id}))
 		},
 		async createStripeAccount() {
 			const id = rando.randomId()
-			await mockStripeTables.accounts.create({
+			await accountingTables.accounts.create({
 				id,
 				email: "fake-stripe-email@xiome.io",
 				charges_enabled: false,
@@ -30,10 +30,10 @@ export function mockStripeAccounts({
 			return {stripeAccountId: id}
 		},
 		async createAccountOnboardingLink() {
-			return {stripeAccountSetupLink: mockStripeAccountSetupLink}
+			return {stripeAccountSetupLink: mockSetupLink}
 		},
 		async createAccountUpdateLink() {
-			return {stripeAccountSetupLink: mockStripeAccountSetupLink}
+			return {stripeAccountSetupLink: mockSetupLink}
 		},
 	}
 }

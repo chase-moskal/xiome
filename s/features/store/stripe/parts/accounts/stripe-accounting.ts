@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 
-export function stripeAccounts({stripe, returnLink, refreshLink}: {
+export function stripeAccounting({stripe, returnLink, refreshLink}: {
 		stripe: Stripe
 		returnLink: string
 		refreshLink: string
