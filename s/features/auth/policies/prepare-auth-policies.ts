@@ -67,9 +67,9 @@ export function prepareAuthPolicies({
 			const auth = await user.processAuth(meta, request)
 			if (!auth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
+				const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
 			const statsHub = await getStatsHub(auth.access.user.userId)
-			const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
-			return {...auth, statsHub}
+			return {...auth, checker, statsHub}
 		},
 	}
 
