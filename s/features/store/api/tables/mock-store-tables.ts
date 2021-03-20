@@ -7,8 +7,9 @@ import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage
 export async function mockStoreTables(tableStorage: FlexStorage) {
 	return {
 		billing: await mockStorageTables<BillingTables>(tableStorage, {
-			stripePremiums: true,
-			stripeCustomers: true,
+			subscriptions: true,
+			customers: true,
+			subscriptionPlans: true,
 		}),
 		merchant: await mockStorageTables<MerchantTables>(tableStorage, {
 			stripeAccounts: true,

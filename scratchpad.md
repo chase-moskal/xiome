@@ -1,6 +1,39 @@
 
 # big picture
 
+### subscriptions modeling
+
+stripe stuff
+- products
+- prices
+- subscriptions
+
+billing tables
+- customers
+- subscriptions
+  - PROBLEM: each subscription maps to multiple plans
+- subscriptionPlans
+  - each plan correlates to a stripeProductId
+
+webhooks
+- checkout.session.completed
+  - fulfillSubscription
+  - updateSubscription
+- customer.subscription.updated
+  - respectSubscriptionChange
+
+TODO:
+- subscription planner topic
+  - clerks can manage stripe products, prices
+
+
+
+
+
+
+
+
+
 what happens stories
 - when a clerk creates a subscription plan
 - when a clerk updates a subscription plan

@@ -8,18 +8,18 @@ import {MerchantAuth} from "../api/policies/types/contexts/merchant-auth.js"
 export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 
 	async getConnectDetails(
-				{access, stripeLiaison, getTablesNamespacedForApp},
+				{access, stripeAccounting, getTablesNamespacedForApp},
 				{appId}: {appId: string},
 			): Promise<undefined | StripeAccountDetails> {
 
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const existingAssociatedStripeAccount = await namespacedTables.merchant.stripeAccounts
-			.one(find({userId}))
+		const existingAssociatedStripeAccount = await namespacedTables
+			.merchant.stripeAccounts.one(find({userId}))
 
 		if (existingAssociatedStripeAccount) {
-			const account = await stripeLiaison.accounts
+			const account = await stripeAccounting
 				.getStripeAccount(existingAssociatedStripeAccount.stripeAccountId)
 			return {
 				stripeAccountId: account.id,
@@ -34,27 +34,28 @@ export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 	},
 
 	async generateConnectSetupLink(
-				{access, stripeLiaison, getTablesNamespacedForApp},
+				{access, stripeAccounting, getTablesNamespacedForApp},
 				{appId}: {appId: string}
 			) {
 
 		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(appId)
 
-		const {stripeAccountId} = await namespacedTables.merchant.stripeAccounts.assert({
-			...find({userId}),
-			make: async() => {
-				const {stripeAccountId} = await stripeLiaison.accounts
-					.createStripeAccount()
-				await namespacedTables.merchant.stripeAccounts.create({
-					userId,
-					stripeAccountId,
-				})
-				return {userId, stripeAccountId, appId}
-			},
-		})
+		const {stripeAccountId} = (
+			await namespacedTables.merchant.stripeAccounts.assert({
+				...find({userId}),
+				make: async() => {
+					const {stripeAccountId} = await stripeAccounting.createStripeAccount()
+					await namespacedTables.merchant.stripeAccounts.create({
+						userId,
+						stripeAccountId,
+					})
+					return {userId, stripeAccountId, appId}
+				},
+			})
+		)
 
-		const {stripeAccountSetupLink} = await stripeLiaison.accounts
+		const {stripeAccountSetupLink} = await stripeAccounting
 			.createAccountUpdateLink({stripeAccountId})
 
 		return {stripeAccountId, stripeAccountSetupLink}
