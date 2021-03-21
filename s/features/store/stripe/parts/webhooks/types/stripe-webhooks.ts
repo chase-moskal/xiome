@@ -1,4 +1,4 @@
 
-import {stripeWebhooks} from "../stripe-webhooks.js"
+import {stripeWebhooks} from "../stripe-webhooks2.js"
 
 export type StripeWebhooks = ReturnType<typeof stripeWebhooks>

@@ -2,7 +2,7 @@
 import {find} from "../../../../toolbox/dbby/dbby-x.js"
 import {StoreTables} from "../../api/tables/types/store-tables.js"
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
-import {SubscriptionRow} from "../../api/tables/types/rows/stripe-subscription-row.js"
+import {SubscriptionRow} from "../../api/tables/types/rows/subscription-row.js"
 
 export function payDatalayer({tables}: {
 			tables: StoreTables & AuthTables

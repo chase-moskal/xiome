@@ -3,6 +3,7 @@ import {CardClues} from "../../../../stripe/parts/subscriptions/types/card-clues
 
 export type SubscriptionRow = {
 	userId: string
+	active: boolean
 	renewalTime: number
 	subscriptionPlanId: string
 	stripeSubscriptionId: string
