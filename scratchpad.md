@@ -1,6 +1,47 @@
 
 # big picture
 
+### refactor subscriptions
+
+- merge actions and flows into "subscription flows"
+- split utilities
+  - "stripe subscription utilities"
+  - "store subscription utilities"
+
+
+
+store/
+
+  api/
+    store-api.ts
+    policies/
+      store-policies.ts
+    topics/
+      accounting-topic.ts
+      shopping-topic.ts
+      shopkeeping-topic.ts
+    shop-utilities/
+      shop-utilities.ts
+
+  stripe/
+    liaison/
+      stripe-liaison.ts
+    webhooks/
+      stripe-webhooks.ts
+      flows/
+        flows.ts
+        helpers/
+          webhook-helpers.ts
+        utilities/
+          webhook-utilities.ts
+
+
+
+
+
+
+
+
 ### subscriptions modeling
 
 stripe stuff

@@ -29,15 +29,15 @@ export const storeApi = ({
 	return {
 		stripeConnectService: apiContext<MerchantMeta, MerchantAuth>()({
 			policy: policies.merchant,
-			expose: stripeConnectTopic(),
+			expose: stripeConnectTopic(), // stripe-accounting
 		}),
 		shopkeepingService: apiContext<CustomerMeta, CustomerAuth>()({
 			policy: policies.clerk,
-			expose: shopkeepingTopic(),
+			expose: shopkeepingTopic(), // shop-utilities
 		}),
 		shoppingService: apiContext<CustomerMeta, CustomerAuth>()({
 			policy: policies.customer,
-			expose: shoppingTopic(),
+			expose: shoppingTopic(), // shop-utilities
 		}),
 	}
 }
