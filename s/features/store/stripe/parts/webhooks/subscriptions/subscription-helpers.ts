@@ -22,4 +22,24 @@ export const subscriptionHelpers = ({utilities}: {
 		) {
 		return Promise.all(subscription.productIds.map(each))
 	},
+
+	async getLocalSubscriptionDetailsByStripeProductId({
+			userId, active, stripeProductId, subscription
+		}: {
+			userId: string
+			active: boolean
+			stripeProductId: string
+			subscription: SubscriptionDetails
+		}) {
+		const {subscriptionPlan, userHasRole} =
+			await utilities.getExistingSubscriptionDetails({
+				userId, stripeProductId
+			})
+		const timeframeEnd = utilities.calculateTimeframeEnd({
+			active,
+			subscription,
+			previousTimeframeEnd: userHasRole?.timeframeEnd ?? 0,
+		})
+		return {subscriptionPlan, userHasRole, timeframeEnd}
+	},
 })

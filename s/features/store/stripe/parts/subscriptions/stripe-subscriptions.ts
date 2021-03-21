@@ -89,6 +89,20 @@ export function stripeSubscriptions({stripe}: {
 			})
 		},
 
+		async updateCustomerDefaultPaymentMethod({
+				stripeCustomerId,
+				stripePaymentMethodId,
+			}: {
+				stripeCustomerId: string
+				stripePaymentMethodId: string
+			}) {
+			await stripe.customers.update(stripeCustomerId, {
+				invoice_settings: {
+					default_payment_method: stripePaymentMethodId,
+				},
+			})
+		},
+
 		async scheduleSubscriptionCancellation({stripeSubscriptionId}: {
 			stripeSubscriptionId: string
 		}) {
