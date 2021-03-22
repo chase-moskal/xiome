@@ -1,17 +1,17 @@
 
-import {getStripeId} from "./helpers/get-stripe-id.js"
-import {toPaymentDetails} from "./helpers/to-payment-details.js"
-import {LiaisonOptions} from "../types/liaison-options.js"
+import {getStripeId} from "../../helpers/get-stripe-id.js"
+import {toPaymentDetails} from "../../helpers/to-payment-details.js"
+import {LiaisonConnectedOptions} from "../../../types/liaison-connected-options.js"
 
-export function stripeLiaisonAccounting({stripe}: LiaisonOptions) {
+export function stripeLiaisonCustomers({stripe, connection}: LiaisonConnectedOptions) {
 	return {
 
 		async createCustomer() {
-			const customer = await stripe.customers.create()
+			const customer = await stripe.customers.create(connection)
 			return {stripeCustomerId: customer.id}
 		},
 
-		async updateCustomerDefaultPaymentMethod({
+		async updateDefaultPaymentMethod({
 				stripeCustomerId,
 				stripePaymentMethodId,
 			}: {
@@ -22,17 +22,17 @@ export function stripeLiaisonAccounting({stripe}: LiaisonOptions) {
 				invoice_settings: {
 					default_payment_method: stripePaymentMethodId,
 				},
-			})
+			}, connection)
 		},
 
 		async fetchPaymentDetails(stripePaymentMethodId: string) {
 			return toPaymentDetails(
-				await stripe.paymentMethods.retrieve(stripePaymentMethodId)
+				await stripe.paymentMethods.retrieve(stripePaymentMethodId, connection)
 			)
 		},
 
 		async fetchPaymentDetailsByIntentId(intentId: string) {
-			const intent = await stripe.setupIntents.retrieve(intentId)
+			const intent = await stripe.setupIntents.retrieve(intentId, connection)
 			return toPaymentDetails(
 				await stripe.paymentMethods.retrieve(
 					getStripeId(intent.payment_method)
@@ -41,11 +41,11 @@ export function stripeLiaisonAccounting({stripe}: LiaisonOptions) {
 		},
 
 		async fetchPaymentDetailsBySubscriptionId(stripeSubscriptionId: string) {
-			const subscription = await stripe.subscriptions
-				.retrieve(stripeSubscriptionId)
+			const subscription =
+				await stripe.subscriptions.retrieve(stripeSubscriptionId, connection)
 			const paymentMethodId = getStripeId(subscription.default_payment_method)
 			return toPaymentDetails(
-				await stripe.paymentMethods.retrieve(paymentMethodId)
+				await stripe.paymentMethods.retrieve(paymentMethodId, connection)
 			)
 		},
 	}

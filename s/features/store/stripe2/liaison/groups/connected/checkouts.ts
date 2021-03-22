@@ -1,10 +1,11 @@
 
 import {Stripe} from "stripe"
-import {LiaisonOptions} from "../types/liaison-options.js"
-import {SetupSubscriptionMetadata} from "./types/setup-subscription-metadata.js"
-import {SetupDefaultPaymentsMetadata} from "./types/setup-default-payments-metadata.js"
+import {LiaisonConnectedOptions} from "../../../types/liaison-connected-options.js"
+import {SetupSubscriptionMetadata} from "../../types/setup-subscription-metadata.js"
 
-export function stripeLiaisonCheckouts({stripe, returningLinks}: LiaisonOptions) {
+export function stripeLiaisonCheckouts({
+		stripe, returningLinks, connection,
+	}: LiaisonConnectedOptions) {
 
 	async function checkoutSession({userId, stripeCustomerId, ...params}: {
 			userId: string
@@ -19,13 +20,13 @@ export function stripeLiaisonCheckouts({stripe, returningLinks}: LiaisonOptions)
 			cancel_url: returningLinks.checkouts.cancel,
 			success_url: returningLinks.checkouts.success,
 			...params,
-		})
+		}, connection)
 		return {stripeSessionId: session.id}
 	}
 
 	return {
 
-		async purchaseSubscription({
+		async purchaseSubscriptions({
 				userId, stripePriceIds, stripeCustomerId,
 			}: {
 				userId: string
@@ -64,23 +65,23 @@ export function stripeLiaisonCheckouts({stripe, returningLinks}: LiaisonOptions)
 			})
 		},
 
-		async setupDefaultPayments({
-				userId, stripeCustomerId,
-			}: {
-				userId: string
-				stripeCustomerId: string
-			}) {
-			return checkoutSession({
-				userId,
-				stripeCustomerId,
-				mode: "setup",
-				setup_intent_data: {
-					metadata: <SetupDefaultPaymentsMetadata>{
-						flow: "update-default-payments",
-						customer_id: stripeCustomerId,
-					},
-				},
-			})
-		},
+		// async setupDefaultPayments({
+		// 		userId, stripeCustomerId,
+		// 	}: {
+		// 		userId: string
+		// 		stripeCustomerId: string
+		// 	}) {
+		// 	return checkoutSession({
+		// 		userId,
+		// 		stripeCustomerId,
+		// 		mode: "setup",
+		// 		setup_intent_data: {
+		// 			metadata: <SetupDefaultPaymentsMetadata>{
+		// 				flow: "update-default-payments",
+		// 				customer_id: stripeCustomerId,
+		// 			},
+		// 		},
+		// 	})
+		// },
 	}
 }
