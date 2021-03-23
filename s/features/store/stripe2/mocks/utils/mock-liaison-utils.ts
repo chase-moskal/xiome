@@ -2,12 +2,14 @@
 import {Stripe} from "stripe"
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {day} from "../../../../../toolbox/goodtimes/times.js"
-import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {MockAccount} from "../tables/types/rows/mock-account.js"
 import {MockCustomer} from "../tables/types/rows/mock-customer.js"
+import {and, find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {MockStripeTables} from "../tables/types/mock-stripe-tables.js"
 import {MockSetupIntent} from "../tables/types/rows/mock-setup-intent.js"
 import {MockSubscription} from "../tables/types/rows/mock-subscription.js"
 import {MockPaymentMethod} from "../tables/types/rows/mock-payment-method.js"
+import {SetupSubscriptionMetadata} from "../../liaison/types/setup-subscription-metadata.js"
 
 export function mockLiaisonUtils({rando, tables}: {
 		rando: Rando
@@ -17,6 +19,9 @@ export function mockLiaisonUtils({rando, tables}: {
 	const generateId = () => rando.randomId()
 
 	const procedures = {
+		async insertAccount(account: MockAccount) {
+			await tables.accounts.create(account)
+		},
 		async insertCustomer(customer: MockCustomer) {
 			await tables.customers.create(customer)
 		},
@@ -28,6 +33,9 @@ export function mockLiaisonUtils({rando, tables}: {
 		},
 		async insertPaymentMethod(paymentMethod: MockPaymentMethod) {
 			await tables.paymentMethods.create(paymentMethod)
+		},
+		async fetchAccount(id: string) {
+			return tables.accounts.one(find({id}))
 		},
 		async fetchCustomer(id: string) {
 			return tables.customers.one({conditions: and({equal: {id}})})
@@ -41,10 +49,16 @@ export function mockLiaisonUtils({rando, tables}: {
 		async fetchSetupIntent(id: string) {
 			return tables.setupIntents.one({conditions: and({equal: {id}})})
 		},
+		async updateCustomer(customerId: string, customer: Partial<MockCustomer>) {
+			return tables.customers.update({
+				...find({id: customerId}),
+				write: customer,
+			})
+		},
 	}
 
 	const initializers = {
-		mockSessionForSubscriptionPurchase({
+		sessionForSubscriptionPurchase({
 				userId,
 				customer,
 				subscription,
@@ -61,34 +75,50 @@ export function mockLiaisonUtils({rando, tables}: {
 				subscription: subscription.id,
 			}
 		},
-		mockSessionForSubscriptionUpdate({
-				flow,
+		sessionForSubscriptionUpdate({
 				userId,
 				customer,
 				setupIntent,
+				subscriptionId,
 			}: {
 				userId: string
-				flow: UpdateFlow
 				customer: MockCustomer
+				subscriptionId: string
 				setupIntent: MockSetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
 				id: generateId(),
 				mode: "setup",
-				metadata: {flow},
 				customer: customer.id,
 				client_reference_id: userId,
 				setup_intent: setupIntent.id,
+				metadata: <SetupSubscriptionMetadata>{
+					flow: "update-subscription",
+					customer_id: customer.id,
+					subscription_id: subscriptionId,
+				},
 			}
 		},
-		async mockCustomer(): Promise<MockCustomer> {
+		async account(): Promise<MockAccount> {
+			const account: MockAccount = {
+				id: generateId(),
+				email: "",
+				charges_enabled: false,
+				details_submitted: false,
+				payouts_enabled: false,
+				type: "standard",
+			}
+			await procedures.insertAccount(account)
+			return account
+		},
+		async customer(): Promise<MockCustomer> {
 			const customer = {
 				id: generateId()
 			}
 			await procedures.insertCustomer(customer)
 			return customer
 		},
-		async mockPaymentMethod(): Promise<MockPaymentMethod> {
+		async paymentMethod(): Promise<MockPaymentMethod> {
 			const paymentMethod = <MockPaymentMethod>{
 				id: generateId(),
 				card: {
@@ -108,7 +138,7 @@ export function mockLiaisonUtils({rando, tables}: {
 			await procedures.insertPaymentMethod(paymentMethod)
 			return paymentMethod
 		},
-		async mockSetupIntent({customer, subscription, paymentMethod}: {
+		async setupIntent({customer, subscription, paymentMethod}: {
 				customer: MockCustomer
 				subscription: MockSubscription
 				paymentMethod: MockPaymentMethod
@@ -124,7 +154,7 @@ export function mockLiaisonUtils({rando, tables}: {
 			await procedures.insertSetupIntent(setupIntent)
 			return setupIntent
 		},
-		async mockSubscription({planId, customer, paymentMethod}: {
+		async subscription({planId, customer, paymentMethod}: {
 				planId: string
 				customer: MockCustomer
 				paymentMethod: MockPaymentMethod
@@ -132,7 +162,8 @@ export function mockLiaisonUtils({rando, tables}: {
 			const subscription = <MockSubscription>{
 				id: generateId(),
 				status: "active",
-				plan: {id: planId},
+				// plan: {id: planId},
+				
 				customer: customer.id,
 				cancel_at_period_end: false,
 				current_period_end: Date.now() + (30 * day),
