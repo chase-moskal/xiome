@@ -24,9 +24,8 @@ export async function mockStripeTables({tableStorage}: {tableStorage: FlexStorag
 	const tables = await concurrent(
 		objectMap2<
 			typeof spec,
-			{[P in keyof typeof spec]: Promise<
-				DbbyTable<Flexible<Partial<(typeof spec)[P]>>>
-			>}
+			{[P in keyof typeof spec]:
+				Promise<DbbyTable<Flexible<Partial<(typeof spec)[P]>>>>}
 		>(
 			spec,
 			(value, key) => dbbyX<Flexible<any>>(tableStorage, `mock-stripe-${key}`)

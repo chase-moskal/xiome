@@ -4,19 +4,16 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {StripeLiaison} from "../types/stripe-liaison.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {mockLiaisonUtils} from "./utils/mock-liaison-utils.js"
+import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
 import {StripeLiaisonPlatform} from "../types/stripe-liaison-platform.js"
 import {StripeLiaisonConnected} from "../types/stripe-liaison-connected.js"
 import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
-import {toPaymentDetails} from "../../stripe/parts/subscriptions/helpers/to-payment-details.js"
-import {toSubscriptionDetails} from "../../stripe/parts/subscriptions/helpers/to-subscription-details.js"
-import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 
-export function mockStripeLiaison({rando, webhooks, tables}: {
+export function mockStripeLiaison({rando, tables, webhooks}: {
 		rando: Rando
-		webhooks: StripeWebhooks
 		tables: MockStripeTables
+		webhooks: StripeWebhooks
 	}): StripeLiaison {
 
 	const generateId = () => rando.randomId()
@@ -56,6 +53,16 @@ export function mockStripeLiaison({rando, webhooks, tables}: {
 	}
 
 	const rawTables = tables
+
+	async function webhookEvent<xObject extends {}>(
+			type: keyof StripeWebhooks,
+			object: xObject,
+		) {
+		return webhooks[type](<Stripe.Event>{
+			type,
+			data: <Stripe.Event.Data>{object},
+		})
+	}
 
 	function connect(stripeConnectAccountId: string): StripeLiaisonConnected {
 		const tables = prepareConstrainTables(rawTables)({
@@ -103,45 +110,47 @@ export function mockStripeLiaison({rando, webhooks, tables}: {
 			},
 			checkouts: {
 				async purchaseSubscriptions({userId, prices, customer}) {
-					const session = {
+					const session = <Stripe.Checkout.Session>{
 						id: generateId(),
+						mode: "subscription",
+						payment_status: "paid",
+						line_items: {
+							data: prices.map(id => ({price: {id}})),
+						},
 					}
-					// TODO implement mock subscription purchase?
-					// webhooks?
+					await webhookEvent("checkout.session.completed", session)
 					return <Stripe.Checkout.Session>session
 				},
 				async setupSubscription({userId, customer, subscription}) {
-					const session = {
+					const session = <Stripe.Checkout.Session>{
 						id: generateId(),
+						mode: "setup",
+						subscription,
 					}
-					// TODO implement mock subscription purchase?
-					// webhooks?
+					await webhookEvent("checkout.session.completed", session)
 					return <Stripe.Checkout.Session>session
 				},
-
-				// async purchaseSubscriptions({
-				// 		userId, stripeCustomerId, stripePriceIds,
-				// 	}) {
-				// 	const customer
-				// 		= await utils.procedures.fetchCustomer(stripeCustomerId)
-				// 	const paymentMethod
-				// 		= await utils.initializers.paymentMethod()
-				// 	const subscription
-				// 		= await utils.initializers.subscription({})
-				// 	// const paymentMethod
-				// 	// 	= await utils.initializers.sessionForSubscriptionPurchase({
-				// 	// 		userId,
-				// 	// 		customer,
-				// 	// 		subscription,
-				// 	// 	})
-				// },
-				// async setupSubscription() {},
 			},
 			products: {},
 			subscriptions: {
-				async fetchSubscriptionDetails(stripeSubscriptionId: string) {
-					const subscription = await utils.procedures.fetchSubscription(stripeSubscriptionId)
-					return toSubscriptionDetails(subscription)
+				async fetchSubscription(id) {
+					return <Stripe.Subscription>await tables
+						.subscriptions.one(find({id}))
+				},
+				async updatePaymentMethodForSubscription({
+						subscription,
+						paymentMethod,
+					}) {
+					await tables.subscriptions.update({
+						...find({id: subscription}),
+						write: {default_payment_method: paymentMethod},
+					})
+				},
+				async scheduleSubscriptionCancellation(subscription) {
+					await tables.subscriptions.update({
+						...find({id: subscription}),
+						write: {cancel_at_period_end: true},
+					})
 				},
 			}
 		}

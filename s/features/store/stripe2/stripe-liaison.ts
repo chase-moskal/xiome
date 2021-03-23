@@ -1,11 +1,11 @@
 
 import {LiaisonOptions} from "./types/liaison-options.js"
+import {LiaisonConnectedOptions} from "./types/liaison-connected-options.js"
 import {stripeLiaisonProducts} from "./liaison/groups/connected/products.js"
 import {stripeLiaisonCheckouts} from "./liaison/groups/connected/checkouts.js"
 import {stripeLiaisonCustomers} from "./liaison/groups/connected/customers.js"
 import {stripeLiaisonAccounting} from "./liaison/groups/platform/accounting.js"
 import {stripeLiaisonSubscriptions} from "./liaison/groups/connected/subscriptions.js"
-import {LiaisonConnectedOptions} from "./types/liaison-connected-options.js"
 
 export function stripeLiaison(options: LiaisonOptions) {
 	return {
