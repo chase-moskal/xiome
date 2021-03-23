@@ -100,13 +100,20 @@ export function mockLiaisonUtils({rando, tables}: {
 			}
 		},
 		async account(): Promise<MockAccount> {
-			const account: MockAccount = {
+			const account: Stripe.Account = {
 				id: generateId(),
 				email: "",
+				type: "standard",
 				charges_enabled: false,
 				details_submitted: false,
 				payouts_enabled: false,
-				type: "standard",
+
+				business_profile: undefined,
+				business_type: undefined,
+				country: undefined,
+				default_currency: undefined,
+				object: undefined,
+				settings: undefined,
 			}
 			await procedures.insertAccount(account)
 			return account

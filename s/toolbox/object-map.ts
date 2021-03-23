@@ -11,7 +11,7 @@ export function objectMap<OutputValue = any, InputValue = any, Input extends {} 
 
 export function objectMap2<Input extends {}, Output extends {}>(
 	input: Input,
-	mapper: <InputValue, OutputValue>(value: InputValue, key: string) => OutputValue
+	mapper: (value: any, key: string) => any
 ): Output {
 	const output: any = {}
 	for (const [key, value] of Object.entries(input))

@@ -1,11 +1,11 @@
 
 import {Stripe} from "stripe"
-import {DbbyRow} from "../../../../../../../toolbox/dbby/dbby-types.js"
+import {FlexibleDbbyRow} from "./dbby-bespoke/flexible-dbby-row.js"
 
-export type MockAccount = DbbyRow & Partial<Stripe.Account> & {
+export type MockAccount = {
 	id: string
 	email: string
 	charges_enabled: boolean
 	payouts_enabled: boolean
 	details_submitted: boolean
-}
+} & Partial<Stripe.Account> & FlexibleDbbyRow

@@ -1,12 +1,12 @@
 
 import {Stripe} from "stripe"
-import {DbbyRow} from "../../../../../../../toolbox/dbby/dbby-types.js"
+import {FlexibleDbbyRow} from "./dbby-bespoke/flexible-dbby-row.js"
 
-export type MockSetupIntent = DbbyRow & Partial<Stripe.SetupIntent> & {
+export type MockSetupIntent = {
 	id: string
 	customer: string
 	payment_method: string
 	metadata: {
 		subscription_id: string
 	}
-}
+} & Partial<Stripe.SetupIntent> & FlexibleDbbyRow

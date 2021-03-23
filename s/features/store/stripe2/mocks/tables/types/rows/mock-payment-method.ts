@@ -1,8 +1,8 @@
 
 import {Stripe} from "stripe"
-import {DbbyRow} from "../../../../../../../toolbox/dbby/dbby-types.js"
+import {FlexibleDbbyRow} from "./dbby-bespoke/flexible-dbby-row.js"
 
-export type MockPaymentMethod = DbbyRow & Partial<Stripe.PaymentMethod> & {
+export type MockPaymentMethod = {
 	id: string
 	card: Stripe.PaymentMethod.Card
-}
+} & Partial<Stripe.PaymentMethod> & FlexibleDbbyRow

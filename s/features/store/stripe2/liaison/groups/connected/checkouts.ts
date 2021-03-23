@@ -7,37 +7,36 @@ export function stripeLiaisonCheckouts({
 		stripe, returningLinks, connection,
 	}: LiaisonConnectedOptions) {
 
-	async function checkoutSession({userId, stripeCustomerId, ...params}: {
+	async function checkoutSession({userId, customer, ...params}: {
 			userId: string
-			stripeCustomerId: string
+			customer: string
 		} & {mode: Stripe.Checkout.SessionCreateParams["mode"]}
 			& Partial<Stripe.Checkout.SessionCreateParams>
-		) {
-		const session = await stripe.checkout.sessions.create({
-			customer: stripeCustomerId,
+		): Promise<Stripe.Checkout.Session> {
+		return stripe.checkout.sessions.create({
+			customer,
 			client_reference_id: userId,
 			payment_method_types: ["card"],
 			cancel_url: returningLinks.checkouts.cancel,
 			success_url: returningLinks.checkouts.success,
 			...params,
 		}, connection)
-		return {stripeSessionId: session.id}
 	}
 
 	return {
 
 		async purchaseSubscriptions({
-				userId, stripePriceIds, stripeCustomerId,
+				userId, prices, customer,
 			}: {
 				userId: string
-				stripePriceIds: string[]
-				stripeCustomerId: string
+				prices: string[]
+				customer: string
 			}) {
 			return checkoutSession({
 				userId,
-				stripeCustomerId,
+				customer: customer,
 				mode: "subscription",
-				line_items: stripePriceIds.map(id => ({
+				line_items: prices.map(id => ({
 					price: id,
 					quantity: 1,
 				})),
@@ -45,21 +44,21 @@ export function stripeLiaisonCheckouts({
 		},
 
 		async setupSubscription({
-				userId, stripeCustomerId, stripeSubscriptionId,
+				userId, customer, subscription,
 			}: {
 				userId: string
-				stripeCustomerId: string
-				stripeSubscriptionId: string
+				customer: string
+				subscription: string
 			}) {
 			return checkoutSession({
 				userId,
-				stripeCustomerId,
+				customer: customer,
 				mode: "setup",
 				setup_intent_data: {
 					metadata: <SetupSubscriptionMetadata>{
 						flow: "update-subscription",
-						customer_id: stripeCustomerId,
-						subscription_id: stripeSubscriptionId,
+						customer_id: customer,
+						subscription_id: subscription,
 					},
 				},
 			})

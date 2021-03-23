@@ -1,7 +1,9 @@
 
+import {Stripe} from "stripe"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {StripeLiaison} from "../types/stripe-liaison.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {mockLiaisonUtils} from "./utils/mock-liaison-utils.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
 import {StripeLiaisonPlatform} from "../types/stripe-liaison-platform.js"
@@ -9,98 +11,131 @@ import {StripeLiaisonConnected} from "../types/stripe-liaison-connected.js"
 import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 import {toPaymentDetails} from "../../stripe/parts/subscriptions/helpers/to-payment-details.js"
 import {toSubscriptionDetails} from "../../stripe/parts/subscriptions/helpers/to-subscription-details.js"
+import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 
-export function mockStripeLiaison({rando, webhooks, mockStripeTables}: {
+export function mockStripeLiaison({rando, webhooks, tables}: {
 		rando: Rando
 		webhooks: StripeWebhooks
-		mockStripeTables: MockStripeTables
+		tables: MockStripeTables
 	}): StripeLiaison {
 
-	const utils = mockLiaisonUtils({rando, tables: mockStripeTables})
+	const generateId = () => rando.randomId()
+
 	const platform: StripeLiaisonPlatform = {
 		accounting: {
 			async getStripeAccount(id: string) {
-				return utils.procedures.fetchAccount(id)
+				return <Stripe.Account>await tables.accounts.one(find({id}))
 			},
 			async createStripeAccount() {
-				const account = await utils.initializers.account()
-				return {stripeAccountId: account.id}
+				const account: Partial<Stripe.Account> = {
+					id: generateId(),
+					email: undefined,
+					type: "standard",
+					charges_enabled: false,
+					details_submitted: false,
+					payouts_enabled: false,
+				}
+				await tables.accounts.create(account)
+				return <Stripe.Account>account
 			},
-			async createAccountOnboardingLink() {
-				throw new Error("TODO implement mock onboarding")
-				return {stripeAccountSetupLink: ""}
-			},
-			async createAccountUpdateLink() {
-				throw new Error("TODO implement mock update")
-				return {stripeAccountSetupLink: ""}
+			async createAccountSetupLink({account, type}) {
+				await tables.accounts.update({
+					...find({id: account}),
+					write: {
+						email: `${generateId}@fake.xiome.io`,
+						charges_enabled: true,
+						details_submitted: true,
+						payouts_enabled: true,
+					},
+				})
+				return <Stripe.AccountLink>{
+					url: "https://fake.xiome.io/stripe-account-setup",
+				}
 			},
 		},
 	}
 
+	const rawTables = tables
+
 	function connect(stripeConnectAccountId: string): StripeLiaisonConnected {
-		const utils = mockLiaisonUtils({
-			rando,
-			tables: prepareConstrainTables(mockStripeTables)({
-				"_connectedAccount": stripeConnectAccountId,
-			})
+		const tables = prepareConstrainTables(rawTables)({
+			"_connectedAccount": stripeConnectAccountId,
 		})
 		return {
 			customers: {
 				async createCustomer() {
-					const customer = await utils.initializers.customer()
-					return {stripeCustomerId: customer.id}
+					const customer: Partial<Stripe.Customer> = {
+						id: generateId(),
+						invoice_settings: <any>{
+							default_payment_method: undefined,
+						},
+					}
+					await tables.customers.create(customer)
+					return <Stripe.Customer>customer
 				},
-				async fetchPaymentDetails(stripePaymentMethodId) {
-					const paymentMethod =
-						await utils.procedures.fetchPaymentMethod(stripePaymentMethodId)
-					return toPaymentDetails(paymentMethod)
-				},
-				async fetchPaymentDetailsByIntentId(stripeIntentId) {
-					const intent =
-						await utils.procedures.fetchSetupIntent(stripeIntentId)
-					const paymentMethod =
-						await utils.procedures.fetchPaymentMethod(intent.payment_method)
-					return toPaymentDetails(paymentMethod)
-				},
-				async fetchPaymentDetailsBySubscriptionId(stripeSubscriptionId) {
-					const subscription =
-						await utils.procedures.fetchSubscription(stripeSubscriptionId)
-					const paymentMethod =
-						await utils.procedures
-							.fetchPaymentMethod(subscription.default_payment_method)
-					return toPaymentDetails(paymentMethod)
-				},
-				async updateDefaultPaymentMethod({
-						stripeCustomerId,
-						stripePaymentMethodId,
-					}) {
-					await utils.procedures.updateCustomer(stripeCustomerId, {
-						invoice_settings: {
-							default_payment_method: stripePaymentMethodId,
-							custom_fields: [],
-							footer: "",
+				async updateDefaultPaymentMethod({customer, paymentMethod}) {
+					await tables.customers.update({
+						...find({id: customer}),
+						write: {
+							invoice_settings: <any>{
+								default_payment_method: undefined,
+							},
 						},
 					})
 				},
+				async fetchPaymentMethod(paymentMethod) {
+					return <Stripe.PaymentMethod>await tables
+						.paymentMethods.one(find({id: paymentMethod}))
+				},
+				async fetchPaymentDetailsByIntentId(intentId) {
+					const intent = await tables.setupIntents.one(find({id: intentId}))
+					const paymentMethodId = getStripeId(intent.payment_method)
+					return <Stripe.PaymentMethod>await tables
+						.paymentMethods.one(find({id: paymentMethodId}))
+				},
+				async fetchPaymentDetailsBySubscriptionId(subscriptionId) {
+					const subscription = await tables
+						.subscriptions.one(find({id: subscriptionId}))
+					const paymentMethodId = getStripeId(subscription.default_payment_method)
+					return <Stripe.PaymentMethod>await tables
+						.paymentMethods.one(find({id: paymentMethodId}))
+				},
 			},
 			checkouts: {
-				async purchaseSubscriptions({
-						userId, stripeCustomerId, stripePriceIds,
-					}) {
-					const customer
-						= await utils.procedures.fetchCustomer(stripeCustomerId)
-					const paymentMethod
-						= await utils.initializers.paymentMethod()
-					const subscription
-						= await utils.initializers.subscription({})
-					// const paymentMethod
-					// 	= await utils.initializers.sessionForSubscriptionPurchase({
-					// 		userId,
-					// 		customer,
-					// 		subscription,
-					// 	})
+				async purchaseSubscriptions({userId, prices, customer}) {
+					const session = {
+						id: generateId(),
+					}
+					// TODO implement mock subscription purchase?
+					// webhooks?
+					return <Stripe.Checkout.Session>session
 				},
-				async setupSubscription() {},
+				async setupSubscription({userId, customer, subscription}) {
+					const session = {
+						id: generateId(),
+					}
+					// TODO implement mock subscription purchase?
+					// webhooks?
+					return <Stripe.Checkout.Session>session
+				},
+
+				// async purchaseSubscriptions({
+				// 		userId, stripeCustomerId, stripePriceIds,
+				// 	}) {
+				// 	const customer
+				// 		= await utils.procedures.fetchCustomer(stripeCustomerId)
+				// 	const paymentMethod
+				// 		= await utils.initializers.paymentMethod()
+				// 	const subscription
+				// 		= await utils.initializers.subscription({})
+				// 	// const paymentMethod
+				// 	// 	= await utils.initializers.sessionForSubscriptionPurchase({
+				// 	// 		userId,
+				// 	// 		customer,
+				// 	// 		subscription,
+				// 	// 	})
+				// },
+				// async setupSubscription() {},
 			},
 			products: {},
 			subscriptions: {
