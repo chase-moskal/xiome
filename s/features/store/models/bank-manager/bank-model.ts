@@ -13,8 +13,9 @@ export function bankModel({stripeAccountsService, triggerBankPopup}: {
 			return stripeAccountsService.getConnectDetails({appId})
 		},
 		async setupStripeAccount(appId: string) {
-			const {stripeAccountId, stripeAccountSetupLink} = await stripeAccountsService.generateConnectSetupLink({appId})
-			await triggerBankPopup({stripeAccountId, stripeAccountSetupLink})
+			await triggerBankPopup(
+				await stripeAccountsService.generateConnectSetupLink({appId})
+			)
 		},
 	}
 }

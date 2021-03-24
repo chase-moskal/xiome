@@ -26,14 +26,16 @@ export function payPolicies(options: StorePolicyOptions) {
 	const merchant: Policy<MerchantMeta, MerchantAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.appOwner.processAuth(meta, request)
-			const {tables} = await commonAuthProcessing(auth.app.appId)
-			const stripeAccounting = options.stripeComplex.accounting
-			async function getTablesNamespacedForApp(appId: string) {
-				const authTables = await auth.getTablesNamespacedForApp(appId)
-				const payTables = await bakePayTables(appId)
-				return {...authTables, ...payTables}
+			return {
+				...auth,
+				...await commonAuthProcessing(auth.app.appId),
+				platformStripeLiaison: options.stripeLiaison.platform,
+				async getTablesNamespacedForApp(appId: string) {
+					const authTables = await auth.getTablesNamespacedForApp(appId)
+					const payTables = await bakePayTables(appId)
+					return {...authTables, ...payTables}
+				},
 			}
-			return {...auth, tables, stripeAccounting, getTablesNamespacedForApp}
 		}
 	}
 
@@ -41,15 +43,15 @@ export function payPolicies(options: StorePolicyOptions) {
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
-			const {tables} = await commonAuthProcessing(auth.app.appId)
-			const {stripeAccountId} = await tables.merchant.stripeAccounts.one({
+			const common = await commonAuthProcessing(auth.app.appId)
+			const {stripeAccountId} = await common.tables.merchant.stripeAccounts.one({
 				conditions: false,
 			})
-			const stripeLiaison = options.stripeComplex.getLiaison({
-				tables,
-				stripeConnectAccountId: stripeAccountId,
-			})
-			return {...auth, tables, stripeLiaison}
+			return {
+				...auth,
+				...common,
+				appStripeLiaison: options.stripeLiaison.connect(stripeAccountId),
+			}
 		}
 	}
 
@@ -58,8 +60,7 @@ export function payPolicies(options: StorePolicyOptions) {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
 			auth.checker.requirePrivilege("manage products and subscription plans")
-
-			return {...auth}
+			return auth
 		}
 	}
 

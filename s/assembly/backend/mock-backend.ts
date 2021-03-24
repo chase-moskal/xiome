@@ -11,7 +11,7 @@ import {storeApi} from "../../features/store/api/store-api.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
 import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
 import {mockStoreTables} from "../../features/store/api/tables/mock-store-tables.js"
-import {mockStripeComplex} from "../../features/store/stripe/mock-stripe-complex.js"
+import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
 
 export async function mockBackend({
 			rando,
@@ -38,7 +38,12 @@ export async function mockBackend({
 		mockSendLoginEmail(sendLoginEmail)
 
 	const storeTables = {...authTables, ...storeTablesSpecifically}
-	const stripeComplex = await mockStripeComplex({rando, tableStorage})
+	const {liaison: stripeLiaison, mockStripeOperations} =
+		await mockStripeCircuit({
+			rando,
+			tableStorage,
+			tables: storeTables,
+		})
 
 	const api = asApi({
 		auth: makeAuthApi({
@@ -53,7 +58,7 @@ export async function mockBackend({
 		store: storeApi({
 			rando,
 			config,
-			stripeComplex,
+			stripeLiaison,
 			tables: storeTables,
 			verifyToken,
 		}),
@@ -64,11 +69,12 @@ export async function mockBackend({
 		config,
 		tables: {...authTables, ...storeTables},
 		platformAppId: config.platform.appDetails.appId,
-		stripeComplex,
+		stripeLiaison,
+		mockStripeOperations,
 		getLatestLoginEmail,
 		mockBrowser: async() => mockBrowser({
 			api,
-			mockStripeOperations: stripeComplex.mockStripeOperations,
+			mockStripeOperations,
 		}),
 	}
 }

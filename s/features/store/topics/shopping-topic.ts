@@ -5,7 +5,7 @@ import {CustomerAuth} from "../api/policies/types/contexts/customer-auth.js"
 export const shoppingTopic = () => asTopic<CustomerAuth>()({
 
 	async buySubscription(
-			{tables, stripeLiaison},
+			{tables, appStripeLiaison},
 			{subscriptionPlanId}: {
 				subscriptionPlanId: string
 			}) {
@@ -13,7 +13,7 @@ export const shoppingTopic = () => asTopic<CustomerAuth>()({
 	},
 
 	async updateSubscription(
-			{tables, stripeLiaison},
+			{tables, appStripeLiaison},
 			{subscriptionId}: {
 				subscriptionId: string
 			}) {
@@ -21,7 +21,7 @@ export const shoppingTopic = () => asTopic<CustomerAuth>()({
 	},
 
 	async endSubscription(
-			{tables, stripeLiaison},
+			{tables, appStripeLiaison},
 			{subscriptionId}: {
 				subscriptionId: string
 			}) {

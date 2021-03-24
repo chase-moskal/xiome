@@ -6,8 +6,8 @@ import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
-import {StripeLiaisonPlatform} from "../types/stripe-liaison-platform.js"
-import {StripeLiaisonConnected} from "../types/stripe-liaison-connected.js"
+import {PlatformStripeLiaison} from "../types/platform-stripe-liaison.js"
+import {AppStripeLiaison} from "../types/app-stripe-liaison.js"
 import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 
 export function mockStripeLiaison({rando, tables, webhooks}: {
@@ -18,7 +18,7 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 
 	const generateId = () => rando.randomId()
 
-	const platform: StripeLiaisonPlatform = {
+	const platform: PlatformStripeLiaison = {
 		accounting: {
 			async getStripeAccount(id: string) {
 				return <Stripe.Account>await tables.accounts.one(find({id}))
@@ -64,7 +64,7 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 		})
 	}
 
-	function connect(stripeConnectAccountId: string): StripeLiaisonConnected {
+	function connect(stripeConnectAccountId: string): AppStripeLiaison {
 		const tables = prepareConstrainTables(rawTables)({
 			"_connectedAccount": stripeConnectAccountId,
 		})

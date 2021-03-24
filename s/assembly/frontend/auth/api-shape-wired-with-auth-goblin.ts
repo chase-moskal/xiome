@@ -80,8 +80,8 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		store: {
 			stripeConnectService: {
 				[_augment]: augmentWithAppAndAccessTokens,
-				generateAccountSetupLink: true,
 				getConnectDetails: true,
+				generateConnectSetupLink: true,
 			},
 			shoppingService: {
 				[_augment]: augmentWithAppAndAccessTokens,

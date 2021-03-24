@@ -1,8 +1,8 @@
 
 import {Stripe} from "stripe"
+import {StripeLiaison} from "./types/stripe-liaison.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {StoreTables} from "../api/tables/types/store-tables.js"
-import {StripeLiaison} from "../stripe/types/stripe-liaison.js"
 import {AuthTables} from "../../auth/tables/types/auth-tables.js"
 
 export function stripeWebhooks({logger, liaison, tables}: {

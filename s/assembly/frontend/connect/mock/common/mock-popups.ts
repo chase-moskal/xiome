@@ -1,6 +1,6 @@
 
+import {MockStripeOperations} from "../../../../../features/store/stripe2/types/mock-stripe-operations.js"
 import {TriggerBankPopup} from "../../../../../features/store/models/bank-manager/types/trigger-bank-popup.js"
-import {MockStripeOperations} from "../../../../../features/store/stripe/mocks/types/mock-stripe-operations.js"
 
 export function mockPopups({mockStripeOperations}: {
 		mockStripeOperations: MockStripeOperations

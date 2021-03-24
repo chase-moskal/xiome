@@ -1,5 +1,5 @@
 
-import {CardClues} from "../../../../stripe/parts/subscriptions/types/card-clues.js"
+import {CardClues} from "../../../../stripe2/liaison/types/card-clues.js"
 
 export type SubscriptionRow = {
 	userId: string

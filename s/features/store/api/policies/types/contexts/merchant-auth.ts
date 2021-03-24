@@ -1,9 +1,9 @@
 
 import {StoreAuthSpecifics} from "./specifics/pay-auth-specifics.js"
 import {AppOwnerAuth} from "../../../../../auth/policies/types/app-owner-auth.js"
-import {StripeAccounting} from "../../../../stripe/parts/accounts/types/stripe-accounting.js"
+import {PlatformStripeLiaison} from "../../../../stripe2/types/platform-stripe-liaison.js"
 
 export type MerchantAuth = {
-	stripeAccounting: StripeAccounting
+	platformStripeLiaison: PlatformStripeLiaison
 	getTablesNamespacedForApp: (appId: string) => Promise<StoreAuthSpecifics["tables"]>
 } & StoreAuthSpecifics & AppOwnerAuth
