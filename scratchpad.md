@@ -1,4 +1,25 @@
 
+## next steps
+
+- consolidate various mock behaviors and aspects into one understandable system
+  - applyMockHacks
+  - mockPopups
+  - getLatestLoginEmail
+  - mockStripeOperations
+
+- mocksite in mockmode, no server
+
+- ui components for subscriptions
+  - manage subscriptions for sale
+  - buy subscriptions
+
+- brainstorming for digital sales
+  - video sales: integrate with vimeo?
+  - proof of purchase?
+
+
+
+
 # big picture
 
 ### refactor subscriptions

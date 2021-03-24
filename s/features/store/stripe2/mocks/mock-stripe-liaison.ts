@@ -39,7 +39,9 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 				await tables.accounts.update({
 					...find({id: account}),
 					write: {
-						email: `${generateId}@fake.xiome.io`,
+						email: `${(
+								rando.randomSequence(8, [..."0123456789abcdef"])
+							)}@fake.xiome.io`,
 						charges_enabled: true,
 						details_submitted: true,
 						payouts_enabled: true,
