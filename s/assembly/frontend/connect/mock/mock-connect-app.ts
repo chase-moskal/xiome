@@ -30,16 +30,18 @@ export async function mockConnectApp({
 		sendEmail: emailController.sendEmail,
 	})
 
+	const ownerEmail = "creative@xiome.io"
 	let appId = await mockStateStorage.read<string>("mock-app")
 	if (!appId) {
 		appId = await mockRegisterApp({
 			apiLink,
 			backend,
+			ownerEmail,
 			appOrigins: origins,
-			ownerEmail: "creative@xiome.io",
 		})
 		await mockStateStorage.write<string>("mock-app", appId)
 	}
+	console.log(`mock: app owner email "${ownerEmail}"`)
 
 	emailController.enableEmails()
 
