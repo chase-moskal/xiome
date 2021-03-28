@@ -38,6 +38,7 @@ export async function mockConnectApp({
 			appOrigins: origins,
 			ownerEmail: "creative@xiome.io",
 		})
+		await mockStateStorage.write<string>("mock-app", appId)
 	}
 
 	emailController.enableEmails()
