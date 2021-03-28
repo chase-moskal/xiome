@@ -21,6 +21,7 @@ import {GreenMeta} from "./policies/types/green-meta.js"
 import {AuthApiOptions} from "./types/auth-api-options.js"
 import {AppOwnerMeta} from "./policies/types/app-owner-meta.js"
 import {AppOwnerAuth} from "./policies/types/app-owner-auth.js"
+import {appEditTopic} from "./topics/app-edit-topic.js"
 
 export const makeAuthApi = ({tables, ...options}:
 		AuthApiOptions & {tables: AuthTables}) => {
@@ -47,6 +48,11 @@ export const makeAuthApi = ({tables, ...options}:
 		appService: apiContext<PlatformUserMeta, PlatformUserAuth>()({
 			policy: policies.platformUser,
 			expose: appTopic(options),
+		}),
+
+		appEditService: apiContext<AppOwnerMeta, AppOwnerAuth>()({
+			policy: policies.appOwner,
+			expose: appEditTopic(options),
 		}),
 
 		manageAdminsService: apiContext<AppOwnerMeta, AppOwnerAuth>()({

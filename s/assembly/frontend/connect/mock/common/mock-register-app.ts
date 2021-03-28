@@ -2,8 +2,9 @@
 import {Await} from "../../../../../types/await.js"
 import {mockBackend} from "../../../../backend/mock-backend.js"
 
-export async function mockRegisterApp({appOrigins, apiLink, backend}: {
+export async function mockRegisterApp({apiLink, ownerEmail, appOrigins, backend}: {
 			apiLink: string
+			ownerEmail: string
 			appOrigins: string[]
 			backend: Await<ReturnType<typeof mockBackend>>
 		}) {
@@ -17,8 +18,7 @@ export async function mockRegisterApp({appOrigins, apiLink, backend}: {
 	})
 
 	const {authModel, appModel} = mockWindowForPlatform.models
-	const creativeEmail = "creative@xiome.io"
-	await authModel.sendLoginLink(creativeEmail)
+	await authModel.sendLoginLink(ownerEmail)
 	await authModel.login(backend.getLatestLoginEmail().loginToken)
 
 	const {appId} = await appModel.registerApp({
@@ -26,6 +26,8 @@ export async function mockRegisterApp({appOrigins, apiLink, backend}: {
 		home: window.location.href,
 		origins: appOrigins,
 	})
+
+	console.log("mock: register app", appId)
 
 	return appId
 }

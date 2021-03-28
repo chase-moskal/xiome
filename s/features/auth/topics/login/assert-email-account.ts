@@ -1,15 +1,15 @@
 
-import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
+import {AuthTables} from "../../tables/types/auth-tables.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables} from "../../tables/types/auth-tables.js"
+import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
+import {universalRoles} from "../../../../assembly/backend/permissions/standard/universal/universal-roles.js"
+
+const technicianRoleId = universalRoles.technician.roleId
 
 export async function assertEmailAccount({
-			rando,
-			email,
-			tables,
-			config,
+			rando, email, tables, config,
 		}: {
 			rando: Rando
 			email: string
@@ -21,7 +21,6 @@ export async function assertEmailAccount({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
-			const {roleId} = config.permissions.platform.roles.find(row => row.label === "technician")
 
 			const account = generateAccountRow({rando})
 			const {userId} = account
@@ -30,11 +29,11 @@ export async function assertEmailAccount({
 			const operationCreatesTechnicianUserRole = isTechnician
 				? tables.permissions.userHasRole.create({
 					userId,
-					roleId,
-					public: true,
-					timeframeStart: undefined,
-					timeframeEnd: undefined,
 					hard: true,
+					public: true,
+					timeframeEnd: undefined,
+					roleId: technicianRoleId,
+					timeframeStart: undefined,
 				})
 				: Promise.resolve()
 

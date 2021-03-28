@@ -8,6 +8,7 @@ import {AppModelOptions} from "./types/app/app-model-options.js"
 
 export function makeAppModel({
 		appService,
+		appEditService,
 		manageAdminsService,
 		getAccess,
 	}: AppModelOptions) {
@@ -85,7 +86,7 @@ export function makeAppModel({
 		async updateApp(appId: string, appDraft: AppDraft) {
 			await loadingOperation({
 				errorReason: "failed to update app",
-				promise: appService.updateApp({
+				promise: appEditService.updateApp({
 					appId,
 					appDraft,
 				})
@@ -94,7 +95,7 @@ export function makeAppModel({
 		async deleteApp(appId: string) {
 			return loadingOperation({
 				errorReason: "failed to delete app",
-				promise: appService.deleteApp({appId}),
+				promise: appEditService.deleteApp({appId}),
 			})
 		},
 	}

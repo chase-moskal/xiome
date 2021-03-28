@@ -45,9 +45,12 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			appService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				listApps: true,
+				registerApp: true,
+			},
+			appEditService: {
+				[_augment]: augmentWithAppAndAccessTokens,
 				deleteApp: true,
 				updateApp: true,
-				registerApp: true,
 			},
 			manageAdminsService: {
 				[_augment]: augmentWithAppAndAccessTokens,

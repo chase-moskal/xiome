@@ -1,16 +1,16 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
-import {find} from "../../../../toolbox/dbby/dbby-mongo.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
+import {isUserOwnerOfApp} from "./is-user-the-owner-of-app.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
 
-export async function requireUserIsAllowedToEditApp({appId, access, tables}: {
+export async function requireUserIsAllowedToEditApp(options: {
 		appId: string
 		tables: AuthTables
 		access: AccessPayload
 	}) {
 
-	const {userId} = access.user
-	const ownershipRow = await tables.app.appOwnership.one(find({userId, appId}))
-	if (!ownershipRow) throw new ApiError(403, "user is not allowed")
+	const owner = await isUserOwnerOfApp(options)
+	if (!owner)
+		throw new ApiError(403, "user is not allowed")
 }

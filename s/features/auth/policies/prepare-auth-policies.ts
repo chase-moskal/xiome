@@ -5,7 +5,6 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 import {isOriginValid} from "./routines/is-origin-valid.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
-import {userHasHardPrivilege} from "../topics/permissions/user-has-hard-privilege.js"
 import {requireUserIsAllowedToEditApp} from "../topics/apps/require-user-is-allowed-to-edit-app.js"
 
 import {App} from "../types/tokens/app.js"
@@ -25,6 +24,7 @@ import {AuthPolicyOptions} from "./types/auth-policy-options.js"
 import {makePrivilegeChecker} from "../tools/permissions/make-privilege-checker.js"
 import {appPrivileges} from "../../../assembly/backend/permissions/standard/app/app-privileges.js"
 import {platformPrivileges} from "../../../assembly/backend/permissions/standard/platform/platform-privileges.js"
+import {isUserOwnerOfApp} from "../topics/apps/is-user-the-owner-of-app.js"
 
 export function prepareAuthPolicies({
 			config,
@@ -67,7 +67,7 @@ export function prepareAuthPolicies({
 			const auth = await user.processAuth(meta, request)
 			if (!auth.app.platform)
 				throw new ApiError(403, "forbidden: only platform users allowed here")
-				const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
+			const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
 			const statsHub = await getStatsHub(auth.access.user.userId)
 			return {...auth, checker, statsHub}
 		},
@@ -76,13 +76,7 @@ export function prepareAuthPolicies({
 	const userWhoManagesPermissions: Policy<UserMeta, UserAuth> = {
 		processAuth: async(meta, request) => {
 			const auth = await user.processAuth(meta, request)
-			const allowed = userHasHardPrivilege({
-				config,
-				access: auth.access,
-				privilegeLabel: "manage_permissions",
-			})
-			if (!allowed)
-				throw new ApiError(403, "forbidden: not allowed to manage permissions")
+			auth.checker.requirePrivilege("customize privileges")
 			return auth
 		},
 	}
@@ -94,11 +88,11 @@ export function prepareAuthPolicies({
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
 			async function getTablesNamespacedForApp(appId: string) {
-				await requireUserIsAllowedToEditApp({
-					appId,
-					tables,
-					access: auth.access,
-				})
+				const canEditAnyApp = auth.checker.hasPrivilege("edit any app")
+				const isOwner = isUserOwnerOfApp({appId, access: auth.access, tables})
+				const allowed = isOwner || canEditAnyApp
+				if (!allowed)
+					throw new ApiError(403, "forbidden: not privileged over app")
 				return bakeTables(appId)
 			}
 			return {...auth, getTablesNamespacedForApp}

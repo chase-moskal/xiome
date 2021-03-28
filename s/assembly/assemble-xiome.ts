@@ -17,6 +17,7 @@ export async function assembleXiome(config: XiomeConfig) {
 		: await connect(<XiomeConfigConnected>config)
 
 	const frontend = await assembleAndInitializeFrontend(connection)
+
 	if (isMock)
 		applyMockHacks({
 			connection: <Await<ReturnType<typeof mockConnect>>>connection,

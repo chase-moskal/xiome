@@ -9,6 +9,7 @@ export async function mockConnect(config: XiomeConfigMock) {
 	const options = {
 		origins: [window.location.origin],
 		tableStorage: simpleFlexStorage(window.localStorage),
+		mockStateStorage: simpleFlexStorage(window.localStorage),
 		platformHome: window.location.href,
 		appWindowLink: window.location.href,
 		sendEmail,

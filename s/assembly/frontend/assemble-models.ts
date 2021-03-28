@@ -29,6 +29,7 @@ export async function assembleModels({
 	const appModel = makeAppModel({
 		getAccess: getValidAccess,
 		appService: remote.auth.appService,
+		appEditService: remote.auth.appEditService,
 		manageAdminsService: remote.auth.manageAdminsService,
 	})
 

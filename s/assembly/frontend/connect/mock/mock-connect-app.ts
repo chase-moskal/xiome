@@ -9,12 +9,14 @@ import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectApp({
-		origins, platformHome, appWindowLink, tableStorage, sendEmail
+		origins, platformHome, appWindowLink, tableStorage, mockStateStorage,
+		sendEmail,
 	}: {
 		origins: string[]
 		platformHome: string
 		appWindowLink: string
 		tableStorage: FlexStorage
+		mockStateStorage: FlexStorage
 		sendEmail: SendEmail
 	}) {
 
@@ -28,11 +30,15 @@ export async function mockConnectApp({
 		sendEmail: emailController.sendEmail,
 	})
 
-	const appId = await mockRegisterApp({
-		apiLink,
-		backend,
-		appOrigins: origins,
-	})
+	let appId = await mockStateStorage.read<string>("mock-app")
+	if (!appId) {
+		appId = await mockRegisterApp({
+			apiLink,
+			backend,
+			appOrigins: origins,
+			ownerEmail: "creative@xiome.io",
+		})
+	}
 
 	emailController.enableEmails()
 
