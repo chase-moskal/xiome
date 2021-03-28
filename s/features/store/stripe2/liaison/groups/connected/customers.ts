@@ -31,7 +31,7 @@ export function stripeLiaisonCustomers({stripe, connection}: LiaisonConnectedOpt
 				intentId: string
 			): Promise<Stripe.PaymentMethod> {
 			const intent = await stripe.setupIntents.retrieve(intentId, connection)
-			return stripe.paymentMethods.retrieve(getStripeId(intent.payment_method))
+			return stripe.paymentMethods.retrieve(getStripeId(intent.payment_method), connection)
 		},
 
 		async fetchPaymentDetailsBySubscriptionId(

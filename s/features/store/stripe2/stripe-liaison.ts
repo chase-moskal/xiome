@@ -6,6 +6,7 @@ import {stripeLiaisonCheckouts} from "./liaison/groups/connected/checkouts.js"
 import {stripeLiaisonCustomers} from "./liaison/groups/connected/customers.js"
 import {stripeLiaisonAccounting} from "./liaison/groups/platform/accounting.js"
 import {stripeLiaisonSubscriptions} from "./liaison/groups/connected/subscriptions.js"
+import {stripeLiaisonConcept} from "./liaison/groups/connected/concept.js"
 
 export function stripeLiaison(options: LiaisonOptions) {
 	return {
@@ -17,12 +18,13 @@ export function stripeLiaison(options: LiaisonOptions) {
 				...options,
 				connection: {stripeAccount: stripeConnectAccountId},
 			}
-			return {
-				customers: stripeLiaisonCustomers(connectedOptions),
-				checkouts: stripeLiaisonCheckouts(connectedOptions),
-				subscriptions: stripeLiaisonSubscriptions(connectedOptions),
-				products: stripeLiaisonProducts(connectedOptions),
-			}
+			return stripeLiaisonConcept(connectedOptions)
+			// return {
+			// 	customers: stripeLiaisonCustomers(connectedOptions),
+			// 	checkouts: stripeLiaisonCheckouts(connectedOptions),
+			// 	subscriptions: stripeLiaisonSubscriptions(connectedOptions),
+			// 	products: stripeLiaisonProducts(connectedOptions),
+			// }
 		},
 	}
 }

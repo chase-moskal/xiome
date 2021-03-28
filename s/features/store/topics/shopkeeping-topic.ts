@@ -9,6 +9,9 @@ export const shopkeepingTopic = () => asTopic<ClerkAuth>()({
 		{userId}: {
 			userId: string
 		}) {
+
+		await appStripeLiaison.products
+
 		return true
 	},
 
