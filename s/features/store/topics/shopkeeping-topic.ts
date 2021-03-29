@@ -5,18 +5,15 @@ import {ClerkAuth} from "../api/policies/types/contexts/clerk-auth.js"
 export const shopkeepingTopic = () => asTopic<ClerkAuth>()({
 
 	async createSubscriptionPlan(
-		{tables, appStripeLiaison, checker},
+		{tables, stripeLiaisonForApp, checker},
 		{userId}: {
 			userId: string
 		}) {
-
-		await appStripeLiaison.products
-
 		return true
 	},
 
 	async updateSubscriptionPlan(
-		{tables, appStripeLiaison, checker},
+		{tables, stripeLiaisonForApp, checker},
 		{subscriptionPlanId}: {
 			subscriptionPlanId: string
 		}) {
@@ -24,7 +21,7 @@ export const shopkeepingTopic = () => asTopic<ClerkAuth>()({
 	},
 
 	async deleteSubscriptionPlan(
-		{tables, appStripeLiaison, checker},
+		{tables, stripeLiaisonForApp, checker},
 		{subscriptionPlanId}: {
 			subscriptionPlanId: string
 		}) {

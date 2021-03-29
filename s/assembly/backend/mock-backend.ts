@@ -38,7 +38,7 @@ export async function mockBackend({
 		mockSendLoginEmail(sendLoginEmail)
 
 	const storeTables = {...authTables, ...storeTablesSpecifically}
-	const {liaison: stripeLiaison, mockStripeOperations} =
+	const {stripeComplex, mockStripeOperations} =
 		await mockStripeCircuit({
 			rando,
 			tableStorage,
@@ -58,8 +58,20 @@ export async function mockBackend({
 		store: storeApi({
 			rando,
 			config,
-			stripeLiaison,
+			stripeComplex,
 			tables: storeTables,
+			shoppingOptions: {
+				checkoutReturningLinks: {
+					cancel: "https://fake.xiome.io/checkout-cancel",
+					success: "https://fake.xiome.io/checkout-success",
+				},
+			},
+			stripeConnectOptions: {
+				accountReturningLinks: {
+					refresh: "https://fake.xiome.io/account-refresh",
+					return: "https://fake.xiome.io/account-return",
+				},
+			},
 			verifyToken,
 		}),
 	})
@@ -69,7 +81,7 @@ export async function mockBackend({
 		config,
 		tables: {...authTables, ...storeTables},
 		platformAppId: config.platform.appDetails.appId,
-		stripeLiaison,
+		stripeComplex,
 		mockStripeOperations,
 		getLatestLoginEmail,
 		mockBrowser: async() => mockBrowser({

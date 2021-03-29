@@ -16,29 +16,31 @@ import {ClerkAuth} from "./policies/types/contexts/clerk-auth.js"
 export const storeApi = ({
 			config,
 			tables,
-			stripeLiaison,
+			stripeComplex,
+			shoppingOptions,
+			stripeConnectOptions,
 			verifyToken,
 		}: StoreApiOptions) => {
 
 	const policies = payPolicies({
 		tables,
 		config,
-		stripeLiaison,
+		stripeComplex,
 		verifyToken,
 	})
 
 	return {
 		stripeConnectService: apiContext<MerchantMeta, MerchantAuth>()({
 			policy: policies.merchant,
-			expose: stripeConnectTopic(), // stripe-accounting
+			expose: stripeConnectTopic(stripeConnectOptions),
 		}),
 		shopkeepingService: apiContext<ClerkMeta, ClerkAuth>()({
 			policy: policies.clerk,
-			expose: shopkeepingTopic(), // shop-utilities
+			expose: shopkeepingTopic(),
 		}),
 		shoppingService: apiContext<CustomerMeta, CustomerAuth>()({
 			policy: policies.customer,
-			expose: shoppingTopic(), // shop-utilities
+			expose: shoppingTopic(shoppingOptions),
 		}),
 	}
 }

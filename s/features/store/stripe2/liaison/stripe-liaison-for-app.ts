@@ -1,6 +1,6 @@
 
 import {Stripe} from "stripe"
-import {LiaisonConnectedOptions} from "../../../types/liaison-connected-options.js"
+import {LiaisonConnectedOptions} from "../types/liaison-connected-options.js"
 
 export function stripeLiaisonConcept({stripe, connection}: LiaisonConnectedOptions) {
 	return {

@@ -1,60 +1,54 @@
 
 import {Stripe} from "stripe"
 import {Rando} from "../../../../toolbox/get-rando.js"
-import {StripeLiaison} from "../types/stripe-liaison.js"
+import {StripeComplex} from "../types/stripe-complex.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
-import {AppStripeLiaison} from "../types/app-stripe-liaison.js"
+import {StripeLiaisonForApp} from "../types/stripe-liaison-app.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
-import {PlatformStripeLiaison} from "../types/platform-stripe-liaison.js"
+import {StripeLiaisonForPlatform} from "../types/stripe-liaison-for-platform.js"
 import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 
-export function mockStripeLiaison({rando, tables, webhooks}: {
+export function mockStripeComplex({rando, tables, webhooks}: {
 		rando: Rando
 		tables: MockStripeTables
 		webhooks: StripeWebhooks
-	}): StripeLiaison {
+	}): StripeComplex {
 
 	const generateId = () => rando.randomId()
+	function respond<xResource>(resource: xResource): Stripe.Response<xResource> {
+		return {
+			headers: {},
+			lastResponse: undefined,
+			...resource,
+		}
+	}
 
-	const platform: PlatformStripeLiaison = {
-		accounting: {
-			async getStripeAccount(id: string) {
-				return <Stripe.Account>await tables.accounts.one(find({id}))
-			},
-			async createStripeAccount() {
+	const stripeLiaisonForPlatform: StripeLiaisonForPlatform = {
+		accounts: {
+			async create(params) {
 				const account: Partial<Stripe.Account> = {
 					id: generateId(),
-					email: undefined,
-					type: "standard",
-					charges_enabled: false,
-					details_submitted: false,
-					payouts_enabled: false,
+					type: params.type,
+					email: params.email,
 				}
-				await tables.accounts.create(account)
-				return <Stripe.Account>account
+				return respond(<Stripe.Account>account)
 			},
-			async createAccountSetupLink({account, type}) {
-				await tables.accounts.update({
-					...find({id: account}),
-					write: {
-						email: `${(
-								rando.randomSequence(8, [..."0123456789abcdef"])
-							)}@fake.xiome.io`,
-						charges_enabled: true,
-						details_submitted: true,
-						payouts_enabled: true,
-					},
-				})
-				return <Stripe.AccountLink>{
-					url: "https://fake.xiome.io/stripe-account-setup",
+			async retrieve(id) {
+				const account = await tables.accounts.one(find({id}))
+				return respond(<Stripe.Account>account)
+			},
+		},
+		accountLinks: {
+			async create(params) {
+				const accountLink: Partial<Stripe.AccountLink> = {
+					url: `https://fake.xiome.io/stripe-account-setup`,
 				}
+				return respond(<Stripe.AccountLink>accountLink)
 			},
 		},
 	}
-
-	const rawTables = tables
 
 	async function webhookEvent<xObject extends {}>(
 			type: keyof StripeWebhooks,
@@ -66,20 +60,14 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 		})
 	}
 
-	function connect(stripeConnectAccountId: string): AppStripeLiaison {
+	const rawTables = tables
+	function connectStripeLiaisonForApp(stripeConnectAccountId: string): StripeLiaisonForApp {
 		const tables = prepareConstrainTables(rawTables)({
 			"_connectedAccount": stripeConnectAccountId,
 		})
-		function respond<xResource>(resource: xResource): Stripe.Response<xResource> {
-			return {
-				headers: {},
-				lastResponse: undefined,
-				...resource,
-			}
-		}
 		return {
 			customers: {
-				async create(params: Stripe.CustomerCreateParams) {
+				async create(params) {
 					const customer: Partial<Stripe.Customer> = {
 						id: generateId(),
 						email: params.email,
@@ -88,11 +76,11 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 					await tables.customers.create(customer)
 					return respond(<Stripe.Customer>customer)
 				},
-				async retrieve(id: string) {
+				async retrieve(id) {
 					const customer = await tables.customers.one(find({id}))
 					return respond(<Stripe.Customer>customer)
 				},
-				async update(id: string, params: Stripe.CustomerUpdateParams) {
+				async update(id, params) {
 					await tables.customers.update({
 						...find({id}),
 						write: {
@@ -199,5 +187,5 @@ export function mockStripeLiaison({rando, tables, webhooks}: {
 		}
 	}
 
-	return {platform, connect}
+	return {stripeLiaisonForPlatform, connectStripeLiaisonForApp}
 }

@@ -1,11 +1,14 @@
 
 import {asTopic} from "renraku/x/identities/as-topic.js"
+import {ShoppingOptions} from "./types/shopping-options.js"
 import {CustomerAuth} from "../api/policies/types/contexts/customer-auth.js"
 
-export const shoppingTopic = () => asTopic<CustomerAuth>()({
+export const shoppingTopic = ({
+			checkoutReturningLinks
+		}: ShoppingOptions) => asTopic<CustomerAuth>()({
 
 	async buySubscription(
-			{tables, appStripeLiaison},
+			{tables, stripeLiaisonForApp},
 			{subscriptionPlanId}: {
 				subscriptionPlanId: string
 			}) {
@@ -13,7 +16,7 @@ export const shoppingTopic = () => asTopic<CustomerAuth>()({
 	},
 
 	async updateSubscription(
-			{tables, appStripeLiaison},
+			{tables, stripeLiaisonForApp},
 			{subscriptionId}: {
 				subscriptionId: string
 			}) {
@@ -21,7 +24,7 @@ export const shoppingTopic = () => asTopic<CustomerAuth>()({
 	},
 
 	async endSubscription(
-			{tables, appStripeLiaison},
+			{tables, stripeLiaisonForApp},
 			{subscriptionId}: {
 				subscriptionId: string
 			}) {

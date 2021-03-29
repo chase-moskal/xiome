@@ -26,10 +26,11 @@ export function payPolicies(options: StorePolicyOptions) {
 	const merchant: Policy<MerchantMeta, MerchantAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.appOwner.processAuth(meta, request)
+			const {stripeLiaisonForPlatform} = options.stripeComplex
 			return {
 				...auth,
 				...await commonAuthProcessing(auth.app.appId),
-				platformStripeLiaison: options.stripeLiaison.platform,
+				stripeLiaisonForPlatform,
 				async getTablesNamespacedForApp(appId: string) {
 					const authTables = await auth.getTablesNamespacedForApp(appId)
 					const payTables = await bakePayTables(appId)
@@ -47,10 +48,12 @@ export function payPolicies(options: StorePolicyOptions) {
 			const {stripeAccountId} = await common.tables.merchant.stripeAccounts.one({
 				conditions: false,
 			})
+			const stripeLiaisonForApp = options
+				.stripeComplex.connectStripeLiaisonForApp(stripeAccountId)
 			return {
 				...auth,
 				...common,
-				appStripeLiaison: options.stripeLiaison.connect(stripeAccountId),
+				stripeLiaisonForApp,
 			}
 		}
 	}

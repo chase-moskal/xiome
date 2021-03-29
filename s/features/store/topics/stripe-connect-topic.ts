@@ -2,13 +2,16 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-x.js"
+import {StripeConnectOptions} from "./types/stripe-connect-options.js"
 import {StripeAccountDetails} from "./types/stripe-account-details.js"
 import {MerchantAuth} from "../api/policies/types/contexts/merchant-auth.js"
 
-export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
+export const stripeConnectTopic = ({
+			accountReturningLinks,
+		}: StripeConnectOptions) => asTopic<MerchantAuth>()({
 
 	async getConnectDetails(
-			{access, platformStripeLiaison, getTablesNamespacedForApp},
+			{access, stripeLiaisonForPlatform, getTablesNamespacedForApp},
 			{appId}: {appId: string},
 		): Promise<undefined | StripeAccountDetails> {
 
@@ -20,9 +23,7 @@ export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 
 		if (existingAssociatedStripeAccount) {
 			const id = existingAssociatedStripeAccount.stripeAccountId
-			const account =
-				await platformStripeLiaison.accounting
-					.getStripeAccount(id)
+			const account = await stripeLiaisonForPlatform.accounts.retrieve(id)
 			return {
 				stripeAccountId: account.id,
 				email: account.email,
@@ -36,7 +37,7 @@ export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 	},
 
 	async generateConnectSetupLink(
-			{access, platformStripeLiaison, getTablesNamespacedForApp},
+			{access, stripeLiaisonForPlatform, getTablesNamespacedForApp},
 			{appId}: {appId: string},
 		) {
 
@@ -47,9 +48,8 @@ export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 			await namespacedTables.merchant.stripeAccounts.assert({
 				...find({userId}),
 				make: async() => {
-					const {id: stripeAccountId} =
-						await platformStripeLiaison.accounting
-							.createStripeAccount()
+					const {id: stripeAccountId} = await stripeLiaisonForPlatform
+						.accounts.create({type: "standard"})
 					await namespacedTables.merchant.stripeAccounts.create({
 						userId,
 						stripeAccountId,
@@ -59,12 +59,15 @@ export const stripeConnectTopic = () => asTopic<MerchantAuth>()({
 			})
 		)
 
-		const setupLink =
-			await platformStripeLiaison.accounting.createAccountSetupLink({
+		const {url: stripeAccountSetupLink} = await stripeLiaisonForPlatform
+			.accountLinks.create({
 				account: stripeAccountId,
+				collect: "eventually_due",
 				type: "account_onboarding",
+				return_url: accountReturningLinks.return,
+				refresh_url: accountReturningLinks.refresh,
 			})
 
-		return {stripeAccountId, stripeAccountSetupLink: setupLink.url}
+		return {stripeAccountId, stripeAccountSetupLink}
 	},
 })
