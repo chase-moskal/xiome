@@ -94,6 +94,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			},
 			shopkeepingService: {
 				[_augment]: augmentWithAppAndAccessTokens,
+				listSubscriptionPlans: true,
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,
 				deleteSubscriptionPlan: true,

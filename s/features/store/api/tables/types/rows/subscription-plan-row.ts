@@ -1,8 +1,8 @@
 
-import {SubscriptionPlanDraft} from "../drafts/subscription-plan-draft.js"
-
 export type SubscriptionPlanRow = {
+	subscriptionPlanId: string
+	price: number
+	roleId: string
 	stripePriceId: string
 	stripeProductId: string
-	subscriptionPlanId: string
-} & SubscriptionPlanDraft
+}

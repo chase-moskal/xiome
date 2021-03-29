@@ -12,6 +12,21 @@ export function validator<xValue>(...conditions: Validator<xValue>[]): Validator
 	}
 }
 
+export function schema<xObject extends {}>(schematic: {
+		[P in keyof xObject]: Validator<xObject[P]>
+	}): Validator<xObject> {
+	const schematicKeys = Object.keys(schematic)
+	return object => (
+		Object.entries(object).flatMap(
+			([key, value]) =>
+				schematicKeys.includes(key)
+					? (<Validator<any>>schematic[key])(value)
+						.map(problem => `"${key}": ${problem}`)
+					: [`"${key} not in schema"`]
+		)
+	)
+}
+
 export function branch<xValue>(...conditions: Validator<xValue>[]): Validator<xValue> {
 	return value => {
 		const results = conditions.map(condition => condition(value))
@@ -81,6 +96,15 @@ export const number = (): Validator<number> => value =>
 		? ["must be a number"]
 		: []
 
+export const min = (threshold: number): Validator<number> => value =>
+	value < threshold
+		? ["too small"]
+		: []
+
+export const max = (threshold: number): Validator<number> => value =>
+	value > threshold
+		? ["too big"]
+		: []
 
 export const array = (): Validator<string> => value =>
 	Array.isArray(value)

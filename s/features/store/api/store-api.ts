@@ -14,13 +14,14 @@ import {ClerkMeta} from "./policies/types/contexts/clerk-meta.js"
 import {ClerkAuth} from "./policies/types/contexts/clerk-auth.js"
 
 export const storeApi = ({
-			config,
-			tables,
-			stripeComplex,
-			shoppingOptions,
-			stripeConnectOptions,
-			verifyToken,
-		}: StoreApiOptions) => {
+		rando,
+		config,
+		tables,
+		stripeComplex,
+		shoppingOptions,
+		stripeConnectOptions,
+		verifyToken,
+	}: StoreApiOptions) => {
 
 	const policies = payPolicies({
 		tables,
@@ -36,7 +37,9 @@ export const storeApi = ({
 		}),
 		shopkeepingService: apiContext<ClerkMeta, ClerkAuth>()({
 			policy: policies.clerk,
-			expose: shopkeepingTopic(),
+			expose: shopkeepingTopic({
+				generateId: () => rando.randomId(),
+			}),
 		}),
 		shoppingService: apiContext<CustomerMeta, CustomerAuth>()({
 			policy: policies.customer,
