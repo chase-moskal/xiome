@@ -8,6 +8,6 @@ export function xiomeStoreComponents({models, modals}: XiomeComponentOptions) {
 	const {authModel, bankModel, subscriptionPlanningModel} = models
 	return {
 		XiomeBankConnect: share2(XiomeBankConnect, {modals, authModel, bankModel}),
-		XiomeSubscriptionPlanner: share2(XiomeSubscriptionPlanner, {modals, subscriptionPlanningModel}),
+		XiomeSubscriptionPlanner: share2(XiomeSubscriptionPlanner, {modals, authModel, subscriptionPlanningModel}),
 	}
 }

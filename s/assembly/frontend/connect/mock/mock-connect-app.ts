@@ -40,6 +40,7 @@ export async function mockConnectApp({
 			appOrigins: origins,
 		})
 		await mockStateStorage.write<string>("mock-app", appId)
+		// TODO mock app initialization (link bank!)
 	}
 	console.log(`mock: app owner email "${ownerEmail}"`)
 

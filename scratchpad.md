@@ -1,4 +1,15 @@
 
+- share2 typings not working?
+
+TODO
+- proper error handling for when bank account isn't linked
+  - new property on access token `ecommerceEnabled`
+  - or, 
+- mock link bank account to enable payments
+
+
+
+
 ## next steps
 
 - mocksite in mockmode, no server

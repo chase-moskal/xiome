@@ -98,6 +98,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,
 				deleteSubscriptionPlan: true,
+				deactivateSubscriptionPlan: true,
 			},
 		}
 	})

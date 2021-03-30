@@ -3,9 +3,9 @@ import {makeAppModel} from "../../features/auth/models/app-model.js"
 import {AssembleModelsOptions} from "./types/system-models-options.js"
 import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
-import {bankModel} from "../../features/store/models/bank-manager/bank-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
-import {subscriptionPlanningModel} from "../../features/store/models/subscription-planning-model/subscription-planning-model.js"
+import {bankModel as makeBankModel} from "../../features/store/models/bank-manager/bank-model.js"
+import {subscriptionPlanningModel as makeSubscriptionPlanningModel} from "../../features/store/models/subscription-planning-model/subscription-planning-model.js"
 
 export async function assembleModels({
 		modals,
@@ -39,22 +39,27 @@ export async function assembleModels({
 		permissionsService: remote.auth.permissionsService,
 	})
 
+	const subscriptionPlanningModel = makeSubscriptionPlanningModel({
+		shopkeepingService: remote.store.shopkeepingService,
+	})
+
+	const bankModel = makeBankModel({
+		stripeAccountsService: remote.store.stripeConnectService,
+		triggerBankPopup: popups.triggerBankPopup,
+	})
+
 	authModel.onAccessChange(access => {
 		appModel.accessChange()
 		permissionsModel.accessChange(access)
+		subscriptionPlanningModel.accessChange(access)
 	})
 
 	return {
 		appModel,
 		authModel,
+		bankModel,
 		personalModel,
 		permissionsModel,
-		bankModel: bankModel({
-			stripeAccountsService: remote.store.stripeConnectService,
-			triggerBankPopup: popups.triggerBankPopup,
-		}),
-		subscriptionPlanningModel: subscriptionPlanningModel({
-			shopkeepingService: remote.store.shopkeepingService,
-		}),
+		subscriptionPlanningModel,
 	}
 }

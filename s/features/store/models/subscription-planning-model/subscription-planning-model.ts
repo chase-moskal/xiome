@@ -6,6 +6,8 @@ import {loading} from "../../../../framework/loading/loading.js"
 import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {modelDataInitializationWidget} from "../../../../framework/model-helpers/model-data-initialization-widget.js"
+import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 
 export function subscriptionPlanningModel({shopkeepingService}: {
 		shopkeepingService: Service<typeof shopkeepingTopic>
@@ -22,8 +24,14 @@ export function subscriptionPlanningModel({shopkeepingService}: {
 		})
 	})
 
-	return {
+	const {indicateDomUsage, accessChange} = modelDataInitializationWidget({
 		load,
+		reset: () => state.subscriptionPlanLoading.actions.setNone(),
+	})
+
+	return {
+		accessChange,
+		indicateDomUsage,
 		get subscriptionPlanLoadingView() {
 			return state.subscriptionPlanLoading.view
 		},

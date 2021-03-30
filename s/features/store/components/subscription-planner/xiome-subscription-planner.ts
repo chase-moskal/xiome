@@ -1,5 +1,6 @@
 
 import styles from "./xiome-subscription-planner.css.js"
+import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
@@ -8,11 +9,12 @@ import {subscriptionPlanningModel} from "../../models/subscription-planning-mode
 @mixinStyles(styles)
 export class XiomeSubscriptionPlanner extends WiredComponent<{
 		modals: ModalSystem
+		authModel: AuthModel
 		subscriptionPlanningModel: ReturnType<typeof subscriptionPlanningModel>
 	}> {
 
 	firstUpdated() {
-		this.share.subscriptionPlanningModel.load()
+		this.share.subscriptionPlanningModel.indicateDomUsage()
 	}
 
 	private renderList() {
@@ -41,9 +43,12 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	render() {
-		return html`
-			${this.renderList()}
-			${this.renderCreator()}
-		`
+		return renderWrappedInLoading(
+			this.share.authModel.accessLoadingView,
+			() => html`
+				${this.renderList()}
+				${this.renderCreator()}
+			`
+		)
 	}
 }
