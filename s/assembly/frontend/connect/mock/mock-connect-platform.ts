@@ -7,24 +7,24 @@ import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectPlatform({
-		platformHome, tableStorage, sendEmail
+		platformHome, storage, sendEmail
 	}: {
 		platformHome: string
-		tableStorage: FlexStorage
+		storage: FlexStorage
 		sendEmail: SendEmail
 	}) {
 
 	const apiLink = apiOrigin + "/"
 	const {backend} = await mockStandardBackend({
 		platformHome,
-		tableStorage,
+		tableStorage: storage,
 		sendEmail,
 	})
 
 	const {remote, authGoblin} = await mockWiredRemote({
 		apiLink,
 		backend,
-		tableStorage,
+		storage,
 		appWindowLink: platformHome,
 		appId: backend.platformAppId,
 	})

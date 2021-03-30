@@ -9,13 +9,13 @@ import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectApp({
-		origins, platformHome, appWindowLink, tableStorage, mockStateStorage,
+		origins, storage, platformHome, appWindowLink, mockStateStorage,
 		sendEmail,
 	}: {
 		origins: string[]
+		storage: FlexStorage
 		platformHome: string
 		appWindowLink: string
-		tableStorage: FlexStorage
 		mockStateStorage: FlexStorage
 		sendEmail: SendEmail
 	}) {
@@ -26,7 +26,7 @@ export async function mockConnectApp({
 	const apiLink = apiOrigin + "/"
 	const {backend} = await mockStandardBackend({
 		platformHome,
-		tableStorage,
+		tableStorage: storage,
 		sendEmail: emailController.sendEmail,
 	})
 
@@ -50,7 +50,7 @@ export async function mockConnectApp({
 		appId,
 		apiLink,
 		backend,
-		tableStorage,
+		storage,
 		appWindowLink,
 	})
 

@@ -6,12 +6,12 @@ import {makeTokenStore2} from "../../../../../features/auth/goblin/token-store2.
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockWiredRemote({
-		apiLink, appId, appWindowLink, tableStorage, backend,
+		apiLink, appId, storage, appWindowLink, backend,
 	}: {
 		appId: string
 		apiLink: string
+		storage: FlexStorage
 		appWindowLink: string
-		tableStorage: FlexStorage
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
 
@@ -26,7 +26,7 @@ export async function mockWiredRemote({
 		latency: {min: 200, max: 800},
 		tokenStore: makeTokenStore2({
 			appId,
-			storage: tableStorage,
+			storage,
 			publishAppTokenChange: publishTokenChange,
 			publishAuthTokenChange: publishTokenChange,
 		}),
