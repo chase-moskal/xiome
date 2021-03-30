@@ -5,6 +5,7 @@ import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
 import {bankModel} from "../../features/store/models/bank-manager/bank-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
+import {subscriptionPlanningModel} from "../../features/store/models/subscription-planning-model/subscription-planning-model.js"
 
 export async function assembleModels({
 		modals,
@@ -51,6 +52,9 @@ export async function assembleModels({
 		bankModel: bankModel({
 			stripeAccountsService: remote.store.stripeConnectService,
 			triggerBankPopup: popups.triggerBankPopup,
-		})
+		}),
+		subscriptionPlanningModel: subscriptionPlanningModel({
+			shopkeepingService: remote.store.shopkeepingService,
+		}),
 	}
 }
