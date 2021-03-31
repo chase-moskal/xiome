@@ -61,8 +61,8 @@ export class XiomeBankConnect extends WiredComponent<{
 		return html`
 			<p>stripe email: ${details.email}</p>
 			<p>stripe account id: ${details.stripeAccountId}</p>
-			<p>details submitted: ${details.detailsSubmitted}</p>
-			<p>payouts enabled: ${details.payoutsEnabled}</p>
+			<p>details submitted: ${details.details_submitted}</p>
+			<p>payouts enabled: ${details.payouts_enabled}</p>
 			${this.renderCreateOrEditAccount()}
 		`
 	}

@@ -1,11 +1,29 @@
 
+- new store ui
+  - set store status
+  - subscription planning ui
+
+- renames?
+  - `bankModel` => `storeSettingsModel`
+  - `stripeConnectTopic` => `storeSettingsTopic`
+
 - share2 typings not working?
 
-TODO
+
+
+
+TODO - done
 - proper error handling for when bank account isn't linked
-  - new property on access token `ecommerceEnabled`
-  - or, 
-- mock link bank account to enable payments
+  - backend
+    - new topic `storeStatusTopic`
+      - `storeStatusTopic.checkStoreStatus` returns `{available: boolean}`
+      - new policy `prospect` -- hasn't entered the store yet, seeing if it's open!?
+    - new function `shopkeepingTopic.setEcommerceActive` to set availability
+  - frontend
+    - new model `ecommerceModel` caches the above result to localstorage
+    - other store models can ingest the ecommerceModel to check store availability
+
+- in mock startup, mock link bank account to enable payments by default
 
 
 

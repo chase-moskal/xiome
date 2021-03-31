@@ -12,6 +12,9 @@ import {CustomerMeta} from "./policies/types/contexts/customer-meta.js"
 import {CustomerAuth} from "./policies/types/contexts/customer-auth.js"
 import {ClerkMeta} from "./policies/types/contexts/clerk-meta.js"
 import {ClerkAuth} from "./policies/types/contexts/clerk-auth.js"
+import {ProspectMeta} from "./policies/types/contexts/prosect-meta.js"
+import {ProspectAuth} from "./policies/types/contexts/prosect-auth.js"
+import {storeStatusTopic} from "../topics/store-status-topic.js"
 
 export const storeApi = ({
 		rando,
@@ -34,6 +37,10 @@ export const storeApi = ({
 		stripeConnectService: apiContext<MerchantMeta, MerchantAuth>()({
 			policy: policies.merchant,
 			expose: stripeConnectTopic(stripeConnectOptions),
+		}),
+		storeStatusService: apiContext<ProspectMeta, ProspectAuth>()({
+			policy: policies.prospect,
+			expose: storeStatusTopic(),
 		}),
 		shopkeepingService: apiContext<ClerkMeta, ClerkAuth>()({
 			policy: policies.clerk,

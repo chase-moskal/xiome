@@ -86,6 +86,10 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				getConnectDetails: true,
 				generateConnectSetupLink: true,
 			},
+			storeStatusService: {
+				[_augment]: augmentWithAppAndAccessTokens,
+				checkStoreStatus: true,
+			},
 			shoppingService: {
 				[_augment]: augmentWithAppAndAccessTokens,
 				buySubscription: true,
@@ -94,6 +98,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			},
 			shopkeepingService: {
 				[_augment]: augmentWithAppAndAccessTokens,
+				setEcommerceActive: true,
 				listSubscriptionPlans: true,
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,

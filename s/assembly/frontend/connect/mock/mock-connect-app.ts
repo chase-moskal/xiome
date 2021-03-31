@@ -58,5 +58,5 @@ export async function mockConnectApp({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	return {remote, authGoblin, backend, popups}
+	return {appId, remote, authGoblin, backend, popups}
 }

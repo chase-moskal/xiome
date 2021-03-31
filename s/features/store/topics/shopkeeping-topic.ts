@@ -6,10 +6,10 @@ import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {apiProblems} from "../../../toolbox/api-validate.js"
 import {RoleRow} from "../../auth/tables/types/rows/role-row.js"
 import {ClerkAuth} from "../api/policies/types/contexts/clerk-auth.js"
-import {subscriptionPlanFromRow} from "./converters/subscription-plan-from-row.js"
+import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
 import {SubscriptionPlanRow} from "../api/tables/types/rows/subscription-plan-row.js"
 import {SubscriptionPlanDraft} from "../api/tables/types/drafts/subscription-plan-draft.js"
-import {validateSubscriptionPlanDraft} from "./validators/validate-subscription-plan-draft.js"
+import {validateSubscriptionPlanDraft} from "./utils/validate-subscription-plan-draft.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -17,6 +17,17 @@ const hardcodedInterval = "month"
 export const shopkeepingTopic = ({generateId}: {
 		generateId: () => string
 	}) => asTopic<ClerkAuth>()({
+
+	async setEcommerceActive(
+		{tables},
+		{ecommerceActive}: {
+			ecommerceActive: boolean
+		}) {
+		await tables.billing.storeInfo.update({
+			conditions: false,
+			write: {ecommerceActive},
+		})
+	},
 
 	async listSubscriptionPlans({tables}) {
 		const rows = await tables.billing.subscriptionPlans

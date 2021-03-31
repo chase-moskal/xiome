@@ -10,6 +10,7 @@ export async function mockStoreTables(tableStorage: FlexStorage) {
 			subscriptions: true,
 			customers: true,
 			subscriptionPlans: true,
+			storeInfo: true,
 		}),
 		merchant: await mockStorageTables<MerchantTables>(tableStorage, {
 			stripeAccounts: true,

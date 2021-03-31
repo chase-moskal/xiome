@@ -1,17 +1,20 @@
 
 import {makeAppModel} from "../../features/auth/models/app-model.js"
-import {AssembleModelsOptions} from "./types/system-models-options.js"
 import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
+import {AssembleModelsOptions} from "./types/assemble-models-options.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
 import {bankModel as makeBankModel} from "../../features/store/models/bank-manager/bank-model.js"
+import {makeEcommerceModel} from "../../features/store/models/ecommerce-model/ecommerce-model.js"
 import {subscriptionPlanningModel as makeSubscriptionPlanningModel} from "../../features/store/models/subscription-planning-model/subscription-planning-model.js"
 
 export async function assembleModels({
+		appId,
 		modals,
 		remote,
-		authGoblin,
 		popups,
+		storage,
+		authGoblin,
 	}: AssembleModelsOptions) {
 
 	const authModel = makeAuthModel({
@@ -39,7 +42,14 @@ export async function assembleModels({
 		permissionsService: remote.auth.permissionsService,
 	})
 
+	const ecommerceModel = makeEcommerceModel({
+		appId,
+		storage,
+		storeStatusService: remote.store.storeStatusService,
+	})
+
 	const subscriptionPlanningModel = makeSubscriptionPlanningModel({
+		ecommerceModel,
 		shopkeepingService: remote.store.shopkeepingService,
 	})
 
@@ -59,6 +69,7 @@ export async function assembleModels({
 		authModel,
 		bankModel,
 		personalModel,
+		ecommerceModel,
 		permissionsModel,
 		subscriptionPlanningModel,
 	}

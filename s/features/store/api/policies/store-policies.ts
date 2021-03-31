@@ -9,6 +9,8 @@ import {CustomerAuth} from "./types/contexts/customer-auth.js"
 import {CustomerMeta} from "./types/contexts/customer-meta.js"
 import {ClerkMeta} from "./types/contexts/clerk-meta.js"
 import {ClerkAuth} from "./types/contexts/clerk-auth.js"
+import {ProspectMeta} from "./types/contexts/prosect-meta.js"
+import {ProspectAuth} from "./types/contexts/prosect-auth.js"
 
 export function payPolicies(options: StorePolicyOptions) {
 	const authPolicies = prepareAuthPolicies({
@@ -40,6 +42,19 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
+	/** a prospect user is checking if ecommerce is available */
+	const prospect: Policy<ProspectMeta, ProspectAuth> = {
+		async processAuth(meta, request) {
+			const auth = await authPolicies.user.processAuth(meta, request)
+			const common = await commonAuthProcessing(auth.app.appId)
+			const {stripeLiaisonForPlatform} = options.stripeComplex
+			async function getStripeAccount(id: string) {
+				return stripeLiaisonForPlatform.accounts.retrieve(id)
+			}
+			return {...auth, ...common, getStripeAccount}
+		}
+	}
+
 	/** a customer is a user who buys things */
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
@@ -67,5 +82,5 @@ export function payPolicies(options: StorePolicyOptions) {
 		}
 	}
 
-	return {merchant, customer, clerk}
+	return {merchant, prospect, customer, clerk}
 }

@@ -25,10 +25,10 @@ export const stripeConnectTopic = ({
 			const id = existingAssociatedStripeAccount.stripeAccountId
 			const account = await stripeLiaisonForPlatform.accounts.retrieve(id)
 			return {
-				stripeAccountId: account.id,
 				email: account.email,
-				payoutsEnabled: account.payouts_enabled,
-				detailsSubmitted: account.details_submitted,
+				stripeAccountId: account.id,
+				payouts_enabled: account.payouts_enabled,
+				details_submitted: account.details_submitted,
 			}
 		}
 		else {

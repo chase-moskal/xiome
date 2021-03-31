@@ -33,5 +33,5 @@ export async function connect({
 
 	const popups = systemPopups({popupsBase})
 
-	return {remote, authGoblin, popups}
+	return {appId, remote, authGoblin, popups}
 }

@@ -5,12 +5,12 @@ import {mobxify} from "../../../../framework/mobxify.js"
 import {loading} from "../../../../framework/loading/loading.js"
 import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
-import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {makeEcommerceModel} from "../ecommerce-model/ecommerce-model.js"
 import {modelDataInitializationWidget} from "../../../../framework/model-helpers/model-data-initialization-widget.js"
-import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 
-export function subscriptionPlanningModel({shopkeepingService}: {
+export function subscriptionPlanningModel({shopkeepingService, ecommerceModel}: {
 		shopkeepingService: Service<typeof shopkeepingTopic>
+		ecommerceModel: ReturnType<typeof makeEcommerceModel>
 	}) {
 
 	const state = mobxify({
@@ -18,10 +18,14 @@ export function subscriptionPlanningModel({shopkeepingService}: {
 	})
 
 	const load = onesie(async() => {
-		await state.subscriptionPlanLoading.actions.setLoadingUntil({
-			promise: shopkeepingService.listSubscriptionPlans(),
-			errorReason: "failed to load subscription plans",
-		})
+		const storeStatus = await ecommerceModel.fetchStoreStatus()
+		if (storeStatus)
+			await state.subscriptionPlanLoading.actions.setLoadingUntil({
+				promise: shopkeepingService.listSubscriptionPlans(),
+				errorReason: "failed to load subscription plans",
+			})
+		else
+			state.subscriptionPlanLoading.actions.setNone()
 	})
 
 	const {indicateDomUsage, accessChange} = modelDataInitializationWidget({
