@@ -4,6 +4,7 @@ import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
+import {PlanningSituation} from "../../models/subscription-planning-model/types/planning-situation.js"
 import {subscriptionPlanningModel} from "../../models/subscription-planning-model/subscription-planning-model.js"
 
 @mixinStyles(styles)
@@ -14,15 +15,19 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}> {
 
 	firstUpdated() {
-		this.share.subscriptionPlanningModel.indicateDomUsage()
+		this.share.subscriptionPlanningModel.indicateComponentInitialization()
 	}
 
-	private renderList() {
+	private renderListOfSubscriptionPlans() {
 		return renderWrappedInLoading(
-			this.share.subscriptionPlanningModel.subscriptionPlanLoadingView,
-			plans => html`
+
+			this.share.subscriptionPlanningModel
+				.getLoadingViewForSubscriptionPlans(),
+
+			subscriptionPlans => html`
+				<p>subscription plans:</p>
 				<ol>
-					${plans.map(plan => html`
+					${subscriptionPlans.map(plan => html`
 						<li>
 							<p>${plan.label}</p>
 							<p>price: ${plan.price}</p>
@@ -43,12 +48,29 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	render() {
-		return renderWrappedInLoading(
-			this.share.authModel.accessLoadingView,
-			() => html`
-				${this.renderList()}
-				${this.renderCreator()}
-			`
-		)
+		const mode = this.share.subscriptionPlanningModel.getSituationMode()
+		switch (mode) {
+
+			case PlanningSituation.Mode.StoreUninitialized:
+				return html`<p>store is not initialized</p>`
+
+			case PlanningSituation.Mode.LoggedOut:
+				return html`<p>you must be logged in to plan subscriptions</p>`
+
+			case PlanningSituation.Mode.Unprivileged:
+				return html`<p>you're lacking privileges to plan subscriptions</p>`
+
+			case PlanningSituation.Mode.Privileged:
+				return renderWrappedInLoading(
+					this.share.authModel.accessLoadingView,
+					() => html`
+						${this.renderListOfSubscriptionPlans()}
+						${this.renderCreator()}
+					`
+				)
+
+			default:
+				throw new Error("unknown planning situation mode")
+		}
 	}
 }

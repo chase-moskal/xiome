@@ -1,4 +1,4 @@
 
-import {UserMeta} from "../../../../../auth/policies/types/user-meta.js"
+import {AnonMeta} from "../../../../../auth/policies/types/anon-meta.js"
 
-export type ProspectMeta = UserMeta
+export type ProspectMeta = AnonMeta

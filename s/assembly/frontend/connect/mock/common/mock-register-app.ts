@@ -2,12 +2,14 @@
 import {Await} from "../../../../../types/await.js"
 import {mockBackend} from "../../../../backend/mock-backend.js"
 
-export async function mockRegisterApp({apiLink, ownerEmail, appOrigins, backend}: {
-			apiLink: string
-			ownerEmail: string
-			appOrigins: string[]
-			backend: Await<ReturnType<typeof mockBackend>>
-		}) {
+export async function mockRegisterApp({
+		apiLink, ownerEmail, appOrigins, backend
+	}: {
+		apiLink: string
+		ownerEmail: string
+		appOrigins: string[]
+		backend: Await<ReturnType<typeof mockBackend>>
+	}) {
 
 	const mockBrowserForPlatform = await backend.mockBrowser()
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
@@ -28,6 +30,11 @@ export async function mockRegisterApp({apiLink, ownerEmail, appOrigins, backend}
 	})
 
 	console.log("mock: register app", appId)
+
+	// // link bank account with stripe
+	await mockWindowForPlatform.models.bankModel.setupStripeAccount(appId)
+	// const stripeDetails = await mockWindowForPlatform.models.bankModel.getStripeAccountDetails(appId)
+	// console.log("mock: app stripe details", stripeDetails)
 
 	return appId
 }

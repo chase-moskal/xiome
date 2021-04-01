@@ -33,6 +33,7 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 					type: params.type,
 					email: params.email,
 				}
+				await tables.accounts.create(account)
 				return respond(<Stripe.Account>account)
 			},
 			async retrieve(id) {

@@ -50,11 +50,7 @@ export const stripeConnectTopic = ({
 				make: async() => {
 					const {id: stripeAccountId} = await stripeLiaisonForPlatform
 						.accounts.create({type: "standard"})
-					await namespacedTables.merchant.stripeAccounts.create({
-						userId,
-						stripeAccountId,
-					})
-					return {userId, stripeAccountId, appId}
+					return {userId, stripeAccountId}
 				},
 			})
 		)

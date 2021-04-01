@@ -45,7 +45,7 @@ export function payPolicies(options: StorePolicyOptions) {
 	/** a prospect user is checking if ecommerce is available */
 	const prospect: Policy<ProspectMeta, ProspectAuth> = {
 		async processAuth(meta, request) {
-			const auth = await authPolicies.user.processAuth(meta, request)
+			const auth = await authPolicies.anon.processAuth(meta, request)
 			const common = await commonAuthProcessing(auth.app.appId)
 			const {stripeLiaisonForPlatform} = options.stripeComplex
 			async function getStripeAccount(id: string) {

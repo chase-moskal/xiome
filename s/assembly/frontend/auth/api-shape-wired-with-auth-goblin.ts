@@ -24,6 +24,12 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		})
 	}
 
+	const augmentForAnon = {
+		getMeta: async() => ({
+			appToken: await authGoblin.getAppToken(),
+		}),
+	}
+
 	const shape = asShape<SystemApi>({
 		auth: {
 			appTokenService: {
@@ -33,11 +39,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				authorizeApp: true,
 			},
 			loginService: {
-				[_augment]: {
-					getMeta: async() => ({
-						appToken: await authGoblin.getAppToken(),
-					}),
-				},
+				[_augment]: augmentForAnon,
 				authenticateViaLoginToken: true,
 				authorize: true,
 				sendLoginLink: true,
@@ -87,7 +89,7 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				generateConnectSetupLink: true,
 			},
 			storeStatusService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForAnon,
 				checkStoreStatus: true,
 			},
 			shoppingService: {
