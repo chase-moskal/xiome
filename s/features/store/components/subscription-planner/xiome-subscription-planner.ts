@@ -6,6 +6,8 @@ import {WiredComponent, mixinStyles, html, property} from "../../../../framework
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 import {PlanningSituation} from "../../models/subscription-planning-model/types/planning-situation.js"
 import {subscriptionPlanningModel} from "../../models/subscription-planning-model/subscription-planning-model.js"
+import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 
 @mixinStyles(styles)
 export class XiomeSubscriptionPlanner extends WiredComponent<{
@@ -19,11 +21,9 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	private renderListOfSubscriptionPlans() {
+		const {subscriptionPlanningModel} = this.share
 		return renderWrappedInLoading(
-
-			this.share.subscriptionPlanningModel
-				.getLoadingViewForSubscriptionPlans(),
-
+			subscriptionPlanningModel.getLoadingViews().loadingPlans,
 			subscriptionPlans => html`
 				<p>subscription plans:</p>
 				<ol>
@@ -41,9 +41,58 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 		)
 	}
 
+	@property()
+	private draft: SubscriptionPlanDraft = {
+		label: <string>"",
+		price: <number>0,
+	}
+
 	private renderCreator() {
+		const {subscriptionPlanningModel} = this.share
+
+		function handleChangeLabel({detail}: ValueChangeEvent<string>) {
+			this.draft.label = detail
+		}
+
+		function handleChangePrice({detail}: ValueChangeEvent<number>) {
+			this.draft.price = detail
+		}
+
+		function parsePrice(price: string) {
+			return parseFloat(price) * 100
+		}
+
+		async function handleDraftSubmit() {
+			await subscriptionPlanningModel.createPlan(this.draft)
+		}
+
 		return html`
 			<p>subscription plan creator</p>
+			${renderWrappedInLoading(
+				subscriptionPlanningModel.getLoadingViews().loadingPlanCreation,
+				() => html`
+					<p>creator</p>
+
+					<xio-text-input
+						?show-validation-when-empty=${false}
+						.validator=${() => []}
+						@valuechange=${handleChangeLabel}>
+							<span>plan label</span>
+					</xio-text-input>
+
+					<xio-text-input
+						?show-validation-when-empty=${false}
+						.validator=${() => []}
+						.parser=${parsePrice}
+						@valuechange=${handleChangePrice}>
+							<span>plan price</span>
+					</xio-text-input>
+
+					<xio-button @press=${handleDraftSubmit}>
+						create plan
+					</xio-button>
+				`
+			)}
 		`
 	}
 

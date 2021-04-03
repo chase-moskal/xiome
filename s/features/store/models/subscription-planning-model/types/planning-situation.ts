@@ -28,7 +28,8 @@ export namespace PlanningSituation {
 
 	export interface Privileged {
 		mode: Mode.Privileged
-		loadingSubscriptionPlans: Loading<SubscriptionPlan[]>
+		loadingPlanCreation: Loading<void>
+		loadingPlans: Loading<SubscriptionPlan[]>
 	}
 
 	export type Any = StoreUninitialized | LoggedOut | Unprivileged | Privileged

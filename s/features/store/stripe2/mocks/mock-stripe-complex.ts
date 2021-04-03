@@ -67,6 +67,7 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 			"_connectedAccount": stripeConnectAccountId,
 		})
 		return {
+
 			customers: {
 				async create(params) {
 					const customer: Partial<Stripe.Customer> = {
@@ -94,10 +95,36 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 				},
 			},
 
+			products: {
+				async create(params) {
+					const product = <Partial<Stripe.Product>>{
+						id: generateId(),
+						name: params.name,
+						description: params.description,
+					}
+					await tables.products.create(product)
+					return respond(<Stripe.Product>product)
+				},
+				async retrieve(id) {
+					const product = await tables.products.one(find({id}))
+					return respond(<Stripe.Product>product)
+				},
+				async update(id, params) {
+					await tables.products.update({
+						...find({id}),
+						write: {
+							name: params.name,
+							description: params.description,
+						},
+					})
+					const product = await tables.products.one(find({id}))
+					return respond(<Stripe.Product>product)
+				},
+			},
+
 			checkout: undefined,
 			paymentMethods: undefined,
 			prices: undefined,
-			products: undefined,
 			setupIntents: undefined,
 			subscriptions: undefined,
 

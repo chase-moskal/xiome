@@ -9,6 +9,13 @@ import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {makeEcommerceModel} from "../ecommerce-model/ecommerce-model.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {isAllowedToPlanSubscriptions} from "./helpers/is-allowed-to-plan-subscriptions.js"
+import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+
+function loadingStartsReady() {
+	const load = loading<void>()
+	load.actions.setReady()
+	return load
+}
 
 export function subscriptionPlanningModel({
 			shopkeepingService,
@@ -18,27 +25,27 @@ export function subscriptionPlanningModel({
 		ecommerceModel: ReturnType<typeof makeEcommerceModel>
 	}) {
 
-	const state2 = mobxify({
+	const state = mobxify({
 		situation: <PlanningSituation.Any>{
 			mode: PlanningSituation.Mode.LoggedOut,
 		},
 		setSituation(situation: PlanningSituation.Any) {
-			state2.situation = situation
+			state.situation = situation
 		},
 	})
 
 	let activeInDom = false
 
 	const load = onesie(async function() {
-		if (state2.situation.mode === PlanningSituation.Mode.Privileged) {
+		if (state.situation.mode === PlanningSituation.Mode.Privileged) {
 			const storeStatus = await ecommerceModel.fetchStoreStatus()
 			if (storeStatus)
-				await state2.situation.loadingSubscriptionPlans.actions.setLoadingUntil({
+				await state.situation.loadingPlans.actions.setLoadingUntil({
 					errorReason: "failed to load subscription plans",
 					promise: shopkeepingService.listSubscriptionPlans(),
 				})
 			else
-				state2.situation.loadingSubscriptionPlans.actions.setNone()
+				state.situation.loadingPlans.actions.setNone()
 		}
 	})
 
@@ -50,13 +57,14 @@ export function subscriptionPlanningModel({
 	async function accessChange(access: AccessPayload) {
 		const storeStatus = await ecommerceModel.fetchStoreStatus()
 		const storeInitialized = storeStatus !== StoreStatus.Uninitialized
-		state2.setSituation(
+		state.setSituation(
 			storeInitialized
 			? access
 				? isAllowedToPlanSubscriptions(access)
 					? {
 						mode: PlanningSituation.Mode.Privileged,
-						loadingSubscriptionPlans: loading(),
+						loadingPlans: loading(),
+						loadingPlanCreation: loadingStartsReady(),
 					}
 					: {mode: PlanningSituation.Mode.Unprivileged}
 				: {mode: PlanningSituation.Mode.LoggedOut}
@@ -66,55 +74,39 @@ export function subscriptionPlanningModel({
 			await load()
 	}
 
+	function requirePrivilegedSituation() {
+		if (state.situation.mode !== PlanningSituation.Mode.Privileged)
+			throw new Error("not privileged for subscription planning")
+		return state.situation
+	}
+
 	return {
 		accessChange,
 		indicateComponentInitialization,
 		getSituationMode() {
-			return state2.situation.mode
+			return state.situation.mode
 		},
-		getLoadingViewForSubscriptionPlans() {
-			return (<PlanningSituation.Privileged>state2.situation)
-				.loadingSubscriptionPlans.view
+		getLoadingViews() {
+			const situation = requirePrivilegedSituation()
+			return {
+				loadingPlans: situation.loadingPlans.view,
+				loadingPlanCreation: situation.loadingPlanCreation.view,
+			}
 		},
-		// getLoadingViewForSubscriptionPlans() {
-		// 	if (state2.situation.mode !== SubscriptionSituation.Mode.Privileged)
-		// 		throw new Error("cannot get situation planner loading view outside privileged mode")
-		// 	return state2.situation.loadingSubscriptionPlans.view
-		// },
+		async createPlan(draft: SubscriptionPlanDraft) {
+			const situation = requirePrivilegedSituation()
+
+			async function action() {
+				const plan = await shopkeepingService.createSubscriptionPlan({draft})
+				const existingPlans = situation.loadingPlans.view.payload
+				const newPlans = [...existingPlans, plan]
+				situation.loadingPlans.actions.setReady(newPlans)
+			}
+
+			situation.loadingPlanCreation.actions.setLoadingUntil({
+				errorReason: "error creating subscription plan",
+				promise: action(),
+			})
+		},
 	}
-
-	// const state = mobxify({
-	// 	subscriptionPlanLoading: loading<SubscriptionPlan[]>(),
-	// })
-
-	// const load = onesie(async() => {
-	// 	const storeStatus = await ecommerceModel.fetchStoreStatus()
-	// 	if (storeStatus)
-	// 		await state.subscriptionPlanLoading.actions.setLoadingUntil({
-	// 			promise: shopkeepingService.listSubscriptionPlans(),
-	// 			errorReason: "failed to load subscription plans",
-	// 		})
-	// 	else
-	// 		state.subscriptionPlanLoading.actions.setNone()
-	// })
-
-	// /*
-
-	// access: none
-	// 	{mode: None}
-
-	// */
-
-	// const {indicateDomUsage, accessChange} = modelDataInitializationWidget({
-	// 	load,
-	// 	reset: () => state.subscriptionPlanLoading.actions.setNone(),
-	// })
-
-	// return {
-	// 	accessChange,
-	// 	indicateDomUsage,
-	// 	get subscriptionPlanLoadingView() {
-	// 		return state.subscriptionPlanLoading.view
-	// 	},
-	// }
 }
