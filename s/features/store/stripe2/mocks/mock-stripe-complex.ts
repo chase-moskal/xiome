@@ -4,7 +4,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {StripeComplex} from "../types/stripe-complex.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
+import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
 import {StripeLiaisonForApp} from "../types/stripe-liaison-app.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
 import {StripeLiaisonForPlatform} from "../types/stripe-liaison-for-platform.js"
@@ -66,152 +66,221 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 		const tables = prepareConstrainTables(rawTables)({
 			"_connectedAccount": stripeConnectAccountId,
 		})
+
+		function ignoreUndefined<X extends {}>(input: X): X {
+			const output = {}
+			for (const [key, value] of Object.entries(input)) {
+				if (value !== undefined)
+					output[key] = value
+			}
+			return <X>output
+		}
+
+		function prepMockResource<xResource>(table: DbbyTable<any>) {
+			return {
+				create<xParams>({makeData, hook = async() => {}}: {
+						makeData: (params: xParams) => Partial<xResource>
+						hook?: (resource: xResource) => Promise<void>
+					}) {
+					return async function(params: xParams) {
+						const resource = <Partial<xResource>><any>{
+							id: generateId(),
+							...makeData(params),
+						}
+						await table.create(resource)
+						await hook(<xResource>resource)
+						return respond(<xResource>resource)
+					}
+				},
+				retrieve() {
+					return async function(id: string) {
+						const resource = await table.one(find({id}))
+						return respond<xResource>(resource)
+					}
+				},
+				update<xParams>({makeData, hook = async() => {}}: {
+						makeData: (params: xParams) => Partial<xResource>
+						hook?: (resource: xResource) => Promise<void>
+					}) {
+					return async function(id: string, params: xParams) {
+						await table.update({
+							...find({id}),
+							write: ignoreUndefined(makeData(params)),
+						})
+						const resource = await table.one(find({id}))
+						await hook(<xResource>resource)
+						return respond(<xResource>resource)
+					}
+				},
+				delete() {
+					return async function(id: string) {
+						await table.delete(find({id}))
+					}
+				},
+			}
+		}
+
+		function mockResource<xResource, xCreateParams, xUpdateParams>({
+				table,
+				createData,
+				updateData,
+				createHook,
+				updateHook,
+			}: {
+				table: DbbyTable<any>
+				createData: (params: xCreateParams) => Partial<xResource>
+				updateData: (params: xUpdateParams) => Partial<xResource>
+				createHook?: (resource: xResource) => Promise<void>
+				updateHook?: (resource: xResource) => Promise<void>
+			}) {
+			const context = prepMockResource<xResource>(table)
+			return {
+				create: context.create<xCreateParams>({
+					makeData: createData,
+					hook: createHook,
+				}),
+				retrieve: context.retrieve(),
+				update: context.update<xUpdateParams>({
+					makeData: updateData,
+					hook: updateHook,
+				}),
+				delete: context.delete(),
+			}
+		}
+
 		return {
 
-			customers: {
-				async create(params) {
-					const customer: Partial<Stripe.Customer> = {
-						id: generateId(),
-						email: params.email,
-						invoice_settings: <any>{default_payment_method: undefined},
-					}
-					await tables.customers.create(customer)
-					return respond(<Stripe.Customer>customer)
-				},
-				async retrieve(id) {
-					const customer = await tables.customers.one(find({id}))
-					return respond(<Stripe.Customer>customer)
-				},
-				async update(id, params) {
-					await tables.customers.update({
-						...find({id}),
-						write: {
-							email: params.email,
-							invoice_settings: <any>params.invoice_settings,
-						},
-					})
-					const customer = await tables.customers.one(find({id}))
-					return respond(<Stripe.Customer>customer)
-				},
+			customers: mockResource<
+					Stripe.Customer,
+					Stripe.CustomerCreateParams,
+					Stripe.CustomerUpdateParams
+				>({
+				table: tables.customers,
+				createData: params => ({
+					email: params.email,
+					invoice_settings: <any>params.invoice_settings
+						?? {default_payment_method: undefined},
+				}),
+				updateData: params => ({
+					email: params.email,
+					invoice_settings: <any>params.invoice_settings,
+				}),
+			}),
+
+			products: mockResource<
+					Stripe.Product,
+					Stripe.ProductCreateParams,
+					Stripe.ProductUpdateParams
+				>({
+				table: tables.products,
+				createData: params => ({
+					name: params.name,
+					description: params.description,
+				}),
+				updateData: params => ({
+					name: params.name,
+					description: params.description,
+				}),
+			}),
+
+			prices: mockResource<
+					Stripe.Price,
+					Stripe.PriceCreateParams,
+					Stripe.PriceUpdateParams
+				>({
+				table: tables.prices,
+				createData: params => ({
+					product: params.product,
+					currency: params.currency,
+					unit_amount: params.unit_amount,
+					recurring: <any>params.recurring,
+				}),
+				updateData: params => ({
+					active: params.active,
+				}),
+			}),
+
+			checkout: {
+				sessions: mockResource<
+						Stripe.Checkout.Session,
+						Stripe.Checkout.SessionCreateParams,
+						Stripe.Checkout.Session
+					>({
+					table: tables.checkoutSessions,
+					createData: params => ({
+						customer: params.customer,
+					}),
+					updateData: params => ({}),
+					createHook: async session => {
+						await webhookEvent("checkout.session.completed", session)
+					},
+					updateHook: async session => {
+						await webhookEvent("checkout.session.completed", session)
+					},
+				}),
 			},
 
-			products: {
-				async create(params) {
-					const product = <Partial<Stripe.Product>>{
-						id: generateId(),
-						name: params.name,
-						description: params.description,
-					}
-					await tables.products.create(product)
-					return respond(<Stripe.Product>product)
-				},
-				async retrieve(id) {
-					const product = await tables.products.one(find({id}))
-					return respond(<Stripe.Product>product)
-				},
-				async update(id, params) {
-					await tables.products.update({
-						...find({id}),
-						write: {
-							name: params.name,
-							description: params.description,
-						},
-					})
-					const product = await tables.products.one(find({id}))
-					return respond(<Stripe.Product>product)
-				},
-			},
+			paymentMethods: mockResource<
+					Stripe.PaymentMethod,
+					Stripe.PaymentMethodCreateParams,
+					Stripe.PaymentMethodUpdateParams
+				>({
+				table: tables.paymentMethods,
+				createData: params => ({
+					type: params.type,
+					customer: params.customer,
+				}),
+				updateData: params => ({}),
+			}),
 
-			checkout: undefined,
-			paymentMethods: undefined,
-			prices: undefined,
-			setupIntents: undefined,
-			subscriptions: undefined,
+			setupIntents: mockResource<
+					Stripe.SetupIntent,
+					Stripe.SetupIntentCreateParams,
+					Stripe.SetupIntentUpdateParams
+				>({
+				table: tables.setupIntents,
+				createData: params => ({
+					customer: params.customer,
+					payment_method: params.payment_method,
+					usage: params.usage,
+				}),
+				updateData: params => ({
+					payment_method: params.payment_method,
+				}),
+			}),
 
-			// customers: {
-			// 	async createCustomer() {
-			// 		const customer: Partial<Stripe.Customer> = {
-			// 			id: generateId(),
-			// 			invoice_settings: <any>{
-			// 				default_payment_method: undefined,
-			// 			},
-			// 		}
-			// 		await tables.customers.create(customer)
-			// 		return <Stripe.Customer>customer
-			// 	},
-			// 	async updateDefaultPaymentMethod({customer, paymentMethod}) {
-			// 		await tables.customers.update({
-			// 			...find({id: customer}),
-			// 			write: {
-			// 				invoice_settings: <any>{
-			// 					default_payment_method: undefined,
-			// 				},
-			// 			},
-			// 		})
-			// 	},
-			// 	async fetchPaymentMethod(paymentMethod) {
-			// 		return <Stripe.PaymentMethod>await tables
-			// 			.paymentMethods.one(find({id: paymentMethod}))
-			// 	},
-			// 	async fetchPaymentDetailsByIntentId(intentId) {
-			// 		const intent = await tables.setupIntents.one(find({id: intentId}))
-			// 		const paymentMethodId = getStripeId(intent.payment_method)
-			// 		return <Stripe.PaymentMethod>await tables
-			// 			.paymentMethods.one(find({id: paymentMethodId}))
-			// 	},
-			// 	async fetchPaymentDetailsBySubscriptionId(subscriptionId) {
-			// 		const subscription = await tables
-			// 			.subscriptions.one(find({id: subscriptionId}))
-			// 		const paymentMethodId = getStripeId(subscription.default_payment_method)
-			// 		return <Stripe.PaymentMethod>await tables
-			// 			.paymentMethods.one(find({id: paymentMethodId}))
-			// 	},
-			// },
-			// checkouts: {
-			// 	async purchaseSubscriptions({userId, prices, customer}) {
-			// 		const session = <Stripe.Checkout.Session>{
-			// 			id: generateId(),
-			// 			mode: "subscription",
-			// 			payment_status: "paid",
-			// 			line_items: {
-			// 				data: prices.map(id => ({price: {id}})),
-			// 			},
-			// 		}
-			// 		await webhookEvent("checkout.session.completed", session)
-			// 		return <Stripe.Checkout.Session>session
-			// 	},
-			// 	async setupSubscription({userId, customer, subscription}) {
-			// 		const session = <Stripe.Checkout.Session>{
-			// 			id: generateId(),
-			// 			mode: "setup",
-			// 			subscription,
-			// 		}
-			// 		await webhookEvent("checkout.session.completed", session)
-			// 		return <Stripe.Checkout.Session>session
-			// 	},
-			// },
-			// products: {},
-			// subscriptions: {
-			// 	async fetchSubscription(id) {
-			// 		return <Stripe.Subscription>await tables
-			// 			.subscriptions.one(find({id}))
-			// 	},
-			// 	async updatePaymentMethodForSubscription({
-			// 			subscription,
-			// 			paymentMethod,
-			// 		}) {
-			// 		await tables.subscriptions.update({
-			// 			...find({id: subscription}),
-			// 			write: {default_payment_method: paymentMethod},
-			// 		})
-			// 	},
-			// 	async scheduleSubscriptionCancellation(subscription) {
-			// 		await tables.subscriptions.update({
-			// 			...find({id: subscription}),
-			// 			write: {cancel_at_period_end: true},
-			// 		})
-			// 	},
-			// },
+			subscriptions: mockResource<
+					Stripe.Subscription,
+					Stripe.SubscriptionCreateParams,
+					Stripe.SubscriptionUpdateParams
+				>({
+				table: tables.subscriptions,
+				createData: params => ({
+					customer: params.customer,
+					default_payment_method: params.default_payment_method,
+					cancel_at_period_end: params.cancel_at_period_end,
+					items: {
+						url: "",
+						object: "list",
+						has_more: false,
+						data: <any>params.items.map(itemParams => ({
+							id: generateId(),
+							billing_thresholds: itemParams.billing_thresholds,
+							price: itemParams.price,
+							price_data: itemParams.price_data,
+							quantity: itemParams.quantity,
+							tax_rates: itemParams.tax_rates,
+						})),
+					},
+				}),
+				updateData: params => ({
+					cancel_at_period_end: params.cancel_at_period_end,
+					default_payment_method: params.default_payment_method,
+				}),
+				updateHook: async subscription => {
+					await webhookEvent("customer.subscription.updated", subscription)
+				},
+			}),
 		}
 	}
 

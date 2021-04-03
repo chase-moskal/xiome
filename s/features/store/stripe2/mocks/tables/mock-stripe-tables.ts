@@ -19,6 +19,7 @@ export async function mockStripeTables({tableStorage}: {tableStorage: FlexStorag
 		setupIntents: <Stripe.SetupIntent>undefined,
 		subscriptions: <Stripe.Subscription>undefined,
 		paymentMethods: <Stripe.PaymentMethod>undefined,
+		checkoutSessions: <Stripe.Checkout.Session>undefined,
 	}
 
 	const tables = await concurrent(
