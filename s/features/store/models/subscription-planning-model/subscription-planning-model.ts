@@ -93,20 +93,39 @@ export function subscriptionPlanningModel({
 				loadingPlanCreation: situation.loadingPlanCreation.view,
 			}
 		},
+
 		async createPlan(draft: SubscriptionPlanDraft) {
 			const situation = requirePrivilegedSituation()
-
 			async function action() {
 				const plan = await shopkeepingService.createSubscriptionPlan({draft})
 				const existingPlans = situation.loadingPlans.view.payload
 				const newPlans = [...existingPlans, plan]
 				situation.loadingPlans.actions.setReady(newPlans)
 			}
-
 			situation.loadingPlanCreation.actions.setLoadingUntil({
 				errorReason: "error creating subscription plan",
 				promise: action(),
 			})
 		},
+
+		async deactivatePlan(subscriptionPlanId: string) {
+			const situation = requirePrivilegedSituation()
+			situation.loadingPlans.actions.setLoadingUntil({
+				errorReason: "error occurred",
+				promise: shopkeepingService
+					.deactivateSubscriptionPlan({subscriptionPlanId})
+					.then(shopkeepingService.listSubscriptionPlans)
+			})
+		},
+
+		async deletePlan(subscriptionPlanId: string) {
+			const situation = requirePrivilegedSituation()
+			situation.loadingPlans.actions.setLoadingUntil({
+				errorReason: "error occurred",
+				promise: shopkeepingService
+					.deleteSubscriptionPlan({subscriptionPlanId})
+					.then(shopkeepingService.listSubscriptionPlans)
+			})
+		}
 	}
 }

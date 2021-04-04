@@ -11,7 +11,7 @@ import {find} from "../../../toolbox/dbby/dbby-x.js"
 export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
 	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
-		const all: {conditions: false} = {conditions: false}
+		const all = {conditions: false} as const
 		return concurrent({
 			roles: tables.permissions.role.read(all).then(
 				rows => rows.map(row => ({

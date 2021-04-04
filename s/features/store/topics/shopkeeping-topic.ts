@@ -8,8 +8,8 @@ import {RoleRow} from "../../auth/tables/types/rows/role-row.js"
 import {ClerkAuth} from "../api/policies/types/contexts/clerk-auth.js"
 import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
 import {SubscriptionPlanRow} from "../api/tables/types/rows/subscription-plan-row.js"
-import {SubscriptionPlanDraft} from "../api/tables/types/drafts/subscription-plan-draft.js"
 import {validateSubscriptionPlanDraft} from "./utils/validate-subscription-plan-draft.js"
+import {SubscriptionPlanDraft} from "../api/tables/types/drafts/subscription-plan-draft.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -19,10 +19,9 @@ export const shopkeepingTopic = ({generateId}: {
 	}) => asTopic<ClerkAuth>()({
 
 	async setEcommerceActive(
-		{tables},
-		{ecommerceActive}: {
-			ecommerceActive: boolean
-		}) {
+			{tables},
+			{ecommerceActive}: {ecommerceActive: boolean}
+		) {
 		await tables.billing.storeInfo.update({
 			conditions: false,
 			write: {ecommerceActive},
@@ -48,10 +47,9 @@ export const shopkeepingTopic = ({generateId}: {
 	},
 
 	async createSubscriptionPlan(
-		{tables, stripeLiaisonForApp},
-		{draft}: {
-			draft: SubscriptionPlanDraft
-		}) {
+			{tables, stripeLiaisonForApp},
+			{draft}: {draft: SubscriptionPlanDraft}
+		) {
 
 		apiProblems(validateSubscriptionPlanDraft(draft))
 
@@ -136,6 +134,8 @@ export const shopkeepingTopic = ({generateId}: {
 		await stripeLiaisonForApp.prices
 			.update(stripePriceId, {active: false})
 
+		// TODO cancel all stripe subscriptions
+
 		await tables.billing.subscriptionPlans.update({
 			...find({subscriptionPlanId}),
 			write: {active: false},
@@ -143,10 +143,9 @@ export const shopkeepingTopic = ({generateId}: {
 	},
 
 	async deleteSubscriptionPlan(
-		{tables},
-		{subscriptionPlanId}: {
-			subscriptionPlanId: string
-		}) {
+			{tables},
+			{subscriptionPlanId}: {subscriptionPlanId: string}
+		) {
 
 		const {roleId, active} = await tables.billing.subscriptionPlans
 			.one(find({subscriptionPlanId}))

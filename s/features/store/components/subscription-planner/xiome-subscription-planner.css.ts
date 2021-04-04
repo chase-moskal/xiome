@@ -14,16 +14,17 @@ h3 {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	margin-top: 1rem;
+	border: 1px solid;
 }
 
 .plans > li > * {
 	flex: 1 1 auto;
 	padding: 0.5em;
-	border: 1px solid;
 }
 
-.plans > li {
-	margin-top: 1rem;
+.planinfo {
+	width: 32em;
 }
 
 .planinfo > * + * {
@@ -44,6 +45,10 @@ h3 {
 	font-size: 1.5em;
 }
 
+.planinfo .activity {
+	max-width: 32em;
+}
+
 .planinfo .activity-indicator {
 	display: inline-block;
 	color: white;
@@ -61,7 +66,7 @@ h3 {
 	max-width: 15em;
 }
 
-.plancontrols xio-button {
+.plancontrols > * + * {
 	margin-top: 0.5em;
 }
 
