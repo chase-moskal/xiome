@@ -11,12 +11,6 @@ import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {isAllowedToPlanSubscriptions} from "./helpers/is-allowed-to-plan-subscriptions.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
 
-function loadingStartsReady() {
-	const load = loading<void>()
-	load.actions.setReady()
-	return load
-}
-
 export function subscriptionPlanningModel({
 			shopkeepingService,
 			ecommerceModel,
@@ -34,9 +28,9 @@ export function subscriptionPlanningModel({
 		},
 	})
 
-	let activeInDom = false
+	let isActiveInDom = false
 
-	const load = onesie(async function() {
+	const loadPlans = onesie(async function() {
 		if (state.situation.mode === PlanningSituation.Mode.Privileged) {
 			const storeStatus = await ecommerceModel.fetchStoreStatus()
 			if (storeStatus)
@@ -49,29 +43,10 @@ export function subscriptionPlanningModel({
 		}
 	})
 
-	async function indicateComponentInitialization() {
-		activeInDom = true
-		await load()
-	}
-
-	async function accessChange(access: AccessPayload) {
-		const storeStatus = await ecommerceModel.fetchStoreStatus()
-		const storeInitialized = storeStatus !== StoreStatus.Uninitialized
-		state.setSituation(
-			storeInitialized
-			? access
-				? isAllowedToPlanSubscriptions(access)
-					? {
-						mode: PlanningSituation.Mode.Privileged,
-						loadingPlans: loading(),
-						loadingPlanCreation: loadingStartsReady(),
-					}
-					: {mode: PlanningSituation.Mode.Unprivileged}
-				: {mode: PlanningSituation.Mode.LoggedOut}
-			: {mode: PlanningSituation.Mode.StoreUninitialized}
-		)
-		if (activeInDom)
-			await load()
+	function createLoadingThatStartsReady() {
+		const load = loading<void>()
+		load.actions.setReady()
+		return load
 	}
 
 	function requirePrivilegedSituation() {
@@ -81,11 +56,36 @@ export function subscriptionPlanningModel({
 	}
 
 	return {
-		accessChange,
-		indicateComponentInitialization,
+
+		async requestToStartLoadingPlans() {
+			isActiveInDom = true
+			await loadPlans()
+		},
+
+		async accessChange(access: AccessPayload) {
+			const storeStatus = await ecommerceModel.fetchStoreStatus()
+			const storeInitialized = storeStatus !== StoreStatus.Uninitialized
+			state.setSituation(
+				storeInitialized
+					? access
+						? isAllowedToPlanSubscriptions(access)
+							? {
+								mode: PlanningSituation.Mode.Privileged,
+								loadingPlans: loading(),
+								loadingPlanCreation: createLoadingThatStartsReady(),
+							}
+							: {mode: PlanningSituation.Mode.Unprivileged}
+						: {mode: PlanningSituation.Mode.LoggedOut}
+					: {mode: PlanningSituation.Mode.StoreUninitialized}
+			)
+			if (isActiveInDom)
+				await loadPlans()
+		},
+
 		getSituationMode() {
 			return state.situation.mode
 		},
+
 		getLoadingViews() {
 			const situation = requirePrivilegedSituation()
 			return {
