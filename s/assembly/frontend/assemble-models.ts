@@ -58,10 +58,10 @@ export async function assembleModels({
 		triggerBankPopup: popups.triggerBankPopup,
 	})
 
-	authModel.onAccessChange(access => {
-		appModel.accessChange()
-		permissionsModel.accessChange(access)
-		subscriptionPlanningModel.accessChange(access)
+	authModel.onAccessChange(async access => {
+		await appModel.accessChange()
+		await permissionsModel.accessChange(access)
+		await subscriptionPlanningModel.accessChange(access)
 	})
 
 	return {

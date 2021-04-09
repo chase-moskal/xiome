@@ -32,11 +32,11 @@ export function makeAuthModel({authGoblin, loginService}: AuthModelOptions) {
 				promise: authGoblin.getAccess(),
 				errorReason: "error loading existing login",
 			})
-			authGoblin.forceAccessChange(access)
+			await authGoblin.forceAccessChange(access)
 		},
 
 		async sendLoginLink(email: string) {
-			return await loginService.sendLoginLink({email})
+			return loginService.sendLoginLink({email})
 		},
 
 		async login(loginToken: LoginToken) {

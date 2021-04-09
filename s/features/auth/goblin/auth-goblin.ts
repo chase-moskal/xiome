@@ -83,7 +83,7 @@ export function makeAuthGoblin({appId, tokenStore, authorize, authorizeApp}: {
 		clearAuth: clearTokens,
 		onAccessChange: accessEvent.subscribe,
 		async forceAccessChange(access: AccessPayload) {
-			accessEvent.publish(access)
+			await accessEvent.publish(access)
 		},
 		async refreshFromStorage() {
 			const {access} = await getAccessAndReauthorizeIfNecessary()
