@@ -19,15 +19,20 @@ export function makePermissionsModel({
 	const actions = mobxify({
 		reload: onesie(async() => {
 			if (await getAccess()) {
-				await state.permissionsLoading.actions.setLoadingUntil({
-					promise: permissionsService.fetchPermissions(),
-					errorReason: "error loading permissions",
-				})
+				try {
+					await state.permissionsLoading.actions.setLoadingUntil({
+						promise: permissionsService.fetchPermissions(),
+						errorReason: "error loading permissions",
+					})
+				}
+				catch (e) {
+					console.log(e)
+				}
 			}
 		}),
 		async load() {
 			state.active = true
-			actions.reload()
+			await actions.reload()
 		},
 		deactivate() {
 			state.active = false
