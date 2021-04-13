@@ -5,6 +5,7 @@ import {ModalSystem} from "../types/modal-system.js"
 export function prepareConfirm(
 		popup: ModalSystem["popup"]
 	): ModalSystem["confirm"] {
+
 	return async({
 			title,
 			body = null,
@@ -13,17 +14,27 @@ export function prepareConfirm(
 			focusNthElement = 1,
 			blanketClickMeansNo = true,
 		}) => new Promise<boolean>(resolve => {
-		popup({
+
+		const {controls} = popup({
+
 			focusNthElement,
+
 			onBlanketClick: blanketClickMeansNo
-				? controls => {
+				? () => {
 					controls.close()
 					resolve(false)
 				}
 				: () => {},
-			renderContent: controls => {
-				const onYes = () => { controls.close(); resolve(true) }
-				const onNo = () => { controls.close(); resolve(false) }
+
+			renderContent: () => {
+				const onYes = () => {
+					controls.close()
+					resolve(true)
+				}
+				const onNo = () => {
+					controls.close()
+					resolve(false)
+				}
 				return html`
 					<div data-confirm>
 						${typeof title == "string" ? html`<h2>${title}</h2>` : title}

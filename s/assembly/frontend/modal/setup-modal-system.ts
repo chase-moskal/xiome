@@ -17,7 +17,7 @@ export function setupModalSystem() {
 	const listModals = () => Array.from(modals.values())
 	const {rerender, element} = prepareModalSystemRendering(listModals)
 
-	function popup({renderContent, onBlanketClick, focusNthElement}: PopupOptions) {
+	function popup({focusNthElement, renderContent, onBlanketClick}: PopupOptions) {
 		const id = count++
 		const controls: ModalControls = {
 			rerender,
@@ -30,14 +30,14 @@ export function setupModalSystem() {
 			?? document.documentElement.scrollTop
 			?? document.body.scrollTop
 			?? 0
-		const handleBlanketClick = () => onBlanketClick(controls)
+		const handleBlanketClick = () => onBlanketClick()
 		modals.set(id, {
 			render() {
 				return html`
 					<div data-modal="${id}">
 						<div data-blanket @click=${handleBlanketClick}></div>
 						<div data-plate style="top: ${top}px">
-							${renderContent(controls)}
+							${renderContent()}
 						</div>
 					</div>
 				`

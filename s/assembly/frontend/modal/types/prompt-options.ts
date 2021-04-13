@@ -16,4 +16,5 @@ export interface PromptOptions<xValue> {
 	yes?: ButtonOptions
 	no?: ButtonOptions
 	focusNthElement?: number
+	blanketClickMeansCancel?: boolean
 }

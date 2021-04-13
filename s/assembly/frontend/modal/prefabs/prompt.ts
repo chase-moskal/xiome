@@ -1,11 +1,12 @@
 
 import {html} from "lit-html"
 import {ModalSystem} from "../types/modal-system.js"
-import {XioTextInput} from "../../../../features/xio-components/inputs/xio-text-input.js"
 import {ModalControls} from "../types/modal-controls.js"
+import {XioTextInput} from "../../../../features/xio-components/inputs/xio-text-input.js"
 
-export function preparePrompt(popup: ModalSystem["popup"]):
-		ModalSystem["prompt"] {
+export function preparePrompt(
+		popup: ModalSystem["popup"]
+	): ModalSystem["prompt"] {
 
 	return async({
 			title,
@@ -14,9 +15,11 @@ export function preparePrompt(popup: ModalSystem["popup"]):
 			yes = {label: "okay", vibe: "positive"},
 			no = {label: "nevermind", vibe: "neutral"},
 			focusNthElement = 1,
+			blanketClickMeansCancel = true,
 		}) => new Promise(resolve => {
 
-		const xioTextInput: XioTextInput<any> = <any>document.createElement("xio-text-input")
+		const xioTextInput: XioTextInput<any> =
+			<any>document.createElement("xio-text-input")
 		xioTextInput.textarea = input.textarea ?? false
 		xioTextInput.parser = input.parser
 		xioTextInput.validator = input.validator
@@ -51,8 +54,13 @@ export function preparePrompt(popup: ModalSystem["popup"]):
 
 		const {controls, modal} = popup({
 			focusNthElement,
-			onBlanketClick: () => {},
-			renderContent: controls => {
+			onBlanketClick: blanketClickMeansCancel
+				? () => {
+					controls.close()
+					resolve(undefined)
+				}
+				: () => {},
+			renderContent: () => {
 				const finish = prepareFinishingMoves(controls)
 				return html`
 					<div data-confirm>
