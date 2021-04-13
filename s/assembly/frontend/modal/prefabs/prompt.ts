@@ -55,12 +55,12 @@ export function preparePrompt(
 		const {controls, modal} = popup({
 			focusNthElement,
 			onBlanketClick: blanketClickMeansCancel
-				? () => {
+				? controls => {
 					controls.close()
 					resolve(undefined)
 				}
 				: () => {},
-			renderContent: () => {
+			renderContent: controls => {
 				const finish = prepareFinishingMoves(controls)
 				return html`
 					<div data-confirm>

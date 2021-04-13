@@ -30,14 +30,14 @@ export function setupModalSystem() {
 			?? document.documentElement.scrollTop
 			?? document.body.scrollTop
 			?? 0
-		const handleBlanketClick = () => onBlanketClick()
+		const handleBlanketClick = () => onBlanketClick(controls)
 		modals.set(id, {
 			render() {
 				return html`
 					<div data-modal="${id}">
 						<div data-blanket @click=${handleBlanketClick}></div>
 						<div data-plate style="top: ${top}px">
-							${renderContent()}
+							${renderContent(controls)}
 						</div>
 					</div>
 				`

@@ -15,18 +15,18 @@ export function prepareConfirm(
 			blanketClickMeansNo = true,
 		}) => new Promise<boolean>(resolve => {
 
-		const {controls} = popup({
+		popup({
 
 			focusNthElement,
 
 			onBlanketClick: blanketClickMeansNo
-				? () => {
+				? controls => {
 					controls.close()
 					resolve(false)
 				}
 				: () => {},
 
-			renderContent: () => {
+			renderContent: controls => {
 				const onYes = () => {
 					controls.close()
 					resolve(true)
