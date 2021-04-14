@@ -9,7 +9,7 @@ class XioPlayground extends Component {
 	render() {
 
 		const user: User = {
-			userId: "99ec48f8c4d4cc603c590a889d862a207fcfdcf561b3945de56bab22f51ce621",
+			userId: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
 			profile: {
 				avatar: "",
 				nickname: "Original Ostrich",

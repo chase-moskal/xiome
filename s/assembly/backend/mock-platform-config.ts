@@ -26,7 +26,7 @@ export function mockPlatformConfig({
 				email: technicianEmail,
 			},
 			appDetails: {
-				appId: "402208a6d3295aad235c68cb20a35c30e835344bbc40fb398744c593b6aea076",
+				appId: "96bncPFrDyzJtXqPzHcmDTs7CFSc2SHkgTdZR5wHXCNST25H",
 				label: platformLabel,
 				home: platformHome,
 				origins: [new URL(platformHome).origin],

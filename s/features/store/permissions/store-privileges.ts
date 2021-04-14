@@ -1,5 +1,5 @@
 
 export const storePrivileges = {
-	"manage products and subscription plans": "4e08b54adeed81e9500514900c29ca28b718064f302a70e1767e9e88b04facf1",
-	"give products and subscriptions away for free": "cdec855afb957cb20a5fee94fad876c0b21629c88d64a65183102c59b3535126",
+	"manage products and subscription plans": "68hZRpZHY7M6pmHCtHZGCZbDXzZyNHsKgTzGyZcT5JKCqZ2g",
+	"give products and subscriptions away for free": "2Pgw9ZHw8FWhfWXC9fpqXFPPnBNXSkNwbt6BdzqhPcHFyrMS",
 }

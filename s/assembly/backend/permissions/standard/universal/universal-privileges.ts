@@ -3,5 +3,5 @@ import {powerPrivileges} from "./privilege-groups/power-privileges.js"
 
 export const universalPrivileges = {
 	...powerPrivileges,
-	"banned": "47695268965339c433de5c4dbf69890d97c5f03df3b461b1750f02c7e5ff376a",
+	"banned": "2D2CHFmR7cm77xz6Y9hChWgNr5SkFf8zhXds69sqcNYfcGWS",
 }

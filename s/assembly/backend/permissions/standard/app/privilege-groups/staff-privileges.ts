@@ -3,5 +3,5 @@ import {storePrivileges} from "../../../../../../features/store/permissions/stor
 
 export const staffPrivileges = {
 	...storePrivileges,
-	"customize privileges": "3f58be56d5176b376debfa6ceecc734eeca948ab75b051843d012aed8b6c673a",
+	"customize privileges": "7zk5csW78DHXHbFKzGdYfthYmTkwWKtGD7YnqPswW9Twm5FK",
 }
