@@ -3,11 +3,12 @@
 
 systemic
 
-- [ ] base 42 ids for whole system
+- [x] base 42 ids for whole system
   - implement it
   - new ids for all hardcoded things, permissions, platform app, etc
 
 - [ ] dbby binary data type
+  - not sure if worth?
 
 - [ ] renames
   - `bankModel` => `storeSettingsModel`
