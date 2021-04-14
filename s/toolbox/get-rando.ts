@@ -1,5 +1,5 @@
 
-import {encodeHex} from "./bytes.js"
+import {encodeBase42, encodeHex} from "./bytes.js"
 import {Await} from "../types/await.js"
 import {isNode as stockIsNode} from "./is-node.js"
 
@@ -38,7 +38,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 	
 	function randomId() {
 		const bytes = getRandomBytes(32)
-		return encodeHex(bytes)
+		return encodeBase42(bytes)
 	}
 	
 	function randomSample<T>(palette: T[]): T {
