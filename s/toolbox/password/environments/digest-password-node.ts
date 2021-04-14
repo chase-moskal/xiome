@@ -1,5 +1,5 @@
 
-import {decodeHex} from "../../binary.js"
+import {decodeHex} from "../../binary/hex.js"
 import {digestIterations, digestByteLength, digestAlgorithm} from "../password-constants.js"
 
 export async function digestPasswordNode({salt, password}: {
