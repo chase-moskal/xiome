@@ -1,10 +1,11 @@
 
-const u8 = (buffer: ArrayBuffer) => new Uint8Array(buffer)
-const base42_characters = "256789BCDFGHJKMNPRSTWXYZbcdfghkmnpqrstwxyz"
+//
+// hex
+//
 
 export function encodeHex(buffer: ArrayBuffer) {
 	let result = ""
-	for (const byte of u8(buffer))
+	for (const byte of new Uint8Array(buffer))
 		result += ("0" + (byte & 0xFF).toString(16)).slice(-2)
 	return result
 }
@@ -16,8 +17,16 @@ export function decodeHex(hex: string): ArrayBuffer {
 	return new Uint8Array(result).buffer
 }
 
+//
+// base 64 url
+//
+
+function addEqualsPadding(base64: string) {
+	return base64 + Array((4 - base64.length % 4) % 4 + 1).join("=")
+}
+
 export function encodeBase64url(buffer: ArrayBuffer): string {
-	return btoa(String.fromCharCode(...u8(buffer)))
+	return btoa(String.fromCharCode(...new Uint8Array(buffer)))
 		.replace(/=/g, "")
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")
@@ -38,9 +47,11 @@ export function decodeBase64url(base64: string): ArrayBuffer {
 	).buffer
 }
 
-function addEqualsPadding(base64: string) {
-	return base64 + Array((4 - base64.length % 4) % 4 + 1).join("=")
-}
+//
+// base 42
+//
+
+const base42_characters = "256789BCDFGHJKMNPRSTWXYZbcdfghkmnpqrstwxyz"
 
 export function encodeBase42(buffer: ArrayBuffer) {
 	const hex = encodeHex(buffer)
