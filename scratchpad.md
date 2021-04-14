@@ -1,4 +1,61 @@
 
+## work to launch
+
+systemic
+
+- [ ] base 42 ids for whole system
+  - implement it
+  - new ids for all hardcoded things, permissions, platform app, etc
+
+- [ ] dbby binary data type
+
+- [ ] renames
+  - `bankModel` => `storeSettingsModel`
+  - `stripeConnectTopic` => `storeSettingsTopic`
+
+- [ ] fix share2 typings
+
+ui infrastructure
+
+- [ ] price displays
+  - create a plan
+
+- [ ] system id displays 
+  - design
+  - implementation
+
+feature dev for launch
+
+- [ ] store status togglability
+
+- [ ] prepare subscription plans for launch
+  - availability toggle
+  - remove deactivation/deletion
+
+- [ ] questions board
+  - crude port from metalshop
+  - fully integrate new permissions
+
+- [ ] livestream
+  - crude port from metalshop
+  - fully integrate new permissions
+
+- [ ] stripe testing
+  - set stripe webhook testing
+  - implement all webhook cycles
+
+- [ ] finish permissions ui
+  - delete custom roles
+
+- [ ] admin user search and edit roles
+
+- [ ] technician can disable an entire community/app
+
+
+
+
+-------
+
 - new store ui
   - set store status
   - subscription planning ui
@@ -7,7 +64,6 @@
   - `bankModel` => `storeSettingsModel`
   - `stripeConnectTopic` => `storeSettingsTopic`
 
-- share2 typings not working?
 
 
 
