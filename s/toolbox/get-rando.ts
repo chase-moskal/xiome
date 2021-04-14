@@ -1,6 +1,6 @@
 
 import {Await} from "../types/await.js"
-import {encodeBase42} from "./bytes.js"
+import {encodeBase42} from "./binary.js"
 import {isNode as stockIsNode} from "./is-node.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
