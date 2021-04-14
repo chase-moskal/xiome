@@ -1,7 +1,7 @@
 
 import {Await} from "../types/await.js"
-import {base42_characters, encodeBase42} from "./binary.js"
 import {isNode as stockIsNode} from "./is-node.js"
+import {identifierFromBinary} from "./identifiers.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
 
@@ -38,10 +38,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 
 	function randomId() {
 		const buffer = randomBuffer(32)
-		let id = encodeBase42(buffer)
-		while (id.length < 48)
-			id = base42_characters[0] + id
-		return id
+		return identifierFromBinary(buffer)
 	}
 	
 	function randomSample<T>(palette: T[]): T {
