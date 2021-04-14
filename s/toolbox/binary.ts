@@ -51,20 +51,25 @@ export function decodeBase64url(base64: string): ArrayBuffer {
 // base 42
 //
 
-const base42_characters = "256789BCDFGHJKMNPRSTWXYZbcdfghkmnpqrstwxyz"
+export const base42_characters = "256789BCDFGHJKMNPRSTWXYZbcdfghkmnpqrstwxyz"
+
+function bufferToBig(buffer: ArrayBuffer): bigint {
+	const hex = encodeHex(buffer)
+	return BigInt("0x" + hex)
+}
+
+function bigToBuffer(big: bigint): ArrayBuffer {
+	const hex = big.toString(16)
+	return decodeHex(hex)
+}
 
 export function encodeBase42(buffer: ArrayBuffer) {
-	const hex = encodeHex(buffer)
-	let big = BigInt("0x" + hex)
-	let base42 = ""
-
-	while (big > 0n) {
-		const remainder = big % 42n
-		big /= 42n
-		base42 += base42_characters[Number(remainder)]
-	}
-
-	return base42
+	const recurse = (value: bigint): string =>
+		value < 42n
+			? base42_characters[Number(value)]
+			: recurse(value / 42n) + base42_characters[Number(value % 42n)]
+	const big = bufferToBig(buffer)
+	return recurse(big)
 }
 
 export function decodeBase42(base42: string) {
@@ -79,6 +84,5 @@ export function decodeBase42(base42: string) {
 		step *= 42n
 	}
 
-	const hex = sum.toString(16)
-	return decodeHex(hex)
+	return bigToBuffer(sum)
 }
