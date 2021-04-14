@@ -1,13 +1,13 @@
 
-import {encodeBase42, encodeHex} from "./bytes.js"
 import {Await} from "../types/await.js"
+import {encodeBase42} from "./bytes.js"
 import {isNode as stockIsNode} from "./is-node.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
 
 export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) {
 
-	const getRandomBytes: (bytes: number) => ArrayBuffer = isNode
+	const getRandomBuffer: (bytes: number) => ArrayBuffer = isNode
 		? await (async() => {
 			const crypto = await import("crypto")
 			return (bytes: number) => crypto.randomBytes(bytes).buffer
@@ -28,7 +28,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		}
 
 	function random(): number {
-		const buffer = getRandomBytes(8)
+		const buffer = getRandomBuffer(8)
 		const ints = new Int8Array(buffer)
 		ints[7] = 63
 		ints[6] |= 0xf0
@@ -37,8 +37,8 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 	}
 	
 	function randomId() {
-		const bytes = getRandomBytes(32)
-		return encodeBase42(bytes)
+		const buffer = getRandomBuffer(32)
+		return encodeBase42(buffer)
 	}
 	
 	function randomSample<T>(palette: T[]): T {
@@ -60,6 +60,6 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		randomId,
 		randomSample,
 		randomSequence,
-		getRandomBytes,
+		getRandomBuffer,
 	}
 }

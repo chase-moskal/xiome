@@ -1,10 +1,10 @@
 
-const u8 = (binary: ArrayBuffer) => new Uint8Array(binary)
+const u8 = (buffer: ArrayBuffer) => new Uint8Array(buffer)
 const base42_characters = "256789BCDFGHJKMNPRSTWXYZbcdfghkmnpqrstwxyz"
 
-export function encodeHex(binary: ArrayBuffer) {
+export function encodeHex(buffer: ArrayBuffer) {
 	let result = ""
-	for (const byte of u8(binary))
+	for (const byte of u8(buffer))
 		result += ("0" + (byte & 0xFF).toString(16)).slice(-2)
 	return result
 }
@@ -16,8 +16,8 @@ export function decodeHex(hex: string): ArrayBuffer {
 	return new Uint8Array(result).buffer
 }
 
-export function encodeBase64url(binary: ArrayBuffer): string {
-	return btoa(String.fromCharCode(...u8(binary)))
+export function encodeBase64url(buffer: ArrayBuffer): string {
+	return btoa(String.fromCharCode(...u8(buffer)))
 		.replace(/=/g, "")
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")
@@ -42,8 +42,8 @@ function addEqualsPadding(base64: string) {
 	return base64 + Array((4 - base64.length % 4) % 4 + 1).join("=")
 }
 
-export function encodeBase42(binary: ArrayBuffer) {
-	const hex = encodeHex(binary)
+export function encodeBase42(buffer: ArrayBuffer) {
+	const hex = encodeHex(buffer)
 	let big = BigInt("0x" + hex)
 	let base42 = ""
 
@@ -69,7 +69,5 @@ export function decodeBase42(base42: string) {
 	}
 
 	const hex = sum.toString(16)
-	const binary = decodeHex(hex)
-
-	return binary
+	return decodeHex(hex)
 }
