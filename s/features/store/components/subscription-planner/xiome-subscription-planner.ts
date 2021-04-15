@@ -71,14 +71,14 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 							</span>
 						</div>
 						<div class=details>
-							${renderIdentifier({
-								label: "plan id",
-								id: plan.subscriptionPlanId,
-							})}
-							${renderIdentifier({
-								label: "role id",
-								id: plan.roleId,
-							})}
+							<xio-id
+								label="plan id"
+								id="${plan.subscriptionPlanId}"
+							></xio-id>
+							<xio-id
+								label="role id"
+								id="${plan.roleId}"
+							></xio-id>
 						</div>
 					</div>
 					<div class=plancontrols>

@@ -97,8 +97,10 @@ export class XioProfileCard extends Component {
 				<span>${formatDate(user.stats.joined).date}</span>
 			</li>
 			<li>
-				<span>user id:</span>
-				<code>${user.userId}</code>
+				<xio-id
+					label="user id"
+					id="${user.userId}"
+				></xio-id>
 			</li>
 		`
 	}
