@@ -21,7 +21,7 @@ ui infrastructure
 - [ ] price displays
   - create a plan
 
-- [ ] system id displays 
+- [x] system id displays 
   - design
   - implementation
 
@@ -31,7 +31,11 @@ feature dev for launch
 
 - [ ] prepare subscription plans for launch
   - availability toggle
-  - remove deactivation/deletion
+  - just remove deactivation/deletion for now
+
+- [ ] subscription purchases
+  - design
+  - implement
 
 - [ ] questions board
   - crude port from metalshop
@@ -51,6 +55,20 @@ feature dev for launch
 - [ ] admin user search and edit roles
 
 - [ ] technician can disable an entire community/app
+
+deployment
+
+- [ ] mock deployment
+  - to gh-pages at https://mock.xiome.io/
+
+- [ ] staging deployment
+  - to kubernetes cluster at https://staging.xiome.io/
+  - use fake stripe testing keys
+
+- [ ] production deployment
+  - to kubernetes cluster at https://xiome.io/
+  - use real keys
+
 
 
 
