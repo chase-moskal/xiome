@@ -46,6 +46,7 @@ export async function assembleModels({
 		appId,
 		storage,
 		storeStatusService: remote.store.storeStatusService,
+		shopkeepingService: remote.store.shopkeepingService,
 	})
 
 	const subscriptionPlanningModel = makeSubscriptionPlanningModel({

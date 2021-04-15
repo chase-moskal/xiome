@@ -52,5 +52,15 @@ export const storeApi = ({
 			policy: policies.customer,
 			expose: shoppingTopic(shoppingOptions),
 		}),
+		ecommerceService: {
+			statusToggler: apiContext<ClerkMeta, ClerkAuth>()({
+				policy: policies.clerk,
+				expose: {},
+			}),
+			statusChecker: apiContext<ProspectMeta, ProspectAuth>()({
+				policy: policies.prospect,
+				expose: {},
+			}),
+		}
 	}
 }
