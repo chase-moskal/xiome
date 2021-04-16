@@ -14,6 +14,10 @@ export class XiomeEcommerce extends WiredComponent<{
 		ecommerceModel: ReturnType<typeof makeEcommerceModel>
 	}> {
 
+	firstUpdated() {
+		this.share.ecommerceModel.fetchStoreStatus(true)
+	}
+
 	render() {
 		const {ecommerceModel} = this.share
 		return renderWrappedInLoading(
@@ -28,9 +32,21 @@ export class XiomeEcommerce extends WiredComponent<{
 						return html`<p>store banking info not linked</p>`
 
 					default:
+						const enabled = status === StoreStatus.Enabled
+						async function save(checked: boolean) {
+							return checked
+								? ecommerceModel.enableEcommerce()
+								: ecommerceModel.disableEcommerce()
+						}
 						return html`
 							<p>store is configured properly</p>
-							<p>store status: ${status === StoreStatus.Enabled ? "enabled" : "disabled"}</p>
+							<p>
+								<xio-checkbox
+									?initially-checked=${enabled}
+									.save=${save}
+								></xio-checkbox>
+								Ecommerce active
+							</p>
 						`
 				}
 			}

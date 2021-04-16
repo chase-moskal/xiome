@@ -56,5 +56,9 @@ export function storageCache<xData>({
 		async clear(): Promise<void> {
 			await storage.write<Cache<xData>>(storageKey, undefined)
 		},
+
+		async write(data: xData, time = Date.now()) {
+			await storage.write<Cache<xData>>(storageKey, {data, time})
+		},
 	}
 }

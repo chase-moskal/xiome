@@ -30,14 +30,24 @@ export function makeEcommerceModel({
 		load: onesie(statusCheckerService.getStoreStatus),
 	})
 
-	async function fetchStoreStatus() {
+	async function fetchStoreStatus(forceFresh: boolean = false) {
 		return state.storeStatus.actions.setLoadingUntil({
-			promise: cache.read(),
+			promise: forceFresh
+				? cache.readFresh()
+				: cache.read(),
 			errorReason: "error loading store status",
 		})
 	}
 
-	const {enableEcommerce, disableEcommerce} = statusTogglerService
+	async function enableEcommerce() {
+		await statusTogglerService.enableEcommerce()
+		state.storeStatus.actions.setReady(StoreStatus.Enabled)
+	}
+
+	async function disableEcommerce() {
+		await statusTogglerService.disableEcommerce()
+		state.storeStatus.actions.setReady(StoreStatus.Disabled)
+	}
 
 	return {
 		fetchStoreStatus,

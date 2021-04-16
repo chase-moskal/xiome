@@ -7,14 +7,14 @@ export const statusTogglerTopic = () => asTopic<ClerkAuth>()({
 	async enableEcommerce({tables}) {
 		await tables.billing.storeInfo.update({
 			conditions: false,
-			write: {ecommerceActive: true},
+			upsert: {ecommerceActive: true},
 		})
 	},
 
 	async disableEcommerce({tables}) {
 		await tables.billing.storeInfo.update({
 			conditions: false,
-			write: {ecommerceActive: false},
+			upsert: {ecommerceActive: false},
 		})
 	},
 })
