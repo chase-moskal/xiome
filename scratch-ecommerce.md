@@ -9,8 +9,8 @@ topics
 - store-status
   - checkStoreStatus
   
-- NEW ecommerceService
-  - enabler
+- NEW ecommerce
+  - statusToggler
     - enableEcommerce
     - disableEcommerce
   - statusChecker

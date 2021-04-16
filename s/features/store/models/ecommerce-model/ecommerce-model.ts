@@ -2,21 +2,21 @@
 import {Service} from "../../../../types/service.js"
 import {onesie} from "../../../../toolbox/onesie.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
-import {storeStatusTopic} from "../../topics/store-status-topic.js"
+import {statusCheckerTopic} from "../../topics/status-checker-topic.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {storageCache} from "../../../../toolbox/flex-storage/cache/storage-cache.js"
 import {mobxify} from "../../../../framework/mobxify.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
 import {loading} from "../../../../framework/loading/loading.js"
-import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
+import {statusTogglerTopic} from "../../topics/status-toggler-topic.js"
 
 export function makeEcommerceModel({
-		appId, storage, storeStatusService, shopkeepingService,
+		appId, storage, statusCheckerService, statusTogglerService,
 	}: {
 		appId: string
 		storage: FlexStorage
-		storeStatusService: Service<typeof storeStatusTopic>
-		shopkeepingService: Service<typeof shopkeepingTopic>
+		statusCheckerService: Service<typeof statusCheckerTopic>
+		statusTogglerService: Service<typeof statusTogglerTopic>
 	}) {
 
 	const state = mobxify({
@@ -27,7 +27,7 @@ export function makeEcommerceModel({
 		lifespan: 5 * minute,
 		storage,
 		storageKey: `cache-store-status-${appId}`,
-		load: onesie(storeStatusService.checkStoreStatus),
+		load: onesie(statusCheckerService.getStoreStatus),
 	})
 
 	async function fetchStoreStatus() {
@@ -37,16 +37,12 @@ export function makeEcommerceModel({
 		})
 	}
 
-	async function setEcommerceActive(ecommerceActive: boolean) {
-		await shopkeepingService.setEcommerceActive({
-			ecommerceActive,
-		})
-		return fetchStoreStatus()
-	}
+	const {enableEcommerce, disableEcommerce} = statusTogglerService
 
 	return {
 		fetchStoreStatus,
-		setEcommerceActive,
+		enableEcommerce,
+		disableEcommerce,
 		loadingViews: {
 			get storeStatus() {
 				return state.storeStatus.view

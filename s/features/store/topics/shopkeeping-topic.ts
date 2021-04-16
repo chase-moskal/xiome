@@ -18,16 +18,6 @@ export const shopkeepingTopic = ({generateId}: {
 		generateId: () => string
 	}) => asTopic<ClerkAuth>()({
 
-	async setEcommerceActive(
-			{tables},
-			{ecommerceActive}: {ecommerceActive: boolean}
-		) {
-		await tables.billing.storeInfo.update({
-			conditions: false,
-			write: {ecommerceActive},
-		})
-	},
-
 	async listSubscriptionPlans({tables}) {
 		const rows = await tables.billing.subscriptionPlans
 			.read({conditions: false})

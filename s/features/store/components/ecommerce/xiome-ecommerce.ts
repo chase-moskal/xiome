@@ -1,11 +1,11 @@
 
 import styles from "./xiome-ecommerce.css.js"
-import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
-import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
-import {makeEcommerceModel} from "../../models/ecommerce-model/ecommerce-model.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
+import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
+import {makeEcommerceModel} from "../../models/ecommerce-model/ecommerce-model.js"
+import {WiredComponent, mixinStyles, html} from "../../../../framework/component.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends WiredComponent<{

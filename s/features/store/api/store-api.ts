@@ -14,7 +14,8 @@ import {ClerkMeta} from "./policies/types/contexts/clerk-meta.js"
 import {ClerkAuth} from "./policies/types/contexts/clerk-auth.js"
 import {ProspectMeta} from "./policies/types/contexts/prosect-meta.js"
 import {ProspectAuth} from "./policies/types/contexts/prosect-auth.js"
-import {storeStatusTopic} from "../topics/store-status-topic.js"
+import {statusCheckerTopic} from "../topics/status-checker-topic.js"
+import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
 
 export const storeApi = ({
 		rando,
@@ -38,10 +39,6 @@ export const storeApi = ({
 			policy: policies.merchant,
 			expose: stripeConnectTopic(stripeConnectOptions),
 		}),
-		storeStatusService: apiContext<ProspectMeta, ProspectAuth>()({
-			policy: policies.prospect,
-			expose: storeStatusTopic(),
-		}),
 		shopkeepingService: apiContext<ClerkMeta, ClerkAuth>()({
 			policy: policies.clerk,
 			expose: shopkeepingTopic({
@@ -52,14 +49,14 @@ export const storeApi = ({
 			policy: policies.customer,
 			expose: shoppingTopic(shoppingOptions),
 		}),
-		ecommerceService: {
-			statusToggler: apiContext<ClerkMeta, ClerkAuth>()({
+		ecommerce: {
+			statusTogglerService: apiContext<ClerkMeta, ClerkAuth>()({
 				policy: policies.clerk,
-				expose: {},
+				expose: statusTogglerTopic(),
 			}),
-			statusChecker: apiContext<ProspectMeta, ProspectAuth>()({
+			statusCheckerService: apiContext<ProspectMeta, ProspectAuth>()({
 				policy: policies.prospect,
-				expose: {},
+				expose: statusCheckerTopic(),
 			}),
 		}
 	}

@@ -5,9 +5,9 @@ import {StoreStatus} from "./types/store-status.js"
 import {ProspectAuth} from "../api/policies/types/contexts/prosect-auth.js"
 import {determineStoreStatus} from "./utils/determine-store-status.js"
 
-export const storeStatusTopic = () => asTopic<ProspectAuth>()({
+export const statusCheckerTopic = () => asTopic<ProspectAuth>()({
 
-	async checkStoreStatus({tables, app, getStripeAccount}) {
+	async getStoreStatus({tables, app, getStripeAccount}) {
 		let storeStatus = StoreStatus.Uninitialized
 
 		if (!app.platform) {
