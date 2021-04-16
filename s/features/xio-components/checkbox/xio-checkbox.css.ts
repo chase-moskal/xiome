@@ -10,6 +10,10 @@ export default css`
 	color: white;
 }
 
+:host([disabled]) {
+	opacity: 0.25;
+}
+
 button {
 	display: inline-block;
 	border: unset;

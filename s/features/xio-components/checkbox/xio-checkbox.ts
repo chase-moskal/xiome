@@ -33,6 +33,14 @@ export class XioCheckbox extends Component {
 		this.loading.actions.setReady(this["initially-checked"])
 	}
 
+	get checked() {
+		return this.loading.view.payload
+	}
+
+	set checked(value: boolean) {
+		this.loading.actions.setReady(value)
+	}
+
 	async toggle(previousChecked = this.loading.view.payload, dispatchEvent = true) {
 		const checked = !previousChecked
 		const isNotDisabled = !this.disabled
@@ -55,9 +63,11 @@ export class XioCheckbox extends Component {
 	}
 
 	private handleClick = () => {
-		this.toggle()
-		const activeElement = <HTMLElement>document.activeElement
-		if (activeElement) activeElement.blur()
+		if (!this.disabled) {
+			this.toggle()
+			const activeElement = <HTMLElement>document.activeElement
+			if (activeElement) activeElement.blur()
+		}
 	}
 
 	render() {
