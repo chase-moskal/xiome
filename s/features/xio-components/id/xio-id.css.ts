@@ -53,16 +53,13 @@ button {
 	background: #0002;
 }
 
-.label {
-	opacity: 0.5;
-}
-
 .label,
 .content {
 	padding: 0.2em 0.5em;
 }
 
 .id {
+	opacity: 0.75;
 	max-width: 6em;
 	overflow: hidden;
 	text-overflow: ellipsis;
