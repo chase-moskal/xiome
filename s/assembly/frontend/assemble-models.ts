@@ -63,6 +63,7 @@ export async function assembleModels({
 		await appModel.accessChange()
 		await permissionsModel.accessChange(access)
 		await subscriptionPlanningModel.accessChange(access)
+		await ecommerceModel.accessChange()
 	})
 
 	return {

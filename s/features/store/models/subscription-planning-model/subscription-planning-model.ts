@@ -31,15 +31,12 @@ export function subscriptionPlanningModel({
 	let isActiveInDom = false
 
 	const loadPlans = onesie(async function() {
+		await ecommerceModel.initialize()
 		if (state.situation.mode === PlanningSituation.Mode.Privileged) {
-			const storeStatus = await ecommerceModel.fetchStoreStatus()
-			if (storeStatus)
-				await state.situation.loadingPlans.actions.setLoadingUntil({
-					errorReason: "failed to load subscription plans",
-					promise: shopkeepingService.listSubscriptionPlans(),
-				})
-			else
-				state.situation.loadingPlans.actions.setNone()
+			await state.situation.loadingPlans.actions.setLoadingUntil({
+				errorReason: "failed to load subscription plans",
+				promise: shopkeepingService.listSubscriptionPlans(),
+			})
 		}
 	})
 
@@ -63,8 +60,9 @@ export function subscriptionPlanningModel({
 		},
 
 		async accessChange(access: AccessPayload) {
-			const storeStatus = await ecommerceModel.fetchStoreStatus()
-			const storeInitialized = storeStatus !== StoreStatus.Uninitialized
+			const storeStatus = ecommerceModel.loadingViews.storeStatus.payload
+			const storeInitialized =
+				storeStatus !== undefined && storeStatus !== StoreStatus.Uninitialized
 			state.setSituation(
 				storeInitialized
 					? access
@@ -102,7 +100,7 @@ export function subscriptionPlanningModel({
 				const newPlans = [...existingPlans, plan]
 				situation.loadingPlans.actions.setReady(newPlans)
 			}
-			situation.loadingPlanCreation.actions.setLoadingUntil({
+			return situation.loadingPlanCreation.actions.setLoadingUntil({
 				errorReason: "error creating subscription plan",
 				promise: action(),
 			})
@@ -110,7 +108,7 @@ export function subscriptionPlanningModel({
 
 		async deactivatePlan(subscriptionPlanId: string) {
 			const situation = requirePrivilegedSituation()
-			situation.loadingPlans.actions.setLoadingUntil({
+			return situation.loadingPlans.actions.setLoadingUntil({
 				errorReason: "error occurred",
 				promise: shopkeepingService
 					.deactivateSubscriptionPlan({subscriptionPlanId})
@@ -120,7 +118,7 @@ export function subscriptionPlanningModel({
 
 		async deletePlan(subscriptionPlanId: string) {
 			const situation = requirePrivilegedSituation()
-			situation.loadingPlans.actions.setLoadingUntil({
+			return situation.loadingPlans.actions.setLoadingUntil({
 				errorReason: "error occurred",
 				promise: shopkeepingService
 					.deleteSubscriptionPlan({subscriptionPlanId})

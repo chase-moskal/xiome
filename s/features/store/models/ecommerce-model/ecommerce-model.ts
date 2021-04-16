@@ -49,10 +49,22 @@ export function makeEcommerceModel({
 		state.storeStatus.actions.setReady(StoreStatus.Disabled)
 	}
 
+	let initialized = false
+	async function initialize() {
+		if (!initialized) {
+			initialized = true
+			await fetchStoreStatus()
+		}
+	}
+
 	return {
+		initialize,
 		fetchStoreStatus,
 		enableEcommerce,
 		disableEcommerce,
+		async accessChange() {
+			await fetchStoreStatus(true)
+		},
 		loadingViews: {
 			get storeStatus() {
 				return state.storeStatus.view
