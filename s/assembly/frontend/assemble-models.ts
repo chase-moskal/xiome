@@ -7,6 +7,7 @@ import {makePermissionsModel} from "../../features/auth/models/permissions-model
 import {bankModel as makeBankModel} from "../../features/store/models/bank-manager/bank-model.js"
 import {makeEcommerceModel} from "../../features/store/models/ecommerce-model/ecommerce-model.js"
 import {subscriptionPlanningModel as makeSubscriptionPlanningModel} from "../../features/store/models/subscription-planning-model/subscription-planning-model.js"
+import {altStoreModel, superStoreModel} from "../../features/store/models/store-model/super-store-model.js"
 
 export async function assembleModels({
 		appId,
@@ -59,6 +60,8 @@ export async function assembleModels({
 		triggerBankPopup: popups.triggerBankPopup,
 	})
 
+	const storeModel = altStoreModel()
+
 	authModel.onAccessChange(async access => {
 		await appModel.accessChange()
 		await permissionsModel.accessChange(access)
@@ -70,6 +73,7 @@ export async function assembleModels({
 		appModel,
 		authModel,
 		bankModel,
+		storeModel,
 		personalModel,
 		ecommerceModel,
 		permissionsModel,

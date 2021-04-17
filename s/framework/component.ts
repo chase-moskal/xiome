@@ -25,6 +25,11 @@ export class WiredComponent<S extends Share> extends Component {
 	readonly share: S
 }
 
+export function wranglerComponent<S extends Share>(renderSubscribe) {}
+
+export class ExperimentalComponent<S extends Share> extends WiredComponent<S> {
+}
+
 export function maybe<xContent>(condition: any, content: xContent): xContent {
 	return condition
 		? content

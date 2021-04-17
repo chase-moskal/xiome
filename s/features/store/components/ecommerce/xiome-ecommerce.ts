@@ -6,13 +6,34 @@ import {makeEcommerceModel} from "../../models/ecommerce-model/ecommerce-model.j
 import {WiredComponent, mixinStyles, html} from "../../../../framework/component.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
+import {altStoreModel, StoreState, superStoreModel} from "../../models/store-model/super-store-model.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends WiredComponent<{
 		modals: ModalSystem
-		authModel: AuthModel
-		ecommerceModel: ReturnType<typeof makeEcommerceModel>
+		storeModel: ReturnType<typeof altStoreModel>
 	}> {
+
+	#unsub = () => {}
+	connectedCallback() {
+		super.connectedCallback()
+		this.#unsub = this.share.storeModel.watch(() => {
+			this.render()
+		})
+	}
+	disconnectedCallback() {
+		super.disconnectedCallback()
+		this.#unsub()
+	}
+
+	// #state: StoreState
+
+	// subscribe() {
+	// 	return this.share.storeModel.renderSubscribe(state => {
+	// 		this.#state = state
+	// 		this.requestUpdate()
+	// 	})
+	// }
 
 	firstUpdated() {
 		this.share.ecommerceModel.fetchStoreStatus(true)

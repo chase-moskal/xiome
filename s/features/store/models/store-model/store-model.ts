@@ -14,22 +14,6 @@ import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {isAllowedToPlanSubscriptions} from "../subscription-planning-model/helpers/is-allowed-to-plan-subscriptions.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
-import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
-import {Loading} from "../../../../framework/loading/types/loading.js"
-import {Op} from "../../../../framework/ops.js"
-
-function concept() {
-
-	interface StoreState {
-		access: AccessPayload
-		status: Op<StoreStatus>
-		subscriptionPlans: Op<SubscriptionPlan>
-		permissions: {
-			canWriteSubscriptionPlans: boolean
-		}
-	}
-
-}
 
 //
 // state
