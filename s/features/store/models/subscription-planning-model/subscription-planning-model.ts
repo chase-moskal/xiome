@@ -63,6 +63,7 @@ export function subscriptionPlanningModel({
 			const storeStatus = ecommerceModel.loadingViews.storeStatus.payload
 			const storeInitialized =
 				storeStatus !== undefined && storeStatus !== StoreStatus.Uninitialized
+			console.log(storeStatus, storeInitialized)
 			state.setSituation(
 				storeInitialized
 					? access
