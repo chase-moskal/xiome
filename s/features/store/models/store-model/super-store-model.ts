@@ -9,7 +9,6 @@ import {mobxify} from "../../../../framework/mobxify.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
 import {loading} from "../../../../framework/loading/loading.js"
 import {statusTogglerTopic} from "../../topics/status-toggler-topic.js"
-import {PlanningSituation} from "../subscription-planning-model/types/planning-situation.js"
 import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {isAllowedToPlanSubscriptions} from "../subscription-planning-model/helpers/is-allowed-to-plan-subscriptions.js"
@@ -23,52 +22,14 @@ import {deepClone, deepFreeze} from "../../../../toolbox/deep.js"
 import {stateWrangler} from "../../../../toolbox/state-wrangler/state-wrangler.js"
 import {pubsub} from "../../../../toolbox/pubsub.js"
 import {mobbdeep} from "../../../../toolbox/mobbdeep/mobbdeep.js"
+import {PlanningSituation} from "./subscription-planning/types/planning-situation2.js"
 
 export interface StoreState {
 	access: AccessPayload
 	status: Op<StoreStatus>
-	subscriptionPlans: Op<SubscriptionPlan>
+	subscriptionPlanning: PlanningSituation.Any
 	permissions: {
 		canWriteSubscriptionPlans: boolean
-	}
-}
-
-export function superStoreModel() {
-
-	const {
-		publish: renderPublish,
-		subscribe: renderSubscribe,
-	} = pubsub<(state: StoreState) => void>()
-
-	const actions = stateWrangler<StoreState>({
-		render: renderPublish,
-		debug: console.log.bind(console),
-		initial: {
-			access: undefined,
-			status: ops.loading(),
-			subscriptionPlans: ops.loading(),
-			permissions: {
-				canWriteSubscriptionPlans: false,
-			},
-		},
-	})({
-
-		setAccess(state, access: AccessPayload) {
-			return {...state, access}
-		},
-
-		setStatus(state, status: Op<StoreStatus>) {
-			return {...state, status}
-		},
-
-		setSubscriptionPlans(state, subscriptionPlans: Op<SubscriptionPlan>) {
-			return {...state, subscriptionPlans}
-		},
-	})
-
-	return {
-		actions,
-		renderSubscribe,
 	}
 }
 
@@ -78,7 +39,7 @@ export function altStoreModel() {
 	const state: StoreState = mobb.observables({
 		access: undefined,
 		status: ops.loading(),
-		subscriptionPlans: ops.loading(),
+		subscriptionPlanning: {mode: PlanningSituation.Mode.StoreUninitialized},
 		permissions: {
 			canWriteSubscriptionPlans: false,
 		},
@@ -91,10 +52,68 @@ export function altStoreModel() {
 		setStatus(status: Op<StoreStatus>) {
 			state.status = status
 		},
-		setSubscriptionPlans(plans: Op<SubscriptionPlan>) {
-			state.subscriptionPlans = plans
+		setSubscriptionPlanningSituation(situation: PlanningSituation.Any) {
+			state.subscriptionPlanning = situation
 		},
 	})
 
-	return {actions, watch: mobb.watch}
+	//
+	// subscription planning
+	//
+
+	function subscriptionPlanningShare() {
+		mobb.watch(() => {
+			const {access} = state
+		})
+
+		return {
+
+		}
+	}
+
+	return {
+		watch: mobb.watch,
+		shares: {
+			subscriptionPlaning: subscriptionPlanningShare(),
+		}
+	}
 }
+
+// export function superStoreModel() {
+
+// 	const {
+// 		publish: renderPublish,
+// 		subscribe: renderSubscribe,
+// 	} = pubsub<(state: StoreState) => void>()
+
+// 	const actions = stateWrangler<StoreState>({
+// 		render: renderPublish,
+// 		debug: console.log.bind(console),
+// 		initial: {
+// 			access: undefined,
+// 			status: ops.loading(),
+// 			subscriptionPlans: ops.loading(),
+// 			permissions: {
+// 				canWriteSubscriptionPlans: false,
+// 			},
+// 		},
+// 	})({
+
+// 		setAccess(state, access: AccessPayload) {
+// 			return {...state, access}
+// 		},
+
+// 		setStatus(state, status: Op<StoreStatus>) {
+// 			return {...state, status}
+// 		},
+
+// 		setSubscriptionPlans(state, subscriptionPlans: Op<SubscriptionPlan>) {
+// 			return {...state, subscriptionPlans}
+// 		},
+// 	})
+
+// 	return {
+// 		actions,
+// 		renderSubscribe,
+// 	}
+// }
