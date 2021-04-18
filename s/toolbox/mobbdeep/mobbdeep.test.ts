@@ -91,4 +91,26 @@ export default <Suite>{
 		}).throws()
 		unsubscribe()
 	},
+
+	async "forbids indirect circular behavior"() {
+		const mobb = mobbdeep()
+		const state = mobb.observables({
+			count: 0,
+			countPlusOne: 1,
+		})
+		const actions = mobb.actions({
+			increment: () => state.count += 1,
+			setCountPlusOne: (value: number) => state.countPlusOne = value,
+		})
+		mobb.watch(() => {
+			actions.setCountPlusOne(state.count + 1)
+		})
+		expect(() => {
+			mobb.watch(() => {
+				void state.countPlusOne
+				actions.increment()
+			})
+		}).throws()
+		mobb.dispose()
+	},
 }
