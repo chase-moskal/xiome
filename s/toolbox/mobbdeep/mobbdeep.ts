@@ -1,3 +1,4 @@
+
 import {objectMap} from "../object-map.js"
 
 export function mobbdeep() {
@@ -82,7 +83,9 @@ export function mobbdeep() {
 	function action<xAction extends Action>(act: xAction) {
 		return <xAction>((...args: any[]) => {
 			activeAction = act
-			return act(...args)
+			const result = act(...args)
+			activeAction = undefined
+			return result
 		})
 	}
 
