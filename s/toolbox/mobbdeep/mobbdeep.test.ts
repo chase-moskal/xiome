@@ -45,6 +45,13 @@ export default <Suite>{
 		assert(getCalled() === 2, "unsubscribed watch isn't triggered")
 	},
 
+	async "dispose ends all watches"() {
+		const {actions, mobb, getCalled} = basicTest()
+		mobb.dispose()
+		actions.increment()
+		assert(getCalled() === 2, "unsubscribed watch isn't triggered")
+	},
+
 	async "different mobbdeep contexts are isolated"() {
 		const mobb1 = mobbdeep()
 		const mobb2 = mobbdeep()
@@ -72,5 +79,16 @@ export default <Suite>{
 
 		unsubscribe1()
 		unsubscribe2()
+	},
+
+	async "forbids circular behavior"() {
+		const {state, actions, mobb, unsubscribe} = basicTest()
+		expect(() => {
+			mobb.watch(() => {
+				void state.count
+				actions.increment()
+			})
+		}).throws()
+		unsubscribe()
 	},
 }
