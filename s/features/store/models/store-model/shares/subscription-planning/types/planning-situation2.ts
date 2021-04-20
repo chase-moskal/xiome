@@ -1,6 +1,6 @@
 
-import {Op} from "../../../../../../framework/ops.js"
-import {SubscriptionPlan} from "../../../../topics/types/subscription-plan.js"
+import {Op} from "../../../../../../../framework/ops.js"
+import {SubscriptionPlan} from "../../../../../topics/types/subscription-plan.js"
 
 export namespace PlanningSituation {
 	export enum Mode {
