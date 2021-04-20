@@ -49,7 +49,6 @@ export function mobbstate() {
 	return {
 		state,
 		subscribe,
-		obtainRecord,
 		triggerWatchers,
 	}
 }
