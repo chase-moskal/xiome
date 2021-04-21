@@ -32,7 +32,7 @@ export async function mockRegisterApp({
 	console.log("mock: register app", appId)
 
 	// // link bank account with stripe
-	await mockWindowForPlatform.models.bankModel.setupStripeAccount(appId)
+	await mockWindowForPlatform.models.storeModel.shares.bank.setupStripeAccount(appId)
 	// const stripeDetails = await mockWindowForPlatform.models.bankModel.getStripeAccountDetails(appId)
 	// console.log("mock: app stripe details", stripeDetails)
 

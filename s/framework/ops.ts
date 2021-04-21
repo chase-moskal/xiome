@@ -47,12 +47,23 @@ export const ops = {
 		mode: Ops.Mode.Ready,
 		value,
 	}),
-	select: <xValue>(op: Op<xValue>, options: {
-			none: () => void
-			loading: () => void
-			error: (reason: string) => void
-			ready: (value: xValue) => void
-		}) => {
+	replaceValue<xValue>(op: Op<any>, value: xValue): Op<xValue> {
+		return op.mode === Ops.Mode.Ready
+			? {...op, value}
+			: op
+	},
+
+	value<xValue>(op: Op<xValue>) {
+		return op.mode === Ops.Mode.Ready
+			? op.value
+			: undefined
+	},
+	select<xValue, xResult = any>(op: Op<xValue>, options: {
+			none: () => xResult
+			loading: () => xResult
+			error: (reason: string) => xResult
+			ready: (value: xValue) => xResult
+		}) {
 		switch (op.mode) {
 			case Ops.Mode.None: return options.none()
 			case Ops.Mode.Loading: return options.loading()
@@ -60,4 +71,34 @@ export const ops = {
 			case Ops.Mode.Ready: return options.ready(op.value)
 		}
 	},
+	async operation<xValue>({
+			promise,
+			errorReason = "an error occurred",
+			setOp,
+		}: {
+			errorReason?: string
+			promise: Promise<xValue>
+			setOp: (op: Op<xValue>) => void
+		}) {
+
+		setOp(ops.loading())
+
+		try {
+			const value = await promise
+			setOp(ops.ready(value))
+			return value
+		}
+		catch(error) {
+			setOp(ops.error(errorReason))
+			throw error
+		}
+	},
+	debug(op: Op<any>) {
+		return ops.select(op, {
+			none: () => [`<op {mode: None}>`],
+			loading: () => [`<op {mode: Loading}>`],
+			error: reason => [`<op {mode: Error, reason: "${reason}"}>`],
+			ready: value => [`<op {mode: Ready, value: `, value, `}>`],
+		})
+	}
 }

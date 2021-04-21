@@ -7,10 +7,14 @@ import {XiomeBankConnect} from "../../../features/store/components/bank-connect/
 import {XiomeSubscriptionPlanner} from "../../../features/store/components/subscription-planner/xiome-subscription-planner.js"
 
 export function xiomeStoreComponents({models, modals}: XiomeComponentOptions) {
-	const {authModel, bankModel, subscriptionPlanningModel, ecommerceModel, storeModel} = models
+	const {authModel, storeModel} = models
 	return {
-		XiomeBankConnect: share2(XiomeBankConnect, {modals, authModel, bankModel}),
-		XiomeSubscriptionPlanner: share2(XiomeSubscriptionPlanner, {modals, authModel, subscriptionPlanningModel}),
-		XiomeEcommerce: wire3(XiomeEcommerce, {modals, ...storeModel.shares}, storeModel.watch),
+		XiomeEcommerce: wire3(
+			XiomeEcommerce, {
+				modals,
+				ecommerce: storeModel.shares.ecommerce,
+			},
+			storeModel.watch,
+		),
 	}
 }

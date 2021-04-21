@@ -12,7 +12,7 @@ export function storeCore() {
 	const state: StoreState = mobb.observables({
 		access: undefined,
 		status: ops.loading(),
-		subscriptionPlanning: {mode: PlanningSituation.Mode.StoreUninitialized},
+		subscriptionPlanning: {mode: PlanningSituation.Mode.LoggedOut},
 		permissions: {
 			canWriteSubscriptionPlans: false,
 		},
@@ -23,6 +23,7 @@ export function storeCore() {
 			state.access = access
 		},
 		setStatus(status: Op<StoreStatus>) {
+			console.log("SET STATUS", ...ops.debug(status))
 			state.status = status
 		},
 		setSubscriptionPlanningSituation(situation: PlanningSituation.Any) {

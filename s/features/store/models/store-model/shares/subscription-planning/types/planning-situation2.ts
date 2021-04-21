@@ -4,7 +4,6 @@ import {SubscriptionPlan} from "../../../../../topics/types/subscription-plan.js
 
 export namespace PlanningSituation {
 	export enum Mode {
-		StoreUninitialized,
 		LoggedOut,
 		Unprivileged,
 		Privileged,
@@ -12,10 +11,6 @@ export namespace PlanningSituation {
 
 	export interface Base {
 		mode: Mode
-	}
-
-	export interface StoreUninitialized {
-		mode: Mode.StoreUninitialized
 	}
 
 	export interface LoggedOut {
@@ -28,9 +23,9 @@ export namespace PlanningSituation {
 
 	export interface Privileged {
 		mode: Mode.Privileged
-		planCreation: Op<void>
+		planCreation: Op<undefined>
 		plans: Op<SubscriptionPlan[]>
 	}
 
-	export type Any = StoreUninitialized | LoggedOut | Unprivileged | Privileged
+	export type Any = LoggedOut | Unprivileged | Privileged
 }

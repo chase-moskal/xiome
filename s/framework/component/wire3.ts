@@ -14,16 +14,28 @@ export const wire3 = <S extends {}, C extends ConstructorFor<WiredComponent<S>>>
 		return object
 	}
 
+	autorun() {}
+
+	#active = false
 	#unsub = () => {}
+	#render = () => {
+		this.render()
+		if (this.#active) this.requestUpdate()
+	}
 
 	connectedCallback() {
 		super.connectedCallback()
-		const unsubs = watches.map(watch => watch(() => this.render()))
+		const unsubs = [
+			...watches.map(watch => watch(() => this.autorun())),
+			...watches.map(watch => watch(() => this.#render())),
+		]
 		this.#unsub = () => unsubs.forEach(unsub => unsub())
+		this.#active = true
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback()
+		this.#active = false
 		this.#unsub()
 	}
 }
