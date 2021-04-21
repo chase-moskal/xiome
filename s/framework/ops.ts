@@ -53,6 +53,11 @@ export const ops = {
 			: op
 	},
 
+	isNone: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Ready,
+	isLoading: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Loading,
+	isError: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Error,
+	isReady: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Ready,
+
 	value<xValue>(op: Op<xValue>) {
 		return op.mode === Ops.Mode.Ready
 			? op.value

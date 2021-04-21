@@ -23,7 +23,6 @@ export function storeCore() {
 			state.access = access
 		},
 		setStatus(status: Op<StoreStatus>) {
-			console.log("SET STATUS", ...ops.debug(status))
 			state.status = status
 		},
 		setSubscriptionPlanningSituation(situation: PlanningSituation.Any) {

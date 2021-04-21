@@ -5,6 +5,7 @@ import {WiredComponent, mixinStyles, html} from "../../../../framework/component
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ops} from "../../../../framework/ops.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends WiredComponent<{
@@ -17,42 +18,35 @@ export class XiomeEcommerce extends WiredComponent<{
 	}
 
 	render() {
-		console.log("RENDER")
 		const {ecommerce} = this.share
-		const storeStatus = ops.value(ecommerce.storeStatus)
-		console.log("storestatus", storeStatus)
-		return storeStatus !== undefined
-			? (() => {
-				switch (storeStatus) {
 
-					case StoreStatus.Uninitialized:
-						return html`<p>store uninitialized</p>`
+		return renderOp(ecommerce.storeStatus, storeStatus => {
+			switch (storeStatus) {
 
-					case StoreStatus.Unlinked:
-						return html`<p>store banking info not linked</p>`
+				case StoreStatus.Uninitialized:
+					return html`<p>store uninitialized</p>`
 
-					default:
-						console.log("renderproperly")
-						const enabled = storeStatus === StoreStatus.Enabled
-						async function save(checked: boolean) {
-							return checked
-								? ecommerce.enableEcommerce()
-								: ecommerce.disableEcommerce()
-						}
-						return html`
-							<p>store is configured properly</p>
-							<p>
-								<xio-checkbox
-									?initially-checked=${enabled}
-									.save=${save}
-								></xio-checkbox>
-								Ecommerce active
-							</p>
-						`
-				}
-			})()
-			: html`
-				<p>...loading...</p>
-			`
+				case StoreStatus.Unlinked:
+					return html`<p>store banking info not linked</p>`
+
+				default:
+					const enabled = storeStatus === StoreStatus.Enabled
+					async function save(checked: boolean) {
+						return checked
+							? ecommerce.enableEcommerce()
+							: ecommerce.disableEcommerce()
+					}
+					return html`
+						<p>store is configured properly</p>
+						<p>
+							<xio-checkbox
+								?initially-checked=${enabled}
+								.save=${save}
+							></xio-checkbox>
+							Ecommerce active
+						</p>
+					`
+			}
+		})
 	}
 }

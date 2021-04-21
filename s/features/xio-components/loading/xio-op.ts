@@ -6,7 +6,7 @@ import svgSpinner from "../../../framework/icons/spinner.svg.js"
 import {Component, html, mixinStyles, property} from "../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XioLoading2<xPayload = any> extends Component {
+export class XioOp<xPayload = any> extends Component {
 
 	@property({type: Object})
 	op: Op<xPayload> = ops.none()
