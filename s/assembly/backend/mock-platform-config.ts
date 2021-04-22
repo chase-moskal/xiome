@@ -1,6 +1,6 @@
 
 import {PlatformConfig} from "./types/platform-config.js"
-import {second, minute, day, year} from "../../toolbox/goodtimes/times.js"
+import {second, minute, day} from "../../toolbox/goodtimes/times.js"
 
 import {hardPermissions} from "./permissions/hard-permissions.js"
 
@@ -41,7 +41,6 @@ export function mockPlatformConfig({
 			webhookSecret: "mock-stripe-webhook-secret",
 		},
 		tokens: {
-			expiryRenewalCushion: 10 * second,
 			lifespans: {
 				app: 5 * minute,
 				login: 20 * minute,

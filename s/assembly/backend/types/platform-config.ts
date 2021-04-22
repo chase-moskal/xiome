@@ -26,7 +26,6 @@ export interface PlatformConfig {
 		platform: HardPermissions
 	}
 	tokens: {
-		expiryRenewalCushion: number
 		lifespans: {
 			app: number
 			login: number

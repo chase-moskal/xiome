@@ -14,7 +14,7 @@ export class XiomeEcommerce extends WiredComponent<{
 	}> {
 
 	firstUpdated() {
-		this.share.ecommerce.fetchStoreStatus(true)
+		this.share.ecommerce.initialize()
 	}
 
 	render() {

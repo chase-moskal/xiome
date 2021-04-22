@@ -1,7 +1,9 @@
 
+import {forbidCircularity} from "./forbid-circularity.js"
+
 export function onesie<F extends (...args: any[]) => Promise<any>>(operation: F) {
 	let activeOperation: Promise<any>
-	return <F>async function(...args: any[]) {
+	return forbidCircularity(<F>async function(...args) {
 		if (activeOperation) return activeOperation
 		else {
 			activeOperation = operation(...args)
@@ -9,5 +11,5 @@ export function onesie<F extends (...args: any[]) => Promise<any>>(operation: F)
 			activeOperation = undefined
 			return result
 		}
-	}
+	})
 }

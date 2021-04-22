@@ -2,7 +2,7 @@
 import {ops} from "../../../../../../framework/ops.js"
 import {storageCache} from "../../../../../../toolbox/flex-storage/cache/storage-cache.js"
 import {FlexStorage} from "../../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {minute} from "../../../../../../toolbox/goodtimes/times.js"
+import {minute, second} from "../../../../../../toolbox/goodtimes/times.js"
 import {onesie} from "../../../../../../toolbox/onesie.js"
 import {Service} from "../../../../../../types/service.js"
 import {statusCheckerTopic} from "../../../../topics/status-checker-topic.js"
@@ -42,12 +42,16 @@ export function ecommerceShare({
 
 	async function enableEcommerce() {
 		await statusTogglerService.enableEcommerce()
-		actions.setStatus(ops.ready(StoreStatus.Enabled))
+		const newStatus = StoreStatus.Enabled
+		await cache.write(newStatus)
+		actions.setStatus(ops.ready(newStatus))
 	}
-
+	
 	async function disableEcommerce() {
 		await statusTogglerService.disableEcommerce()
-		actions.setStatus(ops.ready(StoreStatus.Disabled))
+		const newStatus = StoreStatus.Disabled
+		await cache.write(newStatus)
+		actions.setStatus(ops.ready(newStatus))
 	}
 
 	const initialize = (() => {
@@ -66,6 +70,5 @@ export function ecommerceShare({
 		initialize,
 		enableEcommerce,
 		disableEcommerce,
-		fetchStoreStatus,
 	}
 }

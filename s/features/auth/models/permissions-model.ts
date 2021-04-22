@@ -5,20 +5,21 @@ import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {PermissionsDisplay} from "../topics/permissions/types/permissions-display.js"
 import {PermissionsModelOptions} from "./types/permissions/permissions-model-options.js"
+import {nap} from "../../../toolbox/nap.js"
 
 export function makePermissionsModel({
-		getAccess,
 		permissionsService,
 	}: PermissionsModelOptions) {
 
 	const state = mobxify({
+		access: <AccessPayload>undefined,
 		active: false,
 		permissionsLoading: loading<PermissionsDisplay>(),
 	})
 
 	const actions = mobxify({
 		reload: onesie(async() => {
-			if (await getAccess()) {
+			if (state.access) {
 				try {
 					await state.permissionsLoading.actions.setLoadingUntil({
 						promise: permissionsService.fetchPermissions(),
