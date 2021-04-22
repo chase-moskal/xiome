@@ -1,6 +1,6 @@
 
 import {PlatformConfig} from "./types/platform-config.js"
-import {second, minute, day} from "../../toolbox/goodtimes/times.js"
+import {minute, day} from "../../toolbox/goodtimes/times.js"
 
 import {hardPermissions} from "./permissions/hard-permissions.js"
 

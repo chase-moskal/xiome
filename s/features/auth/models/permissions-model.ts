@@ -18,6 +18,9 @@ export function makePermissionsModel({
 	})
 
 	const actions = mobxify({
+		setAccess(access: AccessPayload) {
+			state.access = access
+		},
 		reload: onesie(async() => {
 			if (state.access) {
 				try {
@@ -55,6 +58,7 @@ export function makePermissionsModel({
 			return state.permissionsLoading.view
 		},
 		async accessChange(access: AccessPayload) {
+			actions.setAccess(access)
 			if (state.active && access) {
 				await actions.reload()
 			}
