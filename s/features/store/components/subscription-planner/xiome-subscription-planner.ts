@@ -1,6 +1,7 @@
 
 import styles from "./xiome-subscription-planner.css.js"
 import {renderIdentifier} from "./views/render-identifier.js"
+import {makeStoreModel} from "../../models/store-model/store-model.js"
 import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
 import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
@@ -8,14 +9,14 @@ import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-chan
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
 import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
-import {PlanningSituation} from "../../models/subscription-planning-model/types/planning-situation.js"
 import {subscriptionPlanningModel} from "../../models/subscription-planning-model/subscription-planning-model.js"
+import {PlanningSituation} from "../../models/store-model/shares/types/planning-situation2.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeSubscriptionPlanner extends WiredComponent<{
 		modals: ModalSystem
-		authModel: AuthModel
-		subscriptionPlanningModel: ReturnType<typeof subscriptionPlanningModel>
+		subscriptionPlanning: ReturnType<typeof makeStoreModel>["shares"]["subscriptionPlanning"]
 	}> {
 
 	@property()
@@ -25,11 +26,11 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	firstUpdated() {
-		this.share.subscriptionPlanningModel.requestToStartLoadingPlans()
+		this.share.subscriptionPlanning.activate()
 	}
 
 	private renderListOfSubscriptionPlans(plans: SubscriptionPlan[]) {
-		const {subscriptionPlanningModel, modals} = this.share
+		const {subscriptionPlanning, modals} = this.share
 
 		function renderSinglePlan(plan: SubscriptionPlan) {
 
@@ -42,7 +43,7 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 					focusNthElement: 2,
 				})
 				if (confirmed)
-					subscriptionPlanningModel.deactivatePlan(plan.subscriptionPlanId)
+					subscriptionPlanning.deactivatePlan(plan.subscriptionPlanId)
 			}
 
 			async function handleDelete() {
@@ -54,7 +55,7 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 					focusNthElement: 2,
 				})
 				if (confirmed)
-					subscriptionPlanningModel.deletePlan(plan.subscriptionPlanId)
+					subscriptionPlanning.deletePlan(plan.subscriptionPlanId)
 			}
 
 			return html`
@@ -106,7 +107,7 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	private renderCreator() {
-		const {subscriptionPlanningModel} = this.share
+		const {subscriptionPlanning} = this.share
 
 		function handleChangeLabel({detail}: ValueChangeEvent<string>) {
 			this.draft.label = detail
@@ -121,7 +122,7 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 		}
 
 		async function handleDraftSubmit() {
-			await subscriptionPlanningModel.createPlan(this.draft)
+			await subscriptionPlanning.createPlan(this.draft)
 		}
 
 		return html`
@@ -151,16 +152,15 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 	}
 
 	render() {
-		const {subscriptionPlanningModel, authModel} = this.share
-		const mode = subscriptionPlanningModel.getSituationMode()
-		switch (mode) {
+		const {situation} = this.share.subscriptionPlanning
+		switch (situation.mode) {
 
-			case PlanningSituation.Mode.StoreUninitialized:
-				return html`
-					<p class=warning>
-						store is not initialized
-					</p>
-				`
+			// case PlanningSituation.Mode.StoreUninitialized:
+			// 	return html`
+			// 		<p class=warning>
+			// 			store is not initialized
+			// 		</p>
+			// 	`
 
 			case PlanningSituation.Mode.LoggedOut:
 				return html`
@@ -177,23 +177,16 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 				`
 
 			case PlanningSituation.Mode.Privileged:
-				const {loadingPlans, loadingPlanCreation} =
-					subscriptionPlanningModel.getLoadingViews()
-				return renderWrappedInLoading(
-					authModel.accessLoadingView,
-					() => html`
-
-						${renderWrappedInLoading(
-							loadingPlans,
-							plans => this.renderListOfSubscriptionPlans(plans)
-						)}
-
-						${renderWrappedInLoading(
-							loadingPlanCreation,
-							() => this.renderCreator()
-						)}
-					`
-				)
+				return html`
+					${renderOp(
+						situation.plans,
+						plans => this.renderListOfSubscriptionPlans(plans),
+					)}
+					${renderOp(
+						situation.planCreation,
+						() => this.renderCreator(),
+					)}
+				`
 
 			default:
 				throw new Error("unknown planning situation mode")

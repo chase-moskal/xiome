@@ -29,6 +29,7 @@ export function makeStoreModel({
 		stripeAccountsService: Service<typeof stripeConnectTopic>
 		triggerBankPopup: TriggerBankPopup
 	}) {
+
 	const core = storeCore()
 	const {watch, actions} = core
 

@@ -109,7 +109,10 @@ export function subscriptionPlanningShare({
 		async accessChange() {
 			setSituationAccordingToAccess(state.access)
 		},
-		getSituation() {
+		get access() {
+			return state.access
+		},
+		get situation() {
 			return state.subscriptionPlanning
 		},
 		activate,
