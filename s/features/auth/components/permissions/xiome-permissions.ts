@@ -17,7 +17,7 @@ export class XiomePermissions extends WiredComponent<{
 	}> {
 
 	firstUpdated() {
-		this.share.permissionsModel.load()
+		this.share.permissionsModel.initialize()
 	}
 
 	@property()
@@ -148,10 +148,14 @@ export class XiomePermissions extends WiredComponent<{
 	}
 
 	render() {
-		const {permissionsLoadingView} = this.share.permissionsModel
-		return renderWrappedInLoading(
-			permissionsLoadingView,
-			this.renderPermissions.bind(this),
-		)
+		const {permissionsModel} = this.share
+		return permissionsModel.userCanCustomizePermissions
+			? renderWrappedInLoading(
+				permissionsModel.permissionsLoadingView,
+				this.renderPermissions.bind(this),
+			)
+			: html`
+				<p>you are not privileged to customize permissions</p>
+			`
 	}
 }

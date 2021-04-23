@@ -5,7 +5,6 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 import {isOriginValid} from "./routines/is-origin-valid.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
-import {requireUserIsAllowedToEditApp} from "../topics/apps/require-user-is-allowed-to-edit-app.js"
 
 import {App} from "../types/tokens/app.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
@@ -76,7 +75,7 @@ export function prepareAuthPolicies({
 	const userWhoManagesPermissions: Policy<UserMeta, UserAuth> = {
 		processAuth: async(meta, request) => {
 			const auth = await user.processAuth(meta, request)
-			auth.checker.requirePrivilege("customize privileges")
+			auth.checker.requirePrivilege("customize permissions")
 			return auth
 		},
 	}

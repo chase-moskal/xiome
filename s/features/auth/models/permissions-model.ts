@@ -5,7 +5,7 @@ import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {PermissionsDisplay} from "../topics/permissions/types/permissions-display.js"
 import {PermissionsModelOptions} from "./types/permissions/permissions-model-options.js"
-import {nap} from "../../../toolbox/nap.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard/app-permissions.js"
 
 export function makePermissionsModel({
 		permissionsService,
@@ -17,12 +17,20 @@ export function makePermissionsModel({
 		permissionsLoading: loading<PermissionsDisplay>(),
 	})
 
+	function getUserCanCustomizePermissions() {
+		return state.access
+				? state.access.permit.privileges.includes(
+					appPermissions.privileges["customize permissions"]
+				)
+				: false
+	}
+
 	const actions = mobxify({
 		setAccess(access: AccessPayload) {
 			state.access = access
 		},
 		reload: onesie(async() => {
-			if (state.access) {
+			if (state.active && state.access) {
 				try {
 					await state.permissionsLoading.actions.setLoadingUntil({
 						promise: permissionsService.fetchPermissions(),
@@ -34,9 +42,11 @@ export function makePermissionsModel({
 				}
 			}
 		}),
-		async load() {
+		async initialize() {
 			state.active = true
-			await actions.reload()
+			if (getUserCanCustomizePermissions()) {
+				await actions.reload()
+			}
 		},
 		deactivate() {
 			state.active = false
@@ -52,10 +62,16 @@ export function makePermissionsModel({
 	})
 
 	return {
-		load: actions.load,
+		initialize: actions.initialize,
 		deactivate: actions.deactivate,
+		get access() {
+			return state.access
+		},
 		get permissionsLoadingView() {
 			return state.permissionsLoading.view
+		},
+		get userCanCustomizePermissions() {
+			return getUserCanCustomizePermissions()
 		},
 		async accessChange(access: AccessPayload) {
 			actions.setAccess(access)
