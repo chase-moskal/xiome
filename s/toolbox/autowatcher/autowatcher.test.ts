@@ -32,6 +32,37 @@ export default <Suite>{
 		unsubscribe()
 	},
 
+	async "parent objects and their children are observable"() {
+		const watcher = autowatcher()
+		const state = watcher.observables({
+			parent: {count: 0},
+		})
+		const actions = watcher.actions({
+			increment: () => state.parent.count += 1,
+			setParent: (parent: {count: number}) => state.parent = parent,
+		})
+		let calledChild = 0
+		let calledParent = 0
+		const unsubscribe1 = watcher.watch(() => {
+			void state.parent.count
+			calledChild += 1
+		})
+		const unsubscribe2 = watcher.watch(() => {
+			void state.parent
+			calledParent += 1
+		})
+		assert(calledChild === 1, "initial watch on child")
+		assert(calledParent === 1, "initial watch on parent")
+		actions.increment()
+		assert(calledChild === 2, "child after increment")
+		assert(calledParent === 1, "parent after increment")
+		actions.setParent({count: 100})
+		assert(calledChild === 3, "child after setParent")
+		assert(calledParent === 2, "parent after setParent")
+		unsubscribe1()
+		unsubscribe2()
+	},
+
 	async "observable changes outside actions are forbidden"() {
 		const {state, unsubscribe} = basicTest()
 		expect(() => state.count += 1).throws()
