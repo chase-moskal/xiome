@@ -1,15 +1,15 @@
 
-import {appPermissions} from "../../../../../../assembly/backend/permissions/standard/app-permissions.js"
-import {ops} from "../../../../../../framework/ops.js"
-import {storageCache} from "../../../../../../toolbox/flex-storage/cache/storage-cache.js"
-import {FlexStorage} from "../../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {minute} from "../../../../../../toolbox/goodtimes/times.js"
-import {onesie} from "../../../../../../toolbox/onesie.js"
-import {Service} from "../../../../../../types/service.js"
-import {statusCheckerTopic} from "../../../../topics/status-checker-topic.js"
-import {statusTogglerTopic} from "../../../../topics/status-toggler-topic.js"
-import {StoreStatus} from "../../../../topics/types/store-status.js"
-import {storeCore} from "../../core/store-core.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard/app-permissions.js"
+import {ops} from "../../../../../framework/ops.js"
+import {storageCache} from "../../../../../toolbox/flex-storage/cache/storage-cache.js"
+import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
+import {minute} from "../../../../../toolbox/goodtimes/times.js"
+import {onesie} from "../../../../../toolbox/onesie.js"
+import {Service} from "../../../../../types/service.js"
+import {statusCheckerTopic} from "../../../topics/status-checker-topic.js"
+import {statusTogglerTopic} from "../../../topics/status-toggler-topic.js"
+import {StoreStatus} from "../../../topics/types/store-status.js"
+import {storeCore} from "../core/store-core.js"
 
 export function ecommerceShare({
 		appId,

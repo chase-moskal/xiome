@@ -1,13 +1,13 @@
 
-import {storeCore} from "../../core/store-core.js"
-import {ops} from "../../../../../../framework/ops.js"
-import {Service} from "../../../../../../types/service.js"
-import {onesie} from "../../../../../../toolbox/onesie.js"
+import {storeCore} from "../core/store-core.js"
+import {ops} from "../../../../../framework/ops.js"
+import {Service} from "../../../../../types/service.js"
+import {onesie} from "../../../../../toolbox/onesie.js"
 import {PlanningSituation} from "./types/planning-situation2.js"
-import {shopkeepingTopic} from "../../../../topics/shopkeeping-topic.js"
-import {AccessPayload} from "../../../../../auth/types/tokens/access-payload.js"
-import {SubscriptionPlanDraft} from "../../../../api/tables/types/drafts/subscription-plan-draft.js"
-import {isAllowedToPlanSubscriptions} from "../../../subscription-planning-model/helpers/is-allowed-to-plan-subscriptions.js"
+import {shopkeepingTopic} from "../../../topics/shopkeeping-topic.js"
+import {AccessPayload} from "../../../../auth/types/tokens/access-payload.js"
+import {SubscriptionPlanDraft} from "../../../api/tables/types/drafts/subscription-plan-draft.js"
+import {isAllowedToPlanSubscriptions} from "../../subscription-planning-model/helpers/is-allowed-to-plan-subscriptions.js"
 
 export function subscriptionPlanningShare({
 		shopkeepingService,

@@ -4,7 +4,7 @@ import {Op, ops} from "../../../../../framework/ops.js"
 import {StoreStatus} from "../../../topics/types/store-status.js"
 import {mobbdeep} from "../../../../../toolbox/mobbdeep/mobbdeep.js"
 import {AccessPayload} from "../../../../auth/types/tokens/access-payload.js"
-import {PlanningSituation} from "../shares/subscription-planning/types/planning-situation2.js"
+import {PlanningSituation} from "../shares/types/planning-situation2.js"
 
 export function storeCore() {
 	const mobb = mobbdeep()

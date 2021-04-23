@@ -1,7 +1,7 @@
 
-import {Service} from "../../../../../../types/service.js"
-import {stripeConnectTopic} from "../../../../topics/stripe-connect-topic.js"
-import {TriggerBankPopup} from "../../../bank-manager/types/trigger-bank-popup.js"
+import {Service} from "../../../../../types/service.js"
+import {stripeConnectTopic} from "../../../topics/stripe-connect-topic.js"
+import {TriggerBankPopup} from "../../bank-manager/types/trigger-bank-popup.js"
 
 export function bankShare({
 		triggerBankPopup,
