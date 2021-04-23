@@ -155,13 +155,6 @@ export class XiomeSubscriptionPlanner extends WiredComponent<{
 		const {situation} = this.share.subscriptionPlanning
 		switch (situation.mode) {
 
-			// case PlanningSituation.Mode.StoreUninitialized:
-			// 	return html`
-			// 		<p class=warning>
-			// 			store is not initialized
-			// 		</p>
-			// 	`
-
 			case PlanningSituation.Mode.LoggedOut:
 				return html`
 					<p class=warning>

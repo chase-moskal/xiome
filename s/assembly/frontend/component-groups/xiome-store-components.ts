@@ -24,5 +24,13 @@ export function xiomeStoreComponents({models, modals}: XiomeComponentOptions) {
 			},
 			storeModel.watch,
 		),
+		XiomeBankConnect: wire3(
+			XiomeBankConnect,
+			{
+				modals,
+				bank: storeModel.shares.bank,
+			},
+			storeModel.watch,
+		),
 	}
 }

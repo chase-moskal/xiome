@@ -1,17 +1,23 @@
 
+import {storeCore} from "../core/store-core.js"
 import {Service} from "../../../../../types/service.js"
 import {stripeConnectTopic} from "../../../topics/stripe-connect-topic.js"
 import {TriggerBankPopup} from "../../bank-manager/types/trigger-bank-popup.js"
 
 export function bankShare({
-		triggerBankPopup,
+		core: {state},
 		stripeAccountsService,
+		triggerBankPopup,
 	}: {
+		core: ReturnType<typeof storeCore>
 		stripeAccountsService: Service<typeof stripeConnectTopic>
 		triggerBankPopup: TriggerBankPopup
 	}) {
 
 	return {
+		get access() {
+			return state.access
+		},
 		async getStripeAccountDetails(appId: string) {
 			return stripeAccountsService.getConnectDetails({appId})
 		},

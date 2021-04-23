@@ -1,40 +1,39 @@
 
 import styles from "./xiome-bank-connect.css.js"
+import {onesie} from "../../../../toolbox/onesie.js"
+import {Op, ops} from "../../../../framework/ops.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
+import {makeStoreModel} from "../../models/store-model/store-model.js"
+import {StripeAccountDetails} from "../../topics/types/stripe-account-details.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
-import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
-import {BankModel} from "../../models/bank-manager/types/bank-model.js"
-import {mobxify} from "../../../../framework/mobxify.js"
-import {loading} from "../../../../framework/loading/loading.js"
-import {StripeAccountDetails} from "../../topics/types/stripe-account-details.js"
-import {AuthModel} from "../../../auth/models/types/auth/auth-model.js"
-import {onesie} from "../../../../toolbox/onesie.js"
 
 @mixinStyles(styles)
 export class XiomeBankConnect extends WiredComponent<{
 		modals: ModalSystem
-		authModel: AuthModel
-		bankModel: BankModel
+		bank: ReturnType<typeof makeStoreModel>["shares"]["bank"]
 	}> {
 
 	@property({type: String, reflect: true})
 	appId: string
 
-	private state = mobxify({
-		stripeAccountDetailsLoading: loading<StripeAccountDetails>()
-	})
+	@property({type: Object})
+	private stripeAccountDetails: Op<StripeAccountDetails> = ops.loading()
 
 	private refreshStripeAccountDetails = onesie(async() => {
-		const loadingActions = this.state.stripeAccountDetailsLoading.actions
 		if (this.appId) {
-			loadingActions.setLoadingUntil({
-				errorReason: "error loading stripe account details",
-				promise: this.share.bankModel.getStripeAccountDetails(this.appId),
+			ops.operation({
+				setOp: op => this.stripeAccountDetails = op,
+				promise: this.share.bank.getStripeAccountDetails(this.appId)
+					.then(details => {
+						this.requestUpdate()
+						return details
+					}),
 			})
 		}
 		else {
 			const errorReason = "missing appId for xiome-bank-connect"
-			loadingActions.setError(errorReason)
+			this.stripeAccountDetails = ops.error(errorReason)
 			console.warn(errorReason)
 		}
 	})
@@ -45,7 +44,7 @@ export class XiomeBankConnect extends WiredComponent<{
 
 	// TODO implement
 	private async clickSetupPayouts() {
-		await this.share.bankModel.setupStripeAccount(this.appId)
+		await this.share.bank.setupStripeAccount(this.appId)
 		await this.refreshStripeAccountDetails()
 	}
 
@@ -75,12 +74,11 @@ export class XiomeBankConnect extends WiredComponent<{
 	}
 
 	render() {
-		this.share.authModel
-		return renderWrappedInLoading(
-			this.state.stripeAccountDetailsLoading.view,
+		return renderOp(
+			this.stripeAccountDetails,
 			details => details
 				? this.renderDetails(details)
-				: this.renderNoAccount(),
+				: this.renderNoAccount()
 		)
 	}
 }
