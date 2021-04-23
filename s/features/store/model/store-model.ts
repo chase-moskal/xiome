@@ -1,16 +1,16 @@
 
 import {storeCore} from "./core/store-core.js"
 import {bankShare} from "./shares/bank-share.js"
-import {Service} from "../../../../types/service.js"
+import {Service} from "../../../types/service.js"
 import {ecommerceShare} from "./shares/ecommerce-share.js"
-import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
-import {statusCheckerTopic} from "../../topics/status-checker-topic.js"
-import {statusTogglerTopic} from "../../topics/status-toggler-topic.js"
-import {stripeConnectTopic} from "../../topics/stripe-connect-topic.js"
-import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
-import {TriggerBankPopup} from "../bank-manager/types/trigger-bank-popup.js"
+import {shopkeepingTopic} from "../topics/shopkeeping-topic.js"
+import {statusCheckerTopic} from "../topics/status-checker-topic.js"
+import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
+import {stripeConnectTopic} from "../topics/stripe-connect-topic.js"
+import {TriggerBankPopup} from "./shares/types/trigger-bank-popup.js"
+import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
+import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {subscriptionPlanningShare} from "./shares/subscription-planning-share.js"
-import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export function makeStoreModel({
 		appId,

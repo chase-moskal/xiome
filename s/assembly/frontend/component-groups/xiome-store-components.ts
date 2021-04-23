@@ -1,5 +1,4 @@
 
-import {share2} from "../../../framework/component.js"
 import {wire3} from "../../../framework/component/wire3.js"
 import {XiomeComponentOptions} from "./types/xiome-component-options.js"
 import {XiomeEcommerce} from "../../../features/store/components/ecommerce/xiome-ecommerce.js"

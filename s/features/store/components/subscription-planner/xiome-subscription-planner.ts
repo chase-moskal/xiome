@@ -1,13 +1,13 @@
 
 import styles from "./xiome-subscription-planner.css.js"
+import {makeStoreModel} from "../../model/store-model.js"
 import {renderOp} from "../../../../framework/loading/render-op.js"
-import {makeStoreModel} from "../../models/store-model/store-model.js"
 import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
+import {PlanningSituation} from "../../model/shares/types/planning-situation.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
-import {PlanningSituation} from "../../models/store-model/shares/types/planning-situation2.js"
 
 @mixinStyles(styles)
 export class XiomeSubscriptionPlanner extends WiredComponent<{

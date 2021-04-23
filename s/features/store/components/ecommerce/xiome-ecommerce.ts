@@ -1,6 +1,6 @@
 
 import styles from "./xiome-ecommerce.css.js"
-import {makeStoreModel} from "../../models/store-model/store-model.js"
+import {makeStoreModel} from "../../model/store-model.js"
 import {WiredComponent, mixinStyles, html} from "../../../../framework/component.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ops} from "../../../../framework/ops.js"
