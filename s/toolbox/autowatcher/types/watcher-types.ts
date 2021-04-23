@@ -1,9 +1,9 @@
 
-export type Watcher = () => void
+export type Observer = () => void
 export type Action = (...args: any[]) => any
 
 export interface Record {
-	[key: string]: Watcher[]
+	[key: string]: Observer[]
 }
 
 export interface Actions {
@@ -13,12 +13,12 @@ export interface Actions {
 export interface Subscription {
 	object: {}
 	key: string
-	watcher: Watcher
+	observer: Observer
 }
 
-export interface MobbState {
+export interface State {
 	records: Map<{}, Record>
-	watcherSchedule: Subscription[]
+	schedule: Subscription[]
 	activeAction: Action
-	activeWatcher: Watcher
+	activeObserver: Observer
 }

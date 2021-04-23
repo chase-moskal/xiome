@@ -1,14 +1,14 @@
 
-import {mobbdeep} from "./mobbdeep.js"
 import {Suite, assert, expect} from "cynic"
+import {autowatcher} from "./autowatcher.js"
 
 function basicTest() {
-	const mobb = mobbdeep()
-	const state = mobb.observables({count: 0})
-	const actions = mobb.actions({increment: () => state.count += 1})
+	const watcher = autowatcher()
+	const state = watcher.observables({count: 0})
+	const actions = watcher.actions({increment: () => state.count += 1})
 
 	let called = 0
-	const unsubscribe = mobb.watch(() => {
+	const unsubscribe = watcher.watch(() => {
 		void state.count
 		called += 1
 	})
@@ -18,7 +18,7 @@ function basicTest() {
 	assert(called === 2, "action calls watch")
 
 	return {
-		mobb,
+		watcher,
 		state,
 		actions,
 		unsubscribe,
@@ -46,29 +46,29 @@ export default <Suite>{
 	},
 
 	async "dispose ends all watches"() {
-		const {actions, mobb, getCalled} = basicTest()
-		mobb.dispose()
+		const {actions, watcher, getCalled} = basicTest()
+		watcher.dispose()
 		actions.increment()
 		assert(getCalled() === 2, "unsubscribed watch isn't triggered")
 	},
 
-	async "different mobbdeep contexts are isolated"() {
-		const mobb1 = mobbdeep()
-		const mobb2 = mobbdeep()
+	async "different watcherdeep contexts are isolated"() {
+		const watcher1 = autowatcher()
+		const watcher2 = autowatcher()
 
-		const state1 = mobb1.observable({count: 0})
-		const actions1 = mobb1.actions({increment: () => state1.count += 1})
-		const actions2 = mobb2.actions({increment: () => state1.count += 1})
+		const state1 = watcher1.observable({count: 0})
+		const actions1 = watcher1.actions({increment: () => state1.count += 1})
+		const actions2 = watcher2.actions({increment: () => state1.count += 1})
 		
 		expect(() => actions2.increment()).throws()
 		
 		let called1 = 0
 		let called2 = 0
-		const unsubscribe1 = mobb1.watch(() => {
+		const unsubscribe1 = watcher1.watch(() => {
 			void state1.count
 			called1 += 1
 		})
-		const unsubscribe2 = mobb2.watch(() => {
+		const unsubscribe2 = watcher2.watch(() => {
 			void state1.count
 			called2 += 1
 		})
@@ -82,9 +82,9 @@ export default <Suite>{
 	},
 
 	async "forbids circular behavior"() {
-		const {state, actions, mobb, unsubscribe} = basicTest()
+		const {state, actions, watcher, unsubscribe} = basicTest()
 		expect(() => {
-			mobb.watch(() => {
+			watcher.watch(() => {
 				void state.count
 				actions.increment()
 			})
@@ -93,24 +93,24 @@ export default <Suite>{
 	},
 
 	async "forbids indirect circular behavior"() {
-		const mobb = mobbdeep()
-		const state = mobb.observables({
+		const watcher = autowatcher()
+		const state = watcher.observables({
 			count: 0,
 			countPlusOne: 1,
 		})
-		const actions = mobb.actions({
+		const actions = watcher.actions({
 			increment: () => state.count += 1,
 			setCountPlusOne: (value: number) => state.countPlusOne = value,
 		})
-		mobb.watch(() => {
+		watcher.watch(() => {
 			actions.setCountPlusOne(state.count + 1)
 		})
 		expect(() => {
-			mobb.watch(() => {
+			watcher.watch(() => {
 				void state.countPlusOne
 				actions.increment()
 			})
 		}).throws()
-		mobb.dispose()
+		watcher.dispose()
 	},
 }

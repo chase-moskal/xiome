@@ -1,13 +1,13 @@
 
-import {MobbState, Record, Subscription} from "../types/mobbtypes.js"
+import {State, Record, Subscription} from "../types/watcher-types.js"
 
-export function mobbstate() {
+export function watcherCore() {
 
-	const state: MobbState = {
+	const state: State = {
 		records: new Map(),
-		watcherSchedule: [],
+		schedule: [],
 		activeAction: undefined,
-		activeWatcher: undefined,
+		activeObserver: undefined,
 	}
 
 	function obtainRecord(object: {}) {
@@ -22,33 +22,33 @@ export function mobbstate() {
 	}
 
 	function forbidCircularProblems(object: {}, key: string) {
-		const subscription = state.watcherSchedule.find(subscription =>
+		const subscription = state.schedule.find(subscription =>
 			subscription.object === object &&
 			subscription.key === key
 		)
 		if (subscription)
-			throw new Error("mobbdeep: circular error, a watcher triggers itself")
+			throw new Error("autowatcher: circular error, a observer watch triggers itself")
 	}
 
 	function subscribe(subscription: Subscription) {
-		const {object, key, watcher} = subscription
+		const {object, key, observer} = subscription
 		const record = obtainRecord(object)
-		const existingWatchers = record[key] ?? []
-		record[key] = [...existingWatchers, watcher]
+		const existingObservers = record[key] ?? []
+		record[key] = [...existingObservers, observer]
 		return {subscription, record}
 	}
 
-	function triggerWatchers(object: {}, key: string) {
+	function triggerObservers(object: {}, key: string) {
 		forbidCircularProblems(object, key)
 		const record = obtainRecord(object)
-		const watchers = record[key] ?? []
-		for (const watcher of watchers)
-			watcher()
+		const observers = record[key] ?? []
+		for (const observer of observers)
+			observer()
 	}
 
 	return {
 		state,
 		subscribe,
-		triggerWatchers,
+		triggerObservers,
 	}
 }

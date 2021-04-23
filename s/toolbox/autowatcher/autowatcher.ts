@@ -1,48 +1,48 @@
 
 import {objectMap} from "../object-map.js"
-import {mobbstate} from "./internal/mobbstate.js"
-import {Watcher, Action, Actions} from "./types/mobbtypes.js"
+import {watcherCore} from "./internal/watcher-core.js"
+import {Observer, Action, Actions} from "./types/watcher-types.js"
 
-export function mobbdeep() {
-	const {state, subscribe, triggerWatchers} = mobbstate()
+export function autowatcher() {
+	const {state, subscribe, triggerObservers} = watcherCore()
 
 	function observable<xObject extends {}>(object: xObject) {
 		return new Proxy(object, {
 			get(t, key: string) {
-				if (state.activeWatcher)
-					state.watcherSchedule.push({
+				if (state.activeObserver)
+					state.schedule.push({
 						object,
 						key,
-						watcher: state.activeWatcher
+						observer: state.activeObserver
 					})
 				return object[key]
 			},
 			set(t, key: string, value) {
 				object[key] = value
 				if (!state.activeAction)
-					throw new Error(`mobbdeep: cannot set observable outside action, "${key}"`)
-				triggerWatchers(object, key)
+					throw new Error(`autowatcher: cannot set observable outside action, "${key}"`)
+				triggerObservers(object, key)
 				return true
 			},
 		})
 	}
 
-	function watch(watcher: Watcher) {
-		state.activeWatcher = watcher
-		state.watcherSchedule = []
+	function watch(observer: Observer) {
+		state.activeObserver = observer
+		state.schedule = []
 		try {
-			watcher()
-			const recent = state.watcherSchedule.map(subscribe)
+			observer()
+			const recent = state.schedule.map(subscribe)
 			return function unsubscribe() {
 				for (const {subscription: {key}, record} of recent) {
-					const existingWatchers = record[key] ?? []
-					record[key] = existingWatchers.filter(w => w !== watcher)
+					const existingObservers = record[key] ?? []
+					record[key] = existingObservers.filter(w => w !== observer)
 				}
 			}
 		}
 		finally {
-			state.activeWatcher = undefined
-			state.watcherSchedule = []
+			state.activeObserver = undefined
+			state.schedule = []
 		}
 	}
 

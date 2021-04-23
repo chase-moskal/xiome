@@ -2,14 +2,14 @@
 import {StoreState} from "../types/store-state.js"
 import {Op, ops} from "../../../../framework/ops.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
-import {mobbdeep} from "../../../../toolbox/mobbdeep/mobbdeep.js"
+import {autowatcher} from "../../../../toolbox/autowatcher/autowatcher.js"
 import {PlanningSituation} from "../shares/types/planning-situation.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 
 export function storeCore() {
-	const mobb = mobbdeep()
+	const watcher = autowatcher()
 
-	const state: StoreState = mobb.observables({
+	const state: StoreState = watcher.observables({
 		access: undefined,
 		status: ops.loading(),
 		subscriptionPlanning: {mode: PlanningSituation.Mode.LoggedOut},
@@ -18,7 +18,7 @@ export function storeCore() {
 		},
 	})
 
-	const actions = mobb.actions({
+	const actions = watcher.actions({
 		setAccess(access: AccessPayload) {
 			state.access = access
 		},
@@ -30,5 +30,5 @@ export function storeCore() {
 		},
 	})
 
-	return {state, actions, watch: mobb.watch}
+	return {state, actions, watch: watcher.watch}
 }
