@@ -6,8 +6,8 @@ import {onesie} from "../../../../../toolbox/onesie.js"
 import {PlanningSituation} from "./types/planning-situation2.js"
 import {shopkeepingTopic} from "../../../topics/shopkeeping-topic.js"
 import {AccessPayload} from "../../../../auth/types/tokens/access-payload.js"
+import {userCanManageStore} from "./permissions-helpers/user-can-manage-store.js"
 import {SubscriptionPlanDraft} from "../../../api/tables/types/drafts/subscription-plan-draft.js"
-import {isAllowedToPlanSubscriptions} from "../../subscription-planning-model/helpers/is-allowed-to-plan-subscriptions.js"
 
 export function subscriptionPlanningShare({
 		shopkeepingService,
@@ -94,7 +94,7 @@ export function subscriptionPlanningShare({
 	function setSituationAccordingToAccess(access: AccessPayload) {
 		actions.setSubscriptionPlanningSituation(
 			access
-				? isAllowedToPlanSubscriptions(access)
+				? userCanManageStore(access)
 					? {
 						mode: PlanningSituation.Mode.Privileged,
 						plans: ops.none(),
