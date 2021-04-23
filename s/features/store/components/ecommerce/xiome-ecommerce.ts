@@ -17,9 +17,8 @@ export class XiomeEcommerce extends WiredComponent<{
 		this.share.ecommerce.initialize()
 	}
 
-	render() {
+	private renderStoreManagement() {
 		const {ecommerce} = this.share
-
 		return renderOp(ecommerce.storeStatus, storeStatus => {
 			switch (storeStatus) {
 
@@ -48,5 +47,14 @@ export class XiomeEcommerce extends WiredComponent<{
 					`
 			}
 		})
+	}
+
+	render() {
+		const {ecommerce} = this.share
+		return ecommerce.userCanManageStore
+			? this.renderStoreManagement()
+			: html`
+				<p>you are not privileged to manage the store</p>
+			`
 	}
 }

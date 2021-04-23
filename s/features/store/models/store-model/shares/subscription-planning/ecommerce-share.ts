@@ -1,4 +1,5 @@
 
+import {appPermissions} from "../../../../../../assembly/backend/permissions/standard/app-permissions.js"
 import {ops} from "../../../../../../framework/ops.js"
 import {storageCache} from "../../../../../../toolbox/flex-storage/cache/storage-cache.js"
 import {FlexStorage} from "../../../../../../toolbox/flex-storage/types/flex-storage.js"
@@ -67,6 +68,13 @@ export function ecommerceShare({
 	return {
 		get access() { return state.access },
 		get storeStatus() { return state.status },
+		get userCanManageStore() {
+			return state.access
+				? state.access.permit.privileges.includes(
+					appPermissions.privileges["manage store"]
+				)
+				: false
+		},
 		initialize,
 		enableEcommerce,
 		disableEcommerce,

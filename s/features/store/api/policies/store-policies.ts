@@ -86,7 +86,7 @@ export function payPolicies(options: StorePolicyOptions) {
 	const clerk: Policy<ClerkMeta, ClerkAuth> = {
 		async processAuth(meta, request) {
 			const auth = await customer.processAuth(meta, request)
-			auth.checker.requirePrivilege("manage products and subscription plans")
+			auth.checker.requirePrivilege("manage store")
 			return auth
 		}
 	}

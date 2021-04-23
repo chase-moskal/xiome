@@ -4,6 +4,6 @@ import {appPrivileges} from "../../../../../assembly/backend/permissions/standar
 
 export function isAllowedToPlanSubscriptions(access: AccessPayload) {
 	return access.permit.privileges.includes(
-		appPrivileges["manage products and subscription plans"]
+		appPrivileges["manage store"]
 	)
 }
