@@ -14,7 +14,11 @@ systemic
   - `bankModel` => `storeSettingsModel`
   - `stripeConnectTopic` => `storeSettingsTopic`
 
-- [ ] fix share2 typings
+- [x] fix share2 typings
+
+- [ ] refactor auth goblin
+  - replace with new 'auth-mediator'
+  - reconsider token store and broadcast channel implementation
 
 ui infrastructure
 
@@ -27,7 +31,7 @@ ui infrastructure
 
 feature dev for launch
 
-- [ ] store status togglability
+- [x] store status togglability
 
 - [ ] prepare subscription plans for launch
   - availability toggle
