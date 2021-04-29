@@ -23,55 +23,49 @@ import {AppOwnerMeta} from "./policies/types/app-owner-meta.js"
 import {AppOwnerAuth} from "./policies/types/app-owner-auth.js"
 import {appEditTopic} from "./topics/app-edit-topic.js"
 
-export const makeAuthApi = ({tables, ...options}:
-		AuthApiOptions & {tables: AuthTables}) => {
-
-	const {verifyToken, config} = options
-
-	const policies = prepareAuthPolicies({
-		config,
-		tables,
-		verifyToken,
-	})
+export const makeAuthApi = ({tables, authPolicies, ...options}: {
+		tables: AuthTables
+		authPolicies: ReturnType<typeof prepareAuthPolicies>
+	} & AuthApiOptions) => {
 
 	return {
 		appTokenService: apiContext<GreenMeta, GreenAuth>()({
-			policy: policies.green,
+			policy: authPolicies.green,
 			expose: appTokenTopic(options),
 		}),
 
 		loginService: apiContext<AnonMeta, AnonAuth>()({
-			policy: policies.anon,
+			policy: authPolicies.anon,
 			expose: loginTopic(options),
 		}),
 	
 		appService: apiContext<PlatformUserMeta, PlatformUserAuth>()({
-			policy: policies.platformUser,
+			policy: authPolicies.platformUser,
 			expose: appTopic(options),
 		}),
 
 		appEditService: apiContext<AppOwnerMeta, AppOwnerAuth>()({
-			policy: policies.appOwner,
+			policy: authPolicies.appOwner,
 			expose: appEditTopic(options),
 		}),
 
 		manageAdminsService: apiContext<AppOwnerMeta, AppOwnerAuth>()({
-			policy: policies.appOwner,
+			policy: authPolicies.appOwner,
 			expose: manageAdminsTopic(options),
 		}),
 
 		personalService: apiContext<UserMeta, UserAuth>()({
-			policy: policies.user,
+			policy: authPolicies.user,
 			expose: personalTopic(options),
 		}),
 	
 		userService: apiContext<AnonMeta, AnonAuth>()({
-			policy: policies.anon,
+			policy: authPolicies.anon,
 			expose: userTopic(options),
 		}),
 
 		permissionsService: apiContext<UserMeta, UserAuth>()({
-			policy: policies.userWhoManagesPermissions,
+			policy: authPolicies.userWhoManagesPermissions,
 			expose: permissionsTopic(options),
 		}),
 	}

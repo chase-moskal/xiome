@@ -9,9 +9,12 @@ import {mockPlatformConfig} from "./mock-platform-config.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {storeApi} from "../../features/store/api/store-api.js"
 import {mockSendLoginEmail} from "./tools/mock-send-login-email.js"
+import {questionsApi} from "../../features/questions/api/questions-api.js"
 import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
 import {mockStoreTables} from "../../features/store/api/tables/mock-store-tables.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
+import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
+import {mockQuestionsTables} from "../../features/questions/api/tables/mock-questions-tables.js"
 
 export async function mockBackend({
 			rando,
@@ -33,6 +36,7 @@ export async function mockBackend({
 
 	const authTables = await mockAuthTables(tableStorage)
 	const storeTablesSpecifically = await mockStoreTables(tableStorage)
+	const questionsTables = await mockQuestionsTables(tableStorage)
 
 	const {fakeSendLoginEmail, getLatestLoginEmail} =
 		mockSendLoginEmail(sendLoginEmail)
@@ -45,10 +49,17 @@ export async function mockBackend({
 			tables: storeTables,
 		})
 
+	const authPolicies = prepareAuthPolicies({
+		config,
+		tables: authTables,
+		verifyToken,
+	})
+
 	const api = asApi({
 		auth: makeAuthApi({
 			rando,
 			config,
+			authPolicies,
 			tables: authTables,
 			signToken,
 			verifyToken,
@@ -57,7 +68,7 @@ export async function mockBackend({
 		}),
 		store: storeApi({
 			rando,
-			config,
+			authPolicies,
 			stripeComplex,
 			tables: storeTables,
 			shoppingOptions: {
@@ -72,8 +83,12 @@ export async function mockBackend({
 					return: "https://fake.xiome.io/account-return",
 				},
 			},
-			verifyToken,
 		}),
+		questions: questionsApi({
+			rando,
+			authPolicies,
+			questionsTables,
+		})
 	})
 
 	return {

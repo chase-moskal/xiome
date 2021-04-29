@@ -17,17 +17,17 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 
 	let authGoblin: AuthGoblin
 
-	const augmentWithAppAndAccessTokens = {
-		getMeta: async() => ({
-			appToken: await authGoblin.getAppToken(),
-			accessToken: await authGoblin.getAccessToken(),
-		})
-	}
-
 	const augmentForAnon = {
 		getMeta: async() => ({
 			appToken: await authGoblin.getAppToken(),
 		}),
+	}
+
+	const augmentForUser = {
+		getMeta: async() => ({
+			appToken: await authGoblin.getAppToken(),
+			accessToken: await authGoblin.getAccessToken(),
+		})
 	}
 
 	const shape = asShape<SystemApi>({
@@ -45,32 +45,32 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 				sendLoginLink: true,
 			},
 			appService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				listApps: true,
 				registerApp: true,
 			},
 			appEditService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				deleteApp: true,
 				updateApp: true,
 			},
 			manageAdminsService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				listAdmins: true,
 				assignAdmin: true,
 				revokeAdmin: true,
 				assignPlatformUserAsAdmin: true,
 			},
 			personalService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				setProfile: true,
 			},
 			userService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				getUser: true,
 			},
 			permissionsService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				assignPrivilege: true,
 				createPrivilege: true,
 				createRole: true,
@@ -84,18 +84,18 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		},
 		store: {
 			stripeConnectService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				getConnectDetails: true,
 				generateConnectSetupLink: true,
 			},
 			shoppingService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				buySubscription: true,
 				updateSubscription: true,
 				endSubscription: true,
 			},
 			shopkeepingService: {
-				[_augment]: augmentWithAppAndAccessTokens,
+				[_augment]: augmentForUser,
 				listSubscriptionPlans: true,
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,
@@ -108,12 +108,25 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 					getStoreStatus: true,
 				},
 				statusTogglerService: {
-					[_augment]: augmentWithAppAndAccessTokens,
+					[_augment]: augmentForUser,
 					disableEcommerce: true,
 					enableEcommerce: true,
 				},
 			},
-		}
+		},
+		questions: {
+			questionReadingService: {
+				[_augment]: augmentForAnon,
+				fetchQuestions: true,
+			},
+			questionPostingService: {
+				[_augment]: augmentForUser,
+				postQuestion: true,
+			},
+			questionModerationService: {
+				[_augment]: augmentForUser,
+			},
+		},
 	})
 
 	function installAuthGoblin({loginService, appTokenService}: {

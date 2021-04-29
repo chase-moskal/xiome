@@ -3,7 +3,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {isPlatform} from "../tools/is-platform.js"
 import {AppDraft} from "../types/apps/app-draft.js"
-import {throwProblems} from "./apps/throw-problems.js"
+import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"

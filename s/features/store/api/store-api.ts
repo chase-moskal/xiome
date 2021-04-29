@@ -19,19 +19,17 @@ import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
 
 export const storeApi = ({
 		rando,
-		config,
 		tables,
+		authPolicies,
 		stripeComplex,
 		shoppingOptions,
 		stripeConnectOptions,
-		verifyToken,
 	}: StoreApiOptions) => {
 
 	const policies = payPolicies({
 		tables,
-		config,
+		authPolicies,
 		stripeComplex,
-		verifyToken,
 	})
 
 	return {
