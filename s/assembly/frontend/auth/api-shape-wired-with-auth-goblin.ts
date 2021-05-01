@@ -122,9 +122,12 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			questionPostingService: {
 				[_augment]: augmentForUser,
 				postQuestion: true,
+				archiveQuestion: true,
+				likeQuestion: true,
 			},
 			questionModerationService: {
 				[_augment]: augmentForUser,
+				archiveBoard: true,
 			},
 		},
 	})
