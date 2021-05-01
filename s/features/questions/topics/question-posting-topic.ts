@@ -31,7 +31,13 @@ export const questionPostingTopic = ({rando}: {
 		}
 
 		await questionsTables.questionPosts.create(row)
-		return row
+		return {
+			...row,
+			likes: 0,
+			reports: 0,
+			liked: false,
+			reported: false,
+		}
 	},
 
 	async archiveQuestion(
@@ -42,10 +48,10 @@ export const questionPostingTopic = ({rando}: {
 			}
 		) {
 
-		const question = await questionsTables.questionPosts
+		const questionPost = await questionsTables.questionPosts
 			.one(find({questionId}))
 
-		requireUserCanEditQuestion({userId, checker, question})
+		requireUserCanEditQuestion({userId, checker, questionPost})
 
 		await questionsTables.questionPosts.update({
 			...find({}),
