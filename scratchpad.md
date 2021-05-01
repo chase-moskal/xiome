@@ -1,6 +1,15 @@
 
 ## work to launch
 
+new concerns
+
+- [ ] we need configurable permissions for anons. anonymous must be a system role
+  - merge app and access tokens?
+
+- [ ] renraku: validation of api method arguments? darkvalley?
+
+- [ ] fix gross generate nicknames dependency on fetchUser
+
 systemic
 
 - [x] base 42 ids for whole system

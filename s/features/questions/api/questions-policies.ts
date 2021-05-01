@@ -1,25 +1,9 @@
 
 import {Policy} from "renraku/x/types/primitives/policy.js"
-import {AnonAuth} from "../../auth/policies/types/anon-auth.js"
-import {AnonMeta} from "../../auth/policies/types/anon-meta.js"
-import {UserAuth} from "../../auth/policies/types/user-auth.js"
-import {UserMeta} from "../../auth/policies/types/user-meta.js"
 import {QuestionsTables} from "./tables/types/questions-tables.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {prepareNamespacerForTables} from "../../auth/tables/baking/generic/prepare-namespacer-for-tables.js"
-
-type QuestionsAuth = {
-	questionsTables: QuestionsTables
-}
-
-export type QuestionReaderMeta = AnonMeta
-export type QuestionReaderAuth = QuestionsAuth & AnonAuth
-
-export type QuestionPosterMeta = UserMeta
-export type QuestionPosterAuth = QuestionsAuth & UserAuth
-
-export type QuestionModeratorMeta = QuestionPosterMeta
-export type QuestionModeratorAuth = QuestionPosterAuth
+import {QuestionModeratorAuth, QuestionModeratorMeta, QuestionPosterAuth, QuestionPosterMeta, QuestionReaderAuth, QuestionReaderMeta} from "./types/questions-persona.js"
 
 export function questionsPolicies({authPolicies, questionsTables}: {
 		questionsTables: QuestionsTables

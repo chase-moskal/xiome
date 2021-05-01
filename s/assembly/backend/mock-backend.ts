@@ -88,6 +88,7 @@ export async function mockBackend({
 			rando,
 			authPolicies,
 			questionsTables,
+			generateNickname,
 		})
 	})
 
