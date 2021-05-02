@@ -3,6 +3,7 @@ import {makeRemote} from "../make-remote.js"
 import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfigConnected} from "../types/xiome-config-connected.js"
 import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"
+import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
 
 export async function connect({
 		appId,
@@ -15,10 +16,8 @@ export async function connect({
 		apiLink: `${apiOrigin}/`,
 		storage: simpleFlexStorage(window.localStorage),
 	})
-	
-	const channel = new BroadcastChannel("tokenChangeEvent")
-	authMediator.subscribeToAccessChange(() => channel.postMessage(undefined))
-	channel.onmessage = () => authMediator.initialize()
+
+	wireMediatorBroadcastChannel(authMediator)
 
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 

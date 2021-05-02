@@ -3,6 +3,7 @@ import {Await} from "../../../../../types/await.js"
 import {mockRemote} from "../../../mocks/mock-remote.js"
 import {mockBackend} from "../../../../backend/mock-backend.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
+import {wireMediatorBroadcastChannel} from "./wire-mediator-broadcast-channel.js"
 
 export async function mockWiredRemote({
 		apiLink, appId, storage, appWindowLink, backend,
@@ -23,9 +24,7 @@ export async function mockWiredRemote({
 		latency: {min: 200, max: 800},
 	})
 
-	const channel = new BroadcastChannel("tokenChangeEvent")
-	authMediator.subscribeToAccessChange(() => channel.postMessage(undefined))
-	channel.onmessage = () => authMediator.initialize()
+	wireMediatorBroadcastChannel(authMediator)
 
 	return {remote, authMediator}
 }
