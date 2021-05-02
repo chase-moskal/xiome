@@ -27,8 +27,8 @@ export function makeAuthMediator({
 	const key = `auth-tokens-${appId}`
 	type AccessDetails = {access: AccessPayload; accessToken: AccessToken}
 	const emptyTokens = () => ({accessToken: undefined, refreshToken: undefined})
-	const getTokens = () => storage.read<AuthTokens>(key) ?? emptyTokens()
-	const setTokens = (tokens: AuthTokens) => storage.write(key, tokens)
+	const getTokens = async() => await storage.read<AuthTokens>(key) ?? emptyTokens()
+	const setTokens = async(tokens: AuthTokens) => storage.write(key, tokens)
 
 	async function commitTokens(tokens: AuthTokens) {
 		const access = decodeAccessToken(tokens.accessToken)

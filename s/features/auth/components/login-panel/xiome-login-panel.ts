@@ -100,7 +100,7 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	render() {
 		const {accessLoadingView} = this.share.authModel
-		return renderWrappedInLoading(accessLoadingView, access => access
+		return renderWrappedInLoading(accessLoadingView, access => access.user
 			? this.renderLoggedIn(access)
 			: this.renderLoggedOut()
 		)
