@@ -1,9 +1,9 @@
 
 import {onesie} from "../../../toolbox/onesie.js"
-import {Pubsub, pubsub} from "../../../toolbox/pubsub.js"
 import {Service} from "../../../types/service.js"
 import {greenTopic} from "../topics/green-topic.js"
 import {AuthTokens} from "../types/tokens/auth-token.js"
+import {Pubsub, pubsub} from "../../../toolbox/pubsub.js"
 import {AccessToken} from "../types/tokens/access-token.js"
 import {RefreshToken} from "../types/tokens/refresh-token.js"
 import {isTokenValid} from "../tools/tokens/is-token-valid.js"
