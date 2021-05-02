@@ -38,7 +38,7 @@ export function payPolicies({
 			const {stripeLiaisonForPlatform} = stripeComplex
 			return {
 				...auth,
-				...await commonAuthProcessing(auth.tables, auth.app.appId),
+				...await commonAuthProcessing(auth.tables, auth.access.appId),
 				stripeLiaisonForPlatform,
 				async getTablesNamespacedForApp(appId: string) {
 					const authTables = await auth.getTablesNamespacedForApp(appId)
@@ -53,7 +53,7 @@ export function payPolicies({
 	const prospect: Policy<ProspectMeta, ProspectAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.anon.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.app.appId)
+			const common = await commonAuthProcessing(auth.tables, auth.access.appId)
 			const {stripeLiaisonForPlatform} = stripeComplex
 			async function getStripeAccount(id: string) {
 				return stripeLiaisonForPlatform.accounts.retrieve(id)
@@ -66,7 +66,7 @@ export function payPolicies({
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.app.appId)
+			const common = await commonAuthProcessing(auth.tables, auth.access.appId)
 			const {stripeAccountId} = await common.tables.merchant
 				.stripeAccounts
 				.one({conditions: false})

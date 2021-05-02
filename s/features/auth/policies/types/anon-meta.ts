@@ -1,6 +1,6 @@
 
-import {AppToken} from "../../types/tokens/app-token.js"
+import {AccessToken} from "../../types/tokens/access-token.js"
 
 export interface AnonMeta {
-	appToken: AppToken
+	accessToken: AccessToken
 }

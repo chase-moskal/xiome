@@ -2,7 +2,6 @@
 import {makeRemote} from "../make-remote.js"
 import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfigConnected} from "../types/xiome-config-connected.js"
-import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
 import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"
 
 export async function connect({
@@ -11,27 +10,17 @@ export async function connect({
 		platformOrigin = "https://xiome.io"
 	}: XiomeConfigConnected) {
 
-	const apiLink = `${apiOrigin}/`
-	const popupsBase = `${platformOrigin}/popups`
-
-	const channel = new BroadcastChannel("tokenChangeEvent")
-	const broadcast = () => channel.postMessage(undefined)
-	const tokenStore = makeTokenStore2({
+	const {remote, authMediator} = makeRemote({
 		appId,
+		apiLink: `${apiOrigin}/`,
 		storage: simpleFlexStorage(window.localStorage),
-		publishAppTokenChange: broadcast,
-		publishAuthTokenChange: broadcast,
 	})
+	
+	const channel = new BroadcastChannel("tokenChangeEvent")
+	authMediator.subscribeToAccessChange(() => channel.postMessage(undefined))
+	channel.onmessage = () => authMediator.initialize()
 
-	const {remote, authGoblin} = makeRemote({
-		appId,
-		apiLink,
-		tokenStore,
-	})
+	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 
-	channel.onmessage = authGoblin.refreshFromStorage
-
-	const popups = systemPopups({popupsBase})
-
-	return {appId, remote, authGoblin, popups}
+	return {appId, remote, authMediator, popups}
 }

@@ -1,8 +1,11 @@
 
-import {App} from "../../types/tokens/app.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
+import {AccessPayload} from "../../types/tokens/access-payload.js"
+import {PrivilegeChecker} from "../../tools/permissions/types/privilege-checker.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard/app-permissions.js"
 
 export interface AnonAuth {
-	app: App
+	access: AccessPayload
 	tables: AuthTables
+	checker: PrivilegeChecker<typeof appPermissions["privileges"]>
 }

@@ -9,14 +9,13 @@ import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectApp({
-		origins, storage, platformHome, appWindowLink, mockStateStorage,
+		origins, storage, platformHome, appWindowLink,
 		sendEmail,
 	}: {
 		origins: string[]
 		storage: FlexStorage
 		platformHome: string
 		appWindowLink: string
-		mockStateStorage: FlexStorage
 		sendEmail: SendEmail
 	}) {
 
@@ -31,7 +30,7 @@ export async function mockConnectApp({
 	})
 
 	const ownerEmail = "creative@xiome.io"
-	let appId = await mockStateStorage.read<string>("mock-app")
+	let appId = await storage.read<string>("mock-app")
 	if (!appId) {
 		appId = await mockRegisterApp({
 			apiLink,
@@ -39,13 +38,13 @@ export async function mockConnectApp({
 			ownerEmail,
 			appOrigins: origins,
 		})
-		await mockStateStorage.write<string>("mock-app", appId)
+		await storage.write<string>("mock-app", appId)
 	}
 	console.log(`mock: app owner email "${ownerEmail}"`)
 
 	emailController.enableEmails()
 
-	const {remote, authGoblin} = await mockWiredRemote({
+	const {remote, authMediator} = await mockWiredRemote({
 		appId,
 		apiLink,
 		backend,
@@ -57,5 +56,5 @@ export async function mockConnectApp({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	return {appId, remote, authGoblin, backend, popups}
+	return {appId, remote, authMediator, backend, popups}
 }

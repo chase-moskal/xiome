@@ -2,23 +2,22 @@
 import {generateRemote} from "renraku/x/remote/generate-remote.js"
 import {makeJsonRequester} from "renraku/x/remote/make-json-requester.js"
 
-import {prepareApiShapeWiredWithAuthGoblin} from "./auth/api-shape-wired-with-auth-goblin.js"
-
-import {TokenStore2} from "../../features/auth/goblin/types/token-store2.js"
+import {prepareApiShape} from "./auth/prepare-api-shape.js"
+import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 
 export function makeRemote({
 		appId,
 		apiLink,
-		tokenStore,
+		storage,
 	}: {
 		appId: string
 		apiLink: string
-		tokenStore: TokenStore2
+		storage: FlexStorage
 	}) {
 
-	const {shape, installAuthGoblin} = prepareApiShapeWiredWithAuthGoblin({
+	const {shape, installAuthMediator} = prepareApiShape({
 		appId,
-		tokenStore,
+		storage,
 	})
 
 	const remote = generateRemote({
@@ -30,10 +29,9 @@ export function makeRemote({
 		}),
 	})
 
-	const authGoblin = installAuthGoblin({
-		loginService: remote.auth.loginService,
-		appTokenService: remote.auth.appTokenService,
+	const authMediator = installAuthMediator({
+		greenService: remote.auth.greenService,
 	})
 
-	return {remote, authGoblin}
+	return {remote, authMediator}
 }

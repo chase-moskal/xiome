@@ -68,6 +68,7 @@ export async function mockBackend({
 		}),
 		store: storeApi({
 			rando,
+			config,
 			authPolicies,
 			stripeComplex,
 			tables: storeTables,

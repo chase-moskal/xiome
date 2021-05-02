@@ -20,6 +20,7 @@ import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
 export const storeApi = ({
 		rando,
 		tables,
+		config,
 		authPolicies,
 		stripeComplex,
 		shoppingOptions,
@@ -54,7 +55,7 @@ export const storeApi = ({
 			}),
 			statusCheckerService: apiContext<ProspectMeta, ProspectAuth>()({
 				policy: policies.prospect,
-				expose: statusCheckerTopic(),
+				expose: statusCheckerTopic({config}),
 			}),
 		}
 	}

@@ -6,9 +6,11 @@ import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {ShoppingOptions} from "../../topics/types/shopping-options.js"
 import {StripeConnectOptions} from "../../topics/types/stripe-connect-options.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
+import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 
 export interface StoreApiOptions {
 	rando: Rando
+	config: PlatformConfig
 	stripeComplex: StripeComplex
 	tables: StoreTables & AuthTables
 	shoppingOptions: ShoppingOptions

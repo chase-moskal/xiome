@@ -21,7 +21,7 @@ export function questionsPolicies({authPolicies, questionsTables}: {
 			const auth = await authPolicies.anon.processAuth(meta, request)
 			return {
 				...auth,
-				...await questionsAuthProcessing(auth.app.appId),
+				...await questionsAuthProcessing(auth.access.appId),
 			}
 		},
 	}
@@ -31,7 +31,7 @@ export function questionsPolicies({authPolicies, questionsTables}: {
 			const auth = await authPolicies.user.processAuth(meta, request)
 			return {
 				...auth,
-				...await questionsAuthProcessing(auth.app.appId),
+				...await questionsAuthProcessing(auth.access.appId),
 			}
 		},
 	}
@@ -42,7 +42,7 @@ export function questionsPolicies({authPolicies, questionsTables}: {
 			auth.checker.requirePrivilege("moderate questions")
 			return {
 				...auth,
-				...await questionsAuthProcessing(auth.app.appId),
+				...await questionsAuthProcessing(auth.access.appId),
 			}
 		},
 	}

@@ -1,37 +1,37 @@
 
-import {emptyTokens} from "./empty-tokens.js"
-import {AuthTokens} from "../types/tokens/auth-token.js"
-import {AppToken} from "../types/tokens/app-token.js"
-import {TokenStoreOptions} from "./types/token-store-options.js"
+// import {emptyTokens} from "./empty-tokens.js"
+// import {AuthTokens} from "../types/tokens/auth-token.js"
+// import {AppToken} from "../types/tokens/app-token.js"
+// import {TokenStoreOptions} from "./types/token-store-options.js"
 
-export function makeTokenStore2({
-		appId,
-		storage,
-		publishAppTokenChange = () => {},
-		publishAuthTokenChange = () => {},
-	}: TokenStoreOptions) {
+// export function makeTokenStore2({
+// 		appId,
+// 		storage,
+// 		publishAppTokenChange = () => {},
+// 		publishAuthTokenChange = () => {},
+// 	}: TokenStoreOptions) {
 
-	const appKey = `tokenstore-app-${appId}`
-	const authKey = `tokenstore-auth-${appId}`
+// 	const appKey = `tokenstore-app-${appId}`
+// 	const authKey = `tokenstore-auth-${appId}`
 
-	return {
-		async saveAppToken(appToken: AppToken) {
-			await storage.write(appKey, appToken)
-			await publishAppTokenChange()
-		},
+// 	return {
+// 		async saveAppToken(appToken: AppToken) {
+// 			await storage.write(appKey, appToken)
+// 			await publishAppTokenChange()
+// 		},
 
-		async loadAppToken(): Promise<AppToken> {
-			return await storage.read<AppToken>(appKey) ?? undefined
-		},
+// 		async loadAppToken(): Promise<AppToken> {
+// 			return await storage.read<AppToken>(appKey) ?? undefined
+// 		},
 
-		async saveAuthTokens(tokens: AuthTokens) {
-			await storage.write(authKey, tokens)
-			await publishAuthTokenChange()
-		},
+// 		async saveAuthTokens(tokens: AuthTokens) {
+// 			await storage.write(authKey, tokens)
+// 			await publishAuthTokenChange()
+// 		},
 
-		async loadAuthTokens(): Promise<AuthTokens> {
-			return await storage.read<AuthTokens>(authKey)
-				?? emptyTokens()
-		},
-	}
-}
+// 		async loadAuthTokens(): Promise<AuthTokens> {
+// 			return await storage.read<AuthTokens>(authKey)
+// 				?? emptyTokens()
+// 		},
+// 	}
+// }

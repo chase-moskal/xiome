@@ -4,17 +4,17 @@ import {assembleModels} from "./assemble-models.js"
 import {SystemApi} from "../backend/types/system-api.js"
 import {ToRemote} from "renraku/x/types/remote/to-remote.js"
 import {setupModalSystem} from "./modal/setup-modal-system.js"
-import {AuthGoblin} from "../../features/auth/goblin/types/auth-goblin.js"
 import {SystemPopups} from "./connect/system-popups/types/system-popups.js"
-import {loginWithLinkTokenOrUseExistingLogin} from "./auth/login-with-link-token-or-use-existing-login.js"
+import {AuthMediator} from "../../features/auth/goblin/types/auth-mediator.js"
 import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
+import {loginWithLinkTokenOrUseExistingLogin} from "./auth/login-with-link-token-or-use-existing-login.js"
 
 export async function assembleAndInitializeFrontend({
-		appId, popups, authGoblin, remote,
+		appId, popups, authMediator, remote,
 	}: {
 		appId: string
 		popups: SystemPopups
-		authGoblin: AuthGoblin
+		authMediator: AuthMediator
 		remote: ToRemote<SystemApi>
 	}) {
 
@@ -23,11 +23,10 @@ export async function assembleAndInitializeFrontend({
 	const {modals, modalsElement} = setupModalSystem()
 	const models = await assembleModels({
 		appId,
-		modals,
 		remote,
 		popups,
 		storage,
-		authGoblin,
+		authMediator,
 	})
 
 	const components = getComponents({models, modals})

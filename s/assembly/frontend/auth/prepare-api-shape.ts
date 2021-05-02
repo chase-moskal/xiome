@@ -4,73 +4,62 @@ import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
 
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
-import {loginTopic} from "../../../features/auth/topics/login-topic.js"
-import {makeAuthGoblin} from "../../../features/auth/goblin/auth-goblin.js"
-import {AuthGoblin} from "../../../features/auth/goblin/types/auth-goblin.js"
-import {appTokenTopic} from "../../../features/auth/topics/app-token-topic.js"
-import {TokenStore2} from "../../../features/auth/goblin/types/token-store2.js"
+import {greenTopic} from "../../../features/auth/topics/green-topic.js"
+import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {makeAuthMediator} from "../../../features/auth/goblin/auth-mediator.js"
+import {AuthMediator} from "../../../features/auth/goblin/types/auth-mediator.js"
 
-export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
+export function prepareApiShape({appId, storage}: {
 		appId: string
-		tokenStore: TokenStore2
+		storage: FlexStorage
 	}) {
 
-	let authGoblin: AuthGoblin
+	let authMediator: AuthMediator
 
-	const augmentForAnon = {
+	const standardAugment = {
 		getMeta: async() => ({
-			appToken: await authGoblin.getAppToken(),
+			accessToken: await authMediator.getAccessToken(),
 		}),
-	}
-
-	const augmentForUser = {
-		getMeta: async() => ({
-			appToken: await authGoblin.getAppToken(),
-			accessToken: await authGoblin.getAccessToken(),
-		})
 	}
 
 	const shape = asShape<SystemApi>({
 		auth: {
-			appTokenService: {
-				[_augment]: {
-					getMeta: async() => undefined,
-				},
-				authorizeApp: true,
+			greenService: {
+				[_augment]: {getMeta: async() => undefined},
+				authorize: true,
 			},
 			loginService: {
-				[_augment]: augmentForAnon,
+				[_augment]: standardAugment,
 				authenticateViaLoginToken: true,
-				authorize: true,
 				sendLoginLink: true,
 			},
 			appService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				listApps: true,
 				registerApp: true,
 			},
 			appEditService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				deleteApp: true,
 				updateApp: true,
 			},
 			manageAdminsService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				listAdmins: true,
 				assignAdmin: true,
 				revokeAdmin: true,
 				assignPlatformUserAsAdmin: true,
 			},
 			personalService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				setProfile: true,
 			},
 			userService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				getUser: true,
 			},
 			permissionsService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				assignPrivilege: true,
 				createPrivilege: true,
 				createRole: true,
@@ -84,18 +73,18 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		},
 		store: {
 			stripeConnectService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				getConnectDetails: true,
 				generateConnectSetupLink: true,
 			},
 			shoppingService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				buySubscription: true,
 				updateSubscription: true,
 				endSubscription: true,
 			},
 			shopkeepingService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				listSubscriptionPlans: true,
 				createSubscriptionPlan: true,
 				updateSubscriptionPlan: true,
@@ -104,11 +93,11 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 			},
 			ecommerce: {
 				statusCheckerService: {
-					[_augment]: augmentForAnon,
+					[_augment]: standardAugment,
 					getStoreStatus: true,
 				},
 				statusTogglerService: {
-					[_augment]: augmentForUser,
+					[_augment]: standardAugment,
 					disableEcommerce: true,
 					enableEcommerce: true,
 				},
@@ -116,34 +105,32 @@ export function prepareApiShapeWiredWithAuthGoblin({appId, tokenStore}: {
 		},
 		questions: {
 			questionReadingService: {
-				[_augment]: augmentForAnon,
+				[_augment]: standardAugment,
 				fetchQuestions: true,
 			},
 			questionPostingService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				postQuestion: true,
 				archiveQuestion: true,
 				likeQuestion: true,
 			},
 			questionModerationService: {
-				[_augment]: augmentForUser,
+				[_augment]: standardAugment,
 				archiveBoard: true,
 			},
 		},
 	})
 
-	function installAuthGoblin({loginService, appTokenService}: {
-			loginService: Service<typeof loginTopic>
-			appTokenService: Service<typeof appTokenTopic>
+	function installAuthMediator({greenService}: {
+			greenService: Service<typeof greenTopic>
 		}) {
-		authGoblin = makeAuthGoblin({
+		authMediator = makeAuthMediator({
 			appId,
-			tokenStore,
-			authorize: loginService.authorize,
-			authorizeApp: appTokenService.authorizeApp,
+			storage,
+			greenService,
 		})
-		return authGoblin
+		return authMediator
 	}
 
-	return {shape, installAuthGoblin}
+	return {shape, installAuthMediator}
 }

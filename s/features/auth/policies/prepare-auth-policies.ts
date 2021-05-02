@@ -6,7 +6,6 @@ import {isOriginValid} from "./routines/is-origin-valid.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
 
-import {App} from "../types/tokens/app.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
 
 import {GreenAuth} from "./types/green-auth.js"
@@ -34,44 +33,40 @@ export function prepareAuthPolicies({
 	const bakeTables = authTablesBakery({config, tables})
 	const getStatsHub = prepareStatsHub({tables})
 
+	// policy for completely unknown user
 	const green: Policy<GreenMeta, GreenAuth> = {
 		processAuth: async(meta, request) => {
 			return {bakeTables}
 		},
 	}
 
+	// policy for authorized anonymous user
 	const anon: Policy<AnonMeta, AnonAuth> = {
-		processAuth: async(meta, request) => {
-			const app = await verifyToken<App>(meta.appToken)
-			if (!isOriginValid(request, app))
-				throw new ApiError(403, "invalid origin")
-			return {
-				app,
-				tables: await bakeTables(app.appId),
-			}
-		},
-	}
-
-	const user: Policy<UserMeta, UserAuth> = {
-		processAuth: async({accessToken, ...meta}, request) => {
-			const auth = await anon.processAuth(meta, request)
+		processAuth: async({accessToken}, request) => {
 			const access = await verifyToken<AccessPayload>(accessToken)
-			const checker = makePrivilegeChecker(access.permit, appPrivileges)
-			return {...auth, access, checker}
+			if (isOriginValid(request, access.origins))
+				return {
+					access,
+					tables: await bakeTables(access.appId),
+					checker: makePrivilegeChecker(access.permit, appPrivileges),
+				}
+			else
+				throw new ApiError(403, "invalid origin")
 		},
 	}
 
-	const platformUser: Policy<PlatformUserMeta, PlatformUserAuth> = {
+	// policy for logged in user
+	const user: Policy<UserMeta, UserAuth> = {
 		processAuth: async(meta, request) => {
-			const auth = await user.processAuth(meta, request)
-			if (!auth.app.platform)
-				throw new ApiError(403, "forbidden: only platform users allowed here")
-			const checker = makePrivilegeChecker(auth.access.permit, platformPrivileges)
-			const statsHub = await getStatsHub(auth.access.user.userId)
-			return {...auth, checker, statsHub}
+			const auth = await anon.processAuth(meta, request)
+			if (auth.access.user)
+				return auth
+			else
+				throw new ApiError(403, "not logged in")
 		},
 	}
 
+	// app user who is allowed to manage permissions
 	const userWhoManagesPermissions: Policy<UserMeta, UserAuth> = {
 		processAuth: async(meta, request) => {
 			const auth = await user.processAuth(meta, request)
@@ -80,20 +75,39 @@ export function prepareAuthPolicies({
 		},
 	}
 
+	// policy for logged in user on the platform app
+	const platformUser: Policy<PlatformUserMeta, PlatformUserAuth> = {
+		processAuth: async(meta, request) => {
+			const auth = await user.processAuth(meta, request)
+			if (auth.access.appId == config.platform.appDetails.appId)
+				return {
+					...auth,
+					checker: makePrivilegeChecker(auth.access.permit, platformPrivileges),
+					statsHub: await getStatsHub(auth.access.user.userId),
+				}
+			else
+				throw new ApiError(403, "not platform app")
+		},
+	}
+
+	// platform user who is the owner of an app
 	const appOwner: Policy<
 			AppOwnerMeta,
 			AppOwnerAuth
 		> = {
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
+
 			async function getTablesNamespacedForApp(appId: string) {
 				const canEditAnyApp = auth.checker.hasPrivilege("edit any app")
 				const isOwner = isUserOwnerOfApp({appId, access: auth.access, tables})
 				const allowed = isOwner || canEditAnyApp
-				if (!allowed)
+				if (allowed)
+					return bakeTables(appId)
+				else
 					throw new ApiError(403, "forbidden: not privileged over app")
-				return bakeTables(appId)
 			}
+
 			return {...auth, getTablesNamespacedForApp}
 		},
 	}

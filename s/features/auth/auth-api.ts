@@ -6,7 +6,7 @@ import {userTopic} from "./topics/user-topic.js"
 import {loginTopic} from "./topics/login-topic.js"
 import {AuthTables} from "./tables/types/auth-tables.js"
 import {personalTopic} from "./topics/personal-topic.js"
-import {appTokenTopic} from "./topics/app-token-topic.js"
+import {greenTopic} from "./topics/green-topic.js"
 import {permissionsTopic} from "./topics/permissions-topic.js"
 import {manageAdminsTopic} from "./topics/manage-admins-topic.js"
 import {prepareAuthPolicies} from "./policies/prepare-auth-policies.js"
@@ -29,9 +29,9 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 	} & AuthApiOptions) => {
 
 	return {
-		appTokenService: apiContext<GreenMeta, GreenAuth>()({
+		greenService: apiContext<GreenMeta, GreenAuth>()({
 			policy: authPolicies.green,
-			expose: appTokenTopic(options),
+			expose: greenTopic(options),
 		}),
 
 		loginService: apiContext<AnonMeta, AnonAuth>()({

@@ -2,9 +2,9 @@
 import {loginTopic} from "../../../topics/login-topic.js"
 
 import {Service} from "../../../../../types/service.js"
-import {AuthGoblin} from "../../../goblin/types/auth-goblin.js"
+import {AuthMediator} from "../../../goblin/types/auth-mediator.js"
 
 export interface AuthModelOptions {
-	authGoblin: AuthGoblin
+	authMediator: AuthMediator
 	loginService: Service<typeof loginTopic>
 }

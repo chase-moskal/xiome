@@ -42,7 +42,6 @@ export function mockPlatformConfig({
 		},
 		tokens: {
 			lifespans: {
-				app: 5 * minute,
 				login: 20 * minute,
 				refresh: 30 * day,
 				access: 5 * minute,

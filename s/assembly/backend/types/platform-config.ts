@@ -27,7 +27,6 @@ export interface PlatformConfig {
 	}
 	tokens: {
 		lifespans: {
-			app: number
 			login: number
 			access: number
 			refresh: number

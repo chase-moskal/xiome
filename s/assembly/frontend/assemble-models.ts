@@ -8,15 +8,14 @@ import {makePermissionsModel} from "../../features/auth/models/permissions-model
 
 export async function assembleModels({
 		appId,
-		modals,
 		remote,
 		popups,
 		storage,
-		authGoblin,
+		authMediator,
 	}: AssembleModelsOptions) {
 
 	const authModel = makeAuthModel({
-		authGoblin,
+		authMediator,
 		loginService: remote.auth.loginService,
 	})
 

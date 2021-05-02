@@ -1,8 +1,7 @@
 
 import {Await} from "../../../../../types/await.js"
-import {mockBackend} from "../../../../backend/mock-backend.js"
 import {mockRemote} from "../../../mocks/mock-remote.js"
-import {makeTokenStore2} from "../../../../../features/auth/goblin/token-store2.js"
+import {mockBackend} from "../../../../backend/mock-backend.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockWiredRemote({
@@ -15,24 +14,18 @@ export async function mockWiredRemote({
 		backend: Await<ReturnType<typeof mockBackend>>
 	}) {
 
-	const channel = new BroadcastChannel("tokenChangeEvent")
-	const publishTokenChange = () => channel.postMessage(undefined)
-
-	const {remote, authGoblin} = mockRemote({
+	const {remote, authMediator} = mockRemote({
 		appId,
 		apiLink,
+		storage,
 		api: backend.api,
 		origin: new URL(appWindowLink).origin,
 		latency: {min: 200, max: 800},
-		tokenStore: makeTokenStore2({
-			appId,
-			storage,
-			publishAppTokenChange: publishTokenChange,
-			publishAuthTokenChange: publishTokenChange,
-		}),
 	})
 
-	channel.onmessage = authGoblin.refreshFromStorage
+	const channel = new BroadcastChannel("tokenChangeEvent")
+	authMediator.subscribeToAccessChange(() => channel.postMessage(undefined))
+	channel.onmessage = () => authMediator.initialize()
 
-	return {remote, authGoblin}
+	return {remote, authMediator}
 }

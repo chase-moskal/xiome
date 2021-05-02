@@ -11,14 +11,18 @@ import {AuthTables} from "../../tables/types/auth-tables.js"
 
 export async function signAuthTokens({
 			scope,
+			appId,
 			userId,
 			tables,
+			origins,
 			lifespans,
 			signToken,
 			generateNickname,
 		}: {
 			scope: Scope
+			appId: string
 			userId: string
+			origins: string[]
 			tables: AuthTables
 			lifespans: {
 				access: number
@@ -35,7 +39,7 @@ export async function signAuthTokens({
 
 	return concurrent({
 		accessToken: signToken<AccessPayload>({
-			payload: {user, permit, scope},
+			payload: {appId, origins, user, permit, scope},
 			lifespan: lifespans.access,
 		}),
 		refreshToken: signToken<RefreshPayload>({

@@ -1,6 +1,5 @@
 
 import {mockRemote} from "./mock-remote.js"
-import {mockApiOrigin} from "./mock-api-origin.js"
 import {assembleModels} from "../assemble-models.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
@@ -8,14 +7,11 @@ import {mockPopups} from "../connect/mock/common/mock-popups.js"
 import {MockLatency} from "../../../framework/add-mock-latency.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {MockStripeOperations} from "../../../features/store/stripe2/types/mock-stripe-operations.js"
-import {loginWithLinkTokenOrUseExistingLogin} from "../auth/login-with-link-token-or-use-existing-login.js"
 
 export async function mockBrowser({api, mockStripeOperations}: {
 		api: SystemApi
 		mockStripeOperations: MockStripeOperations
 	}) {
-
-	const {mockTokenIframe} = mockApiOrigin()
 
 	async function mockAppWindow({
 			appId,
@@ -29,30 +25,23 @@ export async function mockBrowser({api, mockStripeOperations}: {
 			latency: MockLatency
 		}) {
 
-		const {tokenStore, onStorageEvent} = mockTokenIframe(appId)
-		const {remote, authGoblin} = mockRemote({
+		const storage = memoryFlexStorage()
+		const {remote, authMediator} = mockRemote({
 			api,
 			appId,
 			apiLink,
 			latency,
-			tokenStore,
+			storage,
 			origin: new URL(windowLink).origin,
 		})
-		onStorageEvent(authGoblin.refreshFromStorage)
 
 		const {modals, nextModalResults} = mockModalSystem()
 		const models = await assembleModels({
 			appId,
-			modals,
 			remote,
-			authGoblin,
-			storage: memoryFlexStorage(),
+			storage,
+			authMediator,
 			popups: mockPopups({mockStripeOperations}),
-		})
-
-		await loginWithLinkTokenOrUseExistingLogin({
-			link: windowLink,
-			authModel: models.authModel,
 		})
 
 		return {models, remote, nextModalResults}
