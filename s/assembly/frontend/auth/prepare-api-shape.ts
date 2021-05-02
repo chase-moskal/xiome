@@ -6,8 +6,8 @@ import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {greenTopic} from "../../../features/auth/topics/green-topic.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {makeAuthMediator} from "../../../features/auth/goblin/auth-mediator.js"
-import {AuthMediator} from "../../../features/auth/goblin/types/auth-mediator.js"
+import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
+import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 
 export function prepareApiShape({appId, storage}: {
 		appId: string

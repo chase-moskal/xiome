@@ -1,5 +1,5 @@
 
-import {AuthMediator} from "../../../../../features/auth/goblin/types/auth-mediator.js"
+import {AuthMediator} from "../../../../../features/auth/mediator/types/auth-mediator.js"
 
 export function wireMediatorBroadcastChannel(authMediator: AuthMediator) {
 	const channel = new BroadcastChannel("tokenChangeEvent")
