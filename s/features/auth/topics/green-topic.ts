@@ -12,6 +12,7 @@ import {AccessPayload} from "../types/tokens/access-payload.js"
 import {RefreshPayload} from "../types/tokens/refresh-payload.js"
 import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
+import {anybodyPrivileges} from "../../../assembly/backend/permissions/standard/universal/privilege-groups/anybody-privileges.js"
 
 export const greenTopic = ({
 		config,
@@ -65,7 +66,9 @@ export const greenTopic = ({
 					appId,
 					scope,
 					origins: originsFromDatabase(appRow.origins),
-					permit: {privileges: []}, // TODO get anonymous privileges
+					permit: {
+						privileges: []
+					},
 				},
 			})
 		}

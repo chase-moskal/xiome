@@ -1,12 +1,12 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
+import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {UserAuth} from "../policies/types/user-auth.js"
-import {AuthApiOptions} from "../types/auth-api-options.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
+import {AuthApiOptions} from "../types/auth-api-options.js"
 import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
-import {find} from "../../../toolbox/dbby/dbby-x.js"
 
 export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()({
 

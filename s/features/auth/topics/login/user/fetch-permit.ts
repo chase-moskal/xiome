@@ -1,10 +1,10 @@
 
-import {UserTables} from "../../../tables/types/table-groups/user-tables.js"
 import {Permit} from "../../../types/permit.js"
-import {find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
-
-import {isCurrentlyWithinTimeframe} from "./utils/is-currently-within-timeframe.js"
 import {AuthTables} from "../../../tables/types/auth-tables.js"
+import {find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {isCurrentlyWithinTimeframe} from "./utils/is-currently-within-timeframe.js"
+import {userPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/user-privileges.js"
+import {anybodyPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/anybody-privileges.js"
 
 export async function fetchPermit({userId, tables}: {
 			userId: string
@@ -24,6 +24,10 @@ export async function fetchPermit({userId, tables}: {
 		})
 
 	return {
-		privileges: roleHasPrivilegeRows.map(({privilegeId}) => privilegeId),
+		privileges: [
+			// ...Object.values(anybodyPrivileges),
+			// ...Object.values(userPrivileges),
+			...roleHasPrivilegeRows.map(({privilegeId}) => privilegeId)
+		],
 	}
 }

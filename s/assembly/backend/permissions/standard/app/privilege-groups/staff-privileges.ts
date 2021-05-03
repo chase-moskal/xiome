@@ -4,6 +4,6 @@ import {storePrivileges} from "../../../../../../features/store/permissions/stor
 
 export const staffPrivileges = {
 	...storePrivileges,
-	...questionsPrivileges,
+	// ...questionsPrivileges.moderator,
 	"customize permissions": "7zk5csW78DHXHbFKzGdYfthYmTkwWKtGD7YnqPswW9Twm5FK",
 }

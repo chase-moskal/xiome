@@ -33,7 +33,7 @@ export function mockRemote({
 	const remote = logAllCalls({
 		// logger: new DisabledLogger(),
 		logger: console,
-		fullyDebug: false,
+		fullyDebug: true,
 		remote: addMockLatency({
 			latency,
 			remote: loopbackJsonRemote<typeof api>({
