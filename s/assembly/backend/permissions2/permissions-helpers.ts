@@ -1,5 +1,5 @@
 
-type HasPrivilege = {customizable: boolean}
+type HasPrivilege = {active: boolean, immutable: boolean}
 type Privileges = {[key: string]: string}
 type Role<xPrivileges extends Privileges> = {
 	roleId: string
@@ -8,7 +8,8 @@ type Role<xPrivileges extends Privileges> = {
 
 export function asPermissions<
 		xPrivileges extends Privileges,
-	>(permissions: {privileges: xPrivileges, roles: {[key: string]: Role<xPrivileges>}}) {
+		xRoles extends {[key: string]: Role<xPrivileges>}
+	>(permissions: {privileges: xPrivileges, roles: xRoles}) {
 	return permissions
 }
 
@@ -22,10 +23,10 @@ export function has<xPrivileges extends Privileges>(
 	return <{[P in keyof xPrivileges]: HasPrivilege}>hasPrivileges
 }
 
-export function customizable<xPrivileges extends Privileges>(privileges: xPrivileges) {
-	return has<xPrivileges>(privileges, {customizable: true})
+export function mutable<xPrivileges extends Privileges>(active: boolean, privileges: xPrivileges) {
+	return has<xPrivileges>(privileges, {active, immutable: false})
 }
 
-export function hardcoded<xPrivileges extends Privileges>(privileges: xPrivileges) {
-	return has<xPrivileges>(privileges, {customizable: false})
+export function immutable<xPrivileges extends Privileges>(active: boolean, privileges: xPrivileges) {
+	return has<xPrivileges>(privileges, {active, immutable: true})
 }

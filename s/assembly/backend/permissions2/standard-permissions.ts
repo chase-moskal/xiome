@@ -1,5 +1,5 @@
 
-import {asPermissions, customizable, hardcoded} from "./permissions-helpers.js"
+import {asPermissions, mutable, immutable, has} from "./permissions-helpers.js"
 
 const commonPrivileges = {
 	"read questions": "22M8Tcp2xMg9hN5YxKkbffXpNHScTCnPXSXztzRnPXbC9RsD",
@@ -23,6 +23,9 @@ const appPowerPrivileges = {
 	"give away freebies": "8R5fFWCJy8PMDJsPNkn8HqzpMGHBkMMfXz9HCzx7XdnrcKzJ",
 }
 
+const active = true
+const INACTIVE = false
+
 const universal = asPermissions({
 	privileges: {
 		...commonPrivileges,
@@ -33,20 +36,20 @@ const universal = asPermissions({
 		"anonymous": {
 			roleId: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
 			hasPrivileges: {
-				"read questions": {customizable: true},
+				"read questions": {active: true, immutable: false},
 			},
 		},
 		"user": {
 			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
 			hasPrivileges: {
-				...customizable(commonPrivileges),
+				...mutable(active, commonPrivileges),
 			},
 		},
 		"technician": {
 			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
 			hasPrivileges: {
-				...hardcoded(commonPrivileges),
-				...hardcoded(powerPrivileges),
+				...immutable(active, commonPrivileges),
+				...immutable(active, powerPrivileges),
 			},
 		},
 	},
@@ -63,7 +66,7 @@ export const platformPermissions = asPermissions({
 			...universal.roles.technician,
 			hasPrivileges: {
 				...universal.roles.technician.hasPrivileges,
-				...hardcoded(platformPowerPrivileges),
+				...immutable(active, platformPowerPrivileges),
 			},
 		},
 	},
@@ -79,15 +82,15 @@ export const appPermissions = asPermissions({
 		"admin": {
 			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
 			hasPrivileges: {
-				...hardcoded(appPowerPrivileges),
-				"customize permissions": {customizable: false},
+				...immutable(active, appPowerPrivileges),
+				"customize permissions": {active: true, immutable: true},
 			},
 		},
 		"technician": {
 			...universal.roles.technician,
 			hasPrivileges: {
 				...universal.roles.technician.hasPrivileges,
-				...hardcoded(appPowerPrivileges),
+				...immutable(active, appPowerPrivileges),
 			},
 		},
 	},

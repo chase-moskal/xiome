@@ -3,6 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {Scope} from "../types/tokens/scope.js"
+import {fetchUser} from "./login/user/fetch-user.js"
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {GreenAuth} from "../policies/types/green-auth.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
@@ -10,9 +11,8 @@ import {AccessToken} from "../types/tokens/access-token.js"
 import {RefreshToken} from "../types/tokens/refresh-token.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
 import {RefreshPayload} from "../types/tokens/refresh-payload.js"
-import {fetchUserAndPermit} from "./login/fetch-user-and-permit.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
-import {anybodyPrivileges} from "../../../assembly/backend/permissions/standard/universal/privilege-groups/anybody-privileges.js"
+import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const greenTopic = ({
 		config,
@@ -28,6 +28,10 @@ export const greenTopic = ({
 			}): Promise<AccessToken> {
 
 		const tables = await bakeTables(appId)
+		const permissionsEngine = makePermissionsEngine({
+			isPlatform: appId === config.platform.appDetails.appId,
+			permissionsTables: tables.permissions,
+		})
 		const appRow = await tables.app.app.one(find({appId}))
 
 		if (!appRow)
@@ -38,11 +42,7 @@ export const greenTopic = ({
 
 		if (refreshToken) {
 			const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-			const {user, permit} = await fetchUserAndPermit({
-				userId,
-				tables,
-				generateNickname,
-			})
+			const user = await fetchUser({userId, tables, generateNickname})
 			await tables.user.latestLogin.update({
 				...find({userId}),
 				upsert: {userId, time: Date.now()},
@@ -52,7 +52,9 @@ export const greenTopic = ({
 				payload: {
 					user,
 					scope,
-					permit,
+					permit: {
+						privileges: await permissionsEngine.getUserPrivileges(userId),
+					},
 					appId: appId,
 					origins: originsFromDatabase(appRow.origins),
 				},
@@ -67,7 +69,7 @@ export const greenTopic = ({
 					scope,
 					origins: originsFromDatabase(appRow.origins),
 					permit: {
-						privileges: []
+						privileges: await permissionsEngine.getAnonymousPrivileges()
 					},
 				},
 			})

@@ -2,5 +2,6 @@
 export type RoleHasPrivilegeRow = {
 	roleId: string
 	privilegeId: string
-	hard: boolean
+	customizable: boolean
+	active: boolean
 }
