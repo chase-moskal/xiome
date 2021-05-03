@@ -12,9 +12,6 @@ import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {PlatformUserAuth} from "../policies/types/platform-user-auth.js"
-import {appPermissions} from "../../../assembly/backend/permissions/standard/app-permissions.js"
-import {questionsPrivileges} from "../../questions/api/questions-privileges.js"
-import {RoleHasPrivilegeRow} from "../tables/types/rows/role-has-privilege-row.js"
 
 export const appTopic = ({
 		rando,
@@ -45,13 +42,12 @@ export const appTopic = ({
 		})))
 	},
 
-	async registerApp({tables, tablesForApp}, {appDraft, ownerUserId}: {
+	async registerApp({tables}, {appDraft, ownerUserId}: {
 			appDraft: AppDraft
 			ownerUserId: string
 		}) {
 		throwProblems(validateAppDraft(appDraft))
 		const appId = rando.randomId()
-		const appTables = await tablesForApp(appId)
 		await Promise.all([
 			tables.app.app.create({
 				appId,
@@ -64,18 +60,6 @@ export const appTopic = ({
 				appId,
 				userId: ownerUserId,
 			}),
-			appTables.permissions.roleHasPrivilege.create(
-				...Object.values(questionsPrivileges.anybody).map(privilegeId => ({
-					privilegeId,
-					hard: false,
-					roleId: appPermissions.roles.anybody.roleId,
-				})),
-				...Object.values(questionsPrivileges.user).map(privilegeId => ({
-					privilegeId,
-					hard: false,
-					roleId: appPermissions.roles.user.roleId,
-				})),
-			),
 		])
 		return {appId}
 	},

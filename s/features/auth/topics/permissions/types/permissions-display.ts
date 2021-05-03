@@ -13,6 +13,7 @@ export interface PermissionsDisplay {
 	rolesHavePrivileges: {
 		roleId: string
 		privilegeId: string
-		hard: boolean
+		active: boolean
+		customizable: boolean
 	}[]
 }

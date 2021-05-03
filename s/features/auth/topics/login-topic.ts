@@ -8,6 +8,7 @@ import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {LoginPayload} from "../types/tokens/login-payload.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
+import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const loginTopic = ({
 		rando,
@@ -51,6 +52,10 @@ export const loginTopic = ({
 			appId: access.appId,
 			origins: access.origins,
 			lifespans: config.tokens.lifespans,
+			permissionsEngine: makePermissionsEngine({
+				isPlatform: access.appId === config.platform.appDetails.appId,
+				permissionsTables: tables.permissions,
+			}),
 			signToken,
 			generateNickname,
 		})

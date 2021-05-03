@@ -9,7 +9,7 @@ import {statusCheckerTopic} from "../../topics/status-checker-topic.js"
 import {statusTogglerTopic} from "../../topics/status-toggler-topic.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {storageCache} from "../../../../toolbox/flex-storage/cache/storage-cache.js"
-import {appPermissions} from "../../../../assembly/backend/permissions/standard/app-permissions.js"
+import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function ecommerceShare({
 		appId,

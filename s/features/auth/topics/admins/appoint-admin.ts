@@ -4,9 +4,9 @@ import {AuthTables} from "../../tables/types/auth-tables.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {assertEmailAccount} from "../login/assert-email-account.js"
 import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
-import {appRoles} from "../../../../assembly/backend/permissions/standard/app/app-roles.js"
+import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appRoles.admin.roleId
+const adminRoleId = appPermissions.roles.admin.roleId
 
 export async function appointAdmin({email, tablesForApp, rando, config}: {
 			email: string

@@ -19,10 +19,9 @@ import {PlatformUserMeta} from "./types/platform-user-meta.js"
 import {AppOwnerMeta} from "./types/app-owner-meta.js"
 import {AppOwnerAuth} from "./types/app-owner-auth.js"
 import {AuthPolicyOptions} from "./types/auth-policy-options.js"
-import {makePrivilegeChecker} from "../tools/permissions/make-privilege-checker.js"
-import {appPrivileges} from "../../../assembly/backend/permissions/standard/app/app-privileges.js"
-import {platformPrivileges} from "../../../assembly/backend/permissions/standard/platform/platform-privileges.js"
 import {isUserOwnerOfApp} from "../topics/apps/is-user-the-owner-of-app.js"
+import {makePrivilegeChecker} from "../tools/permissions/make-privilege-checker.js"
+import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function prepareAuthPolicies({
 			config,
@@ -48,7 +47,7 @@ export function prepareAuthPolicies({
 				return {
 					access,
 					tables: await bakeTables(access.appId),
-					checker: makePrivilegeChecker(access.permit, appPrivileges),
+					checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 				}
 			else
 				throw new ApiError(403, "invalid origin")
@@ -82,9 +81,8 @@ export function prepareAuthPolicies({
 			if (auth.access.appId == config.platform.appDetails.appId)
 				return {
 					...auth,
-					checker: makePrivilegeChecker(auth.access.permit, platformPrivileges),
+					checker: makePrivilegeChecker(auth.access.permit, platformPermissions.privileges),
 					statsHub: await getStatsHub(auth.access.user.userId),
-					tablesForApp: (appId: string) => bakeTables(appId),
 				}
 			else
 				throw new ApiError(403, "not platform app")

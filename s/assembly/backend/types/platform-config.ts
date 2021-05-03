@@ -1,6 +1,4 @@
 
-import {HardPermissions} from "../permissions/types/hard-permissions.js"
-
 export interface PlatformConfig {
 	mongo: {
 		link: string
@@ -20,10 +18,6 @@ export interface PlatformConfig {
 		technician: {
 			email: string
 		}
-	}
-	permissions: {
-		app: HardPermissions
-		platform: HardPermissions
 	}
 	tokens: {
 		lifespans: {

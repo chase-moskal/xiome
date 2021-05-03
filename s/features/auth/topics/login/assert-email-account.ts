@@ -4,9 +4,9 @@ import {AuthTables} from "../../tables/types/auth-tables.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
-import {universalRoles} from "../../../../assembly/backend/permissions/standard/universal/universal-roles.js"
+import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
-const technicianRoleId = universalRoles.technician.roleId
+const technicianRoleId = universalPermissions.roles.technician.roleId
 
 export async function assertEmailAccount({
 			rando, email, tables, config,

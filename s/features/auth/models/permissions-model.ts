@@ -5,7 +5,7 @@ import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
 import {PermissionsDisplay} from "../topics/permissions/types/permissions-display.js"
 import {PermissionsModelOptions} from "./types/permissions/permissions-model-options.js"
-import {appPermissions} from "../../../assembly/backend/permissions/standard/app-permissions.js"
+import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function makePermissionsModel({
 		permissionsService,

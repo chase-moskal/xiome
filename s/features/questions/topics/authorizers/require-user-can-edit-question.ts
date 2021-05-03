@@ -1,12 +1,12 @@
 
 import {QuestionPostRow} from "../../api/tables/types/questions-tables.js"
 import {PrivilegeChecker} from "../../../auth/tools/permissions/types/privilege-checker.js"
-import {appPrivileges} from "../../../../assembly/backend/permissions/standard/app/app-privileges.js"
+import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function requireUserCanEditQuestion({userId, questionPost, checker}: {
 		userId: string
 		questionPost: QuestionPostRow
-		checker: PrivilegeChecker<typeof appPrivileges>
+		checker: PrivilegeChecker<typeof appPermissions["privileges"]>
 	}) {
 	const userIsModerator = checker.hasPrivilege("moderate questions")
 	const userIsOwner = questionPost.authorUserId === userId

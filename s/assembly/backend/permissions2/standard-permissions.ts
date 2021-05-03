@@ -26,7 +26,7 @@ const appPowerPrivileges = {
 const active = true
 const INACTIVE = false
 
-const universal = asPermissions({
+export const universalPermissions = asPermissions({
 	privileges: {
 		...commonPrivileges,
 		...powerPrivileges,
@@ -57,15 +57,15 @@ const universal = asPermissions({
 
 export const platformPermissions = asPermissions({
 	privileges: {
-		...universal.privileges,
+		...universalPermissions.privileges,
 		...platformPowerPrivileges,
 	},
 	roles: {
-		...universal.roles,
+		...universalPermissions.roles,
 		"technician": {
-			...universal.roles.technician,
+			...universalPermissions.roles.technician,
 			hasPrivileges: {
-				...universal.roles.technician.hasPrivileges,
+				...universalPermissions.roles.technician.hasPrivileges,
 				...immutable(active, platformPowerPrivileges),
 			},
 		},
@@ -74,11 +74,11 @@ export const platformPermissions = asPermissions({
 
 export const appPermissions = asPermissions({
 	privileges: {
-		...universal.privileges,
+		...universalPermissions.privileges,
 		...appPowerPrivileges,
 	},
 	roles: {
-		...universal.roles,
+		...universalPermissions.roles,
 		"admin": {
 			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
 			hasPrivileges: {
@@ -87,9 +87,9 @@ export const appPermissions = asPermissions({
 			},
 		},
 		"technician": {
-			...universal.roles.technician,
+			...universalPermissions.roles.technician,
 			hasPrivileges: {
-				...universal.roles.technician.hasPrivileges,
+				...universalPermissions.roles.technician.hasPrivileges,
 				...immutable(active, appPowerPrivileges),
 			},
 		},

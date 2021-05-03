@@ -8,9 +8,9 @@ import {AuthApiOptions} from "../types/auth-api-options.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
-import {appRoles} from "../../../assembly/backend/permissions/standard/app/app-roles.js"
+import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appRoles.admin.roleId
+const adminRoleId = appPermissions.roles.admin.roleId
 
 export const manageAdminsTopic = ({
 			rando,

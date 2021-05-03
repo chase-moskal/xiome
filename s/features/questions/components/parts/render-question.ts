@@ -3,8 +3,8 @@ import {User} from "../../../auth/types/user.js"
 import {html} from "../../../../framework/component.js"
 import {Question} from "../../topics/types/question.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
-import {appPrivileges} from "../../../../assembly/backend/permissions/standard/app/app-privileges.js"
 import {renderQuestionAuthor} from "./render-question-author.js"
+import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function renderQuestion({
 		access,
@@ -34,7 +34,7 @@ export function renderQuestion({
 	const author = getUser(authorUserId)
 	const authority =
 		author.userId === access.user.userId ||
-		access.permit.privileges.includes(appPrivileges["moderate questions"])
+		access.permit.privileges.includes(appPermissions.privileges["moderate questions"])
 
 	const renderDeleteButton = () => html`
 		<button

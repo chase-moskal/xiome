@@ -6,8 +6,8 @@ import {AccessPayload} from "../../types/tokens/access-payload.js"
 import {Scope} from "../../types/tokens/scope.js"
 
 import {fetchUser} from "./user/fetch-user.js"
-import {fetchPermit} from "./user/fetch-permit.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
+import {PermissionsEngine} from "../../../../assembly/backend/permissions2/types/permissions-engine.js"
 
 export async function signAuthTokens({
 			scope,
@@ -16,6 +16,7 @@ export async function signAuthTokens({
 			tables,
 			origins,
 			lifespans,
+			permissionsEngine,
 			signToken,
 			generateNickname,
 		}: {
@@ -24,6 +25,7 @@ export async function signAuthTokens({
 			userId: string
 			origins: string[]
 			tables: AuthTables
+			permissionsEngine: PermissionsEngine
 			lifespans: {
 				access: number
 				refresh: number
@@ -34,7 +36,9 @@ export async function signAuthTokens({
 
 	const {user, permit} = await concurrent({
 		user: fetchUser({userId, tables, generateNickname}),
-		permit: fetchPermit({userId, tables}),
+		permit: (async() => ({
+			privileges: await permissionsEngine.getUserPrivileges(userId),
+		}))(),
 	})
 
 	return concurrent({

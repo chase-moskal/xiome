@@ -39,12 +39,13 @@ export class XiomePermissions extends WiredComponent<{
 			.filter(({privilegeId}) =>
 				assignedPrivilegeIds.includes(privilegeId))
 			.map(privilege => {
-				const {hard} = permissions.rolesHavePrivileges.find(
+				const {active, customizable} = permissions.rolesHavePrivileges.find(
 					rp => rp.roleId === roleSelected.roleId &&
 						rp.privilegeId === privilege.privilegeId
 				)
-				return {...privilege, hard}
+				return {...privilege, active, customizable}
 			})
+			.filter(privilege => privilege.active)
 	}
 
 	private clickNewRole = async() => {

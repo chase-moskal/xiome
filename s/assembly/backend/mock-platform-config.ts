@@ -2,8 +2,6 @@
 import {PlatformConfig} from "./types/platform-config.js"
 import {minute, day} from "../../toolbox/goodtimes/times.js"
 
-import {hardPermissions} from "./permissions/hard-permissions.js"
-
 export function mockPlatformConfig({
 		platformHome,
 		platformLabel,
@@ -19,7 +17,6 @@ export function mockPlatformConfig({
 			link: "mock-mongo-link",
 			database: "platform",
 		},
-		permissions: hardPermissions,
 		platform: {
 			from: `hello@${new URL(platformHome).hostname}`,
 			technician: {

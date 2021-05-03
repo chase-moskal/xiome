@@ -31,7 +31,8 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 				rows => rows.map(row => ({
 					privilegeId: row.privilegeId,
 					roleId: row.roleId,
-					hard: !!row.hard,
+					active: row.active,
+					customizable: row.customizable,
 				}))
 			),
 		})
@@ -67,9 +68,10 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			privilegeId: string
 		}) {
 		await tables.permissions.roleHasPrivilege.create({
-			hard: false,
 			roleId,
 			privilegeId,
+			active: true,
+			customizable: true,
 		})
 	},
 
@@ -77,11 +79,12 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			roleId: string
 			privilegeId: string
 		}) {
-		await tables.permissions.roleHasPrivilege.delete(find({
-			hard: false,
-			roleId,
-			privilegeId,
-		}))
+		await tables.permissions.roleHasPrivilege.update({
+			...find({roleId, privilegeId, customizable: true}),
+			write: {
+				active: false,
+			},
+		})
 	},
 
 	async grantRole({}, {}: {
