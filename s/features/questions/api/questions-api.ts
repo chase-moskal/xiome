@@ -7,11 +7,13 @@ import {questionPostingTopic} from "../topics/question-posting-topic.js"
 import {questionReadingTopic} from "../topics/question-reading-topic.js"
 import {questionModerationTopic} from "../topics/question-moderation-topic.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
+import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
 import {QuestionModeratorAuth, QuestionModeratorMeta, QuestionPosterAuth, QuestionPosterMeta, QuestionReaderAuth, QuestionReaderMeta} from "./types/questions-persona.js"
 
 export function questionsApi({
-		rando, questionsTables, authPolicies, generateNickname
+		config, rando, questionsTables, authPolicies, generateNickname
 	}: {
+		config: PlatformConfig
 		rando: Rando
 		questionsTables: QuestionsTables
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
@@ -26,7 +28,7 @@ export function questionsApi({
 	return {
 		questionReadingService: apiContext<QuestionReaderMeta, QuestionReaderAuth>()({
 			policy: policies.questionReader,
-			expose: questionReadingTopic({generateNickname}),
+			expose: questionReadingTopic({config, generateNickname}),
 		}),
 		questionPostingService: apiContext<QuestionPosterMeta, QuestionPosterAuth>()({
 			policy: policies.questionPoster,

@@ -87,6 +87,7 @@ export async function mockBackend({
 		}),
 		questions: questionsApi({
 			rando,
+			config,
 			authPolicies,
 			questionsTables,
 			generateNickname,

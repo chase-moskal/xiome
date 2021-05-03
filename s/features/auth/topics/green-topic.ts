@@ -42,25 +42,25 @@ export const greenTopic = ({
 
 		if (refreshToken) {
 			const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-			const user = await fetchUser({userId, tables, generateNickname})
+			const user = await fetchUser({userId, tables, permissionsEngine, generateNickname})
 			await tables.user.latestLogin.update({
 				...find({userId}),
 				upsert: {userId, time: Date.now()},
 			})
+			const privileges = await permissionsEngine.getUserPrivileges(userId)
 			return signToken<AccessPayload>({
 				lifespan: config.tokens.lifespans.access,
 				payload: {
 					user,
 					scope,
-					permit: {
-						privileges: await permissionsEngine.getUserPrivileges(userId),
-					},
+					permit: {privileges},
 					appId: appId,
 					origins: originsFromDatabase(appRow.origins),
 				},
 			})
 		}
 		else {
+			const privileges = await permissionsEngine.getAnonymousPrivileges()
 			return signToken<AccessPayload>({
 				lifespan: config.tokens.lifespans.access,
 				payload: {
@@ -68,9 +68,7 @@ export const greenTopic = ({
 					appId,
 					scope,
 					origins: originsFromDatabase(appRow.origins),
-					permit: {
-						privileges: await permissionsEngine.getAnonymousPrivileges()
-					},
+					permit: {privileges},
 				},
 			})
 		}
