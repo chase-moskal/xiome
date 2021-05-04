@@ -79,7 +79,8 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 					</slot>
 					<xio-text-input
 						.validator=${email()}
-						@valuechange=${this.handleEmailChange}>
+						@valuechange=${this.handleEmailChange}
+						@enterpress=${this.sendEmail}>
 							your email
 					</xio-text-input>
 					<xio-button
