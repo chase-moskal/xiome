@@ -39,7 +39,7 @@ export function permissionsMergingFacility({isPlatform}: {
 		return results
 	}
 
-	function merge({hard, soft}: {
+	function mergeRoleHasPrivileges({hard, soft}: {
 			hard: HardPrivilegeDetail[]
 			soft: RoleHasPrivilegeRow[]
 		}) {
@@ -90,7 +90,7 @@ export function permissionsMergingFacility({isPlatform}: {
 
 	return {
 		hardPermissions,
-		merge,
+		mergeRoleHasPrivileges,
 		getActivePrivilegeIds,
 		getHardPrivilegeDetails,
 	}

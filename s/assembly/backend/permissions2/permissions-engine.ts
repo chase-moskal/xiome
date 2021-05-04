@@ -5,6 +5,9 @@ import {PublicUserRole} from "../../../features/auth/types/public-user-role.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
 import {PermissionsTables} from "../../../features/auth/tables/types/table-groups/permissions-tables.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/topics/login/user/utils/is-currently-within-timeframe.js"
+import {merge} from "../../../toolbox/merge.js"
+import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
+import {concurrent} from "../../../toolbox/concurrent.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
@@ -13,7 +16,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 
 	const {
 		hardPermissions,
-		merge,
+		mergeRoleHasPrivileges,
 		getActivePrivilegeIds,
 		getHardPrivilegeDetails,
 	} = permissionsMergingFacility({isPlatform})
@@ -23,7 +26,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const hard = getHardPrivilegeDetails(roleId)
 		const soft = await permissionsTables.roleHasPrivilege
 			.read(find({roleId}))
-		return getActivePrivilegeIds(merge({hard, soft}))
+		return getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
 	}
 
 	async function getUserRoleIds({userId, onlyPublic}: {
@@ -46,7 +49,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const soft = await permissionsTables.roleHasPrivilege.read({
 			conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
 		})
-		return getActivePrivilegeIds(merge({hard, soft}))
+		return getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
 	}
 
 	async function getUserPublicRoles(userId: string) {
@@ -81,9 +84,35 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		}))
 	}
 
+	async function getPermissionsDisplay() {
+		const all = {conditions: false} as const
+		return concurrent({
+			roles: (async() => {
+				const soft = await permissionsTables.role.read(all)
+				const hard: RoleRow[] = Object.entries(hardPermissions.roles)
+					.map(([label, r]) => ({roleId: r.roleId, label, hard: true}))
+				return merge(soft, hard, (a, b) => a.roleId === b.roleId)
+			})(),
+			privileges: (async() => {
+				const soft = await permissionsTables.privilege.read(all)
+				const hard: PrivilegeRow[] = Object.entries(hardPermissions.privileges)
+					.map(([label, privilegeId]) => ({privilegeId, label, hard: true}))
+				return merge(soft, hard, (a, b) => a.privilegeId === b.privilegeId)
+			})(),
+			rolesHavePrivileges: (async() => {
+				const roleIds = Object.values(hardPermissions.roles)
+					.map(role => role.roleId)
+				const hard = getHardPrivilegeDetails(...roleIds)
+				const soft = await permissionsTables.roleHasPrivilege.read(all)
+				return mergeRoleHasPrivileges({hard, soft})
+			})(),
+		})
+	}
+
 	return {
 		getUserPrivileges,
 		getUserPublicRoles,
 		getAnonymousPrivileges,
+		getPermissionsDisplay,
 	}
 }

@@ -3,39 +3,19 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {UserAuth} from "../policies/types/user-auth.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
-import {concurrent} from "../../../toolbox/concurrent.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
+import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()({
+export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async fetchPermissions({tables}): Promise<PermissionsDisplay> {
-		const all = {conditions: false} as const
-		return concurrent({
-			roles: tables.permissions.role.read(all).then(
-				rows => rows.map(row => ({
-					roleId: row.roleId,
-					label: row.label,
-					hard: !!row.hard,
-				}))
-			),
-			privileges: tables.permissions.privilege.read(all).then(
-				rows => rows.map(row => ({
-					privilegeId: row.privilegeId,
-					label: row.label,
-					hard: !!row.hard,
-				}))
-			),
-			rolesHavePrivileges: tables.permissions.roleHasPrivilege.read(all).then(
-				rows => rows.map(row => ({
-					privilegeId: row.privilegeId,
-					roleId: row.roleId,
-					active: row.active,
-					customizable: row.customizable,
-				}))
-			),
+	async fetchPermissions({tables, access}): Promise<PermissionsDisplay> {
+		const permissionsEngine = makePermissionsEngine({
+			isPlatform: access.appId === config.platform.appDetails.appId,
+			permissionsTables: tables.permissions,
 		})
+		return permissionsEngine.getPermissionsDisplay()
 	},
 
 	async createRole({tables}, {label}: {label: string}) {
@@ -67,11 +47,14 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			roleId: string
 			privilegeId: string
 		}) {
-		await tables.permissions.roleHasPrivilege.create({
-			roleId,
-			privilegeId,
-			active: true,
-			customizable: true,
+		await tables.permissions.roleHasPrivilege.update({
+			...find({roleId, privilegeId}),
+			upsert: {
+				roleId,
+				privilegeId,
+				active: true,
+				customizable: true,
+			},
 		})
 	},
 
@@ -80,9 +63,12 @@ export const permissionsTopic = ({rando}: AuthApiOptions) => asTopic<UserAuth>()
 			privilegeId: string
 		}) {
 		await tables.permissions.roleHasPrivilege.update({
-			...find({roleId, privilegeId, customizable: true}),
-			write: {
+			...find({roleId, privilegeId}),
+			upsert: {
+				roleId,
+				privilegeId,
 				active: false,
+				customizable: true,
 			},
 		})
 	},
