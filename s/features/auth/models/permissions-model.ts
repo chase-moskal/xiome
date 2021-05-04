@@ -1,8 +1,7 @@
 
-import {AccessPayload} from "../types/tokens/access-payload.js"
-import {onesie} from "../../../toolbox/onesie.js"
 import {mobxify} from "../../../framework/mobxify.js"
 import {loading} from "../../../framework/loading/loading.js"
+import {AccessPayload} from "../types/tokens/access-payload.js"
 import {PermissionsDisplay} from "../topics/permissions/types/permissions-display.js"
 import {PermissionsModelOptions} from "./types/permissions/permissions-model-options.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
@@ -29,7 +28,7 @@ export function makePermissionsModel({
 		setAccess(access: AccessPayload) {
 			state.access = access
 		},
-		reload: onesie(async() => {
+		reload: (async() => {
 			if (state.active && state.access) {
 				try {
 					await state.permissionsLoading.actions.setLoadingUntil({
@@ -75,7 +74,7 @@ export function makePermissionsModel({
 		},
 		async accessChange(access: AccessPayload) {
 			actions.setAccess(access)
-			if (state.active && access) {
+			if (state.active && access?.user) {
 				await actions.reload()
 			}
 		},
