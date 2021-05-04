@@ -7,7 +7,7 @@ import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.j
 import {makeQuestionsModel} from "../model/questions-model.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
-import {renderQuestion} from "./parts/render-question.js"
+// import {renderQuestion} from "./parts/render-question.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends WiredComponent<{
@@ -28,33 +28,31 @@ export class XiomeEcommerce extends WiredComponent<{
 		this.#boardModel.loadQuestions()
 	}
 
-	private renderQuestionsList() {
-		const boardOp = this.#boardModel.getBoardOp()
-		return renderOp(boardOp, () => {
-			const questions = this.#boardModel.getQuestions()
-			const {getUser, getAccess} = this.#boardModel
-			return html`
-				<ol>
-					${questions.map(question => html`
-						<li data-question-id="${question.questionId}">
-							${renderQuestion({
-								getUser,
-								question,
-								access: getAccess(),
-								handleLikeClick: () => console.log("like"),
-								handleUnlikeClick: () => console.log("unlike"),
-								handleDeleteClick: () => console.log("delete"),
-							})}
-						</li>
-					`)}
-				</ol>
-			`
-		})
-	}
+	// private renderQuestionsList() {
+	// 	const boardOp = this.#boardModel.getBoardOp()
+	// 	return renderOp(boardOp, () => {
+	// 		const questions = this.#boardModel.getQuestions()
+	// 		const {getUser, getAccess} = this.#boardModel
+	// 		return html`
+	// 			<ol>
+	// 				${questions.map(question => html`
+	// 					<li data-question-id="${question.questionId}">
+	// 						${renderQuestion({
+	// 							getUser,
+	// 							question,
+	// 							access: getAccess(),
+	// 							handleLikeClick: () => console.log("like"),
+	// 							handleUnlikeClick: () => console.log("unlike"),
+	// 							handleDeleteClick: () => console.log("delete"),
+	// 						})}
+	// 					</li>
+	// 				`)}
+	// 			</ol>
+	// 		`
+	// 	})
+	// }
 
 	render() {
-		
-		
 		return html``
 		// const {ecommerce} = this.share
 		// return ecommerce.userCanManageStore
