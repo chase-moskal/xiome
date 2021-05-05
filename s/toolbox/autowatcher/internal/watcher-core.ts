@@ -7,7 +7,7 @@ export function watcherCore() {
 		records: new Map(),
 		schedule: [],
 		activeAction: undefined,
-		activeObserver: undefined,
+		activeEffect: undefined,
 	}
 
 	function obtainRecord(object: {}) {
@@ -31,24 +31,24 @@ export function watcherCore() {
 	}
 
 	function subscribe(subscription: Subscription) {
-		const {object, key, observer} = subscription
+		const {object, key, effect} = subscription
 		const record = obtainRecord(object)
-		const existingObservers = record[key] ?? []
-		record[key] = [...existingObservers, observer]
+		const existingEffects = record[key] ?? []
+		record[key] = [...existingEffects, effect]
 		return {subscription, record}
 	}
 
-	function triggerObservers(object: {}, key: string) {
+	function triggerEffects(object: {}, key: string) {
 		forbidCircularProblems(object, key)
 		const record = obtainRecord(object)
-		const observers = record[key] ?? []
-		for (const observer of observers)
-			observer()
+		const effects = record[key] ?? []
+		for (const effect of effects)
+			effect()
 	}
 
 	return {
 		state,
 		subscribe,
-		triggerObservers,
+		triggerEffects,
 	}
 }

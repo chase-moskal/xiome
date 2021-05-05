@@ -1,9 +1,10 @@
 
 export type Observer = () => void
+export type Effect = () => void
 export type Action = (...args: any[]) => any
 
 export interface Record {
-	[key: string]: Observer[]
+	[key: string]: Effect[]
 }
 
 export interface Actions {
@@ -13,12 +14,12 @@ export interface Actions {
 export interface Subscription {
 	object: {}
 	key: string
-	observer: Observer
+	effect: Effect
 }
 
 export interface State {
 	records: Map<{}, Record>
 	schedule: Subscription[]
 	activeAction: Action
-	activeObserver: Observer
+	activeEffect: Effect
 }

@@ -1,19 +1,19 @@
 
 import {objectMap} from "../object-map.js"
 import {watcherCore} from "./internal/watcher-core.js"
-import {Observer, Action, Actions} from "./types/watcher-types.js"
+import {Observer, Action, Actions, Effect} from "./types/watcher-types.js"
 
 export function autowatcher() {
-	const {state, subscribe, triggerObservers} = watcherCore()
+	const {state, subscribe, triggerEffects} = watcherCore()
 
 	function observable<xObject extends {}>(object: xObject) {
 		return new Proxy(object, {
 			get(t, key: string) {
-				if (state.activeObserver)
+				if (state.activeEffect)
 					state.schedule.push({
 						object,
 						key,
-						observer: state.activeObserver
+						effect: state.activeEffect,
 					})
 				return object[key]
 			},
@@ -21,29 +21,33 @@ export function autowatcher() {
 				object[key] = value
 				if (!state.activeAction)
 					throw new Error(`autowatcher: cannot set observable outside action, "${key}"`)
-				triggerObservers(object, key)
+				triggerEffects(object, key)
 				return true
 			},
 		})
 	}
 
-	function watch(observer: Observer) {
-		state.activeObserver = observer
+	function track(observer: Observer, effect: Effect) {
+		state.activeEffect = effect
 		state.schedule = []
 		try {
 			observer()
 			const recent = state.schedule.map(subscribe)
 			return function unsubscribe() {
 				for (const {subscription: {key}, record} of recent) {
-					const existingObservers = record[key] ?? []
-					record[key] = existingObservers.filter(w => w !== observer)
+					const existingEffects = record[key] ?? []
+					record[key] = existingEffects.filter(w => w !== observer)
 				}
 			}
 		}
 		finally {
-			state.activeObserver = undefined
-			state.schedule = []
+			state.activeEffect = undefined
+			state.schedule = undefined
 		}
+	}
+
+	function watch(observer: Observer) {
+		track(observer, observer)
 	}
 
 	function action<xAction extends Action>(act: xAction) {
