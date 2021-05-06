@@ -1,6 +1,7 @@
 
 import {objectMap} from "../object-map.js"
 import {watcherCore} from "./internal/watcher-core.js"
+import {AutowatcherLeakError} from "./internal/watcher-errors.js"
 import {Observer, Action, Actions, Effect} from "./types/watcher-types.js"
 
 export function autowatcher() {
@@ -20,7 +21,7 @@ export function autowatcher() {
 			set(t, key: string, value) {
 				object[key] = value
 				if (!state.activeAction)
-					throw new Error(`autowatcher: cannot set observable outside action, "${key}"`)
+					throw new AutowatcherLeakError(key)
 				triggerEffects(object, key)
 				return true
 			},

@@ -1,5 +1,6 @@
 
 import {State, Record, Subscription} from "../types/watcher-types.js"
+import {AutowatcherCircularError} from "./watcher-errors.js"
 
 export function watcherCore() {
 
@@ -27,7 +28,7 @@ export function watcherCore() {
 			subscription.key === key
 		)
 		if (subscription)
-			throw new Error("autowatcher: circular error, a observer watch triggers itself")
+			throw new AutowatcherCircularError(subscription)
 	}
 
 	function subscribe(subscription: Subscription) {
