@@ -47,7 +47,7 @@ export function autowatcher() {
 		}
 		finally {
 			state.activeEffect = undefined
-			state.schedule = undefined
+			state.schedule = []
 		}
 		return unsubscribe
 	}
