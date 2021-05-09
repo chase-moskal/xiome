@@ -70,6 +70,7 @@
 		"chalk": "^4.1.0",
 		"commotion": "^0.1.0-dev.0",
 		"crosscall": "0.0.6-dev.22",
+		"crypto-es": "^1.2.7",
 		"google-auth-library": "^7.0.3",
 		"js-yaml": "^4.0.0",
 		"js-yaml-chase-esm": "^3.14.0-esm.2",

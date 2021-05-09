@@ -29,7 +29,7 @@ class XioPlayground extends Component {
 
 		return html`
 			<p>xio-profile-card: readonly</p>
-			<xio-profile-card .user=${user}></xio-profile-card>
+			<!-- <xio-profile-card .user=${user}></xio-profile-card> -->
 
 			<p>xio-profile-card: editable</p>
 			<xio-profile-card

@@ -3,13 +3,14 @@ import {ApiError} from "renraku/x/api/api-error.js"
 
 import {User} from "../../../types/user.js"
 import {UserStats} from "../../../types/user-stats"
-import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {and, find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 
 import {profileFromRow} from "./profile-from-row.js"
 import {generateProfileRow} from "./generate-profile-row.js"
 import {AuthTables} from "../../../tables/types/auth-tables.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions2/types/permissions-engine.js"
+import {gravatar} from "../../../../../toolbox/gravatar.js"
 
 export async function fetchUser({userId, tables, permissionsEngine, generateNickname}: {
 			userId: string
@@ -18,7 +19,7 @@ export async function fetchUser({userId, tables, permissionsEngine, generateNick
 			generateNickname: () => string
 		}): Promise<User> {
 
-	const account = await tables.user.account.one({conditions: and({equal: {userId}})})
+	const account = await tables.user.account.one(find({userId}))
 	if (!account) throw new ApiError(500, "user account not found")
 
 	const stats: UserStats = {
@@ -30,7 +31,17 @@ export async function fetchUser({userId, tables, permissionsEngine, generateNick
 		profile: profileFromRow(
 			await tables.user.profile.assert({
 				conditions: and({equal: {userId}}),
-				make: async() => generateProfileRow({userId, generateNickname}),
+				make: async() => {
+					const accountViaEmail = await tables.user.accountViaEmail.one(find({userId}))
+					const avatar = accountViaEmail
+						? gravatar(accountViaEmail.email)
+						: undefined
+					return generateProfileRow({
+						userId,
+						avatar,
+						generateNickname,
+					})
+				},
 			})
 		),
 	})
