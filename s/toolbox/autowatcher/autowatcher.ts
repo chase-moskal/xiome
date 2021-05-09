@@ -28,13 +28,17 @@ export function autowatcher() {
 		})
 	}
 
-	function track(observer: Observer, effect: Effect) {
+	function track({observer, effect}: {
+			observer: Observer
+			effect: Effect
+		}) {
+		let unsubscribe = () => {}
 		state.activeEffect = effect
 		state.schedule = []
 		try {
 			observer()
 			const recent = state.schedule.map(subscribe)
-			return function unsubscribe() {
+			unsubscribe = () => {
 				for (const {subscription: {key}, record} of recent) {
 					const existingEffects = record[key] ?? []
 					record[key] = existingEffects.filter(w => w !== observer)
@@ -45,10 +49,11 @@ export function autowatcher() {
 			state.activeEffect = undefined
 			state.schedule = undefined
 		}
+		return unsubscribe
 	}
 
 	function watch(observer: Observer) {
-		track(observer, observer)
+		return track({observer, effect: observer})
 	}
 
 	function action<xAction extends Action>(act: xAction) {
@@ -86,6 +91,7 @@ export function autowatcher() {
 	return {
 		observable,
 		observables,
+		track,
 		watch,
 		action,
 		actions,

@@ -1,7 +1,12 @@
 
+import {autowatcher} from "../autowatcher.js"
+
+export type Autowatcher = ReturnType<typeof autowatcher>
+
 export type Observer = () => void
 export type Effect = () => void
 export type Action = (...args: any[]) => any
+export type Track = ({}: {observer: Observer, effect: Effect}) => () => void
 
 export interface Record {
 	[key: string]: Effect[]
