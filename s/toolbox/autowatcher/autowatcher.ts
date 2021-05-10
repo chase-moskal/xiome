@@ -53,7 +53,7 @@ export function autowatcher() {
 	}
 
 	function watch(observer: Observer) {
-		return track({observer, effect: observer})
+		return track({observer, effect: () => observer()})
 	}
 
 	function action<xAction extends Action>(act: xAction) {
@@ -71,6 +71,24 @@ export function autowatcher() {
 				object[key] = observables(value)
 		}
 		return observable(object)
+	}
+
+	function computed<xObject extends {}>(object: xObject) {
+		const descriptors = Object.getOwnPropertyDescriptors(object)
+		const values = <xObject>{}
+		const getters = <xObject>{}
+		let unsubscribers: (() => void)[] = []
+		for (const [key, descriptor] of Object.entries(descriptors)) {
+			if (descriptor.get) {
+				const setValue = () => { values[key] = descriptor.get() }
+				unsubscribers.push(track({observer: setValue, effect: setValue}))
+				getters[key] = () => values[key]
+			}
+		}
+		return {
+			getters,
+			unsubscribe: () => unsubscribers.forEach(unsub => unsub()),
+		}
 	}
 
 	function actions<xActions extends Actions>(object: xActions): xActions {
@@ -95,6 +113,7 @@ export function autowatcher() {
 		watch,
 		action,
 		actions,
+		computed,
 		dispose,
 	}
 }

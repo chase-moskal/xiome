@@ -2,7 +2,6 @@
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
 import {deepClone, deepEqual} from "../../../toolbox/deep.js"
-import {mixinStyles} from "../../../framework/component/mixin-styles.js"
 
 import styles from "./xio-profile-card.css.js"
 import {Validator} from "../../../toolbox/darkvalley.js"
@@ -13,29 +12,25 @@ import {User} from "../../auth/types/user.js"
 import {Profile} from "../../auth/types/profile.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
-import {ops} from "../../../framework/ops.js"
+import {Op, ops} from "../../../framework/ops.js"
 
+import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"
 import {Component2, property, html} from "../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component2 {
 
 	#state = this.auto.observables({
-		count: 0
+		busy: <Op<void>>ops.ready(undefined),
 	})
+
 	#actions = this.auto.actions({
-		increment: () => {
-			this.#state.count += 1
-		}
+		setBusy: (op: Op<void>) => {
+			this.#state.busy = op
+		},
 	})
 
-	firstUpdated() {
-		setInterval(() => this.#actions.increment(), 500)
-	}
-
-	render() {
-		return html`hello! count: ${this.#state.count}`
-	}
+	#computed = this.auto.computed({}).getters
 
 	// @property({type: Object})
 	// user?: User
