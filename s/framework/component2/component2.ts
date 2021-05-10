@@ -1,10 +1,11 @@
 
 import {LitElement} from "lit-element"
+import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
+import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
+
 export * from "lit-element"
 
-import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
-
-export class Component2 extends mixinAutowatcher()(LitElement) {}
+export class Component2 extends mixinAutowatcher(mixinInitiallyHidden(LitElement)) {}
 
 export class Component2WithShare<xShare> extends Component2 {
 	readonly share: xShare
@@ -16,12 +17,14 @@ export class Component2WithShare<xShare> extends Component2 {
 	}
 }
 
+
 // export class ExampleImplementationForComponent extends Component2WithShare<{a: true}> {
 // 	#lol = () => {
 // 		this.share.a
 // 		this.auto.observables({})
 // 	}
 // }
+
 
 // import {mixinShare} from "./mixins/mixin-share.js"
 // import {autowatcher} from "../../toolbox/autowatcher/autowatcher.js"
