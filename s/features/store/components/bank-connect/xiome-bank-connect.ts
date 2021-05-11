@@ -2,7 +2,7 @@
 import styles from "./xiome-bank-connect.css.js"
 import {onesie} from "../../../../toolbox/onesie.js"
 import {Op, ops} from "../../../../framework/ops.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {makeStoreModel} from "../../model/store-model.js"
 import {StripeAccountDetails} from "../../topics/types/stripe-account-details.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"

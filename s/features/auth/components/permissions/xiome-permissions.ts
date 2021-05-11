@@ -7,7 +7,7 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
 import {roleLabelValidator} from "../../topics/permissions/validators/role-label-validator.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomePermissions extends WiredComponent<{

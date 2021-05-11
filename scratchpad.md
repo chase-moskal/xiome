@@ -1,7 +1,8 @@
 
 ## notes
 
-- [ ] autowatcher ingest new observables as they are set
+- [x] autowatcher ingest new observables as they are set
+   - not necessary; its impossible to get the child without accessing the parent
 
 ## work to launch
 

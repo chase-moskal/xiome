@@ -12,7 +12,7 @@ import {User} from "../../auth/types/user.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Profile} from "../../auth/types/profile.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
-import {renderOp} from "../../../framework/loading/render-op.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
 import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"

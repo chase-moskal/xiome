@@ -1,7 +1,7 @@
 
 import styles from "./xiome-subscription-planner.css.js"
 import {makeStoreModel} from "../../model/store-model.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
 import {PlanningSituation} from "../../model/shares/types/planning-situation.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"

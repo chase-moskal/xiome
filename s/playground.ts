@@ -1,7 +1,9 @@
 
 import {nap} from "./toolbox/nap.js"
+import {ops} from "./framework/ops.js"
 import {User} from "./features/auth/types/user.js"
 import {Component, mixinLightDom, registerComponents, html} from "./framework/component.js"
+import {renderOp} from "./framework/op-rendering/render-op.js"
 
 @mixinLightDom
 class XioPlayground extends Component {
@@ -36,6 +38,9 @@ class XioPlayground extends Component {
 				.user=${user}
 				.saveProfile=${saveProfile}
 			></xio-profile-card>
+
+			<p>xio-op</p>
+			<xio-op .op=${ops.loading()}></xio-op>
 		`
 	}
 }

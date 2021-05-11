@@ -1,7 +1,8 @@
 
 import styles from "./xiome-my-account.css.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
-import {Profile} from "../../types/profile.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {ProfileDraft} from "../../topics/personal/types/profile-draft.js"
 import {PersonalModel} from "../../models/types/personal/personal-model.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
 
@@ -11,24 +12,16 @@ export class XiomeMyAccount extends WiredComponent<{
 		personalModel: PersonalModel
 	}> {
 
-	// private compositeLoadingView = metaLoadingView(
-	// 	this.share.authModel.accessLoadingView,
-	// 	this.share.personalModel.personalLoadingView,
-	// )
+	private saveProfile = async(profileDraft: ProfileDraft) => {
+		this.share.personalModel.saveProfile(profileDraft)
+	}
 
-	// private saveProfile = async(profile: Profile) => {
-	// 	this.share.personalModel.saveProfile(profile)
-	// }
-
-	// render() {
-	// 	const {compositeLoadingView} = this
-	// 	const {accessLoadingView} = this.share.authModel
-	// 	return renderWrappedInLoading(compositeLoadingView, () => html`
-	// 		<slot></slot>
-	// 		<xio-profile-card
-	// 			.user=${accessLoadingView.payload?.user}
-	// 			.saveProfile=${this.saveProfile}
-	// 		></xio-profile-card>
-	// 	`)
-	// }
+	render() {
+		return renderOp(this.share.authModel.access, ({user}) => html`
+			<xio-profile-card
+				.user=${user}
+				.saveProfile=${this.saveProfile}
+			></xio-profile-card>
+		`)
+	}
 }

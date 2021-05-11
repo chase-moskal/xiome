@@ -14,7 +14,7 @@ import {makeAdminManager} from "./admins/admin-manager.js"
 import {AppModel} from "../../models/types/app/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{

@@ -5,7 +5,7 @@ import {WiredComponent, mixinStyles, html} from "../../../../framework/component
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ops} from "../../../../framework/ops.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends WiredComponent<{

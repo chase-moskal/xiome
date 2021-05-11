@@ -4,7 +4,7 @@ import {Op, ops} from "../../../../framework/ops.js"
 import {email} from "../../../../toolbox/darkvalley.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
-import {renderOp} from "../../../../framework/loading/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
 

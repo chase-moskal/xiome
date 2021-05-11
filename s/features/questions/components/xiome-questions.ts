@@ -1,7 +1,7 @@
 
 import styles from "./xiome-questions.css.js"
 import {ops} from "../../../framework/ops.js"
-import {renderOp} from "../../../framework/loading/render-op.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../framework/component.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {makeQuestionsModel} from "../model/questions-model.js"
