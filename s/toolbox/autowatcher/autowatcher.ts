@@ -19,10 +19,13 @@ export function autowatcher() {
 				return object[key]
 			},
 			set(t, key: string, value) {
+				const oldValue = object[key]
 				object[key] = value
+				const isChanged = value !== oldValue
 				if (!context.activeAction)
 					throw new AutowatcherLeakError(key)
-				triggerObservation(object, key)
+				if (isChanged)
+					triggerObservation(object, key)
 				return true
 			},
 		})
