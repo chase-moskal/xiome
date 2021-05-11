@@ -164,7 +164,7 @@ export function autowatcher() {
 		})
 	}
 
-	const unsubscribeComputedSymbol = Symbol("unsubscribe")
+	// const unsubscribeComputedSymbol = Symbol("unsubscribe")
 
 	// function computed<xObject extends {}>(object: xObject) {
 	// 	const descriptors = Object.getOwnPropertyDescriptors(object)
@@ -211,7 +211,7 @@ export function autowatcher() {
 	}
 
 	return {
-		unsubscribeComputedSymbol,
+		// unsubscribeComputedSymbol,
 		observable,
 		state,
 		track,
