@@ -7,7 +7,7 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
 import {roleLabelValidator} from "../../topics/permissions/validators/role-label-validator.js"
 import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
-import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
 
 @mixinStyles(styles)
 export class XiomePermissions extends WiredComponent<{
@@ -151,9 +151,9 @@ export class XiomePermissions extends WiredComponent<{
 	render() {
 		const {permissionsModel} = this.share
 		return permissionsModel.userCanCustomizePermissions
-			? renderWrappedInLoading(
-				permissionsModel.permissionsLoadingView,
-				this.renderPermissions.bind(this),
+			? renderOp(
+				permissionsModel.permissionsDisplay,
+				permissionsDisplay => this.renderPermissions.bind(this)
 			)
 			: html`
 				<p>you are not privileged to customize permissions</p>

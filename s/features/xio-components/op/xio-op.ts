@@ -1,22 +1,20 @@
 
-import styles from "./xio-loading.css.js"
-import {loading} from "../../../framework/loading/loading.js"
-import {LoadingView} from "../../../framework/loading/types/loading-view.js"
-import {Component, html, mixinStyles, property} from "../../../framework/component.js"
-
+import styles from "./xio-op.css.js"
+import {Op, ops} from "../../../framework/ops.js"
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgSpinner from "../../../framework/icons/spinner.svg.js"
+import {Component, html, mixinStyles, property} from "../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XioLoading<xPayload = any> extends Component {
+export class XioOp<xPayload = any> extends Component {
 
 	@property({type: Object})
-	loadingView: LoadingView<xPayload> = loading<xPayload>().view
+	op: Op<xPayload> = ops.none()
 
-	@property({type: Object})
+	@property()
 	errorIcon = svgWarning
 
-	@property({type: Object})
+	@property()
 	loadingIcon = svgSpinner
 
 	@property({type: String})
@@ -26,7 +24,7 @@ export class XioLoading<xPayload = any> extends Component {
 	["error-message"] = "error"
 
 	render() {
-		return this.loadingView.select({
+		return ops.select(this.op, {
 			none: () => html`
 				<slot name=none></slot>
 			`,

@@ -1,4 +1,8 @@
 
+## notes
+
+- [ ] autowatcher ingest new observables as they are set
+
 ## work to launch
 
 new concerns

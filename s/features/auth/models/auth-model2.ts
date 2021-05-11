@@ -1,24 +1,37 @@
 
-import {loading} from "../../../framework/loading/loading.js"
-import {mobxify} from "../../../framework/mobxify.js"
-
-import {AccessPayload} from "../types/tokens/access-payload.js"
+import {Op, ops} from "../../../framework/ops.js"
 import {LoginToken} from "../types/tokens/login-token.js"
 import {isTokenValid} from "../tools/tokens/is-token-valid.js"
+import {AccessPayload} from "../types/tokens/access-payload.js"
 import {AuthModelOptions} from "./types/auth/auth-model-options.js"
+import {autowatcher} from "../../../toolbox/autowatcher/autowatcher.js"
 
 export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
-	const state = mobxify({
-		accessLoading: loading<AccessPayload>(),
+
+	const auto = autowatcher()
+	const state = auto.state({
+		access: <Op<AccessPayload>>ops.none(),
+	})
+	const actions = auto.actions({
+		setAccess(op: Op<AccessPayload>) {
+			state.access = op
+		},
 	})
 
 	authMediator.subscribeToAccessChange(access => {
-		state.accessLoading.actions.setReady(access)
+		actions.setAccess(ops.ready(access))
 	})
 
+	async function accessOperation(promise: Promise<AccessPayload>) {
+		return ops.operation({
+			promise,
+			setOp: op => actions.setAccess(op),
+		})
+	}
+
 	return {
-		get accessLoadingView() {
-			return state.accessLoading.view
+		get access() {
+			return state.access
 		},
 
 		onAccessChange: authMediator.subscribeToAccessChange,
@@ -28,10 +41,7 @@ export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
 		},
 
 		async useExistingLogin() {
-			return state.accessLoading.actions.setLoadingUntil({
-				promise: authMediator.initialize(),
-				errorReason: "error loading existing login",
-			})
+			await accessOperation(authMediator.initialize())
 		},
 
 		async sendLoginLink(email: string) {
@@ -41,18 +51,17 @@ export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
 		async login(loginToken: LoginToken) {
 			try {
 				if (isTokenValid(loginToken))
-					await state.accessLoading.actions.setLoadingUntil({
-						promise: loginService
+					await accessOperation(
+						loginService
 							.authenticateViaLoginToken({loginToken})
-							.then(tokens => authMediator.login(tokens)),
-						errorReason: "failed to login with token",
-					})
+							.then(tokens => authMediator.login(tokens))
+					)
 				else
-					state.accessLoading.actions.setError("login link expired")
+					actions.setAccess(ops.error("login link expired"))
 			}
 			catch (error) {
-				state.accessLoading.actions.setError("error with login")
 				console.error(error)
+				actions.setAccess(ops.error("error with login"))
 			}
 		},
 
@@ -61,10 +70,7 @@ export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
 		},
 
 		async reauthorize() {
-			await state.accessLoading.actions.setLoadingUntil({
-				promise: authMediator.reauthorize(),
-				errorReason: "failed to reauthorize",
-			})
+			await accessOperation(authMediator.reauthorize())
 		},
 	}
 }

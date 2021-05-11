@@ -11,9 +11,9 @@ export class XiomeMyAvatar extends WiredComponent<{authModel: AuthModel}> {
 	@property({type: Boolean, reflect: true})
 	"logged-in": boolean = false
 
-	autorun() {
-		this["logged-in"] = !!this.share.authModel.accessLoadingView.payload
-	}
+	// autorun() {
+	// 	this["logged-in"] = !!this.share.authModel.accessLoadingView.payload
+	// }
 
 	render() {
 		return html`

@@ -1,4 +1,5 @@
 
+import {ops} from "../../../../../../framework/ops.js"
 import {Service} from "../../../../../../types/service.js"
 import {AppDisplay} from "../../../../types/apps/app-display.js"
 import {manageAdminsTopic} from "../../../../topics/manage-admins-topic.js"
@@ -17,11 +18,11 @@ export function adminManagerControls({
 	}) {
 
 	const {appId} = app
-	const load = (promise: Promise<any> = Promise.resolve(undefined)) => (
-		actions.adminsLoadingActions.setLoadingUntil({
-			errorReason: "error in admin management",
-			promise: promise
+	const load = (firstStep: Promise<any> = Promise.resolve(undefined)) => (
+		ops.operation({
+			promise: firstStep
 				.then(() => manageAdminsService.listAdmins({appId})),
+			setOp: admins => actions.setAdmins(admins)
 		})
 	)
 

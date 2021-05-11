@@ -1,18 +1,19 @@
 
 import styles from "./xio-checkbox.css.js"
 import {CheckEvent} from "./events/check-event.js"
-import {loading} from "../../../framework/loading/loading.js"
 import {Component, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
 
 import checkIcon from "../../../framework/icons/check.svg.js"
 import spinnerIcon from "../../../framework/icons/spinner.svg.js"
 import warningIcon from "../../../framework/icons/warning.svg.js"
+import {Op, ops} from "../../../framework/ops.js"
 
 @mixinFocusable
 @mixinStyles(styles)
 export class XioCheckbox extends Component {
 
-	private loading = loading<boolean>()
+	@property()
+	private loading: Op<boolean> = ops.none()
 
 	@property({type: Boolean})
 	["initially-checked"]: boolean = false
@@ -30,23 +31,24 @@ export class XioCheckbox extends Component {
 	save: (checked: boolean) => Promise<void>
 
 	firstUpdated() {
-		this.loading.actions.setReady(this["initially-checked"])
+		this.loading = ops.ready(this["initially-checked"])
 	}
 
 	get checked() {
-		return this.loading.view.payload
+		return ops.value(this.loading)
 	}
 
 	set checked(value: boolean) {
-		this.loading.actions.setReady(value)
+		this.loading = ops.ready(value)
 	}
 
-	async toggle(previousChecked = this.loading.view.payload, dispatchEvent = true) {
+	async toggle(previousChecked = ops.value(this.loading), dispatchEvent = true) {
 		const checked = !previousChecked
 		const isNotDisabled = !this.disabled
-		const loadingIsDone = this.loading.view.ready
-		return (isNotDisabled && loadingIsDone)
-			? this.loading.actions.setLoadingUntil({
+		const isLoadingDone = ops.isReady(this.loading)
+		return (isNotDisabled && isLoadingDone)
+			? ops.operation({
+				setOp: op => this.loading = op,
 				errorReason: this["error-message"],
 				promise: (async() => {
 					await (this.save ?? (async() => {}))(checked)
@@ -73,10 +75,10 @@ export class XioCheckbox extends Component {
 	render() {
 		return html`
 			<button
-				data-mode="${this.loading.view.mode}"
-				?data-checked=${this.loading.view.payload}
+				data-mode="${this.loading.mode}"
+				?data-checked=${ops.value(this.loading)}
 				@click=${this.handleClick}>
-					${this.loading.view.select({
+					${ops.select(this.loading, {
 						none: () => null,
 						loading: () => spinnerIcon,
 						error: reason => html`${warningIcon}<div class=error>${reason}</div>`,

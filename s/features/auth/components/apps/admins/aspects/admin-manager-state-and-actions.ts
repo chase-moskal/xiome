@@ -1,23 +1,25 @@
 
 import {AssignerDraft} from "./types/assigner-draft.js"
-import {mobxify} from "../../../../../../framework/mobxify.js"
-import {loading} from "../../../../../../framework/loading/loading.js"
 import {AdminEmailDisplay} from "../../../../types/manage-admins/admin-email-display.js"
+import {autowatcher} from "../../../../../../toolbox/autowatcher/autowatcher.js"
+import {Op, ops} from "../../../../../../framework/ops.js"
 
 export function adminManagerStateAndActions() {
-	const adminsLoading = loading<AdminEmailDisplay[]>()
+	const auto = autowatcher()
 
-	const state = mobxify({
-		adminsLoadingView: adminsLoading.view,
+	const state = auto.state({
+		admins: <Op<AdminEmailDisplay[]>>ops.none(),
 		assignerDraft: <AssignerDraft>{
 			email: undefined,
 		},
 	})
 
-	const actions = mobxify({
-		adminsLoadingActions: adminsLoading.actions,
-		setAssignerDraft({email}: AssignerDraft) {
-			state.assignerDraft = {email}
+	const actions = auto.actions({
+		setAdmins(op: Op<AdminEmailDisplay[]>) {
+			state.admins = op
+		},
+		setAssignerDraft(draft: AssignerDraft) {
+			state.assignerDraft = draft
 		},
 	})
 

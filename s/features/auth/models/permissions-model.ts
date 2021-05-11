@@ -1,7 +1,7 @@
 
-import {mobxify} from "../../../framework/mobxify.js"
-import {loading} from "../../../framework/loading/loading.js"
+import {Op, ops} from "../../../framework/ops.js"
 import {AccessPayload} from "../types/tokens/access-payload.js"
+import {autowatcher} from "../../../toolbox/autowatcher/autowatcher.js"
 import {PermissionsDisplay} from "../topics/permissions/types/permissions-display.js"
 import {PermissionsModelOptions} from "./types/permissions/permissions-model-options.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
@@ -10,37 +10,32 @@ export function makePermissionsModel({
 		permissionsService,
 	}: PermissionsModelOptions) {
 
-	const state = mobxify({
-		access: <AccessPayload>undefined,
+	const auto = autowatcher()
+	const state = auto.state({
 		active: false,
-		permissionsLoading: loading<PermissionsDisplay>(),
+		access: <AccessPayload>undefined,
+		permissionsDisplay: <Op<PermissionsDisplay>>undefined,
 	})
-
-	function getUserCanCustomizePermissions() {
-		return state.access
-				? state.access.permit.privileges.includes(
-					appPermissions.privileges["customize permissions"]
-				)
-				: false
-	}
-
-	const actions = mobxify({
+	const actions = auto.actions({
+		setPermissionsDisplay(op: Op<PermissionsDisplay>) {
+			state.permissionsDisplay = op
+		},
 		setAccess(access: AccessPayload) {
 			state.access = access
 		},
-		reload: (async() => {
+		async reload() {
 			if (state.active && state.access) {
 				try {
-					await state.permissionsLoading.actions.setLoadingUntil({
+					await ops.operation({
 						promise: permissionsService.fetchPermissions(),
-						errorReason: "error loading permissions",
+						setOp: op => actions.setPermissionsDisplay(op),
 					})
 				}
 				catch (e) {
 					console.log(e)
 				}
 			}
-		}),
+		},
 		async initialize() {
 			state.active = true
 			if (getUserCanCustomizePermissions()) {
@@ -51,7 +46,7 @@ export function makePermissionsModel({
 			state.active = false
 		},
 		reloadAfter<xAction extends (...args: any[]) => Promise<void>>(action: xAction) {
-			state.permissionsLoading.actions.setLoading()
+			actions.setPermissionsDisplay(ops.loading())
 			return <xAction>async function(...args: any[]) {
 				const result = await action(...args)
 				await actions.reload()
@@ -60,14 +55,23 @@ export function makePermissionsModel({
 		},
 	})
 
+	function getUserCanCustomizePermissions() {
+		return state.access
+				? state.access.permit.privileges.includes(
+					appPermissions.privileges["customize permissions"]
+				)
+				: false
+	}
+
 	return {
+		auto,
 		initialize: actions.initialize,
 		deactivate: actions.deactivate,
 		get access() {
 			return state.access
 		},
-		get permissionsLoadingView() {
-			return state.permissionsLoading.view
+		get permissionsDisplay() {
+			return state.permissionsDisplay
 		},
 		get userCanCustomizePermissions() {
 			return getUserCanCustomizePermissions()

@@ -1,12 +1,11 @@
 
 import styles from "./xiome-login-panel.css.js"
-import {AuthModel} from "../../models/types/auth/auth-model.js"
+import {Op, ops} from "../../../../framework/ops.js"
 import {email} from "../../../../toolbox/darkvalley.js"
-import {loading} from "../../../../framework/loading/loading.js"
+import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
-import {whenLoadingIsDone} from "../../../../framework/loading/when-loading-is-done.js"
-import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
@@ -15,7 +14,8 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 	@property({type: Boolean, reflect: true})
 	["show-logout"]: boolean = false
 
-	private sentLoading = loading<{email: string}>()
+	@property()
+	private sentLoading: Op<{email: string}> = ops.none()
 
 	@query("xio-text-input")
 	private textInput: XioTextInput
@@ -25,16 +25,18 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private async sendEmail() {
 		const email = this.textInput.value
-		this.sentLoading.actions.setLoadingUntil({
+		await ops.operation({
 			promise: this.share.authModel.sendLoginLink(email)
 				.then(() => ({email})),
+			setOp: op => this.sentLoading = op,
 			errorReason: `failed sending email to "${email}"`,
 		})
 	}
 
 	private resetSentLoading() {
-		this.sentLoading.actions.setNone()
-		if (this.textInput) this.textInput.text = ""
+		this.sentLoading = ops.none()
+		if (this.textInput)
+			this.textInput.text = ""
 	}
 
 	private logout() {
@@ -70,9 +72,8 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 
 	private renderLoggedOut() {
 		const {emailIsValid} = this
-		const sentLoadingView = this.sentLoading.view
 		return html`
-			<xio-loading .loadingView=${sentLoadingView}>
+			<xio-op .op=${this.sentLoading}>
 				<div slot=none>
 					<slot name=logged-out>
 						<p>Login with your email address</p>
@@ -89,19 +90,21 @@ export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
 							send login link
 					</xio-button>
 				</div>
-				${whenLoadingIsDone(sentLoadingView, sent => html`
-					<p>email sent to ${sent.email}</p>
-					<xio-button @press=${this.resetSentLoading}>
-						try another address?
-					</xio-button>
-				`)}
-			</xio-loading>
+				${ops.isReady(this.sentLoading)
+					? html`
+						<p>email sent to ${ops.value(this.sentLoading).email}</p>
+						<xio-button @press=${this.resetSentLoading}>
+							try another address?
+						</xio-button>
+					`
+					: null}
+			</xio-op>
 		`
 	}
 
 	render() {
-		const {accessLoadingView} = this.share.authModel
-		return renderWrappedInLoading(accessLoadingView, access => access.user
+		const {access: accessOp} = this.share.authModel
+		return renderOp(accessOp, access => access
 			? this.renderLoggedIn(access)
 			: this.renderLoggedOut()
 		)

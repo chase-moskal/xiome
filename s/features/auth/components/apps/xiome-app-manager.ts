@@ -4,7 +4,6 @@ import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
 import {multistate} from "../../../../toolbox/multistate.js"
 import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
-import {renderWrappedInLoading} from "../../../../framework/loading/render-wrapped-in-loading.js"
 
 import {makeAppForm} from "./form/app-form.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
@@ -15,6 +14,7 @@ import {makeAdminManager} from "./admins/admin-manager.js"
 import {AppModel} from "../../models/types/app/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {renderOp} from "../../../../framework/loading/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeAppManager extends WiredComponent<{
@@ -173,10 +173,10 @@ export class XiomeAppManager extends WiredComponent<{
 	}
 
 	render() {
-		const {appListLoadingView} = this.share.appModel
+		const {appList} = this.share.appModel
 		return html`
-			${renderWrappedInLoading(appListLoadingView, appList => appList.length
-				? this.renderAppList(appList)
+			${renderOp(appList, list => list.length
+				? this.renderAppList(list)
 				: this.renderNoApps())}
 			<div class=app-registration>
 				<slot name="register-app-heading"></slot>

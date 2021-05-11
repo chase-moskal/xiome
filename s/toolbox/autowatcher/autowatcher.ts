@@ -62,6 +62,12 @@ export function autowatcher() {
 		return track({watcher, effect})
 	}
 
+	function runInAction(act: () => void) {
+		context.activeAction = act
+		act()
+		context.activeAction = undefined
+	}
+
 	function action<xAction extends Action>(act: xAction) {
 		return <xAction>((...args: any[]) => {
 			context.activeAction = act
@@ -70,29 +76,6 @@ export function autowatcher() {
 			return result
 		})
 	}
-
-	// const unsubscribeComputedSymbol = Symbol("unsubscribe")
-
-	// function computed<xObject extends {}>(object: xObject) {
-	// 	const descriptors = Object.getOwnPropertyDescriptors(object)
-	// 	const values = <xObject>{}
-	// 	const getters = <xObject>{...object}
-	// 	let unsubscribers: (() => void)[] = []
-	// 	for (const [key, descriptor] of Object.entries(descriptors)) {
-	// 		if (descriptor.get) {
-	// 			const setValue = () => { values[key] = descriptor.get() }
-	// 			unsubscribers.push(watch(setValue))
-	// 			Object.defineProperty(getters, key, {
-	// 				get: () => values[key],
-	// 				enumerable: true,
-	// 				configurable: false,
-	// 			})
-	// 		}
-	// 	}
-	// 	getters[unsubscribeComputedSymbol] =
-	// 		() => unsubscribers.forEach(unsub => unsub())
-	// 	return getters
-	// }
 
 	function state<xObject extends {}>(object: xObject): xObject {
 		for (const [key, value] of Object.entries(object)) {
@@ -117,6 +100,19 @@ export function autowatcher() {
 		context.observableRecords = new Map()
 	}
 
+	// function setup<xState extends {}, xActions extends Actions>({
+	// 		state: stateObject,
+	// 		actions: actionsObject,
+	// 	}: {
+	// 		state: xState
+	// 		actions: xActions
+	// 	}) {
+	// 	return {
+	// 		state: state(stateObject),
+	// 		actions: actions(actionsObject),
+	// 	}
+	// }
+
 	return {
 		observable,
 		state,
@@ -125,5 +121,7 @@ export function autowatcher() {
 		action,
 		actions,
 		dispose,
+		runInAction,
+		// setup,
 	}
 }

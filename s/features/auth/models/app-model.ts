@@ -1,10 +1,9 @@
 
-import {mobxify} from "../../../framework/mobxify.js"
-import {loading} from "../../../framework/loading/loading.js"
-
+import {Op, ops} from "../../../framework/ops.js"
 import {AppDraft} from "../types/apps/app-draft.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {AppModelOptions} from "./types/app/app-model-options.js"
+import {autowatcher} from "../../../toolbox/autowatcher/autowatcher.js"
 
 export function makeAppModel({
 		appService,
@@ -13,11 +12,17 @@ export function makeAppModel({
 		getAccess,
 	}: AppModelOptions) {
 
-	const state = mobxify({
+	const auto = autowatcher()
+	const state = auto.state({
 		active: false,
-		appListLoading: loading<AppDisplay[]>(),
+		appList: <Op<AppDisplay[]>>ops.none(),
+	})
+	const actions = auto.actions({
 		setActive(active: boolean) {
 			state.active = active
+		},
+		setAppList(op: Op<AppDisplay[]>) {
+			state.appList = op
 		},
 	})
 
@@ -26,15 +31,21 @@ export function makeAppModel({
 		return access?.user.userId
 	}
 
-	async function loadAppList() {
-		state.setActive(true)
-		return await state.appListLoading.actions.setLoadingUntil({
-			errorReason: "failed to load app list",
-			promise: getUserId()
-				.then(userId => userId
-					? appService.listApps({ownerUserId: userId})
-					: []),
+	async function appListOperation(promise: Promise<AppDisplay[]>) {
+		return ops.operation({
+			promise,
+			setOp: op => actions.setAppList(op),
 		})
+	}
+
+	async function loadAppList() {
+		actions.setActive(true)
+		return appListOperation((async() => {
+			const userId = await getUserId()
+			return userId
+				? appService.listApps({ownerUserId: userId})
+				: []
+		})())
 	}
 
 	async function loadingOperation<xResult>({errorReason, promise}: {
@@ -43,22 +54,20 @@ export function makeAppModel({
 		}) {
 		let result: xResult
 		let error: any
-		await state.appListLoading.actions.setLoadingUntil({
-			errorReason,
-			promise: (async() => {
-				try { result = await promise }
-				catch (err) { error = err }
-				return loadAppList()
-			})(),
-		})
+		await appListOperation((async() => {
+			try { result = await promise }
+			catch (err) { error = err }
+			return loadAppList()
+		})())
 		if (error) throw error
 		else return result
 	}
 
 	return {
+		auto,
 		manageAdminsService,
-		get appListLoadingView() {
-			return state.appListLoading.view
+		get appList() {
+			return state.appList
 		},
 		loadAppList,
 		async accessChange() {

@@ -22,12 +22,6 @@ export function makePersonalModel({
 		},
 	})
 
-	// const state = mobxify({
-	// 	personalLoading: loading<void>(),
-	// })
-
-	// state.personalLoading.actions.setReady()
-
 	return {
 		get submitDraftOp() {
 			return state.submitDraftOp
@@ -46,22 +40,4 @@ export function makePersonalModel({
 			})
 		}
 	}
-
-	// return mobxify({
-	// 	get submitDraftOp() {}
-
-	// 	get personalLoadingView() {
-	// 		return state.personalLoading.view
-	// 	},
-	// 	async saveProfile(profileDraft: ProfileDraft): Promise<void> {
-	// 		await state.personalLoading.actions.setLoadingUntil({
-	// 			errorReason: "error saving profile",
-	// 			promise: (async() => {
-	// 				const {user: {userId}} = await getAccess()
-	// 				await personalService.setProfile({userId, profileDraft})
-	// 				await reauthorize()
-	// 			})()
-	// 		})
-	// 	},
-	// })
 }

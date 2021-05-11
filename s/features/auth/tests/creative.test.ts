@@ -4,6 +4,7 @@ import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {standardSystem} from "./helpers/standard-system.js"
 import {appLink, platformLink} from "./helpers/constants.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"
+import {ops} from "../../../framework/ops.js"
 
 const creativeEmail = "creative@chasemoskal.com"
 const customerEmail = "customer@chasemoskal.com"
@@ -16,18 +17,18 @@ export default <Suite>{
 
 	"register app": async() => {
 		const {appModel} = (await creativeSignupAndLogin(creativeEmail)).models
-		assert(appModel.appListLoadingView.none, "app-list loading should start 'none'")
+		assert(ops.isNone(appModel.appList), "app-list loading should start 'none'")
 
 		await appModel.loadAppList()
-		assert(appModel.appListLoadingView.ready, "app-list should be finished loading")
-		assert(appModel.appListLoadingView.payload.length === 0, "should start with zero apps")
+		assert(ops.isReady(appModel.appList), "app-list should be finished loading")
+		assert(ops.value(appModel.appList).length === 0, "should start with zero apps")
 
 		const {appId} = await appModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
 		})
-		assert(appModel.appListLoadingView.payload.length === 1, "should now have one app")
+		assert(ops.value(appModel.appList).length === 1, "should now have one app")
 
 		await expect(async() => {
 			await appModel.registerApp({
@@ -36,10 +37,10 @@ export default <Suite>{
 				origins: [appOrigin],
 			})
 		}).throws()
-		assert(appModel.appListLoadingView.payload.length === 1, "should still have one app")
+		assert(ops.value(appModel.appList).length === 1, "should still have one app")
 
 		await appModel.deleteApp(appId)
-		assert(appModel.appListLoadingView.payload.length === 0, "deleted app should be gone")
+		assert(ops.value(appModel.appList).length === 0, "deleted app should be gone")
 	},
 
 	"register an app and login to it": async() => {
@@ -56,10 +57,10 @@ export default <Suite>{
 			label: "My App",
 			origins: [appOrigin],
 		})
-		assert(platformAppModel.appListLoadingView.payload.length === 1, "should now have one app")
+		assert(ops.value(platformAppModel.appList).length === 1, "should now have one app")
 		const appRow = await system.tables.app.app.read(find({appId}))
 		assert(appRow, "app row must be present")
-		const app = platformAppModel.appListLoadingView.payload[0]
+		const app = ops.value(platformAppModel.appList)[0]
 		assert(app, "app must be present")
 
 		// app window 1
