@@ -167,41 +167,41 @@ export default <Suite>{
 		assert(lastEffect === 6, "effect is correctly receives observation")
 	},
 
-	async "computeds work"() {
-		const auto = autowatcher()
-		const state = auto.state({
-			count: 0,
-		})
-		const actions = auto.actions({
-			setCount(count: number) {
-				state.count = count
-			},
-		})
-		const computed = auto.computed({
-			get oneMore() {
-				return state.count + 1
-			}
-		})
-		assert(computed.oneMore === 1, "computed one more works initially")
-		actions.setCount(7)
-		assert(computed.oneMore === 8, "computed one more works after action")
-	},
+	// async "computeds work"() {
+	// 	const auto = autowatcher()
+	// 	const state = auto.state({
+	// 		count: 0,
+	// 	})
+	// 	const actions = auto.actions({
+	// 		setCount(count: number) {
+	// 			state.count = count
+	// 		},
+	// 	})
+	// 	const computed = auto.computed({
+	// 		get oneMore() {
+	// 			return state.count + 1
+	// 		}
+	// 	})
+	// 	assert(computed.oneMore === 1, "computed one more works initially")
+	// 	actions.setCount(7)
+	// 	assert(computed.oneMore === 8, "computed one more works after action")
+	// },
 
-	async "computeds work as part of state"() {
-		const auto = autowatcher()
-		const state = auto.state({
-			count: 0,
-			get oneMore() {
-				return this.count + 1
-			},
-		})
-		const actions = auto.actions({
-			setCount(count: number) {
-				state.count = count
-			},
-		})
-		assert(state.oneMore === 1, "computed one more works initially")
-		actions.setCount(7)
-		assert(state.oneMore === 8, "computed one more works after action")
-	},
+	// async "computeds work as part of state"() {
+	// 	const auto = autowatcher()
+	// 	const state = auto.state({
+	// 		count: 0,
+	// 		get oneMore() {
+	// 			return this.count + 1
+	// 		},
+	// 	})
+	// 	const actions = auto.actions({
+	// 		setCount(count: number) {
+	// 			state.count = count
+	// 		},
+	// 	})
+	// 	assert(state.oneMore === 1, "computed one more works initially")
+	// 	actions.setCount(7)
+	// 	assert(state.oneMore === 8, "computed one more works after action")
+	// },
 }

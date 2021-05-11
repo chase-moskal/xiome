@@ -166,26 +166,26 @@ export function autowatcher() {
 
 	const unsubscribeComputedSymbol = Symbol("unsubscribe")
 
-	function computed<xObject extends {}>(object: xObject) {
-		const descriptors = Object.getOwnPropertyDescriptors(object)
-		const values = <xObject>{}
-		const getters = <xObject>{...object}
-		let unsubscribers: (() => void)[] = []
-		for (const [key, descriptor] of Object.entries(descriptors)) {
-			if (descriptor.get) {
-				const setValue = () => { values[key] = descriptor.get() }
-				unsubscribers.push(watch(setValue))
-				Object.defineProperty(getters, key, {
-					get: () => values[key],
-					enumerable: true,
-					configurable: false,
-				})
-			}
-		}
-		getters[unsubscribeComputedSymbol] =
-			() => unsubscribers.forEach(unsub => unsub())
-		return getters
-	}
+	// function computed<xObject extends {}>(object: xObject) {
+	// 	const descriptors = Object.getOwnPropertyDescriptors(object)
+	// 	const values = <xObject>{}
+	// 	const getters = <xObject>{...object}
+	// 	let unsubscribers: (() => void)[] = []
+	// 	for (const [key, descriptor] of Object.entries(descriptors)) {
+	// 		if (descriptor.get) {
+	// 			const setValue = () => { values[key] = descriptor.get() }
+	// 			unsubscribers.push(watch(setValue))
+	// 			Object.defineProperty(getters, key, {
+	// 				get: () => values[key],
+	// 				enumerable: true,
+	// 				configurable: false,
+	// 			})
+	// 		}
+	// 	}
+	// 	getters[unsubscribeComputedSymbol] =
+	// 		() => unsubscribers.forEach(unsub => unsub())
+	// 	return getters
+	// }
 
 	function state<xObject extends {}>(object: xObject): xObject {
 		for (const [key, value] of Object.entries(object)) {
@@ -218,7 +218,7 @@ export function autowatcher() {
 		watch,
 		action,
 		actions,
-		computed,
+		// computed,
 		dispose,
 	}
 }
