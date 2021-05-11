@@ -1,107 +1,11 @@
 
 import {objectMap} from "../object-map.js"
-
-export type Watcher<X> = () => X
-export type Action = (...args: any[]) => any
-export type Effect<X> = (observation: X) => void
-
-export type Stakeout<X> = {
-	watcher: Watcher<X>
-	effect?: Effect<X>
-}
-
-export type Watch<X> = (stakeout: Stakeout<X>) => () => void
-
-export interface ObservableRecord {
-	[key: string]: Stakeout<any>[]
-}
-
-export interface Actions {
-	[key: string]: Action
-}
-
-export interface ScheduledObservable {
-	object: {}
-	key: string
-	stakeout: Stakeout<any>
-}
-
-export interface Context {
-	observableRecords: Map<{}, ObservableRecord>
-	newObservablesSchedule: ScheduledObservable[]
-	activeAction: Action
-	activeStakeout: Stakeout<any>
-}
-
-export class AutowatcherCircularError extends Error {
-	constructor(scheduled: ScheduledObservable) {
-		super(`an effect changes an observable, named "${scheduled.key}", that triggers that same effect, causing an infinite circle`)
-	}
-}
-
-export class AutowatcherLeakError extends Error {
-	constructor(key: string) {
-		super(`cannot set observable, named "${key}", outside a formalized action`)
-	}
-}
-
-function makeContext() {
-	const context: Context = {
-		observableRecords: new Map(),
-		newObservablesSchedule: [],
-		activeAction: undefined,
-		activeStakeout: undefined,
-	}
-
-	function obtainRecord(object: {}) {
-		if (context.observableRecords.has(object)) {
-			return context.observableRecords.get(object)
-		}
-		else {
-			const record: ObservableRecord = {}
-			context.observableRecords.set(object, record)
-			return record
-		}
-	}
-
-	function forbidCircularProblems(object: {}, key: string) {
-		const scheduled = context.newObservablesSchedule.find(s =>
-			s.object === object &&
-			s.key === key
-		)
-		if (scheduled)
-			throw new AutowatcherCircularError(scheduled)
-	}
-
-	function subscribe(subscription: ScheduledObservable) {
-		const {object, key, stakeout} = subscription
-		const record = obtainRecord(object)
-		const stakeouts = record[key] ?? []
-		record[key] = [...stakeouts, stakeout]
-		return {subscription, record}
-	}
-
-	function triggerObservation(object: {}, key: string) {
-		forbidCircularProblems(object, key)
-		const record = obtainRecord(object)
-		const stakeouts = record[key] ?? []
-		for (const {watcher, effect} of stakeouts) {
-			if (effect)
-				effect(watcher())
-			else
-				watcher()
-		}
-	}
-
-	return {
-		context,
-		subscribe,
-		triggerObservation,
-	}
-}
+import {autowatcherCore} from "./core/autowatcher-core.js"
+import {AutowatcherLeakError} from "./core/autowatcher-errors.js"
+import {Action, Actions, Effect, Stakeout, Watcher} from "./types/autowatcher-types.js"
 
 export function autowatcher() {
-	const {context, subscribe, triggerObservation} = makeContext()
+	const {context, subscribe, triggerObservation} = autowatcherCore()
 
 	function observable<xObject extends {}>(object: xObject) {
 		return new Proxy(object, {
@@ -211,14 +115,12 @@ export function autowatcher() {
 	}
 
 	return {
-		// unsubscribeComputedSymbol,
 		observable,
 		state,
 		track,
 		watch,
 		action,
 		actions,
-		// computed,
 		dispose,
 	}
 }
