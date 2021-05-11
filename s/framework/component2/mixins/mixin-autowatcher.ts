@@ -18,20 +18,34 @@ export function mixinAutowatcher<C extends Constructor<LitBase>>(Base: C) {
 
 		render() {}
 
-		connectedCallback() {
-			super.connectedCallback()
+		firstUpdated() {
 			this.#track({
 				observer: () => this.render(),
 				effect: () => this.requestUpdate(),
 			})
 		}
 
-		disconnectedCallback() {
-			super.disconnectedCallback()
-			for (const unsubscribe of this.#unsubscribers) {
+		dispose() {
+			for (const unsubscribe of this.#unsubscribers)
 				unsubscribe()
-			}
 			this.#unsubscribers = []
+			this.auto.dispose()
 		}
+
+		// connectedCallback() {
+		// 	super.connectedCallback()
+		// 	this.#track({
+		// 		observer: () => this.render(),
+		// 		effect: () => this.requestUpdate(),
+		// 	})
+		// }
+
+		// disconnectedCallback() {
+		// 	super.disconnectedCallback()
+		// 	for (const unsubscribe of this.#unsubscribers) {
+		// 		unsubscribe()
+		// 	}
+		// 	this.#unsubscribers = []
+		// }
 	}
 }
