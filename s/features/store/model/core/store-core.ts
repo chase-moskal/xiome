@@ -2,14 +2,14 @@
 import {StoreState} from "../types/store-state.js"
 import {Op, ops} from "../../../../framework/ops.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
-import {autowatcher} from "../../../../toolbox/autowatcher/autowatcher.js"
 import {PlanningSituation} from "../shares/types/planning-situation.js"
 import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
+import {autowatcher} from "../../../../toolbox/autowatcher/autowatcher.js"
 
 export function storeCore() {
 	const watcher = autowatcher()
 
-	const state: StoreState = watcher.observables({
+	const state: StoreState = watcher.state({
 		access: undefined,
 		status: ops.loading(),
 		subscriptionPlanning: {mode: PlanningSituation.Mode.LoggedOut},

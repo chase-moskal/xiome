@@ -1,6 +1,6 @@
 
 import {Suite, assert, expect} from "cynic"
-import {autowatcher} from "./concept2.js"
+import {autowatcher} from "./autowatcher.js"
 
 function basicTest() {
 	const auto = autowatcher()

@@ -25,7 +25,7 @@ export function makeQuestionsModel({
 
 	const watcher = autowatcher()
 
-	const state = watcher.observables({
+	const state = watcher.state({
 		users: <User[]>[],
 		questions: <Question[]>[],
 		boardOps: <{[key: string]: Op<void>}>{},

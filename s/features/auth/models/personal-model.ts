@@ -1,11 +1,8 @@
 
-import {mobxify} from "../../../framework/mobxify.js"
-import {loading} from "../../../framework/loading/loading.js"
-
-import {PersonalModelOptions} from "./types/personal/personal-model-options.js"
+import {Op, ops} from "../../../framework/ops.js"
 import {ProfileDraft} from "../topics/personal/types/profile-draft.js"
 import {autowatcher} from "../../../toolbox/autowatcher/autowatcher.js"
-import {Op, Ops, ops} from "../../../framework/ops.js"
+import {PersonalModelOptions} from "./types/personal/personal-model-options.js"
 
 export function makePersonalModel({
 		personalService,
@@ -15,7 +12,7 @@ export function makePersonalModel({
 
 	const auto = autowatcher()
 
-	const state = auto.observables({
+	const state = auto.state({
 		submitDraftOp: <Op<void>>ops.ready(undefined)
 	})
 

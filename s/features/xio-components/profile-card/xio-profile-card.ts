@@ -21,7 +21,7 @@ import {Component2, property, html} from "../../../framework/component2/componen
 @mixinStyles(styles)
 export class XioProfileCard extends Component2 {
 
-	#state = this.auto.observables({
+	#state = this.auto.state({
 		busy: <Op<void>>ops.ready(undefined),
 	})
 

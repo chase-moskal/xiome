@@ -1,7 +1,6 @@
 
 import {CSSResult, CSSResultArray, LitElement} from "lit-element"
-import {Track} from "../../toolbox/autowatcher/types/watcher-types.js"
-import {Autowatcher} from "../../toolbox/autowatcher/types/autowatcher.js"
+import {Autowatcher, Track} from "../../toolbox/autowatcher/types/autowatcher-types.js"
 
 export type Constructor<T extends {}> = new(...args: any[]) => T
 
@@ -30,5 +29,6 @@ export interface LitBaseClass {
 
 export interface AutowatchComponent extends LitBase {
 	auto: Autowatcher
-	autotracks: Track[]
+	subscribeAutotrack(track: Track<any>): void
+	dispose(): void
 }

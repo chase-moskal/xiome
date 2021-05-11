@@ -1,4 +1,6 @@
 
+import {autowatcher} from "../autowatcher.js"
+
 export type Watcher<X> = () => X
 export type Action = (...args: any[]) => any
 export type Effect<X> = (observation: X) => void
@@ -8,7 +10,7 @@ export type Stakeout<X> = {
 	effect?: Effect<X>
 }
 
-export type Watch<X> = (stakeout: Stakeout<X>) => () => void
+export type Track<X> = (stakeout: Stakeout<X>) => () => void
 
 export interface ObservableRecord {
 	[key: string]: Stakeout<any>[]
@@ -30,3 +32,5 @@ export interface Context {
 	activeAction: Action
 	activeStakeout: Stakeout<any>
 }
+
+export type Autowatcher = ReturnType<typeof autowatcher>
