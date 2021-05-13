@@ -6,10 +6,10 @@ import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
-import {WiredComponent, html, mixinStyles, property, query} from "../../../../framework/component.js"
+import {Component2WithShare, html, mixinStyles, property, query} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomeLoginPanel extends WiredComponent<{authModel: AuthModel}> {
+export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}> {
 
 	@property({type: Boolean, reflect: true})
 	["show-logout"]: boolean = false

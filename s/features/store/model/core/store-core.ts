@@ -7,9 +7,9 @@ import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 import {autowatcher} from "../../../../toolbox/autowatcher/autowatcher.js"
 
 export function storeCore() {
-	const watcher = autowatcher()
+	const auto = autowatcher()
 
-	const state: StoreState = watcher.state({
+	const state: StoreState = auto.state({
 		access: undefined,
 		status: ops.loading(),
 		subscriptionPlanning: {mode: PlanningSituation.Mode.LoggedOut},
@@ -18,7 +18,7 @@ export function storeCore() {
 		},
 	})
 
-	const actions = watcher.actions({
+	const actions = auto.actions({
 		setAccess(access: AccessPayload) {
 			state.access = access
 		},
@@ -30,5 +30,5 @@ export function storeCore() {
 		},
 	})
 
-	return {state, actions, watch: watcher.watch}
+	return {state, actions, track: auto.track}
 }

@@ -2,14 +2,14 @@
 import styles from "./xiome-bank-connect.css.js"
 import {onesie} from "../../../../toolbox/onesie.js"
 import {Op, ops} from "../../../../framework/ops.js"
-import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {makeStoreModel} from "../../model/store-model.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {StripeAccountDetails} from "../../topics/types/stripe-account-details.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
+import {Component2WithShare, mixinStyles, html, property} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomeBankConnect extends WiredComponent<{
+export class XiomeBankConnect extends Component2WithShare<{
 		modals: ModalSystem
 		bank: ReturnType<typeof makeStoreModel>["shares"]["bank"]
 	}> {

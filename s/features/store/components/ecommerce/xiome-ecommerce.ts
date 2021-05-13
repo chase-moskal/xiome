@@ -1,14 +1,13 @@
 
 import styles from "./xiome-ecommerce.css.js"
 import {makeStoreModel} from "../../model/store-model.js"
-import {WiredComponent, mixinStyles, html} from "../../../../framework/component.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ops} from "../../../../framework/ops.js"
 import {StoreStatus} from "../../topics/types/store-status.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {Component2WithShare, mixinStyles, html} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomeEcommerce extends WiredComponent<{
+export class XiomeEcommerce extends Component2WithShare<{
 		modals: ModalSystem
 		ecommerce: ReturnType<typeof makeStoreModel>["shares"]["ecommerce"]
 	}> {

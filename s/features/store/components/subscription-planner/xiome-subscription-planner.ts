@@ -6,11 +6,11 @@ import {SubscriptionPlan} from "../../topics/types/subscription-plan.js"
 import {PlanningSituation} from "../../model/shares/types/planning-situation.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
-import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {Component2WithShare, mixinStyles, html, property} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomeSubscriptionPlanner extends WiredComponent<{
+export class XiomeSubscriptionPlanner extends Component2WithShare<{
 		modals: ModalSystem
 		subscriptionPlanning: ReturnType<typeof makeStoreModel>["shares"]["subscriptionPlanning"]
 	}> {

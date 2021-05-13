@@ -64,7 +64,7 @@ export function makeAppModel({
 	}
 
 	return {
-		auto,
+		track: auto.track,
 		manageAdminsService,
 		get appList() {
 			return state.appList

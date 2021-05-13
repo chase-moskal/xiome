@@ -64,7 +64,7 @@ export function makePermissionsModel({
 	}
 
 	return {
-		auto,
+		track: auto.track,
 		initialize: actions.initialize,
 		deactivate: actions.deactivate,
 		get access() {

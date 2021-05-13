@@ -30,6 +30,8 @@ export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
 	}
 
 	return {
+		track: auto.track,
+
 		get access() {
 			return state.access
 		},

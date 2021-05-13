@@ -31,7 +31,7 @@ export function makeStoreModel({
 	}) {
 
 	const core = storeCore()
-	const {watch, actions} = core
+	const {track, actions} = core
 
 	const shares = {
 		subscriptionPlanning: subscriptionPlanningShare({core, shopkeepingService}),
@@ -40,7 +40,7 @@ export function makeStoreModel({
 	}
 
 	return {
-		watch,
+		track,
 		shares,
 		async accessChange(access: AccessPayload) {
 			actions.setAccess(access)

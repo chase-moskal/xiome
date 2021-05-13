@@ -3,7 +3,7 @@ import styles from "./xiome-app-manager.css.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
 import {multistate} from "../../../../toolbox/multistate.js"
-import {WiredComponent, html, mixinStyles} from "../../../../framework/component.js"
+import {Component2WithShare, html, mixinStyles} from "../../../../framework/component2/component2.js"
 
 import {makeAppForm} from "./form/app-form.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
@@ -17,7 +17,7 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
-export class XiomeAppManager extends WiredComponent<{
+export class XiomeAppManager extends Component2WithShare<{
 		appModel: AppModel
 		modals: ModalSystem
 	}> {

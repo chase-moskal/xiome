@@ -2,15 +2,15 @@
 import styles from "./xiome-permissions.css.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {makePermissionsModel} from "../../models/permissions-model.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {RoleDisplay} from "../../topics/permissions/types/role-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
 import {roleLabelValidator} from "../../topics/permissions/validators/role-label-validator.js"
-import {WiredComponent, mixinStyles, html, property} from "../../../../framework/component.js"
-import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {Component2WithShare, mixinStyles, html, property} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomePermissions extends WiredComponent<{
+export class XiomePermissions extends Component2WithShare<{
 		modals: ModalSystem
 		authModel: AuthModel
 		permissionsModel: ReturnType<typeof makePermissionsModel>
