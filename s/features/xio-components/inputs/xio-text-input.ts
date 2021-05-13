@@ -4,7 +4,7 @@ import {nullParser} from "./parsing/null-parser.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
-import {Component, html, mixinStyles, mixinFocusable, property, query, maybe} from "../../../framework/component.js"
+import {Component2, html, mixinStyles, mixinFocusable, property, query} from "../../../framework/component2/component2.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
@@ -12,7 +12,7 @@ import {EnterPressEvent} from "./events/enter-press.js"
 
  @mixinFocusable
  @mixinStyles(styles)
-export class XioTextInput<xParsedValue = string> extends Component {
+export class XioTextInput<xParsedValue = string> extends Component2 {
 
 	@property({type: String, reflect: true})
 	["initial"]: string = ""
@@ -162,9 +162,11 @@ export class XioTextInput<xParsedValue = string> extends Component {
 						`}
 					</div>
 					<ol class=problems part=problems>
-						${maybe(showProblems, problems.map(problem => html`
-							<li>${problem}</li>
-						`))}
+						${showProblems
+							? problems.map(problem => html`
+								<li>${problem}</li>
+							`)
+							: null}
 					</ol>
 				</div>
 			</div>
