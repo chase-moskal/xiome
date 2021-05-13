@@ -21,7 +21,7 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 		price: <number>0,
 	}
 
-	firstUpdated() {
+	init() {
 		this.share.subscriptionPlanning.activate()
 	}
 

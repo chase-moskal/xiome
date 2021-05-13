@@ -16,7 +16,7 @@ export class XiomePermissions extends Component2WithShare<{
 		permissionsModel: ReturnType<typeof makePermissionsModel>
 	}> {
 
-	firstUpdated() {
+	init() {
 		this.share.permissionsModel.initialize()
 	}
 

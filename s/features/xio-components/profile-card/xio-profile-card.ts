@@ -88,7 +88,7 @@ export class XioProfileCard extends Component2 {
 		})
 	}
 
-	firstUpdated() {
+	init() {
 		this.#actions.setBusy(ops.ready(undefined))
 	}
 

@@ -105,7 +105,7 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 		this.dispatchValueChange()
 	}
 
-	firstUpdated() {
+	init() {
 		this.draft = this.initial
 		this.addEventListener("valuechange", this.onvaluechange)
 		this.addEventListener("enterpress", this.onenterpress)

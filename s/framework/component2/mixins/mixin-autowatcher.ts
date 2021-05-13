@@ -1,4 +1,5 @@
 
+import {PropertyValues} from "../component2.js"
 import {Constructor, LitBase} from "../component-types.js"
 import {autowatcher} from "../../../toolbox/autowatcher/autowatcher.js"
 import {Track} from "../../../toolbox/autowatcher/types/autowatcher-types.js"
@@ -19,8 +20,7 @@ export function mixinAutowatcher<C extends Constructor<LitBase>>(Base: C) {
 			)
 		}
 
-		constructor(...args: any[]) {
-			super(...args)
+		firstUpdated(changes: PropertyValues) {
 			this.subscribeAutotrack(this.auto.track)
 		}
 

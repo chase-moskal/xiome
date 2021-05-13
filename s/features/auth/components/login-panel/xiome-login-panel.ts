@@ -104,7 +104,7 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 
 	render() {
 		const {access: accessOp} = this.share.authModel
-		return renderOp(accessOp, access => access
+		return renderOp(accessOp, access => access?.user
 			? this.renderLoggedIn(access)
 			: this.renderLoggedOut()
 		)

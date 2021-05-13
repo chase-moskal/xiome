@@ -22,8 +22,7 @@ export class XiomeAppManager extends Component2WithShare<{
 		modals: ModalSystem
 	}> {
 
-	firstUpdated(changes: any) {
-		super.firstUpdated(changes)
+	init() {
 		this.share.appModel.loadAppList()
 	}
 

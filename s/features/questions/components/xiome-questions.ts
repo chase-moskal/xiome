@@ -23,7 +23,7 @@ export class XiomeEcommerce extends Component2WithShare<{
 	@property({type: String})
 	draftText: string = ""
 
-	firstUpdated() {
+	init() {
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
 	}

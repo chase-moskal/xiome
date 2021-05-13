@@ -38,7 +38,7 @@ export class XiomeBankConnect extends Component2WithShare<{
 		}
 	})
 
-	async firstUpdated() {
+	async init() {
 		await this.refreshStripeAccountDetails()
 	}
 

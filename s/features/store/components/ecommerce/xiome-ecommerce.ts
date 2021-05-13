@@ -12,7 +12,7 @@ export class XiomeEcommerce extends Component2WithShare<{
 		ecommerce: ReturnType<typeof makeStoreModel>["shares"]["ecommerce"]
 	}> {
 
-	firstUpdated() {
+	init() {
 		this.share.ecommerce.initialize()
 	}
 

@@ -30,7 +30,7 @@ export class XioCheckbox extends Component2 {
 	@property({type: Function})
 	save: (checked: boolean) => Promise<void>
 
-	firstUpdated() {
+	init() {
 		this.loading = ops.ready(this["initially-checked"])
 	}
 
