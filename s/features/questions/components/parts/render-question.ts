@@ -1,6 +1,6 @@
 
 // import {User} from "../../../auth/types/user.js"
-// import {html} from "../../../../framework/component.js"
+// import {html} from "../../../../framework/component2/component2.js"
 // import {Question} from "../../topics/types/question.js"
 // import {AccessPayload} from "../../../auth/types/tokens/access-payload.js"
 // import {renderQuestionAuthor} from "./render-question-author.js"

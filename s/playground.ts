@@ -2,13 +2,12 @@
 import {nap} from "./toolbox/nap.js"
 import {ops} from "./framework/ops.js"
 import {User} from "./features/auth/types/user.js"
-import {Component, mixinLightDom, registerComponents, html} from "./framework/component.js"
+import {Component2, mixinLightDom, registerComponents, html} from "./framework/component2/component2.js"
 
 @mixinLightDom
-class XioPlayground extends Component {
+class XioPlayground extends Component2 {
 
 	render() {
-
 		const user: User = {
 			userId: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
 			profile: {

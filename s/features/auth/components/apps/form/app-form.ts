@@ -1,8 +1,8 @@
 
 import {deepEqual} from "../../../../../toolbox/deep.js"
-import {html} from "../../../../../framework/component.js"
 import {Validator} from "../../../../../toolbox/darkvalley.js"
 import {parseOrigins} from "../../../topics/apps/parse-origins.js"
+import {html} from "../../../../../framework/component2/component2.js"
 import {validateAppFormDraft} from "./utils/validate-app-form-draft.js"
 import {getEmptyAppFormDraft} from "./utils/get-empty-app-form-draft.js"
 import {appDraftValidators} from "../../../topics/apps/app-draft-validators.js"

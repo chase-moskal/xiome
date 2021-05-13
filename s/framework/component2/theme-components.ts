@@ -1,12 +1,10 @@
 
-import {LitElement} from "lit-element"
-import {CSS} from "../component/mixin-styles.js"
 import {mixinStyles} from "./mixins/mixin-styles.js"
 import {objectMap} from "../../toolbox/object-map.js"
-import {ConstructorFor} from "../../types/constructor-for.js"
+import {CSS, Constructor, LitBase} from "../component2/component-types.js"
 
 export const themeComponents = <
-		xComponents extends {[key: string]: ConstructorFor<LitElement>}
+		xComponents extends {[key: string]: Constructor<LitBase>}
 	>(
 		theme: CSS,
 		components: xComponents

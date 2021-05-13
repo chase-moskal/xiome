@@ -1,6 +1,6 @@
 
 // import {User} from "../../../auth/types/user.js"
-// import {html} from "../../../../framework/component.js"
+// import {html} from "../../../../framework/component2/component2.js"
 // import {renderQuestionAuthor} from "./render-question-author.js"
 // import {QuestionValidation} from "../types/question-validation.js"
 

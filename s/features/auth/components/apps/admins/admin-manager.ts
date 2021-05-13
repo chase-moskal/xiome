@@ -1,10 +1,10 @@
 
 import {Service} from "../../../../../types/service.js"
-import {html} from "../../../../../framework/component.js"
 import {AppDisplay} from "../../../types/apps/app-display.js"
-import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
+import {html} from "../../../../../framework/component2/component2.js"
 import {manageAdminsTopic} from "../../../topics/manage-admins-topic.js"
 import {adminManagerControls} from "./aspects/admin-manager-controls.js"
+import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {emailValidator} from "../../../topics/apps/admin-email-validator.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {adminManagerStateAndActions} from "./aspects/admin-manager-state-and-actions.js"

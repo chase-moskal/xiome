@@ -4,6 +4,7 @@ import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
 
 export * from "lit-element"
+
 export * from "./mixins/mixin-autotrack.js"
 export * from "./mixins/mixin-autowatcher.js"
 export * from "./mixins/mixin-focusable.js"
@@ -11,6 +12,9 @@ export * from "./mixins/mixin-initially-hidden.js"
 export * from "./mixins/mixin-light-dom.js"
 export * from "./mixins/mixin-share.js"
 export * from "./mixins/mixin-styles.js"
+
+export * from "./theme-components.js"
+export * from "./register-components.js"
 
 export class Component2 extends mixinAutowatcher(mixinInitiallyHidden(LitElement)) {}
 

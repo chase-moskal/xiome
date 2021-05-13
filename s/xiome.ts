@@ -4,7 +4,7 @@ import "./toolbox/mobx-necessary-hack.js"
 import "./assembly/frontend/window-globals.js"
 
 import {assembleXiome} from "./assembly/assemble-xiome.js"
-import {registerComponents} from "./framework/component.js"
+import {registerComponents} from "./framework/component2/component2.js"
 import {readXiomeConfigElement} from "./assembly/frontend/read-xiome-config-element.js"
 
 void async function xiome() {

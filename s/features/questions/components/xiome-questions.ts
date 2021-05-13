@@ -2,7 +2,7 @@
 import styles from "./xiome-questions.css.js"
 import {ops} from "../../../framework/ops.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {WiredComponent, mixinStyles, html, property} from "../../../framework/component.js"
+import {Component2WithShare, mixinStyles, html, property} from "../../../framework/component2/component2.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {makeQuestionsModel} from "../model/questions-model.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
@@ -10,7 +10,7 @@ import {QuestionsBoardModel} from "../model/types/board-model.js"
 // import {renderQuestion} from "./parts/render-question.js"
 
 @mixinStyles(styles)
-export class XiomeEcommerce extends WiredComponent<{
+export class XiomeEcommerce extends Component2WithShare<{
 		modals: ModalSystem
 		questionsModel: QuestionsModel
 	}> {
