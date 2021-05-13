@@ -75,6 +75,10 @@ export class XiomeAppManager extends Component2WithShare<{
 						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
 						.querySelector(selector)
 				})
+				adminManager.track({
+					watcher: () => { adminManager.render() },
+					effect: () => this.requestUpdate(),
+				})
 				adminManager.controls.listAdmins()
 				return adminManager
 			}

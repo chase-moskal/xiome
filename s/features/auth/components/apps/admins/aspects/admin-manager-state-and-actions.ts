@@ -24,6 +24,7 @@ export function adminManagerStateAndActions() {
 	})
 
 	return {
+		track: auto.track,
 		state,
 		actions,
 	}

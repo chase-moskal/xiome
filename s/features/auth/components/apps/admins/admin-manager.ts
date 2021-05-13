@@ -16,7 +16,7 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 		query: <E extends HTMLElement>(selector: string) => E
 	}) {
 
-	const {state, actions} = adminManagerStateAndActions()
+	const {state, actions, track} = adminManagerStateAndActions()
 	const controls = adminManagerControls({
 		app,
 		state,
@@ -89,5 +89,5 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 		`
 	}
 
-	return {render, controls}
+	return {render, controls, track}
 }
