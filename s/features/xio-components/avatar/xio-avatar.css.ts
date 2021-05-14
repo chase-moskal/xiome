@@ -11,6 +11,7 @@ export default css`
 	max-height: var(--avatar-size, 3em);
 	border-radius: var(--avatar-border-radius, 0.3em);
 	overflow: hidden;
+	user-select: none;
 }
 
 .avatar {
@@ -26,6 +27,7 @@ export default css`
 }
 
 svg, img {
+	pointer-events: none;
 	display: block;
 	width: 100%;
 	height: 100%;
