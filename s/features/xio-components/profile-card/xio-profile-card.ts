@@ -1,7 +1,7 @@
 
+import {deepEqual} from "../../../toolbox/deep.js"
 import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
-import {deepClone, deepEqual} from "../../../toolbox/deep.js"
 
 import styles from "./xio-profile-card.css.js"
 import {Validator} from "../../../toolbox/darkvalley.js"
@@ -15,8 +15,16 @@ import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
+import {ProfileDraft} from "../../auth/topics/personal/types/profile-draft.js"
 import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"
 import {Component2, property, html} from "../../../framework/component2/component2.js"
+
+function makeProfileDraftBasedOnProfile(profile: Profile): ProfileDraft {
+	return {
+		tagline: profile.tagline,
+		nickname: profile.nickname,
+	}
+}
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component2 {
@@ -31,17 +39,21 @@ export class XioProfileCard extends Component2 {
 		},
 	})
 
+	init() {
+		this.#actions.setBusy(ops.ready(undefined))
+	}
+
 	@property({type: Object})
 	user?: User
 
 	@property({type: Object})
-	saveProfile?: (profile: Profile) => Promise<void>
+	saveProfile?: (profile: ProfileDraft) => Promise<void>
 
 	@property({type: Object})
-	private changedProfile: Profile = undefined
+	private profileDraft: ProfileDraft = undefined
 
-	private get changes(): boolean {
-		return !!this.changedProfile
+	private get draftIsChanged(): boolean {
+		return !!this.profileDraft
 	}
 
 	private get readonly() {
@@ -57,39 +69,42 @@ export class XioProfileCard extends Component2 {
 		)
 	}
 
-	private generateNewProfileFromInputs(): Profile {
+	private generateNewProfileDraftFromInputs() {
 		const {profile} = this.user
-		const clonedProfile = deepClone(profile)
+		const profileDraft = makeProfileDraftBasedOnProfile(profile)
 		const nicknameInput = this.getTextInputField("nickname")
-		if (!nicknameInput) return clonedProfile
+
+		if (!nicknameInput)
+			return {profileDraft, isChanged: false}
+
 		const taglineInput = this.getTextInputField("tagline")
-		clonedProfile.nickname = nicknameInput.value
-		clonedProfile.tagline = taglineInput.value
+
+		profileDraft.nickname = nicknameInput.value
+		profileDraft.tagline = taglineInput.value
+
 		this.problems = [...nicknameInput.problems, ...taglineInput.problems]
-		return clonedProfile
+		const isChanged = !deepEqual(
+			makeProfileDraftBasedOnProfile(profile),
+			profileDraft,
+		)
+
+		return {profileDraft, isChanged}
 	}
 
 	private handleChange = debounce2(200, () => {
 		if (!this.user) return
-		const {profile} = this.user
-		const newProfile = this.generateNewProfileFromInputs()
-		const changes = !deepEqual(profile, newProfile)
-		this.changedProfile = changes ? newProfile : undefined
+		const {profileDraft, isChanged} = this.generateNewProfileDraftFromInputs()
+		this.profileDraft = isChanged ? profileDraft : undefined
 	})
 
 	private handleSave = async() => {
-		const profile = this.changedProfile
 		await ops.operation({
-			promise: this.saveProfile(profile)
+			promise: this.saveProfile(this.profileDraft)
 				.finally(() => {
-					this.changedProfile = null
+					this.profileDraft = null
 				}),
 			setOp: op => this.#actions.setBusy(op),
 		})
-	}
-
-	init() {
-		this.#actions.setBusy(ops.ready(undefined))
 	}
 
 	private renderRoles(user: User) {
@@ -118,7 +133,7 @@ export class XioProfileCard extends Component2 {
 			text: string
 			input?: {
 				label: string
-				changes: boolean
+				draftIsChanged: boolean
 				readonly: boolean
 				validator: Validator<string>
 				onvaluechange: (event: ValueChangeEvent<string>) => void
@@ -137,7 +152,7 @@ export class XioProfileCard extends Component2 {
 					`}"
 					show-validation-when-empty
 					?readonly=${input.readonly}
-					?hide-validation=${!input.changes}
+					?hide-validation=${!input.draftIsChanged}
 					.validator=${input.validator}
 					@valuechange=${input.onvaluechange}>
 						<span>${input.label}</span>
@@ -149,7 +164,7 @@ export class XioProfileCard extends Component2 {
 	}
 
 	render() {
-		const {user} = this
+		const {user, draftIsChanged} = this
 		if (!user) return null
 		return renderOp(this.#state.busy, () => html`
 			<xio-avatar .user=${user}></xio-avatar>
@@ -162,7 +177,7 @@ export class XioProfileCard extends Component2 {
 						: {
 							label: "nickname",
 							readonly: false,
-							changes: this.changes,
+							draftIsChanged,
 							validator: profileValidators.nickname,
 							onvaluechange: this.handleChange,
 						}
@@ -175,7 +190,7 @@ export class XioProfileCard extends Component2 {
 						: {
 							label: "tagline",
 							readonly: false,
-							changes: this.changes,
+							draftIsChanged,
 							validator: profileValidators.tagline,
 							onvaluechange: this.handleChange,
 						}
@@ -190,7 +205,7 @@ export class XioProfileCard extends Component2 {
 			${this.readonly ? null : html`
 				<div class="buttonbar">
 					<xio-button
-						?disabled=${!this.changedProfile || this.problems.length > 0}
+						?disabled=${!this.profileDraft || this.problems.length > 0}
 						@press=${this.handleSave}>
 							<slot name=save-button>save profile</slot>
 					</xio-button>
