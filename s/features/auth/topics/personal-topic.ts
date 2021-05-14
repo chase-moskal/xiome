@@ -1,4 +1,5 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {UserAuth} from "../policies/types/user-auth.js"
@@ -6,22 +7,21 @@ import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {ProfileDraft} from "./personal/types/profile-draft.js"
 import {validateProfileDraft} from "./personal/validate-profile-draft.js"
-import {isUserAllowedToEditProfile} from "./personal/is-user-allowed-to-edit-profile.js"
 import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async setProfile({access, tables}, {userId, profileDraft}: {
+	async setProfile({access, tables, checker}, {userId, profileDraft}: {
 			userId: string
 			profileDraft: ProfileDraft
 		}) {
 
-		const allowed = isUserAllowedToEditProfile({
-			access,
-			config,
-			tables,
-		})
-		if (!allowed) throw new Error("forbidden")
+		const isProfileOwner = access.user.userId === userId
+		const canEditAnyProfile = checker.hasPrivilege("edit any profile")
+		const allowed = isProfileOwner || canEditAnyProfile
+
+		if (!allowed)
+			throw new ApiError(403, "forbidden: you are not allowed to edit this profile")
 
 		throwProblems(validateProfileDraft(profileDraft))
 
