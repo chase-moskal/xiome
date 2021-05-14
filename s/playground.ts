@@ -11,9 +11,9 @@ class XioPlayground extends Component2 {
 		const user: User = {
 			userId: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
 			profile: {
-				avatar: "",
 				nickname: "Original Ostrich",
 				tagline: "i'm super cool",
+				avatar: "https://www.gravatar.com/avatar/a6263131d6ccdbfe1c7cee96da970eda?s=240",
 			},
 			roles: [],
 			stats: {

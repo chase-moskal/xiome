@@ -1,25 +1,16 @@
 
 import styles from "./xiome-my-avatar.css.js"
+import {ops} from "../../../../framework/ops.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
-import {Component2WithShare, html, mixinStyles, property} from "../../../../framework/component2/component2.js"
-
-import svgSilhouette from "../../../../framework/icons/silhouette.svg.js"
+import {Component2WithShare, html, mixinStyles} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
 export class XiomeMyAvatar extends Component2WithShare<{authModel: AuthModel}> {
-
-	@property({type: Boolean, reflect: true})
-	"logged-in": boolean = false
-
-	// autorun() {
-	// 	this["logged-in"] = !!this.share.authModel.accessLoadingView.payload
-	// }
-
 	render() {
+		const access = ops.value(this.share.authModel.access)
+		const user = access?.user
 		return html`
-			<div class=avatar>
-				${svgSilhouette}
-			</div>
+			<xio-avatar .user=${user}></xio-avatar>
 		`
 	}
 }

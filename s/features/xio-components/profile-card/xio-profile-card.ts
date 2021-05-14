@@ -152,11 +152,7 @@ export class XioProfileCard extends Component2 {
 		const {user} = this
 		if (!user) return null
 		return renderOp(this.#state.busy, () => html`
-			<div class=avatar>
-				${user.profile.avatar
-					? html`<img src="${user.profile.avatar}" alt=""/>`
-					: html`no avatar`}
-			</div>
+			<xio-avatar .user=${user}></xio-avatar>
 			<div class=textfields ?data-readonly=${this.readonly}>
 				${this.renderText({
 					field: "nickname",
