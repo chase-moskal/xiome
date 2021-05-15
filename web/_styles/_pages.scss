@@ -25,24 +25,9 @@
 	xio-playground {
 		display: block;
 		margin-top: 1em;
-		width: 20em;
 	}
-	xio-profile-card {
-		padding: 0.2em;
-		background: #0002;
+	.lowkey {
+		opacity: 0.3;
+		margin: 0.5em 0;
 	}
 }
-
-// .catalog {
-// 	display: grid;
-// 	grid-template-columns: repeat(auto-fill, minmax(12em, 1fr));
-// 	justify-items: center;
-// 	gap: 1rem;
-// }
-
-// .catalog > div {
-// 	width: 100%;
-// 	max-width: 16em;
-// 	min-height: 10em;
-// 	background: grey;
-// }

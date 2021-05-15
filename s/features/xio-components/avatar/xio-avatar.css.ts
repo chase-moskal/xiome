@@ -5,10 +5,8 @@ export default css`
 
 :host {
 	display: block;
-	width: 100%;
-	height: 100%;
-	max-width: var(--avatar-size, 3em);
-	max-height: var(--avatar-size, 3em);
+	width: var(--avatar-size, 3em);
+	height: var(--avatar-size, 3em);
 	border-radius: var(--avatar-border-radius, 0.3em);
 	overflow: hidden;
 	user-select: none;
@@ -30,7 +28,6 @@ svg, img {
 	pointer-events: none;
 	display: block;
 	width: 100%;
-	height: 100%;
 }
 
 `

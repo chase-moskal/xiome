@@ -4,27 +4,20 @@ import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
 
 import styles from "./xio-profile-card.css.js"
-import {Validator} from "../../../toolbox/darkvalley.js"
-import {ValueChangeEvent} from "../inputs/events/value-change-event.js"
 import {profileValidators} from "../../auth/topics/personal/validate-profile-draft.js"
 
 import {User} from "../../auth/types/user.js"
 import {Op, ops} from "../../../framework/ops.js"
-import {Profile} from "../../auth/types/profile.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {formatDate} from "../../../toolbox/goodtimes/format-date.js"
 
+import {renderText} from "./renders/render-text.js"
+import {renderRoles} from "./renders/render-roles.js"
+import {renderDetails} from "./renders/render-details.js"
+import {makeProfileDraft} from "./helpers/make-profile-draft.js"
 import {ProfileDraft} from "../../auth/topics/personal/types/profile-draft.js"
 import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"
 import {Component2, property, html} from "../../../framework/component2/component2.js"
-
-function makeProfileDraftBasedOnProfile(profile: Profile): ProfileDraft {
-	return {
-		tagline: profile.tagline,
-		nickname: profile.nickname,
-	}
-}
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component2 {
@@ -71,7 +64,7 @@ export class XioProfileCard extends Component2 {
 
 	private generateNewProfileDraftFromInputs() {
 		const {profile} = this.user
-		const profileDraft = makeProfileDraftBasedOnProfile(profile)
+		const profileDraft = makeProfileDraft(profile)
 		const nicknameInput = this.getTextInputField("nickname")
 
 		if (!nicknameInput)
@@ -84,7 +77,7 @@ export class XioProfileCard extends Component2 {
 
 		this.problems = [...nicknameInput.problems, ...taglineInput.problems]
 		const isChanged = !deepEqual(
-			makeProfileDraftBasedOnProfile(profile),
+			makeProfileDraft(profile),
 			profileDraft,
 		)
 
@@ -107,110 +100,60 @@ export class XioProfileCard extends Component2 {
 		})
 	}
 
-	private renderRoles(user: User) {
-		return user.roles.map(role => html`
-			<li data-role-label="${role.label}">${role.label}</li>
-		`)
-	}
-
-	private renderDetails(user: User) {
-		return html`
-			<li>
-				<span>joined:</span>
-				<span>${formatDate(user.stats.joined).date}</span>
-			</li>
-			<li>
-				<xio-id
-					label="user id"
-					id="${user.userId}"
-				></xio-id>
-			</li>
-		`
-	}
-
-	private renderText({field, text, input}: {
-			field: string
-			text: string
-			input?: {
-				label: string
-				draftIsChanged: boolean
-				readonly: boolean
-				validator: Validator<string>
-				onvaluechange: (event: ValueChangeEvent<string>) => void
-			}
-		}) {
-		return input
-			? html`
-				<xio-text-input
-					data-field="${field}"
-					initial=${text}
-					part="xiotextinput"
-					exportparts="${`
-						label: xiotextinput-label,
-						textinput: xiotextinput-textinput,
-						problems: xiotextinput-problems,
-					`}"
-					show-validation-when-empty
-					?readonly=${input.readonly}
-					?hide-validation=${!input.draftIsChanged}
-					.validator=${input.validator}
-					@valuechange=${input.onvaluechange}>
-						<span>${input.label}</span>
-				</xio-text-input>
-			`
-			: html`
-				<p part="textfield" data-field="${field}">${text}</p>
-			`
-	}
-
 	render() {
 		const {user, draftIsChanged} = this
 		if (!user) return null
 		return renderOp(this.#state.busy, () => html`
-			<xio-avatar .user=${user}></xio-avatar>
-			<div class=textfields ?data-readonly=${this.readonly}>
-				${this.renderText({
-					field: "nickname",
-					text: user.profile.nickname,
-					input: this.readonly
-						? undefined
-						: {
-							label: "nickname",
-							readonly: false,
-							draftIsChanged,
-							validator: profileValidators.nickname,
-							onvaluechange: this.handleChange,
-						}
-				})}
-				${this.renderText({
-					field: "tagline",
-					text: user.profile.tagline,
-					input: this.readonly
-						? undefined
-						: {
-							label: "tagline",
-							readonly: false,
-							draftIsChanged,
-							validator: profileValidators.tagline,
-							onvaluechange: this.handleChange,
-						}
-				})}
-			</div>
-			<ul class=roles>
-				${this.renderRoles(user)}
-			</ul>
-			<ul class="detail">
-				${this.renderDetails(user)}
-			</ul>
-			${this.readonly ? null : html`
-				<div class="buttonbar">
-					<xio-button
-						?disabled=${!this.profileDraft || this.problems.length > 0}
-						@press=${this.handleSave}>
-							<slot name=save-button>save profile</slot>
-					</xio-button>
+			<div class=container>
+				<div class=avatarbox>
+					<xio-avatar .user=${user}></xio-avatar>
 				</div>
-			`}
+				<div class=mainbox>
+					<div class=textbox>
+						<div class=textfields ?data-readonly=${this.readonly}>
+							${renderText({
+								field: "nickname",
+								text: user.profile.nickname,
+								input: this.readonly
+									? undefined
+									: {
+										label: "nickname",
+										readonly: false,
+										draftIsChanged,
+										validator: profileValidators.nickname,
+										onvaluechange: this.handleChange,
+									}
+							})}
+							${renderText({
+								field: "tagline",
+								text: user.profile.tagline,
+								input: this.readonly
+									? undefined
+									: {
+										label: "tagline",
+										readonly: false,
+										draftIsChanged,
+										validator: profileValidators.tagline,
+										onvaluechange: this.handleChange,
+									}
+							})}
+							${renderRoles(user)}
+						</div>
+					</div>
+					<div class=detailbox>
+						${renderDetails(user)}
+						${this.readonly ? null : html`
+							<div class=buttonbar>
+								<xio-button
+									?disabled=${!this.profileDraft || this.problems.length > 0}
+									@press=${this.handleSave}>
+										<slot name=save-button>save profile</slot>
+								</xio-button>
+							</div>
+						`}
+					</div>
+				</div>
+			</div>
 		`)
 	}
 }

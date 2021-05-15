@@ -6,6 +6,42 @@ export default css`
 	display: block;
 }
 
+.container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.avatarbox {
+	margin-right: 0.5em;
+}
+
+xio-avatar {
+	--avatar-size: 3em;
+}
+
+.mainbox {
+	display: flex;
+	flex-direction: row;
+	flex: 1 1 auto;
+	flex-wrap: wrap;
+}
+
+.textbox {
+	display: block;
+	flex: 1 1 auto;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.detailbox {
+	margin-bottom: 0.5em;
+}
+
+.buttonbar {
+	margin-top: 0.5em;
+}
+
 .cardplate > * {
 	display: block;
 }
@@ -44,13 +80,16 @@ xio-text-input::part(label) {
 }
 
 xio-text-input + xio-text-input {
-	margin-top: 0.5em;
+	margin-top: 0.25em;
 }
 
 .detail {
 	font-size: 0.7em;
-	margin-top: 0.5em;
 	list-style: none;
+}
+
+.detail > li {
+	margin-top: 0.2em;
 }
 
 .detail > li > :first-child {
@@ -66,9 +105,10 @@ xio-text-input + xio-text-input {
 }
 
 .roles {
+	font-size: 0.6em;
 	list-style: none;
 	padding: 0;
-	margin-top: 0.5em;
+	margin-top: 0.2em;
 }
 
 .roles li {
@@ -77,10 +117,6 @@ xio-text-input + xio-text-input {
 	border-radius: 1em;
 	padding: 0.1em 0.3em;
 	line-height: 0.8em;
-}
-
-.buttonbar {
-	margin-top: 1rem;
 }
 
 `

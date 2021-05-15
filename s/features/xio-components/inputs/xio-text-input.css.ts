@@ -8,7 +8,7 @@ export default css`
 	display: block;
 	max-width: 48rem;
 	--width: var(--xio-text-input-width, 24rem);
-	--pad: var(--xio-text-input-pad, 0.3em);
+	--pad: var(--xio-text-input-pad, 0.2em);
 	--font: var(--xio-text-input-font, inherit);
 	--color: var(--xio-text-input-color, inherit);
 	--label-font: var(--xio-text-input-label-font, inherit);
@@ -92,7 +92,7 @@ textarea {
 	flex-direction: column;
 	justify-content: flex-start;
 	flex: 1 1 auto;
-	min-width: 12rem;
+	/* min-width: 12rem; */
 	list-style: none;
 	color: var(--problems-color, var(--invalid-color));
 }
