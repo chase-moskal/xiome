@@ -36,6 +36,9 @@ xio-avatar {
 }
 
 .detailbox {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	margin-bottom: 0.5em;
 }
 
