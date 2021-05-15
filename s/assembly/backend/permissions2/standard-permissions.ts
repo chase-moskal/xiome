@@ -35,18 +35,21 @@ export const universalPermissions = asPermissions({
 	roles: {
 		"anonymous": {
 			roleId: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
+			public: true,
 			hasPrivileges: {
 				"read questions": {active: true, immutable: false},
 			},
 		},
 		"user": {
 			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
+			public: false,
 			hasPrivileges: {
 				...mutable(active, commonPrivileges),
 			},
 		},
 		"technician": {
 			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
+			public: true,
 			hasPrivileges: {
 				...immutable(active, commonPrivileges),
 				...immutable(active, powerPrivileges),
@@ -81,6 +84,7 @@ export const appPermissions = asPermissions({
 		...universalPermissions.roles,
 		"admin": {
 			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
+			public: true,
 			hasPrivileges: {
 				...immutable(active, appPowerPrivileges),
 				"customize permissions": {active: true, immutable: true},

@@ -55,6 +55,7 @@ export const shopkeepingTopic = ({generateId}: {
 
 		const role: RoleRow = {
 			hard: true,
+			public: true,
 			label: draft.label,
 			roleId: generateId(),
 		}

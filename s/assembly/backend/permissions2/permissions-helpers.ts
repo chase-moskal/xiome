@@ -1,15 +1,25 @@
 
 type HasPrivilege = {active: boolean, immutable: boolean}
-type Privileges = {[key: string]: string}
 type Role<xPrivileges extends Privileges> = {
 	roleId: string
+	public: boolean
 	hasPrivileges: Partial<{[P in keyof xPrivileges]: HasPrivilege}>
 }
 
+export type Privileges = {[key: string]: string}
+export type Roles<xPrivileges extends Privileges> = {[key: string]: Role<xPrivileges>}
+
+export type Permissions<
+	xPrivileges extends Privileges,
+	xRoles extends Roles<xPrivileges>
+> = {privileges: xPrivileges, roles: xRoles}
+
+export type AnyPermissions = Permissions<Privileges, Roles<Privileges>>
+
 export function asPermissions<
 		xPrivileges extends Privileges,
-		xRoles extends {[key: string]: Role<xPrivileges>}
-	>(permissions: {privileges: xPrivileges, roles: xRoles}) {
+		xRoles extends Roles<xPrivileges>
+	>(permissions: Permissions<xPrivileges, xRoles>) {
 	return permissions
 }
 

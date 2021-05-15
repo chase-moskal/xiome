@@ -1,12 +1,13 @@
 
+import {AnyPermissions} from "../permissions-helpers.js"
 import {appPermissions, platformPermissions} from "../standard-permissions.js"
 import {RoleHasPrivilegeRow} from "../../../../features/auth/tables/types/rows/role-has-privilege-row.js"
 
 export function permissionsMergingFacility({isPlatform}: {
 		isPlatform: boolean
 	}) {
-	
-	const hardPermissions = isPlatform
+
+	const hardPermissions: AnyPermissions = isPlatform
 		? platformPermissions
 		: appPermissions
 

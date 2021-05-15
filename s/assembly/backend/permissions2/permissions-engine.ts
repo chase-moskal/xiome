@@ -56,9 +56,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const userHasRoles = await getUserRoleIds({userId, onlyPublic: true})
 		const roleIds = userHasRoles.map(x => x.roleId)
 		const hardRoles: RoleRow[] = roleIds.map(roleId => {
-			const [label] = Object.entries(hardPermissions.roles)
+			const [label, role] = Object.entries(hardPermissions.roles)
 				.find(([,role]) => role.roleId === roleId)
-			return {roleId, label, hard: true}
+			return {roleId, label, public: role.public, hard: true}
 		})
 		const softRoles = await permissionsTables.role.read({
 			conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
@@ -76,12 +76,14 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			return {...userHasRole, ...roleRow}
 		})
 
-		return combinedData.map(x => (<PublicUserRole>{
-			roleId: x.roleId,
-			label: x.label,
-			timeframeEnd: x.timeframeEnd,
-			timeframeStart: x.timeframeStart,
-		}))
+		return combinedData
+			.filter(r => r.public)
+			.map(x => (<PublicUserRole>{
+				roleId: x.roleId,
+				label: x.label,
+				timeframeEnd: x.timeframeEnd,
+				timeframeStart: x.timeframeStart,
+			}))
 	}
 
 	async function getPermissionsDisplay() {
@@ -90,7 +92,12 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			roles: (async() => {
 				const soft = await permissionsTables.role.read(all)
 				const hard: RoleRow[] = Object.entries(hardPermissions.roles)
-					.map(([label, r]) => ({roleId: r.roleId, label, hard: true}))
+					.map(([label, r]) => ({
+						label,
+						hard: true,
+						roleId: r.roleId,
+						public: r.public,
+					}))
 				return merge(soft, hard, (a, b) => a.roleId === b.roleId)
 			})(),
 			privileges: (async() => {

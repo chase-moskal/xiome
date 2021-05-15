@@ -27,6 +27,7 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 		await tables.permissions.role.create({
 			hard: false,
 			label,
+			public: true,
 			roleId: rando.randomId(),
 		})
 	},
