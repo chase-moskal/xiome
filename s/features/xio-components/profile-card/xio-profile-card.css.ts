@@ -81,7 +81,7 @@ xio-text-input::part(label) {
 }
 
 xio-text-input + xio-text-input {
-	margin-top: 0.25em;
+	margin-top: 0.1em;
 }
 
 .detail {
