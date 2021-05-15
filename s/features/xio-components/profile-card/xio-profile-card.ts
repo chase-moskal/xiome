@@ -102,59 +102,52 @@ export class XioProfileCard extends Component2 {
 
 	render() {
 		const {user, draftIsChanged} = this
-		if (!user) return null
+		if (!user)
+			return null
 		return renderOp(this.#state.busy, () => html`
-			<div class=container>
-				<div class=avatarbox>
-					<xio-avatar .user=${user}></xio-avatar>
-				</div>
-				<div class=mainbox>
-					<div class=textbox>
-						<div class=textfields ?data-readonly=${this.readonly}>
-							${renderText({
-								field: "nickname",
-								text: user.profile.nickname,
-								input: this.readonly
-									? undefined
-									: {
-										label: "nickname",
-										readonly: false,
-										draftIsChanged,
-										validator: profileValidators.nickname,
-										onvaluechange: this.handleChange,
-									}
-							})}
-							${renderText({
-								field: "tagline",
-								text: user.profile.tagline,
-								input: this.readonly
-									? undefined
-									: {
-										label: "tagline",
-										readonly: false,
-										draftIsChanged,
-										validator: profileValidators.tagline,
-										onvaluechange: this.handleChange,
-									}
-							})}
-							${renderRoles(user)}
-						</div>
+			<div class=container ?data-readonly=${this.readonly}>
+				<xio-avatar .user=${user}></xio-avatar>
+				<div class=box>
+					<div class=textfields>
+						${renderText({
+							field: "nickname",
+							text: user.profile.nickname,
+							input: this.readonly
+								? undefined
+								: {
+									label: "nickname",
+									readonly: false,
+									draftIsChanged,
+									validator: profileValidators.nickname,
+									onvaluechange: this.handleChange,
+								}
+						})}
+						${renderText({
+							field: "tagline",
+							text: user.profile.tagline,
+							input: this.readonly
+								? undefined
+								: {
+									label: "tagline",
+									readonly: false,
+									draftIsChanged,
+									validator: profileValidators.tagline,
+									onvaluechange: this.handleChange,
+								}
+						})}
+						${renderRoles(user)}
+						${this.readonly ? null : html`
+							<div class=buttonbar>
+								<xio-button
+									?disabled=${!this.profileDraft || this.problems.length > 0}
+									@press=${this.handleSave}>
+										<slot name=save-button>save profile</slot>
+								</xio-button>
+							</div>
+						`}
 					</div>
 					${this["show-details"]
-						? html`
-							<div class=detailbox>
-								${renderDetails(user)}
-								${this.readonly ? null : html`
-									<div class=buttonbar>
-										<xio-button
-											?disabled=${!this.profileDraft || this.problems.length > 0}
-											@press=${this.handleSave}>
-												<slot name=save-button>save profile</slot>
-										</xio-button>
-									</div>
-								`}
-							</div>
-						`
+						? renderDetails(user)
 						: null}
 				</div>
 			</div>

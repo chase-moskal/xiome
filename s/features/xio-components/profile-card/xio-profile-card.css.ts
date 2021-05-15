@@ -3,7 +3,7 @@ import {css} from "../../../framework/component2/component2.js"
 export default css`
 
 :host {
-	display: block;
+	display: inline-block;
 	--local-avatar-size: var(--avatar-size, 3em);
 }
 
@@ -13,33 +13,27 @@ export default css`
 	flex-wrap: wrap;
 }
 
-.avatarbox {
-	margin-right: 0.5em;
-}
-
 xio-avatar {
+	flex: 0 0 auto;
+	margin-right: 0.4em;
+	border: 1px solid;
 	--avatar-size: var(--local-avatar-size);
 }
 
-.mainbox {
+.box {
 	display: flex;
 	flex-direction: row;
-	flex: 1 1 auto;
 	flex-wrap: wrap;
+	flex: 1;
+	flex-basis: 12em;
 }
 
-.textbox {
-	display: block;
-	flex: 1 1 auto;
-	margin-right: 0.5em;
-	margin-bottom: 0.5em;
+.textfields {
+	margin-right: 1em;
 }
 
-.detailbox {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	margin-bottom: 0.5em;
+.detail {
+	margin-top: 0.5em;
 }
 
 .buttonbar {
@@ -78,8 +72,11 @@ p[data-field=tagline] {
 	font-style: italic;
 }
 
+xio-text-input > span {
+	opacity: 0.4;
+}
+
 xio-text-input::part(label) {
-	opacity: 0.6;
 	font-size: 0.7rem;
 }
 
