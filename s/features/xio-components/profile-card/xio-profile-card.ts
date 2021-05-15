@@ -1,22 +1,19 @@
 
-import {deepEqual} from "../../../toolbox/deep.js"
-import {debounce2} from "../../../toolbox/debounce2.js"
-import {select} from "../../../toolbox/select/select.js"
-
-import styles from "./xio-profile-card.css.js"
-import {profileValidators} from "../../auth/topics/personal/validate-profile-draft.js"
-
 import {User} from "../../auth/types/user.js"
+import {deepEqual} from "../../../toolbox/deep.js"
+import styles from "./xio-profile-card.css.js"
 import {Op, ops} from "../../../framework/ops.js"
-import {XioTextInput} from "../inputs/xio-text-input.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
-
 import {renderText} from "./renders/render-text.js"
 import {renderRoles} from "./renders/render-roles.js"
+import {debounce2} from "../../../toolbox/debounce2.js"
+import {select} from "../../../toolbox/select/select.js"
+import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderDetails} from "./renders/render-details.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {ProfileDraft} from "../../auth/topics/personal/types/profile-draft.js"
 import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"
+import {profileValidators} from "../../auth/topics/personal/validate-profile-draft.js"
 import {Component2, property, html} from "../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
@@ -35,6 +32,9 @@ export class XioProfileCard extends Component2 {
 	init() {
 		this.#actions.setBusy(ops.ready(undefined))
 	}
+
+	@property({type: Boolean})
+	["show-details"]: boolean
 
 	@property({type: Object})
 	user?: User
@@ -140,18 +140,22 @@ export class XioProfileCard extends Component2 {
 							${renderRoles(user)}
 						</div>
 					</div>
-					<div class=detailbox>
-						${renderDetails(user)}
-						${this.readonly ? null : html`
-							<div class=buttonbar>
-								<xio-button
-									?disabled=${!this.profileDraft || this.problems.length > 0}
-									@press=${this.handleSave}>
-										<slot name=save-button>save profile</slot>
-								</xio-button>
+					${this["show-details"]
+						? html`
+							<div class=detailbox>
+								${renderDetails(user)}
+								${this.readonly ? null : html`
+									<div class=buttonbar>
+										<xio-button
+											?disabled=${!this.profileDraft || this.problems.length > 0}
+											@press=${this.handleSave}>
+												<slot name=save-button>save profile</slot>
+										</xio-button>
+									</div>
+								`}
 							</div>
-						`}
-					</div>
+						`
+						: null}
 				</div>
 			</div>
 		`)

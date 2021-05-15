@@ -40,10 +40,11 @@ class XioPlayground extends Component2 {
 		const {user} = this
 		return html`
 			<p class=lowkey>xio-profile-card: readonly</p>
-			<xio-profile-card .user=${user}></xio-profile-card>
+			<xio-profile-card show-details .user=${user}></xio-profile-card>
 
 			<p class=lowkey>xio-profile-card: editable</p>
 			<xio-profile-card
+				show-details
 				.user=${user}
 				.saveProfile=${this.saveProfile}
 			></xio-profile-card>

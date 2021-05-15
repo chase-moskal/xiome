@@ -4,6 +4,7 @@ export default css`
 
 :host {
 	display: block;
+	--local-avatar-size: var(--avatar-size, 3em);
 }
 
 .container {
@@ -17,7 +18,7 @@ export default css`
 }
 
 xio-avatar {
-	--avatar-size: 3em;
+	--avatar-size: var(--local-avatar-size);
 }
 
 .mainbox {
