@@ -46,7 +46,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"technician": {
-			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
+			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
 			hasPrivileges: {
 				...immutable(active, commonPrivileges),
 				...immutable(active, powerPrivileges),
