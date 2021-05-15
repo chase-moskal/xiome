@@ -11,13 +11,10 @@ button {
 .container {
 	position: relative;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	user-select: none;
 	cursor: pointer;
 	border: none;
-	background: #0002;
-	border-radius: 0.2em;
-	overflow: hidden;
 }
 
 :host {
@@ -32,7 +29,7 @@ button {
 	position: absolute;
 	top: -0.5em;
 	right: -0.5em;
-	background: #00aa0044;
+	background: #0a0c;
 	padding: 0 0.5em;
 	border-radius: 1em;
 	pointer-events: none;
@@ -50,17 +47,16 @@ button {
 .content {
 	display: flex;
 	justify-content: row;
-	background: #0002;
 }
 
-.label,
-.content {
-	padding: 0.2em 0.5em;
+.label::after {
+	content: ":";
+	margin-right: 0.2em;
 }
 
 .id {
 	opacity: 0.75;
-	max-width: 6em;
+	max-width: var(--id-max-width, 6em);
 	overflow: hidden;
 	text-overflow: ellipsis;
 }

@@ -109,7 +109,7 @@ xio-text-input + xio-text-input {
 	font-size: 0.6em;
 	list-style: none;
 	padding: 0;
-	margin-top: 0.2em;
+	margin-top: 0.3rem;
 }
 
 .roles li {

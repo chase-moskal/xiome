@@ -10,9 +10,6 @@ export class XioId extends Component2 {
 	@property()
 	id: string
 
-	@property()
-	label: string
-
 	@property({type: Boolean, reflect: true})
 	copied: boolean = false
 
@@ -42,12 +39,9 @@ export class XioId extends Component2 {
 	render() {
 		return html`
 			<button class=container @click=${this.copy}>
-				<div class=label>${this.label}</div>
-				<div class=content>
-					<div class=id>${this.id}</div>
-					<div class=copy>
-						${clipboardIcon}
-					</div>
+				<div class=id>${this.id}</div>
+				<div class=copy>
+					${clipboardIcon}
 				</div>
 			</button>
 		`

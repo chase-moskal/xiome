@@ -1,8 +1,8 @@
 
 import {User} from "../../auth/types/user.js"
-import {deepEqual} from "../../../toolbox/deep.js"
 import styles from "./xio-profile-card.css.js"
 import {Op, ops} from "../../../framework/ops.js"
+import {deepEqual} from "../../../toolbox/deep.js"
 import {renderText} from "./renders/render-text.js"
 import {renderRoles} from "./renders/render-roles.js"
 import {debounce2} from "../../../toolbox/debounce2.js"

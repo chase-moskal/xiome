@@ -11,10 +11,8 @@ export function renderDetails(user: User) {
 				<span>${formatDate(user.stats.joined).date}</span>
 			</li>
 			<li>
-				<xio-id
-					label="user id"
-					id="${user.userId}"
-				></xio-id>
+				<span>user id:</span>
+				<span><xio-id id="${user.userId}"></xio-id></span>
 			</li>
 		</ul>
 	`
