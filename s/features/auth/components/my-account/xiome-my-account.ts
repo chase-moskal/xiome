@@ -19,6 +19,7 @@ export class XiomeMyAccount extends Component2WithShare<{
 	render() {
 		return renderOp(this.share.authModel.access, ({user}) => html`
 			<xio-profile-card
+				show-details
 				.user=${user}
 				.saveProfile=${this.saveProfile}
 			></xio-profile-card>
