@@ -19,8 +19,8 @@ export * from "./register-components.js"
 export class Component2 extends mixinAutowatcher(mixinInitiallyHidden(LitElement)) {
 	init() {}
 	firstUpdated(changes: PropertyValues) {
-		super.firstUpdated(changes)
 		this.init()
+		super.firstUpdated(changes)
 	}
 }
 
