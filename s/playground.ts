@@ -39,6 +39,10 @@ class XioPlayground extends Component2 {
 	render() {
 		const {user} = this
 		return html`
+
+			<p>xiome-questions</p>
+			<xiome-questions></xiome-questions>
+
 			<p class=lowkey>xio-profile-card: readonly</p>
 			<xio-profile-card show-details .user=${user}></xio-profile-card>
 

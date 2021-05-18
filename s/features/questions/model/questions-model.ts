@@ -20,7 +20,7 @@ export function makeQuestionsModel({
 		questionPostingService: Service<typeof questionPostingTopic>
 		questionReadingService: Service<typeof questionReadingTopic>
 		questionModerationService: Service<typeof questionModerationTopic>
-		getAccess: () => AccessPayload
+		getAccess: () => Op<AccessPayload>
 	}) {
 
 	const watcher = autowatcher()
@@ -106,7 +106,8 @@ export function makeQuestionsModel({
 				const question = await questionPostingService
 					.postQuestion({questionDraft})
 				actions.addQuestions([question])
-				actions.addUsers([getAccess().user])
+				const access = ops.value(getAccess())
+				actions.addUsers([access.user])
 			},
 
 			async likeQuestion(questionId: string, like: boolean) {
@@ -133,5 +134,5 @@ export function makeQuestionsModel({
 		}
 	}
 
-	return {makeBoardModel}
+	return {makeBoardModel, track: watcher.track}
 }

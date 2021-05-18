@@ -1,16 +1,13 @@
 
 import styles from "./xiome-questions.css.js"
-import {ops} from "../../../framework/ops.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {Component2WithShare, mixinStyles, html, property} from "../../../framework/component2/component2.js"
-import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {makeQuestionsModel} from "../model/questions-model.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
-// import {renderQuestion} from "./parts/render-question.js"
+import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
+import {Component2WithShare, mixinStyles, html, property} from "../../../framework/component2/component2.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
-export class XiomeEcommerce extends Component2WithShare<{
+export class XiomeQuestions extends Component2WithShare<{
 		modals: ModalSystem
 		questionsModel: QuestionsModel
 	}> {
@@ -24,6 +21,7 @@ export class XiomeEcommerce extends Component2WithShare<{
 	draftText: string = ""
 
 	init() {
+		console.log("INIT")
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
 	}
@@ -52,13 +50,16 @@ export class XiomeEcommerce extends Component2WithShare<{
 	// 	})
 	// }
 
+	private renderQuestionsBoard() {
+		const accessOp = this.#boardModel.getAccess()
+		return renderOp(accessOp, access => html`
+			questions
+		`)
+	}
+
 	render() {
-		return html``
-		// const {ecommerce} = this.share
-		// return ecommerce.userCanManageStore
-		// 	? this.renderStoreManagement()
-		// 	: html`
-		// 		<p>you are not privileged to manage the store</p>
-		// 	`
+		return this.#boardModel
+			? this.renderQuestionsBoard()
+			: null
 	}
 }

@@ -5,6 +5,7 @@ import {makeStoreModel} from "../../features/store/model/store-model.js"
 import {AssembleModelsOptions} from "./types/assemble-models-options.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
+import {makeQuestionsModel} from "../../features/questions/model/questions-model.js"
 
 export async function assembleModels({
 		appId,
@@ -48,6 +49,11 @@ export async function assembleModels({
 		triggerBankPopup: popups.triggerBankPopup,
 	})
 
+	const questionsModel = makeQuestionsModel({
+		...remote.questions,
+		getAccess: () => authModel.access,
+	})
+
 	authModel.onAccessChange(async access => {
 		await appModel.accessChange()
 		await permissionsModel.accessChange(access)
@@ -59,6 +65,7 @@ export async function assembleModels({
 		authModel,
 		storeModel,
 		personalModel,
+		questionsModel,
 		permissionsModel,
 	}
 }
