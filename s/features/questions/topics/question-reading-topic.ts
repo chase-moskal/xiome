@@ -7,6 +7,7 @@ import {QuestionReaderAuth} from "../api/types/questions-persona.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
 import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
+import {fetchUsers} from "../../auth/topics/login/user/fetch-users.js"
 
 export const questionReadingTopic = ({config, generateNickname}: {
 		config: PlatformConfig
@@ -26,13 +27,11 @@ export const questionReadingTopic = ({config, generateNickname}: {
 			permissionsTables: tables.permissions,
 		})
 
-		const users = await Promise.all(posts.map(
-			async question => fetchUser({
-				permissionsEngine,
-				authTables: tables,
-				userId: question.authorUserId,
-			})
-		))
+		const users = await fetchUsers({
+			permissionsEngine,
+			authTables: tables,
+			userIds: posts.map(p => p.authorUserId),
+		})
 
 		const questions = await resolveQuestions({
 			posts,

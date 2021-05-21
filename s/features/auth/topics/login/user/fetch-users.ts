@@ -25,7 +25,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 			throw new ApiError(404, `account not found for user id ${userId}`)
 
 		if (!profile)
-			throw new ApiError(404, `account not found for user id ${userId}`)
+			throw new ApiError(404, `profile not found for user id ${userId}`)
 
 		const roles = publicRolesForUsers
 			.find(r => r.userId === userId)
