@@ -42,7 +42,11 @@ export const greenTopic = ({
 
 		if (refreshToken) {
 			const {userId} = await verifyToken<RefreshPayload>(refreshToken)
-			const user = await fetchUser({userId, tables, permissionsEngine, generateNickname})
+			const user = await fetchUser({
+				userId,
+				permissionsEngine,
+				authTables: tables,
+			})
 			await tables.user.latestLogin.update({
 				...find({userId}),
 				upsert: {userId, time: Date.now()},

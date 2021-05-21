@@ -13,6 +13,6 @@ export const userTopic = ({config, generateNickname}: AuthApiOptions) => asTopic
 			isPlatform: access.appId === config.platform.appDetails.appId,
 			permissionsTables: tables.permissions,
 		})
-		return await fetchUser({userId, tables, permissionsEngine, generateNickname})
+		return await fetchUser({userId, authTables: tables, permissionsEngine})
 	},
 })

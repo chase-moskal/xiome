@@ -1,4 +1,14 @@
 
+import {html} from "lit-html"
+import {Question} from "../../topics/types/question.js"
+
+export function renderQuestion({question}: {question: Question}) {
+	return html`
+		<li data-question-id="${question.questionId}">
+		</li>
+	`
+}
+
 // import {User} from "../../../auth/types/user.js"
 // import {html} from "../../../../framework/component2/component2.js"
 // import {Question} from "../../topics/types/question.js"

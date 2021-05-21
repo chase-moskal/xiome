@@ -9,7 +9,7 @@ import styles from "./xio-avatar.css.js"
 export class XioAvatar extends Component2 {
 
 	@property({type: Object})
-	private user: User
+	user: User
 
 	render() {
 		const {user} = this

@@ -15,6 +15,7 @@ const adminRoleId = appPermissions.roles.admin.roleId
 export const manageAdminsTopic = ({
 			rando,
 			config,
+			generateNickname,
 		}: AuthApiOptions) => asTopic<AppOwnerAuth>()({
 
 	async listAdmins(auth, {appId}: {
@@ -54,6 +55,7 @@ export const manageAdminsTopic = ({
 			config,
 			email,
 			tablesForApp,
+			generateNickname,
 		})
 	},
 
@@ -73,6 +75,7 @@ export const manageAdminsTopic = ({
 			config,
 			email,
 			tablesForApp,
+			generateNickname,
 		})
 	},
 

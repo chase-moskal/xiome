@@ -1,13 +1,13 @@
 
-import {merge} from "../../../toolbox/merge.js"
-import {concurrent} from "../../../toolbox/concurrent.js"
 import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
 import {RoleRow} from "../../../features/auth/tables/types/rows/role-row.js"
 import {PublicUserRole} from "../../../features/auth/types/public-user-role.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
-import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
 import {PermissionsTables} from "../../../features/auth/tables/types/table-groups/permissions-tables.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/topics/login/user/utils/is-currently-within-timeframe.js"
+import {merge} from "../../../toolbox/merge.js"
+import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
+import {concurrent} from "../../../toolbox/concurrent.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
@@ -156,26 +156,10 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		})
 	}
 
-	async function getUserPrivileges(userId: string) {
-		const result = await getPrivilegesForUsers([userId])
-		return result
-			.find(r => r.userId === userId)
-			.privileges
-	}
-
-	async function getUserPublicRoles(userId: string) {
-		const result = await getPublicRolesForUsers([userId])
-		return result
-			.find(r => r.userId === userId)
-			.publicUserRoles
-	}
-
 	return {
 		getAnonymousPrivileges,
 		getPrivilegesForUsers,
-		getPublicRolesForUsers,
+		getPublicRoleDataForUsers: getPublicRolesForUsers,
 		getPermissionsDisplay,
-		getUserPrivileges,
-		getUserPublicRoles,
 	}
 }

@@ -8,19 +8,24 @@ import {appPermissions} from "../../../../assembly/backend/permissions2/standard
 
 const adminRoleId = appPermissions.roles.admin.roleId
 
-export async function appointAdmin({email, tablesForApp, rando, config}: {
-			email: string
-			tablesForApp: AuthTables
-		} & {
-			rando: Rando
-			config: PlatformConfig
-		}) {
+export async function appointAdmin({
+		email, tablesForApp, rando, config, generateNickname,
+	}: {
+		rando: Rando
+		email: string
+		config: PlatformConfig
+		tablesForApp: AuthTables
+		generateNickname: () => string
+	}) {
+
 	const {userId: adminUserId} = await assertEmailAccount({
 		rando,
 		email,
 		config,
 		tables: tablesForApp,
+		generateNickname,
 	})
+
 	await tablesForApp.permissions.userHasRole.assert({
 		...find({userId: adminUserId, roleId: adminRoleId}),
 		make: async () => ({

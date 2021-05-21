@@ -28,10 +28,9 @@ export const questionReadingTopic = ({config, generateNickname}: {
 
 		const users = await Promise.all(posts.map(
 			async question => fetchUser({
-				userId: question.authorUserId,
-				tables,
 				permissionsEngine,
-				generateNickname,
+				authTables: tables,
+				userId: question.authorUserId,
 			})
 		))
 
