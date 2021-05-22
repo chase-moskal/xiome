@@ -1,5 +1,5 @@
 
-import {ApiError} from "renraku/x/api/api-error"
+import {ApiError} from "renraku/x/api/api-error.js"
 import {UserStats} from "../../../types/user-stats.js"
 import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {AuthTables} from "../../../tables/types/auth-tables.js"

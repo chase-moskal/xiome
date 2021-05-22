@@ -1,11 +1,11 @@
 
 import styles from "./xiome-questions.css.js"
+import {renderQuestion} from "./parts/render-question.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {Component2WithShare, mixinStyles, html, property} from "../../../framework/component2/component2.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {renderQuestion} from "./parts/render-question.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends Component2WithShare<{
@@ -30,10 +30,12 @@ export class XiomeQuestions extends Component2WithShare<{
 		const boardOp = this.#boardModel.getBoardOp()
 		return renderOp(boardOp, () => {
 			const questions = this.#boardModel.getQuestions()
-			const {getUser, getAccess} = this.#boardModel
 			return html`
 				<ol>
-					${questions.map(question => renderQuestion({question}))}
+					${questions.map(question => {
+						const author = this.#boardModel.getUser(question.authorUserId)
+						return renderQuestion({author, question})
+					})}
 				</ol>
 			`
 		})
@@ -41,7 +43,7 @@ export class XiomeQuestions extends Component2WithShare<{
 
 	private renderQuestionsBoard() {
 		const accessOp = this.#boardModel.getAccess()
-		return renderOp(accessOp, access => html`
+		return renderOp(accessOp, () => html`
 			${this.renderQuestionsList()}
 		`)
 	}

@@ -1,10 +1,18 @@
 
 import {html} from "lit-html"
+import {User} from "../../../auth/types/user.js"
 import {Question} from "../../topics/types/question.js"
 
-export function renderQuestion({question}: {question: Question}) {
+export function renderQuestion({author, question}: {
+		author: User
+		question: Question
+	}) {
 	return html`
 		<li data-question-id="${question.questionId}">
+			<div class=question-voting></div>
+			<div class=question-expression>
+				<xio-profile-card .user=${author}></xio-profile-card>
+			</div>
 		</li>
 	`
 }

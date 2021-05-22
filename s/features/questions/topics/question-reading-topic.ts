@@ -1,13 +1,11 @@
 
-import {Question} from "./types/question.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
-import {fetchUser} from "../../auth/topics/login/user/fetch-user.js"
-import {QuestionReaderAuth} from "../api/types/questions-persona.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
+import {QuestionReaderAuth} from "../api/types/questions-persona.js"
+import {fetchUsers} from "../../auth/topics/login/user/fetch-users.js"
 import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
-import {fetchUsers} from "../../auth/topics/login/user/fetch-users.js"
 
 export const questionReadingTopic = ({config, generateNickname}: {
 		config: PlatformConfig
@@ -35,8 +33,8 @@ export const questionReadingTopic = ({config, generateNickname}: {
 
 		const questions = await resolveQuestions({
 			posts,
-			userId: undefined, // TODO we need anons to have an access object!
 			questionsTables,
+			userId: access?.user?.userId,
 		})
 
 		return {questions, users}
