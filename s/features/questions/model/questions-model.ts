@@ -10,6 +10,7 @@ import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
 import {questionPostingTopic} from "../topics/question-posting-topic.js"
 import {questionReadingTopic} from "../topics/question-reading-topic.js"
 import {questionModerationTopic} from "../topics/question-moderation-topic.js"
+import {happystate} from "../../../toolbox/happystate/happystate.js"
 
 export function makeQuestionsModel({
 		questionPostingService,
@@ -23,78 +24,76 @@ export function makeQuestionsModel({
 		getAccess: () => Op<AccessPayload>
 	}) {
 
-	const watcher = autowatcher()
-
-	const state = watcher.state({
-		access: <AccessPayload>undefined,
-		users: <User[]>[],
-		questions: <Question[]>[],
-		boardOps: <{[key: string]: Op<void>}>{},
-	})
-
-	const actions = watcher.actions({
-		setAccess(access: AccessPayload) {
-			console.log("questions set access", {access})
-			state.access = access
+	const happy = happystate({
+		state: {
+			access: <AccessPayload>undefined,
+			users: <User[]>[],
+			questions: <Question[]>[],
+			boardOps: <{[key: string]: Op<void>}>{},
 		},
-		setBoardOp(board: string, op: Op<void>) {
-			state.boardOps = {...state.boardOps, [board]: op}
-		},
-		addUsers(newUsers: User[]) {
-			state.users = [...merge<User>(
-				newUsers,
-				state.users,
-				(a, b) => a.userId === b.userId,
-			)]
-		},
-		addQuestions(newQuestions: Question[]) {
-			state.questions = [...merge<Question>(
-				newQuestions,
-				state.questions,
-				(a, b) => a.questionId === b.questionId,
-			)]
-		},
-		setQuestionLike(questionId: string, like: boolean) {
-			state.questions = state.questions.map(question =>
-				question.questionId === questionId
-					? {
-						...question,
-						liked: like,
-						likes: question.liked === like
-							? question.likes
-							: like
-								? question.likes + 1
-								: question.likes - 1
-					}
-					: {...question}
-			)
-		},
-		setQuestionArchive(questionId: string, archive: boolean) {
-			state.questions = state.questions.map(question =>
-				question.questionId === questionId
-					? {...question, archive}
-					: {...question}
-			)
-		},
+		actions: state => ({
+			setAccess(access: AccessPayload) {
+				state.access = access
+			},
+			setBoardOp(board: string, op: Op<void>) {
+				state.boardOps = {...state.boardOps, [board]: op}
+			},
+			addUsers(newUsers: User[]) {
+				state.users = [...merge<User>(
+					newUsers,
+					state.users,
+					(a, b) => a.userId === b.userId,
+				)]
+			},
+			addQuestions(newQuestions: Question[]) {
+				state.questions = [...merge<Question>(
+					newQuestions,
+					state.questions,
+					(a, b) => a.questionId === b.questionId,
+				)]
+			},
+			setQuestionLike(questionId: string, like: boolean) {
+				state.questions = state.questions.map(question =>
+					question.questionId === questionId
+						? {
+							...question,
+							liked: like,
+							likes: question.liked === like
+								? question.likes
+								: like
+									? question.likes + 1
+									: question.likes - 1
+						}
+						: {...question}
+				)
+			},
+			setQuestionArchive(questionId: string, archive: boolean) {
+				state.questions = state.questions.map(question =>
+					question.questionId === questionId
+						? {...question, archive}
+						: {...question}
+				)
+			},
+		}),
 	})
 
 	function makeBoardModel(board: string) {
 		return {
 
 			getAccess() {
-				return state.access
+				return happy.state.access
 			},
 
 			getBoardOp() {
-				return state.boardOps[board]
+				return happy.state.boardOps[board]
 			},
 
 			getQuestions() {
-				return state.questions.filter(question => question.board === board)
+				return happy.state.questions.filter(question => question.board === board)
 			},
 
 			getUser(userId: string) {
-				return state.users.find(user => user.userId === userId)
+				return happy.state.users.find(user => user.userId === userId)
 			},
 
 			async loadQuestions() {
@@ -102,19 +101,19 @@ export function makeQuestionsModel({
 					promise: (async() => {
 						const {users, questions} = await questionReadingService
 							.fetchQuestions({board})
-						actions.addUsers(users)
-						actions.addQuestions(questions)
+						happy.actions.addUsers(users)
+						happy.actions.addQuestions(questions)
 					})(),
-					setOp: op => actions.setBoardOp(board, op),
+					setOp: op => happy.actions.setBoardOp(board, op),
 				})
 			},
 
 			async postQuestion(questionDraft: QuestionDraft) {
 				const question = await questionPostingService
 					.postQuestion({questionDraft})
-				actions.addQuestions([question])
+				happy.actions.addQuestions([question])
 				const access = ops.value(getAccess())
-				actions.addUsers([access.user])
+				happy.actions.addUsers([access.user])
 			},
 
 			async likeQuestion(questionId: string, like: boolean) {
@@ -122,7 +121,7 @@ export function makeQuestionsModel({
 					like,
 					questionId,
 				})
-				actions.setQuestionLike(questionId, like)
+				happy.actions.setQuestionLike(questionId, like)
 			},
 
 			async archiveQuestion(questionId: string, archive: boolean) {
@@ -130,20 +129,20 @@ export function makeQuestionsModel({
 					archive,
 					questionId,
 				})
-				actions.setQuestionArchive(questionId, archive)
+				happy.actions.setQuestionArchive(questionId, archive)
 			},
 
 			async archiveBoard() {
 				await questionModerationService.archiveBoard({board})
-				for (const question of state.questions)
-					actions.setQuestionArchive(question.questionId, true)
+				for (const question of happy.state.questions)
+					happy.actions.setQuestionArchive(question.questionId, true)
 			},
 		}
 	}
 
 	return {
+		happy,
 		makeBoardModel,
-		track: watcher.track,
-		accessChange: actions.setAccess,
+		accessChange: happy.actions.setAccess,
 	}
 }

@@ -25,6 +25,9 @@ export class XiomeQuestions extends Component2WithShare<{
 	draftText: string = ""
 
 	init() {
+		this.share.questionsModel.happy.subscribe(() => {
+			this.requestUpdate()
+		})
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
 	}
@@ -64,8 +67,7 @@ export class XiomeQuestions extends Component2WithShare<{
 	}
 
 	render() {
-		console.log("RENDER", this.#boardModel)
-		return this.#boardModel
+		return this.#boardModel && this.#boardModel.getBoardOp()
 			? this.renderQuestionsBoard()
 			: null
 	}

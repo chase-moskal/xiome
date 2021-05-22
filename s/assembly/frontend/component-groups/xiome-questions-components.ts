@@ -7,11 +7,9 @@ export function xiomeQuestionsComponents({models, modals}: XiomeComponentOptions
 	const {questionsModel} = models
 	return {
 		XiomeQuestions:
-			mixinAutotrack(questionsModel.track)(
-				mixinShare({
-					modals,
-					questionsModel,
-				})(XiomeQuestions)
-			),
+			mixinShare({
+				modals,
+				questionsModel,
+			})(XiomeQuestions)
 	}
 }
