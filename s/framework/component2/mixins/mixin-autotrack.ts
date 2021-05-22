@@ -8,6 +8,7 @@ export function mixinAutotrack(...tracks: Track<any>[]) {
 		return class extends Base {
 			firstUpdated(changes: PropertyValues) {
 				super.firstUpdated(changes)
+				console.log("MIXIN AUTOTRACK")
 				for (const track of tracks)
 					this.subscribeAutotrack(track)
 			}

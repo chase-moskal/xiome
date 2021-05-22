@@ -55,9 +55,12 @@ export async function assembleModels({
 	})
 
 	authModel.onAccessChange(async access => {
-		await appModel.accessChange()
-		await permissionsModel.accessChange(access)
-		await storeModel.accessChange(access)
+		await Promise.all([
+			appModel.accessChange(),
+			permissionsModel.accessChange(access),
+			storeModel.accessChange(access),
+			questionsModel.accessChange(access),
+		])
 	})
 
 	return {

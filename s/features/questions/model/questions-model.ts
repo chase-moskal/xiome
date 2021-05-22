@@ -26,12 +26,17 @@ export function makeQuestionsModel({
 	const watcher = autowatcher()
 
 	const state = watcher.state({
+		access: <AccessPayload>undefined,
 		users: <User[]>[],
 		questions: <Question[]>[],
 		boardOps: <{[key: string]: Op<void>}>{},
 	})
 
 	const actions = watcher.actions({
+		setAccess(access: AccessPayload) {
+			console.log("questions set access", {access})
+			state.access = access
+		},
 		setBoardOp(board: string, op: Op<void>) {
 			state.boardOps = {...state.boardOps, [board]: op}
 		},
@@ -76,7 +81,9 @@ export function makeQuestionsModel({
 	function makeBoardModel(board: string) {
 		return {
 
-			getAccess,
+			getAccess() {
+				return state.access
+			},
 
 			getBoardOp() {
 				return state.boardOps[board]
@@ -134,5 +141,9 @@ export function makeQuestionsModel({
 		}
 	}
 
-	return {makeBoardModel, track: watcher.track}
+	return {
+		makeBoardModel,
+		track: watcher.track,
+		accessChange: actions.setAccess,
+	}
 }

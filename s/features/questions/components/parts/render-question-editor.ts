@@ -1,4 +1,32 @@
 
+import {html} from "lit-html"
+import {User} from "../../../auth/types/user.js"
+import {renderQuestionBody} from "./render-question-body.js"
+
+export function renderQuestionEditor({questionAuthor}: {
+		questionAuthor: User
+	}) {
+	return html`
+		<div class=question-editor>
+			<div class=editor-intro>
+				<p class=editor-heading>Post a new question</p>
+			</div>
+			<div class=editor-textbox>
+				${renderQuestionBody({
+					editable: true,
+					postedTime: Date.now()
+				})}
+			</div>
+			<div class=editor-poster-profile>
+				<xio-profile-card .user=${questionAuthor}></xio-profile-card>
+			</div>
+			<div class=editor-buttons>
+				<xio-button>Post question</xio-button>
+			</div>
+		</div>
+	`
+}
+
 // import {User} from "../../../auth/types/user.js"
 // import {html} from "../../../../framework/component2/component2.js"
 // import {renderQuestionAuthor} from "./render-question-author.js"
