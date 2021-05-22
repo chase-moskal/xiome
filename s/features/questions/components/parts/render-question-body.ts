@@ -12,10 +12,8 @@ export function renderQuestionBody({editable, postedTime}: {
 	return html`
 		<div class=question-body ?data-editable=${editable}>
 			<div class=metabar>
-				<div class=triangle></div>
 				<p>
-					<strong>posted:</strong>
-					<span>${`${date} ${time}`}</span>
+					${`${date} ${time}`}
 				</p>
 			</div>
 			<div class=textbox>

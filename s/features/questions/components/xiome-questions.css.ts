@@ -2,8 +2,86 @@
 import {css} from "../../../framework/component2/component2.js"
 export default css`
 
-* {
+/* * {
 	outline: 1px solid #f002;
+} */
+
+:host {
+	--bg: var(--xiome-questions-body-background, #0006);
+	--color: var(--xiome-questions-body-color, #fff6);
+}
+
+.question-editor {
+	padding: 1em;
+	border: 2px dashed;
+}
+
+.editor-intro {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 0.5em;
+}
+
+.editor-profile {
+	margin: 0.5em 0;
+}
+
+.editor-profile xio-profile-card {
+	width: 100%;
+}
+
+.editor-buttons {
+	text-align: right;
+}
+
+.question-body {
+	display: flex;
+	flex-direction: column;
+}
+
+.metabar {
+	position: relative;
+	padding-left: 2.5em;
+}
+
+.metabar::before {
+	display: block;
+	z-index: -1;
+	content: "";
+	position: absolute;
+	width: 0;
+	height: 0;
+	left: 0;
+	bottom: 0;
+	border: 1em solid transparent;
+	border-bottom-color: var(--bg);
+}
+
+.metabar p {
+	opacity: 0.5;
+	font-size: 0.8em;
+}
+
+textarea {
+	display: block;
+	font: inherit;
+	width: 100%;
+	min-height: 12em;
+	border: none;
+	padding: 1em;
+	background: var(--bg);
+	color: var(--color);
+}
+
+[data-editable] .metabar {
+	order: 1;
+}
+
+[data-editable] .metabar::before {
+	bottom: unset;
+	top: 0;
+	border-bottom-color: transparent;
+	border-top-color: var(--bg);
 }
 
 `

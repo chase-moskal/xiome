@@ -25,7 +25,7 @@ xio-avatar {
 	flex-direction: row;
 	flex-wrap: wrap;
 	flex: 1;
-	flex-basis: 12em;
+	flex-basis: 8em;
 }
 
 .textfields {

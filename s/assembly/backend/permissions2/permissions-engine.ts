@@ -85,7 +85,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		})
 
 		const allRoleIds = rolesForUsers
-			.flatMap(r => r.userHasRoles.map(r2 => r2.roleId))
+			.flatMap(r => r.userHasRoles
+				.filter(r2 => r2.public)
+				.map(r2 => r2.roleId))
 
 		const allHardRoles: RoleRow[] = allRoleIds.map(roleId => {
 			const [label, role] = Object.entries(hardPermissions.roles)

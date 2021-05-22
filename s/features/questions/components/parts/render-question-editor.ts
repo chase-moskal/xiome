@@ -17,7 +17,7 @@ export function renderQuestionEditor({questionAuthor}: {
 					postedTime: Date.now()
 				})}
 			</div>
-			<div class=editor-poster-profile>
+			<div class=editor-profile>
 				<xio-profile-card .user=${questionAuthor}></xio-profile-card>
 			</div>
 			<div class=editor-buttons>
