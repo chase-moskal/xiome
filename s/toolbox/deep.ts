@@ -3,13 +3,19 @@ export function deepClone<T extends {}>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj))
 }
 
-export function deepFreeze<xObject extends {}>(object: xObject): xObject {
+export type DeepReadonly<X extends {}> = {
+	readonly [P in keyof X]: X[P] extends {}
+		? DeepReadonly<X[P]>
+		: X[P]
+}
+
+export function deepFreeze<xObject extends {}>(object: xObject) {
 	Object.freeze(object)
 	for (const value of Object.values(object)) {
 		if (typeof value === "object")
 			deepFreeze(value)
 	}
-	return object
+	return <DeepReadonly<xObject>>object
 }
 
 const isSet = (a: any) => (a !== null && a !== undefined)

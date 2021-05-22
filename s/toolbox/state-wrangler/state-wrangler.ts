@@ -15,7 +15,7 @@ export function stateWrangler<xState>({
 	const render2 = debounce2(1, () => render(latest))
 
 	function commit(state: xState) {
-		latest = deepFreeze(deepClone(state))
+		latest = <xState>deepFreeze(deepClone(state))
 		debug("state", latest)
 		render2()
 	}
