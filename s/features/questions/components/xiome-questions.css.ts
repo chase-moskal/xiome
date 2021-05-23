@@ -62,15 +62,16 @@ export default css`
 	font-size: 0.8em;
 }
 
-textarea {
+xio-text-input {
 	display: block;
 	font: inherit;
 	width: 100%;
-	min-height: 12em;
 	border: none;
 	padding: 1em;
 	background: var(--bg);
 	color: var(--color);
+	--border: none;
+	--height: 8em;
 }
 
 [data-editable] .metabar {

@@ -1,6 +1,7 @@
 
 import styles from "./xio-text-input.css.js"
-import {nullParser} from "./parsing/null-parser.js"
+import {noopParser} from "./parsing/noop-parser.js"
+import {EnterPressEvent} from "./events/enter-press.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
@@ -8,7 +9,6 @@ import {Component2, html, mixinStyles, mixinFocusable, property, query} from "..
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
-import {EnterPressEvent} from "./events/enter-press.js"
 
  @mixinFocusable
  @mixinStyles(styles)
@@ -40,7 +40,7 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 	}
 
 	@property({type: Function})
-	parser: undefined | TextInputParser<xParsedValue>
+	parser: TextInputParser<xParsedValue> = noopParser
 
 	@property({type: Function})
 	validator: undefined | TextInputValidator<xParsedValue>
@@ -50,7 +50,7 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 
 	get value(): xParsedValue {
 		const {draft} = this
-		const parsed = this.parser ? this.parser(draft) : nullParser(draft)
+		const parsed = this.parser(draft)
 		this.problems = this.validator ? this.validator(parsed) : []
 		return this.problems.length === 0
 			? parsed

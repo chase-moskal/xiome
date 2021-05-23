@@ -2,9 +2,19 @@
 import {html} from "lit-html"
 import {User} from "../../../auth/types/user.js"
 import {renderQuestionBody} from "./render-question-body.js"
+import {PressEvent} from "../../../xio-components/button/events/press-event.js"
+import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 
-export function renderQuestionEditor({questionAuthor}: {
+export function renderQuestionEditor({
+		postable,
+		questionAuthor,
+		handlePost,
+		handleValueChange,
+	}: {
+		postable: boolean
 		questionAuthor: User
+		handlePost: (event: PressEvent) => void
+		handleValueChange: (event: ValueChangeEvent<string>) => void
 	}) {
 	return html`
 		<div class=question-editor>
@@ -14,14 +24,18 @@ export function renderQuestionEditor({questionAuthor}: {
 			<div class=editor-textbox>
 				${renderQuestionBody({
 					editable: true,
-					postedTime: Date.now()
+					postedTime: Date.now(),
+					handleValueChange,
 				})}
 			</div>
 			<div class=editor-profile>
 				<xio-profile-card .user=${questionAuthor}></xio-profile-card>
 			</div>
 			<div class=editor-buttons>
-				<xio-button>Post question</xio-button>
+				<xio-button
+					?disabled=${!postable}
+					@press=${handlePost}
+				>Post question</xio-button>
 			</div>
 		</div>
 	`

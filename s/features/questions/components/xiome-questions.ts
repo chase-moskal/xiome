@@ -9,6 +9,8 @@ import {renderQuestionEditor} from "./parts/render-question-editor.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 import {Component2WithShare, mixinStyles, html, property} from "../../../framework/component2/component2.js"
+import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
+import {PressEvent} from "../../xio-components/button/events/press-event.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends Component2WithShare<{
@@ -24,12 +26,24 @@ export class XiomeQuestions extends Component2WithShare<{
 	@property({type: String})
 	draftText: string = ""
 
+	get postable() {
+		return !!this.draftText
+	}
+
 	init() {
 		this.share.questionsModel.happy.subscribe(() => {
 			this.requestUpdate()
 		})
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
+	}
+
+	private handlePost = (event: PressEvent) => {
+		console.log("POST", this.draftText)
+	}
+
+	private handleValueChange = (event: ValueChangeEvent<string>) => {
+		this.draftText = event.detail.value
 	}
 
 	private renderEditor() {
@@ -42,7 +56,12 @@ export class XiomeQuestions extends Component2WithShare<{
 		)
 
 		return allowedToPostQuestions
-			? renderQuestionEditor({questionAuthor})
+			? renderQuestionEditor({
+				questionAuthor,
+				postable: this.postable,
+				handlePost: this.handlePost,
+				handleValueChange: this.handleValueChange,
+			})
 			: null
 	}
 

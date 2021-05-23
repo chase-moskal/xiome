@@ -1,10 +1,17 @@
 
 import {html} from "lit-html"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
+import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {validateQuestionDraftContent} from "../../topics/validation/validate-question-draft.js"
 
-export function renderQuestionBody({editable, postedTime}: {
+export function renderQuestionBody({
+		editable,
+		postedTime,
+		handleValueChange = () => {},
+	}: {
 		editable: boolean
 		postedTime: number
+		handleValueChange?: (event: ValueChangeEvent<string>) => void
 	}) {
 
 	const {date, time} = formatDate(postedTime)
@@ -17,7 +24,12 @@ export function renderQuestionBody({editable, postedTime}: {
 				</p>
 			</div>
 			<div class=textbox>
-				<textarea></textarea>
+				<xio-text-input
+					textarea
+					?readonly=${!editable}
+					.validator=${validateQuestionDraftContent}
+					@valuechange=${handleValueChange}
+				></xio-text-input>
 			</div>
 		</div>
 	`

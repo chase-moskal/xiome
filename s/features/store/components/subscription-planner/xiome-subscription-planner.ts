@@ -106,11 +106,11 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 		const {subscriptionPlanning} = this.share
 
 		function handleChangeLabel({detail}: ValueChangeEvent<string>) {
-			this.draft.label = detail
+			this.draft.label = detail.value
 		}
 
 		function handleChangePrice({detail}: ValueChangeEvent<number>) {
-			this.draft.price = detail
+			this.draft.price = detail.value
 		}
 
 		function parsePrice(price: string) {

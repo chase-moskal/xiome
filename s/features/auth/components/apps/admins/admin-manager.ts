@@ -25,7 +25,7 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 	})
 
 	function handleEmailChange(event: ValueChangeEvent<string>) {
-		const email = event.detail ?? undefined
+		const email = event.detail.value ?? undefined
 		actions.setAssignerDraft({email})
 	}
 
