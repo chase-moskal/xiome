@@ -41,6 +41,7 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 
 	private logout() {
 		this.share.authModel.logout()
+			.then(() => this.sentLoading = ops.none())
 	}
 
 	subscribe() {

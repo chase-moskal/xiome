@@ -14,7 +14,7 @@ export function makePermissionsModel({
 	const state = auto.state({
 		active: false,
 		access: <AccessPayload>undefined,
-		permissionsDisplay: <Op<PermissionsDisplay>>undefined,
+		permissionsDisplay: <Op<PermissionsDisplay>>ops.none(),
 	})
 	const actions = auto.actions({
 		setPermissionsDisplay(op: Op<PermissionsDisplay>) {
@@ -78,9 +78,7 @@ export function makePermissionsModel({
 		},
 		async accessChange(access: AccessPayload) {
 			actions.setAccess(access)
-			if (state.active && access?.user) {
-				await actions.reload()
-			}
+			await actions.reload()
 		},
 		createRole: actions.reloadAfter(async(label: string) => {
 			await permissionsService.createRole({label})

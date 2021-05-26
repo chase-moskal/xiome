@@ -68,7 +68,10 @@ export function makeAuthModel({authMediator, loginService}: AuthModelOptions) {
 		},
 
 		async logout() {
-			await authMediator.logout()
+			await ops.operation({
+				promise: authMediator.logout(),
+				setOp: op => actions.setAccess(op),
+			})
 		},
 
 		async reauthorize() {
