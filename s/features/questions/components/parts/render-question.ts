@@ -2,16 +2,29 @@
 import {html} from "lit-html"
 import {User} from "../../../auth/types/user.js"
 import {Question} from "../../topics/types/question.js"
+import {renderQuestionBody} from "./render-question-body.js"
 
-export function renderQuestion({author, question}: {
+export function renderQuestion({author, authority, question, handleDelete}: {
 		author: User
+		authority: boolean
 		question: Question
+		handleDelete: () => void
 	}) {
 	return html`
 		<li data-question-id="${question.questionId}">
 			<div class=question-voting></div>
 			<div class=question-expression>
 				<xio-profile-card .user=${author}></xio-profile-card>
+				${renderQuestionBody({
+					editable: false,
+					content: question.content,
+					timePosted: question.timePosted,
+				})}
+			</div>
+			<div class=question-controls>
+				${authority
+					? html`<xio-button @press=${handleDelete}>delete</xio-button>`
+					: null}
 			</div>
 		</li>
 	`

@@ -6,11 +6,13 @@ import {PressEvent} from "../../../xio-components/button/events/press-event.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 
 export function renderQuestionEditor({
+		content,
 		postable,
 		questionAuthor,
 		handlePost,
 		handleValueChange,
 	}: {
+		content: string
 		postable: boolean
 		questionAuthor: User
 		handlePost: (event: PressEvent) => void
@@ -23,8 +25,9 @@ export function renderQuestionEditor({
 			</div>
 			<div class=editor-textbox>
 				${renderQuestionBody({
+					content,
 					editable: true,
-					postedTime: Date.now(),
+					timePosted: Date.now(),
 					handleValueChange,
 				})}
 			</div>

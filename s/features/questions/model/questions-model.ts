@@ -5,11 +5,12 @@ import {Service} from "../../../types/service.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Question} from "../topics/types/question.js"
 import {QuestionDraft} from "../topics/types/question-draft.js"
+import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
 import {questionPostingTopic} from "../topics/question-posting-topic.js"
 import {questionReadingTopic} from "../topics/question-reading-topic.js"
 import {questionModerationTopic} from "../topics/question-moderation-topic.js"
-import {happystate} from "../../../toolbox/happystate/happystate.js"
+import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function makeQuestionsModel({
 		questionPostingService,
@@ -29,6 +30,7 @@ export function makeQuestionsModel({
 			users: <User[]>[],
 			questions: <Question[]>[],
 			boardOps: <{[key: string]: Op<void>}>{},
+			postingOp: <Op<void>>ops.ready(undefined),
 		},
 		actions: state => ({
 			setAccess(access: AccessPayload) {
@@ -36,6 +38,9 @@ export function makeQuestionsModel({
 			},
 			setBoardOp(board: string, op: Op<void>) {
 				state.boardOps = {...state.boardOps, [board]: op}
+			},
+			setPostingOp(op: Op<void>) {
+				state.postingOp = op
 			},
 			addUsers(newUsers: User[]) {
 				state.users = [...merge<User>(
@@ -79,6 +84,34 @@ export function makeQuestionsModel({
 	function makeBoardModel(board: string) {
 		return {
 
+			getPermissions() {
+				const {access} = happy.state
+				return {
+					"read questions":
+						access
+							? access.permit.privileges.includes(
+								appPermissions.privileges["read questions"]
+							)
+							: false,
+					"post questions": 
+						access
+							? access.permit.privileges.includes(
+								appPermissions.privileges["post questions"]
+							)
+							: false,
+					"moderate questions":
+						access
+							? access.permit.privileges.includes(
+								appPermissions.privileges["moderate questions"]
+							)
+							: false,
+				}
+			},
+
+			getBoardName() {
+				return board
+			},
+
 			getAccess() {
 				return happy.state.access
 			},
@@ -87,8 +120,14 @@ export function makeQuestionsModel({
 				return happy.state.boardOps[board]
 			},
 
+			getPostingOp() {
+				return happy.state.postingOp
+			},
+
 			getQuestions() {
-				return happy.state.questions.filter(question => question.board === board)
+				return happy.state.questions
+					.filter(question => question.board === board)
+					.filter(question => question.archive === false)
 			},
 
 			getUser(userId: string) {
@@ -108,8 +147,12 @@ export function makeQuestionsModel({
 			},
 
 			async postQuestion(questionDraft: QuestionDraft) {
-				const question = await questionPostingService
-					.postQuestion({questionDraft})
+				const question = await ops.operation({
+					promise: questionPostingService.postQuestion({questionDraft}),
+					setOp: op => happy.actions.setPostingOp(
+						ops.replaceValue(op, undefined)
+					),
+				})
 				happy.actions.addQuestions([question])
 				const access = ops.value(getAccess())
 				happy.actions.addUsers([access.user])
@@ -142,6 +185,11 @@ export function makeQuestionsModel({
 	return {
 		happy,
 		makeBoardModel,
-		accessChange: happy.actions.setAccess,
+		accessChange: (access: AccessPayload) => {
+			happy.actions.setAccess(access)
+			if (access.user) {
+				happy.actions.addUsers([access.user])
+			}
+		},
 	}
 }

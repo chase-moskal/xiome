@@ -62,8 +62,14 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 	}
 
 	set text(value: string) {
-		this.input.value = value
-		this.updateFromRawInput()
+		const {input} = this
+		if (input) {
+			this.input.value = value
+			this.updateFromRawInput()
+		}
+		else {
+			this.initial = value
+		}
 	}
 
 	onvaluechange: (event: ValueChangeEvent<xParsedValue>) => void =

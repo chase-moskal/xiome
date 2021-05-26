@@ -153,7 +153,7 @@ export class XiomePermissions extends Component2WithShare<{
 		return permissionsModel.userCanCustomizePermissions
 			? renderOp(
 				permissionsModel.permissionsDisplay,
-				permissionsDisplay => this.renderPermissions.bind(this)
+				this.renderPermissions.bind(this),
 			)
 			: html`
 				<p>you are not privileged to customize permissions</p>

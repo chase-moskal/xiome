@@ -11,6 +11,14 @@ export default css`
 	--color: var(--xiome-questions-body-color, #fff6);
 }
 
+.questionslist {
+	list-style: none;
+}
+
+.questionslist > li {
+	margin-top: 2em;
+}
+
 .question-editor {
 	padding: 1em;
 	border: 2px dashed;
@@ -26,7 +34,7 @@ export default css`
 	margin: 0.5em 0;
 }
 
-.editor-profile xio-profile-card {
+xio-profile-card {
 	width: 100%;
 }
 
@@ -62,7 +70,8 @@ export default css`
 	font-size: 0.8em;
 }
 
-xio-text-input {
+.textbox p,
+.textbox xio-text-input {
 	display: block;
 	font: inherit;
 	width: 100%;
@@ -70,8 +79,11 @@ xio-text-input {
 	padding: 1em;
 	background: var(--bg);
 	color: var(--color);
-	--border: none;
+}
+
+.textbox xio-text-input {
 	--height: 8em;
+	--border: none;
 }
 
 [data-editable] .metabar {

@@ -18,7 +18,7 @@ export const questionReadingTopic = ({config, generateNickname}: {
 		) {
 		
 		const posts = await questionsTables.questionPosts
-			.read(find({board}))
+			.read(find({board, archive: false}))
 
 		const permissionsEngine = makePermissionsEngine({
 			isPlatform: access.appId === config.platform.appDetails.appId,
