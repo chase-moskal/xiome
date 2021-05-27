@@ -23,22 +23,49 @@ head
 	//- )
 
 	style.
+		* {
+			margin: 0;
+			padding: 0;
+		}
 		html, body {
 			background: #333;
 			color: #999;
 		}
+		body {
+			padding: 1em;
+		}
+		xiome-login-panel > section {
+			margin-top: 1.5em;
+		}
+		h1, h2 {
+			opacity: 0.4;
+		}
+		h1 {
+			font-size: 4em;
+		}
+		h2 {
+			font-size: 3em;
+		}
 
 h1 mock site
 xiome-login-panel(show-logout)
+
 	section
 		h2 ecommerce settings
 		xiome-ecommerce
+	
 	section
 		h2 subscription plans
 		xiome-subscription-planner
-	xiome-my-account
+
+	section
 		h2 your account
-	section.permissions
+		xiome-my-account
+
+	section
 		h2 permissions
 		xiome-permissions
-	xiome-questions
+
+	section 
+		h2 questions
+		xiome-questions
