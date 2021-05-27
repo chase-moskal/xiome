@@ -33,3 +33,23 @@ export class Component2WithShare<xShare> extends Component2 {
 			throw new Error("component requires share")
 	}
 }
+
+/////////
+
+export class Component3 extends mixinInitiallyHidden(LitElement) {
+	init() {}
+	firstUpdated(changes: PropertyValues) {
+		super.firstUpdated(changes)
+		this.init()
+	}
+}
+
+export class Component3WithShare<xShare> extends Component3 {
+	readonly share: xShare
+
+	constructor() {
+		super()
+		if (this.share === undefined)
+			throw new Error("component requires share")
+	}
+}

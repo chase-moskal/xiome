@@ -7,18 +7,16 @@ import {RoleDisplay} from "../../topics/permissions/types/role-display.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {PermissionsDisplay} from "../../topics/permissions/types/permissions-display.js"
 import {roleLabelValidator} from "../../topics/permissions/validators/role-label-validator.js"
-import {Component2WithShare, mixinStyles, html, property} from "../../../../framework/component2/component2.js"
+import {mixinStyles, html, property, Component3WithShare} from "../../../../framework/component2/component2.js"
 
 @mixinStyles(styles)
-export class XiomePermissions extends Component2WithShare<{
+export class XiomePermissions extends Component3WithShare<{
 		modals: ModalSystem
 		authModel: AuthModel
 		permissionsModel: ReturnType<typeof makePermissionsModel>
 	}> {
 
 	init() {
-		const update = () => { this.requestUpdate() }
-		this.share.permissionsModel.onStateChange(update)
 		this.share.permissionsModel.initialize()
 	}
 

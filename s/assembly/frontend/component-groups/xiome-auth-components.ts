@@ -6,6 +6,7 @@ import {XiomeMyAvatar} from "../../../features/auth/components/my-avatar/xiome-m
 import {XiomeMyAccount} from "../../../features/auth/components/my-account/xiome-my-account.js"
 import {XiomeLoginPanel} from "../../../features/auth/components/login-panel/xiome-login-panel.js"
 import {XiomePermissions} from "../../../features/auth/components/permissions/xiome-permissions.js"
+import {mixinHappy} from "../../../framework/component2/mixins/mixin-happy.js"
 
 export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 	const {authModel, appModel, personalModel, permissionsModel} = models
@@ -37,10 +38,12 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeMyAccount)
 			),
 		XiomePermissions:
-			mixinShare({
-				modals,
-				authModel,
-				permissionsModel,
-			})(XiomePermissions),
+			mixinHappy(permissionsModel.onStateChange)(
+				mixinShare({
+					modals,
+					authModel,
+					permissionsModel,
+				})(XiomePermissions)
+			),
 	}
 }
