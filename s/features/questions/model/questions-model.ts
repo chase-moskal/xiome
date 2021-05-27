@@ -24,7 +24,7 @@ export function makeQuestionsModel({
 		getAccess: () => Op<AccessPayload>
 	}) {
 
-	const {actions, getState, subscribe} = happystate({
+	const {actions, getState, onStateChange} = happystate({
 		state: {
 			access: <AccessPayload>undefined,
 			users: <User[]>[],
@@ -183,7 +183,7 @@ export function makeQuestionsModel({
 	}
 
 	return {
-		subscribe,
+		onStateChange,
 		makeBoardModel,
 		accessChange: (access: AccessPayload) => {
 			actions.setAccess(access)

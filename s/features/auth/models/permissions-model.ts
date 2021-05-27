@@ -10,7 +10,7 @@ export function makePermissionsModel({
 		permissionsService,
 	}: PermissionsModelOptions) {
 
-	const {getState, actions, subscribe} = happystate({
+	const {getState, actions, onStateChange} = happystate({
 		state: {
 			active: <boolean>false,
 			access: <AccessPayload>undefined,
@@ -66,7 +66,7 @@ export function makePermissionsModel({
 	}
 
 	return {
-		subscribe,
+		onStateChange,
 		getState,
 		initialize,
 		deactivate,

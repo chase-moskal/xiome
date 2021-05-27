@@ -14,11 +14,19 @@ export function happystate<xState extends {}, xActions extends Actions>({
 	}) {
 
 	let frozenState = deepFreeze(deepClone(realState))
+
 	const actions = makeActions(realState)
-	const {publish, subscribe, dispose} = pubsub()
+
+	const {
+		publish,
+		subscribe: onStateChange,
+		dispose: clearStateListeners,
+	} = pubsub()
+
 	const change = debounce2(1, publish)
 
 	const augmentedActions = <Actions>{}
+
 	for (const [key, action] of Object.entries(actions)) {
 		augmentedActions[key] = (...args: any[]) => {
 			action(...args)
@@ -27,14 +35,10 @@ export function happystate<xState extends {}, xActions extends Actions>({
 		}
 	}
 
-	function getState() {
-		return <xState>frozenState
-	}
-
 	return {
 		actions: <xActions>augmentedActions,
-		getState,
-		subscribe,
-		dispose,
+		onStateChange,
+		clearStateListeners,
+		getState: () => <xState>frozenState,
 	}
 }

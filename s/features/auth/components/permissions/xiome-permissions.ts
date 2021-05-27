@@ -18,7 +18,7 @@ export class XiomePermissions extends Component2WithShare<{
 
 	init() {
 		const update = () => { this.requestUpdate() }
-		this.share.permissionsModel.subscribe(update)
+		this.share.permissionsModel.onStateChange(update)
 		this.share.permissionsModel.initialize()
 	}
 
