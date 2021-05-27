@@ -1,7 +1,7 @@
 
 import {pubsub} from "../pubsub.js"
 import {debounce2} from "../debounce2.js"
-import {deepClone, deepFreeze, DeepReadonly} from "../deep.js"
+import {deepClone, deepFreeze} from "../deep.js"
 
 type Actions = {[key: string]: (...args: any[]) => void}
 
@@ -27,11 +27,13 @@ export function happystate<xState extends {}, xActions extends Actions>({
 		}
 	}
 
+	function getState() {
+		return <xState>frozenState
+	}
+
 	return {
-		get state() {
-			return <xState>frozenState
-		},
 		actions: <xActions>augmentedActions,
+		getState,
 		subscribe,
 		dispose,
 	}

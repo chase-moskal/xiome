@@ -37,12 +37,10 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeMyAccount)
 			),
 		XiomePermissions:
-			mixinAutotrack(authModel.track, permissionsModel.track)(
-				mixinShare({
-					modals,
-					authModel,
-					permissionsModel,
-				})(XiomePermissions)
-			),
+			mixinShare({
+				modals,
+				authModel,
+				permissionsModel,
+			})(XiomePermissions),
 	}
 }

@@ -17,6 +17,8 @@ export class XiomePermissions extends Component2WithShare<{
 	}> {
 
 	init() {
+		const update = () => { this.requestUpdate() }
+		this.share.permissionsModel.subscribe(update)
 		this.share.permissionsModel.initialize()
 	}
 
@@ -58,7 +60,7 @@ export class XiomePermissions extends Component2WithShare<{
 			},
 		})
 		if (result)
-			await permissionsModel.createRole(result.value)
+			await permissionsModel.createRole({label: result.value})
 	}
 
 	private clickAvailablePrivilege = (privilegeId: string) => async() => {
@@ -150,9 +152,11 @@ export class XiomePermissions extends Component2WithShare<{
 
 	render() {
 		const {permissionsModel} = this.share
-		return permissionsModel.userCanCustomizePermissions
+		const {getUserCanCustomizePermissions, getState} = permissionsModel
+		const state = getState()
+		return getUserCanCustomizePermissions()
 			? renderOp(
-				permissionsModel.permissionsDisplay,
+				state.permissionsDisplay,
 				this.renderPermissions.bind(this),
 			)
 			: html`

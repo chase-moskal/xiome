@@ -34,7 +34,7 @@ export class XiomeQuestions extends Component2WithShare<{
 
 	init() {
 		const update = () => { this.requestUpdate() }
-		this.share.questionsModel.happy.subscribe(update)
+		this.share.questionsModel.subscribe(update)
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
 	}

@@ -24,7 +24,7 @@ export function makeQuestionsModel({
 		getAccess: () => Op<AccessPayload>
 	}) {
 
-	const happy = happystate({
+	const {actions, getState, subscribe} = happystate({
 		state: {
 			access: <AccessPayload>undefined,
 			users: <User[]>[],
@@ -85,7 +85,7 @@ export function makeQuestionsModel({
 		return {
 
 			getPermissions() {
-				const {access} = happy.state
+				const {access} = getState()
 				return {
 					"read questions":
 						access
@@ -113,25 +113,25 @@ export function makeQuestionsModel({
 			},
 
 			getAccess() {
-				return happy.state.access
+				return getState().access
 			},
 
 			getBoardOp() {
-				return happy.state.boardOps[board]
+				return getState().boardOps[board]
 			},
 
 			getPostingOp() {
-				return happy.state.postingOp
+				return getState().postingOp
 			},
 
 			getQuestions() {
-				return happy.state.questions
+				return getState().questions
 					.filter(question => question.board === board)
 					.filter(question => question.archive === false)
 			},
 
 			getUser(userId: string) {
-				return happy.state.users.find(user => user.userId === userId)
+				return getState().users.find(user => user.userId === userId)
 			},
 
 			async loadQuestions() {
@@ -139,23 +139,23 @@ export function makeQuestionsModel({
 					promise: (async() => {
 						const {users, questions} = await questionReadingService
 							.fetchQuestions({board})
-						happy.actions.addUsers(users)
-						happy.actions.addQuestions(questions)
+						actions.addUsers(users)
+						actions.addQuestions(questions)
 					})(),
-					setOp: op => happy.actions.setBoardOp(board, op),
+					setOp: op => actions.setBoardOp(board, op),
 				})
 			},
 
 			async postQuestion(questionDraft: QuestionDraft) {
 				const question = await ops.operation({
 					promise: questionPostingService.postQuestion({questionDraft}),
-					setOp: op => happy.actions.setPostingOp(
+					setOp: op => actions.setPostingOp(
 						ops.replaceValue(op, undefined)
 					),
 				})
-				happy.actions.addQuestions([question])
+				actions.addQuestions([question])
 				const access = ops.value(getAccess())
-				happy.actions.addUsers([access.user])
+				actions.addUsers([access.user])
 			},
 
 			async likeQuestion(questionId: string, like: boolean) {
@@ -163,7 +163,7 @@ export function makeQuestionsModel({
 					like,
 					questionId,
 				})
-				happy.actions.setQuestionLike(questionId, like)
+				actions.setQuestionLike(questionId, like)
 			},
 
 			async archiveQuestion(questionId: string, archive: boolean) {
@@ -171,25 +171,24 @@ export function makeQuestionsModel({
 					archive,
 					questionId,
 				})
-				happy.actions.setQuestionArchive(questionId, archive)
+				actions.setQuestionArchive(questionId, archive)
 			},
 
 			async archiveBoard() {
 				await questionModerationService.archiveBoard({board})
-				for (const question of happy.state.questions)
-					happy.actions.setQuestionArchive(question.questionId, true)
+				for (const question of getState().questions)
+					actions.setQuestionArchive(question.questionId, true)
 			},
 		}
 	}
 
 	return {
-		happy,
+		subscribe,
 		makeBoardModel,
 		accessChange: (access: AccessPayload) => {
-			happy.actions.setAccess(access)
-			if (access.user) {
-				happy.actions.addUsers([access.user])
-			}
+			actions.setAccess(access)
+			if (access?.user)
+				actions.addUsers([access.user])
 		},
 	}
 }
