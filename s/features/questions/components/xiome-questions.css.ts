@@ -50,6 +50,8 @@ xio-profile-card {
 }
 
 .question-controls {
+	opacity: 0.6;
+	font-size: 0.8em;
 	padding-top: 0.4em;
 	text-align: right;
 }
@@ -90,6 +92,10 @@ xio-profile-card {
 	background: var(--bg);
 	color: var(--color);
 	border-radius: 0.5rem;
+}
+
+.textbox p {
+	min-height: 4em;
 }
 
 .textbox xio-text-input {
