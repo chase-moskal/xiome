@@ -11,7 +11,7 @@ export async function initializeUserProfile({userId, authTables, email, generate
 	}) {
 
 	const avatar = email
-		? gravatar(email)
+		? gravatar({email, size: 240, default: "identicon"})
 		: undefined
 
 	await authTables.user.profile.create(generateProfileRow({
