@@ -54,10 +54,6 @@ export function makePermissionsModel({
 			await reload()
 	}
 
-	function deactivate() {
-		actions.setActive(false)
-	}
-
 	function reloadAfter<F extends (...args: any) => Promise<any>>(
 			func: F
 		) {
@@ -72,7 +68,6 @@ export function makePermissionsModel({
 		onStateChange,
 		getState,
 		initialize,
-		deactivate,
 		getUserCanCustomizePermissions,
 		createRole: reloadAfter(permissionsService.createRole),
 		assignPrivilege: reloadAfter(permissionsService.assignPrivilege),
