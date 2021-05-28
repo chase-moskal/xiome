@@ -49,37 +49,33 @@ export function permissionsMergingFacility({isPlatform}: {
 
 		const results: RoleHasPrivilegeRow[] = []
 
-		// iterate over hard, merge in soft
-		for (const {privilegeId, roleId, ...hardy} of hard) {
-			const softy = soft.find(s => s.privilegeId)
-			if (softy) {
-				if (hardy.immutable) {
-					results.push({
-						privilegeId,
-						roleId,
-						active: hardy.active,
-						customizable: !hardy.immutable,
-					})
-				}
-				else {
-					results.push(softy)
-				}
-			}
-			else {
-				results.push({
-					privilegeId,
-					roleId,
-					active: hardy.active,
-					customizable: !hardy.immutable,
-				})
+		function rowMatch(hardy: HardPrivilegeDetail, softy: RoleHasPrivilegeRow) {
+			return hardy.roleId === softy.roleId
+				&& hardy.privilegeId === softy.privilegeId
+		}
+
+		function toSofty(hardy: HardPrivilegeDetail): RoleHasPrivilegeRow {
+			return {
+				roleId: hardy.roleId,
+				privilegeId: hardy.privilegeId,
+				active: hardy.active,
+				customizable: !hardy.immutable,
 			}
 		}
 
-		// add remaining soft
 		for (const softy of soft) {
-			const exists = results.find(r => r.privilegeId === softy.privilegeId)
-			if (!exists)
-				results.push(softy)
+			const hardy = hard.find(h => rowMatch(h, softy))
+			results.push(
+				hardy && hardy.immutable
+					? toSofty(hardy)
+					: softy
+			)
+		}
+
+		for (const hardy of hard) {
+			const alreadyIncluded = !!results.find(softy => rowMatch(hardy, softy))
+			if (!alreadyIncluded)
+				results.push(toSofty(hardy))
 		}
 
 		return results

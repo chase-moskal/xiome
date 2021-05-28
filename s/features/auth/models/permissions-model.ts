@@ -59,7 +59,7 @@ export function makePermissionsModel({
 			func: F
 		) {
 		return <F>(async(...args: any) => {
-			const result = func(...args)
+			const result = await func(...args)
 			await reload()
 			return result
 		})
