@@ -7,6 +7,8 @@ export default css`
 } */
 
 :host {
+	display: block;
+	max-width: 36em;
 	--bg: var(--xiome-questions-body-background, #0006);
 	--color: var(--xiome-questions-body-color, #fff6);
 }
@@ -47,22 +49,29 @@ xio-profile-card {
 	flex-direction: column;
 }
 
+.question-controls {
+	padding-top: 0.4em;
+	text-align: right;
+}
+
 .metabar {
 	position: relative;
-	padding-left: 2.5em;
+	padding-left: 3.5em;
+	text-align: right;
 }
 
 .metabar::before {
 	display: block;
-	z-index: -1;
+	z-index: 0;
 	content: "";
 	position: absolute;
 	width: 0;
 	height: 0;
-	left: 0;
+	left: 1rem;
 	bottom: 0;
 	border: 1em solid transparent;
 	border-bottom-color: var(--bg);
+	margin-right: auto;
 }
 
 .metabar p {
@@ -75,10 +84,12 @@ xio-profile-card {
 	display: block;
 	font: inherit;
 	width: 100%;
+	max-width: 100%;
 	border: none;
 	padding: 1em;
 	background: var(--bg);
 	color: var(--color);
+	border-radius: 0.5rem;
 }
 
 .textbox xio-text-input {
