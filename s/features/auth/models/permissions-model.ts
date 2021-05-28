@@ -31,7 +31,10 @@ export function makePermissionsModel({
 
 	async function reload() {
 		await ops.operation({
-			promise: permissionsService.fetchPermissions(),
+			promise: Promise.resolve()
+				.then(async() => getUserCanCustomizePermissions()
+					? permissionsService.fetchPermissions()
+					: undefined),
 			setOp: op => actions.setPermissionsDisplay(op),
 		})
 	}
