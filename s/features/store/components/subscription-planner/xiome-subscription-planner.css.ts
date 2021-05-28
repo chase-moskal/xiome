@@ -2,10 +2,6 @@
 import {css} from "../../../../framework/component2/component2.js"
 export default css`
 
-h3 {
-	margin-top: 2rem;
-}
-
 .plans {
 	list-style: none;
 }
