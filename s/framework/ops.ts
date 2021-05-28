@@ -98,6 +98,14 @@ export const ops = {
 			throw error
 		}
 	},
+	mode(op: Op<any>) {
+		return ops.select(op, {
+			none: () => "none",
+			loading: () => "loading",
+			error: () => "error",
+			ready: () => "ready",
+		})
+	},
 	debug(op: Op<any>) {
 		return ops.select(op, {
 			none: () => [`<op {mode: None}>`],
@@ -105,5 +113,5 @@ export const ops = {
 			error: reason => [`<op {mode: Error, reason: "${reason}"}>`],
 			ready: value => [`<op {mode: Ready, value: `, value, `}>`],
 		})
-	}
+	},
 }

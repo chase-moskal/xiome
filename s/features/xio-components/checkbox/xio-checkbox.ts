@@ -75,7 +75,7 @@ export class XioCheckbox extends Component2 {
 	render() {
 		return html`
 			<button
-				data-mode="${this.loading.mode}"
+				data-mode="${ops.mode(this.loading)}"
 				?data-checked=${ops.value(this.loading)}
 				@click=${this.handleClick}>
 					${ops.select(this.loading, {
