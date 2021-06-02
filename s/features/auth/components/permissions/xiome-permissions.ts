@@ -111,7 +111,6 @@ export class XiomePermissions extends Component3WithShare<{
 	}
 
 	private renderPermissions(permissions: PermissionsDisplay) {
-		console.log(permissions)
 		const assignedPrivileges = this.getAssignedPrivileges(permissions)
 		const activePrivileges = assignedPrivileges.filter(p => p.active)
 		const availablePrivileges = this.roleSelected
