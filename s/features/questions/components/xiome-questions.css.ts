@@ -131,7 +131,7 @@ xio-profile-card {
 	position: absolute;
 	width: 0;
 	height: 0;
-	left: 1rem;
+	left: 0.5em;
 	bottom: 0;
 	border: 1em solid transparent;
 	border-bottom-color: var(--bg);
@@ -153,11 +153,12 @@ xio-profile-card {
 	padding: 1em;
 	background: var(--bg);
 	color: var(--color);
-	border-radius: 0.5rem;
+	border-radius: 0.5em;
 }
 
 .textbox p {
 	min-height: 4em;
+	white-space: pre;
 }
 
 .textbox xio-text-input {

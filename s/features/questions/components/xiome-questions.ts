@@ -10,6 +10,7 @@ import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {Component2WithShare, mixinStyles, html, property, query} from "../../../framework/component2/component2.js"
+import {sortQuestions} from "./helpers/sort-questions.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends Component2WithShare<{
@@ -70,9 +71,10 @@ export class XiomeQuestions extends Component2WithShare<{
 	}
 
 	private renderQuestionsList() {
-		const questions = this.#boardModel.getQuestions()
+		const questions = sortQuestions(this.#boardModel.getQuestions())
 		const access = this.#boardModel.getAccess()
 		const permissions = this.#boardModel.getPermissions()
+
 		return html`
 			<ol class=questionslist>
 				${questions.map(question => {

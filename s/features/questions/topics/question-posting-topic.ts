@@ -108,7 +108,7 @@ export const questionPostingTopic = ({rando}: {
 		const removeReport = () => questionsTables.questionReports
 			.delete(find({userId, questionId}))
 
-		if (report && alreadyReported)
+		if (report && !alreadyReported)
 			await addReport()
 
 		else if (!report && alreadyReported)
