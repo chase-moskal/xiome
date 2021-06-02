@@ -38,6 +38,8 @@ export const universalPermissions = asPermissions({
 			public: true,
 			hasPrivileges: {
 				"read questions": {active: true, immutable: false},
+				"post questions": {active: false, immutable: true},
+				"like questions": {active: false, immutable: true},
 			},
 		},
 		"authenticated": {
