@@ -37,6 +37,7 @@ export async function assembleModels({
 
 	const permissionsModel = makePermissionsModel({
 		permissionsService: remote.auth.permissionsService,
+		reauthorize,
 	})
 
 	const storeModel = makeStoreModel({

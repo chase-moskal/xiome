@@ -8,6 +8,7 @@ import {appPermissions} from "../../../assembly/backend/permissions2/standard-pe
 
 export function makePermissionsModel({
 		permissionsService,
+		reauthorize,
 	}: PermissionsModelOptions) {
 
 	const {getState, actions, onStateChange} = happystate({
@@ -60,6 +61,7 @@ export function makePermissionsModel({
 		return <F>(async(...args: any) => {
 			const result = await func(...args)
 			await reload()
+			await reauthorize()
 			return result
 		})
 	}
