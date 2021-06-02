@@ -71,6 +71,21 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
+			setQuestionReport(questionId: string, report: boolean) {
+				state.questions = state.questions.map(question =>
+					question.questionId === questionId
+						? {
+							...question,
+							reported: report,
+							reports: question.reported === report
+								? question.reports
+								: report
+									? question.reports + 1
+									: question.reports - 1
+						}
+						: {...question}
+				)
+			},
 			setQuestionArchive(questionId: string, archive: boolean) {
 				state.questions = state.questions.map(question =>
 					question.questionId === questionId
@@ -164,6 +179,14 @@ export function makeQuestionsModel({
 					questionId,
 				})
 				actions.setQuestionLike(questionId, like)
+			},
+
+			async reportQuestion(questionId: string, report: boolean) {
+				await questionPostingService.reportQuestion({
+					report,
+					questionId,
+				})
+				actions.setQuestionReport(questionId, report)
 			},
 
 			async archiveQuestion(questionId: string, archive: boolean) {

@@ -76,7 +76,8 @@ export class XiomeQuestions extends Component2WithShare<{
 		return html`
 			<ol class=questionslist>
 				${questions.map(question => {
-					const author = this.#boardModel.getUser(question.authorUserId)
+					const {questionId, authorUserId} = question
+					const author = this.#boardModel.getUser(authorUserId)
 
 					const isAuthor = (access && access.user)
 						? access.user.userId === author.userId
@@ -85,13 +86,25 @@ export class XiomeQuestions extends Component2WithShare<{
 					const authority = permissions["moderate questions"] || isAuthor
 
 					const handleDelete = () => {
-						this.#boardModel.archiveQuestion(
-							question.questionId,
-							true,
-						)
+						this.#boardModel.archiveQuestion(questionId, true)
 					}
 
-					return renderQuestion({author, authority, question, handleDelete})
+					const handleLike = (like: boolean) => {
+						this.#boardModel.likeQuestion(questionId, like)
+					}
+
+					const handleReport = (report: boolean) => {
+						this.#boardModel.reportQuestion(questionId, report)
+					}
+
+					return renderQuestion({
+						author,
+						authority,
+						question,
+						handleDelete,
+						handleLike,
+						handleReport,
+					})
 				})}
 			</ol>
 		`

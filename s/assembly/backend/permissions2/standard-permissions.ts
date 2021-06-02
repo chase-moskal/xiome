@@ -5,6 +5,7 @@ const commonPrivileges = {
 	"read questions": "22M8Tcp2xMg9hN5YxKkbffXpNHScTCnPXSXztzRnPXbC9RsD",
 	"post questions": "75KrRyRPRnZZZKrh2zcwB98MCsZX9HCwg66qrzYTSprdqSTf",
 	"like questions": "8qpc7M8nGkscwcSSW8d6Z7FyKGsxB8W5PWt2PCzk2sSJGgYb",
+	"report questions": "86qRZfryfMWSfRhmkWkpq6pRYWCybmyNsD8RfxS7RpTqXN9J",
 }
 
 const commonPowerPrivileges = {
@@ -40,6 +41,7 @@ export const universalPermissions = asPermissions({
 				"read questions": {active: true, immutable: false},
 				"post questions": {active: false, immutable: true},
 				"like questions": {active: false, immutable: true},
+				"report questions": {active: false, immutable: true},
 			},
 		},
 		"authenticated": {

@@ -113,6 +113,7 @@ export function prepareApiShape({appId, storage}: {
 				postQuestion: true,
 				archiveQuestion: true,
 				likeQuestion: true,
+				reportQuestion: true,
 			},
 			questionModerationService: {
 				[_augment]: standardAugment,

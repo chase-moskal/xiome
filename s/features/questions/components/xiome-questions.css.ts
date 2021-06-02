@@ -11,6 +11,8 @@ export default css`
 	max-width: 36em;
 	--bg: var(--xiome-questions-body-background, #0006);
 	--color: var(--xiome-questions-body-color, #fff6);
+	--like-color: var(--xiome-questions-like-color, cyan);
+	--report-color: var(--xiome-questions-report-color, #f90);
 }
 
 .questionslist {
@@ -19,6 +21,66 @@ export default css`
 
 .questionslist > li {
 	margin-top: 2em;
+}
+
+.question-expression {
+	display: flex;
+	flex-direction: row;
+}
+
+.question-area {
+	flex: 1 1 auto;
+}
+
+.question-voting {
+	padding: 0.5em;
+	padding-top: 4.5em;
+}
+
+.question-voting button {
+	display: block;
+	border: none;
+	font: inherit;
+	background: transparent;
+	color: inherit;
+}
+
+.question-voting [data-vote] {
+	cursor: pointer;
+	opacity: 0.6;
+	user-select: none;
+}
+
+.question-voting [data-vote="report"] {
+	opacity: 0.4;
+}
+
+.question-voting [data-vote]:hover,
+.question-voting [data-vote]:focus {
+	opacity: 1;
+}
+
+.question-voting [data-vote="like"][data-active] {
+	color: var(--like-color);
+}
+
+.question-voting [data-vote="report"][data-active] {
+	color: var(--report-color);
+}
+
+.question-voting [data-vote] > span {
+	vertical-align: middle;
+}
+
+.question-voting [data-vote] > span:nth-child(2) {
+	font-size: 0.9em;
+}
+
+.question-voting svg {
+	width: 1.4em;
+	height: 1.4em;
+	position: relative;
+	top: 0.1em;
 }
 
 .question-editor {

@@ -72,14 +72,46 @@ export const questionPostingTopic = ({rando}: {
 		const myLikeCount = await questionsTables.questionLikes
 			.count(find({questionId, userId}))
 
-		const alreadyLike = myLikeCount > 0
+		const alreadyLiked = myLikeCount > 0
 
-		const addLike = () => questionsTables.questionLikes.create({userId, questionId})
-		const removeLike = () => questionsTables.questionLikes.delete(find({userId, questionId}))
+		const addLike = () => questionsTables.questionLikes
+			.create({userId, questionId})
 
-		if (like && !alreadyLike)
+		const removeLike = () => questionsTables.questionLikes
+			.delete(find({userId, questionId}))
+
+		if (like && !alreadyLiked)
 			await addLike()
-		else if (!like && alreadyLike)
+
+		else if (!like && alreadyLiked)
 			await removeLike()
+	},
+
+	async reportQuestion(
+			{questionsTables, checker, access: {user: {userId}}},
+			{questionId, report}: {
+				questionId: string
+				report: boolean
+			},
+		) {
+
+		checker.requirePrivilege("report questions")
+
+		const myReportCount = await questionsTables.questionReports
+			.count(find({questionId, userId}))
+
+		const alreadyReported = myReportCount > 0
+
+		const addReport = () => questionsTables.questionReports
+			.create({userId, questionId})
+
+		const removeReport = () => questionsTables.questionReports
+			.delete(find({userId, questionId}))
+
+		if (report && alreadyReported)
+			await addReport()
+
+		else if (!report && alreadyReported)
+			await removeReport()
 	},
 })
