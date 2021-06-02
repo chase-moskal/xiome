@@ -54,7 +54,7 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 				roleId,
 				privilegeId,
 				active: true,
-				customizable: true,
+				immutable: false,
 			},
 		})
 	},
@@ -69,7 +69,7 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 				roleId,
 				privilegeId,
 				active: false,
-				customizable: true,
+				immutable: false,
 			},
 		})
 	},

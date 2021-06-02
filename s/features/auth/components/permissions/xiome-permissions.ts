@@ -1,5 +1,6 @@
 
 import styles from "./xiome-permissions.css.js"
+import lockSvg from "../../../../framework/icons/lock.svg.js"
 import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {makePermissionsModel} from "../../models/permissions-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
@@ -29,7 +30,7 @@ export class XiomePermissions extends Component3WithShare<{
 
 	private getAssignedPrivileges(permissions: PermissionsDisplay) {
 		const {roleSelected} = this
-		if (!roleSelected) return null
+		if (!roleSelected) return []
 
 		const assignedPrivilegeIds = permissions.rolesHavePrivileges
 			.filter(({roleId}) => roleId === roleSelected.roleId)
@@ -39,13 +40,12 @@ export class XiomePermissions extends Component3WithShare<{
 			.filter(({privilegeId}) =>
 				assignedPrivilegeIds.includes(privilegeId))
 			.map(privilege => {
-				const {active, customizable} = permissions.rolesHavePrivileges.find(
+				const {active, immutable} = permissions.rolesHavePrivileges.find(
 					rp => rp.roleId === roleSelected.roleId &&
 						rp.privilegeId === privilege.privilegeId
 				)
-				return {...privilege, active, customizable}
+				return {...privilege, active, immutable}
 			})
-			.filter(privilege => privilege.active)
 	}
 
 	private clickNewRole = async() => {
@@ -79,14 +79,54 @@ export class XiomePermissions extends Component3WithShare<{
 			})
 	}
 
+	private renderPrivilege({
+			privilegeId,
+			label,
+			hard,
+			immutable,
+			onPrivilegeClick,
+		}: {
+			privilegeId: string
+			label: string
+			hard: boolean
+			immutable: boolean
+			onPrivilegeClick: () => void
+		}) {
+		return html`
+			<xio-button
+				title="${privilegeId}"
+				?disabled=${immutable}
+				?data-hard=${hard}
+				?data-soft=${!hard}
+				?data-immutable=${immutable}
+				@press=${onPrivilegeClick}>
+					<div>
+						${immutable
+							? html`<div class=icon>${lockSvg}</div>`
+							: null}
+						${label}
+					</div>
+			</xio-button>
+		`
+	}
+
 	private renderPermissions(permissions: PermissionsDisplay) {
+		console.log(permissions)
 		const assignedPrivileges = this.getAssignedPrivileges(permissions)
+		const activePrivileges = assignedPrivileges.filter(p => p.active)
 		const availablePrivileges = this.roleSelected
-			? permissions.privileges
-				.filter(privilege => !assignedPrivileges
-					.find(priv => priv.privilegeId === privilege.privilegeId)
-				)
-			: permissions.privileges
+			? [
+				...permissions.privileges
+					.filter(privilege => {
+						const assigned = assignedPrivileges
+							.find(priv => priv.privilegeId === privilege.privilegeId)
+						return !assigned
+					})
+					.map(privilege => ({...privilege, immutable: false})),
+				...assignedPrivileges
+					.filter(privilege => !privilege.active)
+			]
+			: []
 		return html`
 			<div class=container>
 				<div class=roles>
@@ -94,20 +134,26 @@ export class XiomePermissions extends Component3WithShare<{
 					<div part=plate>
 						${permissions.roles.map(role => html`
 							<xio-button
-								?data-hard=${role.hard}
 								title="${role.roleId}"
-								?disabled=${this.roleSelected &&
-									role.roleId === this.roleSelected.roleId}
+								?data-selected=${
+									this.roleSelected &&
+									role.roleId === this.roleSelected.roleId
+								}
+								?data-hard=${role.hard}
+								?disabled=${
+									this.roleSelected &&
+									role.roleId === this.roleSelected.roleId
+								}
 								@click=${this.clickRole(role)}>
 									${role.label}
 							</xio-button>
 						`)}
 					</div>
-					<div part=plate class=buttonbar>
+					<!-- <div part=plate class=buttonbar>
 						<xio-button class=buttonbar @press=${this.clickNewRole}>
 							new role
 						</xio-button>
-					</div>
+					</div> -->
 				</div>
 
 				<div class=assigned>
@@ -119,29 +165,21 @@ export class XiomePermissions extends Component3WithShare<{
 						}
 					</p>
 					<div part=plate>
-						${assignedPrivileges &&
-							assignedPrivileges.map(({privilegeId, label, hard}) => html`
-								<xio-button
-									title="${privilegeId}"
-									?data-hard=${hard}
-									@press=${this.clickAssignedPrivilege(privilegeId)}>
-									${label}
-								</xio-button>
-							`)}
+						${activePrivileges.map(privilege => this.renderPrivilege({
+								...privilege,
+								onPrivilegeClick:
+									this.clickAssignedPrivilege(privilege.privilegeId)
+							}))}
 					</div>
 				</div>
 
 				<div class=available>
 					<p>privileges available</p>
 					<div part=plate>
-						${availablePrivileges.map(({privilegeId, label, hard}) => html`
-							<xio-button
-								title="${privilegeId}"
-								?data-hard=${hard}
-								@press=${this.clickAvailablePrivilege(privilegeId)}>
-									${label}
-							</xio-button>
-						`)}
+						${availablePrivileges.map(privilege => this.renderPrivilege({
+							...privilege,
+							onPrivilegeClick: this.clickAvailablePrivilege(privilege.privilegeId),
+						}))}
 					</div>
 				</div>
 			</div>

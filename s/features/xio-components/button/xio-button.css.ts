@@ -25,7 +25,7 @@ button:not([disabled]):focus {
 
 button[disabled] {
 	cursor: default;
-	opacity: var(--xio-button-disabled-opacity, 0.25);
+	opacity: var(--xio-button-disabled-opacity, 0.4);
 	border-style: var(--xio-button-disabled-border-style, dashed);
 }
 

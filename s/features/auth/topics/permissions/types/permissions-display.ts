@@ -14,6 +14,6 @@ export interface PermissionsDisplay {
 		roleId: string
 		privilegeId: string
 		active: boolean
-		customizable: boolean
+		immutable: boolean
 	}[]
 }

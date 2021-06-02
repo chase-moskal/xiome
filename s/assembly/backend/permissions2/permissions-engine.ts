@@ -8,6 +8,7 @@ import {permissionsMergingFacility} from "./merging/permissions-merging-facility
 import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
 import {PermissionsTables} from "../../../features/auth/tables/types/table-groups/permissions-tables.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/topics/login/user/utils/is-currently-within-timeframe.js"
+import {universalPermissions} from "./standard-permissions.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
@@ -68,6 +69,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.find(r => r.userId === userId)
 				.userHasRoles
 				.map(r => r.roleId)
+			roleIds.push(universalPermissions.roles.authenticated.roleId)
 			const hard = getHardPrivilegeDetails(...roleIds)
 			const soft = roleIds
 				.flatMap(roleId => allRolesHavePrivileges.filter(p => p.roleId === roleId))

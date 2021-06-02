@@ -59,7 +59,7 @@ export function permissionsMergingFacility({isPlatform}: {
 				roleId: hardy.roleId,
 				privilegeId: hardy.privilegeId,
 				active: hardy.active,
-				customizable: !hardy.immutable,
+				immutable: hardy.immutable,
 			}
 		}
 

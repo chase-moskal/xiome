@@ -43,14 +43,28 @@ export default css`
 	margin: 0.2em 0.1em;
 }
 
-[part=plate] xio-button[data-hard] {
-	color: blue;
+[part=plate] xio-button[data-soft] {
+	color: red;
 }
 
-[part=plate] xio-button[disabled]::part(button) {
+[part=plate] xio-button[data-selected]::part(button) {
 	border: 1px solid lime;
 	background: yellow;
 	color: black;
+}
+
+[part=plate] xio-button > div {
+	display: flex;
+	flex-direction: row;
+}
+
+[part=plate] xio-button .icon {
+	margin-right: 0.2em;
+}
+
+[part=plate] xio-button svg {
+	width: 0.8em;
+	height: 0.8em;
 }
 
 .buttonbar {
