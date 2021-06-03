@@ -96,6 +96,18 @@ export function makeQuestionsModel({
 		}),
 	})
 
+	async function loadQuestionsForBoard(board: string) {
+		await ops.operation({
+			promise: (async() => {
+				const {users, questions} = await questionReadingService
+					.fetchQuestions({board})
+				actions.addUsers(users)
+				actions.addQuestions(questions)
+			})(),
+			setOp: op => actions.setBoardOp(board, op),
+		})
+	}
+
 	function makeBoardModel(board: string) {
 		return {
 
@@ -150,15 +162,7 @@ export function makeQuestionsModel({
 			},
 
 			async loadQuestions() {
-				await ops.operation({
-					promise: (async() => {
-						const {users, questions} = await questionReadingService
-							.fetchQuestions({board})
-						actions.addUsers(users)
-						actions.addQuestions(questions)
-					})(),
-					setOp: op => actions.setBoardOp(board, op),
-				})
+				await loadQuestionsForBoard(board)
 			},
 
 			async postQuestion(questionDraft: QuestionDraft) {
@@ -205,6 +209,11 @@ export function makeQuestionsModel({
 		}
 	}
 
+	async function refreshAllBoards() {
+		const state = getState()
+		await Promise.all(Object.keys(state.boardOps).map(loadQuestionsForBoard))
+	}
+
 	return {
 		onStateChange,
 		makeBoardModel,
@@ -212,6 +221,7 @@ export function makeQuestionsModel({
 			actions.setAccess(access)
 			if (access?.user)
 				actions.addUsers([access.user])
+			refreshAllBoards()
 		},
 	}
 }
