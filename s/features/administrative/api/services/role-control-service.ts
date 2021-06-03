@@ -1,11 +1,11 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
-import {UserAuth} from "../policies/types/user-auth.js"
-import {asTopic} from "renraku/x/identities/as-topic.js"
-import {AuthApiOptions} from "../types/auth-api-options.js"
-import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
-import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
-import {length, one, schema, string, validator, boolean, number, branch, notDefined, Validator} from "../../../toolbox/darkvalley.js"
+
+import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {UserAuth} from "../../../auth/policies/types/user-auth.js"
+import {MakeServiceOptions} from "../types/make-service-options.js"
+import {throwProblems} from "../../../../toolbox/topic-validation/throw-problems.js"
+import {length, one, schema, string, validator, boolean, number, branch, notDefined, Validator} from "../../../../toolbox/darkvalley.js"
 
 const validateId = validator(one(
 	string(),
@@ -17,9 +17,14 @@ const validateTimeframe: Validator<undefined | number> = branch<undefined | numb
 	number(),
 )
 
-export const roleManipulationTopic = ({
-		config
-	}: AuthApiOptions) => asTopic<UserAuth>()({
+export const roleControlService = ({
+		service,
+	}: MakeServiceOptions) => service<UserAuth>({
+		policy: async auth => {
+			auth.checker.requirePrivilege("assign roles")
+			return auth
+		},
+	})({
 
 	async assignRoleToUser(
 			{tables},

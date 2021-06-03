@@ -23,8 +23,6 @@ import {AuthApiOptions} from "./types/auth-api-options.js"
 import {AppOwnerMeta} from "./policies/types/app-owner-meta.js"
 import {AppOwnerAuth} from "./policies/types/app-owner-auth.js"
 import {appEditTopic} from "./topics/app-edit-topic.js"
-import {searchUsersTopic} from "./topics/search-users-topic.js"
-import {roleManipulationTopic} from "./topics/role-manipulation-topic.js"
 
 export const makeAuthApi = ({tables, authPolicies, ...options}: {
 		tables: AuthTables
@@ -65,16 +63,6 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 		userService: apiContext<AnonMeta, AnonAuth>()({
 			policy: authPolicies.anon,
 			expose: userTopic(options),
-		}),
-
-		searchUsersService: apiContext<UserMeta, UserAuth>()({
-			policy: authPolicies.userSearcher,
-			expose: searchUsersTopic(options),
-		}),
-
-		roleManipulationService: apiContext<UserMeta, UserAuth>()({
-			policy: authPolicies.roleManipulator,
-			expose: roleManipulationTopic(options),
 		}),
 
 		permissionsService: apiContext<UserMeta, UserAuth>()({

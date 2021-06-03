@@ -15,6 +15,7 @@ import {mockStoreTables} from "../../features/store/api/tables/mock-store-tables
 import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
 import {mockQuestionsTables} from "../../features/questions/api/tables/mock-questions-tables.js"
+import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 
 export async function mockBackend({
 			rando,
@@ -65,6 +66,11 @@ export async function mockBackend({
 			verifyToken,
 			generateNickname,
 			sendLoginEmail: fakeSendLoginEmail,
+		}),
+		administrative: makeAdministrativeApi({
+			config,
+			authTables,
+			authPolicies,
 		}),
 		store: storeApi({
 			rando,
