@@ -1,16 +1,21 @@
 
 import {or} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
+import {apiContext2} from "../../../../framework/api/api-context2.js"
 import {fetchUsers} from "../../../auth/topics/login/user/fetch-users.js"
-import {MakeAdminisrativeService} from "../types/make-adminisrative-service.js"
+import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
 import {maxLength, minLength, one, schema, string, validator} from "../../../../toolbox/darkvalley.js"
 
-export const searchUsersService:
-	MakeAdminisrativeService<UserAuth> = ({config}) => ({
+export const searchUsersService = ({
+		config,
+		authPolicies,
+	}: AdministrativeApiOptions) => apiContext2<UserMeta, UserAuth>()({
 
-	policy: async auth => {
+	policy: async(meta, request) => {
+		const auth = await authPolicies.user.processAuth(meta, request)
 		auth.checker.requirePrivilege("search users")
 		return auth
 	},
