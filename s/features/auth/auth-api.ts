@@ -1,4 +1,5 @@
 
+import {asApi} from "renraku/x/identities/as-api.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {appTopic} from "./topics/app-topic.js"
@@ -22,13 +23,15 @@ import {AuthApiOptions} from "./types/auth-api-options.js"
 import {AppOwnerMeta} from "./policies/types/app-owner-meta.js"
 import {AppOwnerAuth} from "./policies/types/app-owner-auth.js"
 import {appEditTopic} from "./topics/app-edit-topic.js"
+import {searchUsersTopic} from "./topics/search-users-topic.js"
+import {roleManipulationTopic} from "./topics/role-manipulation-topic.js"
 
 export const makeAuthApi = ({tables, authPolicies, ...options}: {
 		tables: AuthTables
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
 	} & AuthApiOptions) => {
 
-	return {
+	return asApi({
 		greenService: apiContext<GreenMeta, GreenAuth>()({
 			policy: authPolicies.green,
 			expose: greenTopic(options),
@@ -64,9 +67,19 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 			expose: userTopic(options),
 		}),
 
+		searchUsersService: apiContext<UserMeta, UserAuth>()({
+			policy: authPolicies.userSearcher,
+			expose: searchUsersTopic(options),
+		}),
+
+		roleManipulationService: apiContext<UserMeta, UserAuth>()({
+			policy: authPolicies.roleManipulator,
+			expose: roleManipulationTopic(options),
+		}),
+
 		permissionsService: apiContext<UserMeta, UserAuth>()({
 			policy: authPolicies.userWhoManagesPermissions,
 			expose: permissionsTopic(options),
 		}),
-	}
+	})
 }

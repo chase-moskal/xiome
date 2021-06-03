@@ -6,7 +6,7 @@ import {AnonAuth} from "../policies/types/anon-auth.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const userTopic = ({config, generateNickname}: AuthApiOptions) => asTopic<AnonAuth>()({
+export const userTopic = ({config}: AuthApiOptions) => asTopic<AnonAuth>()({
 
 	async getUser({tables, access}, {userId}: {userId: string}) {
 		const permissionsEngine = makePermissionsEngine({

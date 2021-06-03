@@ -86,6 +86,11 @@ export function each<xValue>(
 	}
 }
 
+export const notDefined = (): Validator<undefined> => value =>
+	typeof value !== undefined
+		? ["must be undefined or null"]
+		: []
+
 export const string = (): Validator<string> => value =>
 	typeof value !== "string"
 		? ["must be a string"]
@@ -94,6 +99,11 @@ export const string = (): Validator<string> => value =>
 export const number = (): Validator<number> => value =>
 	typeof value !== "number"
 		? ["must be a number"]
+		: []
+
+export const boolean = (): Validator<boolean> => value =>
+	typeof value !== "boolean"
+		? ["must be a boolean"]
 		: []
 
 export const min = (threshold: number): Validator<number> => value =>

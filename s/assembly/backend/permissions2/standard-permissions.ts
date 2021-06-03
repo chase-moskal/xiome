@@ -12,6 +12,9 @@ const commonPowerPrivileges = {
 	"edit any profile": "2Z5M2n7pg9nRhwztgqztK6rBTPnyfr6fxk6T29sdfRTNGTqp",
 	"customize permissions": "5Y5sBg2JtqqWnPXq5xXYRDB2cFygtc9StwN7GSZsBXzDBNNW",
 	"moderate questions": "5dHqPzNHGsYnbqkF252ZhWS25hwCGrBSS67RBpmfm7by9dGF",
+	"assign roles": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
+	"search users": "6SgrbgZnP7WnSMPHTNWDsFxqfdbJqfdBprMsznBdZrmGs9Nz",
+	"view stats": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
 }
 
 const platformPowerPrivileges = {
