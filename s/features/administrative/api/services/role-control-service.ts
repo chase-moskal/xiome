@@ -1,21 +1,13 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 
+import {validateId} from "../utils/validation/validate-id.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
 import {MakeServiceOptions} from "../types/make-service-options.js"
-import {throwProblems} from "../../../../toolbox/topic-validation/throw-problems.js"
-import {length, one, schema, string, validator, boolean, number, branch, notDefined, Validator} from "../../../../toolbox/darkvalley.js"
-
-const validateId = validator(one(
-	string(),
-	length(48),
-))
-
-const validateTimeframe: Validator<undefined | number> = branch<undefined | number>(
-	notDefined(),
-	number(),
-)
+import {validateTimeframe} from "../utils/validation/validate-timeframe.js"
+import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 
 export const roleControlService = ({
 		service,
@@ -37,15 +29,15 @@ export const roleControlService = ({
 			},
 		) {
 
-		throwProblems(schema({
-			roleId: validateId,
-			userId: validateId,
-			isPublic: validator(boolean()),
-			timeframeEnd: validateTimeframe,
-			timeframeStart: validateTimeframe,
-		})(options))
-
-		const {roleId, userId, isPublic, timeframeEnd, timeframeStart} = options
+		const {roleId, userId, isPublic, timeframeEnd, timeframeStart} = (
+			runValidation(options, schema({
+				roleId: validateId,
+				userId: validateId,
+				isPublic: validator(boolean()),
+				timeframeEnd: validateTimeframe,
+				timeframeStart: validateTimeframe,
+			}))
+		)
 
 		const existing = await tables.permissions.userHasRole.one(find({
 			userId,
@@ -76,12 +68,10 @@ export const roleControlService = ({
 			},
 		) {
 
-		throwProblems(schema({
+		const {roleId, userId} = runValidation(options, schema({
 			roleId: validateId,
 			userId: validateId,
-		})(options))
-
-		const {roleId, userId} = options
+		}))
 
 		const existing = await tables.permissions.userHasRole.one(find({
 			userId,
