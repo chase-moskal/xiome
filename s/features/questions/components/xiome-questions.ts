@@ -1,5 +1,6 @@
 
 import styles from "./xiome-questions.css.js"
+import {sortQuestions} from "./helpers/sort-questions.js"
 import {renderQuestion} from "./parts/render-question.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
@@ -10,7 +11,6 @@ import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {Component2WithShare, mixinStyles, html, property, query} from "../../../framework/component2/component2.js"
-import {sortQuestions} from "./helpers/sort-questions.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends Component2WithShare<{
