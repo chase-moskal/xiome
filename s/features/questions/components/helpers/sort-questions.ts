@@ -1,9 +1,11 @@
 
 import {Question} from "../../api/types/question.js"
 
-export function sortQuestions(questions: Question[]) {
+export function sortQuestions(questions: Question[], myUserId: string) {
 	return [...questions].sort((a, b) => {
 		const promote = {a: -1, b: 1}
+
+		if (a.authorUserId === myUserId) return promote.a
 
 		if (a.likes > b.likes) return promote.a
 		if (a.likes < b.likes) return promote.b

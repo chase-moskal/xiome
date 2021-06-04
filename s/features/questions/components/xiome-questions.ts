@@ -71,8 +71,9 @@ export class XiomeQuestions extends Component2WithShare<{
 	}
 
 	private renderQuestionsList() {
-		const questions = sortQuestions(this.#boardModel.getQuestions())
 		const access = this.#boardModel.getAccess()
+		const myUserId = access?.user?.userId
+		const questions = sortQuestions(this.#boardModel.getQuestions(), myUserId)
 		const permissions = this.#boardModel.getPermissions()
 
 		return html`
