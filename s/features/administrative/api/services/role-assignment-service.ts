@@ -6,14 +6,14 @@ import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
 import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
-import {apiContext2} from "../../../../framework/api/api-context2.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
+import {buildApiContext} from "../../../../framework/api/build-api-context.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 
 export const roleAssignmentService = ({
 		authPolicies,
-	}: AdministrativeApiOptions) => apiContext2<UserMeta, UserAuth>()({
+	}: AdministrativeApiOptions) => buildApiContext<UserMeta, UserAuth>()({
 
 	policy: async(meta, request) => {
 		const auth = await authPolicies.user.processAuth(meta, request)

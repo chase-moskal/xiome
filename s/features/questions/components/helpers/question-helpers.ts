@@ -1,6 +1,6 @@
 
 import {User} from "../../../auth/types/user.js"
-import {Question} from "../../topics/types/question.js"
+import {Question} from "../../api/types/question.js"
 
 // export function ascertainOwnership(question: Question, me: User) {
 // 	if (!me) return {mine: false, authority: false}

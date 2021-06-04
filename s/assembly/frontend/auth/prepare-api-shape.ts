@@ -115,18 +115,18 @@ export function prepareApiShape({appId, storage}: {
 			},
 		},
 		questions: {
-			questionReadingService: {
+			questionsReadingService: {
 				[_augment]: standardAugment,
 				fetchQuestions: true,
 			},
-			questionPostingService: {
+			questionsPostingService: {
 				[_augment]: standardAugment,
 				postQuestion: true,
 				archiveQuestion: true,
 				likeQuestion: true,
 				reportQuestion: true,
 			},
-			questionModerationService: {
+			questionsModerationService: {
 				[_augment]: standardAugment,
 				archiveBoard: true,
 			},

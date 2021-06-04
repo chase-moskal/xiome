@@ -1,42 +1,15 @@
 
-import {Rando} from "../../../toolbox/get-rando.js"
-import {apiContext} from "renraku/x/api/api-context.js"
-import {questionsPolicies} from "./questions-policies.js"
-import {QuestionsTables} from "./tables/types/questions-tables.js"
-import {questionPostingTopic} from "../topics/question-posting-topic.js"
-import {questionReadingTopic} from "../topics/question-reading-topic.js"
-import {questionModerationTopic} from "../topics/question-moderation-topic.js"
-import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
-import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
-import {QuestionModeratorAuth, QuestionModeratorMeta, QuestionPosterAuth, QuestionPosterMeta, QuestionReaderAuth, QuestionReaderMeta} from "./types/questions-persona.js"
+import {asApi} from "renraku/x/identities/as-api.js"
+import {QuestionsApiOptions} from "./types/questions-api-options.js"
+import {questionsReadingParts} from "./services/questions-reading-parts.js"
+import {questionsPostingParts} from "./services/questions-posting-parts.js"
+import {assembleApiContext} from "../../../framework/api/assemble-api-context.js"
+import {questionsModerationParts} from "./services/questions-moderation-parts.js"
 
-export function questionsApi({
-		config, rando, questionsTables, authPolicies, generateNickname
-	}: {
-		config: PlatformConfig
-		rando: Rando
-		questionsTables: QuestionsTables
-		authPolicies: ReturnType<typeof prepareAuthPolicies>
-		generateNickname: () => string
-	}) {
-
-	const policies = questionsPolicies({
-		authPolicies,
-		questionsTables,
+export function questionsApi(options: QuestionsApiOptions) {
+	return asApi({
+		questionsReadingService: assembleApiContext(questionsReadingParts(options)),
+		questionsPostingService: assembleApiContext(questionsPostingParts(options)),
+		questionsModerationService: assembleApiContext(questionsModerationParts(options)),
 	})
-
-	return {
-		questionReadingService: apiContext<QuestionReaderMeta, QuestionReaderAuth>()({
-			policy: policies.questionReader,
-			expose: questionReadingTopic({config, generateNickname}),
-		}),
-		questionPostingService: apiContext<QuestionPosterMeta, QuestionPosterAuth>()({
-			policy: policies.questionPoster,
-			expose: questionPostingTopic({rando}),
-		}),
-		questionModerationService: apiContext<QuestionModeratorMeta, QuestionModeratorAuth>()({
-			policy: policies.questionModerator,
-			expose: questionModerationTopic(),
-		}),
-	}
 }

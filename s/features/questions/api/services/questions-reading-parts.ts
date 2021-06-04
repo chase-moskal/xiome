@@ -1,19 +1,25 @@
 
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionReaderAuth} from "../types/questions-persona.js"
+import {resolveQuestions} from "./helpers/resolve-questions.js"
 import {AnonMeta} from "../../../auth/policies/types/anon-meta.js"
-import {apiContext2} from "../../../../framework/api/api-context2.js"
+import {AnonAuth} from "../../../auth/policies/types/anon-auth.js"
+import {QuestionsAuthParts} from "../types/questions-auth-parts.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
 import {fetchUsers} from "../../../auth/topics/login/user/fetch-users.js"
-import {resolveQuestions} from "../../topics/helpers/resolve-questions.js"
+import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const questionsReadingService = (options: QuestionsApiOptions) => apiContext2<
-		AnonMeta,
-		QuestionReaderAuth
-	>()({
-	policy: anonQuestionsPolicy(options),
+export const questionsReadingParts = (
+		options: QuestionsApiOptions
+	) => asServiceParts<AnonMeta, QuestionsAuthParts & AnonAuth>()({
+
+	policy: async(meta, request) => {
+		const auth = await anonQuestionsPolicy(options)(meta, request)
+		auth.checker.requirePrivilege("read questions")
+		return auth
+	},
+
 	expose: {
 
 		async fetchQuestions(

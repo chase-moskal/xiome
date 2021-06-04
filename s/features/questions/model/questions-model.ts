@@ -1,26 +1,26 @@
 
 import {User} from "../../auth/types/user.js"
 import {merge} from "../../../toolbox/merge.js"
-import {Service} from "../../../types/service.js"
 import {Op, ops} from "../../../framework/ops.js"
-import {Question} from "../topics/types/question.js"
-import {QuestionDraft} from "../topics/types/question-draft.js"
+import {Question} from "../api/types/question.js"
+import {QuestionDraft} from "../api/types/question-draft.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
-import {questionPostingTopic} from "../topics/question-posting-topic.js"
-import {questionReadingTopic} from "../topics/question-reading-topic.js"
-import {questionModerationTopic} from "../topics/question-moderation-topic.js"
+import {GetBusiness} from "../../../framework/api/types/get-business.js"
+import {questionsReadingParts} from "../api/services/questions-reading-parts.js"
+import {questionsPostingParts} from "../api/services/questions-posting-parts.js"
+import {questionsModerationParts} from "../api/services/questions-moderation-parts.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function makeQuestionsModel({
-		questionPostingService,
-		questionReadingService,
-		questionModerationService,
+		questionsReadingService,
+		questionsPostingService,
+		questionsModerationService,
 		getAccess,
 	}: {
-		questionPostingService: Service<typeof questionPostingTopic>
-		questionReadingService: Service<typeof questionReadingTopic>
-		questionModerationService: Service<typeof questionModerationTopic>
+		questionsReadingService: GetBusiness<typeof questionsReadingParts>
+		questionsPostingService: GetBusiness<typeof questionsPostingParts>
+		questionsModerationService: GetBusiness<typeof questionsModerationParts>
 		getAccess: () => Op<AccessPayload>
 	}) {
 
@@ -99,7 +99,7 @@ export function makeQuestionsModel({
 	async function loadQuestionsForBoard(board: string) {
 		await ops.operation({
 			promise: (async() => {
-				const {users, questions} = await questionReadingService
+				const {users, questions} = await questionsReadingService
 					.fetchQuestions({board})
 				actions.addUsers(users)
 				actions.addQuestions(questions)
@@ -167,7 +167,7 @@ export function makeQuestionsModel({
 
 			async postQuestion(questionDraft: QuestionDraft) {
 				const question = await ops.operation({
-					promise: questionPostingService.postQuestion({questionDraft}),
+					promise: questionsPostingService.postQuestion({questionDraft}),
 					setOp: op => actions.setPostingOp(
 						ops.replaceValue(op, undefined)
 					),
@@ -178,7 +178,7 @@ export function makeQuestionsModel({
 			},
 
 			async likeQuestion(questionId: string, like: boolean) {
-				await questionPostingService.likeQuestion({
+				await questionsPostingService.likeQuestion({
 					like,
 					questionId,
 				})
@@ -186,7 +186,7 @@ export function makeQuestionsModel({
 			},
 
 			async reportQuestion(questionId: string, report: boolean) {
-				await questionPostingService.reportQuestion({
+				await questionsPostingService.reportQuestion({
 					report,
 					questionId,
 				})
@@ -194,7 +194,7 @@ export function makeQuestionsModel({
 			},
 
 			async archiveQuestion(questionId: string, archive: boolean) {
-				await questionPostingService.archiveQuestion({
+				await questionsPostingService.archiveQuestion({
 					archive,
 					questionId,
 				})
@@ -202,7 +202,7 @@ export function makeQuestionsModel({
 			},
 
 			async archiveBoard() {
-				await questionModerationService.archiveBoard({board})
+				await questionsModerationService.archiveBoard({board})
 				for (const question of getState().questions)
 					actions.setQuestionArchive(question.questionId, true)
 			},

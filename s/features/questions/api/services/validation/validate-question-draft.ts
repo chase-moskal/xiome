@@ -1,6 +1,6 @@
 
-import {QuestionDraft} from "../types/question-draft.js"
-import {maxLength, minLength, notWhitespace, one, schema, string} from "../../../../toolbox/darkvalley.js"
+import {QuestionDraft} from "../../types/question-draft.js"
+import {maxLength, minLength, notWhitespace, one, schema, string} from "../../../../../toolbox/darkvalley.js"
 
 export const validateQuestionDraftContent = one(
 	string(),

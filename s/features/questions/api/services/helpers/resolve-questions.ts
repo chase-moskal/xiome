@@ -1,7 +1,7 @@
 
-import {or} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionPostRow, QuestionsTables} from "../../api/tables/types/questions-tables.js"
-import {Question} from "../types/question.js"
+import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
+import {Question} from "../../types/question.js"
 
 export async function resolveQuestions({userId, posts, questionsTables}: {
 		userId?: string

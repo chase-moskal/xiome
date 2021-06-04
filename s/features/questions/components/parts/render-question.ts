@@ -1,7 +1,7 @@
 
 import {html} from "lit-html"
 import {User} from "../../../auth/types/user.js"
-import {Question} from "../../topics/types/question.js"
+import {Question} from "../../api/types/question.js"
 import {renderQuestionBody} from "./render-question-body.js"
 import heartSvg from "../../../../framework/icons/heart.svg.js"
 import heartFillSvg from "../../../../framework/icons/heart-fill.svg.js"

@@ -1,5 +1,5 @@
 
-import {Question} from "../../topics/types/question.js"
+import {Question} from "../../api/types/question.js"
 
 export function sortQuestions(questions: Question[]) {
 	return [...questions].sort((a, b) => {

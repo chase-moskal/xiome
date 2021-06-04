@@ -1,5 +1,5 @@
 
-import {QuestionPostRow} from "../../api/tables/types/questions-tables.js"
+import {QuestionPostRow} from "../tables/types/questions-tables.js"
 
 export type Question = {
 	liked: boolean

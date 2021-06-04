@@ -1,15 +1,12 @@
 
 import {ServiceParts} from "./types/service-parts.js"
-import {apiContext} from "renraku/x/api/api-context.js"
 import {Topic} from "renraku/x/types/primitives/topic.js"
+import {assembleApiContext} from "./assemble-api-context.js"
 
-export function apiContext2<xMeta, xAuth>() {
+export function buildApiContext<xMeta, xAuth>() {
 	return function<xTopic extends Topic<xAuth>>(
 			parts: ServiceParts<xMeta, xAuth, xTopic>
 		) {
-		return apiContext<xMeta, xAuth>()({
-			policy: {processAuth: parts.policy},
-			expose: parts.expose,
-		})
+		return assembleApiContext<xMeta, xAuth, xTopic>(parts)
 	}
 }
