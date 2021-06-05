@@ -1,6 +1,8 @@
 
 import styles from "./xiome-permissions.css.js"
 import lockSvg from "../../../../framework/icons/lock.svg.js"
+import wrenchSvg from "../../../../framework/icons/wrench.svg.js"
+
 import {AuthModel} from "../../models/types/auth/auth-model.js"
 import {makePermissionsModel} from "../../models/permissions-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
@@ -48,14 +50,28 @@ export class XiomePermissions extends Component3WithShare<{
 			})
 	}
 
+	private clickDeleteRole = async() => {
+		const {modals, permissionsModel} = this.share
+		const role = this.roleSelected
+		const confirmed = await modals.confirm({
+			title: "Delete role?",
+			body: `Are you sure you want to permanently delete the role "${role.label}"`,
+			yes: {vibe: "negative", label: "Delete role"},
+			focusNthElement: 2,
+		})
+		if (confirmed)
+			await permissionsModel.deleteRole({roleId: role.roleId})
+	}
+
 	private clickNewRole = async() => {
 		const {modals, permissionsModel} = this.share
 		const result = await modals.prompt<string>({
-			title: "enter a name for your new custom role",
+			title: "Create a new role",
 			input: {
-				label: "role name",
+				label: "Role name",
 				validator: roleLabelValidator,
 			},
+			yes: {vibe: "positive", label: "Create role"}
 		})
 		if (result)
 			await permissionsModel.createRole({label: result.value})
@@ -144,15 +160,30 @@ export class XiomePermissions extends Component3WithShare<{
 									role.roleId === this.roleSelected.roleId
 								}
 								@click=${this.clickRole(role)}>
+								<div>
+									${role.hard
+										? html`<div class=icon>${wrenchSvg}</div>`
+										: null}
 									${role.label}
+								</div>
 							</xio-button>
 						`)}
 					</div>
-					<!-- <div part=plate class=buttonbar>
-						<xio-button class=buttonbar @press=${this.clickNewRole}>
+					<div part=plate class=buttonbar>
+						${this.roleSelected
+							? html`
+								<xio-button
+									data-button=delete
+									?disabled=${this.roleSelected.hard}
+									@press=${this.clickDeleteRole}>
+										delete role
+								</xio-button>
+							`
+							: null}
+						<xio-button data-button=new @press=${this.clickNewRole}>
 							new role
 						</xio-button>
-					</div> -->
+					</div>
 				</div>
 
 				<div class=assigned>

@@ -54,6 +54,13 @@ export const universalPermissions = asPermissions({
 				...mutable(active, commonPrivileges),
 			},
 		},
+		"banned": {
+			roleId: "8FN9yGdMCBptMMCqHTHSJJ6PHtwpBWmtdPGGDzbTKCqdzsHC",
+			public: true,
+			hasPrivileges: {
+				"banned": {active: true, immutable: true},
+			},
+		},
 		"technician": {
 			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
 			public: true,

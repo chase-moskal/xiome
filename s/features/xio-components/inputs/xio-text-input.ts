@@ -50,7 +50,7 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 
 	get value(): xParsedValue {
 		const {draft} = this
-		const parsed = this.parser(draft)
+		const parsed = (this.parser ?? noopParser)(draft)
 		this.problems = this.validator ? this.validator(parsed) : []
 		return this.problems.length === 0
 			? parsed

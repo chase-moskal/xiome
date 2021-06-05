@@ -72,6 +72,7 @@ export function makePermissionsModel({
 		initialize,
 		getUserCanCustomizePermissions,
 		createRole: reloadAfter(permissionsService.createRole),
+		deleteRole: reloadAfter(permissionsService.deleteRole),
 		assignPrivilege: reloadAfter(permissionsService.assignPrivilege),
 		unassignPrivilege: reloadAfter(permissionsService.unassignPrivilege),
 		async accessChange(access: AccessPayload) {

@@ -120,10 +120,12 @@ export function makeQuestionsModel({
 								appPermissions.privileges["read questions"]
 							)
 							: false,
-					"post questions": 
+					"post questions":
 						access
 							? access.permit.privileges.includes(
 								appPermissions.privileges["post questions"]
+							) && !access.permit.privileges.includes(
+								appPermissions.privileges["banned"]
 							)
 							: false,
 					"moderate questions":
