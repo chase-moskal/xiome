@@ -116,16 +116,34 @@ export class XiomeQuestions extends Component2WithShare<{
 
 					const authority = permissions["moderate questions"] || isAuthor
 
-					const handleDelete = () => {
-						this.#boardModel.archiveQuestion(questionId, true)
+					const handleDelete = async() => {
+						const confirmed = await this.share.modals.confirm({
+							title: "Delete question?",
+							body: "Are you sure you want to delete this question? This cannot be undone.",
+							yes: {vibe: "negative", label: "Delete question"},
+							no: {vibe: "neutral", label: "Nevermind"},
+							focusNthElement: 2,
+						})
+						if (confirmed)
+							await this.#boardModel.archiveQuestion(questionId, true)
 					}
 
 					const handleLike = (like: boolean) => {
 						this.#boardModel.likeQuestion(questionId, like)
 					}
 
-					const handleReport = (report: boolean) => {
-						this.#boardModel.reportQuestion(questionId, report)
+					const handleReport = async(report: boolean) => {
+						const confirmed = report
+							? await this.share.modals.confirm({
+								title: "Report question?",
+								body: "Are you sure you want to submit a report against this question?",
+								yes: {vibe: "negative", label: "Submit report"},
+								no: {vibe: "neutral", label: "Nevermind"},
+								focusNthElement: 2,
+							})
+							: true
+						if (confirmed)
+							await this.#boardModel.reportQuestion(questionId, report)
 					}
 
 					return renderQuestion({
