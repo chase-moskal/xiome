@@ -1,18 +1,20 @@
 
+import {schema} from "../../../../toolbox/darkvalley.js"
 import {or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
+import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {fetchUsers} from "../../../auth/topics/login/user/fetch-users.js"
-import {buildApiContext} from "../../../../framework/api/build-api-context.js"
+import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
-import {maxLength, minLength, one, schema, string, validator} from "../../../../toolbox/darkvalley.js"
+import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 
-export const searchUsersService = ({
+export const searchUsersParts = ({
 		config,
 		authPolicies,
-	}: AdministrativeApiOptions) => buildApiContext<UserMeta, UserAuth>()({
+	}: AdministrativeApiOptions) => asServiceParts<UserMeta, UserAuth>()({
 
 	policy: async(meta, request) => {
 		const auth = await authPolicies.user.processAuth(meta, request)
@@ -24,18 +26,17 @@ export const searchUsersService = ({
 
 		async searchForUsers({tables, access}, options: {term: string}) {
 			const {term} = runValidation(options, schema({
-				term: validator<string>(one(
-					string(),
-					minLength(2),
-					maxLength(48),
-				)),
+				term: validateUserSearchTerm,
 			}))
 
+			const regex = new RegExp(escapeRegex(term), "i")
+
 			const profiles = await tables.user.profile.read({
-				limit: 25,
+				limit: 100,
 				conditions: or(
-					{search: {userId: term}},
-					{search: {nickname: term}},
+					{search: {userId: regex}},
+					{search: {nickname: regex}},
+					{search: {tagline: regex}},
 				),
 			})
 

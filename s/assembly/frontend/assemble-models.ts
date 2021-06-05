@@ -6,6 +6,7 @@ import {AssembleModelsOptions} from "./types/assemble-models-options.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
 import {makeQuestionsModel} from "../../features/questions/model/questions-model.js"
+import {makeAdministrativeModel} from "../../features/administrative/models/administrative-model.js"
 
 export async function assembleModels({
 		appId,
@@ -50,6 +51,11 @@ export async function assembleModels({
 		triggerBankPopup: popups.triggerBankPopup,
 	})
 
+	const administrativeModel = makeAdministrativeModel({
+		searchUsersService: remote.administrative.searchUsersService,
+		roleAssignmentService: remote.administrative.roleAssignmentService,
+	})
+
 	const questionsModel = makeQuestionsModel({
 		...remote.questions,
 		getAccess: () => authModel.access,
@@ -71,5 +77,6 @@ export async function assembleModels({
 		personalModel,
 		questionsModel,
 		permissionsModel,
+		administrativeModel,
 	}
 }

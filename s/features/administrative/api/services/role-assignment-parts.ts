@@ -7,13 +7,13 @@ import {UserAuth} from "../../../auth/policies/types/user-auth.js"
 import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
-import {buildApiContext} from "../../../../framework/api/build-api-context.js"
+import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 
-export const roleAssignmentService = ({
+export const roleAssignmentParts = ({
 		authPolicies,
-	}: AdministrativeApiOptions) => buildApiContext<UserMeta, UserAuth>()({
+	}: AdministrativeApiOptions) => asServiceParts<UserMeta, UserAuth>()({
 
 	policy: async(meta, request) => {
 		const auth = await authPolicies.user.processAuth(meta, request)

@@ -83,9 +83,13 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 
 	@property({type: String})
 	private draft: string = ""
+	private lastDraft: string = ""
 
 	private dispatchValueChange = () => {
-		this.dispatchEvent(new ValueChangeEvent(this.value))
+		const {draft, lastDraft} = this
+		if (draft !== lastDraft)
+			this.dispatchEvent(new ValueChangeEvent(this.value))
+		this.lastDraft = draft
 	}
 
 	private dispatchEnterPress = () => {
