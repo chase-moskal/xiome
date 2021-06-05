@@ -32,8 +32,16 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 		})
 	},
 
-	async deleteRole({}, {}: {roleId: string}) {
-		console.log("TODO: deleteRole")
+	async deleteRole({tables}, {roleId}: {roleId: string}) {
+		const role = await tables.permissions.role.one(find({roleId}))
+
+		if (!role)
+			throw new ApiError(404, "role not found")
+
+		if (role.hard)
+			throw new ApiError(400, "cannot delete hard role")
+
+		await tables.permissions.role.delete(find({roleId}))
 	},
 
 	async createPrivilege({}, {}: {label: string}) {

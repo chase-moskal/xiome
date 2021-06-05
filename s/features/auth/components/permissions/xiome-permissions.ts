@@ -57,6 +57,7 @@ export class XiomePermissions extends Component3WithShare<{
 			title: "Delete role?",
 			body: `Are you sure you want to permanently delete the role "${role.label}"`,
 			yes: {vibe: "negative", label: "Delete role"},
+			no: {vibe: "neutral", label: "Nevermind"},
 			focusNthElement: 2,
 		})
 		if (confirmed)
