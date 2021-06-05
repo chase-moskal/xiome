@@ -4,18 +4,17 @@ import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {UserAuth} from "../policies/types/user-auth.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
-import {PermissionsDisplay} from "./permissions/types/permissions-display.js"
+import {fetchPermissionsDisplay} from "./permissions/fetch-permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
-import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async fetchPermissions({tables, access}): Promise<PermissionsDisplay> {
-		const permissionsEngine = makePermissionsEngine({
-			isPlatform: access.appId === config.platform.appDetails.appId,
+	async fetchPermissions({tables, access}) {
+		return fetchPermissionsDisplay({
+			config,
+			access,
 			permissionsTables: tables.permissions,
 		})
-		return permissionsEngine.getPermissionsDisplay()
 	},
 
 	async createRole({tables}, {label}: {label: string}) {

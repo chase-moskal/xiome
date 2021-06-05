@@ -10,8 +10,10 @@ import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
 import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
+import {fetchPermissionsDisplay} from "../../../auth/topics/permissions/fetch-permissions-display.js"
 
 export const roleAssignmentParts = ({
+		config,
 		authPolicies,
 	}: AdministrativeApiOptions) => asServiceParts<UserMeta, UserAuth>()({
 
@@ -22,6 +24,14 @@ export const roleAssignmentParts = ({
 	},
 
 	expose: {
+
+		async fetchPermissions({tables, access}) {
+			return fetchPermissionsDisplay({
+				config,
+				access,
+				permissionsTables: tables.permissions,
+			})
+		},
 
 		async assignRoleToUser(
 				{tables},
