@@ -24,11 +24,16 @@ export const questionsReadingParts = (
 
 		async fetchQuestions(
 				{questionsTables, tables, access},
-				{board}: {board: string}
+				{board}: {board: string},
 			) {
-			
+
 			const posts = await questionsTables.questionPosts
-				.read(find({board, archive: false}))
+				.read({
+					...find({board, archive: false}),
+					limit: 100,
+					offset: 0,
+					order: {timePosted: "descend"},
+				})
 
 			const permissionsEngine = makePermissionsEngine({
 				isPlatform: access.appId === options.config.platform.appDetails.appId,

@@ -15,6 +15,16 @@ export default css`
 	--report-color: var(--xiome-questions-report-color, #f90);
 }
 
+.questions-moderation-panel {
+	padding: 1em;
+	border: 1px dotted;
+	margin-bottom: 1em;
+}
+
+.questions-moderation-panel .purge-button {
+	color: red;
+}
+
 .questionslist {
 	list-style: none;
 }

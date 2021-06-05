@@ -51,7 +51,35 @@ export class XiomeQuestions extends Component2WithShare<{
 		this.draftText = event.detail.value
 	}
 
-	private renderEditor() {
+	private renderQuestionsModerationPanel() {
+		const permissions = this.#boardModel.getPermissions()
+		const board = this.#boardModel.getBoardName()
+		const handlePressPurgeButton = async() => {
+			const confirmed = await this.share.modals.confirm({
+				title: `Purge questions?`,
+				body: `Are you sure you want to delete all the questions on the board "${board}"? This cannot be undone.`,
+				yes: {vibe: "negative", label: "Purge all"},
+				no: {vibe: "neutral", label: "Nevermind"},
+				focusNthElement: 2,
+			})
+			if (confirmed)
+				await this.#boardModel.archiveBoard()
+		}
+		return permissions["moderate questions"]
+			? html`
+				<div class=questions-moderation-panel>
+					<h3>moderate questions board "${this.board}"</h3>
+					<xio-button
+						class=purge-button
+						@press=${handlePressPurgeButton}>
+							Purge all questions
+					</xio-button>
+				</div>
+			`
+			: null
+	}
+
+	private renderQuestionsEditor() {
 		const access = this.#boardModel.getAccess()
 		const permissions = this.#boardModel.getPermissions()
 		const questionAuthor = access?.user
@@ -116,7 +144,8 @@ export class XiomeQuestions extends Component2WithShare<{
 	private renderQuestionsBoard() {
 		const boardOp = this.#boardModel.getBoardOp()
 		return renderOp(boardOp, () => html`
-			${this.renderEditor()}
+			${this.renderQuestionsModerationPanel()}
+			${this.renderQuestionsEditor()}
 			${this.renderQuestionsList()}
 		`)
 	}
