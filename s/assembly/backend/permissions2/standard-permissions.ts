@@ -40,6 +40,7 @@ export const universalPermissions = asPermissions({
 		"anonymous": {
 			roleId: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
 			public: true,
+			assignable: false,
 			hasPrivileges: {
 				"read questions": {active: true, immutable: false},
 				"post questions": {active: false, immutable: true},
@@ -50,6 +51,7 @@ export const universalPermissions = asPermissions({
 		"authenticated": {
 			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
 			public: false,
+			assignable: false,
 			hasPrivileges: {
 				...mutable(active, commonPrivileges),
 			},
@@ -57,6 +59,7 @@ export const universalPermissions = asPermissions({
 		"banned": {
 			roleId: "8FN9yGdMCBptMMCqHTHSJJ6PHtwpBWmtdPGGDzbTKCqdzsHC",
 			public: true,
+			assignable: true,
 			hasPrivileges: {
 				"banned": {active: true, immutable: true},
 			},
@@ -64,6 +67,7 @@ export const universalPermissions = asPermissions({
 		"technician": {
 			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
 			public: true,
+			assignable: false,
 			hasPrivileges: {
 				...immutable(active, commonPrivileges),
 				...immutable(active, commonPowerPrivileges),
@@ -101,6 +105,7 @@ export const appPermissions = asPermissions({
 		"admin": {
 			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
 			public: true,
+			assignable: false,
 			hasPrivileges: {
 				...immutable(active, appPowerPrivileges),
 				...immutable(active, commonPrivileges),

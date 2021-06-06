@@ -24,9 +24,10 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			`validation error on label: ${problems.join("; ")}`
 		)
 		await tables.permissions.role.create({
-			hard: false,
 			label,
+			hard: false,
 			public: true,
+			assignable: true,
 			roleId: rando.randomId(),
 		})
 	},
@@ -41,14 +42,6 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			throw new ApiError(400, "cannot delete hard role")
 
 		await tables.permissions.role.delete(find({roleId}))
-	},
-
-	async createPrivilege({}, {}: {label: string}) {
-		console.log("TODO: createPrivilege")
-	},
-
-	async deletePrivilege({}, {}: {privilegeId: string}) {
-		console.log("TODO: deletePrivilege")
 	},
 
 	async assignPrivilege({tables}, {roleId, privilegeId}: {
@@ -79,21 +72,5 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 				immutable: false,
 			},
 		})
-	},
-
-	async grantRole({}, {}: {
-			userId: string
-			roleId: string
-			timeframeStart: number
-			timeframeEnd: number
-		}) {
-		console.log("TODO: grantRole")
-	},
-
-	async revokeRole({}, {}: {
-			userId: string
-			roleId: string
-		}) {
-		console.log("TODO: revokeRole")
 	},
 })

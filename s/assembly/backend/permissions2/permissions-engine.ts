@@ -2,13 +2,13 @@
 import {merge} from "../../../toolbox/merge.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
+import {universalPermissions} from "./standard-permissions.js"
 import {RoleRow} from "../../../features/auth/tables/types/rows/role-row.js"
 import {PublicUserRole} from "../../../features/auth/types/public-user-role.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
 import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
 import {PermissionsTables} from "../../../features/auth/tables/types/table-groups/permissions-tables.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/topics/login/user/utils/is-currently-within-timeframe.js"
-import {universalPermissions} from "./standard-permissions.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
@@ -34,7 +34,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			userIds: string[]
 			onlyGetPublicRoles: boolean
 		}) {
-		
+
 		const isPublic = (row: {public: boolean}) => row.public
 		const all = <X>(x: X) => x
 		
@@ -94,7 +94,13 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const allHardRoles: RoleRow[] = allRoleIds.map(roleId => {
 			const [label, role] = Object.entries(hardPermissions.roles)
 				.find(([,role]) => role.roleId === roleId)
-			return {roleId, label, public: role.public, hard: true}
+			return {
+				roleId,
+				label,
+				hard: true,
+				public: role.public,
+				assignable: role.assignable,
+			}
 		})
 
 		const allSoftRoles = await permissionsTables.role.read({
@@ -141,6 +147,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 						hard: true,
 						roleId: r.roleId,
 						public: r.public,
+						assignable: r.assignable,
 					}))
 				return merge(soft, hard, (a, b) => a.roleId === b.roleId)
 			})(),

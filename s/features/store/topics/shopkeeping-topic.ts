@@ -58,6 +58,7 @@ export const shopkeepingTopic = ({generateId}: {
 			public: true,
 			label: draft.label,
 			roleId: generateId(),
+			assignable: true,
 		}
 
 		const plan: SubscriptionPlanRow = {

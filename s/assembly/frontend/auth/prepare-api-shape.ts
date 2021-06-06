@@ -61,13 +61,9 @@ export function prepareApiShape({appId, storage}: {
 			permissionsService: {
 				[_augment]: standardAugment,
 				assignPrivilege: true,
-				createPrivilege: true,
 				createRole: true,
-				deletePrivilege: true,
 				deleteRole: true,
 				fetchPermissions: true,
-				grantRole: true,
-				revokeRole: true,
 				unassignPrivilege: true,
 			},
 		},
