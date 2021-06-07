@@ -20,26 +20,25 @@ export default css`
 
 .userlist > li {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
-	margin-top: 0.5em;
 	background: #0002;
 	padding: 0.5em;
+	margin-top: 0.5em;
 }
 
-.userlist > li > xio-profile-card {
+.userinfo {
+	display: flex;
+	flex-direction: row;
+}
+
+.userinfo xio-profile-card {
 	flex: 1 1 auto;
 }
 
-.userlist > li > .controls {
-	flex: 0 1 auto;
-	display: flex;
-	flex-direction: column;
-}
-
-.userlist > li > .controls > select {
-	min-width: 12em;
-	margin: 0.3em;
+.userinfo .controls .edit[data-edit-mode] {
+	color: lime;
+	--xio-button-hover-color: lime;
 }
 
 `

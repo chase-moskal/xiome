@@ -11,6 +11,8 @@ import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.j
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {validateUserSearchTerm} from "../api/services/validation/validate-user-search-term.js"
 import {Component3WithShare, html, mixinStyles, property} from "../../../framework/component2/component2.js"
+import wrenchSvg from "../../../framework/icons/wrench.svg.js"
+import {makeUserStateGetter} from "./parts/make-user-state-getter.js"
 
 @mixinStyles(styles)
 export class XiomeManageUsers extends Component3WithShare<{
@@ -20,6 +22,11 @@ export class XiomeManageUsers extends Component3WithShare<{
 
 	@property()
 	private users: Op<User[]> = ops.ready([])
+
+	private getUserState = makeUserStateGetter({
+		getUsersOp: () => this.users,
+		requestUpdate: () => this.requestUpdate()
+	})
 
 	init() {
 		this.share.administrativeModel.loadPermissions()
@@ -45,13 +52,35 @@ export class XiomeManageUsers extends Component3WithShare<{
 			this.users = ops.ready([])
 	}
 
-	// TODO implement state for role assignment widget for each user
-	private userStates = new Map<string, {}>()
-
 	render() {
 		const {permissionsOp} = this.share.administrativeModel.getState()
 
-		function renderUser() {}
+		const renderUser = (user: User) => {
+			const state = this.getUserState(user.userId)
+			return html`
+				<li>
+					<div class=userinfo>
+						<xio-profile-card
+							.user=${user}
+							show-details
+						></xio-profile-card>
+						<div class=controls>
+							<xio-button
+								class=edit
+								?data-edit-mode=${!!state.editWidget}
+								@press=${state.toggleEditWidget}>
+									${wrenchSvg}
+							</xio-button>
+						</div>
+					</div>
+					${state.editWidget ? renderOp(permissionsOp, permissions => html`
+						<div class=editwidget>
+							role editing widget
+						</div>
+					`) : null}
+				</li>
+			`
+		}
 
 		return html`
 			<div class=container>
@@ -66,17 +95,7 @@ export class XiomeManageUsers extends Component3WithShare<{
 					${renderOp(this.users, users => users.length > 0
 						? html`
 							<ol class=userlist>
-								${users.map(user => html`
-									<li>
-										<xio-profile-card
-											.user=${user}
-											show-details
-										></xio-profile-card>
-										<div class=controls>
-											<xio-button class=edit></xio-button>
-										</div>
-									</li>
-								`)}
+								${users.map(renderUser)}
 							</ol>
 						`
 						: html`
