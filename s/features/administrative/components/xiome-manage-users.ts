@@ -4,15 +4,14 @@ import styles from "./xiome-manage-users.css.js"
 import {User} from "../../auth/types/user.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {debounce3} from "../../../toolbox/debounce2.js"
+import wrenchSvg from "../../../framework/icons/wrench.svg.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
+import {makeUserStates} from "./parts/make-user-states.js"
 import {makeAdministrativeModel} from "../models/administrative-model.js"
-import {whenOpReady} from "../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {validateUserSearchTerm} from "../api/services/validation/validate-user-search-term.js"
 import {Component3WithShare, html, mixinStyles, property} from "../../../framework/component2/component2.js"
-import wrenchSvg from "../../../framework/icons/wrench.svg.js"
-import {makeUserStateGetter} from "./parts/make-user-state-getter.js"
 
 @mixinStyles(styles)
 export class XiomeManageUsers extends Component3WithShare<{
@@ -23,9 +22,9 @@ export class XiomeManageUsers extends Component3WithShare<{
 	@property()
 	private users: Op<User[]> = ops.ready([])
 
-	private getUserState = makeUserStateGetter({
+	private userStates = makeUserStates({
 		getUsersOp: () => this.users,
-		requestUpdate: () => this.requestUpdate()
+		requestUpdate: () => this.requestUpdate(),
 	})
 
 	init() {
@@ -50,13 +49,14 @@ export class XiomeManageUsers extends Component3WithShare<{
 			})
 		else
 			this.users = ops.ready([])
+		this.userStates.cleanupObsoleteStates()
 	}
 
 	render() {
 		const {permissionsOp} = this.share.administrativeModel.getState()
 
 		const renderUser = (user: User) => {
-			const state = this.getUserState(user.userId)
+			const state = this.userStates.obtainStateForUser(user.userId)
 			return html`
 				<li>
 					<div class=userinfo>

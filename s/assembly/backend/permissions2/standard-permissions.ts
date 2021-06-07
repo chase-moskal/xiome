@@ -1,11 +1,12 @@
 
-import {asPermissions, mutable, immutable, has} from "./permissions-helpers.js"
+import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 
 const commonPrivileges = {
 	"read questions": "22M8Tcp2xMg9hN5YxKkbffXpNHScTCnPXSXztzRnPXbC9RsD",
 	"post questions": "75KrRyRPRnZZZKrh2zcwB98MCsZX9HCwg66qrzYTSprdqSTf",
 	"like questions": "8qpc7M8nGkscwcSSW8d6Z7FyKGsxB8W5PWt2PCzk2sSJGgYb",
 	"report questions": "86qRZfryfMWSfRhmkWkpq6pRYWCybmyNsD8RfxS7RpTqXN9J",
+	"search users": "6SgrbgZnP7WnSMPHTNWDsFxqfdbJqfdBprMsznBdZrmGs9Nz",
 }
 
 const commonPowerPrivileges = {
@@ -13,7 +14,6 @@ const commonPowerPrivileges = {
 	"customize permissions": "5Y5sBg2JtqqWnPXq5xXYRDB2cFygtc9StwN7GSZsBXzDBNNW",
 	"moderate questions": "5dHqPzNHGsYnbqkF252ZhWS25hwCGrBSS67RBpmfm7by9dGF",
 	"assign roles": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
-	"search users": "6SgrbgZnP7WnSMPHTNWDsFxqfdbJqfdBprMsznBdZrmGs9Nz",
 	"view stats": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
 }
 
@@ -42,10 +42,10 @@ export const universalPermissions = asPermissions({
 			public: true,
 			assignable: false,
 			hasPrivileges: {
+				...immutable(INACTIVE, commonPrivileges),
+				...immutable(INACTIVE, commonPowerPrivileges),
+				"banned": {active: false, immutable: true},
 				"read questions": {active: true, immutable: false},
-				"post questions": {active: false, immutable: true},
-				"like questions": {active: false, immutable: true},
-				"report questions": {active: false, immutable: true},
 			},
 		},
 		"authenticated": {
@@ -54,6 +54,8 @@ export const universalPermissions = asPermissions({
 			assignable: false,
 			hasPrivileges: {
 				...mutable(active, commonPrivileges),
+				...immutable(INACTIVE, commonPowerPrivileges),
+				"banned": {active: false, immutable: true},
 			},
 		},
 		"banned": {
@@ -61,6 +63,8 @@ export const universalPermissions = asPermissions({
 			public: true,
 			assignable: true,
 			hasPrivileges: {
+				...immutable(INACTIVE, commonPrivileges),
+				...immutable(INACTIVE, commonPowerPrivileges),
 				"banned": {active: true, immutable: true},
 			},
 		},
@@ -84,6 +88,27 @@ export const platformPermissions = asPermissions({
 	},
 	roles: {
 		...universalPermissions.roles,
+		"anonymous": {
+			...universalPermissions.roles.anonymous,
+			hasPrivileges: {
+				...universalPermissions.roles.anonymous.hasPrivileges,
+				...immutable(INACTIVE, platformPowerPrivileges),
+			}
+		},
+		"authenticated": {
+			...universalPermissions.roles.authenticated,
+			hasPrivileges: {
+				...universalPermissions.roles.authenticated.hasPrivileges,
+				...immutable(INACTIVE, platformPowerPrivileges),
+			}
+		},
+		"banned": {
+			...universalPermissions.roles.banned,
+			hasPrivileges: {
+				...universalPermissions.roles.banned.hasPrivileges,
+				...immutable(INACTIVE, platformPowerPrivileges),
+			}
+		},
 		"technician": {
 			...universalPermissions.roles.technician,
 			hasPrivileges: {
@@ -102,6 +127,27 @@ export const appPermissions = asPermissions({
 	},
 	roles: {
 		...universalPermissions.roles,
+		"anonymous": {
+			...universalPermissions.roles.anonymous,
+			hasPrivileges: {
+				...universalPermissions.roles.anonymous.hasPrivileges,
+				...immutable(INACTIVE, appPowerPrivileges),
+			}
+		},
+		"authenticated": {
+			...universalPermissions.roles.authenticated,
+			hasPrivileges: {
+				...universalPermissions.roles.authenticated.hasPrivileges,
+				...immutable(INACTIVE, appPowerPrivileges),
+			}
+		},
+		"banned": {
+			...universalPermissions.roles.banned,
+			hasPrivileges: {
+				...universalPermissions.roles.banned.hasPrivileges,
+				...immutable(INACTIVE, appPowerPrivileges),
+			}
+		},
 		"admin": {
 			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
 			public: true,

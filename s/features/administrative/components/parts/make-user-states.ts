@@ -2,7 +2,7 @@
 import {User} from "../../../auth/types/user.js"
 import {Op, ops} from "../../../../framework/ops.js"
 
-export function makeUserStateGetter({
+export function makeUserStates({
 		getUsersOp,
 		requestUpdate,
 	}: {
@@ -23,7 +23,7 @@ export function makeUserStateGetter({
 
 	const states = new Map<string, UserState>()
 
-	const removeStatesForUsersThatAreGone = () => {
+	function cleanupObsoleteStates() {
 		const userIdsPendingRemovalFromState: string[] = []
 		const usersOp = getUsersOp()
 		if (ops.ready(usersOp)) {
@@ -38,8 +38,7 @@ export function makeUserStateGetter({
 			states.delete(obsoleteUserId)
 	}
 
-	return (userId: string): UserState => {
-		removeStatesForUsersThatAreGone()
+	function obtainStateForUser(userId: string) {
 		let state: UserState = states.get(userId)
 		if (!state) {
 			const newState: UserState = {
@@ -55,5 +54,10 @@ export function makeUserStateGetter({
 			states.set(userId, state)
 		}
 		return state
+	}
+
+	return {
+		cleanupObsoleteStates,
+		obtainStateForUser,
 	}
 }
