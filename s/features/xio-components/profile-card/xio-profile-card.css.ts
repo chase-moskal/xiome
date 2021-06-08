@@ -16,7 +16,6 @@ export default css`
 xio-avatar {
 	flex: 0 0 auto;
 	margin-right: 0.4em;
-	border: 1px solid;
 	--avatar-size: var(--local-avatar-size);
 }
 

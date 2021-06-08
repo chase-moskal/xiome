@@ -8,7 +8,7 @@ export const profileFromRow = ({
 		nickname,
 	}: ProfileRow): Profile => ({
 
-	avatar,
 	tagline,
 	nickname,
+	avatar: JSON.parse(avatar),
 })

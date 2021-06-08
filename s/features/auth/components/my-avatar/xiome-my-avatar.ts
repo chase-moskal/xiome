@@ -8,9 +8,9 @@ import {Component2WithShare, html, mixinStyles} from "../../../../framework/comp
 export class XiomeMyAvatar extends Component2WithShare<{authModel: AuthModel}> {
 	render() {
 		const access = ops.value(this.share.authModel.access)
-		const user = access?.user
+		const avatarSpec = access?.user?.profile.avatar
 		return html`
-			<xio-avatar .user=${user}></xio-avatar>
+			<xio-avatar .spec=${avatarSpec}></xio-avatar>
 		`
 	}
 }

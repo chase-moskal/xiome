@@ -4,7 +4,7 @@ import {css} from "../../../framework/component2/component2.js"
 export default css`
 
 :host {
-	display: block;
+	display: inline-block;
 	width: var(--avatar-size, 3em);
 	height: var(--avatar-size, 3em);
 	border-radius: var(--avatar-border-radius, 0.3em);
@@ -16,8 +16,8 @@ export default css`
 	display: block;
 	width: 100%;
 	height: 100%;
-	color: #333;
-	background: #4448;
+	color: #444;
+	background: #888;
 }
 
 .avatar[data-logged-in] {

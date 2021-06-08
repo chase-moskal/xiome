@@ -104,9 +104,10 @@ export class XioProfileCard extends Component2 {
 		const {user, draftIsChanged} = this
 		if (!user)
 			return null
+		const avatarSpec = user.profile.avatar
 		return renderOp(this.#state.busy, () => html`
 			<div class=container ?data-readonly=${this.readonly}>
-				<xio-avatar .user=${user}></xio-avatar>
+				<xio-avatar .spec=${avatarSpec}></xio-avatar>
 				<div class=box>
 					<div class=textfields>
 						${renderText({

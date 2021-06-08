@@ -14,7 +14,7 @@ class XioPlayground extends Component2 {
 		profile: {
 			nickname: "Original Ostrich",
 			tagline: "i'm super cool",
-			avatar: "https://www.gravatar.com/avatar/a6263131d6ccdbfe1c7cee96da970eda?s=240",
+			avatar: undefined,
 		},
 		roles: [{
 			label: "premium",

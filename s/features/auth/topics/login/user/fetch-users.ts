@@ -1,6 +1,7 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 import {UserStats} from "../../../types/user-stats.js"
+import {profileFromRow} from "./profile/profile-from-row.js"
 import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {AuthTables} from "../../../tables/types/auth-tables.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions2/types/permissions-engine.js"
@@ -37,7 +38,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 
 		return {
 			userId,
-			profile,
+			profile: profileFromRow(profile),
 			roles,
 			stats,
 		}

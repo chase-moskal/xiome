@@ -28,7 +28,7 @@ export function makeAppModel({
 
 	async function getUserId() {
 		const access = await getAccess()
-		return access?.user.userId
+		return access?.user?.userId
 	}
 
 	async function appListOperation(promise: Promise<AppDisplay[]>) {
