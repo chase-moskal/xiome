@@ -67,6 +67,7 @@ export async function assembleModels({
 			permissionsModel.accessChange(access),
 			storeModel.accessChange(access),
 			questionsModel.accessChange(access),
+			administrativeModel.accessChange(access),
 		])
 	})
 

@@ -5,7 +5,9 @@ import {searchUsersParts} from "../api/services/search-users-parts.js"
 import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
 import {GetBusiness} from "../../../framework/api/types/get-business.js"
 import {roleAssignmentParts} from "../api/services/role-assignment-parts.js"
+import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 import {PermissionsDisplay} from "../../auth/topics/permissions/types/permissions-display.js"
+import {makeAllowanceChecker} from "../../../assembly/backend/permissions2/tools/make-allowance-checker.js"
 
 export function makeAdministrativeModel({
 		searchUsersService,
@@ -30,17 +32,32 @@ export function makeAdministrativeModel({
 		}),
 	})
 
+	let initializedInDom = false
+
+	function allowanceChecker() {
+		return makeAllowanceChecker(getState().access, appPermissions.privileges)
+	}
+
 	async function loadPermissions() {
-		await ops.operation({
-			promise: roleAssignmentService.fetchPermissions(),
-			setOp: actions.setPermissionsOp,
-		})
+		if (initializedInDom && allowanceChecker()("assign roles"))
+			await ops.operation({
+				promise: roleAssignmentService.fetchPermissions(),
+				setOp: actions.setPermissionsOp,
+			})
+	}
+
+	async function initialize() {
+		initializedInDom = true
+		await loadPermissions()
 	}
 
 	return {
 		getState,
 		onStateChange,
-		loadPermissions,
+		initialize,
+		get isAllowed() {
+			return allowanceChecker()
+		},
 		accessChange: (access: AccessPayload) => {
 			actions.setAccess(access)
 			loadPermissions()
