@@ -54,7 +54,10 @@ export class XiomeManageUsers extends Component3WithShare<{
 		this.share.administrativeModel.initialize()
 	}
 
-	private search = debounce3(
+	@property({type: String})
+	private searchText: string = ""
+
+	private debouncedSearchUsers = debounce3(
 		1000,
 		async(term: string) =>
 			term
@@ -62,17 +65,24 @@ export class XiomeManageUsers extends Component3WithShare<{
 				: []
 	)
 
-	private searchChange = async(event: ValueChangeEvent<string>) => {
-		const {value} = event.detail
+	async search() {
+		const {searchText} = this
 		this.userResults = ops.ready([])
-		if (value)
+
+		if (searchText)
 			await ops.operation({
-				promise: this.search(value),
+				promise: this.debouncedSearchUsers(searchText),
 				setOp: op => this.userResults = op,
 			})
 		else
 			this.userResults = ops.ready([])
+
 		this.userStates.cleanupObsoleteStates()
+	}
+
+	private searchChange = async(event: ValueChangeEvent<string>) => {
+		this.searchText = event.detail.value ?? ""
+		return this.search()
 	}
 
 	render() {
@@ -112,7 +122,8 @@ export class XiomeManageUsers extends Component3WithShare<{
 									const activeElement = <HTMLElement>document.activeElement
 									if (activeElement)
 										activeElement.blur()
-								}
+								},
+								search: () => this.search(),
 							})
 						)
 						: null}
@@ -125,6 +136,7 @@ export class XiomeManageUsers extends Component3WithShare<{
 
 				${allowed ? html`
 					<xio-text-input
+						.text=${this.searchText}
 						placeholder="search for users"
 						.validator=${validateUserSearchTerm}
 						@valuechange=${this.searchChange}

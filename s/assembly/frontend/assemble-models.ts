@@ -53,6 +53,7 @@ export async function assembleModels({
 
 	const administrativeModel = makeAdministrativeModel({
 		roleAssignmentService: remote.administrative.roleAssignmentService,
+		reauthorize: () => authModel.reauthorize(),
 	})
 
 	const questionsModel = makeQuestionsModel({

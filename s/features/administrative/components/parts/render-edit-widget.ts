@@ -41,6 +41,7 @@ export function renderEditWidget({
 		updateLocalUserResultsCache,
 		userResult: {user: {userId}, roleIds},
 		blur,
+		search,
 	}: {
 		userResult: UserResult
 		permissions: PermissionsDisplay
@@ -50,6 +51,7 @@ export function renderEditWidget({
 			revokeRole: (userId: string, roleId: string) => void
 		}
 		blur: () => void
+		search: () => Promise<any>
 	}) {
 
 	const rolesAssigned = sortAssignableFirst(
@@ -73,6 +75,11 @@ export function renderEditWidget({
 			return rolesUserHas.length > 0
 		})
 
+	async function ifChangingSelfThenReauthorize() {
+		if (userId === administrativeModel.getState().access?.user?.userId)
+			await administrativeModel.reauthorize()
+	}
+
 	async function clickToAssign({roleId}: RoleDisplay) {
 		await administrativeModel.assignRoleToUser({
 			userId,
@@ -83,6 +90,8 @@ export function renderEditWidget({
 		})
 		updateLocalUserResultsCache.assignRole(userId, roleId)
 		blur()
+		await ifChangingSelfThenReauthorize()
+		await search()
 	}
 
 	async function clickToRevoke({roleId}: RoleDisplay) {
@@ -92,6 +101,8 @@ export function renderEditWidget({
 		})
 		updateLocalUserResultsCache.revokeRole(userId, roleId)
 		blur()
+		await ifChangingSelfThenReauthorize()
+		await search()
 	}
 
 	return html`

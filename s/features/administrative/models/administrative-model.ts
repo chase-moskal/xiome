@@ -10,8 +10,10 @@ import {makeAllowanceChecker} from "../../../assembly/backend/permissions2/tools
 
 export function makeAdministrativeModel({
 		roleAssignmentService,
+		reauthorize,
 	}: {
 		roleAssignmentService: GetBusiness<typeof roleAssignmentParts>
+		reauthorize: () => Promise<void>
 	}) {
 
 	const {actions, getState, onStateChange} = happystate({
@@ -59,6 +61,7 @@ export function makeAdministrativeModel({
 			actions.setAccess(access)
 			loadPermissions()
 		},
+		reauthorize,
 		searchUsers: roleAssignmentService.searchUsers,
 		assignRoleToUser: roleAssignmentService.assignRoleToUser,
 		revokeRoleFromUser: roleAssignmentService.revokeRoleFromUser,
