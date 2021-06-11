@@ -91,16 +91,22 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.map(r2 => r2.roleId))
 
 		const allHardRoles: RoleRow[] = allRoleIds.map(roleId => {
-			const [label, role] = Object.entries(hardPermissions.roles)
+			const found = Object.entries(hardPermissions.roles)
 				.find(([,role]) => role.roleId === roleId)
-			return {
-				roleId,
-				label,
-				hard: true,
-				public: role.public,
-				assignable: role.assignable,
+			if (found) {
+				const [label, role] = found
+				return {
+					roleId,
+					label,
+					hard: true,
+					public: role.public,
+					assignable: role.assignable,
+				}
 			}
-		})
+			else {
+				return undefined
+			}
+		}).filter(r => !!r)
 
 		const allSoftRoles = await permissionsTables.role.read({
 			conditions: or(...allRoleIds.map(roleId => ({equal: {roleId}})))

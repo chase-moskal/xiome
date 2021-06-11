@@ -12,7 +12,6 @@ import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.j
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {validateUserSearchTerm} from "../api/services/validation/validate-user-search-term.js"
 import {Component3WithShare, html, mixinStyles, property} from "../../../framework/component2/component2.js"
-import {PermissionsDisplay} from "../../auth/topics/permissions/types/permissions-display.js"
 import {EditWidget} from "./types/edit-widget.js"
 import {renderEditWidget} from "./parts/render-edit-widget.js"
 
@@ -25,9 +24,30 @@ export class XiomeManageUsers extends Component3WithShare<{
 	@property()
 	private userResults: Op<UserResult[]> = ops.ready([])
 
+	private updateLocalUserResultsCache = {
+		assignRole: (userId: string, roleId: string) => {
+			if (!ops.ready(this.userResults)) throw new Error("error updating user cache")
+			const userResults = ops.value(this.userResults)
+			this.userResults = ops.ready(userResults.map(result =>
+				result.user.userId === userId
+					? {user: result.user, roleIds: [...result.roleIds, roleId]}
+					: result
+			))
+		},
+		revokeRole: (userId: string, roleId: string) => {
+			if (!ops.ready(this.userResults)) throw new Error("error updating user cache")
+			const userResults = ops.value(this.userResults)
+			this.userResults = ops.ready(userResults.map(result =>
+				result.user.userId === userId
+					? {user: result.user, roleIds: result.roleIds.filter(id => id !== roleId)}
+					: result
+			))
+		},
+	}
+
 	private userStates = makeUserStates({
 		getUserResultsOp: () => this.userResults,
-		requestUpdate: () => this.requestUpdate(),
+		rerender: () => this.requestUpdate(),
 	})
 
 	init() {
@@ -74,19 +94,25 @@ export class XiomeManageUsers extends Component3WithShare<{
 						<div class=controls>
 							<xio-button
 								class=edit
-								?data-edit-mode=${!!state.editWidget}
-								@press=${state.toggleEditWidget}>
+								?data-edit-mode=${state.editMode}
+								@press=${state.toggleEditMode}>
 									${wrenchSvg}
 							</xio-button>
 						</div>
 					</div>
-					${state.editWidget
+					${state.editMode
 						? renderOp(
 							permissionsOp,
 							permissions => renderEditWidget({
 								userResult,
 								permissions,
-								editWidget: <EditWidget>state.editWidget,
+								administrativeModel: this.share.administrativeModel,
+								updateLocalUserResultsCache: this.updateLocalUserResultsCache,
+								blur: () => {
+									const activeElement = <HTMLElement>document.activeElement
+									if (activeElement)
+										activeElement.blur()
+								}
 							})
 						)
 						: null}

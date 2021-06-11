@@ -60,5 +60,7 @@ export function makeAdministrativeModel({
 			loadPermissions()
 		},
 		searchUsers: roleAssignmentService.searchUsers,
+		assignRoleToUser: roleAssignmentService.assignRoleToUser,
+		revokeRoleFromUser: roleAssignmentService.revokeRoleFromUser,
 	}
 }

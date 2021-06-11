@@ -5,6 +5,7 @@ import {html} from "../../../../framework/component2/component2.js"
 import {PermissionsDisplay} from "../../../auth/topics/permissions/types/permissions-display.js"
 import {RoleDisplay} from "../../../auth/topics/permissions/types/role-display.js"
 import {PrivilegeDisplay} from "../../../auth/topics/permissions/types/privilege-display.js"
+import {makeAdministrativeModel} from "../../models/administrative-model.js"
 
 function sortAssignableFirst(roles: RoleDisplay[]) {
 	const assignable = roles.filter(role => role.assignable)
@@ -12,12 +13,13 @@ function sortAssignableFirst(roles: RoleDisplay[]) {
 	return [...assignable, ...notAssignable]
 }
 
-function renderRoleButton(role: RoleDisplay) {
+function renderRoleButton(role: RoleDisplay, onClick: (role: RoleDisplay) => any) {
 	return html`
 		<xio-button
 			?disabled=${!role.assignable}
 			title=${role.roleId}
-			data-role-id=${role.roleId}>
+			data-role-id=${role.roleId}
+			@press=${() => onClick(role)}>
 				${role.label}
 		</xio-button>
 	`
@@ -34,13 +36,20 @@ function renderPrivilegeUserHas(privilege: PrivilegeDisplay) {
 }
 
 export function renderEditWidget({
-		editWidget,
 		permissions,
-		userResult: {roleIds},
+		administrativeModel,
+		updateLocalUserResultsCache,
+		userResult: {user: {userId}, roleIds},
+		blur,
 	}: {
 		userResult: UserResult
-		editWidget: EditWidget
 		permissions: PermissionsDisplay
+		administrativeModel: ReturnType<typeof makeAdministrativeModel>
+		updateLocalUserResultsCache: {
+			assignRole: (userId: string, roleId: string) => void
+			revokeRole: (userId: string, roleId: string) => void
+		}
+		blur: () => void
 	}) {
 
 	const rolesAssigned = sortAssignableFirst(
@@ -62,18 +71,39 @@ export function renderEditWidget({
 			return rolesUserHas.length > 0
 		})
 
+	async function clickToAssign({roleId}: RoleDisplay) {
+		await administrativeModel.assignRoleToUser({
+			userId,
+			roleId,
+			isPublic: true,
+			timeframeEnd: undefined,
+			timeframeStart: undefined,
+		})
+		updateLocalUserResultsCache.assignRole(userId, roleId)
+		blur()
+	}
+
+	async function clickToRevoke({roleId}: RoleDisplay) {
+		await administrativeModel.revokeRoleFromUser({
+			userId,
+			roleId,
+		})
+		updateLocalUserResultsCache.revokeRole(userId, roleId)
+		blur()
+	}
+
 	return html`
 		<div class=editwidget>
 			<div class=available>
 				<header>roles available <small>(click to assign)</small></header>
 				<div>
-					${rolesAvailable.map(renderRoleButton)}
+					${rolesAvailable.map(role => renderRoleButton(role, clickToAssign))}
 				</div>
 			</div>
 			<div class=assigned>
 				<header>roles assigned <small>(click to revoke)</small></header>
 				<div>
-					${rolesAssigned.map(renderRoleButton)}
+					${rolesAssigned.map(role => renderRoleButton(role, clickToRevoke))}
 				</div>
 			</div>
 			<div class=allprivileges>

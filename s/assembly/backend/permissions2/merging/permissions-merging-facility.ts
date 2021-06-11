@@ -21,22 +21,26 @@ export function permissionsMergingFacility({isPlatform}: {
 	function getHardPrivilegeDetails(...roleIds: string[]) {
 		const results: HardPrivilegeDetail[] = []
 		for (const roleId of roleIds) {
-			const [,role] = Object.entries(hardPermissions.roles)
+			const found = Object.entries(hardPermissions.roles)
 				.find(([,role2]) => role2.roleId === roleId)
-			for (const [label, has] of Object.entries(role.hasPrivileges)) {
-				const privilegeId = hardPermissions.privileges[label]
-				const already = results.find(
-					detail =>
-						detail.roleId === roleId &&
-						detail.privilegeId === privilegeId
-				)
-				if (!already)
-					results.push({
-						privilegeId,
-						roleId,
-						active: has.active,
-						immutable: has.immutable,
-					})
+			if (found) {
+				const [,role] = found
+				for (const [label, has] of Object.entries(role.hasPrivileges)) {
+					const privilegeId = hardPermissions.privileges[label]
+					const already = results.find(
+						detail =>
+							detail.roleId === roleId &&
+							detail.privilegeId === privilegeId
+					)
+					if (!already) {
+						results.push({
+							privilegeId,
+							roleId,
+							active: has.active,
+							immutable: has.immutable,
+						})
+					}
+				}
 			}
 		}
 		return results

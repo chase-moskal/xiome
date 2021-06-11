@@ -2,32 +2,17 @@
 import {Op, ops} from "../../../../framework/ops.js"
 import {UserResult} from "../../api/types/user-result.js"
 import {EditWidget} from "../types/edit-widget.js"
-import {UserState} from "../types/user-state.js"
+import {UserState, UserState2} from "../types/user-state.js"
 
 export function makeUserStates({
 		getUserResultsOp,
-		requestUpdate,
+		rerender,
 	}: {
 		getUserResultsOp: () => Op<UserResult[]>
-		requestUpdate: () => void
+		rerender: () => void
 	}) {
 
-	function makeEditWidgetState(): EditWidget {
-		return {
-			roleChanges: {},
-			assignRole(roleId: string) {
-				console.log("SET ASSIGN", roleId)
-			},
-			revokeRole(roleId: string) {
-				console.log("SET REVOKE", roleId)
-			},
-			async save() {
-				console.log("SAVE ALL ASSIGNS AND REVOKES")
-			},
-		}
-	}
-
-	const states = new Map<string, UserState>()
+	const states = new Map<string, UserState2>()
 
 	function cleanupObsoleteStates() {
 		const userIdsPendingRemovalFromState: string[] = []
@@ -45,15 +30,13 @@ export function makeUserStates({
 	}
 
 	function obtainStateForUser(userId: string) {
-		let state: UserState = states.get(userId)
+		let state: UserState2 = states.get(userId)
 		if (!state) {
-			const newState: UserState = {
-				editWidget: false,
-				toggleEditWidget: () => {
-					newState.editWidget = newState.editWidget === false
-						? makeEditWidgetState()
-						: false
-					requestUpdate()
+			const newState: UserState2 = {
+				editMode: false,
+				toggleEditMode() {
+					newState.editMode = !newState.editMode
+					rerender()
 				},
 			}
 			state = newState
