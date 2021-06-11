@@ -1,5 +1,4 @@
 
-import {EditWidget} from "../types/edit-widget.js"
 import {UserResult} from "../../api/types/user-result.js"
 import {html} from "../../../../framework/component2/component2.js"
 import {PermissionsDisplay} from "../../../auth/topics/permissions/types/permissions-display.js"

@@ -1,8 +1,7 @@
 
+import {UserState2} from "../types/user-state.js"
 import {Op, ops} from "../../../../framework/ops.js"
 import {UserResult} from "../../api/types/user-result.js"
-import {EditWidget} from "../types/edit-widget.js"
-import {UserState, UserState2} from "../types/user-state.js"
 
 export function makeUserStates({
 		getUserResultsOp,
