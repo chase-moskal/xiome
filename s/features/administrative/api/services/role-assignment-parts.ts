@@ -47,7 +47,7 @@ export const roleAssignmentParts = ({
 			const profiles = await tables.user.profile.read({
 				limit: 100,
 				conditions: or(
-					{search: {userId: regex}},
+					{equal: {userId: term}},
 					{search: {nickname: regex}},
 					{search: {tagline: regex}},
 				),
