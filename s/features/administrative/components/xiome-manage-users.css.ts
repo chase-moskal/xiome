@@ -41,4 +41,45 @@ export default css`
 	--xio-button-hover-color: lime;
 }
 
+.editwidget {
+	padding: 0.5em;
+}
+
+.editwidget header {
+	padding: 0.5em;
+}
+
+.editwidget .manageroles {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.editwidget .manageroles > div {
+	flex: 1 1 auto;
+}
+
+.editwidget .manageroles > div > div {
+	padding: 0.5em;
+}
+
+.editwidget ul {
+	list-style: none;
+	padding: 0.5em;
+}
+
+.editwidget .allprivileges {
+	margin-top: 0.5em;
+}
+
+.editwidget .allprivileges li {
+	display: inline-block;
+	font-size: 0.75em;
+	padding: 0.1em 0.3em;
+	margin: 0.2em 0.1em;
+	border: 1px solid;
+	border-radius: 1em;
+}
+
 `

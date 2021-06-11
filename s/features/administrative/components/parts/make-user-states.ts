@@ -1,35 +1,41 @@
 
-import {User} from "../../../auth/types/user.js"
 import {Op, ops} from "../../../../framework/ops.js"
+import {UserResult} from "../../api/types/user-result.js"
+import {EditWidget} from "../types/edit-widget.js"
+import {UserState} from "../types/user-state.js"
 
 export function makeUserStates({
-		getUsersOp,
+		getUserResultsOp,
 		requestUpdate,
 	}: {
-		getUsersOp: () => Op<User[]>
+		getUserResultsOp: () => Op<UserResult[]>
 		requestUpdate: () => void
 	}) {
 
-	type EditWidget = {
-		roleChanges: {
-			[userId: string]: undefined | "assign" | "revoke"
+	function makeEditWidgetState(): EditWidget {
+		return {
+			roleChanges: {},
+			assignRole(roleId: string) {
+				console.log("SET ASSIGN", roleId)
+			},
+			revokeRole(roleId: string) {
+				console.log("SET REVOKE", roleId)
+			},
+			async save() {
+				console.log("SAVE ALL ASSIGNS AND REVOKES")
+			},
 		}
-	}
-
-	type UserState = {
-		editWidget: false | EditWidget
-		toggleEditWidget: () => void
 	}
 
 	const states = new Map<string, UserState>()
 
 	function cleanupObsoleteStates() {
 		const userIdsPendingRemovalFromState: string[] = []
-		const usersOp = getUsersOp()
-		if (ops.ready(usersOp)) {
-			const users = ops.value(usersOp)
+		const userResultsOp = getUserResultsOp()
+		if (ops.ready(userResultsOp)) {
+			const userResults = ops.value(userResultsOp)
 			for (const stateUserId of states.keys()) {
-				const userIsGone = !users.find(user => user.userId === stateUserId)
+				const userIsGone = !userResults.find(({user}) => user.userId === stateUserId)
 				if (userIsGone)
 					userIdsPendingRemovalFromState.push(stateUserId)
 			}
@@ -45,7 +51,7 @@ export function makeUserStates({
 				editWidget: false,
 				toggleEditWidget: () => {
 					newState.editWidget = newState.editWidget === false
-						? {roleChanges: {}}
+						? makeEditWidgetState()
 						: false
 					requestUpdate()
 				},

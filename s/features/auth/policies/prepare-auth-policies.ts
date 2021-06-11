@@ -74,24 +74,6 @@ export function prepareAuthPolicies({
 		},
 	}
 
-	// user who is allowed to search all users
-	const userSearcher: Policy<UserMeta, UserAuth> = {
-		processAuth: async(meta, request) => {
-			const auth = await user.processAuth(meta, request)
-			auth.checker.requirePrivilege("search users")
-			return auth
-		},
-	}
-
-	// user who is allowed to assign roles
-	const roleManipulator: Policy<UserMeta, UserAuth> = {
-		processAuth: async(meta, request) => {
-			const auth = await user.processAuth(meta, request)
-			auth.checker.requirePrivilege("assign roles")
-			return auth
-		},
-	}
-
 	// user who is allowed to view statistics
 	const statsViewer: Policy<UserMeta, UserAuth> = {
 		processAuth: async(meta, request) => {
@@ -144,8 +126,6 @@ export function prepareAuthPolicies({
 		user,
 		appOwner,
 		platformUser,
-		userSearcher,
-		roleManipulator,
 		userWhoManagesPermissions,
 	}
 }

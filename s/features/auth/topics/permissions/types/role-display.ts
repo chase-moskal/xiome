@@ -1,6 +1,4 @@
 
-export interface RoleDisplay {
-	roleId: string
-	label: string
-	hard: boolean
-}
+import {RoleRow} from "../../../tables/types/rows/role-row.js"
+
+export interface RoleDisplay extends RoleRow {}

@@ -7,7 +7,11 @@ import {PlatformConfig} from "../../../../assembly/backend/types/platform-config
 import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 import {initializeUserProfile} from "./user/profile/initialize-user-profile.js"
 
-const technicianRoleId = universalPermissions.roles.technician.roleId
+const standardRoleIds = {
+	anonymous: universalPermissions.roles.anonymous.roleId,
+	authenticated: universalPermissions.roles.authenticated.roleId,
+	technician: universalPermissions.roles.technician.roleId,
+}
 
 export async function assertEmailAccount({
 			rando, email, tables, config, generateNickname,
@@ -26,30 +30,50 @@ export async function assertEmailAccount({
 			const account = generateAccountRow({rando})
 			const {userId} = account
 
-			const operationCreatesAccount = tables.user.account.create(account)
+			const createAccount = tables.user.account.create(account)
 
-			const operationCreatesTechnicianUserRole = isTechnician
-				? tables.permissions.userHasRole.create({
-					userId,
-					hard: true,
-					public: true,
-					timeframeEnd: undefined,
-					roleId: technicianRoleId,
-					timeframeStart: undefined,
-				})
-				: Promise.resolve()
-
-			const operationInitializesProfile = initializeUserProfile({
+			const createProfile = initializeUserProfile({
 				userId,
 				email,
 				authTables: tables,
 				generateNickname,
 			})
 
+			const assignAnonymous = tables.permissions.userHasRole.create({
+				userId,
+				hard: true,
+				public: false,
+				roleId: standardRoleIds.anonymous,
+				timeframeEnd: undefined,
+				timeframeStart: undefined,
+			})
+
+			const assignAuthenticated = tables.permissions.userHasRole.create({
+				userId,
+				hard: true,
+				public: false,
+				roleId: standardRoleIds.authenticated,
+				timeframeEnd: undefined,
+				timeframeStart: undefined,
+			})
+
+			const assignTechnician = isTechnician
+				? tables.permissions.userHasRole.create({
+					userId,
+					hard: true,
+					public: true,
+					timeframeEnd: undefined,
+					roleId: standardRoleIds.technician,
+					timeframeStart: undefined,
+				})
+				: Promise.resolve()
+
 			await Promise.all([
-				operationCreatesAccount,
-				operationCreatesTechnicianUserRole,
-				operationInitializesProfile,
+				createAccount,
+				createProfile,
+				assignAnonymous,
+				assignAuthenticated,
+				assignTechnician,
 			])
 
 			return {email, userId}

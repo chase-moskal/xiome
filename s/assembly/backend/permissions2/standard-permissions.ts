@@ -6,15 +6,14 @@ const commonPrivileges = {
 	"post questions": "75KrRyRPRnZZZKrh2zcwB98MCsZX9HCwg66qrzYTSprdqSTf",
 	"like questions": "8qpc7M8nGkscwcSSW8d6Z7FyKGsxB8W5PWt2PCzk2sSJGgYb",
 	"report questions": "86qRZfryfMWSfRhmkWkpq6pRYWCybmyNsD8RfxS7RpTqXN9J",
-	"search users": "6SgrbgZnP7WnSMPHTNWDsFxqfdbJqfdBprMsznBdZrmGs9Nz",
 }
 
 const commonPowerPrivileges = {
 	"edit any profile": "2Z5M2n7pg9nRhwztgqztK6rBTPnyfr6fxk6T29sdfRTNGTqp",
 	"customize permissions": "5Y5sBg2JtqqWnPXq5xXYRDB2cFygtc9StwN7GSZsBXzDBNNW",
 	"moderate questions": "5dHqPzNHGsYnbqkF252ZhWS25hwCGrBSS67RBpmfm7by9dGF",
-	"assign roles": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
 	"view stats": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
+	"administrate user roles": "6HpSB2ZGcCsDGwHHmHKZCqYgpPxSg5kyw8PYtx5R2m6zBxmt",
 }
 
 const platformPowerPrivileges = {

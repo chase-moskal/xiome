@@ -1,7 +1,6 @@
 
 import {Op, ops} from "../../../framework/ops.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
-import {searchUsersParts} from "../api/services/search-users-parts.js"
 import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
 import {GetBusiness} from "../../../framework/api/types/get-business.js"
 import {roleAssignmentParts} from "../api/services/role-assignment-parts.js"
@@ -10,10 +9,8 @@ import {PermissionsDisplay} from "../../auth/topics/permissions/types/permission
 import {makeAllowanceChecker} from "../../../assembly/backend/permissions2/tools/make-allowance-checker.js"
 
 export function makeAdministrativeModel({
-		searchUsersService,
 		roleAssignmentService,
 	}: {
-		searchUsersService: GetBusiness<typeof searchUsersParts>
 		roleAssignmentService: GetBusiness<typeof roleAssignmentParts>
 	}) {
 
@@ -39,7 +36,7 @@ export function makeAdministrativeModel({
 	}
 
 	async function loadPermissions() {
-		if (initializedInDom && allowanceChecker()("assign roles"))
+		if (initializedInDom && allowanceChecker()("administrate user roles"))
 			await ops.operation({
 				promise: roleAssignmentService.fetchPermissions(),
 				setOp: actions.setPermissionsOp,
@@ -62,6 +59,6 @@ export function makeAdministrativeModel({
 			actions.setAccess(access)
 			loadPermissions()
 		},
-		searchForUsers: searchUsersService.searchForUsers,
+		searchUsers: roleAssignmentService.searchUsers,
 	}
 }

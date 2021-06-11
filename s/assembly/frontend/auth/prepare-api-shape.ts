@@ -71,12 +71,9 @@ export function prepareApiShape({appId, storage}: {
 			roleAssignmentService: {
 				[_augment]: standardAugment,
 				fetchPermissions: true,
+				searchUsers: true,
 				assignRoleToUser: true,
 				revokeRoleFromUser: true,
-			},
-			searchUsersService: {
-				[_augment]: standardAugment,
-				searchForUsers: true,
 			},
 		},
 		store: {

@@ -2,15 +2,19 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 
 import {validateId} from "./validation/validate-id.js"
+import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
 import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
+import {fetchUsers} from "../../../auth/topics/login/user/fetch-users.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
 import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
+import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchPermissionsDisplay} from "../../../auth/topics/permissions/fetch-permissions-display.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const roleAssignmentParts = ({
 		config,
@@ -19,7 +23,7 @@ export const roleAssignmentParts = ({
 
 	policy: async(meta, request) => {
 		const auth = await authPolicies.user.processAuth(meta, request)
-		auth.checker.requirePrivilege("assign roles")
+		auth.checker.requirePrivilege("administrate user roles")
 		return auth
 	},
 
@@ -31,6 +35,49 @@ export const roleAssignmentParts = ({
 				access,
 				permissionsTables: tables.permissions,
 			})
+		},
+
+		async searchUsers({tables, access}, options: {term: string}) {
+			const {term} = runValidation(options, schema({
+				term: validateUserSearchTerm,
+			}))
+
+			const regex = new RegExp(escapeRegex(term), "i")
+
+			const profiles = await tables.user.profile.read({
+				limit: 100,
+				conditions: or(
+					{search: {userId: regex}},
+					{search: {nickname: regex}},
+					{search: {tagline: regex}},
+				),
+			})
+
+			const userIds = profiles.map(profile => profile.userId)
+
+			const permissionsEngine = makePermissionsEngine({
+				isPlatform: access.appId === config.platform.appDetails.appId,
+				permissionsTables: tables.permissions,
+			})
+
+			const users = await fetchUsers({
+				userIds,
+				permissionsEngine,
+				authTables: tables,
+			})
+
+			const usersAndRoles = await permissionsEngine.getUsersHaveRoles({
+				userIds: users.map(user => user.userId),
+				onlyGetPublicRoles: false,
+			})
+
+			return users.map(user => ({
+				user,
+				roleIds: usersAndRoles
+					.find(u => u.userId === user.userId)
+					.userHasRoles
+					.map(role => role.roleId)
+			}))
 		},
 
 		async assignRoleToUser(

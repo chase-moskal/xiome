@@ -52,7 +52,6 @@ export async function assembleModels({
 	})
 
 	const administrativeModel = makeAdministrativeModel({
-		searchUsersService: remote.administrative.searchUsersService,
 		roleAssignmentService: remote.administrative.roleAssignmentService,
 	})
 

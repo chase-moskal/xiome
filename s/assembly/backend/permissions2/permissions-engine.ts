@@ -2,7 +2,6 @@
 import {merge} from "../../../toolbox/merge.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
-import {universalPermissions} from "./standard-permissions.js"
 import {RoleRow} from "../../../features/auth/tables/types/rows/role-row.js"
 import {PublicUserRole} from "../../../features/auth/types/public-user-role.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
@@ -69,7 +68,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.find(r => r.userId === userId)
 				.userHasRoles
 				.map(r => r.roleId)
-			roleIds.push(universalPermissions.roles.authenticated.roleId)
+			// roleIds.push(universalPermissions.roles.authenticated.roleId)
 			const hard = getHardPrivilegeDetails(...roleIds)
 			const soft = roleIds
 				.flatMap(roleId => allRolesHavePrivileges.filter(p => p.roleId === roleId))
@@ -182,6 +181,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 	}
 
 	return {
+		getUsersHaveRoles,
 		getAnonymousPrivileges,
 		getPrivilegesForUsers,
 		getPublicRolesForUsers,
