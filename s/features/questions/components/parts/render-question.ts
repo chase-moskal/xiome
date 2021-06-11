@@ -69,7 +69,7 @@ export function renderQuestion({
 					</button>
 				</div>
 				<div class=question-area>
-					<xio-profile-card .user=${author}></xio-profile-card>
+					<xio-profile-card .user=${author} show-details></xio-profile-card>
 					${renderQuestionBody({
 						editable: false,
 						content: question.content,

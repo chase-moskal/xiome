@@ -17,6 +17,7 @@ export const questionsModerationParts = (
 	policy: async(meta, request) => {
 		const auth = await authenticatedQuestionsPolicy(options)(meta, request)
 		auth.checker.requirePrivilege("moderate questions")
+		auth.checker.requireNotHavePrivilege("banned")
 		return auth
 	},
 

@@ -161,10 +161,13 @@ export class XiomeQuestions extends Component2WithShare<{
 
 	private renderQuestionsBoard() {
 		const boardOp = this.#boardModel.getBoardOp()
+		const numberOfQuestions = this.#boardModel.getQuestions().length
 		return renderOp(boardOp, () => html`
 			${this.renderQuestionsModerationPanel()}
 			${this.renderQuestionsEditor()}
-			${this.renderQuestionsList()}
+			${numberOfQuestions > 0
+				? this.renderQuestionsList()
+				: html`<slot name=empty><p>Be the first to post a question!</p></slot>`}
 		`)
 	}
 

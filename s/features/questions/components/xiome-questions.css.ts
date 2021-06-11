@@ -25,6 +25,11 @@ export default css`
 	color: red;
 }
 
+slot[name="empty"] {
+	display: block;
+	margin-top: 1em;
+}
+
 .questionslist {
 	list-style: none;
 }

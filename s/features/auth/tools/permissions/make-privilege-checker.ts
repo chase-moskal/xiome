@@ -18,8 +18,14 @@ export function makePrivilegeChecker<xPrivileges extends {[key: string]: string}
 			throw new ApiError(403, `forbidden; privilege required "${key}"`)
 	}
 
+	function requireNotHavePrivilege(key: keyof xPrivileges) {
+		if (hasPrivilege(key))
+			throw new ApiError(403, `forbidden: must not have privilege "${key}"`)
+	}
+
 	return {
 		hasPrivilege,
 		requirePrivilege,
+		requireNotHavePrivilege,
 	}
 }

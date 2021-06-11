@@ -12,6 +12,7 @@ import {validateQuestionDraft} from "./validation/validate-question-draft.js"
 import {throwProblems} from "../../../../toolbox/topic-validation/throw-problems.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 import {requireUserCanEditQuestion} from "./authorizers/require-user-can-edit-question.js"
+import {ApiError} from "renraku/x/api/api-error"
 
 export const questionsPostingParts = (
 		options: QuestionsApiOptions
@@ -23,6 +24,7 @@ export const questionsPostingParts = (
 	policy: async(meta, request) => {
 		const auth = await authenticatedQuestionsPolicy(options)(meta, request)
 		auth.checker.requirePrivilege("post questions")
+		auth.checker.requireNotHavePrivilege("banned")
 		return auth
 	},
 
