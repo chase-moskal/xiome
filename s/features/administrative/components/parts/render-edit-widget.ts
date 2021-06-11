@@ -64,18 +64,16 @@ export function renderEditWidget({
 
 	return html`
 		<div class=editwidget>
-			<div class=manageroles>
-				<div class=assigned>
-					<header>roles assigned</header>
-					<div>
-						${rolesAssigned.map(renderRoleButton)}
-					</div>
+			<div class=available>
+				<header>roles available <small>(click to assign)</small></header>
+				<div>
+					${rolesAvailable.map(renderRoleButton)}
 				</div>
-				<div class=available>
-					<header>roles available</header>
-					<div>
-						${rolesAvailable.map(renderRoleButton)}
-					</div>
+			</div>
+			<div class=assigned>
+				<header>roles assigned <small>(click to revoke)</small></header>
+				<div>
+					${rolesAssigned.map(renderRoleButton)}
 				</div>
 			</div>
 			<div class=allprivileges>

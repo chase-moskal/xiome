@@ -41,36 +41,21 @@ export default css`
 	--xio-button-hover-color: lime;
 }
 
-.editwidget {
-	padding: 0.5em;
+.editwidget > div {
+	margin-top: 1em;
 }
 
-.editwidget header {
-	padding: 0.5em;
+.editwidget header + * {
+	margin-top: 0.25em;
 }
 
-.editwidget .manageroles {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	width: 100%;
-}
-
-.editwidget .manageroles > div {
-	flex: 1 1 auto;
-}
-
-.editwidget .manageroles > div > div {
-	padding: 0.5em;
+.editwidget header small {
+	font-size: inherit;
+	opacity: 0.6;
 }
 
 .editwidget ul {
 	list-style: none;
-	padding: 0.5em;
-}
-
-.editwidget .allprivileges {
-	margin-top: 0.5em;
 }
 
 .editwidget .allprivileges li {
