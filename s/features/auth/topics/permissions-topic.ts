@@ -41,7 +41,10 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 		if (role.hard)
 			throw new ApiError(400, "cannot delete hard role")
 
-		await tables.permissions.role.delete(find({roleId}))
+		await Promise.all([
+			tables.permissions.userHasRole.delete(find({roleId})),
+			tables.permissions.role.delete(find({roleId})),
+		])
 	},
 
 	async assignPrivilege({tables}, {roleId, privilegeId}: {

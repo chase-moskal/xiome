@@ -55,11 +55,13 @@ export function renderEditWidget({
 	const rolesAssigned = sortAssignableFirst(
 		roleIds
 			.map(id => permissions.roles.find(role => role.roleId === id))
+			.filter(id => !!id)
 	)
 
 	const rolesAvailable = sortAssignableFirst(
 		permissions.roles
 			.filter(role => !roleIds.includes(role.roleId))
+			.filter(id => !!id)
 	)
 
 	const privilegesUserHas = permissions.privileges

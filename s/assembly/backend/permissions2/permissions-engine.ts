@@ -36,10 +36,23 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 
 		const isPublic = (row: {public: boolean}) => row.public
 		const all = <X>(x: X) => x
-		
-		const usersHaveRoles = await permissionsTables.userHasRole.read({
-			conditions: or(...userIds.map(userId => ({equal: {userId}})))
-		})
+
+		const usersHaveRoles = await (async() => {
+			const usersHaveRolesRaw = await permissionsTables.userHasRole.read({
+				conditions: or(...userIds.map(userId => ({equal: {userId}})))
+			})
+			const roleIds = usersHaveRolesRaw.map(u => u.roleId)
+			const roles = await permissionsTables.role.read({
+				conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
+			})
+			const roleIdsThatActuallyExist = [
+				...roles.map(r => r.roleId),
+				...Object.entries(hardPermissions.roles)
+					.map(([,role]) => role.roleId),
+			]
+			return usersHaveRolesRaw
+				.filter(u => roleIdsThatActuallyExist.includes(u.roleId))
+		})()
 
 		return userIds.map(userId => {
 			const raw = usersHaveRoles.filter(r => r.userId === userId)
@@ -179,12 +192,12 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			.privileges
 	}
 
-	async function getUserPublicRoles(userId: string) {
-		const result = await getPublicRolesForUsers([userId])
-		return result
-			.find(r => r.userId === userId)
-			.publicUserRoles
-	}
+	// async function getUserPublicRoles(userId: string) {
+	// 	const result = await getPublicRolesForUsers([userId])
+	// 	return result
+	// 		.find(r => r.userId === userId)
+	// 		.publicUserRoles
+	// }
 
 	return {
 		getUsersHaveRoles,
@@ -193,6 +206,5 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		getPublicRolesForUsers,
 		getPermissionsDisplay,
 		getUserPrivileges,
-		getUserPublicRoles,
 	}
 }
