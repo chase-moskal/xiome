@@ -36,6 +36,10 @@ export default css`
 	flex: 1 1 auto;
 }
 
+.userinfo .controls {
+	margin-left: 1em;
+}
+
 .userinfo .controls .edit[data-edit-mode] {
 	color: lime;
 	--xio-button-hover-color: lime;

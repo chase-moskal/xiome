@@ -28,6 +28,7 @@ xio-avatar {
 }
 
 .textfields {
+	flex: 1 1 auto;
 	margin-right: 1em;
 }
 
