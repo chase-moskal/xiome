@@ -59,7 +59,7 @@ export class XiomeBankConnect extends Component2WithShare<{
 	private renderDetails(details: StripeAccountDetails) {
 		return html`
 			<p>stripe email: ${details.email}</p>
-			<p>stripe account id: ${details.stripeAccountId}</p>
+			<p>stripe account id: <xio-id id=${details.stripeAccountId}></xio-id></p>
 			<p>details submitted: ${details.details_submitted}</p>
 			<p>payouts enabled: ${details.payouts_enabled}</p>
 			${this.renderCreateOrEditAccount()}

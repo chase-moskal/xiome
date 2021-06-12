@@ -91,16 +91,13 @@ export default css`
 }
 
 .twoside > div {
-	flex: 1 0 50%;
+	max-width: 100%;
+	flex: 1 0 16em;
 	padding-bottom: 1em;
 }
 
 .twoside > div:nth-child(1) {
 	padding-right: 1rem;
-}
-
-.app-editor {
-	min-width: 15em;
 }
 
 .app-form > * + * {

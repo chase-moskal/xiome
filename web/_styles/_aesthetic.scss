@@ -20,7 +20,7 @@ html {
 
 xiome-app-manager {
 	&::part(appeditor-appform-xiotextinput) {
-		--width: 100%;
+		width: 100%;
 	}
 	&::part(xiotextinput-problems) {
 		font: 0.8em "Play", sans-serif;

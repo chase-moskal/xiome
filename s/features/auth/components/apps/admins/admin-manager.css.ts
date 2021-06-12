@@ -16,9 +16,8 @@ export default css`
 	flex: 1 1 auto;
 }
 
-
 .adminmanager .adminassigner > xio-text-input {
-	--width: 100%;
+	width: 100%;
 }
 
 .adminmanager .adminassigner > xio-text-input::part(problems) {

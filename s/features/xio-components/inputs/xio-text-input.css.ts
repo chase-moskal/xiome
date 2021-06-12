@@ -6,8 +6,8 @@ export default css`
 
 :host {
 	display: block;
+	width: 100%;
 	max-width: 48rem;
-	--width: var(--xio-text-input-width, 24rem);
 	--height: var(--xio-text-input-height, 5rem);
 	--pad: var(--xio-text-input-pad, 0.2em);
 	--font: var(--xio-text-input-font, inherit);
@@ -49,15 +49,14 @@ slot {
 
 .inputbox {
 	display: block;
-	width: 100%;
-	max-width: var(--width);
+	/* max-width: var(--width); */
 	position: relative;
-	flex: 0 1 auto;
+	flex: 1 1 auto;
 }
 
 :host([textarea]) .inputbox {
 	flex: 1 1 auto;
-	max-width: unset;
+	/* max-width: unset; */
 }
 
 .inputbox svg {
@@ -79,6 +78,7 @@ slot {
 }
 
 #textinput {
+	min-width: 1em;
 	width: 100%;
 	font: var(--font);
 	padding: var(--pad);
