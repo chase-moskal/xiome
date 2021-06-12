@@ -49,7 +49,7 @@ slot {
 
 .inputbox {
 	display: block;
-	/* width: 100%; */
+	width: 100%;
 	max-width: var(--width);
 	position: relative;
 	flex: 0 1 auto;
