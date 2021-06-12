@@ -10,7 +10,7 @@ export class XiomeMyAvatar extends Component2WithShare<{authModel: AuthModel}> {
 		const access = ops.value(this.share.authModel.access)
 		const avatarSpec = access?.user?.profile.avatar
 		return html`
-			<xio-avatar .spec=${avatarSpec}></xio-avatar>
+			<xio-avatar .spec=${avatarSpec} part="xio-avatar"></xio-avatar>
 		`
 	}
 }

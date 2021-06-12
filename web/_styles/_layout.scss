@@ -27,6 +27,9 @@ html {
 		xiome-login-panel::part(buttonbar) {
 			text-align: right;
 		}
+		xiome-my-avatar::part(xio-avatar) {
+			display: block;
+		}
 	}
 }
 
@@ -56,6 +59,7 @@ html {
 	nav {
 		display: flex;
 		flex-direction: row;
+		flex-wrap: wrap;
 		margin-left: -0.3em;
 		> a {
 			padding: 0.1em 0.3em;
