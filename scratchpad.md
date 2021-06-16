@@ -8,12 +8,12 @@
 
 new concerns
 
-- [ ] we need configurable permissions for anons. anonymous must be a system role
+- [x] we need configurable permissions for anons. anonymous must be a system role
   - merge app and access tokens?
 
-- [ ] renraku: validation of api method arguments? darkvalley?
+- [x] renraku: validation of api method arguments? darkvalley?
 
-- [ ] fix gross generate nicknames dependency on fetchUser
+- [x] fix gross generate nicknames dependency on fetchUser
 
 systemic
 
@@ -24,13 +24,13 @@ systemic
 - [ ] dbby binary data type
   - not sure if worth?
 
-- [ ] renames
+- [o] renames
   - `bankModel` => `storeSettingsModel`
   - `stripeConnectTopic` => `storeSettingsTopic`
 
 - [x] fix share2 typings
 
-- [ ] refactor auth goblin
+- [x] refactor auth goblin
   - replace with new 'auth-mediator'
   - reconsider token store and broadcast channel implementation
 
@@ -47,7 +47,7 @@ feature dev for launch
 
 - [x] store status togglability
 
-- [ ] prepare subscription plans for launch
+- [x] prepare subscription plans for launch
   - availability toggle
   - just remove deactivation/deletion for now
 
@@ -55,7 +55,7 @@ feature dev for launch
   - design
   - implement
 
-- [ ] questions board
+- [x] questions board
   - crude port from metalshop
   - fully integrate new permissions
 
@@ -67,10 +67,10 @@ feature dev for launch
   - set stripe webhook testing
   - implement all webhook cycles
 
-- [ ] finish permissions ui
+- [x] finish permissions ui
   - delete custom roles
 
-- [ ] admin user search and edit roles
+- [x] admin user search and edit roles
 
 - [ ] technician can disable an entire community/app
 
