@@ -1,4 +1,42 @@
 
+## priorities for alpha launch
+
+website
+
+- [ ] refine about page
+- [ ] rework alpha note
+- [ ] components listing
+
+systemic
+
+- [ ] mechanism to mark some api features as development-only
+  - dev-marked features work in local testing
+  - dev-marked features work on staging cluster
+  - dev-marked features are disabled on production cluster
+
+- [ ] dbby binary data type
+  - not sure if worth?
+
+deployment
+
+- [ ] local dev
+  - clientside backend for rapid testing
+  - can run local node app
+
+- [ ] staging deployment
+  - github action, each master commit
+  - to kubernetes cluster at https://staging.xiome.io/
+  - use fake stripe testing keys
+
+- [ ] production deployment
+  - github action, each v tag
+  - to kubernetes cluster at https://xiome.io/
+  - use real secret keys
+
+
+
+--------
+
 ## notes
 
 - [x] autowatcher ingest new observables as they are set
