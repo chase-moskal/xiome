@@ -4,9 +4,9 @@ export interface PlatformConfig {
 		link: string
 		database: string
 	}
-	google: {
-		clientId: string
-	}
+	// google: {
+	// 	clientId: string
+	// }
 	platform: {
 		appDetails: {
 			appId: string

@@ -7,21 +7,36 @@ website
 - [ ] rework alpha note
 - [ ] components listing
 
+refactors
+
+- [ ] rename "auth" to core
+  - possibly even split it up into different concerns
+
+- [ ] consider revised base41 format
+  - excludes "B" character, looks too similar to "8"
+
 systemic
 
-- [ ] mechanism to mark some api features as development-only
+- [x] mechanism to mark some api features as development-only
   - dev-marked features work in local testing
   - dev-marked features work on staging cluster
   - dev-marked features are disabled on production cluster
+  - DONE -- production script simply doesn't expose all the apis
 
 - [ ] dbby binary data type
   - not sure if worth?
 
 deployment
 
-- [ ] local dev
+- [x] local dev in mock mode
   - clientside backend for rapid testing
   - can run local node app
+
+- [ ] prerequisite setup
+  - prepare server.ts
+  - sendgrid account
+  - k8s clusters
+  - 
 
 - [ ] staging deployment
   - github action, each master commit

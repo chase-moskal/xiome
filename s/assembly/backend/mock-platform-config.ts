@@ -29,9 +29,9 @@ export function mockPlatformConfig({
 				origins: [new URL(platformHome).origin],
 			},
 		},
-		google: {
-			clientId: "mock-google-token",
-		},
+		// google: {
+		// 	clientId: "mock-google-token",
+		// },
 		stripe: {
 			apiKey: "pk_test_NEDtuftU6ziXyM4Y6PDrifPl00g6q5efYe",
 			secret: "sk_test_Pj55B8JGeQyJeMxhcRc3ljEs00V9zwM3FA",

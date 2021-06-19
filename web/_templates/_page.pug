@@ -14,11 +14,6 @@ head
 
 	if debug
 		xiome-config(mock="platform")
-		//- xiome-config(
-		//- 	app="96bncPFrDyzJtXqPzHcmDTs7CFSc2SHkgTdZR5wHXCNST25H"
-		//- 	api="http://localhost:4999"
-		//- 	platform="http://localhost:5000/x"
-		//- )
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
