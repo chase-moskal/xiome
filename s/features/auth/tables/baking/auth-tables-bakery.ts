@@ -1,12 +1,12 @@
 
 import {AuthTables} from "../types/auth-tables.js"
 import {bakeryForAppTables} from "./bespoke/bakery-for-app-tables.js"
-import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {prepareNamespacerForTables} from "./generic/prepare-namespacer-for-tables.js"
 
 export function authTablesBakery({config, tables}: {
-			config: PlatformConfig
-			tables: AuthTables
+		tables: AuthTables
+		config: SecretConfig
 		}) {
 
 	const bakeAppTables = bakeryForAppTables({

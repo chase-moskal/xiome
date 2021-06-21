@@ -4,10 +4,10 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {StoreStatus} from "./types/store-status.js"
 import {determineStoreStatus} from "./utils/determine-store-status.js"
 import {ProspectAuth} from "../api/policies/types/contexts/prosect-auth.js"
-import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
+import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 
 export const statusCheckerTopic = ({config}: {
-		config: PlatformConfig
+		config: SecretConfig
 	}) => asTopic<ProspectAuth>()({
 
 	async getStoreStatus({tables, access, getStripeAccount}) {

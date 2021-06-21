@@ -3,7 +3,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {assertEmailAccount} from "../login/assert-email-account.js"
-import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 const adminRoleId = appPermissions.roles.admin.roleId
@@ -13,7 +13,7 @@ export async function appointAdmin({
 	}: {
 		rando: Rando
 		email: string
-		config: PlatformConfig
+		config: SecretConfig
 		tablesForApp: AuthTables
 		generateNickname: () => string
 	}) {

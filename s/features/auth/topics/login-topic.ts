@@ -1,5 +1,4 @@
 
-
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {AnonAuth} from "../policies/types/anon-auth.js"
@@ -32,10 +31,10 @@ export const loginTopic = ({
 			appLabel: appRow.label,
 			to: email,
 			platformLink: config.platform.appDetails.home,
-			lifespan: config.tokens.lifespans.login,
+			lifespan: config.crypto.tokenLifespans.login,
 			loginToken: await signToken<LoginPayload>({
 				payload: {userId},
-				lifespan: config.tokens.lifespans.login,
+				lifespan: config.crypto.tokenLifespans.login,
 			}),
 		})
 	},
@@ -51,7 +50,7 @@ export const loginTopic = ({
 			scope: {core: true},
 			appId: access.appId,
 			origins: access.origins,
-			lifespans: config.tokens.lifespans,
+			lifespans: config.crypto.tokenLifespans,
 			permissionsEngine: makePermissionsEngine({
 				isPlatform: access.appId === config.platform.appDetails.appId,
 				permissionsTables: tables.permissions,

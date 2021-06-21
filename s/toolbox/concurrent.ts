@@ -5,7 +5,7 @@ export type PromisedProps<T> = {[P in keyof T]: T[P] | Promise<T[P]>}
 
 export async function concurrent<T>(obj: T): Promise<AwaitProps<T>> {
 	const keys = Object.keys(obj)
-	const awaitables = keys.map(key => obj[key])
+	const awaitables = Object.values(obj)
 	const values = await Promise.all(awaitables)
 	const result = {}
 	keys.forEach((key, i) => result[key] = values[i])

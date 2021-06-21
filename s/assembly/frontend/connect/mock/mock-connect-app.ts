@@ -3,7 +3,7 @@ import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
-import {makeEmailController} from "./common/email-controller.js"
+import {makeEmailEnabler} from "./common/email-enabler.js"
 import {mockStandardBackend} from "./common/mock-standard-backend.js"
 import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
@@ -19,14 +19,14 @@ export async function mockConnectApp({
 		sendEmail: SendEmail
 	}) {
 
-	const emailController = makeEmailController(sendEmail)
-	emailController.disableEmails()
+	const emailEnabler = makeEmailEnabler(sendEmail)
+	emailEnabler.disableEmails()
 
 	const apiLink = apiOrigin + "/"
 	const {backend} = await mockStandardBackend({
 		platformHome,
 		tableStorage: storage,
-		sendEmail: emailController.sendEmail,
+		sendEmail: emailEnabler.sendEmail,
 	})
 
 	const ownerEmail = "creative@xiome.io"
@@ -42,7 +42,7 @@ export async function mockConnectApp({
 	}
 	console.log(`mock: app owner email "${ownerEmail}"`)
 
-	emailController.enableEmails()
+	emailEnabler.enableEmails()
 
 	const {remote, authMediator} = await mockWiredRemote({
 		appId,

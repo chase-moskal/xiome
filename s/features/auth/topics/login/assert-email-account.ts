@@ -3,9 +3,9 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
-import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 import {initializeUserProfile} from "./user/profile/initialize-user-profile.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
+import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 const standardRoleIds = {
 	anonymous: universalPermissions.roles.anonymous.roleId,
@@ -14,14 +14,14 @@ const standardRoleIds = {
 }
 
 export async function assertEmailAccount({
-			rando, email, tables, config, generateNickname,
-		}: {
-			rando: Rando
-			email: string
-			tables: AuthTables
-			config: PlatformConfig
-			generateNickname: () => string
-		}) {
+		rando, email, tables, config, generateNickname,
+	}: {
+		rando: Rando
+		email: string
+		tables: AuthTables
+		config: SecretConfig
+		generateNickname: () => string
+	}) {
 
 	const {userId} = await tables.user.accountViaEmail.assert({
 		...find({email}),

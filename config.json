@@ -1,0 +1,31 @@
+{
+	"server": {
+		"port": 4999
+	},
+	"platform": {
+		"from": "hello@xiome.io",
+		"technician": {
+			"email": "chasemoskal@gmail.com"
+		},
+		"appDetails": {
+			"appId": "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
+			"label": "Xiome Cloud",
+			"home": "https://xiome.io/",
+			"origins": [
+				"https://xiome.io"
+			]
+		}
+	},
+	"email": "mock-console",
+	"database": "mock-memory",
+	"stripe": "mock-mode",
+	"crypto": {
+		"keys": "mock-mode",
+		"tokenLifespans": {
+			"login": 300000,
+			"refresh": 155520000000,
+			"access": 300000,
+			"external": 300000
+		}
+	}
+}

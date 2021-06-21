@@ -3,17 +3,6 @@ export interface SecretConfig {
 	server: {
 		port: number
 	}
-	email: "mock-console" | {
-		sendgrid: {
-			apiKey: string
-		}
-	}
-	database: "mock-file" | "mock-memory" | {
-		mongo: {
-			link: string
-			db: string
-		}
-	}
 	platform: {
 		from: string
 		technician: {
@@ -24,6 +13,17 @@ export interface SecretConfig {
 			label: string
 			home: string
 			origins: string[]
+		}
+	}
+	email: "mock-console" | {
+		sendgrid: {
+			apiKey: string
+		}
+	}
+	database: "mock-file" | "mock-memory" | "mock-localstorage" | {
+		mongo: {
+			link: string
+			db: string
 		}
 	}
 	stripe: "mock-mode" | {

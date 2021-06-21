@@ -18,7 +18,6 @@ export const greenTopic = ({
 		config,
 		signToken,
 		verifyToken,
-		generateNickname,
 	}: AuthApiOptions) => asTopic<GreenAuth>()({
 
 	async authorize({bakeTables}, {appId, scope, refreshToken}: {
@@ -53,7 +52,7 @@ export const greenTopic = ({
 			})
 			const privileges = await permissionsEngine.getUserPrivileges(userId)
 			return signToken<AccessPayload>({
-				lifespan: config.tokens.lifespans.access,
+				lifespan: config.crypto.tokenLifespans.access,
 				payload: {
 					user,
 					scope,
@@ -66,7 +65,7 @@ export const greenTopic = ({
 		else {
 			const privileges = await permissionsEngine.getAnonymousPrivileges()
 			return signToken<AccessPayload>({
-				lifespan: config.tokens.lifespans.access,
+				lifespan: config.crypto.tokenLifespans.access,
 				payload: {
 					user: undefined,
 					appId,

@@ -1,5 +1,5 @@
 
 import {Await} from "../../../types/await.js"
-import {mockBackend} from "../mock-backend.js"
+import {configureApi} from "../configure-api.js"
 
-export type SystemApi = Await<ReturnType<typeof mockBackend>>["api"]
+export type SystemApi = Await<ReturnType<typeof configureApi>>["api"]

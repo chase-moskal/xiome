@@ -1,6 +1,6 @@
 
-import {PlatformConfig} from "../../../assembly/backend/types/platform-config.js"
+import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 
-export function isPlatform(appId: string, config: PlatformConfig) {
+export function isPlatform(appId: string, config: SecretConfig) {
 	return config.platform.appDetails.appId === appId
 }

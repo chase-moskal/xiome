@@ -1,10 +1,10 @@
 
 import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {PlatformConfig} from "../../../../assembly/backend/types/platform-config.js"
 
 export interface AdministrativeApiOptions {
-	config: PlatformConfig
+	config: SecretConfig
 	authTables: AuthTables
 	authPolicies: ReturnType<typeof prepareAuthPolicies>
 }
