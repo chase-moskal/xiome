@@ -3,11 +3,20 @@ import {Await} from "renraku/x/types/tools/await.js"
 
 export type ZipSpec = [string[], any][]
 
+function isPlainObject(x: any) {
+	return (
+		typeof x === "object"
+		&& x !== null
+		&& !Array.isArray(x)
+		&& !(x instanceof Promise)
+	)
+}
+
 function unzipRecursive(object: {}, path: string[] = []) {
 	let spec: ZipSpec = []
 
 	for (const [key, value] of Object.entries(object)) {
-		if (value === "object" && !Array.isArray(value))
+		if (isPlainObject(value))
 			spec = [
 				...spec,
 				...unzipRecursive(value, [...path, key])
@@ -43,7 +52,7 @@ export function applyProperty(object: {}, path: string[], value: any) {
 		if (final)
 			level[key] = value
 		else {
-			const existingIsObject = typeof existing === "object" && !Array.isArray(existing)
+			const existingIsObject = isPlainObject(existing)
 			if (existingIsObject)
 				level = existing
 			else {

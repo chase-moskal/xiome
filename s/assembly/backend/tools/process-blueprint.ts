@@ -18,7 +18,7 @@ function processBlueprintRecursive({
 			value === true
 				? process([...path, key])
 				: processBlueprintRecursive({
-					blueprint,
+					blueprint: value,
 					path: [...path, key],
 					process,
 				})

@@ -17,11 +17,12 @@ export const mockConfig: SecretConfig = {
 			home: "https://xiome.io/",
 			origins: [
 				"https://xiome.io",
+				"http://localhost:5000",
 			],
 		},
 	},
 	email: "mock-console",
-	database: "mock-memory",
+	database: "mock-localstorage",
 	stripe: "mock-mode",
 	crypto: {
 		keys: "mock-mode",
