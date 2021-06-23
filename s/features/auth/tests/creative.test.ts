@@ -1,10 +1,11 @@
 
 import {Suite, assert, expect} from "cynic"
+
+import {ops} from "../../../framework/ops.js"
 import {find} from "../../../toolbox/dbby/dbby-mongo.js"
 import {standardSystem} from "./helpers/standard-system.js"
 import {appLink, platformLink} from "./helpers/constants.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"
-import {ops} from "../../../framework/ops.js"
 
 const creativeEmail = "creative@chasemoskal.com"
 const customerEmail = "customer@chasemoskal.com"
@@ -44,8 +45,8 @@ export default <Suite>{
 	},
 
 	"register an app and login to it": async() => {
-		const {signupAndLogin, system} = await standardSystem()
-		const platformWindow = await signupAndLogin({
+		const system = await standardSystem()
+		const platformWindow = await system.signupAndLogin({
 			email: creativeEmail,
 			appLink: platformLink,
 			appId: system.platformAppId,
@@ -58,13 +59,13 @@ export default <Suite>{
 			origins: [appOrigin],
 		})
 		assert(ops.value(platformAppModel.appList).length === 1, "should now have one app")
-		const appRow = await system.tables.app.app.read(find({appId}))
+		const appRow = await system.backend.database.core.app.app.read(find({appId}))
 		assert(appRow, "app row must be present")
 		const app = ops.value(platformAppModel.appList)[0]
 		assert(app, "app must be present")
 
 		// app window 1
-		await signupAndLogin({
+		await system.signupAndLogin({
 			appId: app.appId,
 			appLink: app.home,
 			email: customerEmail,
@@ -73,7 +74,7 @@ export default <Suite>{
 		// app window 2
 		const badLink = "https://badexample.com/"
 		await expect(async() => {
-			await signupAndLogin({
+			await system.signupAndLogin({
 				appId: app.appId,
 				appLink: badLink,
 				email: customerEmail,

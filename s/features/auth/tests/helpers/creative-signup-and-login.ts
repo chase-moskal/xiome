@@ -1,13 +1,13 @@
 
 import {assert} from "cynic"
 
-import {testableSystem} from "./testable-system.js"
 import {apiLink, platformLink} from "./constants.js"
 import {makeLoginLink} from "../../tools/emails/make-login-link.js"
+import {standardSystem} from "./standard-system.js"
 
 export async function creativeSignupAndLogin(email: string) {
-	const {system, getLatestLoginEmail} = await testableSystem()
-	const browser = await system.mockBrowser()
+	const system = await standardSystem()
+	const browser = await system.backend.mockBrowser()
 	const latency = false
 
 	const windowForSignup = await browser.mockAppWindow({
@@ -25,7 +25,7 @@ export async function creativeSignupAndLogin(email: string) {
 		appId: system.platformAppId,
 		windowLink: makeLoginLink({
 			home: platformLink,
-			loginToken: getLatestLoginEmail().loginToken,
+			loginToken: system.backend.emails.recallLatestLoginEmail().loginToken,
 		}),
 	})
 

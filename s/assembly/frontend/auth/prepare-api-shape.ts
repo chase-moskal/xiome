@@ -76,38 +76,39 @@ export function prepareApiShape({appId, storage}: {
 				revokeRoleFromUser: true,
 			},
 		},
-		store: {
-			stripeConnectService: {
-				[_augment]: standardAugment,
-				getConnectDetails: true,
-				generateConnectSetupLink: true,
-			},
-			shoppingService: {
-				[_augment]: standardAugment,
-				buySubscription: true,
-				updateSubscription: true,
-				endSubscription: true,
-			},
-			shopkeepingService: {
-				[_augment]: standardAugment,
-				listSubscriptionPlans: true,
-				createSubscriptionPlan: true,
-				updateSubscriptionPlan: true,
-				deleteSubscriptionPlan: true,
-				deactivateSubscriptionPlan: true,
-			},
-			ecommerce: {
-				statusCheckerService: {
-					[_augment]: standardAugment,
-					getStoreStatus: true,
-				},
-				statusTogglerService: {
-					[_augment]: standardAugment,
-					disableEcommerce: true,
-					enableEcommerce: true,
-				},
-			},
-		},
+		// // TODO reactivate store
+		// store: {
+		// 	stripeConnectService: {
+		// 		[_augment]: standardAugment,
+		// 		getConnectDetails: true,
+		// 		generateConnectSetupLink: true,
+		// 	},
+		// 	shoppingService: {
+		// 		[_augment]: standardAugment,
+		// 		buySubscription: true,
+		// 		updateSubscription: true,
+		// 		endSubscription: true,
+		// 	},
+		// 	shopkeepingService: {
+		// 		[_augment]: standardAugment,
+		// 		listSubscriptionPlans: true,
+		// 		createSubscriptionPlan: true,
+		// 		updateSubscriptionPlan: true,
+		// 		deleteSubscriptionPlan: true,
+		// 		deactivateSubscriptionPlan: true,
+		// 	},
+		// 	ecommerce: {
+		// 		statusCheckerService: {
+		// 			[_augment]: standardAugment,
+		// 			getStoreStatus: true,
+		// 		},
+		// 		statusTogglerService: {
+		// 			[_augment]: standardAugment,
+		// 			disableEcommerce: true,
+		// 			enableEcommerce: true,
+		// 		},
+		// 	},
+		// },
 		questions: {
 			questionsReadingService: {
 				[_augment]: standardAugment,

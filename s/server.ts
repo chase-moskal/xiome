@@ -4,11 +4,8 @@ import {readFile} from "fs/promises"
 import {makeNodeHttpServer} from "renraku/x/server/make-node-http-server.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {AuthTables} from "./features/auth/tables/types/auth-tables.js"
-
+import {configureApi} from "./assembly/backend/configure-api.js"
 import {SecretConfig} from "./assembly/backend/types/secret-config.js"
-
-import {configureApi} from "./assembly/backend/configure-api"
 
 void async function main() {
 	console.log("starting server...")
@@ -20,7 +17,7 @@ void async function main() {
 	const {api} = await configureApi(config)
 	const servelet = makeJsonHttpServelet(api)
 	const server = makeNodeHttpServer(servelet)
-	
+
 	server.listen(config.server.port)
 	console.log(`📡 ${config.platform.appDetails.label} listening on port ${config.server.port}`)
 	console.log(` - platform app id: ${config.platform.appDetails.appId}`)

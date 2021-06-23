@@ -1,33 +1,28 @@
 
 import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
+import {mockBackend} from "../../../backend/mock-backend.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
-import {mockStandardBackend} from "./common/mock-standard-backend.js"
-import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectPlatform({
-		platformHome, storage, sendEmail
+		platformHome, storage,
 	}: {
 		platformHome: string
 		storage: FlexStorage
-		sendEmail: SendEmail
 	}) {
 
+	const backend = await mockBackend()
+
 	const apiLink = apiOrigin + "/"
-	const {backend} = await mockStandardBackend({
-		platformHome,
-		tableStorage: storage,
-		sendEmail,
-	})
 	const appId = backend.platformAppId
 
 	const {remote, authMediator} = await mockWiredRemote({
+		appId,
 		apiLink,
 		backend,
 		storage,
 		appWindowLink: platformHome,
-		appId,
 	})
 
 	const popups = mockPopups({

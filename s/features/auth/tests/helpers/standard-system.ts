@@ -1,12 +1,12 @@
 
 import {assert} from "cynic"
 import {apiLink} from "./constants.js"
-import {testableSystem} from "./testable-system.js"
 import {makeLoginLink} from "../../tools/emails/make-login-link.js"
+import {mockBackend} from "../../../../assembly/backend/mock-backend.js"
 
 export async function standardSystem() {
 	const latency = false
-	const {system, getLatestLoginEmail} = await testableSystem()
+	const backend = await mockBackend()
 	
 	async function signupAndLogin({email, appLink, appId}: {
 			appId: string
@@ -14,7 +14,7 @@ export async function standardSystem() {
 			appLink: string
 		}) {
 
-		const browser = await system.mockBrowser()
+		const browser = await backend.mockBrowser()
 		const windowForSignup = await browser.mockAppWindow({
 			appId,
 			apiLink,
@@ -29,7 +29,7 @@ export async function standardSystem() {
 			latency,
 			windowLink: makeLoginLink({
 				home: appLink,
-				loginToken: getLatestLoginEmail().loginToken,
+				loginToken: backend.emails.recallLatestLoginEmail().loginToken,
 			}),
 		})
 		assert(
@@ -40,5 +40,9 @@ export async function standardSystem() {
 		return windowForLogin
 	}
 
-	return {system, getLatestLoginEmail, signupAndLogin}
+	return {
+		backend,
+		platformAppId: backend.config.platform.appDetails.appId,
+		signupAndLogin,
+	}
 }

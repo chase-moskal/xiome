@@ -1,35 +1,25 @@
 
 import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
+import {mockBackend} from "../../../backend/mock-backend.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
-import {makeEmailEnabler} from "./common/email-enabler.js"
-import {mockStandardBackend} from "./common/mock-standard-backend.js"
-import {SendEmail} from "../../../../features/auth/types/emails/send-email.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockConnectApp({
-		origins, storage, platformHome, appWindowLink,
-		sendEmail,
+		origins, storage, appWindowLink,
 	}: {
 		origins: string[]
 		storage: FlexStorage
-		platformHome: string
 		appWindowLink: string
-		sendEmail: SendEmail
 	}) {
 
-	const emailEnabler = makeEmailEnabler(sendEmail)
-	emailEnabler.disableEmails()
+	const backend = await mockBackend()
+	backend.emails.disableEmails()
 
 	const apiLink = apiOrigin + "/"
-	const {backend} = await mockStandardBackend({
-		platformHome,
-		tableStorage: storage,
-		sendEmail: emailEnabler.sendEmail,
-	})
-
 	const ownerEmail = "creative@xiome.io"
+
 	let appId = await storage.read<string>("mock-app")
 	if (!appId) {
 		appId = await mockRegisterApp({
@@ -42,8 +32,7 @@ export async function mockConnectApp({
 	}
 	console.log(`mock: app owner email "${ownerEmail}"`)
 
-	emailEnabler.enableEmails()
-
+	backend.emails.enableEmails()
 	const {remote, authMediator} = await mockWiredRemote({
 		appId,
 		apiLink,

@@ -1,16 +1,16 @@
 
 import {Suite, assert} from "cynic"
 
-import {testableSystem} from "./helpers/testable-system.js"
 import {apiLink, platformLink} from "./helpers/constants.js"
 import {makeLoginLink} from "../tools/emails/make-login-link.js"
 
 import {Await} from "../../../types/await.js"
+import {standardSystem} from "./helpers/standard-system.js"
 
 export default <Suite>{
 	"sign up, login, and logout": async() => {
-		const {system, getLatestLoginEmail} = await testableSystem()
-		const browser = await system.mockBrowser()
+		const system = await standardSystem()
+		const browser = await system.backend.mockBrowser()
 		const latency = false
 
 		const grabAccess =
@@ -25,7 +25,7 @@ export default <Suite>{
 			appId: system.platformAppId,
 		})
 		await windowForSignup.models.authModel.sendLoginLink(
-			system.config.platform.technician.email
+			system.backend.config.platform.technician.email
 		)
 		assert(
 			await grabAccess(windowForSignup) === undefined,
@@ -39,7 +39,7 @@ export default <Suite>{
 			appId: system.platformAppId,
 			windowLink: makeLoginLink({
 				home: platformLink,
-				loginToken: getLatestLoginEmail().loginToken,
+				loginToken: system.backend.emails.recallLatestLoginEmail().loginToken,
 			}),
 		})
 		assert(

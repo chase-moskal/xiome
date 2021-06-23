@@ -2,6 +2,8 @@
 import {asApi} from "renraku/x/identities/as-api.js"
 
 import {Database} from "./types/database.js"
+import {dbbyX} from "../../toolbox/dbby/dbby-x.js"
+import {waitForProperties} from "./tools/zippy.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {dbbyMongo} from "../../toolbox/dbby/dbby-mongo.js"
@@ -11,17 +13,15 @@ import {loginEmailRecaller} from "./tools/login-email-recaller.js"
 import {BlueprintForTables} from "./types/blueprint-for-tables.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
+import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
+import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
+import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
 import {prepareSendLoginEmail} from "../../features/auth/tools/emails/send-login-email.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
 import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 import {standardNicknameGenerator} from "../../features/auth/tools/nicknames/standard-nickname-generator.js"
-import {waitForProperties} from "./tools/zippy.js"
-import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
-import {dbbyX} from "../../toolbox/dbby/dbby-x.js"
-import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
-import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 
 export async function configureApi(config: SecretConfig) {
 	const rando = await getRando()
@@ -29,7 +29,7 @@ export async function configureApi(config: SecretConfig) {
 	//
 	// emails
 	//
-	const emailEnabler = await (async () => {
+	const emails = await (async () => {
 		let sendEmail: SendEmail
 
 		if (config.email === "mock-console") {
@@ -50,15 +50,29 @@ export async function configureApi(config: SecretConfig) {
 			}
 		}
 
-		return makeEmailEnabler(sendEmail)
+		const enabler = makeEmailEnabler(sendEmail)
+		sendEmail = enabler.sendEmail
+		const {disableEmails, enableEmails} = enabler
+
+		const {sendLoginEmail, recallLatestLoginEmail} = loginEmailRecaller(
+			prepareSendLoginEmail({sendEmail})
+		)
+
+		return {
+			sendEmail,
+			enableEmails,
+			disableEmails,
+			sendLoginEmail,
+			recallLatestLoginEmail,
+		}
 	})()
 
 	//
 	// database
 	//
 	const {database, mockStorage} = await (async (): Promise<{
-			mockStorage: FlexStorage
 			database: Database
+			mockStorage: FlexStorage
 		}> => {
 
 		const blueprint: BlueprintForTables<Database> = {
@@ -130,7 +144,9 @@ export async function configureApi(config: SecretConfig) {
 					mockStorage: memoryFlexStorage(),
 					database: <Database>processBlueprint({
 						blueprint,
-						process: path => dbbyMongo({collection: db.collection(path.join("-"))}),
+						process: path => dbbyMongo({
+							collection: db.collection(path.join("-")),
+						}),
 					})
 				}
 			}
@@ -171,13 +187,9 @@ export async function configureApi(config: SecretConfig) {
 	//
 	// api
 	//
-	const {api, recallLatestLoginEmail} = await (async () => {
+	const api = await (async () => {
 
 		const generateNickname = standardNicknameGenerator({rando})
-
-		const {sendLoginEmail, recallLatestLoginEmail} = loginEmailRecaller(
-			prepareSendLoginEmail({sendEmail: emailEnabler.sendEmail})
-		)
 
 		const authPolicies = prepareAuthPolicies({
 			config,
@@ -185,7 +197,7 @@ export async function configureApi(config: SecretConfig) {
 			verifyToken,
 		})
 
-		const api = asApi({
+		return asApi({
 			auth: makeAuthApi({
 				rando,
 				config,
@@ -194,28 +206,27 @@ export async function configureApi(config: SecretConfig) {
 				signToken,
 				verifyToken,
 				generateNickname,
-				sendLoginEmail,
+				sendLoginEmail: emails.sendLoginEmail,
 			}),
 			administrative: makeAdministrativeApi({
 				config,
 				authTables: database.core,
 				authPolicies,
 			}),
-			questionsApi: questionsApi({
+			questions: questionsApi({
 				rando,
 				config,
 				authPolicies,
 				questionsTables: database.questions,
 			}),
 		})
-
-		return {api, recallLatestLoginEmail}
 	})()
 
 	return {
 		api,
+		emails,
 		database,
-		emailEnabler,
-		recallLatestLoginEmail,
+		stripeComplex,
+		mockStripeOperations,
 	}
 }

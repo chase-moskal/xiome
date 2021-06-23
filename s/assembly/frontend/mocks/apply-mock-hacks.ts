@@ -16,7 +16,7 @@ export async function applyMockHacks({connection, frontend}: {
 		loginService.sendLoginLink,
 		async(func, ...args) => {
 			await func(...args)
-			const details = connection.backend.getLatestLoginEmail()
+			const details = connection.backend.emails.recallLatestLoginEmail()
 			console.log("mock: logging in...")
 			await nap(1000)
 			await frontend.models.authModel.login(details.loginToken)

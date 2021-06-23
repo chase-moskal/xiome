@@ -21,7 +21,7 @@ export async function mockRegisterApp({
 
 	const {authModel, appModel} = mockWindowForPlatform.models
 	await authModel.sendLoginLink(ownerEmail)
-	await authModel.login(backend.getLatestLoginEmail().loginToken)
+	await authModel.login(backend.emails.recallLatestLoginEmail().loginToken)
 
 	const {appId} = await appModel.registerApp({
 		label: "Mock App",
@@ -31,8 +31,9 @@ export async function mockRegisterApp({
 
 	console.log("mock: register app", appId)
 
+	// TODO reactivate store
 	// // link bank account with stripe
-	await mockWindowForPlatform.models.storeModel.shares.bank.setupStripeAccount(appId)
+	// await mockWindowForPlatform.models.storeModel.shares.bank.setupStripeAccount(appId)
 	// const stripeDetails = await mockWindowForPlatform.models.bankModel.getStripeAccountDetails(appId)
 	// console.log("mock: app stripe details", stripeDetails)
 

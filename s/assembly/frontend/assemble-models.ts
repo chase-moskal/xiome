@@ -41,15 +41,16 @@ export async function assembleModels({
 		reauthorize,
 	})
 
-	const storeModel = makeStoreModel({
-		appId,
-		storage,
-		shopkeepingService: remote.store.shopkeepingService,
-		stripeAccountsService: remote.store.stripeConnectService,
-		statusCheckerService: remote.store.ecommerce.statusCheckerService,
-		statusTogglerService: remote.store.ecommerce.statusTogglerService,
-		triggerBankPopup: popups.triggerBankPopup,
-	})
+	// // TODO reactivate store
+	// const storeModel = makeStoreModel({
+	// 	appId,
+	// 	storage,
+	// 	shopkeepingService: remote.store.shopkeepingService,
+	// 	stripeAccountsService: remote.store.stripeConnectService,
+	// 	statusCheckerService: remote.store.ecommerce.statusCheckerService,
+	// 	statusTogglerService: remote.store.ecommerce.statusTogglerService,
+	// 	triggerBankPopup: popups.triggerBankPopup,
+	// })
 
 	const administrativeModel = makeAdministrativeModel({
 		roleAssignmentService: remote.administrative.roleAssignmentService,
@@ -65,7 +66,7 @@ export async function assembleModels({
 		await Promise.all([
 			appModel.accessChange(),
 			permissionsModel.accessChange(access),
-			storeModel.accessChange(access),
+			// storeModel.accessChange(access),
 			questionsModel.accessChange(access),
 			administrativeModel.accessChange(access),
 		])
@@ -74,7 +75,7 @@ export async function assembleModels({
 	return {
 		appModel,
 		authModel,
-		storeModel,
+		// storeModel,
 		personalModel,
 		questionsModel,
 		permissionsModel,
