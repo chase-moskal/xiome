@@ -1,9 +1,9 @@
 
-import {mockConfig} from "./mock-config.js"
 import {configureApi} from "./configure-api.js"
+import {SecretConfig} from "./types/secret-config.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 
-export async function mockBackend() {
+export async function mockBackend(config: SecretConfig) {
 
 	const {
 		api,
@@ -11,16 +11,16 @@ export async function mockBackend() {
 		database,
 		stripeComplex,
 		mockStripeOperations,
-	} = await configureApi(mockConfig)
+	} = await configureApi(config)
 
 	return {
 		api,
+		config,
 		emails,
 		database,
 		stripeComplex,
-		config: mockConfig,
 		mockStripeOperations,
-		platformAppId: mockConfig.platform.appDetails.appId,
+		platformAppId: config.platform.appDetails.appId,
 		mockBrowser: async() => mockBrowser({
 			api,
 			mockStripeOperations,

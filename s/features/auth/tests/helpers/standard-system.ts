@@ -2,12 +2,16 @@
 import {assert} from "cynic"
 import {apiLink} from "./constants.js"
 import {makeLoginLink} from "../../tools/emails/make-login-link.js"
+import {mockConfig} from "../../../../assembly/backend/mock-config.js"
 import {mockBackend} from "../../../../assembly/backend/mock-backend.js"
 
 export async function standardSystem() {
 	const latency = false
-	const backend = await mockBackend()
-	
+
+	const config = mockConfig()
+	config.database = "mock-memory"
+	const backend = await mockBackend(config)
+
 	async function signupAndLogin({email, appLink, appId}: {
 			appId: string
 			email: string

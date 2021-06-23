@@ -4,6 +4,7 @@ import {mockPopups} from "./common/mock-popups.js"
 import {mockBackend} from "../../../backend/mock-backend.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {mockConfig} from "../../../backend/mock-config.js"
 
 export async function mockConnectPlatform({
 		platformHome, storage,
@@ -12,7 +13,7 @@ export async function mockConnectPlatform({
 		storage: FlexStorage
 	}) {
 
-	const backend = await mockBackend()
+	const backend = await mockBackend(mockConfig())
 
 	const apiLink = apiOrigin + "/"
 	const appId = backend.platformAppId

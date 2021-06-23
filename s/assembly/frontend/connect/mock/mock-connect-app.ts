@@ -1,6 +1,7 @@
 
 import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
+import {mockConfig} from "../../../backend/mock-config.js"
 import {mockBackend} from "../../../backend/mock-backend.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
@@ -14,7 +15,7 @@ export async function mockConnectApp({
 		appWindowLink: string
 	}) {
 
-	const backend = await mockBackend()
+	const backend = await mockBackend(mockConfig())
 	backend.emails.disableEmails()
 
 	const apiLink = apiOrigin + "/"
