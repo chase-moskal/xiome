@@ -1,6 +1,6 @@
 
 import {Await} from "../../../../../types/await.js"
-import {mockBackend} from "../../../../backend/mock-backend.js"
+import {configureApiForNode} from "../../../../backend/configure-api-for-node.js"
 
 export async function mockRegisterApp({
 		apiLink, ownerEmail, appOrigins, backend
@@ -8,7 +8,7 @@ export async function mockRegisterApp({
 		apiLink: string
 		ownerEmail: string
 		appOrigins: string[]
-		backend: Await<ReturnType<typeof mockBackend>>
+		backend: Await<ReturnType<typeof configureApiForNode>>
 	}) {
 
 	const mockBrowserForPlatform = await backend.mockBrowser()

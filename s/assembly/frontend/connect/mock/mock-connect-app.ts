@@ -2,10 +2,10 @@
 import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
 import {mockConfig} from "../../../backend/mock-config.js"
-import {mockBackend} from "../../../backend/mock-backend.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {configureApiForBrowser} from "../../../backend/configure-api-for-browser.js"
 
 export async function mockConnectApp({
 		origins, storage, appWindowLink,
@@ -15,7 +15,7 @@ export async function mockConnectApp({
 		appWindowLink: string
 	}) {
 
-	const backend = await mockBackend(mockConfig())
+	const backend = await configureApiForBrowser(mockConfig())
 	backend.emails.disableEmails()
 
 	const apiLink = apiOrigin + "/"

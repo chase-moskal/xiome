@@ -1,5 +1,5 @@
 
 import {Await} from "../../../types/await.js"
-import {configureApi} from "../configure-api.js"
+import {configureApiForNode} from "../configure-api-for-node.js"
 
-export type SystemApi = Await<ReturnType<typeof configureApi>>["api"]
+export type SystemApi = Await<ReturnType<typeof configureApiForNode>>["api"]

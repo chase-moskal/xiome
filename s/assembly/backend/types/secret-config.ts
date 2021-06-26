@@ -1,41 +1,20 @@
 
+import {ConfigKeys} from "./config-keys.js"
+import {ConfigStripe} from "./config-stripe.js"
+import {ConfigPlatform} from "./config-platform.js"
+import {ConfigDatabaseMongo} from "./config-database-mongo.js"
+import {ConfigEmailSendgrid} from "./config-email-sendgrid.js"
+
 export interface SecretConfig {
 	server: {
 		port: number
 	}
-	platform: {
-		from: string
-		technician: {
-			email: string
-		}
-		appDetails: {
-			appId: string
-			label: string
-			home: string
-			origins: string[]
-		}
-	}
-	email: "mock-console" | {
-		sendgrid: {
-			apiKey: string
-		}
-	}
-	database: "mock-file" | "mock-memory" | "mock-localstorage" | {
-		mongo: {
-			link: string
-			db: string
-		}
-	}
-	stripe: "mock-mode" | {
-		apiKey: string
-		secret: string
-		webhookSecret: string
-	}
+	platform: ConfigPlatform
+	email: "mock-console" | ConfigEmailSendgrid
+	database: "mock-file" | "mock-memory" | "mock-localstorage" | ConfigDatabaseMongo
+	stripe: "mock-mode" | ConfigStripe
 	crypto: {
-		keys: "mock-mode" | {
-			private: string
-			public: string
-		}
+		keys: "mock-mode" | ConfigKeys
 		tokenLifespans: {
 			login: number
 			refresh: number

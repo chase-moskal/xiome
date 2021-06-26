@@ -4,7 +4,7 @@ import {readFile} from "fs/promises"
 import {makeNodeHttpServer} from "renraku/x/server/make-node-http-server.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {configureApi} from "./assembly/backend/configure-api.js"
+import {configureApiForNode} from "./assembly/backend/configure-api-for-node.js"
 import {SecretConfig} from "./assembly/backend/types/secret-config.js"
 
 void async function main() {
@@ -14,7 +14,7 @@ void async function main() {
 		await readFile("./config.json", "utf-8")
 	)
 
-	const {api} = await configureApi(config)
+	const {api} = await configureApiForNode(config)
 	const servelet = makeJsonHttpServelet(api)
 	const server = makeNodeHttpServer(servelet)
 
