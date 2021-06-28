@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+COMMAND=$1
+TAG="dev"
+IMAGE="xiome-web"
+COMMANDLIST="'build', 'run', or 'debug'"
+
+if [[ -z "$COMMAND" ]]; then
+	echo "ERR command param required, eg $COMMANDLIST"
+	exit 1
+fi
+
+dockerrun() {
+	NAME=$1
+	CMD=$2
+	docker run \
+		--name $NAME \
+		--network bridge \
+		--publish 8080:80 \
+		--rm \
+		-it \
+		$NAME:$TAG \
+		$CMD
+}
+
+if [ "$COMMAND" == "build" ]; then
+	docker build \
+		--file ./web/Dockerfile \
+		--quiet \
+		--tag $IMAGE:$TAG \
+		.
+
+elif [ "$COMMAND" == "run" ]; then
+	dockerrun $IMAGE
+
+elif [ "$COMMAND" == "debug" ]; then
+	dockerrun $IMAGE /bin/bash
+
+else
+	echo "ERR unknown command, must be $COMMANDLIST"
+
+fi
