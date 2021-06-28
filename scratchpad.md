@@ -1,4 +1,27 @@
 
+## launch
+
+deployment
+- [x] dockerized web server
+- [ ] dockerized node server
+- [ ] github action publishes docker images to github packages
+- [ ] write helm chart
+- [ ] github action publishes helm chart to stage cluster
+- [ ] sendgrid email is ready
+- [ ] production deployments
+
+website
+- [ ] rework alpha note
+- [ ] refine about page
+- [ ] basic components listing
+
+systemic
+- [ ] consider revised base41 format
+- [ ] consider binary ids
+- [ ] rename 'auth' to 'core'
+
+
+
 ## priorities for alpha launch
 
 website
