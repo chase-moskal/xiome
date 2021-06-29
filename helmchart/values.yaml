@@ -18,11 +18,11 @@ images:
   pullPolicy: IfNotPresent
 
 web:
-  image: chase-moskal/xiome/web
+  image: ghcr.io/chase-moskal/xiome/web
   replicas: 2
 
 microservices:
   server:
-    image: chase-moskal/xiome/server
+    image: ghcr.io/chase-moskal/xiome/server
     replicas: 2
     port: 8000
