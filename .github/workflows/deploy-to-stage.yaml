@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  # IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-deploy:
@@ -20,16 +20,11 @@ jobs:
     steps:
 
     ##
-    ## checkout and build
+    ## checkout and docker setup
     ##
 
     - name: checkout
       uses: actions/checkout@v2
-
-    - name: npm install and build
-      shell: bash
-      run: |
-        npm install && npm run build
 
     ##
     ## docker setup
@@ -41,7 +36,7 @@ jobs:
     - name: set up docker buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: login to github actions
+    - name: login to github packages
       uses: docker/login-action@v1
       with:
         registry: ${{ env.REGISTRY }}
@@ -55,6 +50,15 @@ jobs:
     #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
     ##
+    ## project build
+    ##
+
+    - name: npm install and build
+      shell: bash
+      run: |
+        npm install && npm run build
+
+    ##
     ## push web image
     ##
 
@@ -64,7 +68,7 @@ jobs:
         file: ./web/Dockerfile
         context: .
         push: true
-        tags: xiome/web:${{ github.sha }}
+        tags: chase-moskal/xiome/web:${{ github.sha }}
 
     ##
     ## push images for microservices
@@ -76,7 +80,7 @@ jobs:
         file: ./s/Dockerfile
         context: .
         push: true
-        tags: xiome/server:${{ github.sha }}
+        tags: chase-moskal/xiome/server:${{ github.sha }}
 
     # ##
     # ## deploy to stage
