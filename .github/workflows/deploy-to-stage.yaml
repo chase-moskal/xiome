@@ -34,7 +34,7 @@ jobs:
     - name: login to github container registry
       uses: docker/login-action@v1
       with:
-        registry: ghcr.io
+        registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -57,7 +57,7 @@ jobs:
         file: ./web/Dockerfile
         context: .
         push: true
-        tags: ${{ github.repository }}/web:${{ github.sha }}
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/web:${{ github.sha }}
 
     # ##
     # ## push images for microservices
