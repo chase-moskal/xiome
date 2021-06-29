@@ -92,7 +92,7 @@ jobs:
           --install \
           --namespace xiome \
           --set-string images.tag=$GITHASH \
-          --set-string env.XIOME_CONFIG="$XIOME_CONFIG" \
-          --set-string env.XIOME_PUBLIC_KEY="$XIOME_PUBLIC_KEY" \
-          --set-string env.XIOME_PRIVATE_KEY="$XIOME_PRIVATE_KEY" \
+          --set-string env.XIOME_CONFIG="$(echo "$XIOME_CONFIG" | base64 -w 0)" \
+          --set-string env.XIOME_PUBLIC_KEY="$(echo "$XIOME_PUBLIC_KEY" | base64 -w 0)" \
+          --set-string env.XIOME_PRIVATE_KEY="$(echo "$XIOME_PRIVATE_KEY" | base64 -w 0)" \
           -f ./helmchart/values-stage.yaml

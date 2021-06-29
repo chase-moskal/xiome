@@ -1,7 +1,7 @@
 
 config: config-prod
 
-env:
+env: # these environment variables must be passed base64 encoded
   XIOME_CONFIG: ~
   XIOME_PUBLIC_KEY: ~
   XIOME_PRIVATE_KEY: ~
