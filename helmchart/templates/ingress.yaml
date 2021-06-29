@@ -33,15 +33,19 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: {{$rname}}-web-service
-          servicePort: 80
+          service:
+            name: {{$rname}}-web-service
+            port:
+              number: 80
   {{- range $mname, $microservice := .Values.microservices }}
   - host: {{ $mname }}.{{ $domain }}
     http:
       paths:
       - backend:
-          serviceName: {{ $rname }}-{{ $mname }}-service
-          servicePort: {{ $microservice.port }}
+          service:
+            name: {{ $rname }}-{{ $mname }}-service
+            port:
+              number: {{ $microservice.port }}
   {{- end }}
 
 {{ if .Values.ingress.tls }}
