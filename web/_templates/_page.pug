@@ -17,13 +17,15 @@ head
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome.js`)
-		script(async defer src="https://unpkg.com/es-module-shims@0.9.0/dist/es-module-shims.js")
+		script(async defer src="https://unpkg.com/es-module-shims@0.11.1/dist/es-module-shims.js")
 	else
-		xiome-config(
-			app="96bncPFrDyzJtXqPzHcmDTs7CFSc2SHkgTdZR5wHXCNST25H"
-			api="http://localhost:4999"
-			platform="http://localhost:5000/x"
-		)
+		script.
+			const {host} = new URL(window.location.href)
+			const config = document.createElement("xiome-config")
+			config.setAttribute("app", "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg")
+			config.setAttribute("platform", `${host}`)
+			config.setAttribute("api", `server.${host}`)
+			document.head.appendChild(config)
 		script(src=`${base}/xiome.bundle.min.js`)
 
 	block head
