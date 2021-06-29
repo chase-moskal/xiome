@@ -35,10 +35,10 @@ jobs:
     ## docker setup
     ##
 
-    - name: Set up qemu
+    - name: set up qemu
       uses: docker/setup-qemu-action@v1
 
-    - name: set up docker Buildx
+    - name: set up docker buildx
       uses: docker/setup-buildx-action@v1
 
     - name: login to github actions
@@ -61,11 +61,10 @@ jobs:
     - name: push web image
       uses: docker/build-push-action@v2
       with:
-        repository: xiome-web
-        dockerfile: ./web/Dockerfile
+        file: ./web/Dockerfile
         context: .
         push: true
-        tags: ${{ github.sha }}
+        tags: xiome/web:${{ github.sha }}
 
     ##
     ## push images for microservices
@@ -74,11 +73,10 @@ jobs:
     - name: push server image
       uses: docker/build-push-action@v2
       with:
-        repository: xiome-server
-        dockerfile: ./s/Dockerfile
+        file: ./s/Dockerfile
         context: .
         push: true
-        tags: ${{ github.sha }}
+        tags: xiome/server:${{ github.sha }}
 
     # ##
     # ## deploy to stage
