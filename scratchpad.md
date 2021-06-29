@@ -5,7 +5,7 @@ deployment
 - [x] dockerized web server
 - [x] dockerized node server
 - [x] github action publishes docker images to github packages
-- [ ] write helm chart
+- [x] write helm chart
 - [ ] github action publishes helm chart to stage cluster
 - [ ] sendgrid email is ready
 - [ ] production deployments

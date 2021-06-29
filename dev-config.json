@@ -10,9 +10,9 @@
 		"appDetails": {
 			"appId": "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
 			"label": "Xiome Cloud",
-			"home": "https://xiome.io/",
+			"home": "https://stage.xiome.io/",
 			"origins": [
-				"https://xiome.io"
+				"https://stage.xiome.io"
 			]
 		}
 	},
