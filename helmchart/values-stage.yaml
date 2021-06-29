@@ -3,8 +3,6 @@ config: config-stage
 
 ingress:
   domain: stage.xiome.io
-  tls:
-    production: false
 
 images:
   tag: stage # overwrite with git hash
