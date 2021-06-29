@@ -20,11 +20,10 @@ head
 		script(async defer src="https://unpkg.com/es-module-shims@0.11.1/dist/es-module-shims.js")
 	else
 		script.
-			const {host} = new URL(window.location.href)
 			const config = document.createElement("xiome-config")
 			config.setAttribute("app", "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg")
-			config.setAttribute("platform", `${host}`)
-			config.setAttribute("api", `server.${host}`)
+			config.setAttribute("platform", window.location.href)
+			config.setAttribute("api", `https://server.${window.location.host}`)
 			document.head.appendChild(config)
 		script(src=`${base}/xiome.bundle.min.js`)
 
