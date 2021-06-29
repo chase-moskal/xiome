@@ -48,10 +48,10 @@ jobs:
         npm install && npm run build
 
     ##
-    ## push web image
+    ## push images
     ##
 
-    - name: push web image
+    - name: push image - web
       uses: docker/build-push-action@v2
       with:
         file: ./web/Dockerfile
@@ -59,17 +59,13 @@ jobs:
         push: true
         tags: ${{ env.REGISTRY }}/${{ github.repository }}/web:${{ github.sha }}
 
-    # ##
-    # ## push images for microservices
-    # ##
-
-    # - name: push image - core
-    #   uses: docker/build-push-action@v2
-    #   with:
-    #     file: ./s/Dockerfile
-    #     context: .
-    #     push: true
-    #     tags: chase-moskal/xiome/core:${{ github.sha }}
+    - name: push image - server
+      uses: docker/build-push-action@v2
+      with:
+        file: ./s/Dockerfile
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/server:${{ github.sha }}
 
     # ##
     # ## deploy to stage
