@@ -22,7 +22,7 @@ spec:
         checksum: {{ $checksum }}
     spec:
       imagePullSecrets:
-      - name: dockerconfigjson-github-com
+      - name: dockerconfigjson-ghcr
       containers:
       - image: "{{ $microservice.image }}:{{ $images.tag }}"
         imagePullPolicy: {{ $images.pullPolicy }}

@@ -16,7 +16,7 @@ spec:
         app: web
     spec:
       imagePullSecrets:
-      - name: dockerconfigjson-github-com
+      - name: dockerconfigjson-ghcr
       containers:
       - name: metalshop-web
         image: "{{ .Values.web.image }}:{{ .Values.images.tag }}"
