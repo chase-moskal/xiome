@@ -7,8 +7,10 @@ deployment
 - [x] github action publishes docker images to github packages
 - [x] write helm chart
 - [x] github action publishes helm chart to stage cluster
-- [ ] connect frontend to api server
-- [ ] sendgrid email is ready
+- [x] connect frontend to api server
+- [ ] connect mongodb
+- [ ] connect sendgrid email and protonmail
+- [ ] refactor external-dns into helm chart?
 - [ ] production deployments
 
 website
