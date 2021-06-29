@@ -1,6 +1,6 @@
 {
 	"server": {
-		"port": 4999
+		"port": 8000
 	},
 	"platform": {
 		"from": "hello@xiome.io",

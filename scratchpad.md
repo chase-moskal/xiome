@@ -3,7 +3,7 @@
 
 deployment
 - [x] dockerized web server
-- [ ] dockerized node server
+- [x] dockerized node server
 - [ ] github action publishes docker images to github packages
 - [ ] write helm chart
 - [ ] github action publishes helm chart to stage cluster

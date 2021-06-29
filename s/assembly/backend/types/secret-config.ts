@@ -14,7 +14,7 @@ export interface SecretConfig {
 	database: "mock-file" | "mock-memory" | "mock-localstorage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
 	crypto: {
-		keys: "mock-mode" | ConfigKeys
+		keys: "mock-mode" | "environment-variables" | ConfigKeys
 		tokenLifespans: {
 			login: number
 			refresh: number

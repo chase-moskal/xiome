@@ -2,9 +2,11 @@
 
 COMMAND=$1
 TAG="dev"
-IMAGE="xiome-web"
-DOCKERFILE="./web/Dockerfile"
+IMAGE="xiome-core"
+DOCKERFILE="./s/Dockerfile"
 COMMANDLIST="'build', 'run', or 'debug'"
+
+XIOME_CONFIG=`cat ./dev-config.json`
 
 if [[ -z "$COMMAND" ]]; then
 	echo "ERR command param required, eg $COMMANDLIST"
@@ -17,9 +19,10 @@ dockerrun() {
 	docker run \
 		--name $NAME \
 		--network bridge \
-		--publish 8080:80 \
+		--publish 8000:8000 \
 		--rm \
 		-it \
+		-e XIOME_CONFIG="$XIOME_CONFIG" \
 		$NAME:$TAG \
 		$CMD
 }

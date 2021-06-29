@@ -1,8 +1,8 @@
 
-import {createRequire} from "module"
-import {MailService} from "@sendgrid/mail"
-const require = createRequire(import.meta.url)
-export default <MailService>require("sendgrid/mail")
+// import {createRequire} from "module"
+// import {MailService} from "@sendgrid/mail/index.js"
+// const require = createRequire(import.meta.url)
+// export default <MailService>require("sendgrid/mail")
 
 // export interface Message {
 // 	to: string

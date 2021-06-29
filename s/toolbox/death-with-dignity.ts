@@ -16,12 +16,12 @@ export function deathWithDignity({logger = console}: {
 	})
 
 	process.on("uncaughtException", error => {
-		logger.error("unhandled exception:", error)
+		logger.error("🚨 unhandled exception:", error)
 		process.exit(1)
 	})
 
 	process.on("unhandledRejection", (reason, error) => {
-		logger.error("unhandled rejection:", reason, error)
+		logger.error("🚨 unhandled rejection:", reason, error)
 		process.exit(1)
 	})
 }

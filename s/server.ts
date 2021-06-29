@@ -1,18 +1,17 @@
 
-import * as json5 from "json5"
-import {readFile} from "fs/promises"
+import json5 from "json5"
 import {makeNodeHttpServer} from "renraku/x/server/make-node-http-server.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
-import {configureApiForNode} from "./assembly/backend/configure-api-for-node.js"
+import {deathWithDignity} from "./toolbox/death-with-dignity.js"
 import {SecretConfig} from "./assembly/backend/types/secret-config.js"
+import {configureApiForNode} from "./assembly/backend/configure-api-for-node.js"
 
 void async function main() {
-	console.log("starting server...")
+	deathWithDignity()
 
-	const config: SecretConfig = json5.parse(
-		await readFile("./config.json", "utf-8")
-	)
+	console.log("starting server...")
+	const config = json5.parse<SecretConfig>(process.env.XIOME_CONFIG)
 
 	const {api} = await configureApiForNode(config)
 	const servelet = makeJsonHttpServelet(api)

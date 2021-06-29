@@ -1,5 +1,5 @@
 
-import {MongoClient} from "mongodb"
+import mongodb from "mongodb"
 
 import {Database} from "../types/database.js"
 import {SecretConfig} from "../types/secret-config.js"
@@ -14,7 +14,7 @@ export function configureMongo({blueprint, config}: {
 		config: {database: ConfigDatabaseMongo} & SecretConfig
 	}) {
 
-	const mongo = new MongoClient(config.database.mongo.link)
+	const mongo = new mongodb.MongoClient(config.database.mongo.link)
 	const db = mongo.db(config.database.mongo.db)
 
 	return {

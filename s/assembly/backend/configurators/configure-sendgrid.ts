@@ -1,5 +1,5 @@
 
-import sendgridMail from "../../../commonjs/sendgrid-mail.js"
+import sendgridMail from "@sendgrid/mail"
 
 import {SecretConfig} from "../types/secret-config.js"
 import {ConfigEmailSendgrid} from "../types/config-email-sendgrid.js"
