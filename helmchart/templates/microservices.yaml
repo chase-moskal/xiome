@@ -1,0 +1,56 @@
+
+{{- $images := .Values.images -}}
+{{- $checksum := include (print $.Template.BasePath "/secret-env.yaml") . | sha256sum -}}
+{{- $rname := include "app.fullname" . -}}
+{{- $root := . -}}
+
+{{- range $mname, $microservice := .Values.microservices -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $rname }}-{{ $mname }}
+spec:
+  replicas: {{ $microservice.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $rname }}-{{ $mname }}
+  template:
+    metadata:
+      labels:
+        app: {{ $rname }}-{{ $mname }}
+      annotations:
+        checksum: {{ $checksum }}
+    spec:
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+      containers:
+      - image: "{{ $microservice.image }}:{{ $images.tag }}"
+        imagePullPolicy: {{ $images.pullPolicy }}
+        name: {{ $mname }}
+        ports:
+        - containerPort: {{ $microservice.port }}
+        env:
+        {{- range $key, $value := $root.Values.env }}
+        - name: {{ $key }}
+          valueFrom:
+            secretKeyRef:
+              key: {{ $key }}
+              name: {{ $rname }}-secret-env
+        {{- end }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $rname }}-{{ $mname }}-service
+spec:
+  selector:
+    app: {{ $rname }}-{{ $mname }}
+  ports:
+  - protocol: TCP
+    port: {{ $microservice.port }}
+    targetPort: {{ $microservice.port }}
+
+---
+{{- end -}}

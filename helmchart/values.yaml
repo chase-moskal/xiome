@@ -1,0 +1,28 @@
+
+config: config-prod
+
+env:
+  XIOME_CONFIG: ~
+  XIOME_PUBLIC_KEY: ~
+  XIOME_PRIVATE_KEY: ~
+
+ingress:
+  class: nginx
+  domain: xiome.io
+  tls:
+    production: true
+    email: chasemoskal@gmail.com
+
+images:
+  tag: latest # overwrite with git hash
+  pullPolicy: IfNotPresent
+
+web:
+  image: chase-moskal/xiome/web
+  replicas: 2
+
+microservices:
+  server:
+    image: chase-moskal/xiome/server
+    replicas: 2
+    port: 8000

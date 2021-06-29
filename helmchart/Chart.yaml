@@ -1,0 +1,6 @@
+
+apiVersion: v2
+name: xiome
+description: app platform in the cloud
+type: application
+version: 0.0.0-dev.0

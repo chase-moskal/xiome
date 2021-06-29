@@ -1,0 +1,17 @@
+
+config: config-stage
+
+ingress:
+  domain: stage.xiome.io
+  tls:
+    production: false
+
+images:
+  tag: stage # overwrite with git hash
+
+web:
+  replicas: 2
+
+microservices:
+  server:
+    replicas: 2

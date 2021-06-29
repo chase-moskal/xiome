@@ -1,0 +1,42 @@
+
+{{- $rname := include "app.fullname" . -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{$rname}}-web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  replicas: {{ .Values.web.replicas }}
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+      containers:
+      - name: metalshop-web
+        image: "{{ .Values.web.image }}:{{ .Values.images.tag }}"
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: HTTPS_METHOD
+          value: noredirect
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{$rname}}-web-service
+spec:
+  selector:
+    app: web
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
