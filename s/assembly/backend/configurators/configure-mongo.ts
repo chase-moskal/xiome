@@ -14,7 +14,10 @@ export function configureMongo({blueprint, config}: {
 		config: {database: ConfigDatabaseMongo} & SecretConfig
 	}) {
 
-	const mongo = new mongodb.MongoClient(config.database.mongo.link)
+	const mongo = new mongodb.MongoClient(config.database.mongo.link, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	const db = mongo.db(config.database.mongo.db)
 
 	return {
