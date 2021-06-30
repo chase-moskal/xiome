@@ -8,8 +8,8 @@ images:
   tag: stage # overwrite with git hash
 
 web:
-  replicas: 2
+  replicas: 1
 
 microservices:
   server:
-    replicas: 2
+    replicas: 1
