@@ -3,7 +3,6 @@
 		"port": 8000
 	},
 	"platform": {
-		"from": "hello@xiome.io",
 		"technician": {
 			"email": "chasemoskal@gmail.com"
 		},
