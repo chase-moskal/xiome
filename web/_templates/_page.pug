@@ -25,7 +25,7 @@ head
 			config.setAttribute("platform", window.location.href)
 			config.setAttribute("api", `https://server.${window.location.host}`)
 			document.head.appendChild(config)
-		script(src=`${base}/xiome.bundle.min.js`)
+		script(async defer src=`${base}/xiome.bundle.min.js`)
 
 	block head
 
