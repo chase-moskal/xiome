@@ -88,7 +88,7 @@
 		"nodemailer-sendgrid-transport": "^0.2.0",
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.8",
-		"renraku": "0.0.0-dev.37",
+		"renraku": "0.0.0-dev.38",
 		"stripe": "^8.157.0"
 	},
 	"keywords": [

@@ -5,6 +5,7 @@ import {day, minute} from "../../toolbox/goodtimes/times.js"
 export const mockConfig = (): SecretConfig => ({
 	server: {
 		port: 4999,
+		detailedLogs: true,
 	},
 	platform: {
 		technician: {

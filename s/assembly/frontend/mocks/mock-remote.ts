@@ -1,13 +1,13 @@
 
 import {loopbackJsonRemote} from "renraku/x/remote/loopback-json-remote.js"
+import {noServeletLogger} from "renraku/x/servelet/logger/no-servelet-logger.js"
 import {makeJsonHttpServelet} from "renraku/x/servelet/make-json-http-servelet.js"
 
 import {SystemApi} from "../../backend/types/system-api.js"
 import {prepareApiShape} from "../auth/prepare-api-shape.js"
 import {logAllCalls} from "../../../framework/log-all-calls.js"
-import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
-import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.js"
 
 export function mockRemote({
 		api,
@@ -40,7 +40,7 @@ export function mockRemote({
 				shape,
 				link: apiLink,
 				headers: {origin},
-				servelet: makeJsonHttpServelet(api),
+				servelet: makeJsonHttpServelet(api, noServeletLogger()),
 			}),
 		}),
 	})

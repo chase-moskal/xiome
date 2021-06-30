@@ -8,6 +8,7 @@ import {ConfigDatabaseMongo} from "./config-database-mongo.js"
 export interface SecretConfig {
 	server: {
 		port: number
+		detailedLogs: boolean
 	}
 	platform: ConfigPlatform
 	email: "mock-console" | ConfigEmailMailgun

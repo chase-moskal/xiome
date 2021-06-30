@@ -1,22 +1,17 @@
 
 import {SendEmail} from "../../../../../features/auth/types/emails/send-email.js"
-import {EmailDetails} from "../../../../../features/auth/types/emails/email-details.js"
 
-export function makeEmailEnabler(sendEmailActual: SendEmail) {
-	const disabled = async() => {}
-	let sendEmailMaybe: SendEmail = disabled
+export function makeEmailEnabler(actuallySendEmail: SendEmail) {
+	let enabled = true
 
-	function enableEmails() {
-		sendEmailMaybe = sendEmailActual
+	const sendEmail: SendEmail = async details => {
+		if (enabled)
+			return actuallySendEmail(details)
 	}
 
-	function disableEmails() {
-		sendEmailMaybe = disabled
+	return {
+		sendEmail,
+		enableEmails() { enabled = true },
+		disableEmails() { enabled = false },
 	}
-
-	async function sendEmail(details: EmailDetails) {
-		await sendEmailMaybe(details)
-	}
-
-	return {sendEmail, enableEmails, disableEmails}
 }

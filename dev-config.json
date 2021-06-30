@@ -1,6 +1,7 @@
 {
 	"server": {
-		"port": 8000
+		"port": 8000,
+		"detailedLogs": true
 	},
 	"platform": {
 		"technician": {
@@ -9,9 +10,9 @@
 		"appDetails": {
 			"appId": "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
 			"label": "Xiome Cloud",
-			"home": "https://stage.xiome.io/",
+			"home": "http://localhost:5000/x/",
 			"origins": [
-				"https://stage.xiome.io"
+				"http://localhost:5000"
 			]
 		}
 	},

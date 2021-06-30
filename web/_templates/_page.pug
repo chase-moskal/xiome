@@ -22,8 +22,26 @@ head
 		script.
 			const config = document.createElement("xiome-config")
 			config.setAttribute("app", "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg")
-			config.setAttribute("platform", window.location.href)
-			config.setAttribute("api", `https://server.${window.location.host}`)
+			switch (window.location.hostname) {
+				case "xiome.io": {
+					config.setAttribute("platform", `https://xiome.io`)
+					config.setAttribute("api", `https://server.xiome.io`)
+					break
+				}
+				case "stage.xiome.io": {
+					config.setAttribute("platform", `https://stage.xiome.io`)
+					config.setAttribute("api", `https://server.stage.xiome.io`)
+					break
+				}
+				case "localhost": {
+					config.setAttribute("platform", `http://localhost:5000`)
+					config.setAttribute("api", `http://localhost:8000`)
+					break
+				}
+				default: {
+					throw new Error("unknown xiome hostname")
+				}
+			}
 			document.head.appendChild(config)
 		script(async defer src=`${base}/xiome.bundle.min.js`)
 
