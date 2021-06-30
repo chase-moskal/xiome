@@ -7,7 +7,6 @@ export const mockConfig = (): SecretConfig => ({
 		port: 4999,
 	},
 	platform: {
-		from: "hello@xiome.io",
 		technician: {
 			email: "chasemoskal@gmail.com",
 		},

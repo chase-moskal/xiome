@@ -11,13 +11,13 @@ import {SecretConfig} from "./types/secret-config.js"
 import {makeAuthApi} from "../../features/auth/auth-api.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {processBlueprint} from "./tools/process-blueprint.js"
+import {configureMongo} from "./configurators/configure-mongo.js"
 import {loginEmailRecaller} from "./tools/login-email-recaller.js"
 import {BlueprintForTables} from "./types/blueprint-for-tables.js"
-import {configureSendgrid} from "./configurators/configure-sendgrid.js"
-import {configureMongo} from "./configurators/configure-mongo.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
 import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
@@ -32,7 +32,7 @@ import {standardNicknameGenerator} from "../../features/auth/tools/nicknames/sta
 
 export function prepareApiConfigurator(configurators: {
 		configureMongo: typeof configureMongo
-		configureSendgrid: typeof configureSendgrid
+		configureMailgun: typeof configureMailgun
 		configureTokenFunctions: typeof configureTokenFunctions
 		configureMockFileStorage: typeof configureMockFileStorage
 	}) {
@@ -51,7 +51,7 @@ export function prepareApiConfigurator(configurators: {
 			}
 			else {
 				sendEmail = configurators
-					.configureSendgrid({...config, email: config.email})
+					.configureMailgun(config.email)
 					.sendEmail
 			}
 

@@ -1,6 +1,5 @@
 
 export interface ConfigPlatform {
-	from: string
 	technician: {
 		email: string
 	}

@@ -2,15 +2,15 @@
 import {ConfigKeys} from "./config-keys.js"
 import {ConfigStripe} from "./config-stripe.js"
 import {ConfigPlatform} from "./config-platform.js"
+import {ConfigEmailMailgun} from "./config-email-mailgun.js"
 import {ConfigDatabaseMongo} from "./config-database-mongo.js"
-import {ConfigEmailSendgrid} from "./config-email-sendgrid.js"
 
 export interface SecretConfig {
 	server: {
 		port: number
 	}
 	platform: ConfigPlatform
-	email: "mock-console" | ConfigEmailSendgrid
+	email: "mock-console" | ConfigEmailMailgun
 	database: "mock-file" | "mock-memory" | "mock-localstorage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
 	crypto: {
