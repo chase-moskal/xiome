@@ -9,15 +9,15 @@ import {BlueprintForTables} from "../types/blueprint-for-tables.js"
 import {ConfigDatabaseMongo} from "../types/config-database-mongo.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 
-export function configureMongo({blueprint, config}: {
+export async function configureMongo({blueprint, config}: {
 		blueprint: BlueprintForTables<Database>
 		config: {database: ConfigDatabaseMongo} & SecretConfig
 	}) {
 
-	const mongo = new mongodb.MongoClient(config.database.mongo.link, {
+	const mongo = await new mongodb.MongoClient(config.database.mongo.link, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
-	})
+	}).connect()
 	const db = mongo.db(config.database.mongo.db)
 
 	return {
