@@ -8,8 +8,12 @@ deployment
 - [x] write helm chart
 - [x] github action publishes helm chart to stage cluster
 - [x] connect frontend to api server
-- [ ] connect mongodb
-- [ ] connect sendgrid email and protonmail
+- [x] connect mongodb
+- [x] connect sendgrid email and protonmail
+- [x] integrated login and support emails
+- [ ] fix dbby mongodb errors
+- [ ] clean up renraku servelet logging double spaces
+- [ ] rename `server.xiome.io` to `api.xiome.io`
 - [ ] refactor external-dns into helm chart?
 - [ ] production deployments
 
