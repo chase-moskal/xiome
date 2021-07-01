@@ -14,7 +14,6 @@ export function configureMailgun({mailgun: {apiKey, from, sendingDomain}}: Confi
 				subject,
 				text: body,
 			})
-			console.log("sent via mailgun")
 		},
 	}
 }
