@@ -22,14 +22,14 @@ export const appTopic = ({
 			ownerUserId: string
 		}): Promise<AppDisplay[]> {
 		const ownerships = await tables.app.appOwnership.read(find({userId: ownerUserId}))
-		const appRows = await tables.app.app.read({
-			conditions: and(
-				{equal: {archived: false}},
-				ownerships.length
-					? or(...ownerships.map(own => ({equal: {appId: own.appId}})))
-					: undefined
-			)
-		})
+		const appRows = ownerships.length
+			? await tables.app.app.read({
+				conditions: and(
+					or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
+					{equal: {archived: false}},
+				)
+			})
+			: []
 		return Promise.all(appRows.map(async row => ({
 			appId: row.appId,
 			label: row.label,
