@@ -16,5 +16,7 @@ export function or<
 }
 
 export function find<Row extends DbbyRow>(...rows: Partial<Row>[]) {
-	return {conditions: or(...rows.map(row => ({equal: row})))}
+	return rows.length
+		? {conditions: or(...rows.map(row => ({equal: row})))}
+		: {conditions: false as const}
 }

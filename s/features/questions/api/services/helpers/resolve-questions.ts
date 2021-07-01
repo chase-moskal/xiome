@@ -11,13 +11,17 @@ export async function resolveQuestions({userId, posts, questionsTables}: {
 
 	const ids = posts.map(post => post.questionId)
 
-	const likes = await questionsTables.questionLikes.read({
-		conditions: or(...ids.map(id => ({equal: {questionId: id}})))
-	})
+	const likes = ids.length
+		? await questionsTables.questionLikes.read({
+			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
+		})
+		: []
 
-	const reports = await questionsTables.questionReports.read({
-		conditions: or(...ids.map(id => ({equal: {questionId: id}})))
-	})
+	const reports = ids.length
+		? await questionsTables.questionReports.read({
+			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
+		})
+		: []
 
 	return ids.map(id => {
 		const questionPost = posts.find(post => post.questionId === id)

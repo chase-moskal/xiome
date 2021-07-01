@@ -38,10 +38,14 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const all = <X>(x: X) => x
 
 		const usersHaveRoles = await (async() => {
+			if (userIds.length === 0)
+				throw new Error("invalid: user ids cannot be empty")
 			const usersHaveRolesRaw = await permissionsTables.userHasRole.read({
 				conditions: or(...userIds.map(userId => ({equal: {userId}})))
 			})
 			const roleIds = usersHaveRolesRaw.map(u => u.roleId)
+			if (userIds.length === 0)
+				throw new Error("invalid: role ids cannot be empty")
 			const roles = await permissionsTables.role.read({
 				conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
 			})
@@ -72,9 +76,11 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const allRoleIds = rolesForUsers
 			.flatMap(r => r.userHasRoles.map(r2 => r2.roleId))
 
-		const allRolesHavePrivileges = await permissionsTables.roleHasPrivilege.read({
-			conditions: or(...allRoleIds.map(roleId => ({equal: ({roleId})})))
-		})
+		const allRolesHavePrivileges = allRoleIds.length
+			? await permissionsTables.roleHasPrivilege.read({
+				conditions: or(...allRoleIds.map(roleId => ({equal: ({roleId})})))
+			})
+			: []
 
 		function resolvePrivilegesForEachUser(userId: string) {
 			const roleIds = rolesForUsers
@@ -121,9 +127,11 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			}
 		}).filter(r => !!r)
 
-		const allSoftRoles = await permissionsTables.role.read({
-			conditions: or(...allRoleIds.map(roleId => ({equal: {roleId}})))
-		})
+		const allSoftRoles = allRoleIds.length
+			? await permissionsTables.role.read({
+				conditions: or(...allRoleIds.map(roleId => ({equal: {roleId}})))
+			})
+			: []
 
 		const mergedRoles = [...allHardRoles]
 		for (const role of allSoftRoles) {

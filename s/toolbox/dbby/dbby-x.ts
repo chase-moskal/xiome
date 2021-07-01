@@ -155,6 +155,8 @@ function rowVersusConditional<Row extends {}>(
 	function crawl(conditions: DbbyConditions<Row>) {
 		if (conditions === false) return true
 		const [operation, ...conds] = conditions
+		if (conds.length === 0)
+			throw new Error("empty and/or conditions are not allowed")
 		const and = operation === "and"
 		let valid = and
 		const applyResult = (result: boolean) =>

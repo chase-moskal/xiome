@@ -82,7 +82,10 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 	}
 }
 
-function prepareQuery<Row extends DbbyRow>({conditions}: DbbyConditional<Row>): FilterQuery<{}> {
+function prepareQuery<Row extends DbbyRow>({
+		conditions
+	}: DbbyConditional<Row>): FilterQuery<{}> {
+
 	if (!conditions) return {}
 
 	function recurse(tree: DbbyConditionTree<Row>): FilterQuery<{}> {
@@ -167,5 +170,5 @@ function conditionsToMongoQuery<Row extends DbbyRow>(
 				notwise(conditions.notSearch, mongoloids.search),
 			].filter(isSet)
 		}
-		: false
+		: {}
 }

@@ -25,7 +25,9 @@ export const appTopic = ({
 		const appRows = await tables.app.app.read({
 			conditions: and(
 				{equal: {archived: false}},
-				or(...ownerships.map(own => ({equal: {appId: own.appId}})))
+				ownerships.length
+					? or(...ownerships.map(own => ({equal: {appId: own.appId}})))
+					: undefined
 			)
 		})
 		return Promise.all(appRows.map(async row => ({
