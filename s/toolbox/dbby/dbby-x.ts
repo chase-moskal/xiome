@@ -154,7 +154,8 @@ function rowVersusConditional<Row extends {}>(
 
 	function crawl(conditions: DbbyConditions<Row>) {
 		if (conditions === false) return true
-		const [operation, ...conds] = conditions
+		const [operation, ...rawconds] = conditions
+		const conds = rawconds.filter(c => !!c)
 		if (conds.length === 0)
 			throw new Error("empty and/or conditions are not allowed")
 		const and = operation === "and"
