@@ -88,11 +88,14 @@ export default <Suite>{
 		},
 		"read one": async() => {
 			const dbby = await setupThreeUserDemo()
-			return (true
-				&& expect(
-						await dbby.one({conditions: and({equal: {userId: "u123"}})})
-					).ok()
-			)
+			expect(
+				await dbby.one({conditions: and({equal: {userId: "u123"}})})
+			).ok()
+		},
+		"ignore undefined conditions": async() => {
+			const dbby = await setupThreeUserDemo()
+			const result = await dbby.one({conditions: and({equal: {userId: "u123"}}, undefined)})
+			expect(result.userId).equals("u123")
 		},
 		"read one with not set condition": async() => {
 			const dbby = await setupThreeUserDemo()
