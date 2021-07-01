@@ -8,7 +8,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
     {{- if .Values.ingress.tls }}
-    cert-manager.io/issuer: {{ $rname }}-issuer
+    cert-manager.io/cluster-issuer: {{ $rname }}-issuer
     cert-manager.io/issue-temporary-certificate: "true"
     {{- end }}
     {{- if .Values.ingress.globalStaticIp }}
