@@ -164,7 +164,7 @@ export const https = (): Validator<string> => value => {
 }
 
 export const origin = (): Validator<string> => value =>
-	/^https?:\/\/[a-zA-Z\.\d]+(?:|:\d+)$/i.test(value)
+	/^https?:\/\/[a-zA-Z\.\d-]+(?:|:\d+)$/i.test(value)
 		? []
 		: ["invalid origin"]
 
