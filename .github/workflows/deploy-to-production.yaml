@@ -1,0 +1,98 @@
+
+name: deploy to production
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+
+    ##
+    ## checkout and docker setup
+    ##
+
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: set up qemu
+      uses: docker/setup-qemu-action@v1
+
+    - name: set up docker buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: login to github container registry
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    ##
+    ## project build
+    ##
+
+    - name: npm install and build
+      shell: bash
+      run: |
+        npm install && npm run build
+
+    ##
+    ## push images
+    ##
+
+    - name: push image - web
+      uses: docker/build-push-action@v2
+      with:
+        file: ./web/Dockerfile
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/web:${{ github.sha }}
+
+    - name: push image - api
+      uses: docker/build-push-action@v2
+      with:
+        file: ./s/Dockerfile
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
+
+    ##
+    ## deploy to production
+    ##
+
+    - name: set kubeconfig
+      uses: azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.PROD_KUBECONFIG }}
+      id: setcontext
+
+    - name: helm deployment
+      shell: bash
+      env:
+        GITHASH: ${{ github.sha }}
+        XIOME_CONFIG: ${{ secrets.PROD_XIOME_CONFIG }}
+        XIOME_PUBLIC_KEY: ${{ secrets.PROD_XIOME_PUBLIC_KEY }}
+        XIOME_PRIVATE_KEY: ${{ secrets.PROD_XIOME_PRIVATE_KEY }}
+      run: |
+        helm upgrade xiome ./helm \
+          --atomic \
+          --wait \
+          --install \
+          --namespace xiome \
+          --set-string images.tag=$GITHASH \
+          --set-string env.XIOME_CONFIG="$(echo "$XIOME_CONFIG" | base64 -w 0)" \
+          --set-string env.XIOME_PUBLIC_KEY="$(echo "$XIOME_PUBLIC_KEY" | base64 -w 0)" \
+          --set-string env.XIOME_PRIVATE_KEY="$(echo "$XIOME_PRIVATE_KEY" | base64 -w 0)" \
+          -f ./helm/values.yaml
