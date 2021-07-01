@@ -2,7 +2,7 @@
 ## scratchpad
 
 deployment refactors and considerations
-- [ ] refactor external-dns into helm chart?
+- [x] (nah) refactor external-dns into helm chart?
 - [ ] production deployments on git tags
 - [ ] publish npm package on release?
 
