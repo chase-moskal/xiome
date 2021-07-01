@@ -25,6 +25,11 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
 
+    - name: set up node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 15
+
     - name: set up qemu
       uses: docker/setup-qemu-action@v1
 
@@ -46,6 +51,11 @@ jobs:
       shell: bash
       run: |
         npm install && npm run build
+
+    - name: npm publish
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
 
     ##
     ## push images
