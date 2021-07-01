@@ -22,7 +22,7 @@ web:
   replicas: 2
 
 microservices:
-  server:
-    image: ghcr.io/chase-moskal/xiome/server
+  api:
+    image: ghcr.io/chase-moskal/xiome/api
     replicas: 2
     port: 8000

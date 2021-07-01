@@ -11,5 +11,5 @@ web:
   replicas: 1
 
 microservices:
-  server:
+  api:
     replicas: 1
