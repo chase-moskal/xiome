@@ -10,6 +10,7 @@ website
 - [ ] fix code snippets
 - [ ] rework alpha note
 - [ ] refine the about page
+- [ ] rework readme
 - [ ] basic components listing
 
 systemic
