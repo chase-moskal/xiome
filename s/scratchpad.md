@@ -9,6 +9,7 @@ deployment refactors and considerations
 website
 - [ ] fix code snippets
 - [ ] rework alpha note
+- [ ] add stage warning
 - [ ] refine the about page
 - [ ] rework readme
 - [ ] basic components listing
