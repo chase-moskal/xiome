@@ -18,6 +18,24 @@ html {
 	display: none;
 }
 
+.stageplate {
+	display: none;
+	background: #666;
+	color: #fff;
+	width: 100%;
+	padding: 2em;
+	p {
+		max-width: 640px;
+		margin: auto;
+	}
+	.angry {
+		color: #f66;
+	}
+	html.stage & {
+		display: block;
+	}
+}
+
 .siteheader {
 	position: relative;
 	menu-system {
@@ -120,6 +138,12 @@ code {
 	h4 { font-size: 1.1em; }
 	h5 { font-size: 1.1em; font-weight: bold; }
 	h6 { font-size: 1.1em; font-weight: bold; font-size: italic; }
+}
+
+.codeblock {
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	font-size: 0.6em;
 }
 
 .sitefooter {

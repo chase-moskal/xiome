@@ -31,6 +31,7 @@ head
 				case "stage.xiome.io": {
 					config.setAttribute("platform", `https://stage.xiome.io`)
 					config.setAttribute("api", `https://api.stage.xiome.io`)
+					document.documentElement.className += " stage"
 					break
 				}
 				case "localhost": {
@@ -46,6 +47,13 @@ head
 		script(async defer src=`${base}/xiome.bundle.min.js`)
 
 	block head
+
+.stageplate
+	p.angry oops!
+	p you've wandered onto our developer testing stage!
+	p it looks like the real thing, but it's a sham!
+	br
+	p go back to the real #[a(href="https://xiome.io/") xiome.io]
 
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div
@@ -64,7 +72,7 @@ header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 					h3 your account
 
 main
-	p.content.prerelease-notice #[span.prerelease alpha] prerelease warning: #[strong we wipe all data regularly,] and some features are missing. right now, xiome is only suitable for experimentation and feedback
+	p.content.prerelease-notice xiome is currently experimental — we might wipe data soon!
 	block maincontent
 
 footer.sitefooter
