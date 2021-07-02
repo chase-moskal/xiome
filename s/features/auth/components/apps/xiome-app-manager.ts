@@ -148,19 +148,21 @@ export class XiomeAppManager extends Component2WithShare<{
 					</div>
 					<div class=app-options>
 						<div class=app-code>
-							<h4>install with html</h4>
+							<h4>html install</h4>
+							<p>just copy-paste into your website's &lt;head&gt; section</p>
 							<code class=htmlcode>
 								${renderXiomeConfig(app.appId)}
 							</code>
+							<p>then you're all set to head over to the components page</p>
 						</div>
 						<div class=adminmanager>
 							<h4>manage admins</h4>
 							${adminManager.render()}
 						</div>
-						<div>
+						<!-- <div>
 							<h4>bank link to receive payouts</h4>
 							<xiome-bank-connect .appId=${app.appId}></xiome-bank-connect>
-						</div>
+						</div> -->
 					</div>
 				</div>
 

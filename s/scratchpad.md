@@ -7,7 +7,7 @@ deployment refactors and considerations
 - [x] publish npm package on release?
 
 website
-- [ ] fix code snippets
+- [x] fix code snippets
 - [ ] rework alpha note
 - [ ] add stage warning
 - [ ] refine the about page

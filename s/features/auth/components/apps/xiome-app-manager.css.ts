@@ -142,8 +142,9 @@ code.id {
 
 .app-code code {
 	display: block;
-	padding: 1em 2em;
-	margin-top: 1em;
+	font-size: 0.6em;
+	padding: 1em;
+	margin: 0.5em 0;
 }
 
 .delete-app-button {

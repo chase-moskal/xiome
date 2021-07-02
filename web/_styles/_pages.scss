@@ -16,6 +16,7 @@
 			margin-top: 0.5em;
 		}
 		.mocksnippet {
+			margin-top: 0.5em;
 			margin-left: 1em;
 		}
 	}
@@ -30,4 +31,10 @@
 		opacity: 0.3;
 		margin: 0.5em 0;
 	}
+}
+
+.codeblock {
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	font-size: 0.6em;
 }
