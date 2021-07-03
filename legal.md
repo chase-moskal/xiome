@@ -48,7 +48,7 @@ things we track:
 1. **[stripe](https://stripe.com/) information for payments**  
   we store stripe information relating to user payments, which allows us to gather and direct the payments — we don't directly store any credit card numbers
 1. **messages, comments, posts, likes, reports**  
-  of course, we store the information users post, including messages that are intended to be private or public, what they mark as 'liked' and things like that
+  of course, we store the information users post, and what they mark as 'liked' and things like that
 
 we're regularly adding new features, so it's possible this list is incomplete
 
