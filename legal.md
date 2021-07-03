@@ -1,4 +1,6 @@
 
+if you have any questions, please email us at hello@xiome.io
+
 "we", "us", "our", and "xiome" refer to xiome.io and its associated software, app, and cloud platform
 
 # xiome.io terms of service
@@ -57,8 +59,6 @@ xiome is open source software, so you can see for yourself what we're tracking â
 if you find anything we seem to be tracking that isn't on the list, please consider adding it to this list by submitting a github pull request for the addition
 
 we may be forced to share the information we have with law enforcement agencies
-
-if you have any questions, please email us at hello@xiome.io
 
 # xiome.io cookie policy
 
