@@ -22,7 +22,7 @@ export default css`
 }
 
 .questions-moderation-panel .purge-button {
-	color: red;
+	--xio-button-hover-color: red;
 }
 
 slot[name="empty"] {

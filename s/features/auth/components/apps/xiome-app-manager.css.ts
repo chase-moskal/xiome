@@ -150,7 +150,7 @@ code.id {
 .delete-app-button {
 	display: block;
 	text-align: right;
-	--xio-button-hover-background: red;
+	--xio-button-hover-color: red;
 }
 
 ${adminManagerCss}
