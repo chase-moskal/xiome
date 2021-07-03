@@ -11,11 +11,8 @@ html {
 	color: #fff8;
 	min-height: 100%;
 	background: #2f3038;
-	background: fixed linear-gradient(
-		to bottom right,
-		#2f3038,
-		#21222a
-	);
+	background: #151619;
+	background: fixed linear-gradient(to bottom right, #24252a, #000000);
 }
 
 xiome-app-manager {
@@ -78,7 +75,9 @@ code { background: #0002; }
 .prerelease {
 	font-family: Play, sans-serif;
 	color: #fffd78;
-	background: #797f3387;
+	.prerelease-tag {
+		background: #797f3387;
+	}
 }
 
 .prerelease-notice {

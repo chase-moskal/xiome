@@ -38,6 +38,9 @@ html {
 
 .siteheader {
 	position: relative;
+	> div {
+		padding-right: 3rem;
+	}
 	menu-system {
 		--menu-margin: 0.4em 0 0 0;
 		--xio-button-hover-color: #fff;
@@ -66,11 +69,26 @@ html {
 		flex-direction: column;
 	}
 	h1 {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
 		span {
 			display: inline-block;
 			vertical-align: middle;
-			&:first-child {
-				letter-spacing: 0.2em;
+		}
+		.title {
+			letter-spacing: 0.2em;
+		}
+		.prerelease {
+			font-size: 0.7rem;
+			text-transform: none;
+			.prerelease-tag {
+				padding: 0.2em 0.5em;
+				border-radius: 2em;
+				text-transform: uppercase;
+			}
+			.prerelease-note {
+				margin-left: 0.5em;
 			}
 		}
 	}
@@ -78,6 +96,7 @@ html {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+		margin-top: 0.5em;
 		margin-left: -0.3em;
 		> a {
 			padding: 0.1em 0.3em;
@@ -93,14 +112,6 @@ main {
 	margin-top: 1em;
 }
 
-.prerelease {
-	margin-top: 0;
-	font-size: 0.7rem;
-	padding: 0.2em 0.5em;
-	border-radius: 2em;
-	text-transform: uppercase;
-}
-
 code {
 	font-size: 0.7em;
 	padding: 0.2em;
@@ -112,12 +123,12 @@ code {
 }
 
 .content {
-	max-width: 700px;
+	// max-width: 700px;
 	* + p,
 	* + ol,
 	* + ul,
 	* + li {
-		margin-top: 0.4em;
+		margin-top: 0.6em;
 	}
 	* + h1,
 	* + h2,
@@ -125,7 +136,7 @@ code {
 	* + h4,
 	* + h5,
 	* + h6 {
-		margin-top: 1rem;
+		margin-top: 1.2rem;
 	}
 	h1, h2, h3, h4, h5, h6 {
 		font-weight: normal;

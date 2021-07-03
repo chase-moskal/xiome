@@ -58,8 +58,10 @@ head
 header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 	div
 		h1
-			span Xiome
-			span.prerelease alpha
+			span.title Xiome
+			span.prerelease
+				span.prerelease-tag alpha
+				span.prerelease-note for experimentation only
 		nav
 			a(href=`${base}/`) learn
 			a(href=`${base}/setup`) setup
@@ -72,7 +74,7 @@ header(data-page-subtitle=(pageSubtitle || "home")).siteheader
 					h3 your account
 
 main
-	p.content.prerelease-notice xiome is new, and experimental — we might wipe data soon!
+	//- p.content.prerelease-notice xiome is new, and experimental — we might wipe data soon!
 	block maincontent
 
 footer.sitefooter
