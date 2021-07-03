@@ -3,7 +3,7 @@
 COMMAND=$1
 TAG="dev"
 IMAGE="xiome-core"
-DOCKERFILE="./s/Dockerfile"
+DOCKERFILE="./s/dockerfile"
 COMMANDLIST="'build', 'run', or 'debug'"
 
 XIOME_CONFIG=`cat ./dev-config.json`
