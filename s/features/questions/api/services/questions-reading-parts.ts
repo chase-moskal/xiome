@@ -35,22 +35,26 @@ export const questionsReadingParts = (
 					order: {timePosted: "descend"},
 				})
 
-			const permissionsEngine = makePermissionsEngine({
-				isPlatform: access.appId === options.config.platform.appDetails.appId,
-				permissionsTables: tables.permissions,
-			})
+			let questions = []
+			let users = []
+			if (posts.length) {
+				const permissionsEngine = makePermissionsEngine({
+					isPlatform: access.appId === options.config.platform.appDetails.appId,
+					permissionsTables: tables.permissions,
+				})
 
-			const users = await fetchUsers({
-				permissionsEngine,
-				authTables: tables,
-				userIds: posts.map(p => p.authorUserId),
-			})
+				users = await fetchUsers({
+					permissionsEngine,
+					authTables: tables,
+					userIds: posts.map(p => p.authorUserId),
+				})
 
-			const questions = await resolveQuestions({
-				posts,
-				questionsTables,
-				userId: access?.user?.userId,
-			})
+				questions = await resolveQuestions({
+					posts,
+					questionsTables,
+					userId: access?.user?.userId,
+				})
+			}
 
 			return {questions, users}
 		},
