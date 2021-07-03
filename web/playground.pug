@@ -2,6 +2,7 @@
 extends _templates/_page.pug
 
 block append variables
+	- pageName = "playground"
 	- pageSubtitle = "playground"
 
 block head
@@ -10,7 +11,7 @@ block head
 block maincontent
 	xio-modal
 
-	.page-playground.content
+	.page.content
 		h2 developer playground
 		p this page is for developers to experiment with and work on new components
 

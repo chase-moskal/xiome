@@ -4,6 +4,7 @@ doctype html
 block variables
 	- let base = "."
 	- let pageSubtitle
+	- let pageName
 
 head
 	meta(charset="utf-8")
@@ -55,29 +56,33 @@ head
 	br
 	p go back to the real #[a(href="https://xiome.io/") xiome.io]
 
-header(data-page-subtitle=(pageSubtitle || "home")).siteheader
-	div
-		h1
-			span.title Xiome
-			span.prerelease
-				span.prerelease-tag alpha
-				span.prerelease-note for experimentation only
-		nav
-			a(href=`${base}/`) learn
-			a(href=`${base}/setup`) setup
-			a(href=`${base}/components`) components
-	menu-system(sticky initially-hidden)
-		menu-display(data-label="account")
-			xiome-my-avatar(slot="button")
-			xiome-login-panel(show-logout)
-				xiome-my-account
-					h3 your account
+body(data-page=pageName)
+	header(data-page-subtitle=(pageSubtitle || "home")).siteheader
+		div
+			h1
+				span.title Xiome
+				span.prerelease
+					span.prerelease-tag alpha
+					span.prerelease-note for experimentation only
+			nav
+				a(href=`${base}/`) learn
+				a(href=`${base}/setup`) setup
+				a(href=`${base}/components`) components
+		menu-system(sticky initially-hidden)
+			menu-display(data-label="account")
+				xiome-my-avatar(slot="button")
+				xiome-login-panel(show-logout)
+					xiome-my-account
+						h3 your account
 
-main
-	//- p.content.prerelease-notice xiome is new, and experimental — we might wipe data soon!
-	block maincontent
+	main
+		block maincontent
 
-footer.sitefooter
-	p #[a(data-external href="mailto:hello@xiome.io") hello@xiome.io] #[span send us an email]
-	p #[a(data-external href="https://github.com/chase-moskal/xiome#readme") xiome on github] #[span collaborate with developers]
-	p #[a(data-external href="https://github.com/chase-moskal/xiome#readme") xiome on discord] #[span chat with us, we're here to help!]
+	footer.sitefooter
+		p #[a(data-external href="mailto:hello@xiome.io") hello@xiome.io] #[span send us an email]
+		p #[a(data-external href="https://github.com/chase-moskal/xiome#readme") xiome on github] #[span collaborate with developers]
+		p #[a(data-external href="https://github.com/chase-moskal/xiome#readme") xiome on discord] #[span chat with us, we're here to help!]
+		br
+		small
+			p #[a(href="https://github.com/chase-moskal/xiome#readme") privacy policy]
+			p #[a(href="https://github.com/chase-moskal/xiome#readme") terms of service]

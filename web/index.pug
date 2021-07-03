@@ -1,8 +1,12 @@
 
 extends _templates/_page.pug
 
+block append variables
+	- pageName = "learn"
+	- pageSubtitle = ""
+
 block maincontent
-	.page-learn.content
+	.page.content
 
 		.segment.twoside
 			.text

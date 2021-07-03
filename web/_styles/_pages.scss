@@ -1,5 +1,12 @@
 
-.page-learn {
+[data-page="learn"] {
+	.page, .sitefooter {
+		max-width: 40em;
+	}
+}
+
+[data-page="learn"] .page {
+	margin: 0 auto;
 	margin-bottom: 4rem;
 
 	ul {
@@ -18,13 +25,11 @@
 		justify-content: start;
 		flex-wrap: wrap-reverse;
 		.text {
-			flex: 1 1 auto;
-			max-width: 25em;
+			flex: 1 1 12em;
 			margin-bottom: 1em;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			
 		}
 		.art {
 			margin: 1em;
@@ -39,17 +44,11 @@
 		&.flip {
 			flex-direction: row-reverse;
 			justify-content: flex-end;
-			.text {
-				flex: 1 1 20em;
-			}
-		}
-		@media (min-width: 1400px) {
-			font-size: 1.3em;
 		}
 	}
 }
 
-.page-setup {
+[data-page="setup"] .page {
 	xiome-app-manager {
 		margin-top: 1em;
 	}
@@ -65,7 +64,7 @@
 	}
 }
 
-.page-playground {
+[data-page="playground"] .page {
 	xio-playground {
 		display: block;
 		margin-top: 1em;

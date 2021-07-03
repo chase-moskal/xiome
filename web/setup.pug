@@ -2,10 +2,11 @@
 extends _templates/_page.pug
 
 block append variables
+	- pageName = "setup"
 	- pageSubtitle = "setup"
 
 block maincontent
-	.page-setup
+	.page
 
 		xiome-login-panel(initially-hidden)
 			h2(slot="logged-out") login to setup communities

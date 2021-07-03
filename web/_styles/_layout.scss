@@ -159,9 +159,14 @@ code {
 
 .sitefooter {
 	@extend .slice;
-	margin-top: 2em;
-	margin-bottom: 5em;
+	margin-top: 7rem;
+	margin-bottom: 7rem;
 	> p > span {
 		margin-left: 0.5em;
+	}
+	small {
+		display: block;
+		font-size: 0.7em;
+		opacity: 0.7;
 	}
 }
