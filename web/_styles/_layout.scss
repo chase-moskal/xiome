@@ -107,7 +107,7 @@ html {
 
 main {
 	@extend .slice;
-	margin-top: 3em;
+	margin-top: 2em;
 }
 
 code {
@@ -121,7 +121,6 @@ code {
 }
 
 .content {
-	// max-width: 700px;
 	* + p,
 	* + ol,
 	* + ul,
@@ -160,7 +159,7 @@ code {
 	margin-top: 7rem;
 	margin-bottom: 7rem;
 	> p > span {
-		margin-left: 0.5em;
+		opacity: 0.25;
 	}
 	small {
 		display: block;
