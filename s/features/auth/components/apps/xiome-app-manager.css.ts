@@ -23,10 +23,6 @@ export default css`
 	padding: 4em 2em;
 }
 
-/* .app {
-	overflow: hidden;
-} */
-
 .app > * + * {
 	margin-top: 0.3em;
 }
@@ -109,6 +105,16 @@ export default css`
 	padding-right: 1rem;
 }
 
+.editside > .buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* .editside > xio-button {
+	margin: auto;
+} */
+
 .app-form > * + * {
 	margin-top: 0.3em;
 }
@@ -152,6 +158,10 @@ code.id {
 .htmlcode [data-syntax=indent] {
 	display: block;
 	margin-left: 1em;
+}
+
+.app-code > * {
+	margin-top: 1em;
 }
 
 .app-code code {

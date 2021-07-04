@@ -141,6 +141,19 @@ export class XiomeAppManager extends Component3WithShare<{
 		// `
 	}
 
+	private renderAppCode(appId: string) {
+		return html`
+			<div class=app-code>
+				<h4>connect your website</h4>
+				<p>copy-paste this html into your website's &lt;head&gt; section:</p>
+				<code class=htmlcode>
+					${renderXiomeConfig(appId)}
+				</code>
+				<p>then head over to the <a part=link href="./components">components page</a></p>
+			</div>
+		`
+	}
+
 	private renderApp(app: AppDisplay) {
 		const appState = this.getAppState(app.appId)
 		return html`
@@ -171,16 +184,11 @@ export class XiomeAppManager extends Component3WithShare<{
 				</div>
 
 				<div class=twoside>
-					<div class=app-code>
-						<h4>html install</h4>
-						<p>just copy-paste into your website's &lt;head&gt; section</p>
-						<code class=htmlcode>
-							${renderXiomeConfig(app.appId)}
-						</code>
-						<p>then you're all set to head over to the components page</p>
-					</div>
-					<div>
-						<xio-button @click=${appState.toggleEditMode}>edit community</xio-button>
+					${this.renderAppCode(app.appId)}
+					<div class=editside>
+						<div class=buttons>
+							<xio-button @click=${appState.toggleEditMode}>edit community</xio-button>
+						</div>
 						<div class=app-options ?hidden=${!appState.editMode}>
 							<div class=app-details>
 								${appState.appForm.render({partNamespace: "appeditor"})}
