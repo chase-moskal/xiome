@@ -23,6 +23,10 @@ export default css`
 	--border-radius: var(--xio-text-input-border-radius, 0.3em);
 }
 
+:host([hidden]) {
+	display: none;
+}
+
 label {
 	font: var(--label-font);
 	color: var(--label-color);

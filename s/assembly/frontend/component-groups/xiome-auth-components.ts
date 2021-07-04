@@ -24,7 +24,7 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeLoginPanel)
 			),
 		XiomeAppManager:
-			mixinAutotrack(appModel.track)(
+			mixinHappy(appModel.onStateChange)(
 				mixinShare({
 					modals,
 					appModel,

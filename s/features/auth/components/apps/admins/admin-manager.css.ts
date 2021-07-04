@@ -18,6 +18,7 @@ export default css`
 
 .adminmanager .adminassigner > xio-text-input {
 	width: 100%;
+	max-width: 100%;
 }
 
 .adminmanager .adminassigner > xio-text-input::part(problems) {
@@ -32,6 +33,7 @@ export default css`
 .adminmanager .adminlist ul {
 	list-style: none;
 	padding: 0 1em;
+	border: 1px solid #fff1;
 }
 
 .adminmanager .adminlist li {

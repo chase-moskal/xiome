@@ -1,7 +1,7 @@
 
 import {makeAppModel} from "../../features/auth/models/app-model.js"
 import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
-import {makeStoreModel} from "../../features/store/model/store-model.js"
+// import {makeStoreModel} from "../../features/store/model/store-model.js"
 import {AssembleModelsOptions} from "./types/assemble-models-options.js"
 import {makePersonalModel} from "../../features/auth/models/personal-model.js"
 import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"

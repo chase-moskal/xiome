@@ -14,6 +14,7 @@ import {TextInputParser} from "../../../../xio-components/inputs/types/text-inpu
 export function makeAppForm({
 		clearOnSubmit,
 		submitButtonText,
+		showAdditionalOrigins,
 		initialValues = getEmptyAppFormDraft(),
 		query,
 		submit,
@@ -21,6 +22,7 @@ export function makeAppForm({
 	}: {
 		clearOnSubmit: boolean
 		submitButtonText: string
+		showAdditionalOrigins: boolean
 		initialValues?: AppFormDraft
 		requestUpdate: () => void
 		submit: (draft: AppFormDraft) => Promise<void>
@@ -106,9 +108,10 @@ export function makeAppForm({
 			problems: ${partNamespace}-appform-xiotextinput-problems,
 		`
 		const renderTextInput = <xValue = string>({
-				textarea, label, dataForm, initialText, showValidationWhenEmpty,
+				hide, textarea, label, dataForm, initialText, showValidationWhenEmpty,
 				parser, validator,
 			}: {
+				hide: boolean
 				textarea: boolean
 				label: string
 				dataForm: string
@@ -123,6 +126,7 @@ export function makeAppForm({
 				exportparts="${exportPartsTextInput}"
 				data-form="${dataForm}"
 				initial="${initialText}"
+				?hidden=${hide}
 				?disabled=${formDisabled}
 				?hide-validation=${!changes}
 				?show-validation-when-empty=${showValidationWhenEmpty}
@@ -139,9 +143,10 @@ export function makeAppForm({
 				<slot name=create-app-heading></slot>
 
 				${renderTextInput({
+					hide: false,
 					textarea: false,
 					dataForm: "label",
-					label: "community label",
+					label: "community name",
 					initialText: initialValues.label,
 					showValidationWhenEmpty: false,
 					parser: undefined,
@@ -149,9 +154,10 @@ export function makeAppForm({
 				})}
 
 				${renderTextInput({
+					hide: false,
 					textarea: false,
 					dataForm: "home",
-					label: "website homepage",
+					label: `website homepage, like "https://chasemoskal.com/"`,
 					initialText: initialValues.home,
 					showValidationWhenEmpty: false,
 					parser: undefined,
@@ -159,9 +165,10 @@ export function makeAppForm({
 				})}
 
 				${renderTextInput<string[]>({
+					hide: !showAdditionalOrigins,
 					textarea: true,
 					dataForm: "additional-origins",
-					label: "additional origins (optional)",
+					label: "(optional) additional domain names",
 					initialText: initialValues.additionalOrigins.join("\n"),
 					showValidationWhenEmpty: true,
 					parser: parseOrigins,

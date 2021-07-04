@@ -16,6 +16,9 @@
 
 	.segment {
 		margin-top: 2rem;
+		&:first-of-type {
+			margin-top: 0;
+		}
 	}
 
 	.twoside {
@@ -54,7 +57,6 @@
 		margin-top: 1em;
 	}
 	.plate {
-		margin-top: 1em;
 		p + p {
 			margin-top: 0.5em;
 		}

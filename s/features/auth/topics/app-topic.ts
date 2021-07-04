@@ -3,7 +3,6 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {isPlatform} from "../tools/is-platform.js"
 import {AppDraft} from "../types/apps/app-draft.js"
-import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
 import {AppDisplay} from "../types/apps/app-display.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
@@ -12,6 +11,7 @@ import {and, find, or} from "../../../toolbox/dbby/dbby-mongo.js"
 import {originsToDatabase} from "./origins/origins-to-database.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {PlatformUserAuth} from "../policies/types/platform-user-auth.js"
+import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
 
 export const appTopic = ({
 		rando,
@@ -47,7 +47,7 @@ export const appTopic = ({
 	async registerApp({tables}, {appDraft, ownerUserId}: {
 			appDraft: AppDraft
 			ownerUserId: string
-		}) {
+		}): Promise<AppDisplay> {
 		throwProblems(validateAppDraft(appDraft))
 		const appId = rando.randomId()
 		await Promise.all([
@@ -63,6 +63,14 @@ export const appTopic = ({
 				userId: ownerUserId,
 			}),
 		])
-		return {appId}
+		return {
+			...appDraft,
+			appId,
+			stats: {
+				users: 1,
+				usersActiveDaily: 0,
+				usersActiveMonthly: 0,
+			},
+		}
 	},
 })

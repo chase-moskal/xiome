@@ -18,18 +18,18 @@ export default <Suite>{
 
 	"register app": async() => {
 		const {appModel} = (await creativeSignupAndLogin(creativeEmail)).models
-		assert(ops.isNone(appModel.appList), "app-list loading should start 'none'")
+		assert(ops.isNone(appModel.state.appRecords), "appRecords loading should start 'none'")
 
-		await appModel.loadAppList()
-		assert(ops.isReady(appModel.appList), "app-list should be finished loading")
-		assert(ops.value(appModel.appList).length === 0, "should start with zero apps")
+		await appModel.loadApps()
+		assert(ops.isReady(appModel.state.appRecords), "appRecords should be finished loading")
+		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "should start with zero apps")
 
 		const {appId} = await appModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
 		})
-		assert(ops.value(appModel.appList).length === 1, "should now have one app")
+		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 1, "should now have one app")
 
 		await expect(async() => {
 			await appModel.registerApp({
@@ -38,10 +38,10 @@ export default <Suite>{
 				origins: [appOrigin],
 			})
 		}).throws()
-		assert(ops.value(appModel.appList).length === 1, "should still have one app")
+		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 1, "should still have one app")
 
 		await appModel.deleteApp(appId)
-		assert(ops.value(appModel.appList).length === 0, "deleted app should be gone")
+		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "deleted app should be gone")
 	},
 
 	"register an app and login to it": async() => {
@@ -58,10 +58,10 @@ export default <Suite>{
 			label: "My App",
 			origins: [appOrigin],
 		})
-		assert(ops.value(platformAppModel.appList).length === 1, "should now have one app")
+		assert(Object.keys(ops.value(platformAppModel.state.appRecords)).length === 1, "should now have one app")
 		const appRow = await system.backend.database.core.app.app.read(find({appId}))
 		assert(appRow, "app row must be present")
-		const app = ops.value(platformAppModel.appList)[0]
+		const app = ops.value(ops.value(platformAppModel.state.appRecords)[appId])
 		assert(app, "app must be present")
 
 		// app window 1

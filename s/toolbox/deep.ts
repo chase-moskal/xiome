@@ -12,7 +12,7 @@ export type DeepReadonly<X extends {}> = {
 export function deepFreeze<xObject extends {}>(object: xObject) {
 	Object.freeze(object)
 	for (const value of Object.values(object)) {
-		if (typeof value === "object")
+		if (value && typeof value === "object")
 			deepFreeze(value)
 	}
 	return <DeepReadonly<xObject>>object

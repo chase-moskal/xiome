@@ -35,6 +35,9 @@ export class XioTextInput<xParsedValue = string> extends Component2 {
 	@property({type: String, reflect: true})
 	["placeholder"]: string = ""
 
+	@property({type: Boolean, reflect: true})
+	["hidden"]: boolean = false
+
 	focus() {
 		this.shadowRoot.querySelector<HTMLElement>("#textinput").focus()
 	}

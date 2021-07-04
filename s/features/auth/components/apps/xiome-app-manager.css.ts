@@ -11,12 +11,21 @@ export default css`
 	margin-bottom: 2em;
 }
 
-.app {
+.app-list > xio-op {
+	display: block;
+	border: 1px solid #f00;
 	margin-top: 0.5em;
 	border: 1px solid #fff1;
 	border-radius: 0.2em;
-	overflow: hidden;
 }
+
+.app-list > xio-op[mode="loading"] {
+	padding: 4em 2em;
+}
+
+/* .app {
+	overflow: hidden;
+} */
 
 .app > * + * {
 	margin-top: 0.3em;
@@ -108,8 +117,13 @@ export default css`
 	margin-top: 0.6em;
 }
 
+.app-options {
+	border: 1px solid #fff1;
+	padding: 1em;
+}
+
 .app-options > * + * {
-	margin-top: 1em;
+	margin-top: 3em;
 }
 
 code {
@@ -154,5 +168,14 @@ code.id {
 }
 
 ${adminManagerCss}
+
+.app-list {
+	margin-bottom: 5rem;
+}
+
+.app-registration {
+	max-width: 40em;
+	margin-bottom: 5em;
+}
 
 `

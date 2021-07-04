@@ -8,8 +8,22 @@ import {Component2, html, mixinStyles, property} from "../../../framework/compon
 @mixinStyles(styles)
 export class XioOp<xPayload = any> extends Component2 {
 
+	@property({type: String, reflect: true})
+	mode: string = "none"
+
+	// @property({type: Object})
+	// op: Op<xPayload> = ops.none()
+	private _op: Op<xPayload> = ops.none()
+	get op() {
+		return this._op
+	}
 	@property({type: Object})
-	op: Op<xPayload> = ops.none()
+	set op(op: Op<xPayload>) {
+		const old = this._op
+		this._op = op
+		this.mode = ops.mode(op)
+		this.requestUpdate("op", old)
+	}
 
 	@property()
 	errorIcon = svgWarning

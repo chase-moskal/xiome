@@ -2,32 +2,34 @@
 import styles from "./xiome-app-manager.css.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
-import {multistate} from "../../../../toolbox/multistate.js"
-import {Component2WithShare, html, mixinStyles} from "../../../../framework/component2/component2.js"
+import {Component3WithShare, html, mixinStyles} from "../../../../framework/component2/component2.js"
 
 import {makeAppForm} from "./form/app-form.js"
+import {makeAdminManager} from "./admins/admin-manager.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
 import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 
-import {makeAdminManager} from "./admins/admin-manager.js"
-
-import {AppModel} from "../../models/types/app/app-model.js"
 import {AppDisplay} from "../../types/apps/app-display.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {AppModel} from "../../models/types/app/app-model.js"
+import {AppRecords} from "../../models/types/app/app-records.js"
+import {strongRecordKeeper} from "../../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {happystate} from "../../../../toolbox/happystate/happystate.js"
 
 @mixinStyles(styles)
-export class XiomeAppManager extends Component2WithShare<{
+export class XiomeAppManager extends Component3WithShare<{
 		appModel: AppModel
 		modals: ModalSystem
 	}> {
 
 	init() {
-		this.share.appModel.loadAppList()
+		this.share.appModel.loadApps()
 	}
 
 	private appRegistrationForm = makeAppForm({
 		clearOnSubmit: true,
+		showAdditionalOrigins: false,
 		submitButtonText: "create community",
 		requestUpdate: () => this.requestUpdate(),
 		query: selector => (
@@ -41,49 +43,53 @@ export class XiomeAppManager extends Component2WithShare<{
 		},
 	})
 
-	private getAppForm = (multistate<
-			AppDisplay,
-			ReturnType<typeof makeAppForm>
-		>(
-			app => makeAppForm({
+	private getAppState = strongRecordKeeper<string>()(appId => {
+		const app = this.share.appModel.getApp(appId)
+
+		const {actions, getState, onStateChange} = happystate({
+			state: {editMode: false},
+			actions: state => ({
+				toggleEditMode() { state.editMode = !state.editMode },
+			}),
+		})
+		onStateChange(() => { this.requestUpdate() })
+
+		return {
+			toggleEditMode: actions.toggleEditMode,
+			get editMode() { return getState().editMode },
+			appForm: makeAppForm({
 				clearOnSubmit: false,
+				showAdditionalOrigins: true,
 				submitButtonText: "save changes",
 				initialValues: appDisplayToFormDraft(app),
-				requestUpdate: () => this.requestUpdate(),
+				requestUpdate: () => { this.requestUpdate() },
 				query: selector => (
 					this.shadowRoot
-						.querySelector(`.app[data-app-id="${app.appId}"] .app-editor`)
+						.querySelector(`.app[data-app-id="${app.appId}"] .app-options`)
 						.querySelector(selector)
 				),
 				submit: async formDraft => {
 					const appDraft = formDraftToAppDraft(formDraft)
 					await this.share.appModel.updateApp(app.appId, appDraft)
 				},
-			})
-		)
-	)
-
-	private getAdminManager = (multistate<
-			AppDisplay,
-			ReturnType<typeof makeAdminManager>
-		>(
-			app => {
-				const adminManager = makeAdminManager({
+			}),
+			adminManager: (() => {
+				const manager = makeAdminManager({
 					app,
 					manageAdminsService: this.share.appModel.manageAdminsService,
 					query: selector => this.shadowRoot
 						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
 						.querySelector(selector)
 				})
-				adminManager.track({
-					watcher: () => { adminManager.render() },
+				manager.track({
+					watcher: () => { manager.render() },
 					effect: () => this.requestUpdate(),
 				})
-				adminManager.controls.listAdmins()
-				return adminManager
-			}
-		)
-	)
+				manager.controls.listAdmins()
+				return manager
+			})(),
+		}
+	})
 
 	private deleteApp = async(app: AppDisplay) => {
 		const userIsSure = await this.share.modals.confirm({
@@ -93,27 +99,50 @@ export class XiomeAppManager extends Component2WithShare<{
 			no: {label: "nevermind", vibe: "neutral"},
 			focusNthElement: 2,
 		})
-		if (userIsSure) await this.share.appModel.deleteApp(app.appId)
+		if (userIsSure)
+			await this.share.appModel.deleteApp(app.appId)
+	}
+
+	private renderAppRegistration() {
+		return html`
+			<div class=app-registration>
+				<slot name="register-app-heading"></slot>
+				${this.appRegistrationForm.render({partNamespace: "appregistration"})}
+			</div>
+		`
 	}
 
 	private renderNoApps() {
 		return html`
 			<slot name=no-apps></slot>
+			${this.renderAppRegistration()}
 		`
 	}
 
-	private renderAppList(appList: AppDisplay[]) {
+	private renderAppList(records: AppRecords) {
 		return html`
 			<slot></slot>
 			<div class=app-list>
-				${appList.map(app => this.renderApp(app))}
+				${Object.entries(records)
+					.map(([appId, record]) =>
+						renderOp(record, app => this.renderApp(app)))}
 			</div>
+			${this.renderAppRegistration()}
 		`
 	}
 
+	private renderAppBankLinking(app: AppDisplay) {
+		return null
+		// return html`
+		// 	<div>
+		// 		<h4>bank link to receive payouts</h4>
+		// 		<xiome-bank-connect .appId=${app.appId}></xiome-bank-connect>
+		// 	</div>
+		// `
+	}
+
 	private renderApp(app: AppDisplay) {
-		const appForm = this.getAppForm(app)
-		const adminManager = this.getAdminManager(app)
+		const appState = this.getAppState(app.appId)
 		return html`
 			<div class=app data-app-id=${app.appId}>
 
@@ -142,51 +171,45 @@ export class XiomeAppManager extends Component2WithShare<{
 				</div>
 
 				<div class=twoside>
-					<div class=app-editor>
-						<h4>edit community details</h4>
-						${appForm.render({partNamespace: "appeditor"})}
+					<div class=app-code>
+						<h4>html install</h4>
+						<p>just copy-paste into your website's &lt;head&gt; section</p>
+						<code class=htmlcode>
+							${renderXiomeConfig(app.appId)}
+						</code>
+						<p>then you're all set to head over to the components page</p>
 					</div>
-					<div class=app-options>
-						<div class=app-code>
-							<h4>html install</h4>
-							<p>just copy-paste into your website's &lt;head&gt; section</p>
-							<code class=htmlcode>
-								${renderXiomeConfig(app.appId)}
-							</code>
-							<p>then you're all set to head over to the components page</p>
+					<div>
+						<xio-button @click=${appState.toggleEditMode}>edit community</xio-button>
+						<div class=app-options ?hidden=${!appState.editMode}>
+							<div class=app-details>
+								${appState.appForm.render({partNamespace: "appeditor"})}
+							</div>
+							<div class=adminmanager>
+								<h4>manage admins</h4>
+								${appState.adminManager.render()}
+							</div>
+							${this.renderAppBankLinking(app)}
+							<div class=finalbox>
+								<xio-button
+									class=delete-app-button
+									@press=${() => this.deleteApp(app)}>
+										delete community
+								</xio-button>
+							</div>
 						</div>
-						<div class=adminmanager>
-							<h4>manage admins</h4>
-							${adminManager.render()}
-						</div>
-						<!-- <div>
-							<h4>bank link to receive payouts</h4>
-							<xiome-bank-connect .appId=${app.appId}></xiome-bank-connect>
-						</div> -->
 					</div>
-				</div>
-
-				<div class=finalbox>
-					<xio-button
-						class=delete-app-button
-						@press=${() => this.deleteApp(app)}>
-							delete community
-					</xio-button>
 				</div>
 			</div>
 		`
 	}
 
 	render() {
-		const {appList} = this.share.appModel
+		const {appRecords} = this.share.appModel.state
 		return html`
-			${renderOp(appList, list => list.length
-				? this.renderAppList(list)
+			${renderOp(appRecords, records => Object.values(records).length
+				? this.renderAppList(records)
 				: this.renderNoApps())}
-			<div class=app-registration>
-				<slot name="register-app-heading"></slot>
-				${this.appRegistrationForm.render({partNamespace: "appregistration"})}
-			</div>
 		`
 	}
 }
