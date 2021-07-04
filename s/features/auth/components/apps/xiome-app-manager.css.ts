@@ -8,6 +8,7 @@ export default css`
 }
 
 .app-list {
+	margin-top: 2em;
 	margin-bottom: 2em;
 }
 
@@ -110,10 +111,6 @@ export default css`
 	justify-content: center;
 	align-items: center;
 }
-
-/* .editside > xio-button {
-	margin: auto;
-} */
 
 .app-form > * + * {
 	margin-top: 0.3em;
