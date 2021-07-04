@@ -71,13 +71,28 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 		this.emailIsValid = this.textInput.problems.length === 0
 	}
 
+	private renderLegalLink() {
+		return html`
+			<small>
+				<p>
+					<a
+						part=link
+						target=_blank
+						href="https://github.com/chase-moskal/xiome/blob/master/legal.md">
+							policies and terms
+					</a>
+				</p>
+			</small>
+		`
+	}
+
 	private renderLoggedOut() {
 		const {emailIsValid} = this
 		return html`
 			<xio-op .op=${this.sentLoading}>
 				<div slot=none>
 					<slot name=logged-out>
-						<p>Login with your email address</p>
+						<p>login with your email address</p>
 					</slot>
 					<xio-text-input
 						.validator=${email()}
@@ -85,6 +100,9 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 						@enterpress=${this.sendEmail}>
 							your email
 					</xio-text-input>
+					<slot name=legal>
+						${this.renderLegalLink()}
+					</slot>
 					<xio-button
 						?disabled=${!emailIsValid}
 						@press=${this.sendEmail}>
