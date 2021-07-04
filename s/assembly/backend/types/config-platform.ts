@@ -1,5 +1,6 @@
 
 export interface ConfigPlatform {
+	legalLink: string
 	technician: {
 		email: string
 	}

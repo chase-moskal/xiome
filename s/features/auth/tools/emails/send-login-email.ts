@@ -1,8 +1,8 @@
 
 import {makeLoginLink} from "./make-login-link.js"
+import {SendEmail} from "../../types/emails/send-email.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
 import {SendLoginEmail} from "../../types/emails/send-login-email.js"
-import {SendEmail} from "../../types/emails/send-email.js"
 
 export function prepareSendLoginEmail({sendEmail}: {
 		sendEmail: SendEmail
@@ -13,6 +13,7 @@ export function prepareSendLoginEmail({sendEmail}: {
 			appHome,
 			appLabel,
 			lifespan,
+			legalLink,
 			loginToken,
 			platformLink,
 		}) {
@@ -22,15 +23,17 @@ export function prepareSendLoginEmail({sendEmail}: {
 
 		return sendEmail({
 			to,
-			subject: `Login link for ${appLabel}`,
+			subject: `Login to ${appLabel}`,
 			body: (
 `
 Login link for ${appLabel} (expires in ${minutesLeft} minutes)
+
  » ${loginLink} «
 
 If you didn't request this login link, just ignore it
 
  * logins powered by ${platformLink} *
+ * policies and terms of service ${legalLink} *
 `
 			),
 		})

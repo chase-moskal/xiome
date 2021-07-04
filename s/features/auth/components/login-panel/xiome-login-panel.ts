@@ -78,7 +78,7 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 					<a
 						part=link
 						target=_blank
-						href="https://github.com/chase-moskal/xiome/blob/master/legal.md">
+						href="https://xiome.io/legal">
 							policies and terms
 					</a>
 				</p>

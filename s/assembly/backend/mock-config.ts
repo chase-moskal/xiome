@@ -8,6 +8,7 @@ export const mockConfig = (): SecretConfig => ({
 		detailedLogs: true,
 	},
 	platform: {
+		legalLink: "https://xiome.io/legal",
 		technician: {
 			email: "chasemoskal@gmail.com",
 		},

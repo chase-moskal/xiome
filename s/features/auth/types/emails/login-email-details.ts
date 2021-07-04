@@ -4,6 +4,7 @@ export interface LoginEmailDetails {
 	appHome: string
 	appLabel: string
 	lifespan: number
+	legalLink: string
 	loginToken: string
 	platformLink: string
 }

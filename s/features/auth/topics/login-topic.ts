@@ -30,6 +30,7 @@ export const loginTopic = ({
 			appHome: appRow.home,
 			appLabel: appRow.label,
 			to: email,
+			legalLink: config.platform.legalLink,
 			platformLink: config.platform.appDetails.home,
 			lifespan: config.crypto.tokenLifespans.login,
 			loginToken: await signToken<LoginPayload>({
