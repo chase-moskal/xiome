@@ -50,7 +50,7 @@ things we track:
 1. **permissions data**  
   info about what system roles and system privileges users might have in a community
 1. **[stripe](https://stripe.com/) information for payments**  
-  we store stripe information relating to user payments, which allows us to gather and direct the payments — we don't directly store any credit card numbers
+  we store data about user's stripe accounts and stripe payments, which allows us to gather and direct payments — we don't directly store any credit card numbers
 1. **messages, comments, posts, likes, reports**  
   of course, we store the information users post, and what they mark as 'liked' and things like that
 
