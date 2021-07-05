@@ -76,10 +76,16 @@
 		> li {
 			display: flex;
 			flex-wrap: wrap;
-			// background: #fff1;
-			
+			border-top: 1px solid #fff1;
+			padding-top: 2em;
+
 			+ li {
-				margin-top: 4em;
+				margin-top: 2em;
+			}
+
+			&:last-of-type {
+				padding-bottom: 2em;
+				border-bottom: 1px solid #fff1;
 			}
 
 			> * {
@@ -108,7 +114,7 @@
 					&::before {
 						content: "copy-paste this component's html into your website";
 						display: block;
-						color: #fffa;
+						color: #fff4;
 						font-family: sans-serif;
 						margin-bottom: 0.5em;
 					}
