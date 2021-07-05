@@ -16,12 +16,20 @@ xio-text-input > span {
 	font-size: 0.7em;
 }
 
+.buttonbar {
+	margin-top: 0.5em;
+	vertical-align: middle;
+}
+
+slot[name="legal"] {
+	display: inline-block;
+	margin: 0 1em;
+}
+
 small {
+	display: block;
 	opacity: 0.5;
 	font-size: 0.7em;
-	margin-top: 1em;
-	padding-left: 1em;
-	display: block;
 }
 
 `

@@ -100,14 +100,16 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 						@enterpress=${this.sendEmail}>
 							<span>your email</span>
 					</xio-text-input>
-					<slot name=legal>
-						${this.renderLegalLink()}
-					</slot>
-					<xio-button
-						?disabled=${!emailIsValid}
-						@press=${this.sendEmail}>
-							send login link
-					</xio-button>
+					<div class=buttonbar>
+						<slot name=legal>
+							${this.renderLegalLink()}
+						</slot>
+						<xio-button
+							?disabled=${!emailIsValid}
+							@press=${this.sendEmail}>
+								send login link
+						</xio-button>
+					</div>
 				</div>
 				${ops.isReady(this.sentLoading)
 					? html`
