@@ -1,11 +1,11 @@
 
 email us at hello@xiome.io if you have any questions
 
-"we", "us", "our", and "xiome" all refes to the xiome.io open source project
+"we", "us", "our", and "xiome" all refer to the xiome.io open source project
 
 # xiome.io terms of service
 
-xiome's software and services are provided under the terms of the [ISC License](LICENSE) and also the terms below
+xiome's software and services are provided under the terms of the [isc license](license) and also the terms below
 
 we're not responsible or liable for anything that happens related to xiome
 
@@ -15,13 +15,13 @@ when you post or submit any data to xiome, you surrender all rights to that data
 - delete the data
 
 we may, without notice or reason:
-- shut down any service
+- shut down or delete any service or software
 - ban or delete any user or community
 - delete any content any user has posted
 - change pricing or fees
 - change policies or terms of service
 
-there are also some rules:
+there are also some rules about submitting or posting to xiome:
 - never spam
 - never submit or post personally identifiable information about anybody
 - never submit or post anything illegal, like threats of violence, underage porn
@@ -34,13 +34,13 @@ we try to maintain the anonymity of all users
 
 we don't sell data
 
-we record some basic statistics which we might publish, like counts of the numbers of people using xiome communities
+we record some basic statistics which we might publish, like counts of the numbers of people using xiome
 
 we may be forced to share data with law enforcement agencies
 
 things we track:
 1. **email address**  
-  this is so we can send login links when the user wants to login. we don't publicize it. in an emergency, we may use the email addresses to contact people about something very important
+  this is so we can send login links when the user wants to login. we don't publicize it. we may use the email addresses to notify people about important things related to xiome
 1. **profile data**  
   info the user saves about their avatar, like nickname, tagline, profile picture preferences
 1. **account stats**  
@@ -62,4 +62,4 @@ if you find anything we seem to be tracking that isn't on the list, please consi
 
 # xiome.io cookie policy
 
-we store some cookies locally in users' web browsers, to keep them logged in, and to store their preferences for various components and features
+we store some cookies (localStorage) locally in users' web browsers, to keep them logged in, and to store their preferences for various components and features
