@@ -6,6 +6,36 @@ block append variables
 	- pageSubtitle = "components"
 
 block maincontent
-	.page.content
-		h2 components
-		p coming soon
+	.page
+		ol.componentgrid
+			li
+				.summary
+					h3
+						span my account
+						span  component
+					p this component allows users to edit their profile
+					code.htmlcode.codeblock=`<xiome-login-panel show-logout>\n\t<xiome-my-account></xiome-my-account>\n</xiome-login-panel>`
+				.demo
+					demo-xiome-login-panel(show-logout)
+						demo-xiome-my-account
+			li
+				.summary
+					h3
+						span questions
+						span  component
+					p a community board where users can post questions
+					code.htmlcode.codeblock=`<xiome-login-panel>\n\t<xiome-questions board="default"></xiome-questions>\n</xiome-login-panel>`
+				.demo
+					demo-xiome-login-panel
+						demo-xiome-questions
+			li
+				.summary
+					h3
+						span permissions
+						span  component
+					p allows community admins to manage roles and privileges
+					code.htmlcode.codeblock=`<xiome-permissions></xiome-permissions>`
+				.demo
+					demo-xiome-permissions
+		h3.soon
+			p more components coming soon

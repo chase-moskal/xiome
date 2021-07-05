@@ -18,6 +18,7 @@ export function makeAppModel({
 			active: false,
 			appRecords: <Op<AppRecords>>ops.none(),
 			addingNewApp: <Op<null>>ops.none(),
+			// loadingPromise: <Promise<void>>Promise.resolve(),
 		},
 		actions: state => ({
 			setActive(active) {
@@ -26,6 +27,9 @@ export function makeAppModel({
 			setAddingNewApp(op: Op<null>) {
 				state.addingNewApp = op
 			},
+			// setLoadingPromise(promise: Promise<void>) {
+			// 	state.loadingPromise = promise
+			// },
 			setAppRecords(op: Op<AppDisplay[]>) {
 				const appList = ops.value(op) ?? []
 				let records: AppRecords = {}
@@ -34,11 +38,10 @@ export function makeAppModel({
 				state.appRecords = ops.replaceValue(op, records)
 			},
 			setIndividualAppRecord(appId: string, op: Op<AppDisplay>) {
-				const apps = ops.value(state.appRecords)
-				if (apps)
-					state.appRecords = ops.ready({...apps, [appId]: op})
-				else
+				if (ops.isLoading(state.appRecords))
 					throw new Error("cannot set individual app while apps are loading")
+				const apps = ops.value(state.appRecords) ?? {}
+				state.appRecords = ops.ready({...apps, [appId]: op})
 			},
 			deleteIndividualAppRecord(appId: string) {
 				if (ops.isReady(state.appRecords)) {
@@ -61,9 +64,9 @@ export function makeAppModel({
 		return access?.user?.userId
 	}
 
-	async function loadApps() {
+	async function loadApps(): Promise<AppDisplay[]> {
 		actions.setActive(true)
-		return ops.operation({
+		const appsPromise = ops.operation({
 			promise: (async() => {
 				const userId = await getUserId()
 				return userId
@@ -72,6 +75,8 @@ export function makeAppModel({
 			})(),
 			setOp: op => actions.setAppRecords(op),
 		})
+		// actions.setLoadingPromise(appsPromise.then(() => undefined))
+		return appsPromise
 	}
 
 	async function registerApp(appDraft: AppDraft) {

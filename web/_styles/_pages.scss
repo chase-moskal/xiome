@@ -68,6 +68,78 @@
 	}
 }
 
+[data-page="components"] .page {
+
+	.componentgrid {
+		list-style: none;
+
+		> li {
+			display: flex;
+			flex-wrap: wrap;
+			background: #fff1;
+			
+			+ li {
+				margin-top: 3em;
+			}
+
+			> * {
+				padding: 1em;
+			}
+
+			> .summary {
+				flex: 0 1 24em;
+				max-width: 100%;
+				> * + * {
+					margin-top: 1rem;
+				}
+				> h3 {
+					font-size: 2rem;
+					> span:nth-child(2) {
+						opacity: 0.3;
+					}
+				}
+				code {
+					color: #0f0c;
+					padding: 1em;
+					white-space: pre-wrap;
+					tab-size: 2;
+					&::before {
+						content: "copy-paste this component's html into your website";
+						display: block;
+						color: #fffa;
+						font-family: sans-serif;
+						margin-bottom: 0.5em;
+					}
+				}
+			}
+			> .demo {
+				flex: 1 1 24em;
+				position: relative;
+				padding: 4em;
+				padding-top: 2em;
+				@media (max-width: 600px) { padding: 1em; padding-top: 2em; }
+				background: #0002;
+				&::before {
+					position: absolute;
+					font-size: 0.7em;
+					content: "interactive demo — play around!";
+					right: 0;
+					left: 0;
+					top: 0.2em;
+					text-align: center;
+					opacity: 0.6;
+				}
+			}
+		}
+	}
+
+	.soon {
+		margin: 5em auto;
+		text-align: center;
+		opacity: 0.5;
+	}
+}
+
 [data-page="playground"] .page {
 	xio-playground {
 		display: block;
