@@ -10,6 +10,7 @@ export async function mockConnect(config: XiomeConfigMock) {
 		storage: simpleFlexStorage(window.localStorage),
 		platformHome: window.location.href,
 		appWindowLink: window.location.href,
+		latency: {min: 200, max: 800},
 	}
 	return config.mock === "platform"
 		? await mockConnectPlatform(options)

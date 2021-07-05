@@ -10,6 +10,7 @@ export async function demos() {
 		appWindowLink: window.location.href,
 		origins: [window.location.origin],
 		storage: memoryFlexStorage(),
+		latency: false,
 	})
 	const frontend = await assembleAndInitializeFrontend(connection)
 	applyMockHacks({connection, frontend})

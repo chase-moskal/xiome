@@ -27,6 +27,7 @@ export async function mockConnectPlatform({
 		backend,
 		storage,
 		appWindowLink: platformHome,
+		latency: {min: 200, max: 800},
 	})
 
 	const popups = mockPopups({
