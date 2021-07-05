@@ -8,7 +8,10 @@ import {configureApiForNode} from "../../../../assembly/backend/configure-api-fo
 export async function standardSystem() {
 	const latency = false
 
-	const config = mockConfig()
+	const config = mockConfig({
+		platformHome: "https://stage.xiome.io/",
+		platformOrigins: ["https://stage.xiome.io"],
+	})
 	config.database = "mock-memory"
 	const backend = await configureApiForNode(config)
 

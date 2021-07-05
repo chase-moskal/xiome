@@ -2,7 +2,10 @@
 import {SecretConfig} from "./types/secret-config.js"
 import {day, minute} from "../../toolbox/goodtimes/times.js"
 
-export const mockConfig = (): SecretConfig => ({
+export const mockConfig = ({platformHome, platformOrigins}: {
+		platformHome: string
+		platformOrigins: string[]
+	}): SecretConfig => ({
 	server: {
 		port: 4999,
 		detailedLogs: true,
@@ -15,10 +18,8 @@ export const mockConfig = (): SecretConfig => ({
 		appDetails: {
 			appId: "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
 			label: "Xiome Cloud",
-			home: "http://localhost:5000/x/",
-			origins: [
-				"http://localhost:5000",
-			],
+			home: platformHome,
+			origins: platformOrigins,
 		},
 	},
 	email: "mock-console",

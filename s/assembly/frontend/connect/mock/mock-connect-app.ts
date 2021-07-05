@@ -15,7 +15,10 @@ export async function mockConnectApp({
 		appWindowLink: string
 	}) {
 
-	const backend = await configureApiForBrowser(mockConfig())
+	const backend = await configureApiForBrowser(mockConfig({
+		platformHome: appWindowLink,
+		platformOrigins: origins,
+	}))
 	backend.emails.disableEmails()
 
 	const apiLink = apiOrigin + "/"

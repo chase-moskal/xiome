@@ -13,7 +13,10 @@ export async function mockConnectPlatform({
 		storage: FlexStorage
 	}) {
 
-	const backend = await configureApiForBrowser(mockConfig())
+	const backend = await configureApiForBrowser(mockConfig({
+		platformHome,
+		platformOrigins: [new URL(platformHome).origin],
+	}))
 
 	const apiLink = apiOrigin + "/"
 	const appId = backend.platformAppId
