@@ -74,9 +74,6 @@ p[data-field=tagline] {
 
 xio-text-input > span {
 	opacity: 0.4;
-}
-
-xio-text-input::part(label) {
 	font-size: 0.7rem;
 }
 

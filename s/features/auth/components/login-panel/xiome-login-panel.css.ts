@@ -11,6 +11,11 @@ xio-button {
 	margin-top: 0.2em;
 }
 
+xio-text-input > span {
+	opacity: 0.4;
+	font-size: 0.7em;
+}
+
 small {
 	opacity: 0.5;
 	font-size: 0.7em;

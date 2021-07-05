@@ -98,7 +98,7 @@ export class XiomeLoginPanel extends Component2WithShare<{authModel: AuthModel}>
 						.validator=${email()}
 						@valuechange=${this.handleEmailChange}
 						@enterpress=${this.sendEmail}>
-							your email
+							<span>your email</span>
 					</xio-text-input>
 					<slot name=legal>
 						${this.renderLegalLink()}
