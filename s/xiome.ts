@@ -14,6 +14,6 @@ void async function xiome() {
 	registerComponents(xiome.components)
 	window.xiome = xiome
 
-	if (/^((stage|)\.xiome\.io|localhost)$/.test(window.location.hostname))
+	if (/^((stage\.|)xiome\.io|localhost)$/.test(window.location.hostname))
 		await demos()
 }()
