@@ -11,8 +11,8 @@ website
 - [x] rework alpha note
 - [x] add stage warning
 - [x] refine the about page
-- [ ] rework readme
-- [ ] basic components listing
+- [x] rework readme
+- [x] basic components listing
 
 systemic
 - [ ] binary uids?
