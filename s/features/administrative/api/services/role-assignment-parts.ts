@@ -54,6 +54,8 @@ export const roleAssignmentParts = ({
 			})
 
 			const userIds = profiles.map(profile => profile.userId)
+			if (!userIds.length)
+				return []
 
 			const permissionsEngine = makePermissionsEngine({
 				isPlatform: access.appId === config.platform.appDetails.appId,
