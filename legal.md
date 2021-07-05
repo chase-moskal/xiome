@@ -1,7 +1,7 @@
 
-if you have any questions, please email us at hello@xiome.io
+email us at hello@xiome.io if you have any questions
 
-"we", "us", "our", and "xiome" refer to xiome.io and its associated software, app, and cloud platform
+"we", "us", "our", and "xiome" all refes to the xiome.io open source project
 
 # xiome.io terms of service
 
@@ -9,7 +9,7 @@ xiome's software and services are provided under the terms of the [ISC License](
 
 we're not responsible or liable for anything that happens related to xiome
 
-when you post or submit any data to xiome, you surrender all rights to that data, and we may:
+when you post or submit any data to xiome, you surrender all rights to that data. we might:
 - publicize the data
 - modify the data
 - delete the data
@@ -23,18 +23,20 @@ we may, without notice or reason:
 
 there are also some rules:
 - never spam
-- never post any personally identifiable information about yourself or others
-- never post any anything illegal, like threats of violence, underage porn
+- never submit or post personally identifiable information about anybody
+- never submit or post anything illegal, like threats of violence, underage porn
 
 # xiome.io privacy policy
 
-we try to minimize the amount of data we gather about users, and stick to the minimum that is necessary to provide the functionality for the components and features
+we try to minimize the amount of data we gather about users, and we do our best to guard data with the best security practices we know
 
-we do our best to guard data with the best security practices we know
+we try to maintain the anonymity of all users
 
-we'll never sell any data about our users
+we don't sell data
 
-we record some statistics, and we might publish some, like the total number of people using the xiome platform as a whole
+we record some basic statistics which we might publish, like counts of the numbers of people using xiome communities
+
+we may be forced to share data with law enforcement agencies
 
 things we track:
 1. **email address**  
@@ -56,9 +58,7 @@ we're regularly adding new features, so it's possible this list is incomplete
 
 xiome is open source software, so you can see for yourself what we're tracking — a good place to start looking would be our [database schema](s/assembly/backend/types/database.ts)
 
-if you find anything we seem to be tracking that isn't on the list, please consider adding it to this list by submitting a github pull request for the addition
-
-we may be forced to share the information we have with law enforcement agencies
+if you find anything we seem to be tracking that isn't on the list, please consider adding it to this document by submitting a github pull request for the addition
 
 # xiome.io cookie policy
 
