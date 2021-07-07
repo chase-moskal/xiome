@@ -5,6 +5,7 @@
 	"license": "ISC",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
+	"main": "x/xiome.js",
 	"files": [
 		"x",
 		"s"
