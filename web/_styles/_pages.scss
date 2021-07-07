@@ -52,7 +52,15 @@
 		}
 	}
 
-	.homepoints {
+	.introblock {
+		h2 {
+			span {
+				display: block;
+				&:nth-child(2) {
+					opacity: 0.5;
+				}
+			}
+		}
 		li p {
 			&:nth-child(2) {
 				opacity: 0.5;
