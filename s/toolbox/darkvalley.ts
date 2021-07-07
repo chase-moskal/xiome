@@ -152,7 +152,7 @@ export const url = (): Validator<string> => value => {
 }
 
 export const localhost = (): Validator<string> => value => {
-	return /^https?:\/\/localhost(|:\d{1,5})(|\/\S*)$/i.test(value)
+	return /^https?:\/\/(127\.0\.0\.1|localhost)(|:\d{1,5})(|\/\S*)$/i.test(value)
 		? []
 		: ["must be a localhost address"]
 }
