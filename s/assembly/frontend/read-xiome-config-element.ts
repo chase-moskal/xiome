@@ -16,7 +16,7 @@ export function readXiomeConfigElement(): XiomeConfig {
 	}
 
 	const mock: undefined | "app" | "platform" =
-		fresh.mock === null
+		fresh.mock === undefined
 			? undefined
 			: fresh.mock === "platform"
 				? "platform"
