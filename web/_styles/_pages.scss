@@ -51,6 +51,17 @@
 			justify-content: flex-end;
 		}
 	}
+
+	.homepoints {
+		li p {
+			&:nth-child(2) {
+				opacity: 0.5;
+				margin-top: 0;
+				font-size: 0.8em;
+				margin-left: 2em;
+			}
+		}
+	}
 }
 
 [data-page="setup"] .page {
