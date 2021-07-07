@@ -59,6 +59,7 @@
 		"@stripe/stripe-js": "^1.15.1",
 		"chalk": "^4.1.1",
 		"crosscall": "0.0.6-dev.22",
+		"form-data": "^2.3.3",
 		"js-yaml-chase-esm": "3.14.0-esm.2",
 		"json5": "^2.2.0",
 		"lit-element": "^2.5.1",
