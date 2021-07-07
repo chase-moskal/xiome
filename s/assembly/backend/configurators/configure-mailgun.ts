@@ -15,7 +15,7 @@ export function configureMailgun({mailgun: {apiKey, publicKey, from, domain}}: C
 	return {
 		sendEmail: async({to, body, subject}) => {
 			await mockSendEmail({to, body, subject})
-			await mg.messages().create(domain, {
+			await mg.messages.create(domain, {
 				from,
 				to,
 				subject,
