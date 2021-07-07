@@ -81,6 +81,16 @@
 
 [data-page="components"] .page {
 
+	.explainer {
+		padding-bottom: 4em;
+		> * + * {
+			margin-top: 1em;
+		}
+		p {
+			max-width: 24em;
+		}
+	}
+
 	.componentgrid {
 		list-style: none;
 
@@ -123,7 +133,7 @@
 					white-space: pre-wrap;
 					tab-size: 2;
 					&::before {
-						content: "copy-paste this component's html into your website";
+						content: "copy into website html <body>";
 						display: block;
 						color: #fff4;
 						font-family: sans-serif;
