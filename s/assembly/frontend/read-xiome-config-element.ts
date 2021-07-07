@@ -5,11 +5,14 @@ export function readXiomeConfigElement(): XiomeConfig {
 	const xiomeConfig = document.querySelector("xiome-config")
 	if (!xiomeConfig) throw new Error(`<xiome-config> is required`)
 
+	const attribute = (attr: string) =>
+		xiomeConfig.getAttribute(attr) ?? undefined
+
 	const fresh = {
-		mock: xiomeConfig.getAttribute("mock"),
-		appId: xiomeConfig.getAttribute("app"),
-		apiOrigin: xiomeConfig.getAttribute("api"),
-		platformOrigin: xiomeConfig.getAttribute("platform"),
+		mock: attribute("mock"),
+		appId: attribute("app"),
+		apiOrigin: attribute("api"),
+		platformOrigin: attribute("platform"),
 	}
 
 	const mock: undefined | "app" | "platform" =
