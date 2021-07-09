@@ -1,8 +1,10 @@
 
-import {Binary} from "mongodb"
+import bson from "bson"
 import {DbbyRow} from "./dbby-types.js"
 import {objectMap} from "../object-map.js"
 import {DamnId} from "../damnedb/damn-id.js"
+
+const {Binary} = bson
 
 // strip away the mongo database id's -- we don't use 'em
 export function skimMongoId<Row extends DbbyRow>(row: Row): Row {
