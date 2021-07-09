@@ -1,5 +1,8 @@
 
+import {DamnId} from "../damnedb/damn-id.js"
+
 export type DbbyValue =
+	| DamnId
 	| undefined
 	| boolean
 	| number

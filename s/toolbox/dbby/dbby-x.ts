@@ -1,5 +1,6 @@
 
 export {and, or, find} from "./dbby-helpers.js"
+import {DamnId} from "../damnedb/damn-id.js"
 import {FlexStorage} from "../flex-storage/types/flex-storage.js"
 import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated, DbbyConditionTree, DbbyConditions} from "./dbby-types.js"
 
@@ -8,18 +9,61 @@ export async function dbbyX<Row extends DbbyRow>(
 		tableName: string,
 	): Promise<DbbyTable<Row>> {
 
+	let table: Row[] = []
 	const storageKey = `dbby-${tableName}`
 
-	let table: Row[] = []
+	const serializationKey = "__serialized_type__"
+
+	type SerializedValue = {
+		[serializationKey]: "DamnedId",
+		serializedValue: string
+	}
+
+	type SerializedRow = {[key: string]: any | SerializedValue}
+
+	function serialize(table: Row[]): any[] {
+		return table.map(row => {
+			const serializedRow: SerializedRow = {}
+			for (const [key, value] of Object.entries(row)) {
+				if (value instanceof DamnId)
+					serializedRow[key] = {
+						[serializationKey]: "DamnId",
+						serializedValue: value.toString(),
+					}
+				else
+					serializedRow[key] = value
+			}
+			return serializedRow
+		})
+	}
+
+	function deserialize(data: SerializedRow[]): Row[] {
+		return data.map(datum => {
+			const row = {}
+			for (const [key, value] of Object.entries(datum)) {
+				if (value && typeof value === "object" && value[serializationKey]) {
+					if (value[serializationKey] === "DamnId")
+						row[key] = DamnId.fromString(value.serializationValue)
+					else
+						throw new Error(`dbby-x unknown serialization type "${value[serializationKey]}"`)
+				}
+				else {
+					row[key] = value
+				}
+			}
+			return <Row>row
+		})
+	}
 
 	async function load() {
-		table = await flexStorage.read(storageKey) || []
+		table = deserialize(await flexStorage.read(storageKey) || [])
 	}
 
 	await load()
 
 	async function save() {
-		if (flexStorage) await flexStorage.write(storageKey, table)
+		if (flexStorage)
+			await flexStorage.write(storageKey, serialize(table))
 	}
 
 	function select(conditional: DbbyConditional<Row>): Row[] {

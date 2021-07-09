@@ -5,23 +5,18 @@ import {objectMap} from "../object-map.js"
 import {escapeRegex} from "../escape-regex.js"
 export {and, or, find} from "./dbby-helpers.js"
 
+import {dbbyMongoRowProcessing} from "./dbby-mongo-row-processing.js"
 import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditional, DbbyConditionTree, DbbyUpdateAmbiguated, DbbyOrder} from "./dbby-types.js"
-
-function skimMongoId<Row extends DbbyRow>(row: Row): Row {
-	if (row) {
-		const {_id: noop, ...skimmed} = <any>row
-		return skimmed
-	}
-	return undefined
-}
 
 export function dbbyMongo<Row extends DbbyRow>({collection}: {
 		collection: Collection
 	}): DbbyTable<Row> {
-	return {
 
+	const {up, ups, down, downs} = dbbyMongoRowProcessing<Row>()
+
+	return {
 		async create(...rows) {
-			await collection.insertMany(rows)
+			await collection.insertMany(ups(rows))
 		},
 
 		async read({order, offset = 0, limit = 10000, ...conditional}) {
@@ -31,23 +26,23 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 			if (order) cursor = cursor.sort(orderToSort(order))
 			if (limit) cursor = cursor.limit(limit)
 			const rows = await cursor.toArray()
-			return rows.map(skimMongoId)
+			return downs(rows)
 		},
 
 		async one(conditional) {
 			const query = prepareQuery(conditional)
 			const row = await collection.findOne<Row>(query)
-			return skimMongoId(row)
+			return down(row)
 		},
 
 		async assert({make, ...conditional}) {
 			const query = prepareQuery(conditional)
-			let row = await collection.findOne<Row>(query)
+			let row = down(await collection.findOne<Row>(query))
 			if (!row) {
 				row = await make()
-				await collection.insertOne(row)
+				await collection.insertOne(up(row))
 			}
-			return skimMongoId(row)
+			return row
 		},
 
 		async update({
@@ -58,14 +53,14 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 			}: DbbyUpdateAmbiguated<Row>) {
 			const query = prepareQuery(conditional)
 			if (write) {
-				await collection.updateMany(query, {$set: write}, {upsert: false})
+				await collection.updateMany(query, {$set: up(write)}, {upsert: false})
 			}
 			else if (upsert) {
-				await collection.updateOne(query, {$set: upsert}, {upsert: true})
+				await collection.updateOne(query, {$set: up(upsert)}, {upsert: true})
 			}
 			else if (whole) {
 				await collection.deleteMany(query)
-				await collection.insertOne(whole)
+				await collection.insertOne(up(whole))
 			}
 			else throw new Error("invalid update")
 		},

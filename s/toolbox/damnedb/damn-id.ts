@@ -1,16 +1,18 @@
 
 import {encodeBase42, decodeBase42} from "../binary/base42.js"
 
-export class DamnedId {
+export class DamnId {
 	static fromString(text: string) {
 		const binary = decodeBase42(text)
-		return new DamnedId(binary)
+		return new DamnId(binary)
 	}
 
 	#binary: ArrayBuffer
 	#string: string
-	get toBinary() { return this.#binary }
-	get toString() { return this.#string }
+	get binary() { return this.#binary }
+	get string() { return this.#string }
+	toBinary() { return this.#binary }
+	toString() { return this.#string }
 
 	constructor(binary: ArrayBuffer) {
 		this.#binary = binary
