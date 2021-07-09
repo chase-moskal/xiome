@@ -2,5 +2,5 @@
 import {AuthTables} from "../../tables/types/auth-tables.js"
 
 export type GreenAuth = {
-	bakeTables: (appId: string) => Promise<AuthTables>
+	bakeTables: (id_app: string) => Promise<AuthTables>
 }

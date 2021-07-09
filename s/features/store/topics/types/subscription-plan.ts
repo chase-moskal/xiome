@@ -1,8 +1,8 @@
 
 export interface SubscriptionPlan {
-	subscriptionPlanId: string
+	id_subscriptionPlan: string
 	price: number
 	label: string
 	active: boolean
-	roleId: undefined | string
+	id_role: undefined | string
 }

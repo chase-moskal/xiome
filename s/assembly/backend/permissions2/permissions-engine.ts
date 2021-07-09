@@ -22,10 +22,10 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 	} = permissionsMergingFacility({isPlatform})
 
 	async function getAnonymousPrivileges() {
-		const roleId = hardPermissions.roles.anonymous.roleId
-		const hard = getHardPrivilegeDetails(roleId)
+		const id_role = hardPermissions.roles.anonymous.id_role
+		const hard = getHardPrivilegeDetails(id_role)
 		const soft = await permissionsTables.roleHasPrivilege
-			.read(find({roleId}))
+			.read(find({id_role}))
 		return getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
 	}
 
@@ -41,29 +41,29 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			if (userIds.length === 0)
 				throw new Error("invalid: user ids cannot be empty")
 			const usersHaveRolesRaw = await permissionsTables.userHasRole.read({
-				conditions: or(...userIds.map(userId => ({equal: {userId}})))
+				conditions: or(...userIds.map(id_user => ({equal: {id_user}})))
 			})
-			const roleIds = usersHaveRolesRaw.map(u => u.roleId)
+			const roleIds = usersHaveRolesRaw.map(u => u.id_role)
 			if (userIds.length === 0)
 				throw new Error("invalid: role ids cannot be empty")
 			const roles = await permissionsTables.role.read({
-				conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
+				conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
 			})
 			const roleIdsThatActuallyExist = [
-				...roles.map(r => r.roleId),
+				...roles.map(r => r.id_role),
 				...Object.entries(hardPermissions.roles)
-					.map(([,role]) => role.roleId),
+					.map(([,role]) => role.id_role),
 			]
 			return usersHaveRolesRaw
-				.filter(u => roleIdsThatActuallyExist.includes(u.roleId))
+				.filter(u => roleIdsThatActuallyExist.includes(u.id_role))
 		})()
 
-		return userIds.map(userId => {
-			const raw = usersHaveRoles.filter(r => r.userId === userId)
+		return userIds.map(id_user => {
+			const raw = usersHaveRoles.filter(r => r.id_user === id_user)
 			const userHasRoles = raw
 				.filter(isCurrentlyWithinTimeframe)
 				.filter(onlyGetPublicRoles ? isPublic : all)
-			return {userId, userHasRoles}
+			return {id_user, userHasRoles}
 		})
 	}
 
@@ -74,25 +74,25 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		})
 
 		const allRoleIds = rolesForUsers
-			.flatMap(r => r.userHasRoles.map(r2 => r2.roleId))
+			.flatMap(r => r.userHasRoles.map(r2 => r2.id_role))
 
 		const allRolesHavePrivileges = allRoleIds.length
 			? await permissionsTables.roleHasPrivilege.read({
-				conditions: or(...allRoleIds.map(roleId => ({equal: ({roleId})})))
+				conditions: or(...allRoleIds.map(id_role => ({equal: ({id_role})})))
 			})
 			: []
 
-		function resolvePrivilegesForEachUser(userId: string) {
+		function resolvePrivilegesForEachUser(id_user: string) {
 			const roleIds = rolesForUsers
-				.find(r => r.userId === userId)
+				.find(r => r.id_user === id_user)
 				.userHasRoles
-				.map(r => r.roleId)
-			// roleIds.push(universalPermissions.roles.authenticated.roleId)
+				.map(r => r.id_role)
+			// roleIds.push(universalPermissions.roles.authenticated.id_role)
 			const hard = getHardPrivilegeDetails(...roleIds)
 			const soft = roleIds
-				.flatMap(roleId => allRolesHavePrivileges.filter(p => p.roleId === roleId))
+				.flatMap(id_role => allRolesHavePrivileges.filter(p => p.id_role === id_role))
 			const privileges = getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
-			return {userId, privileges}
+			return {id_user, privileges}
 		}
 
 		return userIds.map(resolvePrivilegesForEachUser)
@@ -107,15 +107,15 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const allRoleIds = rolesForUsers
 			.flatMap(r => r.userHasRoles
 				.filter(r2 => r2.public)
-				.map(r2 => r2.roleId))
+				.map(r2 => r2.id_role))
 
-		const allHardRoles: RoleRow[] = allRoleIds.map(roleId => {
+		const allHardRoles: RoleRow[] = allRoleIds.map(id_role => {
 			const found = Object.entries(hardPermissions.roles)
-				.find(([,role]) => role.roleId === roleId)
+				.find(([,role]) => role.id_role === id_role)
 			if (found) {
 				const [label, role] = found
 				return {
-					roleId,
+					id_role,
 					label,
 					hard: true,
 					public: role.public,
@@ -129,34 +129,34 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 
 		const allSoftRoles = allRoleIds.length
 			? await permissionsTables.role.read({
-				conditions: or(...allRoleIds.map(roleId => ({equal: {roleId}})))
+				conditions: or(...allRoleIds.map(id_role => ({equal: {id_role}})))
 			})
 			: []
 
 		const mergedRoles = [...allHardRoles]
 		for (const role of allSoftRoles) {
-			const found = mergedRoles.find(r => r.roleId === role.roleId)
+			const found = mergedRoles.find(r => r.id_role === role.id_role)
 			if (!found)
 				mergedRoles.push(role)
 		}
 
-		function assemblePublicRolesForEachUser(userId: string) {
+		function assemblePublicRolesForEachUser(id_user: string) {
 			const userHasRoles = rolesForUsers
-				.find(r => r.userId === userId)
+				.find(r => r.id_user === id_user)
 				.userHasRoles
 			const publicUserRoles = userHasRoles
 				.map(userHasRole => {
-					const roleRow = mergedRoles.find(row => row.roleId === userHasRole.roleId)
+					const roleRow = mergedRoles.find(row => row.id_role === userHasRole.id_role)
 					return {...userHasRole, ...roleRow}
 				})
 				.filter(isCurrentlyWithinTimeframe)
 				.map(r => (<PublicUserRole>{
 					label: r.label,
-					roleId: r.roleId,
+					id_role: r.id_role,
 					timeframeEnd: r.timeframeEnd,
 					timeframeStart: r.timeframeStart,
 				}))
-			return {userId, publicUserRoles}
+			return {id_user, publicUserRoles}
 		}
 
 		return userIds.map(assemblePublicRolesForEachUser)
@@ -171,21 +171,21 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 					.map(([label, r]) => ({
 						label,
 						hard: true,
-						roleId: r.roleId,
+						id_role: r.id_role,
 						public: r.public,
 						assignable: r.assignable,
 					}))
-				return merge(soft, hard, (a, b) => a.roleId === b.roleId)
+				return merge(soft, hard, (a, b) => a.id_role === b.id_role)
 			})(),
 			privileges: (async() => {
 				const soft = await permissionsTables.privilege.read(all)
 				const hard: PrivilegeRow[] = Object.entries(hardPermissions.privileges)
-					.map(([label, privilegeId]) => ({privilegeId, label, hard: true}))
-				return merge(soft, hard, (a, b) => a.privilegeId === b.privilegeId)
+					.map(([label, id_privilege]) => ({id_privilege, label, hard: true}))
+				return merge(soft, hard, (a, b) => a.id_privilege === b.id_privilege)
 			})(),
 			rolesHavePrivileges: (async() => {
 				const roleIds = Object.values(hardPermissions.roles)
-					.map(role => role.roleId)
+					.map(role => role.id_role)
 				const hard = getHardPrivilegeDetails(...roleIds)
 				const soft = await permissionsTables.roleHasPrivilege.read(all)
 				return mergeRoleHasPrivileges({hard, soft})
@@ -193,17 +193,17 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		})
 	}
 
-	async function getUserPrivileges(userId: string) {
-		const result = await getPrivilegesForUsers([userId])
+	async function getUserPrivileges(id_user: string) {
+		const result = await getPrivilegesForUsers([id_user])
 		return result
-			.find(r => r.userId === userId)
+			.find(r => r.id_user === id_user)
 			.privileges
 	}
 
-	// async function getUserPublicRoles(userId: string) {
-	// 	const result = await getPublicRolesForUsers([userId])
+	// async function getUserPublicRoles(id_user: string) {
+	// 	const result = await getPublicRolesForUsers([id_user])
 	// 	return result
-	// 		.find(r => r.userId === userId)
+	// 		.find(r => r.id_user === id_user)
 	// 		.publicUserRoles
 	// }
 

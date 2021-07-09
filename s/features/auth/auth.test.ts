@@ -33,7 +33,7 @@ export default <Suite>{
 	// 	// 	// await app.submitAppDraftForRegistration()
 	// 	// 	// assert(app.listing.length === 1, "new app should appear in listing")
 	// 	// 	// assert(app.listing[0].label === draft.label, "label should be maintained")
-	// 	// 	// assert(app.listing[0].appId.length > 8, "new app id should be generated")
+	// 	// 	// assert(app.listing[0].id_app.length > 8, "new app id should be generated")
 	// 	// },
 	// 	"generate an admin account to login with": true,
 	// 	"no-can-do": {

@@ -24,7 +24,7 @@ export default <Suite>{
 		assert(ops.isReady(appModel.state.appRecords), "appRecords should be finished loading")
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "should start with zero apps")
 
-		const {appId} = await appModel.registerApp({
+		const {id_app} = await appModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
@@ -40,7 +40,7 @@ export default <Suite>{
 		}).throws()
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 1, "should still have one app")
 
-		await appModel.deleteApp(appId)
+		await appModel.deleteApp(id_app)
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "deleted app should be gone")
 	},
 
@@ -49,24 +49,24 @@ export default <Suite>{
 		const platformWindow = await system.signupAndLogin({
 			email: creativeEmail,
 			appLink: platformLink,
-			appId: system.platformAppId,
+			id_app: system.platformAppId,
 		})
 		const {appModel: platformAppModel} = platformWindow.models
 
-		const {appId} = await platformAppModel.registerApp({
+		const {id_app} = await platformAppModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
 		})
 		assert(Object.keys(ops.value(platformAppModel.state.appRecords)).length === 1, "should now have one app")
-		const appRow = await system.backend.database.core.app.app.read(find({appId}))
+		const appRow = await system.backend.database.core.app.app.read(find({id_app}))
 		assert(appRow, "app row must be present")
-		const app = ops.value(ops.value(platformAppModel.state.appRecords)[appId])
+		const app = ops.value(ops.value(platformAppModel.state.appRecords)[id_app])
 		assert(app, "app must be present")
 
 		// app window 1
 		await system.signupAndLogin({
-			appId: app.appId,
+			id_app: app.id_app,
 			appLink: app.home,
 			email: customerEmail,
 		})
@@ -75,7 +75,7 @@ export default <Suite>{
 		const badLink = "https://badexample.com/"
 		await expect(async() => {
 			await system.signupAndLogin({
-				appId: app.appId,
+				id_app: app.id_app,
 				appLink: badLink,
 				email: customerEmail,
 			})

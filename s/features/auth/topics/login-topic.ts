@@ -22,8 +22,8 @@ export const loginTopic = ({
 			{access, tables},
 			{email}: {email: string},
 		) {
-		const appRow = await tables.app.app.one(find({appId: access.appId}))
-		const {userId} = await assertEmailAccount({
+		const appRow = await tables.app.app.one(find({id_app: access.id_app}))
+		const {id_user} = await assertEmailAccount({
 			rando, email, config, tables, generateNickname,
 		})
 		await sendLoginEmail({
@@ -34,7 +34,7 @@ export const loginTopic = ({
 			platformLink: config.platform.appDetails.home,
 			lifespan: config.crypto.tokenLifespans.login,
 			loginToken: await signToken<LoginPayload>({
-				payload: {userId},
+				payload: {id_user},
 				lifespan: config.crypto.tokenLifespans.login,
 			}),
 		})
@@ -44,16 +44,16 @@ export const loginTopic = ({
 			{tables, access},
 			{loginToken}: {loginToken: string},
 		) {
-		const {userId} = await verifyToken<LoginPayload>(loginToken)
+		const {id_user} = await verifyToken<LoginPayload>(loginToken)
 		const authTokens = await signAuthTokens({
-			userId,
+			id_user,
 			tables,
 			scope: {core: true},
-			appId: access.appId,
+			id_app: access.id_app,
 			origins: access.origins,
 			lifespans: config.crypto.tokenLifespans,
 			permissionsEngine: makePermissionsEngine({
-				isPlatform: access.appId === config.platform.appDetails.appId,
+				isPlatform: access.id_app === config.platform.appDetails.id_app,
 				permissionsTables: tables.permissions,
 			}),
 			signToken,
@@ -61,8 +61,8 @@ export const loginTopic = ({
 		})
 
 		await tables.user.latestLogin.update({
-			...find({userId}),
-			upsert: {userId, time: Date.now()},
+			...find({id_user}),
+			upsert: {id_user, time: Date.now()},
 		})
 
 		return authTokens
@@ -75,16 +75,16 @@ export const loginTopic = ({
 	// 			refreshToken: RefreshToken
 	// 		}
 	// 	) {
-	// 	const {userId} = await verifyToken<RefreshPayload>(refreshToken)
+	// 	const {id_user} = await verifyToken<RefreshPayload>(refreshToken)
 	// 	const {user, permit} = await fetchUserAndPermit({
-	// 		userId,
+	// 		id_user,
 	// 		tables,
 	// 		generateNickname,
 	// 	})
 
 	// 	await tables.user.latestLogin.update({
-	// 		...find({userId}),
-	// 		upsert: {userId, time: Date.now()},
+	// 		...find({id_user}),
+	// 		upsert: {id_user, time: Date.now()},
 	// 	})
 
 	// 	return signToken<AccessPayload>({
@@ -93,7 +93,7 @@ export const loginTopic = ({
 	// 			user,
 	// 			scope,
 	// 			permit,
-	// 			appId: access.appId,
+	// 			id_app: access.id_app,
 	// 			origins: access.origins,
 	// 		},
 	// 	})

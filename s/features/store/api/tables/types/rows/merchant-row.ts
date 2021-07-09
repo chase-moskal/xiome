@@ -1,5 +1,5 @@
 
 export type MerchantRow = {
-	userId: string
+	id_user: string
 	stripeAccountId: string
 }

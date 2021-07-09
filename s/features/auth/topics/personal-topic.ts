@@ -11,12 +11,12 @@ import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async setProfile({access, tables, checker}, {userId, profileDraft}: {
-			userId: string
+	async setProfile({access, tables, checker}, {id_user, profileDraft}: {
+			id_user: string
 			profileDraft: ProfileDraft
 		}) {
 
-		const isProfileOwner = access.user.userId === userId
+		const isProfileOwner = access.user.id_user === id_user
 		const canEditAnyProfile = checker.hasPrivilege("edit any profile")
 		const allowed = isProfileOwner || canEditAnyProfile
 
@@ -26,7 +26,7 @@ export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 		throwProblems(validateProfileDraft(profileDraft))
 
 		await tables.user.profile.update({
-			...find({userId}),
+			...find({id_user}),
 			write: {
 				nickname: profileDraft.nickname,
 				tagline: profileDraft.tagline,

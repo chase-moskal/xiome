@@ -4,7 +4,7 @@ import {Scope} from "./scope.js"
 import {Permit} from "../permit.js"
 
 export interface AccessPayload {
-	appId: string
+	id_app: string
 	origins: string[]
 	user: User | undefined
 	scope: Scope

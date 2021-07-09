@@ -8,11 +8,11 @@ import {makePermissionsEngine} from "../../../assembly/backend/permissions2/perm
 
 export const userTopic = ({config}: AuthApiOptions) => asTopic<AnonAuth>()({
 
-	async getUser({tables, access}, {userId}: {userId: string}) {
+	async getUser({tables, access}, {id_user}: {id_user: string}) {
 		const permissionsEngine = makePermissionsEngine({
-			isPlatform: access.appId === config.platform.appDetails.appId,
+			isPlatform: access.id_app === config.platform.appDetails.id_app,
 			permissionsTables: tables.permissions,
 		})
-		return await fetchUser({userId, authTables: tables, permissionsEngine})
+		return await fetchUser({id_user, authTables: tables, permissionsEngine})
 	},
 })

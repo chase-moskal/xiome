@@ -1,5 +1,5 @@
 
 export type AppOwnershipRow = {
-	appId: string
-	userId: string
+	id_app: string
+	id_user: string
 }

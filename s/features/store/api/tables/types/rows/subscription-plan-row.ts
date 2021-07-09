@@ -1,8 +1,8 @@
 
 export type SubscriptionPlanRow = {
-	subscriptionPlanId: string
+	id_subscriptionPlan: string
 	price: number
-	roleId: string
+	id_role: string
 	active: boolean
 	stripePriceId: string
 	stripeProductId: string

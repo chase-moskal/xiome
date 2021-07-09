@@ -5,32 +5,32 @@
 // import {isCurrentlyWithinTimeframe} from "./is-currently-within-timeframe.js"
 // import {PermissionsEngine} from "../../../../../../assembly/backend/permissions2/types/permissions-engine.js"
 
-// export async function fetchPublicUserRoles({userId, tables}: {
-// 			userId: string
+// export async function fetchPublicUserRoles({id_user, tables}: {
+// 			id_user: string
 // 			tables: AuthTables
 // 			permissionsEngine: PermissionsEngine
 // 		}): Promise<PublicUserRole[]> {
 
 // 	const isPublic = (row: {public: boolean}) => row.public
 
-// 	const userHasRoleRows = await tables.permissions.userHasRole.read(find({userId}))
+// 	const userHasRoleRows = await tables.permissions.userHasRole.read(find({id_user}))
 // 	const roleIds = userHasRoleRows
 // 		.filter(isCurrentlyWithinTimeframe)
 // 		.filter(isPublic)
-// 		.map(row => row.roleId)
+// 		.map(row => row.id_role)
 
 // 	// TODO account for hard permissions
 // 	const roleRows = await tables.permissions.role.read({
-// 		conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
+// 		conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
 // 	})
 
 // 	const combinedData = userHasRoleRows.map(userRoleRow => {
-// 		const roleRow = roleRows.find(row => row.roleId === userRoleRow.roleId)
+// 		const roleRow = roleRows.find(row => row.id_role === userRoleRow.id_role)
 // 		return {...userRoleRow, ...roleRow}
 // 	})
 
 // 	const roles = combinedData.map(x => (<PublicUserRole>{
-// 		roleId: x.roleId,
+// 		id_role: x.id_role,
 // 		label: x.label,
 // 		timeframeEnd: x.timeframeEnd,
 // 		timeframeStart: x.timeframeStart,

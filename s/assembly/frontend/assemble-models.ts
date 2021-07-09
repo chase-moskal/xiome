@@ -9,7 +9,7 @@ import {makeQuestionsModel} from "../../features/questions/model/questions-model
 import {makeAdministrativeModel} from "../../features/administrative/models/administrative-model.js"
 
 export async function assembleModels({
-		appId,
+		id_app,
 		remote,
 		popups,
 		storage,
@@ -43,7 +43,7 @@ export async function assembleModels({
 
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
-	// 	appId,
+	// 	id_app,
 	// 	storage,
 	// 	shopkeepingService: remote.store.shopkeepingService,
 	// 	stripeAccountsService: remote.store.stripeConnectService,

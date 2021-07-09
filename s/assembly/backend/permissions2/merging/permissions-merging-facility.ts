@@ -12,30 +12,30 @@ export function permissionsMergingFacility({isPlatform}: {
 		: appPermissions
 
 	type HardPrivilegeDetail = {
-		privilegeId: string
-		roleId: string
+		id_privilege: string
+		id_role: string
 		active: boolean
 		immutable: boolean
 	}
 
 	function getHardPrivilegeDetails(...roleIds: string[]) {
 		const results: HardPrivilegeDetail[] = []
-		for (const roleId of roleIds) {
+		for (const id_role of roleIds) {
 			const found = Object.entries(hardPermissions.roles)
-				.find(([,role2]) => role2.roleId === roleId)
+				.find(([,role2]) => role2.id_role === id_role)
 			if (found) {
 				const [,role] = found
 				for (const [label, has] of Object.entries(role.hasPrivileges)) {
-					const privilegeId = hardPermissions.privileges[label]
+					const id_privilege = hardPermissions.privileges[label]
 					const already = results.find(
 						detail =>
-							detail.roleId === roleId &&
-							detail.privilegeId === privilegeId
+							detail.id_role === id_role &&
+							detail.id_privilege === id_privilege
 					)
 					if (!already) {
 						results.push({
-							privilegeId,
-							roleId,
+							id_privilege,
+							id_role,
 							active: has.active,
 							immutable: has.immutable,
 						})
@@ -54,14 +54,14 @@ export function permissionsMergingFacility({isPlatform}: {
 		const results: RoleHasPrivilegeRow[] = []
 
 		function rowMatch(hardy: HardPrivilegeDetail, softy: RoleHasPrivilegeRow) {
-			return hardy.roleId === softy.roleId
-				&& hardy.privilegeId === softy.privilegeId
+			return hardy.id_role === softy.id_role
+				&& hardy.id_privilege === softy.id_privilege
 		}
 
 		function toSofty(hardy: HardPrivilegeDetail): RoleHasPrivilegeRow {
 			return {
-				roleId: hardy.roleId,
-				privilegeId: hardy.privilegeId,
+				id_role: hardy.id_role,
+				id_privilege: hardy.id_privilege,
 				active: hardy.active,
 				immutable: hardy.immutable,
 			}
@@ -88,7 +88,7 @@ export function permissionsMergingFacility({isPlatform}: {
 	function getActivePrivilegeIds(roleHasPrivileges: RoleHasPrivilegeRow[]) {
 		return roleHasPrivileges
 			.filter(row => row.active)
-			.map(row => row.privilegeId)
+			.map(row => row.id_privilege)
 	}
 
 	return {

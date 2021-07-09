@@ -14,11 +14,11 @@ export function authTablesBakery({config, tables}: {
 		appTables: tables.app,
 	})
 
-	return async function bakeTables(appId: string): Promise<AuthTables> {
+	return async function bakeTables(id_app: string): Promise<AuthTables> {
 		return {
 			app: await bakeAppTables(),
-			user: await prepareNamespacerForTables(tables.user)(appId),
-			permissions: await prepareNamespacerForTables(tables.permissions)(appId),
+			user: await prepareNamespacerForTables(tables.user)(id_app),
+			permissions: await prepareNamespacerForTables(tables.permissions)(id_app),
 		}
 	}
 }

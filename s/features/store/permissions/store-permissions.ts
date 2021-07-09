@@ -6,7 +6,7 @@
 // 	privileges: {},
 // 	roles: {
 // 		"premium": {
-// 			roleId: rolePremiumId,
+// 			id_role: rolePremiumId,
 // 			privileges: [],
 // 		},
 // 	},

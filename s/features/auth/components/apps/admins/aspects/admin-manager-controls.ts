@@ -17,11 +17,11 @@ export function adminManagerControls({
 		actions: ReturnType<typeof adminManagerStateAndActions>["actions"]
 	}) {
 
-	const {appId} = app
+	const {id_app} = app
 	const load = (firstStep: Promise<any> = Promise.resolve(undefined)) => (
 		ops.operation({
 			promise: firstStep
-				.then(() => manageAdminsService.listAdmins({appId})),
+				.then(() => manageAdminsService.listAdmins({id_app})),
 			setOp: admins => actions.setAdmins(admins)
 		})
 	)
@@ -33,11 +33,11 @@ export function adminManagerControls({
 	async function assignAdmin() {
 		const {email} = state.assignerDraft
 		actions.setAssignerDraft({email: undefined})
-		await load(manageAdminsService.assignAdmin({appId, email}))
+		await load(manageAdminsService.assignAdmin({id_app, email}))
 	}
 
-	async function revokeAdmin(userId: string) {
-		await load(manageAdminsService.revokeAdmin({appId, userId}))
+	async function revokeAdmin(id_user: string) {
+		await load(manageAdminsService.revokeAdmin({id_app, id_user}))
 	}
 
 	return {listAdmins, assignAdmin, revokeAdmin}

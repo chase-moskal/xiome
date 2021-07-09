@@ -21,6 +21,6 @@ export async function spikeQuestionsAuth<
 	const auth = await basePolicy.processAuth(meta, request)
 	return {
 		...auth,
-		questionsTables: await prepareNamespacerForTables(questionsTables)(auth.access.appId),
+		questionsTables: await prepareNamespacerForTables(questionsTables)(auth.access.id_app),
 	}
 }

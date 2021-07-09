@@ -1,4 +1,4 @@
 
 export interface RefreshPayload {
-	userId: string
+	id_user: string
 }

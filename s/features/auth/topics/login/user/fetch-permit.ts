@@ -6,28 +6,28 @@
 // import {userPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/user-privileges.js"
 // import {anybodyPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/anybody-privileges.js"
 
-// export async function fetchPermit({userId, tables}: {
-// 			userId: string
+// export async function fetchPermit({id_user, tables}: {
+// 			id_user: string
 // 			tables: AuthTables
 // 		}): Promise<Permit> {
 
 // 	const userHasRoleRows = await tables.permissions.userHasRole
-// 		.read(find({userId}))
+// 		.read(find({id_user}))
 
 // 	const roleIds = userHasRoleRows
 // 		.filter(isCurrentlyWithinTimeframe)
-// 		.map(({roleId}) => roleId)
+// 		.map(({id_role}) => id_role)
 
 // 	const roleHasPrivilegeRows = await tables.permissions.roleHasPrivilege
 // 		.read({
-// 			conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
+// 			conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
 // 		})
 
 // 	return {
 // 		privileges: [
 // 			// ...Object.values(anybodyPrivileges),
 // 			// ...Object.values(userPrivileges),
-// 			...roleHasPrivilegeRows.map(({privilegeId}) => privilegeId)
+// 			...roleHasPrivilegeRows.map(({id_privilege}) => id_privilege)
 // 		],
 // 	}
 // }

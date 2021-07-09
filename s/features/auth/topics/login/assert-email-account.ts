@@ -8,9 +8,9 @@ import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 const standardRoleIds = {
-	anonymous: universalPermissions.roles.anonymous.roleId,
-	authenticated: universalPermissions.roles.authenticated.roleId,
-	technician: universalPermissions.roles.technician.roleId,
+	anonymous: universalPermissions.roles.anonymous.id_role,
+	authenticated: universalPermissions.roles.authenticated.id_role,
+	technician: universalPermissions.roles.technician.id_role,
 }
 
 export async function assertEmailAccount({
@@ -23,47 +23,47 @@ export async function assertEmailAccount({
 		generateNickname: () => string
 	}) {
 
-	const {userId} = await tables.user.accountViaEmail.assert({
+	const {id_user: id_user} = await tables.user.accountViaEmail.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
 			const account = generateAccountRow({rando})
-			const {userId} = account
+			const {id_user: id_user} = account
 
 			const createAccount = tables.user.account.create(account)
 
 			const createProfile = initializeUserProfile({
-				userId,
+				id_user,
 				email,
 				authTables: tables,
 				generateNickname,
 			})
 
 			const assignAnonymous = tables.permissions.userHasRole.create({
-				userId,
+				id_user,
 				hard: true,
 				public: false,
-				roleId: standardRoleIds.anonymous,
+				id_role: standardRoleIds.anonymous,
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 			})
 
 			const assignAuthenticated = tables.permissions.userHasRole.create({
-				userId,
+				id_user,
 				hard: true,
 				public: false,
-				roleId: standardRoleIds.authenticated,
+				id_role: standardRoleIds.authenticated,
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 			})
 
 			const assignTechnician = isTechnician
 				? tables.permissions.userHasRole.create({
-					userId,
+					id_user,
 					hard: true,
 					public: true,
 					timeframeEnd: undefined,
-					roleId: standardRoleIds.technician,
+					id_role: standardRoleIds.technician,
 					timeframeStart: undefined,
 				})
 				: Promise.resolve()
@@ -76,9 +76,9 @@ export async function assertEmailAccount({
 				assignTechnician,
 			])
 
-			return {email, userId}
+			return {email, id_user: id_user}
 		},
 	})
 
-	return {userId}
+	return {id_user}
 }

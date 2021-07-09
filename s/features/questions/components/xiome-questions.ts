@@ -100,18 +100,18 @@ export class XiomeQuestions extends Component2WithShare<{
 
 	private renderQuestionsList() {
 		const access = this.#boardModel.getAccess()
-		const myUserId = access?.user?.userId
+		const myUserId = access?.user?.id_user
 		const questions = sortQuestions(this.#boardModel.getQuestions(), myUserId)
 		const permissions = this.#boardModel.getPermissions()
 
 		return html`
 			<ol class=questionslist>
 				${questions.map(question => {
-					const {questionId, authorUserId} = question
+					const {id_question, authorUserId} = question
 					const author = this.#boardModel.getUser(authorUserId)
 
 					const isAuthor = (access && access.user)
-						? access.user.userId === author.userId
+						? access.user.id_user === author.id_user
 						: false
 
 					const authority = permissions["moderate questions"] || isAuthor
@@ -125,11 +125,11 @@ export class XiomeQuestions extends Component2WithShare<{
 							focusNthElement: 2,
 						})
 						if (confirmed)
-							await this.#boardModel.archiveQuestion(questionId, true)
+							await this.#boardModel.archiveQuestion(id_question, true)
 					}
 
 					const handleLike = (like: boolean) => {
-						this.#boardModel.likeQuestion(questionId, like)
+						this.#boardModel.likeQuestion(id_question, like)
 					}
 
 					const handleReport = async(report: boolean) => {
@@ -143,7 +143,7 @@ export class XiomeQuestions extends Component2WithShare<{
 							})
 							: true
 						if (confirmed)
-							await this.#boardModel.reportQuestion(questionId, report)
+							await this.#boardModel.reportQuestion(id_question, report)
 					}
 
 					return renderQuestion({

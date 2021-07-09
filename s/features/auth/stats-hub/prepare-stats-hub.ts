@@ -17,11 +17,11 @@ export function prepareStatsHub({tables}: {
 				user: UserTables
 			}
 		}) {
-	return async function getStatsHub(userId: string): Promise<StatsHub> {
+	return async function getStatsHub(id_user: string): Promise<StatsHub> {
 
-		async function throwForbiddenUser(appId: string) {
-			const row = await tables.app.appOwnership.one(find({appId}))
-			if (row.userId !== userId)
+		async function throwForbiddenUser(id_app: string) {
+			const row = await tables.app.appOwnership.one(find({id_app}))
+			if (row.id_user !== id_user)
 				throw new ApiError(403, "forbidden")
 		}
 
@@ -32,29 +32,29 @@ export function prepareStatsHub({tables}: {
 		}
 
 		return {
-			countUsers: async appId => {
-				await throwForbiddenUser(appId)
+			countUsers: async id_app => {
+				await throwForbiddenUser(id_app)
 				return exposeNamespacing(tables.user.account)
-					.count(find({[namespaceKeyAppId]: appId}))
+					.count(find({[namespaceKeyAppId]: id_app}))
 			},
-			countUsersActiveDaily: async appId => {
-				await throwForbiddenUser(appId)
+			countUsersActiveDaily: async id_app => {
+				await throwForbiddenUser(id_app)
 				const timeToStartCounting = Date.now() - day
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {_appId: appId}},
+							{equal: {_appId: id_app}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})
 			},
-			countUsersActiveMonthly: async appId => {
-				await throwForbiddenUser(appId)
+			countUsersActiveMonthly: async id_app => {
+				await throwForbiddenUser(id_app)
 				const timeToStartCounting = Date.now() - month
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {_appId: appId}},
+							{equal: {_appId: id_app}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})

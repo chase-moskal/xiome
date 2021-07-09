@@ -6,7 +6,7 @@ import {assertEmailAccount} from "../login/assert-email-account.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appPermissions.roles.admin.roleId
+const adminRoleId = appPermissions.roles.admin.id_role
 
 export async function appointAdmin({
 		email, tablesForApp, rando, config, generateNickname,
@@ -18,7 +18,7 @@ export async function appointAdmin({
 		generateNickname: () => string
 	}) {
 
-	const {userId: adminUserId} = await assertEmailAccount({
+	const {id_user: adminUserId} = await assertEmailAccount({
 		rando,
 		email,
 		config,
@@ -27,10 +27,10 @@ export async function appointAdmin({
 	})
 
 	await tablesForApp.permissions.userHasRole.assert({
-		...find({userId: adminUserId, roleId: adminRoleId}),
+		...find({id_user: adminUserId, id_role: adminRoleId}),
 		make: async () => ({
-			userId: adminUserId,
-			roleId: adminRoleId,
+			id_user: adminUserId,
+			id_role: adminRoleId,
 			hard: false,
 			public: true,
 			timeframeEnd: undefined,

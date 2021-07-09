@@ -11,8 +11,8 @@ import {PermissionsEngine} from "../../../../assembly/backend/permissions2/types
 
 export async function signAuthTokens({
 			scope,
-			appId,
-			userId,
+			id_app,
+			id_user,
 			tables,
 			origins,
 			lifespans,
@@ -21,8 +21,8 @@ export async function signAuthTokens({
 			generateNickname,
 		}: {
 			scope: Scope
-			appId: string
-			userId: string
+			id_app: string
+			id_user: string
 			origins: string[]
 			tables: AuthTables
 			permissionsEngine: PermissionsEngine
@@ -35,19 +35,19 @@ export async function signAuthTokens({
 		}) {
 
 	const {user, permit} = await concurrent({
-		user: fetchUser({userId, authTables: tables, permissionsEngine}),
+		user: fetchUser({id_user, authTables: tables, permissionsEngine}),
 		permit: (async() => ({
-			privileges: await permissionsEngine.getUserPrivileges(userId),
+			privileges: await permissionsEngine.getUserPrivileges(id_user),
 		}))(),
 	})
 
 	return concurrent({
 		accessToken: signToken<AccessPayload>({
-			payload: {appId, origins, user, permit, scope},
+			payload: {id_app, origins, user, permit, scope},
 			lifespan: lifespans.access,
 		}),
 		refreshToken: signToken<RefreshPayload>({
-			payload: {userId: user.userId},
+			payload: {id_user: user.id_user},
 			lifespan: lifespans.refresh,
 		}),
 	})

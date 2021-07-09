@@ -46,7 +46,7 @@ export function prepareAuthPolicies({
 			if (isOriginValid(request, access.origins))
 				return {
 					access,
-					tables: await bakeTables(access.appId),
+					tables: await bakeTables(access.id_app),
 					checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 				}
 			else
@@ -87,11 +87,11 @@ export function prepareAuthPolicies({
 	const platformUser: Policy<PlatformUserMeta, PlatformUserAuth> = {
 		processAuth: async(meta, request) => {
 			const auth = await user.processAuth(meta, request)
-			if (auth.access.appId == config.platform.appDetails.appId)
+			if (auth.access.id_app == config.platform.appDetails.id_app)
 				return {
 					...auth,
 					checker: makePrivilegeChecker(auth.access.permit, platformPermissions.privileges),
-					statsHub: await getStatsHub(auth.access.user.userId),
+					statsHub: await getStatsHub(auth.access.user.id_user),
 				}
 			else
 				throw new ApiError(403, "not platform app")
@@ -106,12 +106,12 @@ export function prepareAuthPolicies({
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
 
-			async function getTablesNamespacedForApp(appId: string) {
+			async function getTablesNamespacedForApp(id_app: string) {
 				const canEditAnyApp = auth.checker.hasPrivilege("edit any app")
-				const isOwner = isUserOwnerOfApp({appId, access: auth.access, tables})
+				const isOwner = isUserOwnerOfApp({id_app, access: auth.access, tables})
 				const allowed = isOwner || canEditAnyApp
 				if (allowed)
-					return bakeTables(appId)
+					return bakeTables(id_app)
 				else
 					throw new ApiError(403, "forbidden: not privileged over app")
 			}

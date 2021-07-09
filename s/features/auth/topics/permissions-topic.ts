@@ -28,12 +28,12 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			hard: false,
 			public: true,
 			assignable: true,
-			roleId: rando.randomId(),
+			id_role: rando.randomId(),
 		})
 	},
 
-	async deleteRole({tables}, {roleId}: {roleId: string}) {
-		const role = await tables.permissions.role.one(find({roleId}))
+	async deleteRole({tables}, {id_role}: {id_role: string}) {
+		const role = await tables.permissions.role.one(find({id_role}))
 
 		if (!role)
 			throw new ApiError(404, "role not found")
@@ -42,35 +42,35 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			throw new ApiError(400, "cannot delete hard role")
 
 		await Promise.all([
-			tables.permissions.userHasRole.delete(find({roleId})),
-			tables.permissions.role.delete(find({roleId})),
+			tables.permissions.userHasRole.delete(find({id_role})),
+			tables.permissions.role.delete(find({id_role})),
 		])
 	},
 
-	async assignPrivilege({tables}, {roleId, privilegeId}: {
-			roleId: string
-			privilegeId: string
+	async assignPrivilege({tables}, {id_role, id_privilege}: {
+			id_role: string
+			id_privilege: string
 		}) {
 		await tables.permissions.roleHasPrivilege.update({
-			...find({roleId, privilegeId}),
+			...find({id_role, id_privilege}),
 			upsert: {
-				roleId,
-				privilegeId,
+				id_role,
+				id_privilege,
 				active: true,
 				immutable: false,
 			},
 		})
 	},
 
-	async unassignPrivilege({tables}, {roleId, privilegeId}: {
-			roleId: string
-			privilegeId: string
+	async unassignPrivilege({tables}, {id_role, id_privilege}: {
+			id_role: string
+			id_privilege: string
 		}) {
 		await tables.permissions.roleHasPrivilege.update({
-			...find({roleId, privilegeId}),
+			...find({id_role, id_privilege}),
 			upsert: {
-				roleId,
-				privilegeId,
+				id_role,
+				id_privilege,
 				active: false,
 				immutable: false,
 			},

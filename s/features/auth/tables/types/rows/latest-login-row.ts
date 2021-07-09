@@ -1,5 +1,5 @@
 
 export type LatestLoginRow = {
 	time: number
-	userId: string
+	id_user: string
 }

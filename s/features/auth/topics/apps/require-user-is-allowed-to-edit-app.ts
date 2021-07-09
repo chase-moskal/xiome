@@ -5,7 +5,7 @@ import {isUserOwnerOfApp} from "./is-user-the-owner-of-app.js"
 import {AccessPayload} from "../../types/tokens/access-payload.js"
 
 export async function requireUserIsAllowedToEditApp(options: {
-		appId: string
+		id_app: string
 		tables: AuthTables
 		access: AccessPayload
 	}) {

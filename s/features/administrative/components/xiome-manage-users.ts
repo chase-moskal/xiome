@@ -24,21 +24,21 @@ export class XiomeManageUsers extends Component3WithShare<{
 	private userResults: Op<UserResult[]> = ops.ready([])
 
 	private updateLocalUserResultsCache = {
-		assignRole: (userId: string, roleId: string) => {
+		assignRole: (id_user: string, id_role: string) => {
 			if (!ops.ready(this.userResults)) throw new Error("error updating user cache")
 			const userResults = ops.value(this.userResults)
 			this.userResults = ops.ready(userResults.map(result =>
-				result.user.userId === userId
-					? {user: result.user, roleIds: [...result.roleIds, roleId]}
+				result.user.id_user === id_user
+					? {user: result.user, roleIds: [...result.roleIds, id_role]}
 					: result
 			))
 		},
-		revokeRole: (userId: string, roleId: string) => {
+		revokeRole: (id_user: string, id_role: string) => {
 			if (!ops.ready(this.userResults)) throw new Error("error updating user cache")
 			const userResults = ops.value(this.userResults)
 			this.userResults = ops.ready(userResults.map(result =>
-				result.user.userId === userId
-					? {user: result.user, roleIds: result.roleIds.filter(id => id !== roleId)}
+				result.user.id_user === id_user
+					? {user: result.user, roleIds: result.roleIds.filter(id => id !== id_role)}
 					: result
 			))
 		},
@@ -92,7 +92,7 @@ export class XiomeManageUsers extends Component3WithShare<{
 
 		const renderUser = (userResult: UserResult) => {
 			const {user} = userResult
-			const state = this.userStates.obtainStateForUser(user.userId)
+			const state = this.userStates.obtainStateForUser(user.id_user)
 			return html`
 				<li>
 					<div class=userinfo>

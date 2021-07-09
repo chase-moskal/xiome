@@ -1,6 +1,6 @@
 
 export type AccountViaGoogleRow = {
-	userId: string
+	id_user: string
 	googleId: string
 	googleAvatar: string
 }

@@ -1,6 +1,6 @@
 
 export type RoleRow = {
-	roleId: string
+	id_role: string
 	label: string
 
 	// hardcoded roles cannot be deleted

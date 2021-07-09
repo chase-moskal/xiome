@@ -7,7 +7,7 @@ export function prepareNamespacerForTables<
 			xTables extends {[key: string]: DbbyTable<DbbyRow>}
 		>(tables: xTables) {
 
-	return async function bakeTable(appId: string) {
-		return prepareConstrainTables(tables)({[namespaceKeyAppId]: appId})
+	return async function bakeTable(id_app: string) {
+		return prepareConstrainTables(tables)({[namespaceKeyAppId]: id_app})
 	}
 }

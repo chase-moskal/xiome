@@ -8,7 +8,7 @@ import {dbbyHardback} from "./dbby-hardback.js"
 import {DbbyRow, DbbyTable} from "./dbby-types.js"
 
 type DemoUser = {
-	userId: string
+	id_user: string
 	balance: number
 	location: string
 }
@@ -16,18 +16,18 @@ type DemoUser = {
 async function setupThreeUserDemo() {
 	const dbby = await dbbyMemory<DemoUser>()
 	await Promise.all([
-		dbby.create({userId: "u123", balance: 100, location: "america"}),
-		dbby.create({userId: "u124", balance: 0, location: "canada"}),
-		dbby.create({userId: "u125", balance: -100, location: "canada"}),
+		dbby.create({id_user: "u123", balance: 100, location: "america"}),
+		dbby.create({id_user: "u124", balance: 0, location: "canada"}),
+		dbby.create({id_user: "u125", balance: -100, location: "canada"}),
 	])
 	return dbby
 }
 
 function constrainAppTable<Row extends DbbyRow>(
 			table: DbbyTable<Row>,
-			appId: string,
+			id_app: string,
 		) {
-	return dbbyConstrain<Row, {appId: string}>(table, {appId})
+	return dbbyConstrain<Row, {id_app: string}>(table, {id_app})
 }
 
 export default <Suite>{
@@ -35,10 +35,10 @@ export default <Suite>{
 		"read": async() => {
 			const frontTable = await setupThreeUserDemo()
 			const backTable = await dbbyMemory<DemoUser>()
-			await backTable.create({userId: "u92", balance: 92, location: "victoria"})
+			await backTable.create({id_user: "u92", balance: 92, location: "victoria"})
 			const combinedTable = dbbyHardback({frontTable, backTable})
 			const result01 = await combinedTable.read({conditions: false})
-			const result02 = await combinedTable.read(find({userId: "u92"}))
+			const result02 = await combinedTable.read(find({id_user: "u92"}))
 			expect(result01.length).equals(4)
 			expect(result02.length).equals(1)
 		},
@@ -48,8 +48,8 @@ export default <Suite>{
 			const dbby = await dbbyMemory<DemoUser>()
 			const alpha = constrainAppTable(dbby, "a1")
 			await alpha.create(
-				{userId: "u1", balance: 101, location: "canada"},
-				{userId: "u2", balance: 102, location: "america"},
+				{id_user: "u1", balance: 101, location: "canada"},
+				{id_user: "u2", balance: 102, location: "america"},
 			)
 			const results = await alpha.read({conditions: false})
 			expect(results.length).equals(2)
@@ -58,9 +58,9 @@ export default <Suite>{
 			const dbby = await dbbyMemory<DemoUser>()
 			const a1 = constrainAppTable(dbby, "a1")
 			const a2 = constrainAppTable(dbby, "a2")
-			await a1.create({userId: "u1", balance: 100, location: "america"})
-			await a2.create({userId: "u2", balance: 100, location: "canada"})
-			await a2.delete(find({userId: "u1"}))
+			await a1.create({id_user: "u1", balance: 100, location: "america"})
+			await a2.create({id_user: "u2", balance: 100, location: "canada"})
+			await a2.delete(find({id_user: "u1"}))
 			let failed = false
 			try {
 				await a1.update({...find({location: "canada"}), write: {balance: 99}})
@@ -89,40 +89,40 @@ export default <Suite>{
 		"read one": async() => {
 			const dbby = await setupThreeUserDemo()
 			expect(
-				await dbby.one({conditions: and({equal: {userId: "u123"}})})
+				await dbby.one({conditions: and({equal: {id_user: "u123"}})})
 			).ok()
 		},
 		"ignore undefined conditions": async() => {
 			const dbby = await setupThreeUserDemo()
-			const result = await dbby.one({conditions: and({equal: {userId: "u123"}}, undefined)})
-			expect(result.userId).equals("u123")
+			const result = await dbby.one({conditions: and({equal: {id_user: "u123"}}, undefined)})
+			expect(result.id_user).equals("u123")
 		},
 		"read one with not set condition": async() => {
 			const dbby = await setupThreeUserDemo()
-			await dbby.create({userId: "u999", balance: 1, location: undefined})
+			await dbby.create({id_user: "u999", balance: 1, location: undefined})
 			return expect(
 				(await dbby.one({
 					conditions: and({notSet: {location: true}})
-				})).userId
+				})).id_user
 			).equals("u999")
 		},
 		"assert one": async() => {
 			const dbby = await setupThreeUserDemo()
 			const fallback: DemoUser = {
-				userId: "u000",
+				id_user: "u000",
 				balance: 1000,
 				location: "russia",
 			}
 			return (true
 				&& expect(
 						(await dbby.assert({
-							conditions: and({equal: {userId: "u123"}}),
+							conditions: and({equal: {id_user: "u123"}}),
 							make: async() => fallback,
 						})).location
 					).equals("america")
 				&& expect(
 						(await dbby.assert({
-							conditions: and({equal: {userId: "u000"}}),
+							conditions: and({equal: {id_user: "u000"}}),
 							make: async() => fallback,
 						})).location
 					).equals("russia")
@@ -140,15 +140,15 @@ export default <Suite>{
 			const result1 = await dbby.read({conditions: false, limit: 2})
 			const result2 = await dbby.read({conditions: false, limit: 2, offset: 1})
 			return expect(result1.length).equals(2)
-				&& expect(result2[0].userId).equals("u124")
+				&& expect(result2[0].id_user).equals("u124")
 		},
 		"read with single conditions": async() => {
 			const dbby = await setupThreeUserDemo()
 			return (true
 				&& expect([
-						...await dbby.read({conditions: and({equal: {userId: "u123"}})}),
-						...await dbby.read({conditions: and({equal: {userId: "u124"}})}),
-						...await dbby.read({conditions: and({equal: {userId: "u125"}})}),
+						...await dbby.read({conditions: and({equal: {id_user: "u123"}})}),
+						...await dbby.read({conditions: and({equal: {id_user: "u124"}})}),
+						...await dbby.read({conditions: and({equal: {id_user: "u125"}})}),
 					].length).equals(3)
 				&& expect((
 						await dbby.read({conditions: and({
@@ -206,17 +206,17 @@ export default <Suite>{
 		},
 		"delete a row and it's gone": async() => {
 			const dbby = await setupThreeUserDemo()
-			await dbby.delete({conditions: and({equal: {userId: "u123"}})})
+			await dbby.delete({conditions: and({equal: {id_user: "u123"}})})
 			const users = await dbby.read({conditions: false})
 			return expect(users.length).equals(2)
 		},
 		"update write to a row": async() => {
 			const dbby = await setupThreeUserDemo()
 			await dbby.update({
-				conditions: and({equal: {userId: "u123"}}),
+				conditions: and({equal: {id_user: "u123"}}),
 				write: {location: "argentina"},
 			})
-			const user = await dbby.one({conditions: and({equal: {userId: "u123"}})})
+			const user = await dbby.one({conditions: and({equal: {id_user: "u123"}})})
 			return (true
 				&& expect(user.location).equals("argentina")
 				&& expect(user.balance).equals(100)
@@ -224,12 +224,12 @@ export default <Suite>{
 		},
 		"update whole row": async() => {
 			const dbby = await setupThreeUserDemo()
-			const userId = "u123"
+			const id_user = "u123"
 			await dbby.update({
-				conditions: and({equal: {userId}}),
-				whole: {userId, balance: 50, location: "argentina"},
+				conditions: and({equal: {id_user}}),
+				whole: {id_user, balance: 50, location: "argentina"},
 			})
-			const user = await dbby.one({conditions: and({equal: {userId}})})
+			const user = await dbby.one({conditions: and({equal: {id_user}})})
 			return (true
 				&& expect(user.location).equals("argentina")
 				&& expect(user.balance).equals(50)
@@ -239,24 +239,24 @@ export default <Suite>{
 			const dbby = await setupThreeUserDemo()
 			await Promise.all([
 				dbby.update({
-					conditions: and({equal: {userId: "u123"}}),
+					conditions: and({equal: {id_user: "u123"}}),
 					upsert: {
-						userId: "u123",
+						id_user: "u123",
 						balance: 500,
 						location: "america",
 					},
 				}),
 				dbby.update({
-					conditions: and({equal: {userId: "u126"}}),
+					conditions: and({equal: {id_user: "u126"}}),
 					upsert: {
-						userId: "u126",
+						id_user: "u126",
 						balance: 1000,
 						location: "argentina",
 					},
 				}),
 			])
-			const america = await dbby.one({conditions: and({equal: {userId: "u123"}})})
-			const argentina = await dbby.one({conditions: and({equal: {userId: "u126"}})})
+			const america = await dbby.one({conditions: and({equal: {id_user: "u123"}})})
+			const argentina = await dbby.one({conditions: and({equal: {id_user: "u126"}})})
 			return (true
 				&& expect(america.balance).equals(500)
 				&& expect(argentina.balance).equals(1000)

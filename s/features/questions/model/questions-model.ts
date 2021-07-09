@@ -46,19 +46,19 @@ export function makeQuestionsModel({
 				state.users = [...merge<User>(
 					newUsers,
 					state.users,
-					(a, b) => a.userId === b.userId,
+					(a, b) => a.id_user === b.id_user,
 				)]
 			},
 			addQuestions(newQuestions: Question[]) {
 				state.questions = [...merge<Question>(
 					newQuestions,
 					state.questions,
-					(a, b) => a.questionId === b.questionId,
+					(a, b) => a.id_question === b.id_question,
 				)]
 			},
-			setQuestionLike(questionId: string, like: boolean) {
+			setQuestionLike(id_question: string, like: boolean) {
 				state.questions = state.questions.map(question =>
-					question.questionId === questionId
+					question.id_question === id_question
 						? {
 							...question,
 							liked: like,
@@ -71,9 +71,9 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setQuestionReport(questionId: string, report: boolean) {
+			setQuestionReport(id_question: string, report: boolean) {
 				state.questions = state.questions.map(question =>
-					question.questionId === questionId
+					question.id_question === id_question
 						? {
 							...question,
 							reported: report,
@@ -86,9 +86,9 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setQuestionArchive(questionId: string, archive: boolean) {
+			setQuestionArchive(id_question: string, archive: boolean) {
 				state.questions = state.questions.map(question =>
-					question.questionId === questionId
+					question.id_question === id_question
 						? {...question, archive}
 						: {...question}
 				)
@@ -159,8 +159,8 @@ export function makeQuestionsModel({
 					.filter(question => question.archive === false)
 			},
 
-			getUser(userId: string) {
-				return getState().users.find(user => user.userId === userId)
+			getUser(id_user: string) {
+				return getState().users.find(user => user.id_user === id_user)
 			},
 
 			async loadQuestions() {
@@ -179,34 +179,34 @@ export function makeQuestionsModel({
 				actions.addUsers([access.user])
 			},
 
-			async likeQuestion(questionId: string, like: boolean) {
+			async likeQuestion(id_question: string, like: boolean) {
 				await questionsPostingService.likeQuestion({
 					like,
-					questionId,
+					id_question,
 				})
-				actions.setQuestionLike(questionId, like)
+				actions.setQuestionLike(id_question, like)
 			},
 
-			async reportQuestion(questionId: string, report: boolean) {
+			async reportQuestion(id_question: string, report: boolean) {
 				await questionsPostingService.reportQuestion({
 					report,
-					questionId,
+					id_question,
 				})
-				actions.setQuestionReport(questionId, report)
+				actions.setQuestionReport(id_question, report)
 			},
 
-			async archiveQuestion(questionId: string, archive: boolean) {
+			async archiveQuestion(id_question: string, archive: boolean) {
 				await questionsPostingService.archiveQuestion({
 					archive,
-					questionId,
+					id_question,
 				})
-				actions.setQuestionArchive(questionId, archive)
+				actions.setQuestionArchive(id_question, archive)
 			},
 
 			async archiveBoard() {
 				await questionsModerationService.archiveBoard({board})
 				for (const question of getState().questions)
-					actions.setQuestionArchive(question.questionId, true)
+					actions.setQuestionArchive(question.id_question, true)
 			},
 		}
 	}

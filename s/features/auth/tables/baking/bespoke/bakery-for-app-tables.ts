@@ -18,7 +18,7 @@ export function bakeryForAppTables({config, appTables}: {
 				frontTable: appTables.app,
 				backTable: await dbbyMemory<AppRow>([
 					{
-						appId: platformApp.appId,
+						id_app: platformApp.id_app,
 						home: platformApp.home,
 						label: platformApp.label,
 						origins: originsToDatabase(platformApp.origins),

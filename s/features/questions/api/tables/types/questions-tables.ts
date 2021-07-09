@@ -8,7 +8,7 @@ export type QuestionsTables = {
 }
 
 export type QuestionPostRow = {
-	questionId: string
+	id_question: string
 	authorUserId: string
 	board: string
 	content: string
@@ -17,11 +17,11 @@ export type QuestionPostRow = {
 }
 
 export type QuestionLikeRow = {
-	userId: string
-	questionId: string
+	id_user: string
+	id_question: string
 }
 
 export type QuestionReportRow = {
-	userId: string
-	questionId: string
+	id_user: string
+	id_question: string
 }

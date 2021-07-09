@@ -8,11 +8,11 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 
 	return {
 		sessionForSubscriptionPurchase({
-				userId,
+				id_user,
 				customer,
 				subscription,
 			}: {
-				userId: string
+				id_user: string
 				customer: Stripe.Customer
 				subscription: Stripe.Subscription
 			}): Partial<Stripe.Checkout.Session> {
@@ -20,7 +20,7 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 				id: generateId(),
 				mode: "subscription",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: id_user,
 
 				// TODO check modern technique in stripe docs
 				subscription: subscription.id,
@@ -28,26 +28,26 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 			}
 		},
 		sessionForSubscriptionUpdate({
-				userId,
+				id_user,
 				customer,
 				setupIntent,
-				subscriptionId,
+				id_subscription,
 			}: {
-				userId: string
+				id_user: string
 				customer: Stripe.Customer
-				subscriptionId: string
+				id_subscription: string
 				setupIntent: Stripe.SetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
 				id: generateId(),
 				mode: "setup",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: id_user,
 				setup_intent: setupIntent.id,
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",
 					customer_id: customer.id,
-					subscription_id: subscriptionId,
+					subscription_id: id_subscription,
 				},
 			}
 		},

@@ -1,6 +1,6 @@
 
 export interface XiomeConfigConnected {
-	appId: string
+	id_app: string
 	apiOrigin: string
 	platformOrigin: string
 }

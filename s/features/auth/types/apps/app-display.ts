@@ -2,7 +2,7 @@
 import {AppStats} from "./app-stats.js"
 
 export interface AppDisplay {
-	appId: string
+	id_app: string
 	label: string
 	home: string
 	origins: string[]

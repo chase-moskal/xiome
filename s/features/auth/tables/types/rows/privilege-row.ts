@@ -1,6 +1,6 @@
 
 export type PrivilegeRow = {
-	privilegeId: string
+	id_privilege: string
 	label: string
 	hard: boolean
 }

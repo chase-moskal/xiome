@@ -13,7 +13,7 @@ import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {subscriptionPlanningShare} from "./shares/subscription-planning-share.js"
 
 export function makeStoreModel({
-		appId,
+		id_app,
 		storage,
 		shopkeepingService,
 		statusCheckerService,
@@ -21,7 +21,7 @@ export function makeStoreModel({
 		stripeAccountsService,
 		triggerBankPopup,
 	}: {
-		appId: string
+		id_app: string
 		storage: FlexStorage
 		shopkeepingService: Service<typeof shopkeepingTopic>
 		statusCheckerService: Service<typeof statusCheckerTopic>
@@ -35,7 +35,7 @@ export function makeStoreModel({
 
 	const shares = {
 		subscriptionPlanning: subscriptionPlanningShare({core, shopkeepingService}),
-		ecommerce: ecommerceShare({core, appId, storage, statusTogglerService, statusCheckerService}),
+		ecommerce: ecommerceShare({core, id_app, storage, statusTogglerService, statusCheckerService}),
 		bank: bankShare({core, stripeAccountsService, triggerBankPopup})
 	}
 

@@ -20,18 +20,18 @@ export const greenTopic = ({
 		verifyToken,
 	}: AuthApiOptions) => asTopic<GreenAuth>()({
 
-	async authorize({bakeTables}, {appId, scope, refreshToken}: {
+	async authorize({bakeTables}, {id_app, scope, refreshToken}: {
 				scope: Scope
-				appId: string
+				id_app: string
 				refreshToken?: RefreshToken
 			}): Promise<AccessToken> {
 
-		const tables = await bakeTables(appId)
+		const tables = await bakeTables(id_app)
 		const permissionsEngine = makePermissionsEngine({
-			isPlatform: appId === config.platform.appDetails.appId,
+			isPlatform: id_app === config.platform.appDetails.id_app,
 			permissionsTables: tables.permissions,
 		})
-		const appRow = await tables.app.app.one(find({appId}))
+		const appRow = await tables.app.app.one(find({id_app}))
 
 		if (!appRow)
 			throw new ApiError(400, "incorrect app id")
@@ -40,24 +40,24 @@ export const greenTopic = ({
 			throw new ApiError(403, "app has been archived")
 
 		if (refreshToken) {
-			const {userId} = await verifyToken<RefreshPayload>(refreshToken)
+			const {id_user} = await verifyToken<RefreshPayload>(refreshToken)
 			const user = await fetchUser({
-				userId,
+				id_user,
 				permissionsEngine,
 				authTables: tables,
 			})
 			await tables.user.latestLogin.update({
-				...find({userId}),
-				upsert: {userId, time: Date.now()},
+				...find({id_user}),
+				upsert: {id_user, time: Date.now()},
 			})
-			const privileges = await permissionsEngine.getUserPrivileges(userId)
+			const privileges = await permissionsEngine.getUserPrivileges(id_user)
 			return signToken<AccessPayload>({
 				lifespan: config.crypto.tokenLifespans.access,
 				payload: {
 					user,
 					scope,
 					permit: {privileges},
-					appId: appId,
+					id_app: id_app,
 					origins: originsFromDatabase(appRow.origins),
 				},
 			})
@@ -68,7 +68,7 @@ export const greenTopic = ({
 				lifespan: config.crypto.tokenLifespans.access,
 				payload: {
 					user: undefined,
-					appId,
+					id_app,
 					scope,
 					origins: originsFromDatabase(appRow.origins),
 					permit: {privileges},

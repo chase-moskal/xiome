@@ -1,5 +1,5 @@
 
 export type AccountViaSignatureRow = {
-	userId: string
+	id_user: string
 	publicKey: string
 }

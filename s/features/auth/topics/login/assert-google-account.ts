@@ -11,7 +11,7 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 			rando: Rando
 			tables: UserTables
 			googleResult: GoogleResult
-		}): Promise<{userId: string}> {
+		}): Promise<{id_user: string}> {
 
 	const {googleId, avatar} = googleResult
 	const accountViaGoogle = await tables.accountViaGoogle.one({
@@ -21,7 +21,7 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 	let account: AccountRow
 	if (accountViaGoogle) {
 		account = await tables.account.one({
-			conditions: and({equal: {userId: accountViaGoogle.userId}}),
+			conditions: and({equal: {id_user: accountViaGoogle.id_user}}),
 		})
 	}
 	else {
@@ -31,7 +31,7 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 			tables.accountViaGoogle.create({
 				googleId,
 				googleAvatar: avatar,
-				userId: account.userId,
+				id_user: account.id_user,
 			}),
 		])
 	}

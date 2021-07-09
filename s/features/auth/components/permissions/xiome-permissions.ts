@@ -35,16 +35,16 @@ export class XiomePermissions extends Component3WithShare<{
 		if (!roleSelected) return []
 
 		const assignedPrivilegeIds = permissions.rolesHavePrivileges
-			.filter(({roleId}) => roleId === roleSelected.roleId)
-			.map(({privilegeId}) => privilegeId)
+			.filter(({id_role}) => id_role === roleSelected.id_role)
+			.map(({id_privilege}) => id_privilege)
 
 		return permissions.privileges
-			.filter(({privilegeId}) =>
-				assignedPrivilegeIds.includes(privilegeId))
+			.filter(({id_privilege}) =>
+				assignedPrivilegeIds.includes(id_privilege))
 			.map(privilege => {
 				const {active, immutable} = permissions.rolesHavePrivileges.find(
-					rp => rp.roleId === roleSelected.roleId &&
-						rp.privilegeId === privilege.privilegeId
+					rp => rp.id_role === roleSelected.id_role &&
+						rp.id_privilege === privilege.id_privilege
 				)
 				return {...privilege, active, immutable}
 			})
@@ -61,7 +61,7 @@ export class XiomePermissions extends Component3WithShare<{
 			focusNthElement: 2,
 		})
 		if (confirmed)
-			await permissionsModel.deleteRole({roleId: role.roleId})
+			await permissionsModel.deleteRole({id_role: role.id_role})
 	}
 
 	private clickNewRole = async() => {
@@ -78,32 +78,32 @@ export class XiomePermissions extends Component3WithShare<{
 			await permissionsModel.createRole({label: result.value})
 	}
 
-	private clickAvailablePrivilege = (privilegeId: string) => async() => {
+	private clickAvailablePrivilege = (id_privilege: string) => async() => {
 		const {roleSelected} = this
 		if (roleSelected)
 			await this.share.permissionsModel.assignPrivilege({
-				privilegeId,
-				roleId: roleSelected.roleId,
+				id_privilege,
+				id_role: roleSelected.id_role,
 			})
 	}
 
-	private clickAssignedPrivilege = (privilegeId: string) => async() => {
+	private clickAssignedPrivilege = (id_privilege: string) => async() => {
 		const {roleSelected} = this
 		if (roleSelected)
 			await this.share.permissionsModel.unassignPrivilege({
-				privilegeId,
-				roleId: roleSelected.roleId,
+				id_privilege,
+				id_role: roleSelected.id_role,
 			})
 	}
 
 	private renderPrivilege({
-			privilegeId,
+			id_privilege,
 			label,
 			hard,
 			immutable,
 			onPrivilegeClick,
 		}: {
-			privilegeId: string
+			id_privilege: string
 			label: string
 			hard: boolean
 			immutable: boolean
@@ -111,7 +111,7 @@ export class XiomePermissions extends Component3WithShare<{
 		}) {
 		return html`
 			<xio-button
-				title="${privilegeId}"
+				title="${id_privilege}"
 				?disabled=${immutable}
 				?data-hard=${hard}
 				?data-soft=${!hard}
@@ -135,7 +135,7 @@ export class XiomePermissions extends Component3WithShare<{
 				...permissions.privileges
 					.filter(privilege => {
 						const assigned = assignedPrivileges
-							.find(priv => priv.privilegeId === privilege.privilegeId)
+							.find(priv => priv.id_privilege === privilege.id_privilege)
 						return !assigned
 					})
 					.map(privilege => ({...privilege, immutable: false})),
@@ -150,15 +150,15 @@ export class XiomePermissions extends Component3WithShare<{
 					<div part=plate>
 						${permissions.roles.map(role => html`
 							<xio-button
-								title="${role.roleId}"
+								title="${role.id_role}"
 								?data-selected=${
 									this.roleSelected &&
-									role.roleId === this.roleSelected.roleId
+									role.id_role === this.roleSelected.id_role
 								}
 								?data-hard=${role.hard}
 								?disabled=${
 									this.roleSelected &&
-									role.roleId === this.roleSelected.roleId
+									role.id_role === this.roleSelected.id_role
 								}
 								@click=${this.clickRole(role)}>
 								<div>
@@ -199,7 +199,7 @@ export class XiomePermissions extends Component3WithShare<{
 						${activePrivileges.map(privilege => this.renderPrivilege({
 								...privilege,
 								onPrivilegeClick:
-									this.clickAssignedPrivilege(privilege.privilegeId)
+									this.clickAssignedPrivilege(privilege.id_privilege)
 							}))}
 					</div>
 				</div>
@@ -209,7 +209,7 @@ export class XiomePermissions extends Component3WithShare<{
 					<div part=plate>
 						${availablePrivileges.map(privilege => this.renderPrivilege({
 							...privilege,
-							onPrivilegeClick: this.clickAvailablePrivilege(privilege.privilegeId),
+							onPrivilegeClick: this.clickAvailablePrivilege(privilege.id_privilege),
 						}))}
 					</div>
 				</div>

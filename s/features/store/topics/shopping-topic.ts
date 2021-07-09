@@ -9,24 +9,24 @@ export const shoppingTopic = ({
 
 	async buySubscription(
 			{tables, stripeLiaisonForApp},
-			{subscriptionPlanId}: {
-				subscriptionPlanId: string
+			{id_subscriptionPlan}: {
+				id_subscriptionPlan: string
 			}) {
 		return true
 	},
 
 	async updateSubscription(
 			{tables, stripeLiaisonForApp},
-			{subscriptionId}: {
-				subscriptionId: string
+			{id_subscription}: {
+				id_subscription: string
 			}) {
 		return true
 	},
 
 	async endSubscription(
 			{tables, stripeLiaisonForApp},
-			{subscriptionId}: {
-				subscriptionId: string
+			{id_subscription}: {
+				id_subscription: string
 			}) {
 		return true
 	},

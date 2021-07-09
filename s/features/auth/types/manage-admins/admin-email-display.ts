@@ -1,5 +1,5 @@
 
 export interface AdminEmailDisplay {
-	userId: string
+	id_user: string
 	email: string
 }

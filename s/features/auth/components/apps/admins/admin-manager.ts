@@ -68,10 +68,10 @@ export function makeAdminManager({app, manageAdminsService, query}: {
 			<div class=adminlist>
 				${renderOp(state.admins, admins => html`
 					<ul>
-						${admins.map(({email, userId}) => html`
+						${admins.map(({email, id_user}) => html`
 							<li>
 								<span>${email}</span>
-								<xio-button @press=${() => controls.revokeAdmin(userId)}>
+								<xio-button @press=${() => controls.revokeAdmin(id_user)}>
 									revoke
 								</xio-button>
 							</li>

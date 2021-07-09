@@ -23,14 +23,14 @@ export const shopkeepingTopic = ({generateId}: {
 			.read({conditions: false})
 
 		const roleFinders = rows
-			.map(row => row.roleId)
-			.map(roleId => ({roleId}))
+			.map(row => row.id_role)
+			.map(id_role => ({id_role}))
 
 		const roles = await tables.permissions.role.read(find(...roleFinders))
 
 		const plans = rows.map(plan => subscriptionPlanFromRow({
 			plan,
-			role: roles.find(role => role.roleId === plan.roleId),
+			role: roles.find(role => role.id_role === plan.id_role),
 		}))
 
 		return plans
@@ -57,17 +57,17 @@ export const shopkeepingTopic = ({generateId}: {
 			hard: true,
 			public: true,
 			label: draft.label,
-			roleId: generateId(),
+			id_role: generateId(),
 			assignable: true,
 		}
 
 		const plan: SubscriptionPlanRow = {
 			active: true,
 			price: draft.price,
-			roleId: role.roleId,
+			id_role: role.id_role,
 			stripePriceId: stripePrice.id,
 			stripeProductId: stripeProduct.id,
-			subscriptionPlanId: generateId(),
+			id_subscriptionPlan: generateId(),
 		}
 
 		await Promise.all([
@@ -80,8 +80,8 @@ export const shopkeepingTopic = ({generateId}: {
 
 	async updateSubscriptionPlan(
 		{tables, stripeLiaisonForApp},
-		{subscriptionPlanId, draft}: {
-			subscriptionPlanId: string
+		{id_subscriptionPlan, draft}: {
+			id_subscriptionPlan: string
 			draft: SubscriptionPlanDraft
 		}) {
 
@@ -94,7 +94,7 @@ export const shopkeepingTopic = ({generateId}: {
 		})
 
 		await tables.billing.subscriptionPlans.update({
-			...find({subscriptionPlanId}),
+			...find({id_subscriptionPlan}),
 			write: {
 				stripePriceId: stripeNewPrice.id,
 				price: stripeNewPrice.unit_amount,
@@ -102,26 +102,26 @@ export const shopkeepingTopic = ({generateId}: {
 		})
 
 		const plan = await tables.billing.subscriptionPlans
-			.one(find({subscriptionPlanId}))
+			.one(find({id_subscriptionPlan}))
 
 		await tables.permissions.role.update({
-			...find({roleId: plan.roleId}),
+			...find({id_role: plan.id_role}),
 			write: {label: draft.label},
 		})
 
 		const role = await tables.permissions.role
-			.one(find({roleId: plan.roleId}))
+			.one(find({id_role: plan.id_role}))
 
 		return subscriptionPlanFromRow({role, plan})
 	},
 
 	async deactivateSubscriptionPlan(
 			{tables, stripeLiaisonForApp},
-			{subscriptionPlanId}: {subscriptionPlanId: string},
+			{id_subscriptionPlan}: {id_subscriptionPlan: string},
 		) {
 
 		const {stripePriceId} = await tables.billing.subscriptionPlans
-			.one(find({subscriptionPlanId}))
+			.one(find({id_subscriptionPlan}))
 
 		await stripeLiaisonForApp.prices
 			.update(stripePriceId, {active: false})
@@ -129,25 +129,25 @@ export const shopkeepingTopic = ({generateId}: {
 		// TODO cancel all stripe subscriptions
 
 		await tables.billing.subscriptionPlans.update({
-			...find({subscriptionPlanId}),
+			...find({id_subscriptionPlan}),
 			write: {active: false},
 		})
 	},
 
 	async deleteSubscriptionPlan(
 			{tables},
-			{subscriptionPlanId}: {subscriptionPlanId: string}
+			{id_subscriptionPlan}: {id_subscriptionPlan: string}
 		) {
 
-		const {roleId, active} = await tables.billing.subscriptionPlans
-			.one(find({subscriptionPlanId}))
+		const {id_role, active} = await tables.billing.subscriptionPlans
+			.one(find({id_subscriptionPlan}))
 
 		if (active)
 			throw new ApiError(400, `deleting active subscriptions is forbidden`)
 
 		await Promise.all([
-			tables.permissions.role.delete(find({roleId})),
-			tables.billing.subscriptionPlans.delete(find({subscriptionPlanId})),
+			tables.permissions.role.delete(find({id_role})),
+			tables.billing.subscriptionPlans.delete(find({id_subscriptionPlan})),
 		])
 	},
 })

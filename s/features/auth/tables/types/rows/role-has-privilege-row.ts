@@ -1,7 +1,7 @@
 
 export type RoleHasPrivilegeRow = {
-	roleId: string
-	privilegeId: string
+	id_role: string
+	id_privilege: string
 	immutable: boolean
 	active: boolean
 }

@@ -5,16 +5,16 @@
 // import {concurrent} from "../../../../toolbox/concurrent.js"
 
 // export async function fetchUserAndPermit({
-// 			userId,
+// 			id_user,
 // 			tables,
 // 			generateNickname,
 // 		}: {
-// 			userId: string
+// 			id_user: string
 // 			tables: AuthTables
 // 			generateNickname: () => string
 // 		}) {
 // 	return concurrent({
-// 		user: await fetchUser({userId, tables, generateNickname}),
-// 		permit: await fetchPermit({userId, tables}),
+// 		user: await fetchUser({id_user, tables, generateNickname}),
+// 		permit: await fetchPermit({id_user, tables}),
 // 	})
 // }

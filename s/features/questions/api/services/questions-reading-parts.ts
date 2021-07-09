@@ -39,7 +39,7 @@ export const questionsReadingParts = (
 			let users = []
 			if (posts.length) {
 				const permissionsEngine = makePermissionsEngine({
-					isPlatform: access.appId === options.config.platform.appDetails.appId,
+					isPlatform: access.id_app === options.config.platform.appDetails.id_app,
 					permissionsTables: tables.permissions,
 				})
 
@@ -52,7 +52,7 @@ export const questionsReadingParts = (
 				questions = await resolveQuestions({
 					posts,
 					questionsTables,
-					userId: access?.user?.userId,
+					id_user: access?.user?.id_user,
 				})
 			}
 

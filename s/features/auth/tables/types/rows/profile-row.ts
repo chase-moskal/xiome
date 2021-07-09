@@ -1,6 +1,6 @@
 
 export type ProfileRow = {
-	userId: string
+	id_user: string
 	nickname: string
 	tagline: string
 	avatar: undefined | string

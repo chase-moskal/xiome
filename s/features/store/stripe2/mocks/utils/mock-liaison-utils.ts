@@ -59,11 +59,11 @@ export function mockLiaisonUtils({rando, tables}: {
 
 	const initializers = {
 		sessionForSubscriptionPurchase({
-				userId,
+				id_user,
 				customer,
 				subscription,
 			}: {
-				userId: string
+				id_user: string
 				customer: MockCustomer
 				subscription: MockSubscription
 			}): Partial<Stripe.Checkout.Session> {
@@ -71,31 +71,31 @@ export function mockLiaisonUtils({rando, tables}: {
 				id: generateId(),
 				mode: "subscription",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: id_user,
 				subscription: subscription.id,
 			}
 		},
 		sessionForSubscriptionUpdate({
-				userId,
+				id_user,
 				customer,
 				setupIntent,
-				subscriptionId,
+				id_subscription,
 			}: {
-				userId: string
+				id_user: string
 				customer: MockCustomer
-				subscriptionId: string
+				id_subscription: string
 				setupIntent: MockSetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
 				id: generateId(),
 				mode: "setup",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: id_user,
 				setup_intent: setupIntent.id,
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",
 					customer_id: customer.id,
-					subscription_id: subscriptionId,
+					subscription_id: id_subscription,
 				},
 			}
 		},

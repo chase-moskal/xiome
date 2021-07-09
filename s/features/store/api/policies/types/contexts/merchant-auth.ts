@@ -5,5 +5,5 @@ import {StripeLiaisonForPlatform} from "../../../../stripe2/types/stripe-liaison
 
 export type MerchantAuth = {
 	stripeLiaisonForPlatform: StripeLiaisonForPlatform
-	getTablesNamespacedForApp: (appId: string) => Promise<StoreAuthSpecifics["tables"]>
+	getTablesNamespacedForApp: (id_app: string) => Promise<StoreAuthSpecifics["tables"]>
 } & StoreAuthSpecifics & AppOwnerAuth

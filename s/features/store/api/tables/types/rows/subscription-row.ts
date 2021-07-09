@@ -2,9 +2,9 @@
 import {CardClues} from "../../../../stripe2/liaison/types/card-clues.js"
 
 export type SubscriptionRow = {
-	userId: string
+	id_user: string
 	active: boolean
 	renewalTime: number
-	subscriptionPlanId: string
+	id_subscriptionPlan: string
 	stripeSubscriptionId: string
 } & CardClues

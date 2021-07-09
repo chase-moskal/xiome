@@ -1,5 +1,5 @@
 
 export type CustomerRow = {
-	userId: string
+	id_user: string
 	stripeCustomerId: string
 }

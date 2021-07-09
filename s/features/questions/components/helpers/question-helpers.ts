@@ -5,7 +5,7 @@ import {Question} from "../../api/types/question.js"
 // export function ascertainOwnership(question: Question, me: User) {
 // 	if (!me) return {mine: false, authority: false}
 // 	const admin = (me && me.claims.admin)
-// 	const mine = me && (me.userId === question.authorUserId)
+// 	const mine = me && (me.id_user === question.authorUserId)
 // 	return {
 // 		mine,
 // 		authority: admin || mine,
@@ -17,9 +17,9 @@ import {Question} from "../../api/types/question.js"
 // 	: 1
 
 // export const sortQuestions = (me: MetalUser, questions: Question[]) => {
-// 	const myUserId = me?.userId
-// 	const filterMine = (q: Question) => q.author.userId === myUserId
-// 	const filterTheirs = (q: Question) => q.author.userId !== myUserId
+// 	const myUserId = me?.id_user
+// 	const filterMine = (q: Question) => q.author.id_user === myUserId
+// 	const filterTheirs = (q: Question) => q.author.id_user !== myUserId
 // 	return myUserId
 // 		? [
 // 			...questions.filter(filterMine).sort(sortLikes),

@@ -12,16 +12,16 @@ import {requireUserIsAllowedToEditApp} from "./apps/require-user-is-allowed-to-e
 
 export const appEditTopic = (options: AuthApiOptions) => asTopic<AppOwnerAuth>()({
 
-	async updateApp({tables, access}, {appId, appDraft}: {
-			appId: string
+	async updateApp({tables, access}, {id_app, appDraft}: {
+			id_app: string
 			appDraft: AppDraft
 		}) {
-		// await requireUserIsAllowedToEditApp({tables, access, appId})
+		// await requireUserIsAllowedToEditApp({tables, access, id_app})
 		throwProblems(validateAppDraft(appDraft))
 		await tables.app.app.update({
-			...find({appId}),
+			...find({id_app}),
 			whole: {
-				appId,
+				id_app,
 				home: appDraft.home,
 				label: appDraft.label,
 				origins: originsToDatabase(appDraft.origins),
@@ -30,12 +30,12 @@ export const appEditTopic = (options: AuthApiOptions) => asTopic<AppOwnerAuth>()
 		})
 	},
 
-	async deleteApp({tables, access}, {appId}: {
-			appId: string
+	async deleteApp({tables, access}, {id_app}: {
+			id_app: string
 		}) {
-		// await requireUserIsAllowedToEditApp({tables, access, appId})
+		// await requireUserIsAllowedToEditApp({tables, access, id_app})
 		await tables.app.app.update({
-			...find({appId}),
+			...find({id_app}),
 			write: {archived: true},
 		})
 	},

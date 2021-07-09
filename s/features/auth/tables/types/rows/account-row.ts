@@ -1,5 +1,5 @@
 
 export type AccountRow = {
-	userId: string
+	id_user: string
 	created: number
 }

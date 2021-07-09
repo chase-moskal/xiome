@@ -13,7 +13,7 @@ export const statusCheckerTopic = ({config}: {
 	async getStoreStatus({tables, access, getStripeAccount}) {
 		let storeStatus = StoreStatus.Uninitialized
 
-		if (access.appId !== config.platform.appDetails.appId) {
+		if (access.id_app !== config.platform.appDetails.id_app) {
 			const row = await tables.merchant.stripeAccounts.one({
 				conditions: false,
 			})

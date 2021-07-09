@@ -14,24 +14,24 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 
 	if (!userIds.length)
 		throw new Error("invalid: userIds cannot be empty")
-	const conditions = or(...userIds.map(userId => ({equal: {userId}})))
+	const conditions = or(...userIds.map(id_user => ({equal: {id_user}})))
 
 	const accounts = await authTables.user.account.read({conditions})
 	const profiles = await authTables.user.profile.read({conditions})
 	const publicRolesForUsers = await permissionsEngine.getPublicRolesForUsers(userIds)
 
-	function assembleDetailsForEachUser(userId: string) {
-		const account = accounts.find(a => a.userId === userId)
-		const profile = profiles.find(p => p.userId === userId)
+	function assembleDetailsForEachUser(id_user: string) {
+		const account = accounts.find(a => a.id_user === id_user)
+		const profile = profiles.find(p => p.id_user === id_user)
 
 		if (!account)
-			throw new ApiError(404, `account not found for user id ${userId}`)
+			throw new ApiError(404, `account not found for user id ${id_user}`)
 
 		if (!profile)
-			throw new ApiError(404, `profile not found for user id ${userId}`)
+			throw new ApiError(404, `profile not found for user id ${id_user}`)
 
 		const roles = publicRolesForUsers
-			.find(r => r.userId === userId)
+			.find(r => r.id_user === id_user)
 			.publicUserRoles
 
 		const stats: UserStats = {
@@ -39,7 +39,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		}
 
 		return {
-			userId,
+			id_user,
 			profile: profileFromRow(profile),
 			roles,
 			stats,

@@ -9,7 +9,7 @@
 			"email": "chasemoskal@gmail.com"
 		},
 		"appDetails": {
-			"appId": "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
+			"id_app": "7nsgfgbP8PqcgNYk9hYxWdDcznTxndqpBG7WJDD9rpyCXHJg",
 			"label": "Xiome Cloud",
 			"home": "http://localhost:5000/x/",
 			"origins": [

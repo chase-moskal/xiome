@@ -18,54 +18,54 @@ export const appTopic = ({
 		config,
 	}: AuthApiOptions) => asTopic<PlatformUserAuth>()({
 
-	async listApps({tables, statsHub}, {ownerUserId}: {
-			ownerUserId: string
+	async listApps({tables, statsHub}, {id_ownerUser}: {
+			id_ownerUser: string
 		}): Promise<AppDisplay[]> {
-		const ownerships = await tables.app.appOwnership.read(find({userId: ownerUserId}))
+		const ownerships = await tables.app.appOwnership.read(find({id_user: id_ownerUser}))
 		const appRows = ownerships.length
 			? await tables.app.app.read({
 				conditions: and(
-					or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
+					or(...ownerships.map(own => ({equal: {id_app: own.id_app}}))),
 					{equal: {archived: false}},
 				)
 			})
 			: []
 		return Promise.all(appRows.map(async row => ({
-			appId: row.appId,
+			id_app: row.id_app,
 			label: row.label,
 			home: row.home,
 			origins: originsFromDatabase(row.origins),
-			platform: isPlatform(row.appId, config),
+			platform: isPlatform(row.id_app, config),
 			stats: await concurrent({
-				users: statsHub.countUsers(row.appId),
-				usersActiveDaily: statsHub.countUsersActiveDaily(row.appId),
-				usersActiveMonthly: statsHub.countUsersActiveMonthly(row.appId),
+				users: statsHub.countUsers(row.id_app),
+				usersActiveDaily: statsHub.countUsersActiveDaily(row.id_app),
+				usersActiveMonthly: statsHub.countUsersActiveMonthly(row.id_app),
 			}),
 		})))
 	},
 
-	async registerApp({tables}, {appDraft, ownerUserId}: {
+	async registerApp({tables}, {appDraft, id_ownerUser}: {
 			appDraft: AppDraft
-			ownerUserId: string
+			id_ownerUser: string
 		}): Promise<AppDisplay> {
 		throwProblems(validateAppDraft(appDraft))
-		const appId = rando.randomId()
+		const id_app = rando.randomId()
 		await Promise.all([
 			tables.app.app.create({
-				appId,
+				id_app,
 				label: appDraft.label,
 				home: appDraft.home,
 				origins: originsToDatabase(appDraft.origins),
 				archived: false,
 			}),
 			tables.app.appOwnership.create({
-				appId,
-				userId: ownerUserId,
+				id_app: id_app,
+				id_user: id_ownerUser,
 			}),
 		])
 		return {
 			...appDraft,
-			appId,
+			id_app,
 			stats: {
 				users: 1,
 				usersActiveDaily: 0,

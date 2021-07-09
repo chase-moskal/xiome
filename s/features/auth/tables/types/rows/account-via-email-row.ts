@@ -1,5 +1,5 @@
 
 export type AccountViaEmailRow = {
-	userId: string
+	id_user: string
 	email: string
 }

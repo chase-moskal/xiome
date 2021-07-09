@@ -1,6 +1,6 @@
 
 export type AppRow = {
-	appId: string
+	id_app: string
 	label: string
 	home: string
 	origins: string

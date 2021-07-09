@@ -10,7 +10,7 @@ class XioPlayground extends Component2 {
 
 	@property({type: Object})
 	private user: User = {
-		userId: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
+		id_user: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
 		profile: {
 			nickname: "Original Ostrich",
 			tagline: "i'm super cool",
@@ -18,7 +18,7 @@ class XioPlayground extends Component2 {
 		},
 		roles: [{
 			label: "premium",
-			roleId: "lol12i309u12893h1",
+			id_role: "lol12i309u12893h1",
 			timeframeEnd: undefined,
 			timeframeStart: undefined,
 		}],

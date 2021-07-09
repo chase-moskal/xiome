@@ -19,15 +19,15 @@ export function payPolicies({
 		stripeComplex,
 	}: StorePolicyOptions) {
 
-	async function bakePayTables(appId: string): Promise<StoreTables> {
+	async function bakePayTables(id_app: string): Promise<StoreTables> {
 		return {
-			billing: await prepareNamespacerForTables(tables.billing)(appId),
-			merchant: await prepareNamespacerForTables(tables.merchant)(appId),
+			billing: await prepareNamespacerForTables(tables.billing)(id_app),
+			merchant: await prepareNamespacerForTables(tables.merchant)(id_app),
 		}
 	}
 
-	async function commonAuthProcessing(authTables: AuthTables, appId: string) {
-		const tables = {...authTables, ...await bakePayTables(appId)}
+	async function commonAuthProcessing(authTables: AuthTables, id_app: string) {
+		const tables = {...authTables, ...await bakePayTables(id_app)}
 		return {tables}
 	}
 
@@ -38,11 +38,11 @@ export function payPolicies({
 			const {stripeLiaisonForPlatform} = stripeComplex
 			return {
 				...auth,
-				...await commonAuthProcessing(auth.tables, auth.access.appId),
+				...await commonAuthProcessing(auth.tables, auth.access.id_app),
 				stripeLiaisonForPlatform,
-				async getTablesNamespacedForApp(appId: string) {
-					const authTables = await auth.getTablesNamespacedForApp(appId)
-					const payTables = await bakePayTables(appId)
+				async getTablesNamespacedForApp(id_app: string) {
+					const authTables = await auth.getTablesNamespacedForApp(id_app)
+					const payTables = await bakePayTables(id_app)
 					return {...authTables, ...payTables}
 				},
 			}
@@ -53,7 +53,7 @@ export function payPolicies({
 	const prospect: Policy<ProspectMeta, ProspectAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.anon.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.access.appId)
+			const common = await commonAuthProcessing(auth.tables, auth.access.id_app)
 			const {stripeLiaisonForPlatform} = stripeComplex
 			async function getStripeAccount(id: string) {
 				return stripeLiaisonForPlatform.accounts.retrieve(id)
@@ -66,7 +66,7 @@ export function payPolicies({
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.access.appId)
+			const common = await commonAuthProcessing(auth.tables, auth.access.id_app)
 			const {stripeAccountId} = await common.tables.merchant
 				.stripeAccounts
 				.one({conditions: false})

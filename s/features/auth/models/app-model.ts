@@ -34,21 +34,21 @@ export function makeAppModel({
 				const appList = ops.value(op) ?? []
 				let records: AppRecords = {}
 				for (const app of appList)
-					records[app.appId] = ops.ready(app)
+					records[app.id_app] = ops.ready(app)
 				state.appRecords = ops.replaceValue(op, records)
 			},
-			setIndividualAppRecord(appId: string, op: Op<AppDisplay>) {
+			setIndividualAppRecord(id_app: string, op: Op<AppDisplay>) {
 				if (ops.isLoading(state.appRecords))
 					throw new Error("cannot set individual app while apps are loading")
 				const apps = ops.value(state.appRecords) ?? {}
-				state.appRecords = ops.ready({...apps, [appId]: op})
+				state.appRecords = ops.ready({...apps, [id_app]: op})
 			},
-			deleteIndividualAppRecord(appId: string) {
+			deleteIndividualAppRecord(id_app: string) {
 				if (ops.isReady(state.appRecords)) {
 					const existingRecords = ops.value(state.appRecords)
 					const records: AppRecords = {}
 					for (const [key, value] of Object.entries(existingRecords)) {
-						if (key !== appId)
+						if (key !== id_app)
 							records[key] = value
 					}
 					state.appRecords = ops.ready(records)
@@ -61,16 +61,16 @@ export function makeAppModel({
 
 	async function getUserId() {
 		const access = await getAccess()
-		return access?.user?.userId
+		return access?.user?.id_user
 	}
 
 	async function loadApps(): Promise<AppDisplay[]> {
 		actions.setActive(true)
 		const appsPromise = ops.operation({
 			promise: (async() => {
-				const userId = await getUserId()
-				return userId
-					? appService.listApps({ownerUserId: userId})
+				const id_user = await getUserId()
+				return id_user
+					? appService.listApps({id_ownerUser: id_user})
 					: []
 			})(),
 			setOp: op => actions.setAppRecords(op),
@@ -80,17 +80,17 @@ export function makeAppModel({
 	}
 
 	async function registerApp(appDraft: AppDraft) {
-		const userId = await getUserId()
+		const id_user = await getUserId()
 		const result = await ops.operation({
 			errorReason: "failed to register app",
 			promise: (async() => {
 				const result = await appService.registerApp({
 					appDraft,
-					ownerUserId: userId,
+					id_ownerUser: id_user,
 				})
 				await manageAdminsService.assignPlatformUserAsAdmin({
-					appId: result.appId,
-					platformUserId: userId,
+					id_app: result.id_app,
+					platformUserId: id_user,
 				})
 				return result
 			})(),
@@ -98,55 +98,55 @@ export function makeAppModel({
 				actions.setAddingNewApp(ops.replaceValue(op, null))
 				if (ops.isReady(op)) {
 					const newApp: AppDisplay = {...ops.value(op), ...appDraft}
-					actions.setIndividualAppRecord(newApp.appId, ops.ready(newApp))
+					actions.setIndividualAppRecord(newApp.id_app, ops.ready(newApp))
 				}
 			},
 		})
 		return result
 	}
 
-	async function updateApp(appId: string, appDraft: AppDraft) {
+	async function updateApp(id_app: string, appDraft: AppDraft) {
 		const records = ops.value(getState().appRecords)
 		if (!records)
 			throw new Error("cannot update app while loading records")
-		const existingApp = ops.value(records[appId])
+		const existingApp = ops.value(records[id_app])
 		if (!existingApp)
 			throw new Error("cannot update app not present in records")
 		return ops.operation({
-			promise: appEditService.updateApp({appId, appDraft}),
+			promise: appEditService.updateApp({id_app, appDraft}),
 			setOp: op => actions.setIndividualAppRecord(
-				appId,
+				id_app,
 				ops.replaceValue(op, {...existingApp, ...appDraft})
 			),
 		})
 	}
 
-	function getApp(appId: string) {
+	function getApp(id_app: string) {
 		const records = ops.value(getState().appRecords)
 		return records
-			? ops.value(records[appId])
+			? ops.value(records[id_app])
 			: undefined
 	}
 
-	async function deleteApp(appId: string) {
+	async function deleteApp(id_app: string) {
 		await ops.operation({
-			promise: appEditService.deleteApp({appId}),
+			promise: appEditService.deleteApp({id_app}),
 			setOp: op => {
 				actions.setIndividualAppRecord(
-					appId,
-					ops.replaceValue(op, getApp(appId))
+					id_app,
+					ops.replaceValue(op, getApp(id_app))
 				)
 			},
 		})
-		actions.deleteIndividualAppRecord(appId)
+		actions.deleteIndividualAppRecord(id_app)
 	}
 
 	return {
 		get state() { return getState() },
-		getApp(appId: string) {
+		getApp(id_app: string) {
 			const records = ops.value(getState().appRecords)
 			return records
-				? ops.value(records[appId])
+				? ops.value(records[id_app])
 				: undefined
 		},
 		onStateChange,
@@ -185,7 +185,7 @@ export function makeAppModel({
 
 // 	async function getUserId() {
 // 		const access = await getAccess()
-// 		return access?.user?.userId
+// 		return access?.user?.id_user
 // 	}
 
 // 	async function appListOperation(promise: Promise<AppDisplay[]>) {
@@ -198,9 +198,9 @@ export function makeAppModel({
 // 	async function loadAppList() {
 // 		actions.setActive(true)
 // 		return appListOperation((async() => {
-// 			const userId = await getUserId()
-// 			return userId
-// 				? appService.listApps({ownerUserId: userId})
+// 			const id_user = await getUserId()
+// 			return id_user
+// 				? appService.listApps({id_ownerUser: id_user})
 // 				: []
 // 		})())
 // 	}
@@ -232,36 +232,36 @@ export function makeAppModel({
 // 				await loadAppList()
 // 		},
 // 		async registerApp(appDraft: AppDraft) {
-// 			const userId = await getUserId()
+// 			const id_user = await getUserId()
 // 			const result = await loadingOperation({
 // 				errorReason: "failed to register app",
 // 				promise: (async() => {
 // 					const result = await appService.registerApp({
 // 						appDraft,
-// 						ownerUserId: userId,
+// 						id_ownerUser: id_user,
 // 					})
 // 					await manageAdminsService.assignPlatformUserAsAdmin({
-// 						appId: result.appId,
-// 						platformUserId: userId,
+// 						id_app: result.id_app,
+// 						platformUserId: id_user,
 // 					})
 // 					return result
 // 				})(),
 // 			})
 // 			return result
 // 		},
-// 		async updateApp(appId: string, appDraft: AppDraft) {
+// 		async updateApp(id_app: string, appDraft: AppDraft) {
 // 			await loadingOperation({
 // 				errorReason: "failed to update app",
 // 				promise: appEditService.updateApp({
-// 					appId,
+// 					id_app,
 // 					appDraft,
 // 				})
 // 			})
 // 		},
-// 		async deleteApp(appId: string) {
+// 		async deleteApp(id_app: string) {
 // 			return loadingOperation({
 // 				errorReason: "failed to delete app",
-// 				promise: appEditService.deleteApp({appId}),
+// 				promise: appEditService.deleteApp({id_app}),
 // 			})
 // 		},
 // 	}

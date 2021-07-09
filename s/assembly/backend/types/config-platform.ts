@@ -5,7 +5,7 @@ export interface ConfigPlatform {
 		email: string
 	}
 	appDetails: {
-		appId: string
+		id_app: string
 		label: string
 		home: string
 		origins: string[]

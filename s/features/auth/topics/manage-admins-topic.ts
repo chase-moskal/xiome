@@ -10,7 +10,7 @@ import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appPermissions.roles.admin.roleId
+const adminRoleId = appPermissions.roles.admin.id_role
 
 export const manageAdminsTopic = ({
 			rando,
@@ -18,33 +18,33 @@ export const manageAdminsTopic = ({
 			generateNickname,
 		}: AuthApiOptions) => asTopic<AppOwnerAuth>()({
 
-	async listAdmins(auth, {appId}: {
-				appId: string
+	async listAdmins(auth, {id_app}: {
+				id_app: string
 			}): Promise<AdminEmailDisplay[]> {
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
+		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 
 		const usersWithAdminRole = await tablesForApp.permissions.userHasRole
-			.read(find({roleId: adminRoleId}))
+			.read(find({id_role: adminRoleId}))
 
 		const adminsViaEmail = await tablesForApp.user.accountViaEmail
-			.read(find(...usersWithAdminRole.map(({userId}) => ({userId}))))
+			.read(find(...usersWithAdminRole.map(({id_user}) => ({id_user}))))
 
-		return adminsViaEmail.map(({userId, email}) => ({
-			userId,
+		return adminsViaEmail.map(({id_user: id_user, email}) => ({
+			id_user,
 			email,
 		}))
 	},
 
-	async assignPlatformUserAsAdmin(auth, {appId, platformUserId}: {
-			appId: string
+	async assignPlatformUserAsAdmin(auth, {id_app, platformUserId}: {
+			id_app: string
 			platformUserId: string
 		}) {
 		const tablesForPlatform = auth.tables
-		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
+		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 
 		const platformAccount = await tablesForPlatform.user.accountViaEmail
-			.one(find({userId: platformUserId}))
+			.one(find({id_user: platformUserId}))
 
 		if (!platformAccount)
 			throw new ApiError(404, "platform email account not found")
@@ -59,12 +59,12 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async assignAdmin(auth, {appId, email}: {
-				appId: string
+	async assignAdmin(auth, {id_app, email}: {
+				id_app: string
 				email: string
 			}): Promise<void> {
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
+		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 		const problems = emailValidator(email)
 
 		if (problems.length)
@@ -79,16 +79,16 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async revokeAdmin(auth, {appId, userId}: {
-				appId: string
-				userId: string
+	async revokeAdmin(auth, {id_app, id_user}: {
+				id_app: string
+				id_user: string
 			}): Promise<void> {
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
+		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 
 		await tablesForApp.permissions.userHasRole.delete(find({
-			userId,
-			roleId: adminRoleId,
+			id_user,
+			id_role: adminRoleId,
 		}))
 	},
 })
