@@ -1,2 +1,2 @@
 
-export const namespaceKeyAppId = "__id_app"
+export const namespaceKeyAppId = "id_app-namespace"
