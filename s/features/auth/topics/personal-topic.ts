@@ -3,7 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {UserAuth} from "../policies/types/user-auth.js"
-import {find} from "../../../toolbox/dbby/dbby-mongo.js"
+import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {ProfileDraft} from "./personal/types/profile-draft.js"
 import {validateProfileDraft} from "./personal/validate-profile-draft.js"

@@ -3,9 +3,8 @@ import {Collection, FilterQuery} from "mongodb"
 
 import {objectMap} from "../object-map.js"
 import {escapeRegex} from "../escape-regex.js"
-export {and, or, find} from "./dbby-helpers.js"
 
-import {up, ups, down, downs, valueUp, valueDown} from "./dbby-mongo-row-processing.js"
+import {up, ups, down, downs, valueUp} from "./dbby-mongo-row-processing.js"
 import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditional, DbbyConditionTree, DbbyUpdateAmbiguated, DbbyOrder} from "./dbby-types.js"
 
 export function dbbyMongo<Row extends DbbyRow>({collection}: {

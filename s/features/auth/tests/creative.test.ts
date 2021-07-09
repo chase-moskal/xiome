@@ -2,7 +2,7 @@
 import {Suite, assert, expect} from "cynic"
 
 import {ops} from "../../../framework/ops.js"
-import {find} from "../../../toolbox/dbby/dbby-mongo.js"
+import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {standardSystem} from "./helpers/standard-system.js"
 import {appLink, platformLink} from "./helpers/constants.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"

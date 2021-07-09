@@ -3,7 +3,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {AppDraft} from "../types/apps/app-draft.js"
 import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
-import {find} from "../../../toolbox/dbby/dbby-mongo.js"
+import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {validateAppDraft} from "./apps/validate-app-draft.js"
 import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
