@@ -4,48 +4,49 @@ import {DbbyRow} from "./dbby-types.js"
 import {objectMap} from "../object-map.js"
 import {DamnId} from "../damnedb/damn-id.js"
 
-export function dbbyMongoRowProcessing<Row extends DbbyRow>() {
-
-	// strip away the mongo database id's -- we don't use 'em
-	function skimMongoId(row: Row): Row {
-		if (row) {
-			const {_id: noop, ...skimmed} = <any>row
-			return skimmed
-		}
-		return undefined
+// strip away the mongo database id's -- we don't use 'em
+export function skimMongoId<Row extends DbbyRow>(row: Row): Row {
+	if (row) {
+		const {_id: noop, ...skimmed} = <any>row
+		return skimmed
 	}
+	return undefined
+}
 
-	// process a row before it's sent to mongo
-	// - transform any DamnId's to mongo binary type
-	function up(row: Partial<Row>): any {
-		return objectMap(
-			row,
-			value =>
-				value instanceof DamnId
-					? new Binary(Buffer.from(value.binary), )
-					: value
-		)
-	}
+export function valueUp(value: any, key: string): any {
+	return key.startsWith("id_")
+		? new Binary(Buffer.from(DamnId.fromString(value).binary))
+		: value instanceof DamnId
+			? new Binary(Buffer.from(value.binary))
+			: value
+}
 
-	// process a row retrieved from mongo
-	// - transform any binary types into DamnId's
-	function down(data: any): Row {
-		return objectMap(
-			skimMongoId(data),
-			value =>
-				value instanceof Binary
-					? new DamnId(value.buffer.buffer)
-					: value
-		)
-	}
+export function valueDown(value: any, key: string): any {
+	return key.startsWith("id_")
+		? new DamnId(value.buffer.buffer).string
+		: value instanceof Binary
+			? new DamnId(value.buffer.buffer)
+			: value
+}
 
-	function ups(rows: Partial<Row>[]): any[] {
-		return rows.map(up)
-	}
+// process a row before it's sent to mongo
+// - transform any id_* to mongo binary type
+// - transform any damnid to mongo binary type
+export function up<Row extends DbbyRow>(row: Partial<Row>): any {
+	return objectMap(row, valueUp)
+}
 
-	function downs(rows: any[]): Row[] {
-		return rows.map(down)
-	}
+// process a row retrieved from mongo
+// - transform any id_* from mongo binary to strings via damnid
+// - transform any binary types into damnid
+export function down<Row extends DbbyRow>(data: any): Row {
+	return objectMap(skimMongoId(data), valueDown)
+}
 
-	return {up, ups, down, downs}
+export function ups<Row extends DbbyRow>(rows: Partial<Row>[]): any[] {
+	return rows.map(up)
+}
+
+export function downs<Row extends DbbyRow>(rows: any[]): Row[] {
+	return rows.map(<any>down)
 }

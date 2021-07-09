@@ -5,14 +5,12 @@ import {objectMap} from "../object-map.js"
 import {escapeRegex} from "../escape-regex.js"
 export {and, or, find} from "./dbby-helpers.js"
 
-import {dbbyMongoRowProcessing} from "./dbby-mongo-row-processing.js"
+import {up, ups, down, downs, valueUp, valueDown} from "./dbby-mongo-row-processing.js"
 import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditional, DbbyConditionTree, DbbyUpdateAmbiguated, DbbyOrder} from "./dbby-types.js"
 
 export function dbbyMongo<Row extends DbbyRow>({collection}: {
 		collection: Collection
 	}): DbbyTable<Row> {
-
-	const {up, ups, down, downs} = dbbyMongoRowProcessing<Row>()
 
 	return {
 		async create(...rows) {
@@ -26,21 +24,21 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 			if (order) cursor = cursor.sort(orderToSort(order))
 			if (limit) cursor = cursor.limit(limit)
 			const rows = await cursor.toArray()
-			return downs(rows)
+			return downs<Row>(rows)
 		},
 
 		async one(conditional) {
 			const query = prepareQuery(conditional)
 			const row = await collection.findOne<Row>(query)
-			return down(row)
+			return down<Row>(row)
 		},
 
 		async assert({make, ...conditional}) {
 			const query = prepareQuery(conditional)
-			let row = down(await collection.findOne<Row>(query))
+			let row = down<Row>(await collection.findOne<Row>(query))
 			if (!row) {
 				row = await make()
-				await collection.insertOne(up(row))
+				await collection.insertOne(up<Row>(row))
 			}
 			return row
 		},
@@ -117,7 +115,8 @@ function isSet(a: any): boolean {
 }
 
 function mapwise(x: any, y: (value: any) => any) {
-	return x && objectMap(x, y)
+	const y2 = (value: any, key: string) => valueUp(y(value), key)
+	return x && objectMap(x, y2)
 }
 
 function notwise(x: any, y: (value: any) => any) {
