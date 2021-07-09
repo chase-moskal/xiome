@@ -43,7 +43,7 @@ export function prepareStatsHub({tables}: {
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {_appId: id_app}},
+							{equal: {[namespaceKeyAppId]: id_app}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})
@@ -54,7 +54,7 @@ export function prepareStatsHub({tables}: {
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {_appId: id_app}},
+							{equal: {[namespaceKeyAppId]: id_app}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})
