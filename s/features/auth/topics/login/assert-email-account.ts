@@ -23,12 +23,14 @@ export async function assertEmailAccount({
 		generateNickname: () => string
 	}) {
 
-	const {id_user: id_user} = await tables.user.accountViaEmail.assert({
+	const {id_user} = await tables.user.accountViaEmail.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
 			const account = generateAccountRow({rando})
-			const {id_user: id_user} = account
+			const {id_user} = account
+
+			console.log("GENERATE NEW USER", id_user)
 
 			const createAccount = tables.user.account.create(account)
 
@@ -76,7 +78,7 @@ export async function assertEmailAccount({
 				assignTechnician,
 			])
 
-			return {email, id_user: id_user}
+			return {email, id_user}
 		},
 	})
 

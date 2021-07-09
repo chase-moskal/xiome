@@ -44,11 +44,11 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				conditions: or(...userIds.map(id_user => ({equal: {id_user}})))
 			})
 			const roleIds = usersHaveRolesRaw.map(u => u.id_role)
-			if (userIds.length === 0)
-				throw new Error("invalid: role ids cannot be empty")
-			const roles = await permissionsTables.role.read({
-				conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
-			})
+			const roles = roleIds.length
+				? await permissionsTables.role.read({
+					conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
+				})
+				: []
 			const roleIdsThatActuallyExist = [
 				...roles.map(r => r.id_role),
 				...Object.entries(hardPermissions.roles)

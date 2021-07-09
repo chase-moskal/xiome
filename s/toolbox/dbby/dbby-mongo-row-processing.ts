@@ -6,8 +6,11 @@ import {DamnId} from "../damnedb/damn-id.js"
 
 const {Binary} = bson
 
+const toArrayBuffer = (buffer: Buffer): ArrayBuffer =>
+	new Uint8Array(buffer).buffer
+
 // strip away the mongo database id's -- we don't use 'em
-export function skimMongoId<Row extends DbbyRow>(row: Row): Row {
+function skimMongoId<Row extends DbbyRow>(row: Row): Row {
 	if (row) {
 		const {_id: noop, ...skimmed} = <any>row
 		return skimmed
@@ -25,9 +28,9 @@ export function valueUp(value: any, key: string): any {
 
 export function valueDown(value: any, key: string): any {
 	return key.startsWith("id_")
-		? new DamnId(value.buffer.buffer).string
+		? new DamnId(toArrayBuffer(value.buffer)).string
 		: value instanceof Binary
-			? new DamnId(value.buffer.buffer)
+			? new DamnId(toArrayBuffer(value.buffer)).string
 			: value
 }
 
@@ -42,7 +45,9 @@ export function up<Row extends DbbyRow>(row: Partial<Row>): any {
 // - transform any id_* from mongo binary to strings via damnid
 // - transform any binary types into damnid
 export function down<Row extends DbbyRow>(data: any): Row {
-	return objectMap(skimMongoId(data), valueDown)
+	return (data && typeof data === "object")
+		? objectMap(skimMongoId(data), valueDown)
+		: data
 }
 
 export function ups<Row extends DbbyRow>(rows: Partial<Row>[]): any[] {

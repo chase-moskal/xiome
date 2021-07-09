@@ -30,7 +30,7 @@ export const manageAdminsTopic = ({
 		const adminsViaEmail = await tablesForApp.user.accountViaEmail
 			.read(find(...usersWithAdminRole.map(({id_user}) => ({id_user}))))
 
-		return adminsViaEmail.map(({id_user: id_user, email}) => ({
+		return adminsViaEmail.map(({id_user, email}) => ({
 			id_user,
 			email,
 		}))

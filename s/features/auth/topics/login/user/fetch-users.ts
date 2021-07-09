@@ -14,6 +14,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 
 	if (!userIds.length)
 		throw new Error("invalid: userIds cannot be empty")
+
 	const conditions = or(...userIds.map(id_user => ({equal: {id_user}})))
 
 	const accounts = await authTables.user.account.read({conditions})

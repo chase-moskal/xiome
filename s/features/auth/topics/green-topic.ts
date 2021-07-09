@@ -57,7 +57,7 @@ export const greenTopic = ({
 					user,
 					scope,
 					permit: {privileges},
-					id_app: id_app,
+					id_app,
 					origins: originsFromDatabase(appRow.origins),
 				},
 			})

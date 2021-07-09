@@ -114,7 +114,7 @@ function isSet(a: any): boolean {
 }
 
 function mapwise(x: any, y: (value: any) => any) {
-	const y2 = (value: any, key: string) => valueUp(y(value), key)
+	const y2 = (value: any, key: string) => y(valueUp(value, key))
 	return x && objectMap(x, y2)
 }
 

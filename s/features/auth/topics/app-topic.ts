@@ -59,7 +59,7 @@ export const appTopic = ({
 				archived: false,
 			}),
 			tables.app.appOwnership.create({
-				id_app: id_app,
+				id_app,
 				id_user: id_ownerUser,
 			}),
 		])
