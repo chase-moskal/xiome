@@ -39,8 +39,8 @@ export const questionsPostingParts = (
 			throwProblems(validateQuestionDraft(questionDraft))
 
 			const row: QuestionPostRow = {
-				id_question: options.rando.randomId(),
-				authorUserId: access.user.id_user,
+				id_question: options.rando.randomId().toString(),
+				authorUserId: access.user.userId,
 				archive: false,
 				timePosted: Date.now(),
 				...questionDraft,
@@ -57,7 +57,7 @@ export const questionsPostingParts = (
 		},
 
 		async archiveQuestion(
-				{access: {user: {id_user}}, questionsTables, checker},
+				{access: {user: {userId}}, questionsTables, checker},
 				{id_question, archive}: {
 					archive: boolean
 					id_question: string
@@ -67,7 +67,7 @@ export const questionsPostingParts = (
 			const questionPost = await questionsTables.questionPosts
 				.one(find({id_question}))
 
-			requireUserCanEditQuestion({id_user, checker, questionPost})
+			requireUserCanEditQuestion({userId, checker, questionPost})
 
 			await questionsTables.questionPosts.update({
 				...find({id_question}),
@@ -76,7 +76,7 @@ export const questionsPostingParts = (
 		},
 
 		async likeQuestion(
-				{questionsTables, checker, access: {user: {id_user}}},
+				{questionsTables, checker, access: {user: {userId}}},
 				{id_question, like}: {
 					id_question: string
 					like: boolean
@@ -86,15 +86,15 @@ export const questionsPostingParts = (
 			checker.requirePrivilege("like questions")
 
 			const myLikeCount = await questionsTables.questionLikes
-				.count(find({id_question, id_user}))
+				.count(find({id_question, userId}))
 
 			const alreadyLiked = myLikeCount > 0
 
 			const addLike = () => questionsTables.questionLikes
-				.create({id_user, id_question})
+				.create({userId, id_question})
 
 			const removeLike = () => questionsTables.questionLikes
-				.delete(find({id_user, id_question}))
+				.delete(find({userId, id_question}))
 
 			if (like && !alreadyLiked)
 				await addLike()
@@ -104,7 +104,7 @@ export const questionsPostingParts = (
 		},
 
 		async reportQuestion(
-				{questionsTables, checker, access: {user: {id_user}}},
+				{questionsTables, checker, access: {user: {userId}}},
 				{id_question, report}: {
 					id_question: string
 					report: boolean
@@ -114,15 +114,15 @@ export const questionsPostingParts = (
 			checker.requirePrivilege("report questions")
 
 			const myReportCount = await questionsTables.questionReports
-				.count(find({id_question, id_user}))
+				.count(find({id_question, userId}))
 
 			const alreadyReported = myReportCount > 0
 
 			const addReport = () => questionsTables.questionReports
-				.create({id_user, id_question})
+				.create({userId, id_question})
 
 			const removeReport = () => questionsTables.questionReports
-				.delete(find({id_user, id_question}))
+				.delete(find({userId, id_question}))
 
 			if (report && !alreadyReported)
 				await addReport()

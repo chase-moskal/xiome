@@ -6,6 +6,7 @@ import {and, find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
 
 import {StatsHub} from "./types/stats-hub.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AppTables} from "../tables/types/table-groups/app-tables.js"
 import {UserTables} from "../tables/types/table-groups/user-tables.js"
 import {namespaceKeyAppId} from "../tables/constants/namespace-key-app-id.js"
@@ -17,11 +18,12 @@ export function prepareStatsHub({tables}: {
 				user: UserTables
 			}
 		}) {
-	return async function getStatsHub(id_user: string): Promise<StatsHub> {
+	return async function getStatsHub(userIdString: string): Promise<StatsHub> {
+		const userId = DamnId.fromString(userIdString)
 
 		async function throwForbiddenUser(id_app: string) {
 			const row = await tables.app.appOwnership.one(find({id_app}))
-			if (row.id_user !== id_user)
+			if (row.userId !== userId)
 				throw new ApiError(403, "forbidden")
 		}
 

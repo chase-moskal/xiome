@@ -18,7 +18,7 @@ export async function appointAdmin({
 		generateNickname: () => string
 	}) {
 
-	const {id_user: adminUserId} = await assertEmailAccount({
+	const {userId: adminUserId} = await assertEmailAccount({
 		rando,
 		email,
 		config,
@@ -27,9 +27,9 @@ export async function appointAdmin({
 	})
 
 	await tablesForApp.permissions.userHasRole.assert({
-		...find({id_user: adminUserId, id_role: adminRoleId}),
+		...find({userId: adminUserId, id_role: adminRoleId}),
 		make: async () => ({
-			id_user: adminUserId,
+			userId: adminUserId,
 			id_role: adminRoleId,
 			hard: false,
 			public: true,

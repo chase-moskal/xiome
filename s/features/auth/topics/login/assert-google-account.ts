@@ -3,15 +3,16 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {and} from "../../../../toolbox/dbby/dbby-helpers.js"
 
 import {generateAccountRow} from "./generate-account-row.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+import {GoogleResult} from "../../types/tokens/google-result.js"
 import {AccountRow} from "../../tables/types/rows/account-row.js"
 import {UserTables} from "../../tables/types/table-groups/user-tables.js"
-import {GoogleResult} from "../../types/tokens/google-result.js"
 
 export async function assertGoogleAccount({rando, tables, googleResult}: {
 			rando: Rando
 			tables: UserTables
 			googleResult: GoogleResult
-		}): Promise<{id_user: string}> {
+		}): Promise<{userId: DamnId}> {
 
 	const {googleId, avatar} = googleResult
 	const accountViaGoogle = await tables.accountViaGoogle.one({
@@ -21,7 +22,7 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 	let account: AccountRow
 	if (accountViaGoogle) {
 		account = await tables.account.one({
-			conditions: and({equal: {id_user: accountViaGoogle.id_user}}),
+			conditions: and({equal: {userId: accountViaGoogle.userId}}),
 		})
 	}
 	else {
@@ -31,10 +32,10 @@ export async function assertGoogleAccount({rando, tables, googleResult}: {
 			tables.accountViaGoogle.create({
 				googleId,
 				googleAvatar: avatar,
-				id_user: account.id_user,
+				userId: account.userId,
 			}),
 		])
 	}
 
-	return account
+	return {userId: account.userId}
 }

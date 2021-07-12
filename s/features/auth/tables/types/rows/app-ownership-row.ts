@@ -1,5 +1,6 @@
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 
 export type AppOwnershipRow = {
 	id_app: string
-	id_user: string
+	userId: DamnId
 }

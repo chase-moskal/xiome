@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type AccountViaGoogleRow = {
-	id_user: string
+	userId: DamnId
 	googleId: string
 	googleAvatar: string
 }

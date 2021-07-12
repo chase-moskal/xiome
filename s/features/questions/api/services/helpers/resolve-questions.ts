@@ -3,8 +3,8 @@ import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
 import {Question} from "../../types/question.js"
 
-export async function resolveQuestions({id_user, posts, questionsTables}: {
-		id_user?: string
+export async function resolveQuestions({userId, posts, questionsTables}: {
+		userId?: string
 		posts: QuestionPostRow[]
 		questionsTables: QuestionsTables
 	}) {
@@ -28,8 +28,8 @@ export async function resolveQuestions({id_user, posts, questionsTables}: {
 		const questionLikes = likes.filter(like => like.id_question === id)
 		const questionReports = reports.filter(report => report.id_question === id)
 
-		const userLike = questionLikes.find(like => like.id_user === id_user)
-		const userReport = questionReports.find(report => report.id_user === id_user)
+		const userLike = questionLikes.find(like => like.userId === userId)
+		const userReport = questionReports.find(report => report.userId === userId)
 
 		return <Question>{
 			...questionPost,

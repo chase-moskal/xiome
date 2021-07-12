@@ -91,7 +91,7 @@ export function prepareAuthPolicies({
 				return {
 					...auth,
 					checker: makePrivilegeChecker(auth.access.permit, platformPermissions.privileges),
-					statsHub: await getStatsHub(auth.access.user.id_user),
+					statsHub: await getStatsHub(auth.access.user.userId),
 				}
 			else
 				throw new ApiError(403, "not platform app")

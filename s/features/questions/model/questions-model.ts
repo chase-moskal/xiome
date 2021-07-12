@@ -46,7 +46,7 @@ export function makeQuestionsModel({
 				state.users = [...merge<User>(
 					newUsers,
 					state.users,
-					(a, b) => a.id_user === b.id_user,
+					(a, b) => a.userId === b.userId,
 				)]
 			},
 			addQuestions(newQuestions: Question[]) {
@@ -159,8 +159,8 @@ export function makeQuestionsModel({
 					.filter(question => question.archive === false)
 			},
 
-			getUser(id_user: string) {
-				return getState().users.find(user => user.id_user === id_user)
+			getUser(userId: string) {
+				return getState().users.find(user => user.userId === userId)
 			},
 
 			async loadQuestions() {

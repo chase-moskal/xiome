@@ -29,7 +29,7 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 		accounts: {
 			async create(params) {
 				const account: Partial<Stripe.Account> = {
-					id: generateId(),
+					id: generateId().toString(),
 					type: params.type,
 					email: params.email,
 				}

@@ -59,38 +59,38 @@ export function mockLiaisonUtils({rando, tables}: {
 
 	const initializers = {
 		sessionForSubscriptionPurchase({
-				id_user,
+				userId,
 				customer,
 				subscription,
 			}: {
-				id_user: string
+				userId: string
 				customer: MockCustomer
 				subscription: MockSubscription
 			}): Partial<Stripe.Checkout.Session> {
 			return {
-				id: generateId(),
+				id: generateId().toString(),
 				mode: "subscription",
 				customer: customer.id,
-				client_reference_id: id_user,
+				client_reference_id: userId,
 				subscription: subscription.id,
 			}
 		},
 		sessionForSubscriptionUpdate({
-				id_user,
+				userId,
 				customer,
 				setupIntent,
 				id_subscription,
 			}: {
-				id_user: string
+				userId: string
 				customer: MockCustomer
 				id_subscription: string
 				setupIntent: MockSetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
-				id: generateId(),
+				id: generateId().toString(),
 				mode: "setup",
 				customer: customer.id,
-				client_reference_id: id_user,
+				client_reference_id: userId,
 				setup_intent: setupIntent.id,
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",
@@ -101,7 +101,7 @@ export function mockLiaisonUtils({rando, tables}: {
 		},
 		async account(): Promise<MockAccount> {
 			const account: Stripe.Account = {
-				id: generateId(),
+				id: generateId().toString(),
 				email: "",
 				type: "standard",
 				charges_enabled: false,
@@ -120,14 +120,14 @@ export function mockLiaisonUtils({rando, tables}: {
 		},
 		async customer(): Promise<MockCustomer> {
 			const customer = {
-				id: generateId()
+				id: generateId().toString()
 			}
 			await procedures.insertCustomer(customer)
 			return customer
 		},
 		async paymentMethod(): Promise<MockPaymentMethod> {
 			const paymentMethod = <MockPaymentMethod>{
-				id: generateId(),
+				id: generateId().toString(),
 				card: {
 					brand: "FAKEVISA",
 					country: "US",
@@ -151,7 +151,7 @@ export function mockLiaisonUtils({rando, tables}: {
 				paymentMethod: MockPaymentMethod
 			}): Promise<MockSetupIntent> {
 			const setupIntent = <MockSetupIntent>{
-				id: generateId(),
+				id: generateId().toString(),
 				customer: customer.id,
 				payment_method: paymentMethod.id,
 				metadata: {
@@ -167,7 +167,7 @@ export function mockLiaisonUtils({rando, tables}: {
 				paymentMethod: MockPaymentMethod
 			}): Promise<MockSubscription> {
 			const subscription = <MockSubscription>{
-				id: generateId(),
+				id: generateId().toString(),
 				status: "active",
 				// plan: {id: planId},
 				

@@ -5,15 +5,15 @@
 // import {isCurrentlyWithinTimeframe} from "./is-currently-within-timeframe.js"
 // import {PermissionsEngine} from "../../../../../../assembly/backend/permissions2/types/permissions-engine.js"
 
-// export async function fetchPublicUserRoles({id_user, tables}: {
-// 			id_user: string
+// export async function fetchPublicUserRoles({userId, tables}: {
+// 			userId: string
 // 			tables: AuthTables
 // 			permissionsEngine: PermissionsEngine
 // 		}): Promise<PublicUserRole[]> {
 
 // 	const isPublic = (row: {public: boolean}) => row.public
 
-// 	const userHasRoleRows = await tables.permissions.userHasRole.read(find({id_user}))
+// 	const userHasRoleRows = await tables.permissions.userHasRole.read(find({userId}))
 // 	const roleIds = userHasRoleRows
 // 		.filter(isCurrentlyWithinTimeframe)
 // 		.filter(isPublic)

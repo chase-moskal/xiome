@@ -8,6 +8,7 @@ import {permissionsMergingFacility} from "./merging/permissions-merging-facility
 import {PrivilegeRow} from "../../../features/auth/tables/types/rows/privilege-row.js"
 import {PermissionsTables} from "../../../features/auth/tables/types/table-groups/permissions-tables.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/topics/login/user/utils/is-currently-within-timeframe.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
@@ -41,7 +42,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			if (userIds.length === 0)
 				throw new Error("invalid: user ids cannot be empty")
 			const usersHaveRolesRaw = await permissionsTables.userHasRole.read({
-				conditions: or(...userIds.map(id_user => ({equal: {id_user}})))
+				conditions: or(...userIds.map(userId => ({
+					equal: {userId: DamnId.fromString(userId)}
+				}))),
 			})
 			const roleIds = usersHaveRolesRaw.map(u => u.id_role)
 			const roles = roleIds.length
@@ -58,12 +61,12 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.filter(u => roleIdsThatActuallyExist.includes(u.id_role))
 		})()
 
-		return userIds.map(id_user => {
-			const raw = usersHaveRoles.filter(r => r.id_user === id_user)
+		return userIds.map(userId => {
+			const raw = usersHaveRoles.filter(r => r.userId.toString() === userId)
 			const userHasRoles = raw
 				.filter(isCurrentlyWithinTimeframe)
 				.filter(onlyGetPublicRoles ? isPublic : all)
-			return {id_user, userHasRoles}
+			return {userId, userHasRoles}
 		})
 	}
 
@@ -82,9 +85,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			})
 			: []
 
-		function resolvePrivilegesForEachUser(id_user: string) {
+		function resolvePrivilegesForEachUser(userId: string) {
 			const roleIds = rolesForUsers
-				.find(r => r.id_user === id_user)
+				.find(r => r.userId === userId)
 				.userHasRoles
 				.map(r => r.id_role)
 			// roleIds.push(universalPermissions.roles.authenticated.id_role)
@@ -92,7 +95,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			const soft = roleIds
 				.flatMap(id_role => allRolesHavePrivileges.filter(p => p.id_role === id_role))
 			const privileges = getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
-			return {id_user, privileges}
+			return {userId, privileges}
 		}
 
 		return userIds.map(resolvePrivilegesForEachUser)
@@ -140,9 +143,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				mergedRoles.push(role)
 		}
 
-		function assemblePublicRolesForEachUser(id_user: string) {
+		function assemblePublicRolesForEachUser(userId: string) {
 			const userHasRoles = rolesForUsers
-				.find(r => r.id_user === id_user)
+				.find(r => r.userId === userId)
 				.userHasRoles
 			const publicUserRoles = userHasRoles
 				.map(userHasRole => {
@@ -156,7 +159,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 					timeframeEnd: r.timeframeEnd,
 					timeframeStart: r.timeframeStart,
 				}))
-			return {id_user, publicUserRoles}
+			return {userId, publicUserRoles}
 		}
 
 		return userIds.map(assemblePublicRolesForEachUser)
@@ -193,17 +196,17 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		})
 	}
 
-	async function getUserPrivileges(id_user: string) {
-		const result = await getPrivilegesForUsers([id_user])
+	async function getUserPrivileges(userId: string) {
+		const result = await getPrivilegesForUsers([userId])
 		return result
-			.find(r => r.id_user === id_user)
+			.find(r => r.userId === userId)
 			.privileges
 	}
 
-	// async function getUserPublicRoles(id_user: string) {
-	// 	const result = await getPublicRolesForUsers([id_user])
+	// async function getUserPublicRoles(userId: string) {
+	// 	const result = await getPublicRolesForUsers([userId])
 	// 	return result
-	// 		.find(r => r.id_user === id_user)
+	// 		.find(r => r.userId === userId)
 	// 		.publicUserRoles
 	// }
 

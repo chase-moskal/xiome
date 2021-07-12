@@ -12,7 +12,7 @@ export function renderDetails(user: User) {
 			</li>
 			<li>
 				<span>user id:</span>
-				<span><xio-id id="${user.id_user}"></xio-id></span>
+				<span><xio-id id="${user.userId}"></xio-id></span>
 			</li>
 		</ul>
 	`

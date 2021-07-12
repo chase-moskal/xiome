@@ -4,7 +4,7 @@ import {UserStats} from "./user-stats.js"
 import {PublicUserRole} from "./public-user-role.js"
 
 export type User = {
-	id_user: string
+	userId: string
 	profile: Profile
 	roles: PublicUserRole[]
 	stats: UserStats

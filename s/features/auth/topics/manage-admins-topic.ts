@@ -4,6 +4,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {appointAdmin} from "./admins/appoint-admin.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {emailValidator} from "./apps/admin-email-validator.js"
 import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
@@ -28,23 +29,27 @@ export const manageAdminsTopic = ({
 			.read(find({id_role: adminRoleId}))
 
 		const adminsViaEmail = await tablesForApp.user.accountViaEmail
-			.read(find(...usersWithAdminRole.map(({id_user}) => ({id_user}))))
+			.read(find(...usersWithAdminRole.map(({userId}) => ({userId}))))
 
-		return adminsViaEmail.map(({id_user, email}) => ({
-			id_user,
+		return adminsViaEmail.map(({userId, email}) => ({
+			userId: userId.toString(),
 			email,
 		}))
 	},
 
-	async assignPlatformUserAsAdmin(auth, {id_app, platformUserId}: {
-			id_app: string
-			platformUserId: string
-		}) {
+	async assignPlatformUserAsAdmin(
+			auth,
+			{id_app, platformUserId: platformUserIdString}: {
+				id_app: string
+				platformUserId: string
+			}
+		) {
+		const platformUserId = DamnId.fromString(platformUserIdString)
 		const tablesForPlatform = auth.tables
 		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 
 		const platformAccount = await tablesForPlatform.user.accountViaEmail
-			.one(find({id_user: platformUserId}))
+			.one(find({userId: platformUserId}))
 
 		if (!platformAccount)
 			throw new ApiError(404, "platform email account not found")
@@ -79,15 +84,17 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async revokeAdmin(auth, {id_app, id_user}: {
+	async revokeAdmin(auth, {id_app, userId: userIdString}: {
 				id_app: string
-				id_user: string
+				userId: string
 			}): Promise<void> {
+
+		const userId = DamnId.fromString(userIdString)
 
 		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
 
 		await tablesForApp.permissions.userHasRole.delete(find({
-			id_user,
+			userId,
 			id_role: adminRoleId,
 		}))
 	},

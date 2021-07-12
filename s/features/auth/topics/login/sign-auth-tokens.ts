@@ -7,12 +7,13 @@ import {Scope} from "../../types/tokens/scope.js"
 
 import {fetchUser} from "./user/fetch-user.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsEngine} from "../../../../assembly/backend/permissions2/types/permissions-engine.js"
 
 export async function signAuthTokens({
 			scope,
 			id_app,
-			id_user,
+			userId,
 			tables,
 			origins,
 			lifespans,
@@ -22,7 +23,7 @@ export async function signAuthTokens({
 		}: {
 			scope: Scope
 			id_app: string
-			id_user: string
+			userId: DamnId
 			origins: string[]
 			tables: AuthTables
 			permissionsEngine: PermissionsEngine
@@ -35,9 +36,9 @@ export async function signAuthTokens({
 		}) {
 
 	const {user, permit} = await concurrent({
-		user: fetchUser({id_user, authTables: tables, permissionsEngine}),
+		user: fetchUser({userId, authTables: tables, permissionsEngine}),
 		permit: (async() => ({
-			privileges: await permissionsEngine.getUserPrivileges(id_user),
+			privileges: await permissionsEngine.getUserPrivileges(userId.toString()),
 		}))(),
 	})
 
@@ -47,7 +48,7 @@ export async function signAuthTokens({
 			lifespan: lifespans.access,
 		}),
 		refreshToken: signToken<RefreshPayload>({
-			payload: {id_user: user.id_user},
+			payload: {userId: user.userId},
 			lifespan: lifespans.refresh,
 		}),
 	})

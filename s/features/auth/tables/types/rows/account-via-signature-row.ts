@@ -1,5 +1,7 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type AccountViaSignatureRow = {
-	id_user: string
+	userId: DamnId
 	publicKey: string
 }

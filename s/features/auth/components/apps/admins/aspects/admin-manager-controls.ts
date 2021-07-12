@@ -36,8 +36,8 @@ export function adminManagerControls({
 		await load(manageAdminsService.assignAdmin({id_app, email}))
 	}
 
-	async function revokeAdmin(id_user: string) {
-		await load(manageAdminsService.revokeAdmin({id_app, id_user}))
+	async function revokeAdmin(userId: string) {
+		await load(manageAdminsService.revokeAdmin({id_app, userId}))
 	}
 
 	return {listAdmins, assignAdmin, revokeAdmin}

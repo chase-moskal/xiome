@@ -61,16 +61,16 @@ export function makeAppModel({
 
 	async function getUserId() {
 		const access = await getAccess()
-		return access?.user?.id_user
+		return access?.user?.userId
 	}
 
 	async function loadApps(): Promise<AppDisplay[]> {
 		actions.setActive(true)
 		const appsPromise = ops.operation({
 			promise: (async() => {
-				const id_user = await getUserId()
-				return id_user
-					? appService.listApps({id_ownerUser: id_user})
+				const userId = await getUserId()
+				return userId
+					? appService.listApps({ownerUserId: userId})
 					: []
 			})(),
 			setOp: op => actions.setAppRecords(op),
@@ -80,17 +80,17 @@ export function makeAppModel({
 	}
 
 	async function registerApp(appDraft: AppDraft) {
-		const id_user = await getUserId()
+		const userId = await getUserId()
 		const result = await ops.operation({
 			errorReason: "failed to register app",
 			promise: (async() => {
 				const result = await appService.registerApp({
 					appDraft,
-					id_ownerUser: id_user,
+					ownerUserId: userId,
 				})
 				await manageAdminsService.assignPlatformUserAsAdmin({
 					id_app: result.id_app,
-					platformUserId: id_user,
+					platformUserId: userId,
 				})
 				return result
 			})(),
@@ -185,7 +185,7 @@ export function makeAppModel({
 
 // 	async function getUserId() {
 // 		const access = await getAccess()
-// 		return access?.user?.id_user
+// 		return access?.user?.userId
 // 	}
 
 // 	async function appListOperation(promise: Promise<AppDisplay[]>) {
@@ -198,9 +198,9 @@ export function makeAppModel({
 // 	async function loadAppList() {
 // 		actions.setActive(true)
 // 		return appListOperation((async() => {
-// 			const id_user = await getUserId()
-// 			return id_user
-// 				? appService.listApps({id_ownerUser: id_user})
+// 			const userId = await getUserId()
+// 			return userId
+// 				? appService.listApps({id_ownerUser: userId})
 // 				: []
 // 		})())
 // 	}
@@ -232,17 +232,17 @@ export function makeAppModel({
 // 				await loadAppList()
 // 		},
 // 		async registerApp(appDraft: AppDraft) {
-// 			const id_user = await getUserId()
+// 			const userId = await getUserId()
 // 			const result = await loadingOperation({
 // 				errorReason: "failed to register app",
 // 				promise: (async() => {
 // 					const result = await appService.registerApp({
 // 						appDraft,
-// 						id_ownerUser: id_user,
+// 						id_ownerUser: userId,
 // 					})
 // 					await manageAdminsService.assignPlatformUserAsAdmin({
 // 						id_app: result.id_app,
-// 						platformUserId: id_user,
+// 						platformUserId: userId,
 // 					})
 // 					return result
 // 				})(),

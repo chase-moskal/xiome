@@ -8,6 +8,7 @@ import {AuthApiOptions} from "../types/auth-api-options.js"
 import {LoginPayload} from "../types/tokens/login-payload.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const loginTopic = ({
 		rando,
@@ -23,7 +24,7 @@ export const loginTopic = ({
 			{email}: {email: string},
 		) {
 		const appRow = await tables.app.app.one(find({id_app: access.id_app}))
-		const {id_user} = await assertEmailAccount({
+		const {userId} = await assertEmailAccount({
 			rando, email, config, tables, generateNickname,
 		})
 		await sendLoginEmail({
@@ -34,7 +35,7 @@ export const loginTopic = ({
 			platformLink: config.platform.appDetails.home,
 			lifespan: config.crypto.tokenLifespans.login,
 			loginToken: await signToken<LoginPayload>({
-				payload: {id_user},
+				payload: {userId: userId.toString()},
 				lifespan: config.crypto.tokenLifespans.login,
 			}),
 		})
@@ -44,9 +45,10 @@ export const loginTopic = ({
 			{tables, access},
 			{loginToken}: {loginToken: string},
 		) {
-		const {id_user} = await verifyToken<LoginPayload>(loginToken)
+		const {userId: userIdString} = await verifyToken<LoginPayload>(loginToken)
+		const userId = DamnId.fromString(userIdString)
 		const authTokens = await signAuthTokens({
-			id_user,
+			userId,
 			tables,
 			scope: {core: true},
 			id_app: access.id_app,
@@ -61,8 +63,8 @@ export const loginTopic = ({
 		})
 
 		await tables.user.latestLogin.update({
-			...find({id_user}),
-			upsert: {id_user, time: Date.now()},
+			...find({userId}),
+			upsert: {userId, time: Date.now()},
 		})
 
 		return authTokens
@@ -75,16 +77,16 @@ export const loginTopic = ({
 	// 			refreshToken: RefreshToken
 	// 		}
 	// 	) {
-	// 	const {id_user} = await verifyToken<RefreshPayload>(refreshToken)
+	// 	const {userId} = await verifyToken<RefreshPayload>(refreshToken)
 	// 	const {user, permit} = await fetchUserAndPermit({
-	// 		id_user,
+	// 		userId,
 	// 		tables,
 	// 		generateNickname,
 	// 	})
 
 	// 	await tables.user.latestLogin.update({
-	// 		...find({id_user}),
-	// 		upsert: {id_user, time: Date.now()},
+	// 		...find({userId}),
+	// 		upsert: {userId, time: Date.now()},
 	// 	})
 
 	// 	return signToken<AccessPayload>({

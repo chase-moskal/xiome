@@ -34,13 +34,13 @@
 // 			const profiles = await tables.user.profile.read({
 // 				limit: 100,
 // 				conditions: or(
-// 					{search: {id_user: regex}},
+// 					{search: {userId: regex}},
 // 					{search: {nickname: regex}},
 // 					{search: {tagline: regex}},
 // 				),
 // 			})
 
-// 			const userIds = profiles.map(profile => profile.id_user)
+// 			const userIds = profiles.map(profile => profile.userId)
 
 // 			const permissionsEngine = makePermissionsEngine({
 // 				isPlatform: access.id_app === config.platform.appDetails.id_app,

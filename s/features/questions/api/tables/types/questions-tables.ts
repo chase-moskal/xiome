@@ -17,11 +17,11 @@ export type QuestionPostRow = {
 }
 
 export type QuestionLikeRow = {
-	id_user: string
+	userId: string
 	id_question: string
 }
 
 export type QuestionReportRow = {
-	id_user: string
+	userId: string
 	id_question: string
 }

@@ -13,6 +13,7 @@ import {AccessPayload} from "../types/tokens/access-payload.js"
 import {RefreshPayload} from "../types/tokens/refresh-payload.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const greenTopic = ({
 		config,
@@ -40,17 +41,20 @@ export const greenTopic = ({
 			throw new ApiError(403, "app has been archived")
 
 		if (refreshToken) {
-			const {id_user} = await verifyToken<RefreshPayload>(refreshToken)
+			const {userId: userIdString} = await verifyToken<RefreshPayload>(refreshToken)
+			const userId = DamnId.fromString(userIdString)
 			const user = await fetchUser({
-				id_user,
+				userId,
 				permissionsEngine,
 				authTables: tables,
 			})
 			await tables.user.latestLogin.update({
-				...find({id_user}),
-				upsert: {id_user, time: Date.now()},
+				...find({userId}),
+				upsert: {userId, time: Date.now()},
 			})
-			const privileges = await permissionsEngine.getUserPrivileges(id_user)
+			const privileges =
+				await permissionsEngine
+					.getUserPrivileges(userId.toString())
 			return signToken<AccessPayload>({
 				lifespan: config.crypto.tokenLifespans.access,
 				payload: {

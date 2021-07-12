@@ -15,11 +15,11 @@ export const stripeConnectTopic = ({
 			{id_app}: {id_app: string},
 		): Promise<undefined | StripeAccountDetails> {
 
-		const {id_user} = access.user
+		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(id_app)
 
 		const existingAssociatedStripeAccount = await namespacedTables
-			.merchant.stripeAccounts.one(find({id_user}))
+			.merchant.stripeAccounts.one(find({userId}))
 
 		if (existingAssociatedStripeAccount) {
 			const id = existingAssociatedStripeAccount.stripeAccountId
@@ -41,16 +41,16 @@ export const stripeConnectTopic = ({
 			{id_app}: {id_app: string},
 		) {
 
-		const {id_user} = access.user
+		const {userId} = access.user
 		const namespacedTables = await getTablesNamespacedForApp(id_app)
 
 		const {stripeAccountId} = (
 			await namespacedTables.merchant.stripeAccounts.assert({
-				...find({id_user}),
+				...find({userId}),
 				make: async() => {
 					const {id: stripeAccountId} = await stripeLiaisonForPlatform
 						.accounts.create({type: "standard"})
-					return {id_user, stripeAccountId}
+					return {userId, stripeAccountId}
 				},
 			})
 		)

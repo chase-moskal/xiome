@@ -3,6 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {UserAuth} from "../policies/types/user-auth.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {ProfileDraft} from "./personal/types/profile-draft.js"
@@ -11,12 +12,13 @@ import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js
 
 export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 
-	async setProfile({access, tables, checker}, {id_user, profileDraft}: {
-			id_user: string
+	async setProfile({access, tables, checker}, {userId: userIdString, profileDraft}: {
+			userId: string
 			profileDraft: ProfileDraft
 		}) {
 
-		const isProfileOwner = access.user.id_user === id_user
+		const userId = DamnId.fromString(userIdString)
+		const isProfileOwner = access.user.userId === userIdString
 		const canEditAnyProfile = checker.hasPrivilege("edit any profile")
 		const allowed = isProfileOwner || canEditAnyProfile
 
@@ -26,7 +28,7 @@ export const personalTopic = ({config}: AuthApiOptions) => asTopic<UserAuth>()({
 		throwProblems(validateProfileDraft(profileDraft))
 
 		await tables.user.profile.update({
-			...find({id_user}),
+			...find({userId}),
 			write: {
 				nickname: profileDraft.nickname,
 				tagline: profileDraft.tagline,

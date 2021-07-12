@@ -4,10 +4,11 @@ import {UserStats} from "../../../types/user-stats.js"
 import {profileFromRow} from "./profile/profile-from-row.js"
 import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {AuthTables} from "../../../tables/types/auth-tables.js"
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions2/types/permissions-engine.js"
 
 export async function fetchUsers({userIds, authTables, permissionsEngine}: {
-		userIds: string[]
+		userIds: DamnId[]
 		authTables: AuthTables
 		permissionsEngine: PermissionsEngine
 	}) {
@@ -15,24 +16,26 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 	if (!userIds.length)
 		throw new Error("invalid: userIds cannot be empty")
 
-	const conditions = or(...userIds.map(id_user => ({equal: {id_user}})))
+	const conditions = or(...userIds.map(userId => ({equal: {userId}})))
 
 	const accounts = await authTables.user.account.read({conditions})
 	const profiles = await authTables.user.profile.read({conditions})
-	const publicRolesForUsers = await permissionsEngine.getPublicRolesForUsers(userIds)
+	const publicRolesForUsers =
+		await permissionsEngine
+			.getPublicRolesForUsers(userIds.map(id => id.toString()))
 
-	function assembleDetailsForEachUser(id_user: string) {
-		const account = accounts.find(a => a.id_user === id_user)
-		const profile = profiles.find(p => p.id_user === id_user)
+	function assembleDetailsForEachUser(userId: DamnId) {
+		const account = accounts.find(a => a.userId.toString() === userId.toString())
+		const profile = profiles.find(p => p.userId.toString() === userId.toString())
 
 		if (!account)
-			throw new ApiError(404, `account not found for user id ${id_user}`)
+			throw new ApiError(404, `account not found for user id ${userId}`)
 
 		if (!profile)
-			throw new ApiError(404, `profile not found for user id ${id_user}`)
+			throw new ApiError(404, `profile not found for user id ${userId}`)
 
 		const roles = publicRolesForUsers
-			.find(r => r.id_user === id_user)
+			.find(r => r.userId.toString() === userId.toString())
 			.publicUserRoles
 
 		const stats: UserStats = {
@@ -40,7 +43,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		}
 
 		return {
-			id_user,
+			userId: userId.toString(),
 			profile: profileFromRow(profile),
 			roles,
 			stats,

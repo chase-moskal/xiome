@@ -19,7 +19,7 @@ export function makeUserStates({
 		if (ops.ready(userResultsOp)) {
 			const userResults = ops.value(userResultsOp)
 			for (const stateUserId of states.keys()) {
-				const userIsGone = !userResults.find(({user}) => user.id_user === stateUserId)
+				const userIsGone = !userResults.find(({user}) => user.userId === stateUserId)
 				if (userIsGone)
 					userIdsPendingRemovalFromState.push(stateUserId)
 			}
@@ -28,8 +28,8 @@ export function makeUserStates({
 			states.delete(obsoleteUserId)
 	}
 
-	function obtainStateForUser(id_user: string) {
-		let state: UserState2 = states.get(id_user)
+	function obtainStateForUser(userId: string) {
+		let state: UserState2 = states.get(userId)
 		if (!state) {
 			const newState: UserState2 = {
 				editMode: false,
@@ -39,7 +39,7 @@ export function makeUserStates({
 				},
 			}
 			state = newState
-			states.set(id_user, state)
+			states.set(userId, state)
 		}
 		return state
 	}

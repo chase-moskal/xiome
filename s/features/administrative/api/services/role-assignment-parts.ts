@@ -15,6 +15,7 @@ import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchPermissionsDisplay} from "../../../auth/topics/permissions/fetch-permissions-display.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export const roleAssignmentParts = ({
 		config,
@@ -46,14 +47,15 @@ export const roleAssignmentParts = ({
 
 			const profiles = await tables.user.profile.read({
 				limit: 100,
-				conditions: or(
-					{equal: {id_user: term}},
-					{search: {nickname: regex}},
-					{search: {tagline: regex}},
-				),
+				conditions: DamnId.isId(term)
+					? or({equal: {userId: DamnId.fromString(term)}})
+					: or(
+						{search: {nickname: regex}},
+						{search: {tagline: regex}},
+					)
 			})
 
-			const userIds = profiles.map(profile => profile.id_user)
+			const userIds = profiles.map(profile => profile.userId)
 			if (!userIds.length)
 				return []
 
@@ -69,14 +71,14 @@ export const roleAssignmentParts = ({
 			})
 
 			const usersAndRoles = await permissionsEngine.getUsersHaveRoles({
-				userIds: users.map(user => user.id_user),
+				userIds: users.map(user => user.userId),
 				onlyGetPublicRoles: false,
 			})
 
 			return users.map(user => ({
 				user,
 				roleIds: usersAndRoles
-					.find(u => u.id_user === user.id_user)
+					.find(u => u.userId === user.userId)
 					.userHasRoles
 					.map(role => role.id_role)
 			}))
@@ -86,25 +88,27 @@ export const roleAssignmentParts = ({
 				{tables},
 				options: {
 					id_role: string
-					id_user: string
+					userId: string
 					isPublic: boolean
 					timeframeEnd: undefined | number
 					timeframeStart: undefined | number
 				},
 			) {
 
-			const {id_role, id_user, isPublic, timeframeEnd, timeframeStart} = (
+			const {id_role, userId: userIdString, isPublic, timeframeEnd, timeframeStart} = (
 				runValidation(options, schema({
 					id_role: validateId,
-					id_user: validateId,
+					userId: validateId,
 					isPublic: validator(boolean()),
 					timeframeEnd: validateTimeframe,
 					timeframeStart: validateTimeframe,
 				}))
 			)
 
+			const userId = DamnId.fromString(userIdString)
+
 			const existing = await tables.permissions.userHasRole.one(find({
-				id_user,
+				userId,
 				id_role,
 			}))
 
@@ -112,12 +116,12 @@ export const roleAssignmentParts = ({
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
 				await tables.permissions.userHasRole.assert({
-					conditions: or({equal: {id_role, id_user}}),
+					conditions: or({equal: {id_role, userId}}),
 					make: async() => ({
 						hard: false,
 						public: isPublic,
 						id_role,
-						id_user,
+						userId,
 						timeframeEnd,
 						timeframeStart,
 					}),
@@ -128,17 +132,19 @@ export const roleAssignmentParts = ({
 				{tables},
 				options: {
 					id_role: string
-					id_user: string
+					userId: string
 				},
 			) {
 
-			const {id_role, id_user} = runValidation(options, schema({
+			const {id_role, userId: userIdString} = runValidation(options, schema({
 				id_role: validateId,
-				id_user: validateId,
+				userId: validateId,
 			}))
 
+			const userId = DamnId.fromString(userIdString)
+
 			const existing = await tables.permissions.userHasRole.one(find({
-				id_user,
+				userId,
 				id_role,
 			}))
 
@@ -146,7 +152,7 @@ export const roleAssignmentParts = ({
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
 				await tables.permissions.userHasRole.delete({
-					conditions: or({equal: {id_role, id_user}}),
+					conditions: or({equal: {id_role, userId}}),
 				})
 		},
 	},

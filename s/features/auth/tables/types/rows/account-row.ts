@@ -1,5 +1,7 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type AccountRow = {
-	id_user: string
+	userId: DamnId
 	created: number
 }

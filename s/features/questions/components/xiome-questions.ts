@@ -100,7 +100,7 @@ export class XiomeQuestions extends Component2WithShare<{
 
 	private renderQuestionsList() {
 		const access = this.#boardModel.getAccess()
-		const myUserId = access?.user?.id_user
+		const myUserId = access?.user?.userId
 		const questions = sortQuestions(this.#boardModel.getQuestions(), myUserId)
 		const permissions = this.#boardModel.getPermissions()
 
@@ -111,7 +111,7 @@ export class XiomeQuestions extends Component2WithShare<{
 					const author = this.#boardModel.getUser(authorUserId)
 
 					const isAuthor = (access && access.user)
-						? access.user.id_user === author.id_user
+						? access.user.userId === author.userId
 						: false
 
 					const authority = permissions["moderate questions"] || isAuthor

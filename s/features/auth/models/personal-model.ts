@@ -29,8 +29,8 @@ export function makePersonalModel({
 		async saveProfile(profileDraft: ProfileDraft) {
 			await ops.operation({
 				promise: (async() => {
-					const {user: {id_user}} = await getAccess()
-					await personalService.setProfile({id_user, profileDraft})
+					const {user: {userId}} = await getAccess()
+					await personalService.setProfile({userId, profileDraft})
 					await reauthorize()
 				})(),
 				errorReason: "error saving profile",

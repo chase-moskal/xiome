@@ -12,16 +12,20 @@ import {and, find, or} from "../../../toolbox/dbby/dbby-helpers.js"
 import {originsFromDatabase} from "./origins/origins-from-database.js"
 import {PlatformUserAuth} from "../policies/types/platform-user-auth.js"
 import {throwProblems} from "../../../toolbox/topic-validation/throw-problems.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const appTopic = ({
 		rando,
 		config,
 	}: AuthApiOptions) => asTopic<PlatformUserAuth>()({
 
-	async listApps({tables, statsHub}, {id_ownerUser}: {
-			id_ownerUser: string
+	async listApps({tables, statsHub}, {ownerUserId: ownerUserIdString}: {
+			ownerUserId: string
 		}): Promise<AppDisplay[]> {
-		const ownerships = await tables.app.appOwnership.read(find({id_user: id_ownerUser}))
+
+		const ownerUserId = DamnId.fromString(ownerUserIdString)
+
+		const ownerships = await tables.app.appOwnership.read(find({userId: ownerUserId}))
 		const appRows = ownerships.length
 			? await tables.app.app.read({
 				conditions: and(
@@ -44,12 +48,16 @@ export const appTopic = ({
 		})))
 	},
 
-	async registerApp({tables}, {appDraft, id_ownerUser}: {
+	async registerApp({tables}, {appDraft, ownerUserId: ownerUserIdString}: {
 			appDraft: AppDraft
-			id_ownerUser: string
+			ownerUserId: string
 		}): Promise<AppDisplay> {
+
 		throwProblems(validateAppDraft(appDraft))
-		const id_app = rando.randomId()
+
+		const ownerUserId = DamnId.fromString(ownerUserIdString)
+
+		const id_app = rando.randomId().toString()
 		await Promise.all([
 			tables.app.app.create({
 				id_app,
@@ -60,7 +68,7 @@ export const appTopic = ({
 			}),
 			tables.app.appOwnership.create({
 				id_app,
-				id_user: id_ownerUser,
+				userId: ownerUserId,
 			}),
 		])
 		return {

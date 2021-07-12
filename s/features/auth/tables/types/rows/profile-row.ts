@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type ProfileRow = {
-	id_user: string
+	userId: DamnId
 	nickname: string
 	tagline: string
 	avatar: undefined | string

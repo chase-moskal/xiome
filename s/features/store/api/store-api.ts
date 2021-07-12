@@ -41,7 +41,7 @@ export const storeApi = ({
 		shopkeepingService: apiContext<ClerkMeta, ClerkAuth>()({
 			policy: policies.clerk,
 			expose: shopkeepingTopic({
-				generateId: () => rando.randomId(),
+				generateId: () => rando.randomId().toString(),
 			}),
 		}),
 		shoppingService: apiContext<CustomerMeta, CustomerAuth>()({

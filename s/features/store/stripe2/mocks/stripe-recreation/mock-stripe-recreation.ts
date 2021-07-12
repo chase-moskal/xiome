@@ -4,15 +4,15 @@ import {Rando} from "../../../../../toolbox/get-rando.js"
 import {SetupSubscriptionMetadata} from "../../liaison/types/setup-subscription-metadata.js"
 
 export function mockStripeInitializers({rando}: {rando: Rando}) {
-	const generateId = () => rando.randomId()
+	const generateId = () => rando.randomId().toString()
 
 	return {
 		sessionForSubscriptionPurchase({
-				id_user,
+				userId,
 				customer,
 				subscription,
 			}: {
-				id_user: string
+				userId: string
 				customer: Stripe.Customer
 				subscription: Stripe.Subscription
 			}): Partial<Stripe.Checkout.Session> {
@@ -20,7 +20,7 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 				id: generateId(),
 				mode: "subscription",
 				customer: customer.id,
-				client_reference_id: id_user,
+				client_reference_id: userId,
 
 				// TODO check modern technique in stripe docs
 				subscription: subscription.id,
@@ -28,12 +28,12 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 			}
 		},
 		sessionForSubscriptionUpdate({
-				id_user,
+				userId,
 				customer,
 				setupIntent,
 				id_subscription,
 			}: {
-				id_user: string
+				userId: string
 				customer: Stripe.Customer
 				id_subscription: string
 				setupIntent: Stripe.SetupIntent
@@ -42,7 +42,7 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 				id: generateId(),
 				mode: "setup",
 				customer: customer.id,
-				client_reference_id: id_user,
+				client_reference_id: userId,
 				setup_intent: setupIntent.id,
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",

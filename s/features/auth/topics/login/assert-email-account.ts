@@ -23,26 +23,24 @@ export async function assertEmailAccount({
 		generateNickname: () => string
 	}) {
 
-	const {id_user} = await tables.user.accountViaEmail.assert({
+	const {userId} = await tables.user.accountViaEmail.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
 			const account = generateAccountRow({rando})
-			const {id_user} = account
-
-			console.log("GENERATE NEW USER", id_user)
+			const {userId} = account
 
 			const createAccount = tables.user.account.create(account)
 
 			const createProfile = initializeUserProfile({
-				id_user,
+				userId,
 				email,
 				authTables: tables,
 				generateNickname,
 			})
 
 			const assignAnonymous = tables.permissions.userHasRole.create({
-				id_user,
+				userId,
 				hard: true,
 				public: false,
 				id_role: standardRoleIds.anonymous,
@@ -51,7 +49,7 @@ export async function assertEmailAccount({
 			})
 
 			const assignAuthenticated = tables.permissions.userHasRole.create({
-				id_user,
+				userId,
 				hard: true,
 				public: false,
 				id_role: standardRoleIds.authenticated,
@@ -61,7 +59,7 @@ export async function assertEmailAccount({
 
 			const assignTechnician = isTechnician
 				? tables.permissions.userHasRole.create({
-					id_user,
+					userId,
 					hard: true,
 					public: true,
 					timeframeEnd: undefined,
@@ -78,9 +76,9 @@ export async function assertEmailAccount({
 				assignTechnician,
 			])
 
-			return {email, id_user}
+			return {email, userId}
 		},
 	})
 
-	return {id_user}
+	return {userId}
 }

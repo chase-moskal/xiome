@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type UserHasRoleRow = {
-	id_user: string
+	userId: DamnId
 	id_role: string
 	timeframeStart: undefined | number
 	timeframeEnd: undefined | number

@@ -6,13 +6,13 @@
 // import {userPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/user-privileges.js"
 // import {anybodyPrivileges} from "../../../../../assembly/backend/permissions/standard/universal/privilege-groups/anybody-privileges.js"
 
-// export async function fetchPermit({id_user, tables}: {
-// 			id_user: string
+// export async function fetchPermit({userId, tables}: {
+// 			userId: string
 // 			tables: AuthTables
 // 		}): Promise<Permit> {
 
 // 	const userHasRoleRows = await tables.permissions.userHasRole
-// 		.read(find({id_user}))
+// 		.read(find({userId}))
 
 // 	const roleIds = userHasRoleRows
 // 		.filter(isCurrentlyWithinTimeframe)

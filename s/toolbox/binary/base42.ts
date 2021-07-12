@@ -36,3 +36,20 @@ export function decodeBase42(base42: string) {
 
 	return bigToBinary(sum)
 }
+
+const length = encodeBase42(new ArrayBuffer(32)).length
+
+export function isBase42(text: string) {
+	const correctLength = text.length === length
+
+	let correctCharacters = true
+	{
+		const allowedCharacters = [...base42characters]
+		for (const character of [...text]) {
+			if (!allowedCharacters.includes(character))
+				correctCharacters = false
+		}
+	}
+
+	return (correctLength && correctCharacters)
+}

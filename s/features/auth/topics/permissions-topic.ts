@@ -28,7 +28,7 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			hard: false,
 			public: true,
 			assignable: true,
-			id_role: rando.randomId(),
+			id_role: rando.randomId().toString(),
 		})
 	},
 

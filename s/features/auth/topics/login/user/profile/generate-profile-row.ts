@@ -1,13 +1,14 @@
 
+import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {ProfileRow} from "../../../../tables/types/rows/profile-row.js"
 
-export const generateProfileRow = ({id_user, avatar, generateNickname}: {
-		id_user: string
+export const generateProfileRow = ({userId, avatar, generateNickname}: {
+		userId: DamnId
 		avatar: undefined | string
 		generateNickname: () => string
 	}): ProfileRow => ({
 
-	id_user,
+	userId,
 	avatar,
 	tagline: "",
 	nickname: generateNickname(),

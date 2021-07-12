@@ -38,7 +38,7 @@ export function renderEditWidget({
 		permissions,
 		administrativeModel,
 		updateLocalUserResultsCache,
-		userResult: {user: {id_user}, roleIds},
+		userResult: {user: {userId}, roleIds},
 		blur,
 		search,
 	}: {
@@ -46,8 +46,8 @@ export function renderEditWidget({
 		permissions: PermissionsDisplay
 		administrativeModel: ReturnType<typeof makeAdministrativeModel>
 		updateLocalUserResultsCache: {
-			assignRole: (id_user: string, id_role: string) => void
-			revokeRole: (id_user: string, id_role: string) => void
+			assignRole: (userId: string, id_role: string) => void
+			revokeRole: (userId: string, id_role: string) => void
 		}
 		blur: () => void
 		search: () => Promise<any>
@@ -75,19 +75,19 @@ export function renderEditWidget({
 		})
 
 	async function ifChangingSelfThenReauthorize() {
-		if (id_user === administrativeModel.getState().access?.user?.id_user)
+		if (userId === administrativeModel.getState().access?.user?.userId)
 			await administrativeModel.reauthorize()
 	}
 
 	async function clickToAssign({id_role}: RoleDisplay) {
 		await administrativeModel.assignRoleToUser({
-			id_user,
+			userId,
 			id_role,
 			isPublic: true,
 			timeframeEnd: undefined,
 			timeframeStart: undefined,
 		})
-		updateLocalUserResultsCache.assignRole(id_user, id_role)
+		updateLocalUserResultsCache.assignRole(userId, id_role)
 		blur()
 		await ifChangingSelfThenReauthorize()
 		await search()
@@ -95,10 +95,10 @@ export function renderEditWidget({
 
 	async function clickToRevoke({id_role}: RoleDisplay) {
 		await administrativeModel.revokeRoleFromUser({
-			id_user,
+			userId,
 			id_role,
 		})
-		updateLocalUserResultsCache.revokeRole(id_user, id_role)
+		updateLocalUserResultsCache.revokeRole(userId, id_role)
 		blur()
 		await ifChangingSelfThenReauthorize()
 		await search()
