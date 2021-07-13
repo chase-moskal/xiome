@@ -5,6 +5,9 @@ import dbby from "./toolbox/dbby/dbby.test.js"
 import autowatcher from "./toolbox/autowatcher/autowatcher.test.js"
 
 export default <Suite>{
-	"toolbox": {dbby, autowatcher},
+	"toolbox": {
+		dbby,
+		autowatcher,
+	},
 	// "features": {auth},
 }

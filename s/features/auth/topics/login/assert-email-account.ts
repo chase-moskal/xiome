@@ -23,7 +23,7 @@ export async function assertEmailAccount({
 		generateNickname: () => string
 	}) {
 
-	const {userId} = await tables.user.accountViaEmail.assert({
+	const accountViaEmail = await tables.user.accountViaEmail.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
@@ -76,9 +76,10 @@ export async function assertEmailAccount({
 				assignTechnician,
 			])
 
+			console.log("ASSERTED", userId.string)
 			return {email, userId}
 		},
 	})
 
-	return {userId}
+	return {userId: accountViaEmail.userId}
 }

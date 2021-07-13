@@ -4,11 +4,11 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {AnonAuth} from "../policies/types/anon-auth.js"
 import {signAuthTokens} from "./login/sign-auth-tokens.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {LoginPayload} from "../types/tokens/login-payload.js"
 import {assertEmailAccount} from "./login/assert-email-account.js"
 import {makePermissionsEngine} from "../../../assembly/backend/permissions2/permissions-engine.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const loginTopic = ({
 		rando,
@@ -27,6 +27,8 @@ export const loginTopic = ({
 		const {userId} = await assertEmailAccount({
 			rando, email, config, tables, generateNickname,
 		})
+		const loginTokenPayload = {userId: userId.toString()}
+		debugger
 		await sendLoginEmail({
 			appHome: appRow.home,
 			appLabel: appRow.label,
@@ -35,7 +37,7 @@ export const loginTopic = ({
 			platformLink: config.platform.appDetails.home,
 			lifespan: config.crypto.tokenLifespans.login,
 			loginToken: await signToken<LoginPayload>({
-				payload: {userId: userId.toString()},
+				payload: loginTokenPayload,
 				lifespan: config.crypto.tokenLifespans.login,
 			}),
 		})
@@ -45,8 +47,8 @@ export const loginTopic = ({
 			{tables, access},
 			{loginToken}: {loginToken: string},
 		) {
-		const {userId: userIdString} = await verifyToken<LoginPayload>(loginToken)
-		const userId = DamnId.fromString(userIdString)
+		const verified = await verifyToken<LoginPayload>(loginToken)
+		const userId = DamnId.fromString(verified.userId)
 		const authTokens = await signAuthTokens({
 			userId,
 			tables,

@@ -1,11 +1,13 @@
 
-import {Suite, expect} from "cynic"
+import {Suite, expect, assert} from "cynic"
 
 import {dbbyMemory} from "./dbby-memory.js"
+import {DamnId} from "../damnedb/damn-id.js"
+import {dbbyHardback} from "./dbby-hardback.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
-import {dbbyHardback} from "./dbby-hardback.js"
 import {DbbyRow, DbbyTable} from "./dbby-types.js"
+import {getRando} from "../get-rando.js"
 
 type DemoUser = {
 	userId: string
@@ -211,12 +213,14 @@ export default <Suite>{
 			return expect(users.length).equals(2)
 		},
 		"update write to a row": async() => {
+			debugger
 			const dbby = await setupThreeUserDemo()
 			await dbby.update({
 				conditions: and({equal: {userId: "u123"}}),
 				write: {location: "argentina"},
 			})
 			const user = await dbby.one({conditions: and({equal: {userId: "u123"}})})
+			debugger
 			return (true
 				&& expect(user.location).equals("argentina")
 				&& expect(user.balance).equals(100)
@@ -270,6 +274,18 @@ export default <Suite>{
 				&& expect(countAll).equals(3)
 				&& expect(countCanadians).equals(2)
 			)
+		},
+		"save and load damn ids": async() => {
+			const rando = await getRando()
+			const table = await dbbyMemory<{id: DamnId, a: number}>()
+			const a1 = {id: rando.randomId(), a: 1}
+			const a2 = {id: rando.randomId(), a: 2}
+			await table.create(a1)
+			await table.create(a2)
+			const b1 = await table.one(find({id: a1.id}))
+			const all = await table.read({conditions: false})
+			expect(b1.a).equals(1)
+			assert(b1.id instanceof DamnId, "recovered id is damnid instance")
 		},
 	},
 }

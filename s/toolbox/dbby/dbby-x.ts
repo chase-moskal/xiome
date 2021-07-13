@@ -1,6 +1,6 @@
 
-export {and, or, find} from "./dbby-helpers.js"
 import {DamnId} from "../damnedb/damn-id.js"
+export {and, or, find} from "./dbby-helpers.js"
 import {FlexStorage} from "../flex-storage/types/flex-storage.js"
 import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated, DbbyConditionTree, DbbyConditions} from "./dbby-types.js"
 
@@ -9,29 +9,32 @@ export async function dbbyX<Row extends DbbyRow>(
 		tableName: string,
 	): Promise<DbbyTable<Row>> {
 
-	let table: Row[] = []
-	const storageKey = `dbby-${tableName}`
-
 	const serializationKey = "__serialized_type__"
 
 	type SerializedValue = {
 		[serializationKey]: "DamnedId",
-		serializedValue: string
+		serializedValue: string,
 	}
 
 	type SerializedRow = {[key: string]: any | SerializedValue}
+
+	function copy<T>(x: T): T {
+		if (x === undefined) return undefined
+		return JSON.parse(JSON.stringify(x))
+	}
 
 	function serialize(table: Row[]): any[] {
 		return table.map(row => {
 			const serializedRow: SerializedRow = {}
 			for (const [key, value] of Object.entries(row)) {
-				if (value instanceof DamnId)
+				if (value instanceof DamnId) {
 					serializedRow[key] = {
 						[serializationKey]: "DamnId",
 						serializedValue: value.toString(),
 					}
+				}
 				else
-					serializedRow[key] = value
+					serializedRow[key] = copy(value)
 			}
 			return serializedRow
 		})
@@ -42,8 +45,9 @@ export async function dbbyX<Row extends DbbyRow>(
 			const row = {}
 			for (const [key, value] of Object.entries(datum)) {
 				if (value && typeof value === "object" && value[serializationKey]) {
-					if (value[serializationKey] === "DamnId")
-						row[key] = DamnId.fromString(value.serializationValue)
+					if (value[serializationKey] === "DamnId") {
+						row[key] = DamnId.fromString(value.serializedValue)
+					}
 					else
 						throw new Error(`dbby-x unknown serialization type "${value[serializationKey]}"`)
 				}
@@ -55,56 +59,87 @@ export async function dbbyX<Row extends DbbyRow>(
 		})
 	}
 
+	const data = (() => {
+		let serialized: SerializedRow[] = []
+		return {
+			set table(rows: Row[]) {
+				serialized = serialize(rows)
+			},
+			get table() {
+				return deserialize(serialized)
+			},
+		}
+	})()
+
+	const storageKey = `dbby-${tableName}`
+
 	async function load() {
-		table = deserialize(await flexStorage.read(storageKey) || [])
+		data.table = await flexStorage.read(storageKey) || []
 	}
 
 	await load()
 
 	async function save() {
 		if (flexStorage)
-			await flexStorage.write(storageKey, serialize(table))
+			await flexStorage.write(storageKey, data.table)
 	}
 
 	function select(conditional: DbbyConditional<Row>): Row[] {
-		return table.filter(row => rowVersusConditional(row, conditional))
+		return data.table.filter(row => rowVersusConditional(row, conditional))
+	}
+
+	function discriminate(conditional: DbbyConditional<Row>) {
+		const yep: Row[] = []
+		const nope: Row[] = []
+		for (const row of data.table) {
+			if (rowVersusConditional(row, conditional))
+				yep.push(row)
+			else
+				nope.push(row)
+		}
+		return {yep, nope}
 	}
 
 	function selectOne(conditional: DbbyConditional<Row>): Row {
-		return table.find(row => rowVersusConditional(row, conditional))
+		return data.table.find(row => rowVersusConditional(row, conditional))
 	}
 
-	function updateRow(rows: Row[], update: Partial<Row>) {
-		for (const row of rows) {
-			for (const [key, value] of Object.entries(update)) {
-				;(<any>row)[key] = value
-			}
-		}
+	function applyPatchToRows(conditional: DbbyConditional<Row>, patch: Partial<Row>) {
+		const {yep, nope} = discriminate(conditional)
+		const updated = yep.map(row => <Row>({...row, ...patch}))
+		data.table = [...updated, ...nope]
 	}
 
-	function insertCopy(row: Row) {
-		table.push(copy(row))
-	}
+	// function updateRow(rows: Row[], update: Partial<Row>) {
+	// 	for (const row of rows) {
+	// 		for (const [key, value] of Object.entries(update)) {
+	// 			;(<any>row)[key] = value
+	// 		}
+	// 	}
+	// }
 
 	function eliminateRow(conditional: DbbyConditional<Row>) {
 		const flippedFilterRow = (row: Row) => !rowVersusConditional(
 			row,
 			conditional
 		)
-		table = table.filter(flippedFilterRow)
+		data.table = data.table.filter(flippedFilterRow)
+	}
+
+	function insert(...rows: Row[]) {
+		data.table = [...data.table, ...rows]
 	}
 
 	return {
-
 		async create(...rows) {
 			await load()
-			for (const row of rows) insertCopy(row)
+			insert(...rows)
 			await save()
 		},
 
 		async read({order, offset = 0, limit = 1000, ...conditional}) {
 			await load()
-			const rows = copy(select(conditional))
+			const rows = select(conditional)
 			if (order) {
 				for (const [key, value] of Object.entries(order)) {
 					rows.sort((a, b) =>
@@ -119,16 +154,16 @@ export async function dbbyX<Row extends DbbyRow>(
 
 		async one(conditional) {
 			await load()
-			return copy(selectOne(conditional))
+			return selectOne(conditional)
 		},
 
 		async assert({make, ...conditional}) {
 			await load()
-			let row = copy(selectOne(conditional))
+			let row = selectOne(conditional)
 			if (!row) {
 				const made = await make()
-				insertCopy(made)
-				row = copy(made)
+				insert(made)
+				row = made
 				await save()
 			}
 			return row
@@ -143,15 +178,17 @@ export async function dbbyX<Row extends DbbyRow>(
 			await load()
 			const rows = select(conditional)
 			if (write && rows.length) {
-				updateRow(rows, write)
+				applyPatchToRows(conditional, write)
 			}
 			else if (upsert) {
-				if (rows.length) updateRow(rows, upsert)
-				else insertCopy(upsert)
+				if (rows.length)
+					applyPatchToRows(conditional, upsert)
+				else
+					insert(upsert)
 			}
 			else if (whole) {
 				eliminateRow(conditional)
-				insertCopy(whole)
+				insert(whole)
 			}
 			else throw new Error("invalid update")
 			await save()
@@ -168,11 +205,6 @@ export async function dbbyX<Row extends DbbyRow>(
 			return select(conditional).length
 		},
 	}
-}
-
-function copy<T>(x: T): T {
-	if (x === undefined) return undefined
-	return JSON.parse(JSON.stringify(x))
 }
 
 function compare<Row>(
@@ -244,7 +276,10 @@ function rowVersusCondition<Row extends DbbyRow>(
 
 	const checks: {[key: string]: Evaluator} = {
 		set: a => a !== undefined && a !== null,
-		equal: (a, b) => a === b,
+		equal: (a, b) =>
+			a instanceof DamnId
+				? a.string === b.string
+				: a === b,
 		greater: (a, b) => a > b,
 		greatery: (a, b) => a >= b,
 		less: (a, b) => a < b,
