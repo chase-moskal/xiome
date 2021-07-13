@@ -9,137 +9,150 @@ export async function dbbyX<Row extends DbbyRow>(
 		tableName: string,
 	): Promise<DbbyTable<Row>> {
 
-	const serializationKey = "__serialized_type__"
-
-	type SerializedValue = {
-		[serializationKey]: "DamnedId",
-		serializedValue: string,
-	}
-
-	type SerializedRow = {[key: string]: any | SerializedValue}
-
-	function copy<T>(x: T): T {
-		if (x === undefined) return undefined
-		return JSON.parse(JSON.stringify(x))
-	}
-
-	function serialize(table: Row[]): any[] {
-		return table.map(row => {
-			const serializedRow: SerializedRow = {}
-			for (const [key, value] of Object.entries(row)) {
-				if (value instanceof DamnId) {
-					serializedRow[key] = {
-						[serializationKey]: "DamnId",
-						serializedValue: value.toString(),
-					}
-				}
-				else
-					serializedRow[key] = copy(value)
-			}
-			return serializedRow
-		})
-	}
-
-	function deserialize(data: SerializedRow[]): Row[] {
-		return data.map(datum => {
-			const row = {}
-			for (const [key, value] of Object.entries(datum)) {
-				if (value && typeof value === "object" && value[serializationKey]) {
-					if (value[serializationKey] === "DamnId") {
-						row[key] = DamnId.fromString(value.serializedValue)
+	const table = (() => {
+		const serializationKey = "__serialized_type__"
+	
+		type SerializedValue = {
+			[serializationKey]: "DamnedId",
+			serializedValue: string,
+		}
+	
+		type SerializedRow = {[key: string]: any | SerializedValue}
+	
+		function copy<T>(x: T): T {
+			if (x === undefined) return undefined
+			return JSON.parse(JSON.stringify(x))
+		}
+	
+		function serialize(table: Row[]): any[] {
+			return table.map(row => {
+				const serializedRow: SerializedRow = {}
+				for (const [key, value] of Object.entries(row)) {
+					if (value instanceof DamnId) {
+						serializedRow[key] = {
+							[serializationKey]: "DamnId",
+							serializedValue: value.toString(),
+						}
 					}
 					else
-						throw new Error(`dbby-x unknown serialization type "${value[serializationKey]}"`)
+						serializedRow[key] = copy(value)
 				}
-				else {
-					row[key] = value
-				}
-			}
-			return <Row>row
-		})
-	}
-
-	const data = (() => {
-		let serialized: SerializedRow[] = []
-		return {
-			set table(rows: Row[]) {
-				serialized = serialize(rows)
-			},
-			get table() {
-				return deserialize(serialized)
-			},
+				return serializedRow
+			})
 		}
+	
+		function deserialize(data: SerializedRow[]): Row[] {
+			return data.map(datum => {
+				const row = {}
+				for (const [key, value] of Object.entries(datum)) {
+					if (value && typeof value === "object" && value[serializationKey]) {
+						if (value[serializationKey] === "DamnId") {
+							row[key] = DamnId.fromString(value.serializedValue)
+						}
+						else
+							throw new Error(`dbby-x unknown serialization type "${value[serializationKey]}"`)
+					}
+					else {
+						row[key] = value
+					}
+				}
+				return <Row>row
+			})
+		}
+	
+		const storageKey = `dbby-${tableName}`
+
+		async function load() {
+			return deserialize(await flexStorage.read(storageKey) ?? [])
+		}
+	
+		async function save(rows: Row[]) {
+			await flexStorage.write(storageKey, serialize(rows))
+		}
+
+		return {load, save}
 	})()
 
-	const storageKey = `dbby-${tableName}`
-
-	async function load() {
-		data.table = await flexStorage.read(storageKey) || []
-	}
-
-	await load()
-
-	async function save() {
-		if (flexStorage)
-			await flexStorage.write(storageKey, data.table)
-	}
-
-	function select(conditional: DbbyConditional<Row>): Row[] {
-		return data.table.filter(row => rowVersusConditional(row, conditional))
-	}
-
-	function discriminate(conditional: DbbyConditional<Row>) {
-		const yep: Row[] = []
-		const nope: Row[] = []
-		for (const row of data.table) {
-			if (rowVersusConditional(row, conditional))
-				yep.push(row)
-			else
-				nope.push(row)
+	const readers = (() => {
+		async function select(conditional: DbbyConditional<Row>): Promise<Row[]> {
+			return (await table.load())
+				.filter(row => rowVersusConditional(row, conditional))
 		}
-		return {yep, nope}
-	}
 
-	function selectOne(conditional: DbbyConditional<Row>): Row {
-		return data.table.find(row => rowVersusConditional(row, conditional))
-	}
+		async function discriminate(conditional: DbbyConditional<Row>) {
+			const yep: Row[] = []
+			const nope: Row[] = []
+			for (const row of await table.load()) {
+				if (rowVersusConditional(row, conditional))
+					yep.push(row)
+				else
+					nope.push(row)
+			}
+			return {yep, nope}
+		}
 
-	function applyPatchToRows(conditional: DbbyConditional<Row>, patch: Partial<Row>) {
-		const {yep, nope} = discriminate(conditional)
-		const updated = yep.map(row => <Row>({...row, ...patch}))
-		data.table = [...updated, ...nope]
-	}
+		async function selectOne(conditional: DbbyConditional<Row>) {
+			return (await table.load())
+				.find(row => rowVersusConditional(row, conditional))
+		}
 
-	// function updateRow(rows: Row[], update: Partial<Row>) {
-	// 	for (const row of rows) {
-	// 		for (const [key, value] of Object.entries(update)) {
-	// 			;(<any>row)[key] = value
-	// 		}
-	// 	}
-	// }
+		return {select, selectOne, discriminate}
+	})()
 
-	function eliminateRow(conditional: DbbyConditional<Row>) {
-		const flippedFilterRow = (row: Row) => !rowVersusConditional(
-			row,
-			conditional
-		)
-		data.table = data.table.filter(flippedFilterRow)
-	}
+	const writers = (() => {
+		async function applyPatchToRows(conditional: DbbyConditional<Row>, patch: Partial<Row>) {
+			const {yep, nope} = await readers.discriminate(conditional)
+			const updated = yep.map(row => <Row>({...row, ...patch}))
+			await table.save([...updated, ...nope])
+		}
 
-	function insert(...rows: Row[]) {
-		data.table = [...data.table, ...rows]
-	}
+		async function eliminateRow(conditional: DbbyConditional<Row>) {
+			const flippedFilterRow = (row: Row) => !rowVersusConditional(
+				row,
+				conditional
+			)
+			const rows = await table.load()
+			await table.save(rows.filter(flippedFilterRow))
+		}
 
-	return {
+		async function insert(...rows: Row[]) {
+			const old = await table.load()
+			await table.save([...old, ...rows])
+		}
+
+		return {applyPatchToRows, eliminateRow, insert}
+	})()
+
+	const sequential = (() => {
+		let promiseChain: Promise<any> = Promise.resolve()
+
+		function functionQueuesInSequence<F extends (...args: any) => Promise<any>>(func: F): F {
+			return <F>(async(...args: any[]) => {
+				const next = promiseChain.then(() => func(...args))
+				promiseChain = next.catch(() => {})
+				return next
+			})
+		}
+
+		function groupOfFunctionsQueueInSequence<O extends {[key: string]: (...args: any) => Promise<any>}>(obj: O): O {
+			const newObject = {}
+			for (const [key, value] of Object.entries(obj)) {
+				newObject[key] = functionQueuesInSequence(value)
+			}
+			return <O>newObject
+		}
+
+		return {groupOfFunctionsQueueInSequence}
+	})()
+
+	return sequential.groupOfFunctionsQueueInSequence({
 		async create(...rows) {
-			await load()
-			insert(...rows)
-			await save()
+			await writers.insert(...rows)
 		},
 
 		async read({order, offset = 0, limit = 1000, ...conditional}) {
-			await load()
-			const rows = select(conditional)
+			debugger
+			const rows = await readers.select(conditional)
 			if (order) {
 				for (const [key, value] of Object.entries(order)) {
 					rows.sort((a, b) =>
@@ -153,58 +166,50 @@ export async function dbbyX<Row extends DbbyRow>(
 		},
 
 		async one(conditional) {
-			await load()
-			return selectOne(conditional)
+			return readers.selectOne(conditional)
 		},
 
 		async assert({make, ...conditional}) {
-			await load()
-			let row = selectOne(conditional)
+			let row = await readers.selectOne(conditional)
 			if (!row) {
 				const made = await make()
-				insert(made)
+				await writers.insert(made)
 				row = made
-				await save()
 			}
 			return row
 		},
 
 		async update({
-					write,
-					whole,
-					upsert,
-					...conditional
-				}: DbbyUpdateAmbiguated<Row>) {
-			await load()
-			const rows = select(conditional)
+				write,
+				whole,
+				upsert,
+				...conditional
+			}: DbbyUpdateAmbiguated<Row>) {
+			const rows = await readers.select(conditional)
 			if (write && rows.length) {
-				applyPatchToRows(conditional, write)
+				await writers.applyPatchToRows(conditional, write)
 			}
 			else if (upsert) {
 				if (rows.length)
-					applyPatchToRows(conditional, upsert)
+					await writers.applyPatchToRows(conditional, upsert)
 				else
-					insert(upsert)
+					await writers.insert(upsert)
 			}
 			else if (whole) {
-				eliminateRow(conditional)
-				insert(whole)
+				await writers.eliminateRow(conditional)
+				await writers.insert(whole)
 			}
 			else throw new Error("invalid update")
-			await save()
 		},
 
 		async delete(conditional) {
-			await load()
-			eliminateRow(conditional)
-			await save()
+			await writers.eliminateRow(conditional)
 		},
 
 		async count(conditional) {
-			await load()
-			return select(conditional).length
+			return (await readers.select(conditional)).length
 		},
-	}
+	})
 }
 
 function compare<Row>(
