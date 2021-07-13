@@ -151,7 +151,6 @@ export async function dbbyX<Row extends DbbyRow>(
 		},
 
 		async read({order, offset = 0, limit = 1000, ...conditional}) {
-			debugger
 			const rows = await readers.select(conditional)
 			if (order) {
 				for (const [key, value] of Object.entries(order)) {

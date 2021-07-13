@@ -28,7 +28,6 @@ export const loginTopic = ({
 			rando, email, config, tables, generateNickname,
 		})
 		const loginTokenPayload = {userId: userId.toString()}
-		debugger
 		await sendLoginEmail({
 			appHome: appRow.home,
 			appLabel: appRow.label,

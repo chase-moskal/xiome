@@ -24,8 +24,6 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		await permissionsEngine
 			.getPublicRolesForUsers(userIds.map(id => id.toString()))
 
-	debugger
-
 	function assembleDetailsForEachUser(userId: DamnId) {
 		const account = accounts.find(a => a.userId.toString() === userId.toString())
 		const profile = profiles.find(p => p.userId.toString() === userId.toString())

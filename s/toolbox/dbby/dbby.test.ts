@@ -214,14 +214,12 @@ export default <Suite>{
 			return expect(users.length).equals(2)
 		},
 		"update write to a row": async() => {
-			debugger
 			const dbby = await setupThreeUserDemo()
 			await dbby.update({
 				conditions: and({equal: {userId: "u123"}}),
 				write: {location: "argentina"},
 			})
 			const user = await dbby.one({conditions: and({equal: {userId: "u123"}})})
-			debugger
 			return (true
 				&& expect(user.location).equals("argentina")
 				&& expect(user.balance).equals(100)
