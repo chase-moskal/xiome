@@ -4,5 +4,5 @@ export interface SubscriptionPlan {
 	price: number
 	label: string
 	active: boolean
-	id_role: undefined | string
+	roleId: undefined | string
 }

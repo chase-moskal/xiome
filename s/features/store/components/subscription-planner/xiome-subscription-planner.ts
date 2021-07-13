@@ -74,7 +74,7 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 							></xio-id>
 							<xio-id
 								label="role id"
-								id="${plan.id_role}"
+								id="${plan.roleId}"
 							></xio-id>
 						</div>
 					</div>

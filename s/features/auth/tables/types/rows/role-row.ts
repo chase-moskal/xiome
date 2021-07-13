@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type RoleRow = {
-	id_role: string
+	roleId: DamnId
 	label: string
 
 	// hardcoded roles cannot be deleted

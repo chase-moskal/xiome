@@ -1,6 +1,6 @@
 
 export type PublicUserRole = {
-	id_role: string
+	roleId: string
 	label: string
 	timeframeStart: number
 	timeframeEnd: number

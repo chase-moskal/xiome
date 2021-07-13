@@ -3,14 +3,15 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {initializeUserProfile} from "./user/profile/initialize-user-profile.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 const standardRoleIds = {
-	anonymous: universalPermissions.roles.anonymous.id_role,
-	authenticated: universalPermissions.roles.authenticated.id_role,
-	technician: universalPermissions.roles.technician.id_role,
+	anonymous: universalPermissions.roles.anonymous.roleId,
+	authenticated: universalPermissions.roles.authenticated.roleId,
+	technician: universalPermissions.roles.technician.roleId,
 }
 
 export async function assertEmailAccount({
@@ -43,7 +44,7 @@ export async function assertEmailAccount({
 				userId,
 				hard: true,
 				public: false,
-				id_role: standardRoleIds.anonymous,
+				roleId: DamnId.fromString(standardRoleIds.anonymous),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 			})
@@ -52,7 +53,7 @@ export async function assertEmailAccount({
 				userId,
 				hard: true,
 				public: false,
-				id_role: standardRoleIds.authenticated,
+				roleId: DamnId.fromString(standardRoleIds.authenticated),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 			})
@@ -63,7 +64,7 @@ export async function assertEmailAccount({
 					hard: true,
 					public: true,
 					timeframeEnd: undefined,
-					id_role: standardRoleIds.technician,
+					roleId: DamnId.fromString(standardRoleIds.technician),
 					timeframeStart: undefined,
 				})
 				: Promise.resolve()

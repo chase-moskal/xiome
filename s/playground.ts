@@ -18,7 +18,7 @@ class XioPlayground extends Component2 {
 		},
 		roles: [{
 			label: "premium",
-			id_role: "lol12i309u12893h1",
+			roleId: "lol12i309u12893h1",
 			timeframeEnd: undefined,
 			timeframeStart: undefined,
 		}],

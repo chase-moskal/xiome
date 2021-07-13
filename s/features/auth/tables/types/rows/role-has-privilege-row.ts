@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type RoleHasPrivilegeRow = {
-	id_role: string
+	roleId: DamnId
 	id_privilege: string
 	immutable: boolean
 	active: boolean

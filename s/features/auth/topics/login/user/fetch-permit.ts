@@ -16,11 +16,11 @@
 
 // 	const roleIds = userHasRoleRows
 // 		.filter(isCurrentlyWithinTimeframe)
-// 		.map(({id_role}) => id_role)
+// 		.map(({roleId}) => roleId)
 
 // 	const roleHasPrivilegeRows = await tables.permissions.roleHasPrivilege
 // 		.read({
-// 			conditions: or(...roleIds.map(id_role => ({equal: {id_role}})))
+// 			conditions: or(...roleIds.map(roleId => ({equal: {roleId}})))
 // 		})
 
 // 	return {

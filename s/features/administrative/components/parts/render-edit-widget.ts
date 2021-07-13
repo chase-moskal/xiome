@@ -16,8 +16,8 @@ function renderRoleButton(role: RoleDisplay, onClick: (role: RoleDisplay) => any
 	return html`
 		<xio-button
 			?disabled=${!role.assignable}
-			title=${role.id_role}
-			data-role-id=${role.id_role}
+			title=${role.roleId}
+			data-role-id=${role.roleId}
 			@press=${() => onClick(role)}>
 				${role.label}
 		</xio-button>
@@ -46,8 +46,8 @@ export function renderEditWidget({
 		permissions: PermissionsDisplay
 		administrativeModel: ReturnType<typeof makeAdministrativeModel>
 		updateLocalUserResultsCache: {
-			assignRole: (userId: string, id_role: string) => void
-			revokeRole: (userId: string, id_role: string) => void
+			assignRole: (userId: string, roleId: string) => void
+			revokeRole: (userId: string, roleId: string) => void
 		}
 		blur: () => void
 		search: () => Promise<any>
@@ -55,13 +55,13 @@ export function renderEditWidget({
 
 	const rolesAssigned = sortAssignableFirst(
 		roleIds
-			.map(id => permissions.roles.find(role => role.id_role === id))
+			.map(id => permissions.roles.find(role => role.roleId === id))
 			.filter(id => !!id)
 	)
 
 	const rolesAvailable = sortAssignableFirst(
 		permissions.roles
-			.filter(role => !roleIds.includes(role.id_role))
+			.filter(role => !roleIds.includes(role.roleId))
 			.filter(id => !!id)
 	)
 
@@ -70,7 +70,7 @@ export function renderEditWidget({
 			const rolesWithThisPrivilege = permissions.rolesHavePrivileges
 				.filter(r => r.active && r.id_privilege === privilege.id_privilege)
 			const rolesUserHas = rolesWithThisPrivilege
-				.filter(r => roleIds.includes(r.id_role))
+				.filter(r => roleIds.includes(r.roleId))
 			return rolesUserHas.length > 0
 		})
 
@@ -79,26 +79,26 @@ export function renderEditWidget({
 			await administrativeModel.reauthorize()
 	}
 
-	async function clickToAssign({id_role}: RoleDisplay) {
+	async function clickToAssign({roleId}: RoleDisplay) {
 		await administrativeModel.assignRoleToUser({
 			userId,
-			id_role,
+			roleId,
 			isPublic: true,
 			timeframeEnd: undefined,
 			timeframeStart: undefined,
 		})
-		updateLocalUserResultsCache.assignRole(userId, id_role)
+		updateLocalUserResultsCache.assignRole(userId, roleId)
 		blur()
 		await ifChangingSelfThenReauthorize()
 		await search()
 	}
 
-	async function clickToRevoke({id_role}: RoleDisplay) {
+	async function clickToRevoke({roleId}: RoleDisplay) {
 		await administrativeModel.revokeRoleFromUser({
 			userId,
-			id_role,
+			roleId,
 		})
-		updateLocalUserResultsCache.revokeRole(userId, id_role)
+		updateLocalUserResultsCache.revokeRole(userId, roleId)
 		blur()
 		await ifChangingSelfThenReauthorize()
 		await search()

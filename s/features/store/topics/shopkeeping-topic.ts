@@ -3,6 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {apiProblems} from "../../../toolbox/api-validate.js"
 import {RoleRow} from "../../auth/tables/types/rows/role-row.js"
 import {ClerkAuth} from "../api/policies/types/contexts/clerk-auth.js"
@@ -15,7 +16,7 @@ const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
 
 export const shopkeepingTopic = ({generateId}: {
-		generateId: () => string
+		generateId: () => DamnId
 	}) => asTopic<ClerkAuth>()({
 
 	async listSubscriptionPlans({tables}) {
@@ -23,14 +24,14 @@ export const shopkeepingTopic = ({generateId}: {
 			.read({conditions: false})
 
 		const roleFinders = rows
-			.map(row => row.id_role)
-			.map(id_role => ({id_role}))
+			.map(row => row.roleId)
+			.map(roleId => ({roleId}))
 
 		const roles = await tables.permissions.role.read(find(...roleFinders))
 
 		const plans = rows.map(plan => subscriptionPlanFromRow({
 			plan,
-			role: roles.find(role => role.id_role === plan.id_role),
+			role: roles.find(role => role.roleId === plan.roleId),
 		}))
 
 		return plans
@@ -57,17 +58,17 @@ export const shopkeepingTopic = ({generateId}: {
 			hard: true,
 			public: true,
 			label: draft.label,
-			id_role: generateId(),
+			roleId: generateId(),
 			assignable: true,
 		}
 
 		const plan: SubscriptionPlanRow = {
 			active: true,
 			price: draft.price,
-			id_role: role.id_role,
+			roleId: role.roleId,
 			stripePriceId: stripePrice.id,
 			stripeProductId: stripeProduct.id,
-			id_subscriptionPlan: generateId(),
+			id_subscriptionPlan: generateId().toString(),
 		}
 
 		await Promise.all([
@@ -105,12 +106,12 @@ export const shopkeepingTopic = ({generateId}: {
 			.one(find({id_subscriptionPlan}))
 
 		await tables.permissions.role.update({
-			...find({id_role: plan.id_role}),
+			...find({roleId: plan.roleId}),
 			write: {label: draft.label},
 		})
 
 		const role = await tables.permissions.role
-			.one(find({id_role: plan.id_role}))
+			.one(find({roleId: plan.roleId}))
 
 		return subscriptionPlanFromRow({role, plan})
 	},
@@ -139,14 +140,14 @@ export const shopkeepingTopic = ({generateId}: {
 			{id_subscriptionPlan}: {id_subscriptionPlan: string}
 		) {
 
-		const {id_role, active} = await tables.billing.subscriptionPlans
+		const {roleId, active} = await tables.billing.subscriptionPlans
 			.one(find({id_subscriptionPlan}))
 
 		if (active)
 			throw new ApiError(400, `deleting active subscriptions is forbidden`)
 
 		await Promise.all([
-			tables.permissions.role.delete(find({id_role})),
+			tables.permissions.role.delete(find({roleId})),
 			tables.billing.subscriptionPlans.delete(find({id_subscriptionPlan})),
 		])
 	},

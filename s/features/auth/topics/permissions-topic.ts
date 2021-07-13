@@ -6,6 +6,7 @@ import {asTopic} from "renraku/x/identities/as-topic.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {fetchPermissionsDisplay} from "./permissions/fetch-permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
@@ -28,12 +29,13 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			hard: false,
 			public: true,
 			assignable: true,
-			id_role: rando.randomId().toString(),
+			roleId: rando.randomId(),
 		})
 	},
 
-	async deleteRole({tables}, {id_role}: {id_role: string}) {
-		const role = await tables.permissions.role.one(find({id_role}))
+	async deleteRole({tables}, {roleId: roleIdString}: {roleId: string}) {
+		const roleId = DamnId.fromString(roleIdString)
+		const role = await tables.permissions.role.one(find({roleId}))
 
 		if (!role)
 			throw new ApiError(404, "role not found")
@@ -42,19 +44,20 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 			throw new ApiError(400, "cannot delete hard role")
 
 		await Promise.all([
-			tables.permissions.userHasRole.delete(find({id_role})),
-			tables.permissions.role.delete(find({id_role})),
+			tables.permissions.userHasRole.delete(find({roleId})),
+			tables.permissions.role.delete(find({roleId})),
 		])
 	},
 
-	async assignPrivilege({tables}, {id_role, id_privilege}: {
-			id_role: string
+	async assignPrivilege({tables}, {roleId: roleIdString, id_privilege}: {
+			roleId: string
 			id_privilege: string
 		}) {
+		const roleId = DamnId.fromString(roleIdString)
 		await tables.permissions.roleHasPrivilege.update({
-			...find({id_role, id_privilege}),
+			...find({roleId, id_privilege}),
 			upsert: {
-				id_role,
+				roleId,
 				id_privilege,
 				active: true,
 				immutable: false,
@@ -62,14 +65,15 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 		})
 	},
 
-	async unassignPrivilege({tables}, {id_role, id_privilege}: {
-			id_role: string
+	async unassignPrivilege({tables}, {roleId: roleIdString, id_privilege}: {
+			roleId: string
 			id_privilege: string
 		}) {
+		const roleId = DamnId.fromString(roleIdString)
 		await tables.permissions.roleHasPrivilege.update({
-			...find({id_role, id_privilege}),
+			...find({roleId, id_privilege}),
 			upsert: {
-				id_role,
+				roleId,
 				id_privilege,
 				active: false,
 				immutable: false,

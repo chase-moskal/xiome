@@ -11,7 +11,7 @@ import {AppOwnerAuth} from "../policies/types/app-owner-auth.js"
 import {AdminEmailDisplay} from "../types/manage-admins/admin-email-display.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appPermissions.roles.admin.id_role
+const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 
 export const manageAdminsTopic = ({
 			rando,
@@ -27,7 +27,7 @@ export const manageAdminsTopic = ({
 		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
 
 		const usersWithAdminRole = await tablesForApp.permissions.userHasRole
-			.read(find({id_role: adminRoleId}))
+			.read(find({roleId: adminRoleId}))
 
 		const adminsViaEmail = await tablesForApp.user.accountViaEmail
 			.read(find(...usersWithAdminRole.map(({userId}) => ({userId}))))
@@ -99,7 +99,7 @@ export const manageAdminsTopic = ({
 
 		await tablesForApp.permissions.userHasRole.delete(find({
 			userId,
-			id_role: adminRoleId,
+			roleId: adminRoleId,
 		}))
 	},
 })

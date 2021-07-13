@@ -37,7 +37,7 @@ export const universalPermissions = asPermissions({
 	},
 	roles: {
 		"anonymous": {
-			id_role: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
+			roleId: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
 			public: true,
 			assignable: false,
 			hasPrivileges: {
@@ -48,7 +48,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"authenticated": {
-			id_role: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
+			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
 			public: false,
 			assignable: false,
 			hasPrivileges: {
@@ -58,7 +58,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"banned": {
-			id_role: "8FN9yGdMCBptMMCqHTHSJJ6PHtwpBWmtdPGGDzbTKCqdzsHC",
+			roleId: "8FN9yGdMCBptMMCqHTHSJJ6PHtwpBWmtdPGGDzbTKCqdzsHC",
 			public: true,
 			assignable: true,
 			hasPrivileges: {
@@ -68,7 +68,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"technician": {
-			id_role: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
+			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
 			public: true,
 			assignable: false,
 			hasPrivileges: {
@@ -148,7 +148,7 @@ export const appPermissions = asPermissions({
 			}
 		},
 		"admin": {
-			id_role: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
+			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
 			public: true,
 			assignable: false,
 			hasPrivileges: {

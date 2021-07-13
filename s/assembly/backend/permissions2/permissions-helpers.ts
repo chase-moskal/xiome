@@ -1,7 +1,7 @@
 
 type HasPrivilege = {active: boolean, immutable: boolean}
 type Role<xPrivileges extends Privileges> = {
-	id_role: string
+	roleId: string
 	public: boolean
 	assignable: boolean
 	hasPrivileges: Partial<{[P in keyof xPrivileges]: HasPrivilege}>

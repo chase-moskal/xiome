@@ -2,11 +2,12 @@
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {AuthTables} from "../../tables/types/auth-tables.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {assertEmailAccount} from "../login/assert-email-account.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
-const adminRoleId = appPermissions.roles.admin.id_role
+const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 
 export async function appointAdmin({
 		email, tablesForApp, rando, config, generateNickname,
@@ -27,10 +28,10 @@ export async function appointAdmin({
 	})
 
 	await tablesForApp.permissions.userHasRole.assert({
-		...find({userId: adminUserId, id_role: adminRoleId}),
+		...find({userId: adminUserId, roleId: adminRoleId}),
 		make: async () => ({
 			userId: adminUserId,
-			id_role: adminRoleId,
+			roleId: adminRoleId,
 			hard: false,
 			public: true,
 			timeframeEnd: undefined,

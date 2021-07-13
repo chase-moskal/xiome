@@ -12,6 +12,6 @@ export function subscriptionPlanFromRow({role, plan}: {
 		label: role.label,
 		price: plan.price,
 		active: plan.active,
-		id_role: role.id_role,
+		roleId: role.roleId.toString(),
 	}
 }

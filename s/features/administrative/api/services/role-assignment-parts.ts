@@ -2,6 +2,7 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 
 import {validateId} from "./validation/validate-id.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {UserAuth} from "../../../auth/policies/types/user-auth.js"
@@ -15,7 +16,6 @@ import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchPermissionsDisplay} from "../../../auth/topics/permissions/fetch-permissions-display.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export const roleAssignmentParts = ({
 		config,
@@ -80,14 +80,14 @@ export const roleAssignmentParts = ({
 				roleIds: usersAndRoles
 					.find(u => u.userId === user.userId)
 					.userHasRoles
-					.map(role => role.id_role)
+					.map(role => role.roleId.toString())
 			}))
 		},
 
 		async assignRoleToUser(
 				{tables},
 				options: {
-					id_role: string
+					roleId: string
 					userId: string
 					isPublic: boolean
 					timeframeEnd: undefined | number
@@ -95,9 +95,9 @@ export const roleAssignmentParts = ({
 				},
 			) {
 
-			const {id_role, userId: userIdString, isPublic, timeframeEnd, timeframeStart} = (
+			const {roleId: roleIdString, userId: userIdString, isPublic, timeframeEnd, timeframeStart} = (
 				runValidation(options, schema({
-					id_role: validateId,
+					roleId: validateId,
 					userId: validateId,
 					isPublic: validator(boolean()),
 					timeframeEnd: validateTimeframe,
@@ -105,22 +105,23 @@ export const roleAssignmentParts = ({
 				}))
 			)
 
+			const roleId = DamnId.fromString(roleIdString)
 			const userId = DamnId.fromString(userIdString)
 
 			const existing = await tables.permissions.userHasRole.one(find({
 				userId,
-				id_role,
+				roleId,
 			}))
 
 			if (existing?.hard)
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
 				await tables.permissions.userHasRole.assert({
-					conditions: or({equal: {id_role, userId}}),
+					conditions: or({equal: {roleId, userId}}),
 					make: async() => ({
 						hard: false,
 						public: isPublic,
-						id_role,
+						roleId,
 						userId,
 						timeframeEnd,
 						timeframeStart,
@@ -131,28 +132,30 @@ export const roleAssignmentParts = ({
 		async revokeRoleFromUser(
 				{tables},
 				options: {
-					id_role: string
+					roleId: string
 					userId: string
 				},
 			) {
 
-			const {id_role, userId: userIdString} = runValidation(options, schema({
-				id_role: validateId,
-				userId: validateId,
-			}))
+			const {roleId: roleIdString, userId: userIdString} =
+				runValidation(options, schema({
+					roleId: validateId,
+					userId: validateId,
+				}))
 
+			const roleId = DamnId.fromString(roleIdString)
 			const userId = DamnId.fromString(userIdString)
 
 			const existing = await tables.permissions.userHasRole.one(find({
 				userId,
-				id_role,
+				roleId,
 			}))
 
 			if (existing?.hard)
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
 				await tables.permissions.userHasRole.delete({
-					conditions: or({equal: {id_role, userId}}),
+					conditions: or({equal: {roleId, userId}}),
 				})
 		},
 	},

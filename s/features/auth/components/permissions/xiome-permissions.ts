@@ -35,7 +35,7 @@ export class XiomePermissions extends Component3WithShare<{
 		if (!roleSelected) return []
 
 		const assignedPrivilegeIds = permissions.rolesHavePrivileges
-			.filter(({id_role}) => id_role === roleSelected.id_role)
+			.filter(({roleId}) => roleId === roleSelected.roleId)
 			.map(({id_privilege}) => id_privilege)
 
 		return permissions.privileges
@@ -43,7 +43,7 @@ export class XiomePermissions extends Component3WithShare<{
 				assignedPrivilegeIds.includes(id_privilege))
 			.map(privilege => {
 				const {active, immutable} = permissions.rolesHavePrivileges.find(
-					rp => rp.id_role === roleSelected.id_role &&
+					rp => rp.roleId === roleSelected.roleId &&
 						rp.id_privilege === privilege.id_privilege
 				)
 				return {...privilege, active, immutable}
@@ -61,7 +61,7 @@ export class XiomePermissions extends Component3WithShare<{
 			focusNthElement: 2,
 		})
 		if (confirmed)
-			await permissionsModel.deleteRole({id_role: role.id_role})
+			await permissionsModel.deleteRole({roleId: role.roleId})
 	}
 
 	private clickNewRole = async() => {
@@ -83,7 +83,7 @@ export class XiomePermissions extends Component3WithShare<{
 		if (roleSelected)
 			await this.share.permissionsModel.assignPrivilege({
 				id_privilege,
-				id_role: roleSelected.id_role,
+				roleId: roleSelected.roleId,
 			})
 	}
 
@@ -92,7 +92,7 @@ export class XiomePermissions extends Component3WithShare<{
 		if (roleSelected)
 			await this.share.permissionsModel.unassignPrivilege({
 				id_privilege,
-				id_role: roleSelected.id_role,
+				roleId: roleSelected.roleId,
 			})
 	}
 
@@ -150,15 +150,15 @@ export class XiomePermissions extends Component3WithShare<{
 					<div part=plate>
 						${permissions.roles.map(role => html`
 							<xio-button
-								title="${role.id_role}"
+								title="${role.roleId}"
 								?data-selected=${
 									this.roleSelected &&
-									role.id_role === this.roleSelected.id_role
+									role.roleId === this.roleSelected.roleId
 								}
 								?data-hard=${role.hard}
 								?disabled=${
 									this.roleSelected &&
-									role.id_role === this.roleSelected.id_role
+									role.roleId === this.roleSelected.roleId
 								}
 								@click=${this.clickRole(role)}>
 								<div>

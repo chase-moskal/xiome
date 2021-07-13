@@ -3,7 +3,7 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 
 export type UserHasRoleRow = {
 	userId: DamnId
-	id_role: string
+	roleId: DamnId
 	timeframeStart: undefined | number
 	timeframeEnd: undefined | number
 	public: boolean

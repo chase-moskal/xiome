@@ -8,7 +8,7 @@ export function renderRoles(user: User) {
 			${user.roles.map(role => html`
 				<li
 					data-role-label="${role.label}"
-					data-role-id="${role.id_role}">
+					data-role-id="${role.roleId}">
 						${role.label}
 				</li>
 			`)}
