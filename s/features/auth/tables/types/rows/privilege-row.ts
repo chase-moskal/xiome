@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+
 export type PrivilegeRow = {
-	id_privilege: string
+	privilegeId: DamnId
 	label: string
 	hard: boolean
 }

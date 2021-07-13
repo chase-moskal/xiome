@@ -3,10 +3,10 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {find} from "../../../toolbox/dbby/dbby-x.js"
 import {UserAuth} from "../policies/types/user-auth.js"
 import {asTopic} from "renraku/x/identities/as-topic.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AuthApiOptions} from "../types/auth-api-options.js"
 import {fetchPermissionsDisplay} from "./permissions/fetch-permissions-display.js"
 import {roleLabelValidator} from "./permissions/validators/role-label-validator.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<UserAuth>()({
 
@@ -49,32 +49,34 @@ export const permissionsTopic = ({config, rando}: AuthApiOptions) => asTopic<Use
 		])
 	},
 
-	async assignPrivilege({tables}, {roleId: roleIdString, id_privilege}: {
+	async assignPrivilege({tables}, {roleId: roleIdString, privilegeId: privilegeIdString}: {
 			roleId: string
-			id_privilege: string
+			privilegeId: string
 		}) {
 		const roleId = DamnId.fromString(roleIdString)
+		const privilegeId = DamnId.fromString(privilegeIdString)
 		await tables.permissions.roleHasPrivilege.update({
-			...find({roleId, id_privilege}),
+			...find({roleId, privilegeId}),
 			upsert: {
 				roleId,
-				id_privilege,
+				privilegeId,
 				active: true,
 				immutable: false,
 			},
 		})
 	},
 
-	async unassignPrivilege({tables}, {roleId: roleIdString, id_privilege}: {
+	async unassignPrivilege({tables}, {roleId: roleIdString, privilegeId: privilegeIdString}: {
 			roleId: string
-			id_privilege: string
+			privilegeId: string
 		}) {
 		const roleId = DamnId.fromString(roleIdString)
+		const privilegeId = DamnId.fromString(privilegeIdString)
 		await tables.permissions.roleHasPrivilege.update({
-			...find({roleId, id_privilege}),
+			...find({roleId, privilegeId}),
 			upsert: {
 				roleId,
-				id_privilege,
+				privilegeId,
 				active: false,
 				immutable: false,
 			},

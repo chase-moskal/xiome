@@ -27,8 +27,8 @@ function renderRoleButton(role: RoleDisplay, onClick: (role: RoleDisplay) => any
 function renderPrivilegeUserHas(privilege: PrivilegeDisplay) {
 	return html`
 		<li
-			title="${privilege.id_privilege}"
-			data-privilege-id="${privilege.id_privilege}">
+			title="${privilege.privilegeId}"
+			data-privilege-id="${privilege.privilegeId}">
 				${privilege.label}
 		</li>
 	`
@@ -68,7 +68,7 @@ export function renderEditWidget({
 	const privilegesUserHas = permissions.privileges
 		.filter(privilege => {
 			const rolesWithThisPrivilege = permissions.rolesHavePrivileges
-				.filter(r => r.active && r.id_privilege === privilege.id_privilege)
+				.filter(r => r.active && r.privilegeId === privilege.privilegeId)
 			const rolesUserHas = rolesWithThisPrivilege
 				.filter(r => roleIds.includes(r.roleId))
 			return rolesUserHas.length > 0

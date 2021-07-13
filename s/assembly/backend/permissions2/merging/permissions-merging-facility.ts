@@ -13,7 +13,7 @@ export function permissionsMergingFacility({isPlatform}: {
 		: appPermissions
 
 	type HardPrivilegeDetail = {
-		id_privilege: string
+		privilegeId: string
 		roleId: string
 		active: boolean
 		immutable: boolean
@@ -27,15 +27,15 @@ export function permissionsMergingFacility({isPlatform}: {
 			if (found) {
 				const [,role] = found
 				for (const [label, has] of Object.entries(role.hasPrivileges)) {
-					const id_privilege = hardPermissions.privileges[label]
+					const privilegeId = hardPermissions.privileges[label]
 					const already = results.find(
 						detail =>
 							detail.roleId === roleId &&
-							detail.id_privilege === id_privilege
+							detail.privilegeId === privilegeId
 					)
 					if (!already) {
 						results.push({
-							id_privilege,
+							privilegeId,
 							roleId,
 							active: has.active,
 							immutable: has.immutable,
@@ -56,13 +56,13 @@ export function permissionsMergingFacility({isPlatform}: {
 
 		function rowMatch(hardy: HardPrivilegeDetail, softy: RoleHasPrivilegeRow) {
 			return hardy.roleId === softy.roleId.toString()
-				&& hardy.id_privilege === softy.id_privilege
+				&& hardy.privilegeId === softy.privilegeId.toString()
 		}
 
 		function toSofty(hardy: HardPrivilegeDetail): RoleHasPrivilegeRow {
 			return {
 				roleId: DamnId.fromString(hardy.roleId),
-				id_privilege: hardy.id_privilege,
+				privilegeId: DamnId.fromString(hardy.privilegeId),
 				active: hardy.active,
 				immutable: hardy.immutable,
 			}
@@ -89,7 +89,7 @@ export function permissionsMergingFacility({isPlatform}: {
 	function getActivePrivilegeIds(roleHasPrivileges: RoleHasPrivilegeRow[]) {
 		return roleHasPrivileges
 			.filter(row => row.active)
-			.map(row => row.id_privilege)
+			.map(row => row.privilegeId)
 	}
 
 	return {

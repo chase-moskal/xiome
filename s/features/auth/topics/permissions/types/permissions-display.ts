@@ -7,7 +7,7 @@ export interface PermissionsDisplay {
 	privileges: PrivilegeDisplay[]
 	rolesHavePrivileges: {
 		roleId: string
-		id_privilege: string
+		privilegeId: string
 		active: boolean
 		immutable: boolean
 	}[]

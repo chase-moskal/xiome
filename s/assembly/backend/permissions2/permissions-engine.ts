@@ -28,6 +28,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const soft = await permissionsTables.roleHasPrivilege
 			.read(find({roleId: DamnId.fromString(roleId)}))
 		return getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
+			.map(id => id.toString())
 	}
 
 	async function getUsersHaveRoles({userIds, onlyGetPublicRoles}: {
@@ -95,6 +96,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			const soft = roleIds
 				.flatMap(roleId => allRolesHavePrivileges.filter(p => p.roleId.toString() === roleId))
 			const privileges = getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
+				.map(id => id.toString())
 			return {userId, privileges}
 		}
 
@@ -192,12 +194,16 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			privileges: (async() => {
 				const soft = await permissionsTables.privilege.read(all)
 				const hard: PrivilegeRow[] = Object.entries(hardPermissions.privileges)
-					.map(([label, id_privilege]) => ({id_privilege, label, hard: true}))
-				return merge(soft, hard, (a, b) => a.id_privilege === b.id_privilege)
-					.map(({hard, label, id_privilege}) => ({
+					.map(([label, privilegeId]) => ({
+						privilegeId: DamnId.fromString(privilegeId),
+						label,
+						hard: true,
+					}))
+				return merge(soft, hard, (a, b) => a.privilegeId === b.privilegeId)
+					.map(({hard, label, privilegeId}) => ({
 						hard,
 						label,
-						id_privilege,
+						privilegeId: privilegeId.toString(),
 					}))
 			})(),
 			rolesHavePrivileges: (async() => {
@@ -206,11 +212,11 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				const hard = getHardPrivilegeDetails(...roleIds)
 				const soft = await permissionsTables.roleHasPrivilege.read(all)
 				return mergeRoleHasPrivileges({hard, soft})
-					.map(({active, id_privilege, immutable, roleId}) => ({
+					.map(({active, privilegeId, immutable, roleId}) => ({
 						active,
-						id_privilege,
 						immutable,
 						roleId: roleId.toString(),
+						privilegeId: privilegeId.toString(),
 					}))
 			})(),
 		})

@@ -27,7 +27,7 @@
 // 		privileges: [
 // 			// ...Object.values(anybodyPrivileges),
 // 			// ...Object.values(userPrivileges),
-// 			...roleHasPrivilegeRows.map(({id_privilege}) => id_privilege)
+// 			...roleHasPrivilegeRows.map(({privilegeId}) => privilegeId)
 // 		],
 // 	}
 // }

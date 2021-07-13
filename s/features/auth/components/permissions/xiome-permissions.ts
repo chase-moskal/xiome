@@ -36,15 +36,15 @@ export class XiomePermissions extends Component3WithShare<{
 
 		const assignedPrivilegeIds = permissions.rolesHavePrivileges
 			.filter(({roleId}) => roleId === roleSelected.roleId)
-			.map(({id_privilege}) => id_privilege)
+			.map(({privilegeId}) => privilegeId)
 
 		return permissions.privileges
-			.filter(({id_privilege}) =>
-				assignedPrivilegeIds.includes(id_privilege))
+			.filter(({privilegeId}) =>
+				assignedPrivilegeIds.includes(privilegeId))
 			.map(privilege => {
 				const {active, immutable} = permissions.rolesHavePrivileges.find(
 					rp => rp.roleId === roleSelected.roleId &&
-						rp.id_privilege === privilege.id_privilege
+						rp.privilegeId === privilege.privilegeId
 				)
 				return {...privilege, active, immutable}
 			})
@@ -78,32 +78,32 @@ export class XiomePermissions extends Component3WithShare<{
 			await permissionsModel.createRole({label: result.value})
 	}
 
-	private clickAvailablePrivilege = (id_privilege: string) => async() => {
+	private clickAvailablePrivilege = (privilegeId: string) => async() => {
 		const {roleSelected} = this
 		if (roleSelected)
 			await this.share.permissionsModel.assignPrivilege({
-				id_privilege,
+				privilegeId,
 				roleId: roleSelected.roleId,
 			})
 	}
 
-	private clickAssignedPrivilege = (id_privilege: string) => async() => {
+	private clickAssignedPrivilege = (privilegeId: string) => async() => {
 		const {roleSelected} = this
 		if (roleSelected)
 			await this.share.permissionsModel.unassignPrivilege({
-				id_privilege,
+				privilegeId,
 				roleId: roleSelected.roleId,
 			})
 	}
 
 	private renderPrivilege({
-			id_privilege,
+			privilegeId,
 			label,
 			hard,
 			immutable,
 			onPrivilegeClick,
 		}: {
-			id_privilege: string
+			privilegeId: string
 			label: string
 			hard: boolean
 			immutable: boolean
@@ -111,7 +111,7 @@ export class XiomePermissions extends Component3WithShare<{
 		}) {
 		return html`
 			<xio-button
-				title="${id_privilege}"
+				title="${privilegeId}"
 				?disabled=${immutable}
 				?data-hard=${hard}
 				?data-soft=${!hard}
@@ -135,7 +135,7 @@ export class XiomePermissions extends Component3WithShare<{
 				...permissions.privileges
 					.filter(privilege => {
 						const assigned = assignedPrivileges
-							.find(priv => priv.id_privilege === privilege.id_privilege)
+							.find(priv => priv.privilegeId === privilege.privilegeId)
 						return !assigned
 					})
 					.map(privilege => ({...privilege, immutable: false})),
@@ -199,7 +199,7 @@ export class XiomePermissions extends Component3WithShare<{
 						${activePrivileges.map(privilege => this.renderPrivilege({
 								...privilege,
 								onPrivilegeClick:
-									this.clickAssignedPrivilege(privilege.id_privilege)
+									this.clickAssignedPrivilege(privilege.privilegeId)
 							}))}
 					</div>
 				</div>
@@ -209,7 +209,7 @@ export class XiomePermissions extends Component3WithShare<{
 					<div part=plate>
 						${availablePrivileges.map(privilege => this.renderPrivilege({
 							...privilege,
-							onPrivilegeClick: this.clickAvailablePrivilege(privilege.id_privilege),
+							onPrivilegeClick: this.clickAvailablePrivilege(privilege.privilegeId),
 						}))}
 					</div>
 				</div>

@@ -9,9 +9,9 @@ export function makeAllowanceChecker<xPrivileges extends Privileges>(
 
 	const allowed = {}
 
-	for (const [key, id_privilege] of Object.entries(privileges))
+	for (const [key, privilegeId] of Object.entries(privileges))
 		allowed[key] = access
-			? access.permit.privileges.includes(id_privilege)
+			? access.permit.privileges.includes(privilegeId)
 			: false
 
 	return (privilege: keyof xPrivileges): boolean => (<any>allowed)[privilege]

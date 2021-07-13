@@ -3,7 +3,7 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 
 export type RoleHasPrivilegeRow = {
 	roleId: DamnId
-	id_privilege: string
+	privilegeId: DamnId
 	immutable: boolean
 	active: boolean
 }
