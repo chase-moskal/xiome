@@ -76,7 +76,6 @@ export async function assertEmailAccount({
 				assignTechnician,
 			])
 
-			console.log("ASSERTED", userId.string)
 			return {email, userId}
 		},
 	})
