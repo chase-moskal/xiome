@@ -14,12 +14,12 @@ export async function mockBrowser({api, mockStripeOperations}: {
 	}) {
 
 	async function mockAppWindow({
-			id_app,
+			appId,
 			apiLink,
 			latency,
 			windowLink,
 		}: {
-			id_app: string
+			appId: string
 			apiLink: string
 			windowLink: string
 			latency: MockLatency
@@ -28,7 +28,7 @@ export async function mockBrowser({api, mockStripeOperations}: {
 		const storage = memoryFlexStorage()
 		const {remote, authMediator} = mockRemote({
 			api,
-			id_app,
+			appId,
 			apiLink,
 			latency,
 			storage,
@@ -37,7 +37,7 @@ export async function mockBrowser({api, mockStripeOperations}: {
 
 		const {modals, nextModalResults} = mockModalSystem()
 		const models = await assembleModels({
-			id_app,
+			appId,
 			remote,
 			storage,
 			authMediator,

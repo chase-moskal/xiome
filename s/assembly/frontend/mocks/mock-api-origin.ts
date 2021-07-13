@@ -11,11 +11,11 @@
 
 // 	let iframeCount = 0
 
-// 	function mockTokenIframe(id_app: string) {
+// 	function mockTokenIframe(appId: string) {
 // 		const iframeId = iframeCount++
 // 		const publishTokenChange = () => tokenChangeEvent.publish(iframeId)
 // 		const tokenStore = makeTokenStore2({
-// 			id_app,
+// 			appId,
 // 			storage,
 // 			publishAppTokenChange: publishTokenChange,
 // 			publishAuthTokenChange: publishTokenChange,

@@ -12,11 +12,11 @@ import {decodeAccessToken} from "../tools/tokens/decode-access-token.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
 export function makeAuthMediator({
-		id_app,
+		appId,
 		storage,
 		greenService,
 	}: {
-		id_app: string
+		appId: string
 		storage: FlexStorage
 		greenService: Service<typeof greenTopic>
 	}) {
@@ -24,7 +24,7 @@ export function makeAuthMediator({
 	const tokenChangeEvent = pubsub<() => void>()
 	const accessEvent = pubsub<AccessEventListener>()
 
-	const key = `auth-tokens-${id_app}`
+	const key = `auth-tokens-${appId}`
 	type AccessDetails = {access: AccessPayload; accessToken: AccessToken}
 	const emptyTokens = () => ({accessToken: undefined, refreshToken: undefined})
 	const getTokens = async() => await storage.read<AuthTokens>(key) ?? emptyTokens()
@@ -40,7 +40,7 @@ export function makeAuthMediator({
 
 	async function authorize(refreshToken: undefined | RefreshToken) {
 		const accessToken = await greenService.authorize({
-			id_app,
+			appId,
 			refreshToken,
 			scope: {core: true},
 		})

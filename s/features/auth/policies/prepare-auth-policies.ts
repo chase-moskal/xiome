@@ -2,11 +2,11 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {isOriginValid} from "./routines/is-origin-valid.js"
+import {AccessPayload} from "../types/tokens/access-payload.js"
 import {prepareStatsHub} from "../stats-hub/prepare-stats-hub.js"
 import {authTablesBakery} from "../tables/baking/auth-tables-bakery.js"
-
-import {AccessPayload} from "../types/tokens/access-payload.js"
 
 import {GreenAuth} from "./types/green-auth.js"
 import {GreenMeta} from "./types/green-meta.js"
@@ -46,7 +46,7 @@ export function prepareAuthPolicies({
 			if (isOriginValid(request, access.origins))
 				return {
 					access,
-					tables: await bakeTables(access.id_app),
+					tables: await bakeTables(DamnId.fromString(access.appId)),
 					checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 				}
 			else
@@ -87,7 +87,7 @@ export function prepareAuthPolicies({
 	const platformUser: Policy<PlatformUserMeta, PlatformUserAuth> = {
 		processAuth: async(meta, request) => {
 			const auth = await user.processAuth(meta, request)
-			if (auth.access.id_app == config.platform.appDetails.id_app)
+			if (auth.access.appId == config.platform.appDetails.appId)
 				return {
 					...auth,
 					checker: makePrivilegeChecker(auth.access.permit, platformPermissions.privileges),
@@ -106,12 +106,12 @@ export function prepareAuthPolicies({
 		processAuth: async(meta, request) => {
 			const auth = await platformUser.processAuth(meta, request)
 
-			async function getTablesNamespacedForApp(id_app: string) {
+			async function getTablesNamespacedForApp(appId: DamnId) {
 				const canEditAnyApp = auth.checker.hasPrivilege("edit any app")
-				const isOwner = isUserOwnerOfApp({id_app, access: auth.access, tables})
+				const isOwner = isUserOwnerOfApp({appId, access: auth.access, tables})
 				const allowed = isOwner || canEditAnyApp
 				if (allowed)
-					return bakeTables(id_app)
+					return bakeTables(appId)
 				else
 					throw new ApiError(403, "forbidden: not privileged over app")
 			}

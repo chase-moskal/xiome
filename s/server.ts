@@ -21,5 +21,5 @@ void async function main() {
 
 	server.listen(config.server.port)
 	console.log(`📡 ${config.platform.appDetails.label} listening on port ${config.server.port}`)
-	console.log(` - platform app id: ${config.platform.appDetails.id_app}`)
+	console.log(` - platform app id: ${config.platform.appDetails.appId}`)
 }()

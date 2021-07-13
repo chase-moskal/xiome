@@ -21,18 +21,19 @@ export const greenTopic = ({
 		verifyToken,
 	}: AuthApiOptions) => asTopic<GreenAuth>()({
 
-	async authorize({bakeTables}, {id_app, scope, refreshToken}: {
-				scope: Scope
-				id_app: string
-				refreshToken?: RefreshToken
-			}): Promise<AccessToken> {
+	async authorize({bakeTables}, {appId: appIdString, scope, refreshToken}: {
+			scope: Scope
+			appId: string
+			refreshToken?: RefreshToken
+		}): Promise<AccessToken> {
 
-		const tables = await bakeTables(id_app)
+		const appId = DamnId.fromString(appIdString)
+		const tables = await bakeTables(appId)
 		const permissionsEngine = makePermissionsEngine({
-			isPlatform: id_app === config.platform.appDetails.id_app,
+			isPlatform: appId.toString() === config.platform.appDetails.appId,
 			permissionsTables: tables.permissions,
 		})
-		const appRow = await tables.app.app.one(find({id_app}))
+		const appRow = await tables.app.app.one(find({appId}))
 
 		if (!appRow)
 			throw new ApiError(400, "incorrect app id")
@@ -61,7 +62,7 @@ export const greenTopic = ({
 					user,
 					scope,
 					permit: {privileges},
-					id_app,
+					appId: appId.toString(),
 					origins: originsFromDatabase(appRow.origins),
 				},
 			})
@@ -72,7 +73,7 @@ export const greenTopic = ({
 				lifespan: config.crypto.tokenLifespans.access,
 				payload: {
 					user: undefined,
-					id_app,
+					appId: appId.toString(),
 					scope,
 					origins: originsFromDatabase(appRow.origins),
 					permit: {privileges},

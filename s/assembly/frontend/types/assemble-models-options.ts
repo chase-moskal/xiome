@@ -6,7 +6,7 @@ import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 
 export interface AssembleModelsOptions {
-	id_app: string
+	appId: string
 	remote: SystemRemote
 	popups: SystemPopups
 	storage: FlexStorage

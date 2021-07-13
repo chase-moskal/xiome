@@ -27,9 +27,9 @@ async function setupThreeUserDemo() {
 
 function constrainAppTable<Row extends DbbyRow>(
 			table: DbbyTable<Row>,
-			id_app: string,
+			appId: string,
 		) {
-	return dbbyConstrain<Row, {id_app: string}>(table, {id_app})
+	return dbbyConstrain<Row, {appId: string}>(table, {appId})
 }
 
 export default <Suite>{

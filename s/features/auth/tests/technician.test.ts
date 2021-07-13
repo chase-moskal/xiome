@@ -22,7 +22,7 @@ export default <Suite>{
 			apiLink,
 			latency,
 			windowLink: platformLink,
-			id_app: system.platformAppId,
+			appId: system.platformAppId,
 		})
 		await windowForSignup.models.authModel.sendLoginLink(
 			system.backend.config.platform.technician.email
@@ -36,7 +36,7 @@ export default <Suite>{
 		const windowForLogin = await browser.mockAppWindow({
 			apiLink,
 			latency,
-			id_app: system.platformAppId,
+			appId: system.platformAppId,
 			windowLink: makeLoginLink({
 				home: platformLink,
 				loginToken: system.backend.emails.recallLatestLoginEmail().loginToken,

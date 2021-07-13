@@ -15,15 +15,15 @@ export async function standardSystem() {
 	config.database = "mock-memory"
 	const backend = await configureApiForNode(config)
 
-	async function signupAndLogin({email, appLink, id_app}: {
-			id_app: string
+	async function signupAndLogin({email, appLink, appId}: {
+			appId: string
 			email: string
 			appLink: string
 		}) {
 
 		const browser = await backend.mockBrowser()
 		const windowForSignup = await browser.mockAppWindow({
-			id_app,
+			appId,
 			apiLink,
 			latency,
 			windowLink: appLink,
@@ -31,7 +31,7 @@ export async function standardSystem() {
 		await windowForSignup.models.authModel.sendLoginLink(email)
 	
 		const windowForLogin = await browser.mockAppWindow({
-			id_app,
+			appId,
 			apiLink,
 			latency,
 			windowLink: makeLoginLink({
@@ -49,7 +49,7 @@ export async function standardSystem() {
 
 	return {
 		backend,
-		platformAppId: backend.config.platform.appDetails.id_app,
+		platformAppId: backend.config.platform.appDetails.appId,
 		signupAndLogin,
 	}
 }

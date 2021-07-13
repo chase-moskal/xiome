@@ -2,6 +2,7 @@
 import {asTopic} from "renraku/x/identities/as-topic.js"
 
 import {find} from "../../../toolbox/dbby/dbby-x.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {StripeConnectOptions} from "./types/stripe-connect-options.js"
 import {StripeAccountDetails} from "./types/stripe-account-details.js"
 import {MerchantAuth} from "../api/policies/types/contexts/merchant-auth.js"
@@ -12,11 +13,13 @@ export const stripeConnectTopic = ({
 
 	async getConnectDetails(
 			{access, stripeLiaisonForPlatform, getTablesNamespacedForApp},
-			{id_app}: {id_app: string},
+			{appId: appIdString}: {appId: string},
 		): Promise<undefined | StripeAccountDetails> {
 
+		const appId = DamnId.fromString(appIdString)
+
 		const {userId} = access.user
-		const namespacedTables = await getTablesNamespacedForApp(id_app)
+		const namespacedTables = await getTablesNamespacedForApp(appId)
 
 		const existingAssociatedStripeAccount = await namespacedTables
 			.merchant.stripeAccounts.one(find({userId}))
@@ -38,11 +41,13 @@ export const stripeConnectTopic = ({
 
 	async generateConnectSetupLink(
 			{access, stripeLiaisonForPlatform, getTablesNamespacedForApp},
-			{id_app}: {id_app: string},
+			{appId: appIdString}: {appId: string},
 		) {
 
+		const appId = DamnId.fromString(appIdString)
+
 		const {userId} = access.user
-		const namespacedTables = await getTablesNamespacedForApp(id_app)
+		const namespacedTables = await getTablesNamespacedForApp(appId)
 
 		const {stripeAccountId} = (
 			await namespacedTables.merchant.stripeAccounts.assert({

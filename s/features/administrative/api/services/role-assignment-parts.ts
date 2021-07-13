@@ -60,7 +60,7 @@ export const roleAssignmentParts = ({
 				return []
 
 			const permissionsEngine = makePermissionsEngine({
-				isPlatform: access.id_app === config.platform.appDetails.id_app,
+				isPlatform: access.appId === config.platform.appDetails.appId,
 				permissionsTables: tables.permissions,
 			})
 

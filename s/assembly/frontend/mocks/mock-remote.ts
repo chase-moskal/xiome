@@ -11,13 +11,13 @@ import {addMockLatency, MockLatency} from "../../../framework/add-mock-latency.j
 
 export function mockRemote({
 		api,
-		id_app,
+		appId,
 		origin,
 		apiLink,
 		latency,
 		storage,
 	}: {
-		id_app: string
+		appId: string
 		api: SystemApi
 		origin: string
 		apiLink: string
@@ -26,7 +26,7 @@ export function mockRemote({
 	}) {
 
 	const {shape, installAuthMediator} = prepareApiShape({
-		id_app,
+		appId,
 		storage,
 	})
 

@@ -40,7 +40,7 @@ export const questionsReadingParts = (
 			let users = []
 			if (posts.length) {
 				const permissionsEngine = makePermissionsEngine({
-					isPlatform: access.id_app === options.config.platform.appDetails.id_app,
+					isPlatform: access.appId === options.config.platform.appDetails.appId,
 					permissionsTables: tables.permissions,
 				})
 

@@ -29,21 +29,21 @@ export const appTopic = ({
 		const appRows = ownerships.length
 			? await tables.app.app.read({
 				conditions: and(
-					or(...ownerships.map(own => ({equal: {id_app: own.id_app}}))),
+					or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
 					{equal: {archived: false}},
 				)
 			})
 			: []
 		return Promise.all(appRows.map(async row => ({
-			id_app: row.id_app,
+			appId: row.appId.toString(),
 			label: row.label,
 			home: row.home,
 			origins: originsFromDatabase(row.origins),
-			platform: isPlatform(row.id_app, config),
+			platform: isPlatform(row.appId.toString(), config),
 			stats: await concurrent({
-				users: statsHub.countUsers(row.id_app),
-				usersActiveDaily: statsHub.countUsersActiveDaily(row.id_app),
-				usersActiveMonthly: statsHub.countUsersActiveMonthly(row.id_app),
+				users: statsHub.countUsers(row.appId),
+				usersActiveDaily: statsHub.countUsersActiveDaily(row.appId),
+				usersActiveMonthly: statsHub.countUsersActiveMonthly(row.appId),
 			}),
 		})))
 	},
@@ -57,23 +57,23 @@ export const appTopic = ({
 
 		const ownerUserId = DamnId.fromString(ownerUserIdString)
 
-		const id_app = rando.randomId().toString()
+		const appId = rando.randomId()
 		await Promise.all([
 			tables.app.app.create({
-				id_app,
+				appId,
 				label: appDraft.label,
 				home: appDraft.home,
 				origins: originsToDatabase(appDraft.origins),
 				archived: false,
 			}),
 			tables.app.appOwnership.create({
-				id_app,
+				appId,
 				userId: ownerUserId,
 			}),
 		])
 		return {
 			...appDraft,
-			id_app,
+			appId: appId.toString(),
 			stats: {
 				users: 1,
 				usersActiveDaily: 0,

@@ -217,7 +217,7 @@ export function prepareApiConfigurator(configurators: {
 			database,
 			stripeComplex,
 			mockStripeOperations,
-			platformAppId: config.platform.appDetails.id_app,
+			platformAppId: config.platform.appDetails.appId,
 			mockBrowser: async() => mockBrowser({
 				api,
 				mockStripeOperations,

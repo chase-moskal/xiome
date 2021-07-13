@@ -3,6 +3,7 @@
 import {Policy} from "renraku/x/types/primitives/policy.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
+import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {AnonAuth} from "../../../../../auth/policies/types/anon-auth.js"
 import {AnonMeta} from "../../../../../auth/policies/types/anon-meta.js"
 import {QuestionsTables} from "../../../tables/types/questions-tables.js"
@@ -21,6 +22,6 @@ export async function spikeQuestionsAuth<
 	const auth = await basePolicy.processAuth(meta, request)
 	return {
 		...auth,
-		questionsTables: await prepareNamespacerForTables(questionsTables)(auth.access.id_app),
+		questionsTables: await prepareNamespacerForTables(questionsTables)(DamnId.fromString(auth.access.appId)),
 	}
 }

@@ -6,6 +6,7 @@ import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {standardSystem} from "./helpers/standard-system.js"
 import {appLink, platformLink} from "./helpers/constants.js"
 import {creativeSignupAndLogin} from "./helpers/creative-signup-and-login.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 
 const creativeEmail = "creative@chasemoskal.com"
 const customerEmail = "customer@chasemoskal.com"
@@ -24,7 +25,7 @@ export default <Suite>{
 		assert(ops.isReady(appModel.state.appRecords), "appRecords should be finished loading")
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "should start with zero apps")
 
-		const {id_app} = await appModel.registerApp({
+		const {appId} = await appModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
@@ -40,7 +41,7 @@ export default <Suite>{
 		}).throws()
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 1, "should still have one app")
 
-		await appModel.deleteApp(id_app)
+		await appModel.deleteApp(appId)
 		assert(Object.keys(ops.value(appModel.state.appRecords)).length === 0, "deleted app should be gone")
 	},
 
@@ -49,24 +50,24 @@ export default <Suite>{
 		const platformWindow = await system.signupAndLogin({
 			email: creativeEmail,
 			appLink: platformLink,
-			id_app: system.platformAppId,
+			appId: system.platformAppId,
 		})
 		const {appModel: platformAppModel} = platformWindow.models
 
-		const {id_app} = await platformAppModel.registerApp({
+		const {appId} = await platformAppModel.registerApp({
 			home: appLink,
 			label: "My App",
 			origins: [appOrigin],
 		})
 		assert(Object.keys(ops.value(platformAppModel.state.appRecords)).length === 1, "should now have one app")
-		const appRow = await system.backend.database.core.app.app.read(find({id_app}))
+		const appRow = await system.backend.database.core.app.app.read(find({appId: DamnId.fromString(appId)}))
 		assert(appRow, "app row must be present")
-		const app = ops.value(ops.value(platformAppModel.state.appRecords)[id_app])
+		const app = ops.value(ops.value(platformAppModel.state.appRecords)[appId])
 		assert(app, "app must be present")
 
 		// app window 1
 		await system.signupAndLogin({
-			id_app: app.id_app,
+			appId: app.appId,
 			appLink: app.home,
 			email: customerEmail,
 		})
@@ -75,7 +76,7 @@ export default <Suite>{
 		const badLink = "https://badexample.com/"
 		await expect(async() => {
 			await system.signupAndLogin({
-				id_app: app.id_app,
+				appId: app.appId,
 				appLink: badLink,
 				email: customerEmail,
 			})

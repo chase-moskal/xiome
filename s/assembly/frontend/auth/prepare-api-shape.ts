@@ -9,8 +9,8 @@ import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
 import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 
-export function prepareApiShape({id_app, storage}: {
-		id_app: string
+export function prepareApiShape({appId, storage}: {
+		appId: string
 		storage: FlexStorage
 	}) {
 
@@ -132,7 +132,7 @@ export function prepareApiShape({id_app, storage}: {
 			greenService: Service<typeof greenTopic>
 		}) {
 		authMediator = makeAuthMediator({
-			id_app,
+			appId,
 			storage,
 			greenService,
 		})

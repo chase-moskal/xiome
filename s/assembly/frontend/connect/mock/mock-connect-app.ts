@@ -26,21 +26,21 @@ export async function mockConnectApp({
 	const apiLink = apiOrigin + "/"
 	const ownerEmail = "creative@xiome.io"
 
-	let id_app = await storage.read<string>("mock-app")
-	if (!id_app) {
-		id_app = await mockRegisterApp({
+	let appId = await storage.read<string>("mock-app")
+	if (!appId) {
+		appId = await mockRegisterApp({
 			apiLink,
 			backend,
 			ownerEmail,
 			appOrigins: origins,
 		})
-		await storage.write<string>("mock-app", id_app)
+		await storage.write<string>("mock-app", appId)
 	}
 	console.log(`mock: app owner email "${ownerEmail}"`)
 
 	backend.emails.enableEmails()
 	const {remote, authMediator} = await mockWiredRemote({
-		id_app,
+		appId,
 		apiLink,
 		backend,
 		storage,
@@ -52,5 +52,5 @@ export async function mockConnectApp({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	return {id_app, remote, authMediator, backend, popups}
+	return {appId, remote, authMediator, backend, popups}
 }

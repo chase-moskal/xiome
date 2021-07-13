@@ -1,5 +1,6 @@
 
 import {Policy} from "renraku/x/types/primitives/policy.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {StorePolicyOptions} from "./types/store-policy-options.js"
 import {MerchantAuth} from "./types/contexts/merchant-auth.js"
 import {MerchantMeta} from "./types/contexts/merchant-meta.js"
@@ -19,15 +20,15 @@ export function payPolicies({
 		stripeComplex,
 	}: StorePolicyOptions) {
 
-	async function bakePayTables(id_app: string): Promise<StoreTables> {
+	async function bakePayTables(appId: DamnId): Promise<StoreTables> {
 		return {
-			billing: await prepareNamespacerForTables(tables.billing)(id_app),
-			merchant: await prepareNamespacerForTables(tables.merchant)(id_app),
+			billing: await prepareNamespacerForTables(tables.billing)(appId),
+			merchant: await prepareNamespacerForTables(tables.merchant)(appId),
 		}
 	}
 
-	async function commonAuthProcessing(authTables: AuthTables, id_app: string) {
-		const tables = {...authTables, ...await bakePayTables(id_app)}
+	async function commonAuthProcessing(authTables: AuthTables, appId: DamnId) {
+		const tables = {...authTables, ...await bakePayTables(appId)}
 		return {tables}
 	}
 
@@ -38,11 +39,11 @@ export function payPolicies({
 			const {stripeLiaisonForPlatform} = stripeComplex
 			return {
 				...auth,
-				...await commonAuthProcessing(auth.tables, auth.access.id_app),
+				...await commonAuthProcessing(auth.tables, DamnId.fromString(auth.access.appId)),
 				stripeLiaisonForPlatform,
-				async getTablesNamespacedForApp(id_app: string) {
-					const authTables = await auth.getTablesNamespacedForApp(id_app)
-					const payTables = await bakePayTables(id_app)
+				async getTablesNamespacedForApp(appId: DamnId) {
+					const authTables = await auth.getTablesNamespacedForApp(appId)
+					const payTables = await bakePayTables(appId)
 					return {...authTables, ...payTables}
 				},
 			}
@@ -53,7 +54,10 @@ export function payPolicies({
 	const prospect: Policy<ProspectMeta, ProspectAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.anon.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.access.id_app)
+			const common = await commonAuthProcessing(
+				auth.tables,
+				DamnId.fromString(auth.access.appId),
+			)
 			const {stripeLiaisonForPlatform} = stripeComplex
 			async function getStripeAccount(id: string) {
 				return stripeLiaisonForPlatform.accounts.retrieve(id)
@@ -66,7 +70,10 @@ export function payPolicies({
 	const customer: Policy<CustomerMeta, CustomerAuth> = {
 		async processAuth(meta, request) {
 			const auth = await authPolicies.user.processAuth(meta, request)
-			const common = await commonAuthProcessing(auth.tables, auth.access.id_app)
+			const common = await commonAuthProcessing(
+				auth.tables,
+				DamnId.fromString(auth.access.appId),
+			)
 			const {stripeAccountId} = await common.tables.merchant
 				.stripeAccounts
 				.one({conditions: false})

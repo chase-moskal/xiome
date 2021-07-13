@@ -19,11 +19,12 @@ export const manageAdminsTopic = ({
 			generateNickname,
 		}: AuthApiOptions) => asTopic<AppOwnerAuth>()({
 
-	async listAdmins(auth, {id_app}: {
-				id_app: string
-			}): Promise<AdminEmailDisplay[]> {
+	async listAdmins(auth, {appId: appIdString}: {
+			appId: string
+		}): Promise<AdminEmailDisplay[]> {
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
+		const appId = DamnId.fromString(appIdString)
+		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
 
 		const usersWithAdminRole = await tablesForApp.permissions.userHasRole
 			.read(find({id_role: adminRoleId}))
@@ -39,14 +40,15 @@ export const manageAdminsTopic = ({
 
 	async assignPlatformUserAsAdmin(
 			auth,
-			{id_app, platformUserId: platformUserIdString}: {
-				id_app: string
+			{appId: appIdString, platformUserId: platformUserIdString}: {
+				appId: string
 				platformUserId: string
 			}
 		) {
+		const appId = DamnId.fromString(appIdString)
 		const platformUserId = DamnId.fromString(platformUserIdString)
 		const tablesForPlatform = auth.tables
-		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
+		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
 
 		const platformAccount = await tablesForPlatform.user.accountViaEmail
 			.one(find({userId: platformUserId}))
@@ -64,12 +66,13 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async assignAdmin(auth, {id_app, email}: {
-				id_app: string
-				email: string
-			}): Promise<void> {
+	async assignAdmin(auth, {appId: appIdString, email}: {
+			appId: string
+			email: string
+		}): Promise<void> {
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
+		const appId = DamnId.fromString(appIdString)
+		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
 		const problems = emailValidator(email)
 
 		if (problems.length)
@@ -84,14 +87,15 @@ export const manageAdminsTopic = ({
 		})
 	},
 
-	async revokeAdmin(auth, {id_app, userId: userIdString}: {
-				id_app: string
-				userId: string
-			}): Promise<void> {
+	async revokeAdmin(auth, {appId: appIdString, userId: userIdString}: {
+			appId: string
+			userId: string
+		}): Promise<void> {
 
+		const appId = DamnId.fromString(appIdString)
 		const userId = DamnId.fromString(userIdString)
 
-		const tablesForApp = await auth.getTablesNamespacedForApp(id_app)
+		const tablesForApp = await auth.getTablesNamespacedForApp(appId)
 
 		await tablesForApp.permissions.userHasRole.delete(find({
 			userId,

@@ -1,6 +1,7 @@
 
 import {AuthTables} from "../../tables/types/auth-tables.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export type GreenAuth = {
-	bakeTables: (id_app: string) => Promise<AuthTables>
+	bakeTables: (appId: DamnId) => Promise<AuthTables>
 }

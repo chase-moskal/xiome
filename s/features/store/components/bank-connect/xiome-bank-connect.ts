@@ -15,16 +15,16 @@ export class XiomeBankConnect extends Component2WithShare<{
 	}> {
 
 	@property({type: String, reflect: true})
-	id_app: string
+	appId: string
 
 	@property({type: Object})
 	private stripeAccountDetails: Op<StripeAccountDetails> = ops.loading()
 
 	private refreshStripeAccountDetails = onesie(async() => {
-		if (this.id_app) {
+		if (this.appId) {
 			ops.operation({
 				setOp: op => this.stripeAccountDetails = op,
-				promise: this.share.bank.getStripeAccountDetails(this.id_app)
+				promise: this.share.bank.getStripeAccountDetails(this.appId)
 					.then(details => {
 						this.requestUpdate()
 						return details
@@ -32,7 +32,7 @@ export class XiomeBankConnect extends Component2WithShare<{
 			})
 		}
 		else {
-			const errorReason = "missing id_app for xiome-bank-connect"
+			const errorReason = "missing appId for xiome-bank-connect"
 			this.stripeAccountDetails = ops.error(errorReason)
 			console.warn(errorReason)
 		}
@@ -44,7 +44,7 @@ export class XiomeBankConnect extends Component2WithShare<{
 
 	// TODO implement
 	private async clickSetupPayouts() {
-		await this.share.bank.setupStripeAccount(this.id_app)
+		await this.share.bank.setupStripeAccount(this.appId)
 		await this.refreshStripeAccountDetails()
 	}
 

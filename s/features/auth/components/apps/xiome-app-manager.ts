@@ -43,8 +43,8 @@ export class XiomeAppManager extends Component3WithShare<{
 		},
 	})
 
-	private getAppState = strongRecordKeeper<string>()(id_app => {
-		const app = this.share.appModel.getApp(id_app)
+	private getAppState = strongRecordKeeper<string>()(appId => {
+		const app = this.share.appModel.getApp(appId)
 
 		const {actions, getState, onStateChange} = happystate({
 			state: {editMode: false},
@@ -65,12 +65,12 @@ export class XiomeAppManager extends Component3WithShare<{
 				requestUpdate: () => { this.requestUpdate() },
 				query: selector => (
 					this.shadowRoot
-						.querySelector(`.app[data-app-id="${app.id_app}"] .app-options`)
+						.querySelector(`.app[data-app-id="${app.appId}"] .app-options`)
 						.querySelector(selector)
 				),
 				submit: async formDraft => {
 					const appDraft = formDraftToAppDraft(formDraft)
-					await this.share.appModel.updateApp(app.id_app, appDraft)
+					await this.share.appModel.updateApp(app.appId, appDraft)
 				},
 			}),
 			adminManager: (() => {
@@ -78,7 +78,7 @@ export class XiomeAppManager extends Component3WithShare<{
 					app,
 					manageAdminsService: this.share.appModel.manageAdminsService,
 					query: selector => this.shadowRoot
-						.querySelector(`.app[data-app-id="${app.id_app}"] .adminmanager`)
+						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
 						.querySelector(selector)
 				})
 				manager.track({
@@ -100,7 +100,7 @@ export class XiomeAppManager extends Component3WithShare<{
 			focusNthElement: 2,
 		})
 		if (userIsSure)
-			await this.share.appModel.deleteApp(app.id_app)
+			await this.share.appModel.deleteApp(app.appId)
 	}
 
 	private renderAppRegistration() {
@@ -124,7 +124,7 @@ export class XiomeAppManager extends Component3WithShare<{
 			<slot></slot>
 			<div class=app-list>
 				${Object.entries(records)
-					.map(([id_app, record]) =>
+					.map(([appId, record]) =>
 						renderOp(record, app => this.renderApp(app)))}
 			</div>
 			${this.renderAppRegistration()}
@@ -136,18 +136,18 @@ export class XiomeAppManager extends Component3WithShare<{
 		// return html`
 		// 	<div>
 		// 		<h4>bank link to receive payouts</h4>
-		// 		<xiome-bank-connect .id_app=${app.id_app}></xiome-bank-connect>
+		// 		<xiome-bank-connect .appId=${app.appId}></xiome-bank-connect>
 		// 	</div>
 		// `
 	}
 
-	private renderAppCode(id_app: string) {
+	private renderAppCode(appId: string) {
 		return html`
 			<div class=app-code>
 				<h4>connect your website</h4>
 				<p>copy-paste this html into your website's &lt;head&gt; section:</p>
 				<code class=htmlcode>
-					${renderXiomeConfig(id_app)}
+					${renderXiomeConfig(appId)}
 				</code>
 				<p>then head over to the <a part=link href="./components">components page</a></p>
 			</div>
@@ -155,9 +155,9 @@ export class XiomeAppManager extends Component3WithShare<{
 	}
 
 	private renderApp(app: AppDisplay) {
-		const appState = this.getAppState(app.id_app)
+		const appState = this.getAppState(app.appId)
 		return html`
-			<div class=app data-app-id=${app.id_app}>
+			<div class=app data-app-id=${app.appId}>
 
 				<div class=app-header part=app-header>
 					<div class=title>
@@ -184,7 +184,7 @@ export class XiomeAppManager extends Component3WithShare<{
 				</div>
 
 				<div class=twoside>
-					${this.renderAppCode(app.id_app)}
+					${this.renderAppCode(app.appId)}
 					<div class=editside>
 						<div class=buttons>
 							<xio-button @click=${appState.toggleEditMode}>edit community</xio-button>

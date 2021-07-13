@@ -21,8 +21,8 @@ export function prepareStatsHub({tables}: {
 	return async function getStatsHub(userIdString: string): Promise<StatsHub> {
 		const userId = DamnId.fromString(userIdString)
 
-		async function throwForbiddenUser(id_app: string) {
-			const row = await tables.app.appOwnership.one(find({id_app}))
+		async function throwForbiddenUser(appId: DamnId) {
+			const row = await tables.app.appOwnership.one(find({appId}))
 			if (row.userId !== userId)
 				throw new ApiError(403, "forbidden")
 		}
@@ -34,29 +34,29 @@ export function prepareStatsHub({tables}: {
 		}
 
 		return {
-			countUsers: async id_app => {
-				await throwForbiddenUser(id_app)
+			countUsers: async appId => {
+				await throwForbiddenUser(appId)
 				return exposeNamespacing(tables.user.account)
-					.count(find({[namespaceKeyAppId]: id_app}))
+					.count(find({[namespaceKeyAppId]: appId}))
 			},
-			countUsersActiveDaily: async id_app => {
-				await throwForbiddenUser(id_app)
+			countUsersActiveDaily: async appId => {
+				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - day
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {[namespaceKeyAppId]: id_app}},
+							{equal: {[namespaceKeyAppId]: appId}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})
 			},
-			countUsersActiveMonthly: async id_app => {
-				await throwForbiddenUser(id_app)
+			countUsersActiveMonthly: async appId => {
+				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - month
 				return exposeNamespacing(tables.user.latestLogin)
 					.count({
 						conditions: and(
-							{equal: {[namespaceKeyAppId]: id_app}},
+							{equal: {[namespaceKeyAppId]: appId}},
 							{greater: {time: timeToStartCounting}},
 						)
 					})

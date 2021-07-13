@@ -6,17 +6,17 @@ import {prepareApiShape} from "./auth/prepare-api-shape.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 
 export function makeRemote({
-		id_app,
+		appId,
 		apiLink,
 		storage,
 	}: {
-		id_app: string
+		appId: string
 		apiLink: string
 		storage: FlexStorage
 	}) {
 
 	const {shape, installAuthMediator} = prepareApiShape({
-		id_app,
+		appId,
 		storage,
 	})
 

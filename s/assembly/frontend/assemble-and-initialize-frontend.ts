@@ -10,9 +10,9 @@ import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.
 import {loginWithLinkTokenOrUseExistingLogin} from "./auth/login-with-link-token-or-use-existing-login.js"
 
 export async function assembleAndInitializeFrontend({
-		id_app, popups, authMediator, remote,
+		appId, popups, authMediator, remote,
 	}: {
-		id_app: string
+		appId: string
 		popups: SystemPopups
 		authMediator: AuthMediator
 		remote: ToRemote<SystemApi>
@@ -22,7 +22,7 @@ export async function assembleAndInitializeFrontend({
 
 	const {modals, modalsElement} = setupModalSystem()
 	const models = await assembleModels({
-		id_app,
+		appId,
 		remote,
 		popups,
 		storage,

@@ -14,7 +14,7 @@ export async function creativeSignupAndLogin(email: string) {
 		apiLink,
 		latency,
 		windowLink: platformLink,
-		id_app: system.platformAppId,
+		appId: system.platformAppId,
 	})
 
 	await windowForSignup.models.authModel.sendLoginLink(email)
@@ -22,7 +22,7 @@ export async function creativeSignupAndLogin(email: string) {
 	const windowForLogin = await browser.mockAppWindow({
 		apiLink,
 		latency,
-		id_app: system.platformAppId,
+		appId: system.platformAppId,
 		windowLink: makeLoginLink({
 			home: platformLink,
 			loginToken: system.backend.emails.recallLatestLoginEmail().loginToken,

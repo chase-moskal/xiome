@@ -6,13 +6,13 @@ import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-stora
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
 
 export async function connect({
-		id_app,
+		appId,
 		apiOrigin = "https://api.xiome.io",
 		platformOrigin = "https://xiome.io"
 	}: XiomeConfigConnected) {
 
 	const {remote, authMediator} = makeRemote({
-		id_app,
+		appId,
 		apiLink: `${apiOrigin}/`,
 		storage: simpleFlexStorage(window.localStorage),
 	})
@@ -21,5 +21,5 @@ export async function connect({
 
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 
-	return {id_app, remote, authMediator, popups}
+	return {appId, remote, authMediator, popups}
 }

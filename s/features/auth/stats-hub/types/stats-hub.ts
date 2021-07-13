@@ -1,6 +1,8 @@
 
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+
 export interface StatsHub {
-	countUsers(id_app: string): Promise<number>
-	countUsersActiveDaily(id_app: string): Promise<number>
-	countUsersActiveMonthly(id_app: string): Promise<number>
+	countUsers(appId: DamnId): Promise<number>
+	countUsersActiveDaily(appId: DamnId): Promise<number>
+	countUsersActiveMonthly(appId: DamnId): Promise<number>
 }

@@ -12,13 +12,13 @@ import {storageCache} from "../../../../toolbox/flex-storage/cache/storage-cache
 import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function ecommerceShare({
-		id_app,
+		appId,
 		storage,
 		statusCheckerService,
 		statusTogglerService,
 		core: {state, actions},
 	}: {
-		id_app: string
+		appId: string
 		storage: FlexStorage
 		core: ReturnType<typeof storeCore>
 		statusCheckerService: Service<typeof statusCheckerTopic>
@@ -28,7 +28,7 @@ export function ecommerceShare({
 	const cache = storageCache({
 		lifespan: 5 * minute,
 		storage,
-		storageKey: `cache-store-status-${id_app}`,
+		storageKey: `cache-store-status-${appId}`,
 		load: onesie(statusCheckerService.getStoreStatus),
 	})
 

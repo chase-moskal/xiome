@@ -1,6 +1,7 @@
 
 import {AppRow} from "../../types/rows/app-row.js"
 import {AppTables} from "../../types/table-groups/app-tables.js"
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {dbbyMemory} from "../../../../../toolbox/dbby/dbby-memory.js"
 import {dbbyHardback} from "../../../../../toolbox/dbby/dbby-hardback.js"
 import {originsToDatabase} from "../../../topics/origins/origins-to-database.js"
@@ -18,7 +19,7 @@ export function bakeryForAppTables({config, appTables}: {
 				frontTable: appTables.app,
 				backTable: await dbbyMemory<AppRow>([
 					{
-						id_app: platformApp.id_app,
+						appId: DamnId.fromString(platformApp.appId),
 						home: platformApp.home,
 						label: platformApp.label,
 						origins: originsToDatabase(platformApp.origins),

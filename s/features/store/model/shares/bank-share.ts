@@ -18,12 +18,12 @@ export function bankShare({
 		get access() {
 			return state.access
 		},
-		async getStripeAccountDetails(id_app: string) {
-			return stripeAccountsService.getConnectDetails({id_app})
+		async getStripeAccountDetails(appId: string) {
+			return stripeAccountsService.getConnectDetails({appId})
 		},
-		async setupStripeAccount(id_app: string) {
+		async setupStripeAccount(appId: string) {
 			await triggerBankPopup(
-				await stripeAccountsService.generateConnectSetupLink({id_app})
+				await stripeAccountsService.generateConnectSetupLink({appId})
 			)
 		},
 	}

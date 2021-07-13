@@ -12,17 +12,16 @@ import {PermissionsEngine} from "../../../../assembly/backend/permissions2/types
 
 export async function signAuthTokens({
 			scope,
-			id_app,
+			appId,
 			userId,
 			tables,
 			origins,
 			lifespans,
 			permissionsEngine,
 			signToken,
-			generateNickname,
 		}: {
 			scope: Scope
-			id_app: string
+			appId: string
 			userId: DamnId
 			origins: string[]
 			tables: AuthTables
@@ -32,7 +31,6 @@ export async function signAuthTokens({
 				refresh: number
 			}
 			signToken: SignToken
-			generateNickname: () => string
 		}) {
 
 	const {user, permit} = await concurrent({
@@ -44,7 +42,7 @@ export async function signAuthTokens({
 
 	return concurrent({
 		accessToken: signToken<AccessPayload>({
-			payload: {id_app, origins, user, permit, scope},
+			payload: {appId, origins, user, permit, scope},
 			lifespan: lifespans.access,
 		}),
 		refreshToken: signToken<RefreshPayload>({

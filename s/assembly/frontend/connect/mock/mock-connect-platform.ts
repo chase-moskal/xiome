@@ -19,10 +19,10 @@ export async function mockConnectPlatform({
 	}))
 
 	const apiLink = apiOrigin + "/"
-	const id_app = backend.platformAppId
+	const appId = backend.platformAppId
 
 	const {remote, authMediator} = await mockWiredRemote({
-		id_app,
+		appId,
 		apiLink,
 		backend,
 		storage,
@@ -34,5 +34,5 @@ export async function mockConnectPlatform({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	return {id_app, remote, authMediator, backend, popups}
+	return {appId, remote, authMediator, backend, popups}
 }

@@ -23,7 +23,8 @@ export const loginTopic = ({
 			{access, tables},
 			{email}: {email: string},
 		) {
-		const appRow = await tables.app.app.one(find({id_app: access.id_app}))
+		const appId = DamnId.fromString(access.appId)
+		const appRow = await tables.app.app.one(find({appId}))
 		const {userId} = await assertEmailAccount({
 			rando, email, config, tables, generateNickname,
 		})
@@ -52,15 +53,14 @@ export const loginTopic = ({
 			userId,
 			tables,
 			scope: {core: true},
-			id_app: access.id_app,
+			appId: access.appId,
 			origins: access.origins,
 			lifespans: config.crypto.tokenLifespans,
 			permissionsEngine: makePermissionsEngine({
-				isPlatform: access.id_app === config.platform.appDetails.id_app,
+				isPlatform: access.appId === config.platform.appDetails.appId,
 				permissionsTables: tables.permissions,
 			}),
 			signToken,
-			generateNickname,
 		})
 
 		await tables.user.latestLogin.update({
@@ -96,7 +96,7 @@ export const loginTopic = ({
 	// 			user,
 	// 			scope,
 	// 			permit,
-	// 			id_app: access.id_app,
+	// 			appId: access.appId,
 	// 			origins: access.origins,
 	// 		},
 	// 	})

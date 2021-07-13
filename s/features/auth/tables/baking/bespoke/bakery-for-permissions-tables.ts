@@ -13,15 +13,15 @@
 // 		}) {
 
 // 	return async function bakePermissionsTables(
-// 				id_app: string
+// 				appId: string
 // 			): Promise<PermissionsTables> {
 
 // 		const hardPermissionsTables: PermissionsTables = (
 // 			await transformHardPermissionsToMemoryTables({
-// 				id_app,
+// 				appId,
 // 				namespaceKeyAppId,
 // 				hardPermissions: (
-// 					isPlatform(id_app, config)
+// 					isPlatform(appId, config)
 // 						? config.permissions.platform
 // 						: config.permissions.app
 // 				),
@@ -47,6 +47,6 @@
 // 			}),
 // 		}
 
-// 		return prepareNamespacerForTables(hardbackedPermissionsTables)(id_app)
+// 		return prepareNamespacerForTables(hardbackedPermissionsTables)(appId)
 // 	}
 // }

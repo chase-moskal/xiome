@@ -2,7 +2,7 @@
 import {validator, depend as d, string, each, length, minLength, maxLength, notWhitespace, origin} from "../../../../toolbox/darkvalley.js"
 
 export const appTokenDraftValidators = Object.freeze({
-	id_app: validator<string>(d(
+	appId: validator<string>(d(
 		string(),
 		length(48),
 	)),
