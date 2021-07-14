@@ -53,12 +53,12 @@ export function makeQuestionsModel({
 				state.questions = [...merge<Question>(
 					newQuestions,
 					state.questions,
-					(a, b) => a.id_question === b.id_question,
+					(a, b) => a.questionId === b.questionId,
 				)]
 			},
-			setQuestionLike(id_question: string, like: boolean) {
+			setQuestionLike(questionId: string, like: boolean) {
 				state.questions = state.questions.map(question =>
-					question.id_question === id_question
+					question.questionId === questionId
 						? {
 							...question,
 							liked: like,
@@ -71,9 +71,9 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setQuestionReport(id_question: string, report: boolean) {
+			setQuestionReport(questionId: string, report: boolean) {
 				state.questions = state.questions.map(question =>
-					question.id_question === id_question
+					question.questionId === questionId
 						? {
 							...question,
 							reported: report,
@@ -86,9 +86,9 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setQuestionArchive(id_question: string, archive: boolean) {
+			setQuestionArchive(questionId: string, archive: boolean) {
 				state.questions = state.questions.map(question =>
-					question.id_question === id_question
+					question.questionId === questionId
 						? {...question, archive}
 						: {...question}
 				)
@@ -179,34 +179,34 @@ export function makeQuestionsModel({
 				actions.addUsers([access.user])
 			},
 
-			async likeQuestion(id_question: string, like: boolean) {
+			async likeQuestion(questionId: string, like: boolean) {
 				await questionsPostingService.likeQuestion({
 					like,
-					id_question,
+					questionId,
 				})
-				actions.setQuestionLike(id_question, like)
+				actions.setQuestionLike(questionId, like)
 			},
 
-			async reportQuestion(id_question: string, report: boolean) {
+			async reportQuestion(questionId: string, report: boolean) {
 				await questionsPostingService.reportQuestion({
 					report,
-					id_question,
+					questionId,
 				})
-				actions.setQuestionReport(id_question, report)
+				actions.setQuestionReport(questionId, report)
 			},
 
-			async archiveQuestion(id_question: string, archive: boolean) {
+			async archiveQuestion(questionId: string, archive: boolean) {
 				await questionsPostingService.archiveQuestion({
 					archive,
-					id_question,
+					questionId,
 				})
-				actions.setQuestionArchive(id_question, archive)
+				actions.setQuestionArchive(questionId, archive)
 			},
 
 			async archiveBoard() {
 				await questionsModerationService.archiveBoard({board})
 				for (const question of getState().questions)
-					actions.setQuestionArchive(question.id_question, true)
+					actions.setQuestionArchive(question.questionId, true)
 			},
 		}
 	}

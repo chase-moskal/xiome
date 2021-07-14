@@ -46,7 +46,7 @@ export function renderQuestion({
 	}
 
 	return html`
-		<li data-question-id="${question.id_question}">
+		<li data-question-id="${question.questionId}">
 			<div class=question-expression>
 				<div class=question-voting>
 					<button

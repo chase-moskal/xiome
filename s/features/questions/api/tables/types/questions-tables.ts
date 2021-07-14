@@ -1,4 +1,5 @@
 
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
 
 export type QuestionsTables = {
@@ -8,8 +9,8 @@ export type QuestionsTables = {
 }
 
 export type QuestionPostRow = {
-	id_question: string
-	authorUserId: string
+	questionId: DamnId
+	authorUserId: DamnId
 	board: string
 	content: string
 	archive: boolean
@@ -17,11 +18,11 @@ export type QuestionPostRow = {
 }
 
 export type QuestionLikeRow = {
-	userId: string
-	id_question: string
+	userId: DamnId
+	questionId: DamnId
 }
 
 export type QuestionReportRow = {
-	userId: string
-	id_question: string
+	userId: DamnId
+	questionId: DamnId
 }

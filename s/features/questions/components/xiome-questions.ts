@@ -107,7 +107,7 @@ export class XiomeQuestions extends Component2WithShare<{
 		return html`
 			<ol class=questionslist>
 				${questions.map(question => {
-					const {id_question, authorUserId} = question
+					const {questionId, authorUserId} = question
 					const author = this.#boardModel.getUser(authorUserId)
 
 					const isAuthor = (access && access.user)
@@ -125,11 +125,11 @@ export class XiomeQuestions extends Component2WithShare<{
 							focusNthElement: 2,
 						})
 						if (confirmed)
-							await this.#boardModel.archiveQuestion(id_question, true)
+							await this.#boardModel.archiveQuestion(questionId, true)
 					}
 
 					const handleLike = (like: boolean) => {
-						this.#boardModel.likeQuestion(id_question, like)
+						this.#boardModel.likeQuestion(questionId, like)
 					}
 
 					const handleReport = async(report: boolean) => {
@@ -143,7 +143,7 @@ export class XiomeQuestions extends Component2WithShare<{
 							})
 							: true
 						if (confirmed)
-							await this.#boardModel.reportQuestion(id_question, report)
+							await this.#boardModel.reportQuestion(questionId, report)
 					}
 
 					return renderQuestion({

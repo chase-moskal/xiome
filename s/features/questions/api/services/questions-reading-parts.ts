@@ -1,6 +1,5 @@
 
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
 import {AnonMeta} from "../../../auth/policies/types/anon-meta.js"
 import {AnonAuth} from "../../../auth/policies/types/anon-auth.js"
@@ -47,7 +46,7 @@ export const questionsReadingParts = (
 				users = await fetchUsers({
 					permissionsEngine,
 					authTables: tables,
-					userIds: posts.map(p => DamnId.fromString(p.authorUserId)),
+					userIds: posts.map(p => p.authorUserId),
 				})
 
 				questions = await resolveQuestions({

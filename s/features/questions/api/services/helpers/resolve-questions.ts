@@ -9,34 +9,40 @@ export async function resolveQuestions({userId, posts, questionsTables}: {
 		questionsTables: QuestionsTables
 	}) {
 
-	const ids = posts.map(post => post.id_question)
+	const ids = posts.map(post => post.questionId)
 
 	const likes = ids.length
 		? await questionsTables.questionLikes.read({
-			conditions: or(...ids.map(id => ({equal: {id_question: id}})))
+			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
 		})
 		: []
 
 	const reports = ids.length
 		? await questionsTables.questionReports.read({
-			conditions: or(...ids.map(id => ({equal: {id_question: id}})))
+			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
 		})
 		: []
 
 	return ids.map(id => {
-		const questionPost = posts.find(post => post.id_question === id)
-		const questionLikes = likes.filter(like => like.id_question === id)
-		const questionReports = reports.filter(report => report.id_question === id)
+		const questionPost = posts.find(post => post.questionId === id)
+		const questionLikes = likes.filter(like => like.questionId === id)
+		const questionReports = reports.filter(report => report.questionId === id)
 
-		const userLike = questionLikes.find(like => like.userId === userId)
-		const userReport = questionReports.find(report => report.userId === userId)
+		const userLike = questionLikes.find(like => like.userId.toString() === userId)
+		const userReport = questionReports.find(report => report.userId.toString() === userId)
 
 		return <Question>{
-			...questionPost,
 			likes: questionLikes.length,
 			reports: questionReports.length,
 			liked: !!userLike,
 			reported: !!userReport,
+
+			archive: questionPost.archive,
+			authorUserId: questionPost.authorUserId.toString(),
+			questionId: questionPost.questionId.toString(),
+			board: questionPost.board,
+			content: questionPost.content,
+			timePosted: questionPost.timePosted,
 		}
 	})
 }
