@@ -19,30 +19,24 @@ function skimMongoId<Row extends DbbyRow>(row: Row): Row {
 }
 
 export function valueUp(value: any, key: string): any {
-	return key.startsWith("id_")
-		? new Binary(Buffer.from(DamnId.fromString(value).binary))
-		: value instanceof DamnId
-			? new Binary(Buffer.from(value.binary))
-			: value
+	return value instanceof DamnId
+		? new Binary(Buffer.from(value.binary))
+		: value
 }
 
 export function valueDown(value: any, key: string): any {
-	return key.startsWith("id_")
+	return value instanceof Binary
 		? new DamnId(toArrayBuffer(value.buffer)).string
-		: value instanceof Binary
-			? new DamnId(toArrayBuffer(value.buffer)).string
-			: value
+		: value
 }
 
 // process a row before it's sent to mongo
-// - transform any id_* to mongo binary type
 // - transform any damnid to mongo binary type
 export function up<Row extends DbbyRow>(row: Partial<Row>): any {
 	return objectMap(row, valueUp)
 }
 
 // process a row retrieved from mongo
-// - transform any id_* from mongo binary to strings via damnid
 // - transform any binary types into damnid
 export function down<Row extends DbbyRow>(data: any): Row {
 	return (data && typeof data === "object")
