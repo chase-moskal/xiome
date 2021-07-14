@@ -5,6 +5,6 @@ export type SubscriptionRow = {
 	userId: string
 	active: boolean
 	renewalTime: number
-	id_subscriptionPlan: string
+	subscriptionPlanId: string
 	stripeSubscriptionId: string
 } & CardClues

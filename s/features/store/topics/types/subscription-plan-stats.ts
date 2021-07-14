@@ -1,5 +1,5 @@
 
 export interface SubscriptionPlanStats {
-	id_subscriptionPlan: string
+	subscriptionPlanId: string
 	subscribers: number
 }

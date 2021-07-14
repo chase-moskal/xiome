@@ -2,7 +2,7 @@
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 
 export type SubscriptionPlanRow = {
-	id_subscriptionPlan: string
+	subscriptionPlanId: DamnId
 	price: number
 	roleId: DamnId
 	active: boolean

@@ -79,11 +79,11 @@ export function mockLiaisonUtils({rando, tables}: {
 				userId,
 				customer,
 				setupIntent,
-				id_subscription,
+				subscriptionId,
 			}: {
 				userId: string
 				customer: MockCustomer
-				id_subscription: string
+				subscriptionId: string
 				setupIntent: MockSetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
@@ -95,7 +95,7 @@ export function mockLiaisonUtils({rando, tables}: {
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",
 					customer_id: customer.id,
-					subscription_id: id_subscription,
+					subscription_id: subscriptionId,
 				},
 			}
 		},

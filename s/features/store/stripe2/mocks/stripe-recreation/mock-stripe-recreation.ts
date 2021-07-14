@@ -31,11 +31,11 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 				userId,
 				customer,
 				setupIntent,
-				id_subscription,
+				subscriptionId,
 			}: {
 				userId: string
 				customer: Stripe.Customer
-				id_subscription: string
+				subscriptionId: string
 				setupIntent: Stripe.SetupIntent
 			}): Partial<Stripe.Checkout.Session> {
 			return {
@@ -47,7 +47,7 @@ export function mockStripeInitializers({rando}: {rando: Rando}) {
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",
 					customer_id: customer.id,
-					subscription_id: id_subscription,
+					subscription_id: subscriptionId,
 				},
 			}
 		},

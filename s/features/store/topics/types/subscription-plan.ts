@@ -1,6 +1,6 @@
 
 export interface SubscriptionPlan {
-	id_subscriptionPlan: string
+	subscriptionPlanId: string
 	price: number
 	label: string
 	active: boolean

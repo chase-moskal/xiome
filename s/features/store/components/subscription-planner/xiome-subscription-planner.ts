@@ -39,7 +39,7 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 					focusNthElement: 2,
 				})
 				if (confirmed)
-					subscriptionPlanning.deactivatePlan(plan.id_subscriptionPlan)
+					subscriptionPlanning.deactivatePlan(plan.subscriptionPlanId)
 			}
 
 			async function handleDelete() {
@@ -51,7 +51,7 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 					focusNthElement: 2,
 				})
 				if (confirmed)
-					subscriptionPlanning.deletePlan(plan.id_subscriptionPlan)
+					subscriptionPlanning.deletePlan(plan.subscriptionPlanId)
 			}
 
 			return html`
@@ -70,7 +70,7 @@ export class XiomeSubscriptionPlanner extends Component2WithShare<{
 						<div class=details>
 							<xio-id
 								label="plan id"
-								id="${plan.id_subscriptionPlan}"
+								id="${plan.subscriptionPlanId}"
 							></xio-id>
 							<xio-id
 								label="role id"

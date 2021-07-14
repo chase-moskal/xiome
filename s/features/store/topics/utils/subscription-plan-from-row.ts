@@ -8,10 +8,10 @@ export function subscriptionPlanFromRow({role, plan}: {
 		plan: SubscriptionPlanRow
 	}) {
 	return <SubscriptionPlan>{
-		id_subscriptionPlan: plan.id_subscriptionPlan,
+		subscriptionPlanId: plan.subscriptionPlanId.toString(),
+		roleId: role.roleId.toString(),
 		label: role.label,
 		price: plan.price,
 		active: plan.active,
-		roleId: role.roleId.toString(),
 	}
 }

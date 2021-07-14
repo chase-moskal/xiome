@@ -79,15 +79,15 @@ export function subscriptionPlanningShare({
 		})
 	}
 
-	async function deactivatePlan(id_subscriptionPlan: string) {
+	async function deactivatePlan(subscriptionPlanId: string) {
 		return listAfterwards(
-			() => shopkeepingService.deactivateSubscriptionPlan({id_subscriptionPlan})
+			() => shopkeepingService.deactivateSubscriptionPlan({subscriptionPlanId})
 		)
 	}
 
-	async function deletePlan(id_subscriptionPlan: string) {
+	async function deletePlan(subscriptionPlanId: string) {
 		return listAfterwards(
-			() => shopkeepingService.deleteSubscriptionPlan({id_subscriptionPlan})
+			() => shopkeepingService.deleteSubscriptionPlan({subscriptionPlanId})
 		)
 	}
 

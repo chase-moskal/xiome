@@ -68,7 +68,7 @@ export const shopkeepingTopic = ({generateId}: {
 			roleId: role.roleId,
 			stripePriceId: stripePrice.id,
 			stripeProductId: stripeProduct.id,
-			id_subscriptionPlan: generateId().toString(),
+			subscriptionPlanId: generateId(),
 		}
 
 		await Promise.all([
@@ -81,12 +81,13 @@ export const shopkeepingTopic = ({generateId}: {
 
 	async updateSubscriptionPlan(
 		{tables, stripeLiaisonForApp},
-		{id_subscriptionPlan, draft}: {
-			id_subscriptionPlan: string
+		{subscriptionPlanId: planIdString, draft}: {
+			subscriptionPlanId: string
 			draft: SubscriptionPlanDraft
 		}) {
 
 		apiProblems(validateSubscriptionPlanDraft(draft))
+		const subscriptionPlanId = DamnId.fromString(planIdString)
 
 		const stripeNewPrice = await stripeLiaisonForApp.prices.create({
 			unit_amount: draft.price,
@@ -95,7 +96,7 @@ export const shopkeepingTopic = ({generateId}: {
 		})
 
 		await tables.billing.subscriptionPlans.update({
-			...find({id_subscriptionPlan}),
+			...find({subscriptionPlanId}),
 			write: {
 				stripePriceId: stripeNewPrice.id,
 				price: stripeNewPrice.unit_amount,
@@ -103,7 +104,7 @@ export const shopkeepingTopic = ({generateId}: {
 		})
 
 		const plan = await tables.billing.subscriptionPlans
-			.one(find({id_subscriptionPlan}))
+			.one(find({subscriptionPlanId}))
 
 		await tables.permissions.role.update({
 			...find({roleId: plan.roleId}),
@@ -118,11 +119,12 @@ export const shopkeepingTopic = ({generateId}: {
 
 	async deactivateSubscriptionPlan(
 			{tables, stripeLiaisonForApp},
-			{id_subscriptionPlan}: {id_subscriptionPlan: string},
+			{subscriptionPlanId: planIdString}: {subscriptionPlanId: string},
 		) {
 
+		const subscriptionPlanId = DamnId.fromString(planIdString)
 		const {stripePriceId} = await tables.billing.subscriptionPlans
-			.one(find({id_subscriptionPlan}))
+			.one(find({subscriptionPlanId}))
 
 		await stripeLiaisonForApp.prices
 			.update(stripePriceId, {active: false})
@@ -130,25 +132,26 @@ export const shopkeepingTopic = ({generateId}: {
 		// TODO cancel all stripe subscriptions
 
 		await tables.billing.subscriptionPlans.update({
-			...find({id_subscriptionPlan}),
+			...find({subscriptionPlanId}),
 			write: {active: false},
 		})
 	},
 
 	async deleteSubscriptionPlan(
 			{tables},
-			{id_subscriptionPlan}: {id_subscriptionPlan: string}
+			{subscriptionPlanId: planIdString}: {subscriptionPlanId: string}
 		) {
 
+		const subscriptionPlanId = DamnId.fromString(planIdString)
 		const {roleId, active} = await tables.billing.subscriptionPlans
-			.one(find({id_subscriptionPlan}))
+			.one(find({subscriptionPlanId}))
 
 		if (active)
 			throw new ApiError(400, `deleting active subscriptions is forbidden`)
 
 		await Promise.all([
 			tables.permissions.role.delete(find({roleId})),
-			tables.billing.subscriptionPlans.delete(find({id_subscriptionPlan})),
+			tables.billing.subscriptionPlans.delete(find({subscriptionPlanId})),
 		])
 	},
 })
