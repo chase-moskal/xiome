@@ -9,7 +9,7 @@ import {StatsHub} from "./types/stats-hub.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AppTables} from "../tables/types/table-groups/app-tables.js"
 import {UserTables} from "../tables/types/table-groups/user-tables.js"
-import {namespaceKeyAppId} from "../tables/constants/namespace-key-app-id.js"
+import {namespaceKeyAppId} from "../../../framework/api/namespace-key-app-id.js"
 import {ExposeTableNamespaceAppId} from "../tables/types/utils/expose-table-namespace-app-id.js"
 
 export function prepareStatsHub({tables}: {

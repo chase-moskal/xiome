@@ -1,6 +1,6 @@
 
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {namespaceKeyAppId} from "../../constants/namespace-key-app-id.js"
+import {namespaceKeyAppId} from "../../../../../framework/api/namespace-key-app-id.js"
 import {DbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
 import {prepareConstrainTables} from "../../../../../toolbox/dbby/dbby-constrain.js"
 
