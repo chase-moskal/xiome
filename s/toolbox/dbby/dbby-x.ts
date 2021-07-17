@@ -1,6 +1,7 @@
 
 import {DamnId} from "../damnedb/damn-id.js"
 export {and, or, find} from "./dbby-helpers.js"
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
 import {FlexStorage} from "../flex-storage/types/flex-storage.js"
 import {DbbyRow, DbbyTable, DbbyCondition, DbbyConditional, DbbyUpdateAmbiguated, DbbyConditionTree, DbbyConditions} from "./dbby-types.js"
 
@@ -145,70 +146,73 @@ export async function dbbyX<Row extends DbbyRow>(
 		return {groupOfFunctionsQueueInSequence}
 	})()
 
-	return sequential.groupOfFunctionsQueueInSequence({
-		async create(...rows) {
-			await writers.insert(...rows)
-		},
+	return {
+		[_dbbyTableSymbol]: true,
+		...sequential.groupOfFunctionsQueueInSequence({
+			async create(...rows) {
+				await writers.insert(...rows)
+			},
 
-		async read({order, offset = 0, limit = 1000, ...conditional}) {
-			const rows = await readers.select(conditional)
-			if (order) {
-				for (const [key, value] of Object.entries(order)) {
-					rows.sort((a, b) =>
-						value === "ascend"
-							? a[key] > b[key] ? 1 : -1
-							: a[key] > b[key] ? -1 : 1
-					)
+			async read({order, offset = 0, limit = 1000, ...conditional}) {
+				const rows = await readers.select(conditional)
+				if (order) {
+					for (const [key, value] of Object.entries(order)) {
+						rows.sort((a, b) =>
+							value === "ascend"
+								? a[key] > b[key] ? 1 : -1
+								: a[key] > b[key] ? -1 : 1
+						)
+					}
 				}
-			}
-			return rows.slice(offset, offset + limit)
-		},
+				return rows.slice(offset, offset + limit)
+			},
 
-		async one(conditional) {
-			return readers.selectOne(conditional)
-		},
+			async one(conditional) {
+				return readers.selectOne(conditional)
+			},
 
-		async assert({make, ...conditional}) {
-			let row = await readers.selectOne(conditional)
-			if (!row) {
-				const made = await make()
-				await writers.insert(made)
-				row = made
-			}
-			return row
-		},
+			async assert({make, ...conditional}) {
+				let row = await readers.selectOne(conditional)
+				if (!row) {
+					const made = await make()
+					await writers.insert(made)
+					row = made
+				}
+				return row
+			},
 
-		async update({
-				write,
-				whole,
-				upsert,
-				...conditional
-			}: DbbyUpdateAmbiguated<Row>) {
-			const rows = await readers.select(conditional)
-			if (write && rows.length) {
-				await writers.applyPatchToRows(conditional, write)
-			}
-			else if (upsert) {
-				if (rows.length)
-					await writers.applyPatchToRows(conditional, upsert)
-				else
-					await writers.insert(upsert)
-			}
-			else if (whole) {
+			async update({
+					write,
+					whole,
+					upsert,
+					...conditional
+				}: DbbyUpdateAmbiguated<Row>) {
+				const rows = await readers.select(conditional)
+				if (write && rows.length) {
+					await writers.applyPatchToRows(conditional, write)
+				}
+				else if (upsert) {
+					if (rows.length)
+						await writers.applyPatchToRows(conditional, upsert)
+					else
+						await writers.insert(upsert)
+				}
+				else if (whole) {
+					await writers.eliminateRow(conditional)
+					await writers.insert(whole)
+				}
+				else throw new Error("invalid update")
+			},
+
+			async delete(conditional) {
 				await writers.eliminateRow(conditional)
-				await writers.insert(whole)
-			}
-			else throw new Error("invalid update")
-		},
+			},
 
-		async delete(conditional) {
-			await writers.eliminateRow(conditional)
-		},
-
-		async count(conditional) {
-			return (await readers.select(conditional)).length
-		},
-	})
+			async count(conditional) {
+				return (await readers.select(conditional)).length
+			},
+		})
+	}
 }
 
 function compare<Row>(

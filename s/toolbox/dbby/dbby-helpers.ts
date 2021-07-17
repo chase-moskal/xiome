@@ -1,4 +1,5 @@
 
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
 import {DbbyRow, DbbyConditionLeaf} from "./dbby-types.js"
 
 export function and<
@@ -19,4 +20,8 @@ export function find<Row extends DbbyRow>(...rows: Partial<Row>[]) {
 	return rows.length
 		? {conditions: or(...rows.map(row => ({equal: row})))}
 		: {conditions: false as const}
+}
+
+export function isDbbyTable(x: any) {
+	return x && typeof x === "object" && x[_dbbyTableSymbol]
 }

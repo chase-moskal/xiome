@@ -4,6 +4,7 @@ import {Collection, FilterQuery} from "mongodb"
 import {objectMap} from "../object-map.js"
 import {escapeRegex} from "../escape-regex.js"
 
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
 import {up, ups, down, downs, valueUp} from "./dbby-mongo-row-processing.js"
 import {DbbyTable, DbbyRow, DbbyCondition, DbbyConditional, DbbyConditionTree, DbbyUpdateAmbiguated, DbbyOrder} from "./dbby-types.js"
 
@@ -12,6 +13,8 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 	}): DbbyTable<Row> {
 
 	return {
+		[_dbbyTableSymbol]: true,
+
 		async create(...rows) {
 			await collection.insertMany(ups(rows))
 		},

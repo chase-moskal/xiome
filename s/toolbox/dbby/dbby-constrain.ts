@@ -1,21 +1,27 @@
 
 import {objectMap} from "../object-map.js"
 
-import {and} from "./dbby-helpers.js"
-import {DbbyTable, DbbyRow, DbbyConditionBranch, DbbyConditions, ConstrainTables} from "./dbby-types.js"
+import {and, isDbbyTable} from "./dbby-helpers.js"
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
+import {DbbyTable, DbbyRow, DbbyConditionBranch, DbbyConditions, DbbyTables, DbbyConstrainTables, DbbyConstrainTable, DbbyExtractRow, DbbyConditionTree} from "./dbby-types.js"
 
-export function dbbyConstrain<Row extends DbbyRow, Namespace extends DbbyRow>(
-			table: DbbyTable<Row>,
-			namespace: Namespace,
-		): DbbyTable<Row> {
+export function dbbyConstrain<Namespace extends DbbyRow, xTable extends DbbyTable<DbbyRow>>({
+		table,
+		namespace,
+	}: {
+		table: xTable
+		namespace: Namespace
+	}) {
 
-	const spike = (conditionTree: DbbyConditions<Row>) => (
+	const spike = (conditionTree: DbbyConditions<DbbyRow>) => (
 		conditionTree
-			? <DbbyConditionBranch<"and", Row>>and({equal: <any>namespace}, conditionTree)
-			: <DbbyConditionBranch<"and", Row>>and({equal: <any>namespace})
+			? <DbbyConditionBranch<"and", DbbyRow>>and({equal: <any>namespace}, conditionTree)
+			: <DbbyConditionBranch<"and", DbbyRow>>and({equal: <any>namespace})
 	)
 
-	return {
+	return <DbbyConstrainTable<Namespace, xTable>>{
+		[_dbbyTableSymbol]: true,
+
 		async create(...rows) {
 			return table.create(
 				...rows.map(row => ({...row, ...namespace}))
@@ -74,11 +80,16 @@ export function dbbyConstrain<Row extends DbbyRow, Namespace extends DbbyRow>(
 	}
 }
 
-export function prepareConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}>(
-			tables: T,
-		): ConstrainTables<T> {
-	return (namespace: DbbyRow) => <T>objectMap(
+export function dbbyConstrainTables<xNamespace extends DbbyRow, xTables extends DbbyTables>({
+		namespace,
 		tables,
-		table => dbbyConstrain(table, namespace),
-	)
+	}: {
+		namespace: DbbyRow,
+		tables: xTables,
+	}) {
+	return <DbbyConstrainTables<xNamespace, xTables>>objectMap(tables, value => {
+		return isDbbyTable(value)
+			? dbbyConstrain({namespace, table: value})
+			: dbbyConstrainTables({namespace, tables: value})
+	})
 }

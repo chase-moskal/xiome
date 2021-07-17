@@ -2,6 +2,7 @@
 import {AuthTables} from "./auth-tables.js"
 import {AccessPayload} from "./auth-tokens.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
+import {AppTables} from "../aspects/apps/types/app-tables.js"
 import {StatsHub} from "../aspects/permissions/types/stats-hub.js"
 import {PrivilegeChecker} from "../aspects/permissions/types/privilege-checker.js"
 import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
@@ -9,7 +10,8 @@ import {appPermissions, platformPermissions} from "../../../assembly/backend/per
 export type GreenMeta = undefined
 
 export interface GreenAuth {
-	authTablesForApp: (appId: DamnId) => Promise<AuthTables>
+	appTables: AppTables
+	authTablesForApp: (appId: DamnId) => AuthTables
 }
 
 export interface AnonMeta {
@@ -31,4 +33,5 @@ export interface PlatformUserMeta extends UserMeta {}
 export interface PlatformUserAuth extends Omit<UserAuth, "checker"> {
 	statsHub: StatsHub
 	checker: PrivilegeChecker<typeof platformPermissions["privileges"]>
+	authTablesForApp: (appId: DamnId) => AuthTables
 }

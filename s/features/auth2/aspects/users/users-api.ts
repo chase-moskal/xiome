@@ -1,8 +1,8 @@
 
 import {asApi} from "renraku/x/identities/as-api.js"
-import {AuthApiOptions} from "../../types/auth-api-options.js"
+import {CommonAuthOptions} from "../../types/auth-options.js"
 
-export function usersApi(options: AuthApiOptions) {
+export function usersApi(options: CommonAuthOptions) {
 	return asApi({
 		greenService: greenService(options),
 		// loginService: loginService(options),

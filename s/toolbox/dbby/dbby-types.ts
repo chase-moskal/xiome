@@ -1,5 +1,6 @@
 
 import {DamnId} from "../damnedb/damn-id.js"
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
 
 export type DbbyValue =
 	| DamnId
@@ -88,6 +89,7 @@ export type DbbyConditionHelper<
 ) => DbbyConditionBranch<Op, Row>
 
 export interface DbbyTable<Row extends DbbyRow> {
+	[_dbbyTableSymbol]: true
 	create(...rows: Row[]): Promise<void>
 	read(options: DbbyPaginated<Row>): Promise<Row[]>
 	one(options: DbbyConditional<Row>): Promise<Row>
@@ -97,5 +99,26 @@ export interface DbbyTable<Row extends DbbyRow> {
 	count(options: DbbyConditional<Row>): Promise<number>
 }
 
-export type ConstrainTables<T extends {[key: string]: DbbyTable<DbbyRow>}> =
-	(namespace: DbbyRow) => T
+export type DbbyExtractRow<xTable extends DbbyTable<DbbyRow>> =
+	xTable extends DbbyTable<infer xRow>
+		? xRow
+		: never
+
+export type DbbyTables = {[key: string]: DbbyTable<DbbyRow> | DbbyTables}
+export type AsDbbyTables<xTables extends DbbyTables> = xTables
+
+export type DbbyConstrainRow<xNamespace extends DbbyRow, xRow extends DbbyRow> =
+	Omit<xRow, keyof xNamespace>
+
+export type DbbyConstrainTable<xNamespace extends DbbyRow, xTable extends DbbyTable<DbbyRow>> =
+	xTable extends DbbyTable<infer xRow>
+		? DbbyTable<DbbyConstrainRow<xRow, xNamespace>>
+		: never
+
+export type DbbyConstrainTables<xNamespace extends DbbyRow, xTables extends DbbyTables> = {
+	[P in keyof xTables]: xTables[P] extends DbbyTable<DbbyRow>
+		? DbbyConstrainTable<xNamespace, xTables[P]>
+		: xTables[P] extends DbbyTables
+			? DbbyConstrainTables<xNamespace, xTables[P]>
+			: never
+}
