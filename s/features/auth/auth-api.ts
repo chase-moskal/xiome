@@ -30,6 +30,9 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 	} & AuthApiOptions) => {
 
 	return asApi({
+
+		// tokens
+
 		greenService: apiContext<GreenMeta, GreenAuth>()({
 			policy: authPolicies.green,
 			expose: greenTopic(options),
@@ -39,6 +42,8 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 			policy: authPolicies.anon,
 			expose: loginTopic(options),
 		}),
+
+		// apps
 	
 		appService: apiContext<PlatformUserMeta, PlatformUserAuth>()({
 			policy: authPolicies.platformUser,
@@ -55,6 +60,8 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 			expose: manageAdminsTopic(options),
 		}),
 
+		// users
+
 		personalService: apiContext<UserMeta, UserAuth>()({
 			policy: authPolicies.user,
 			expose: personalTopic(options),
@@ -64,6 +71,8 @@ export const makeAuthApi = ({tables, authPolicies, ...options}: {
 			policy: authPolicies.anon,
 			expose: userTopic(options),
 		}),
+
+		// permissions
 
 		permissionsService: apiContext<UserMeta, UserAuth>()({
 			policy: authPolicies.userWhoManagesPermissions,
