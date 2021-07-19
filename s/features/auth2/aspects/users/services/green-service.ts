@@ -2,17 +2,17 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
+import {AuthOptions} from "../../../types/auth-options.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {CommonAuthOptions} from "../../../types/auth-options.js"
 import {GreenAuth, GreenMeta} from "../../../types/auth-metas.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const greenService =
-	(options: CommonAuthOptions) => apiContext<GreenMeta, GreenAuth>()({
+	(options: AuthOptions) => apiContext<GreenMeta, GreenAuth>()({
 
-	policy: options.basicPolicies.greenPolicy,
+	policy: options.authPolicies.greenPolicy,
 	expose: {
 
 		async authorize({appTables, authTablesForApp}, {

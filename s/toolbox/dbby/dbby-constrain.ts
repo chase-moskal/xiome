@@ -86,7 +86,7 @@ export function dbbyConstrainTables<xNamespace extends DbbyRow, xTables extends 
 	}: {
 		namespace: DbbyRow,
 		tables: xTables,
-	}) {
+	}): DbbyConstrainTables<xNamespace, xTables> {
 	return <DbbyConstrainTables<xNamespace, xTables>>objectMap(tables, value => {
 		return isDbbyTable(value)
 			? dbbyConstrain({namespace, table: value})

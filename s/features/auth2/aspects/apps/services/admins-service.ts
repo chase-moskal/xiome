@@ -1,13 +1,12 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {CommonAuthOptions} from "../../../types/auth-options.js"
+import {AuthOptions} from "../../../types/auth-options.js"
 import {AppsAuth, AppsMeta} from "../types/apps-meta-and-auth.js"
-import {appsManagerPolicy} from "../policies/manage-apps-policy.js"
 
 export const adminService =
-	(options: CommonAuthOptions) => apiContext<AppsMeta, AppsAuth>()({
-	policy: appsManagerPolicy(options),
+	(options: AuthOptions) => apiContext<AppsMeta, AppsAuth>()({
+	policy: options.authPolicies.appsManagerPolicy,
 	expose: {
 
 		async listAdmins(

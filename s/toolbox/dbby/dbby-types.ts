@@ -107,13 +107,35 @@ export type DbbyExtractRow<xTable extends DbbyTable<DbbyRow>> =
 export type DbbyTables = {[key: string]: DbbyTable<DbbyRow> | DbbyTables}
 export type AsDbbyTables<xTables extends DbbyTables> = xTables
 
+// constraints for row
+
+export type DbbyUnconstrainRow<xNamespace extends DbbyRow, xRow extends DbbyRow> =
+	xNamespace & xRow
+
 export type DbbyConstrainRow<xNamespace extends DbbyRow, xRow extends DbbyRow> =
 	Omit<xRow, keyof xNamespace>
 
+// constraints for table
+
+export type DbbyUnconstrainTable<xNamespace extends DbbyRow, xTable extends DbbyTable<DbbyRow>> =
+	xTable extends DbbyTable<infer xRow>
+		? DbbyTable<DbbyUnconstrainRow<xNamespace, xRow>>
+		: never
+
 export type DbbyConstrainTable<xNamespace extends DbbyRow, xTable extends DbbyTable<DbbyRow>> =
 	xTable extends DbbyTable<infer xRow>
-		? DbbyTable<DbbyConstrainRow<xRow, xNamespace>>
+		? DbbyTable<DbbyConstrainRow<xNamespace, xRow>>
 		: never
+
+// constraints for tables
+
+export type DbbyUnconstrainTables<xNamespace extends DbbyRow, xTables extends DbbyTables> = {
+	[P in keyof xTables]: xTables[P] extends DbbyTable<DbbyRow>
+		? DbbyUnconstrainTable<xNamespace, xTables[P]>
+		: xTables[P] extends DbbyTables
+			? DbbyUnconstrainTables<xNamespace, xTables[P]>
+			: never
+}
 
 export type DbbyConstrainTables<xNamespace extends DbbyRow, xTables extends DbbyTables> = {
 	[P in keyof xTables]: xTables[P] extends DbbyTable<DbbyRow>
