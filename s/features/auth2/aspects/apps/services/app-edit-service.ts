@@ -3,7 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {appointAdmin} from "../utils/appoint-admin.js"
-import {AppDraft} from "../types/business/app-draft.js"
+import {AppDraft} from "../types/app-draft.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {validateAppDraft} from "../utils/validate-app-draft.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"

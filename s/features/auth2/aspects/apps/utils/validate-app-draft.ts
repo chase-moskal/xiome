@@ -1,5 +1,5 @@
 
-import {AppDraft} from "../types/business/app-draft.js"
+import {AppDraft} from "../types/app-draft.js"
 import {schema} from "../../../../../toolbox/darkvalley.js"
 import {appDraftValidators} from "./app-draft-validators.js"
 

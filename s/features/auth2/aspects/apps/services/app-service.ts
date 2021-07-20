@@ -1,7 +1,7 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {AppDraft} from "../types/business/app-draft.js"
+import {AppDraft} from "../types/app-draft.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {AppDisplay} from "../../../../auth/types/apps/app-display.js"
