@@ -10,7 +10,7 @@ export async function applyMockHacks({connection, frontend}: {
 		frontend: Await<ReturnType<typeof assembleAndInitializeFrontend>>
 	}) {
 
-	const {loginService} = connection.remote.auth
+	const {loginService} = connection.remote.auth.users
 
 	loginService.sendLoginLink = hitchie(
 		loginService.sendLoginLink,

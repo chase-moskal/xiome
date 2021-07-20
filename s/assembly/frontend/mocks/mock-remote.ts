@@ -30,7 +30,7 @@ export function mockRemote({
 		storage,
 	})
 
-	const remote = logAllCalls({
+	const remote = logAllCalls<typeof api>({
 		// logger: new DisabledLogger(),
 		logger: console,
 		fullyDebug: false,
@@ -46,7 +46,7 @@ export function mockRemote({
 	})
 
 	const authMediator = installAuthMediator({
-		greenService: remote.auth.greenService,
+		greenService: remote.auth.users.greenService,
 	})
 
 	return {remote, authMediator}
