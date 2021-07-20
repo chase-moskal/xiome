@@ -10,7 +10,7 @@ import {signAuthTokens} from "../routines/login/sign-auth-tokens.js"
 import {assertEmailAccount} from "../routines/login/assert-email-account.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const loginService = ({
+export const makeLoginService = ({
 		rando, config, authPolicies,
 		signToken, verifyToken, sendLoginEmail, generateNickname,
 	}: AuthOptions) => apiContext<AnonMeta, LoginAuth>()({

@@ -9,7 +9,7 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {fetchPermissionsDisplay} from "../../users/routines/permissions/fetch-permissions-display.js"
 import {roleLabelValidator} from "../../users/routines/permissions/validators/role-label-validator.js"
 
-export const permissionsService = ({
+export const makePermissionsService = ({
 		rando, config, authPolicies,
 	}: AuthOptions) => apiContext<UserMeta, UserAuth>()({
 	policy: async(meta, request) => {

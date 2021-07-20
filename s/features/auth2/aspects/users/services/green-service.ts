@@ -11,7 +11,7 @@ import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const greenService = (
+export const makeGreenService = (
 		options: AuthOptions
 	) => apiContext<GreenMeta, GreenAuth>()({
 	policy: options.authPolicies.greenPolicy,

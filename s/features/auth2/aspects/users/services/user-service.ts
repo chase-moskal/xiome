@@ -7,7 +7,7 @@ import {AnonAuth, AnonMeta} from "../../../types/auth-metas.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const userService = (
+export const makeUserService = (
 		options: AuthOptions
 	) => apiContext<AnonMeta, AnonAuth>()({
 	policy: options.authPolicies.anonPolicy,

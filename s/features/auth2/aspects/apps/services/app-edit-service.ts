@@ -17,7 +17,7 @@ import {appPermissions} from "../../../../../assembly/backend/permissions2/stand
 
 const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 
-export const appEditService = ({
+export const makeAppEditService = ({
 		rando, config, authPolicies, generateNickname,
 	}: AuthOptions) => apiContext<PlatformUserMeta, AppOwnerAuth>()({
 	policy: authPolicies.appOwnerPolicy,

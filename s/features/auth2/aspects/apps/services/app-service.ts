@@ -14,7 +14,7 @@ import {throwProblems} from "../../../../../toolbox/topic-validation/throw-probl
 import {validateAppDraft} from "../utils/validate-app-draft.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
 
-export const appService = ({
+export const makeAppService = ({
 		rando, config, authPolicies,
 	}: AuthOptions) => apiContext<PlatformUserMeta, PlatformUserAuth>()({
 	policy: authPolicies.platformUserPolicy,

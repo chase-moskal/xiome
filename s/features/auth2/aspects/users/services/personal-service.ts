@@ -10,7 +10,7 @@ import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
 import {validateProfileDraft} from "../routines/personal/validate-profile-draft.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
 
-export const personalService = (
+export const makePersonalService = (
 		options: AuthOptions
 	) => apiContext<AnonMeta, AnonAuth>()({
 	policy: options.authPolicies.userPolicy,

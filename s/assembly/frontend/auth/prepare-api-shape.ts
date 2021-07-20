@@ -2,12 +2,12 @@
 import {asShape} from "renraku/x/identities/as-shape.js"
 import {_meta} from "renraku/x/types/symbols/meta-symbol.js"
 
-import {Service} from "../../../types/service.js"
+import {Service2} from "../../../types/service2.js"
 import {SystemApi} from "../../backend/types/system-api.js"
-import {greenTopic} from "../../../features/auth/topics/green-topic.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
-import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
+import {makeAuthMediator} from "../../../features/auth2/mediator/auth-mediator.js"
+import {AuthMediator} from "../../../features/auth2/mediator/types/auth-mediator.js"
+import {makeGreenService} from "../../../features/auth2/aspects/users/services/green-service.js"
 
 export function prepareApiShape({appId, storage}: {
 		appId: string
@@ -25,26 +25,46 @@ export function prepareApiShape({appId, storage}: {
 			apps: {
 				appService: {
 					[_meta]: standardMeta,
-					deleteApp: true,
 					listApps: true,
 					registerApp: true,
-					updateApp: true,
 				},
-				adminService: {
+				appEditService: {
 					[_meta]: standardMeta,
+					deleteApp: true,
+					updateApp: true,
 					listAdmins: true,
 					revokeAdmin: true,
-					assignAdminByEmail: true,
+					assignAdmin: true,
 					assignPlatformUserAsAdmin: true,
 				},
 			},
 			permissions: {
-
+				permissionsService: {
+					[_meta]: standardMeta,
+					assignPrivilege: true,
+					createRole: true,
+					deleteRole: true,
+					fetchPermissions: true,
+					unassignPrivilege: true,
+				},
 			},
 			users: {
 				greenService: {
 					[_meta]: async() => undefined,
 					authorize: true,
+				},
+				loginService: {
+					[_meta]: standardMeta,
+					authenticateViaLoginToken: true,
+					sendLoginLink: true,
+				},
+				personalService: {
+					[_meta]: standardMeta,
+					setProfile: true,
+				},
+				userService: {
+					[_meta]: standardMeta,
+					getUser: true,
 				},
 			},
 		},
@@ -157,7 +177,7 @@ export function prepareApiShape({appId, storage}: {
 	})
 
 	function installAuthMediator({greenService}: {
-			greenService: Service<typeof greenTopic>
+			greenService: Service2<typeof makeGreenService>
 		}) {
 		authMediator = makeAuthMediator({
 			appId,
