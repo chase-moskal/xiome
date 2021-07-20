@@ -2,20 +2,22 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
+import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {GreenAuth, GreenMeta} from "../../../types/auth-metas.js"
+import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
 
-export const greenService =
-	(options: AuthOptions) => apiContext<GreenMeta, GreenAuth>()({
-
+export const greenService = (
+		options: AuthOptions
+	) => apiContext<GreenMeta, GreenAuth>()({
 	policy: options.authPolicies.greenPolicy,
 	expose: {
 
-		async authorize({appTables, authTablesForApp}, {
+		async authorize({appTables, authTables: unconstrainedAuthTables}, {
 				scope, refreshToken, appId: appIdString,
 			}: {
 				scope: Scope
@@ -24,10 +26,10 @@ export const greenService =
 			}) {
 
 			const appId = DamnId.fromString(appIdString)
-			const authTables = authTablesForApp(appId)
+			const authTables = unconstrainedAuthTables.namespaceForApp(appId)
 			const permissionsEngine = makePermissionsEngine({
-				isPlatform: appId.toString() === options.config.platform.appDetails.appId,
 				permissionsTables: authTables.permissions,
+				isPlatform: appId.toString() === options.config.platform.appDetails.appId,
 			})
 
 			const appRow = await appTables.apps.one(find({appId}))
@@ -43,8 +45,8 @@ export const greenService =
 				const userId = DamnId.fromString(userIdString)
 				const user = await fetchUser({
 					userId,
-					permissionsEngine,
 					authTables,
+					permissionsEngine,
 				})
 				await authTables.users.latestLogins.update({
 					...find({userId}),

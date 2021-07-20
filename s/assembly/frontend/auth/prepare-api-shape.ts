@@ -44,6 +44,7 @@ export function prepareApiShape({appId, storage}: {
 			users: {
 				greenService: {
 					[_meta]: async() => undefined,
+					authorize: true,
 				},
 			},
 		},

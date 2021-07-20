@@ -1,6 +1,7 @@
 
 import {AuthTables} from "./auth-tables.js"
 import {AccessPayload} from "./auth-tokens.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AppTables} from "../aspects/apps/types/app-tables.js"
 import {StatsHub} from "../aspects/permissions/types/stats-hub.js"
 import {PrivilegeChecker} from "../aspects/permissions/types/privilege-checker.js"
@@ -24,6 +25,10 @@ export interface AnonAuth {
 	checker: PrivilegeChecker<typeof appPermissions["privileges"]>
 }
 
+export interface LoginAuth extends AnonAuth {
+	appTables: AppTables
+}
+
 export interface UserMeta extends AnonMeta {}
 
 export interface UserAuth extends AnonAuth {}
@@ -32,6 +37,12 @@ export interface PlatformUserMeta extends UserMeta {}
 
 export interface PlatformUserAuth extends Omit<UserAuth, "authTables" | "checker"> {
 	statsHub: StatsHub
+	appTables: AppTables
 	authTables: UnconstrainedTables<AuthTables>
 	checker: PrivilegeChecker<typeof platformPermissions["privileges"]>
+}
+
+export interface AppOwnerAuth extends Omit<PlatformUserAuth, "authTables"> {
+	authTablesForPlatform: AuthTables
+	authorizeAppOwner(appId: DamnId): Promise<{authTables: AuthTables}>
 }

@@ -1,12 +1,12 @@
 
-import {Rando} from "../../../../toolbox/get-rando.js"
-import {AuthTables} from "../../tables/types/auth-tables.js"
+import {AuthTables} from "../../../../types/auth-tables.js"
+import {Rando} from "../../../../../../toolbox/get-rando.js"
+import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
+import {SecretConfig} from "../../../../../../assembly/backend/types/secret-config.js"
+import {universalPermissions} from "../../../../../../assembly/backend/permissions2/standard-permissions.js"
 import {generateAccountRow} from "./generate-account-row.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {initializeUserProfile} from "./user/profile/initialize-user-profile.js"
-import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {universalPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
+import {initializeUserProfile} from "../profile/initialize-user-profile.js"
+import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 
 const standardRoleIds = {
 	anonymous: universalPermissions.roles.anonymous.roleId,
@@ -15,31 +15,32 @@ const standardRoleIds = {
 }
 
 export async function assertEmailAccount({
-		rando, email, tables, config, generateNickname,
+		rando, email, authTables, config, generateNickname,
 	}: {
 		rando: Rando
 		email: string
-		tables: AuthTables
 		config: SecretConfig
+		authTables: AuthTables
 		generateNickname: () => string
 	}) {
 
-	const accountViaEmail = await tables.user.accountViaEmail.assert({
+	const accountViaEmail = await authTables.users.emails.assert({
 		...find({email}),
 		make: async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
 			const account = generateAccountRow({rando})
 			const {userId} = account
 
-			const createAccount = tables.user.account.create(account)
+			const createAccount = authTables.users.accounts.create(account)
 
 			const createProfile = initializeUserProfile({
 				userId,
-				authTables: tables,
+				email,
+				authTables,
 				generateNickname,
 			})
 
-			const assignAnonymous = tables.permissions.userHasRole.create({
+			const assignAnonymous = authTables.permissions.userHasRole.create({
 				userId,
 				hard: true,
 				public: false,
@@ -48,7 +49,7 @@ export async function assertEmailAccount({
 				timeframeStart: undefined,
 			})
 
-			const assignAuthenticated = tables.permissions.userHasRole.create({
+			const assignAuthenticated = authTables.permissions.userHasRole.create({
 				userId,
 				hard: true,
 				public: false,
@@ -58,7 +59,7 @@ export async function assertEmailAccount({
 			})
 
 			const assignTechnician = isTechnician
-				? tables.permissions.userHasRole.create({
+				? authTables.permissions.userHasRole.create({
 					userId,
 					hard: true,
 					public: true,

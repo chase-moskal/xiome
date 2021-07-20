@@ -3,50 +3,84 @@ import {apiContext} from "renraku/x/api/api-context.js"
 
 import {AppDraft} from "../types/business/app-draft.js"
 import {AuthOptions} from "../../../types/auth-options.js"
-import {AppsAuth, AppsMeta} from "../types/apps-meta-and-auth.js"
-import {appsManagerPolicy} from "../policies/manage-apps-policy.js"
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+import {AppDisplay} from "../../../../auth/types/apps/app-display.js"
+import {and, find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {PlatformUserAuth, PlatformUserMeta} from "../../../types/auth-metas.js"
+import {originsFromDatabase} from "../../../utils/origins-from-database.js"
+import {isPlatform} from "../../../utils/is-platform.js"
+import {concurrent} from "../../../../../toolbox/concurrent.js"
+import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
+import {validateAppDraft} from "../utils/validate-app-draft.js"
+import {originsToDatabase} from "../../../utils/origins-to-database.js"
 
-export const appService =
-	(options: AuthOptions) => apiContext<AppsMeta, AppsAuth>()({
-	policy: appsManagerPolicy(options),
+export const appService = ({
+		rando, config, authPolicies,
+	}: AuthOptions) => apiContext<PlatformUserMeta, PlatformUserAuth>()({
+	policy: authPolicies.platformUserPolicy,
 	expose: {
 
-		async listApps(
-			{appTables, statsHub},
-			{ownerUserId: ownerUserIdString}: {
+		async listApps({appTables, statsHub}, {ownerUserId: ownerUserIdString}: {
 				ownerUserId: string
-			}) {
-			throw new Error("TODO implement")
+			}): Promise<AppDisplay[]> {
+
+			const ownerUserId = DamnId.fromString(ownerUserIdString)
+
+			const ownerships = await appTables.owners.read(find({userId: ownerUserId}))
+			const appRows = ownerships.length
+				? await appTables.apps.read({
+					conditions: and(
+						or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
+						{equal: {archived: false}},
+					)
+				})
+				: []
+			return Promise.all(appRows.map(async row => ({
+				appId: row.appId.toString(),
+				label: row.label,
+				home: row.home,
+				origins: originsFromDatabase(row.origins),
+				platform: isPlatform(row.appId.toString(), config),
+				stats: await concurrent({
+					users: statsHub.countUsers(row.appId),
+					usersActiveDaily: statsHub.countUsersActiveDaily(row.appId),
+					usersActiveMonthly: statsHub.countUsersActiveMonthly(row.appId),
+				}),
+			})))
 		},
 
-		async registerApp(
-				{appTables},
-				{appDraft, ownerUserId: ownerUserIdString}: {
-					appDraft: AppDraft
-					ownerUserId: string
-				}
-			) {
-			throw new Error("TODO implement")
-		},
+		async registerApp({appTables}, {appDraft, ownerUserId: ownerUserIdString}: {
+				appDraft: AppDraft
+				ownerUserId: string
+			}): Promise<AppDisplay> {
 
-		async updateApp(
-				{appTables},
-				{appDraft, appId: appIdString}: {
-					appDraft: AppDraft
-					appId: string
-				}
-			) {
-			throw new Error("TODO implement")
-		},
+			throwProblems(validateAppDraft(appDraft))
 
-		async deleteApp(
-				{appTables},
-				{appDraft, appId: appIdString}: {
-					appDraft: AppDraft
-					appId: string
-				}
-			) {
-			throw new Error("TODO implement")
+			const ownerUserId = DamnId.fromString(ownerUserIdString)
+
+			const appId = rando.randomId()
+			await Promise.all([
+				appTables.apps.create({
+					appId,
+					label: appDraft.label,
+					home: appDraft.home,
+					origins: originsToDatabase(appDraft.origins),
+					archived: false,
+				}),
+				appTables.owners.create({
+					appId,
+					userId: ownerUserId,
+				}),
+			])
+			return {
+				...appDraft,
+				appId: appId.toString(),
+				stats: {
+					users: 1,
+					usersActiveDaily: 0,
+					usersActiveMonthly: 0,
+				},
+			}
 		},
 	},
 })
