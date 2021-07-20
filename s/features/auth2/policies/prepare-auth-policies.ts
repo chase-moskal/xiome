@@ -14,7 +14,7 @@ import {isUserOwnerOfApp} from "../aspects/apps/utils/is-user-the-owner-of-app.j
 import {makePrivilegeChecker} from "../aspects/permissions/tools/make-privilege-checker.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
-import {AnonMeta, AppOwnerAuth, GreenAuth, GreenMeta, LoginAuth, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../types/auth-metas.js"
+import {AnonMeta, AppOwnerAuth, AppOwnerMeta, GreenAuth, GreenMeta, LoginAuth, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../types/auth-metas.js"
 
 export function prepareAuthPolicies({
 		config, appTables, authTables, verifyToken,
@@ -68,7 +68,7 @@ export function prepareAuthPolicies({
 			throw new ApiError(403, "not platform app")
 	}
 
-	const appOwnerPolicy: Policy<PlatformUserMeta, AppOwnerAuth> = async(meta, request) => {
+	const appOwnerPolicy: Policy<AppOwnerMeta, AppOwnerAuth> = async(meta, request) => {
 		const auth = await platformUserPolicy(meta, request)
 		async function authorizeAppOwner(appId: DamnId) {
 			const allowedToEditAnyApp = auth.checker.requirePrivilege("edit any app")

@@ -11,7 +11,7 @@ import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {emailValidator} from "../utils/admin-email-validator.js"
 import {AdminEmailDisplay} from "../types/admin-email-display.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
-import {AppOwnerAuth, PlatformUserMeta} from "../../../types/auth-metas.js"
+import {AppOwnerAuth, AppOwnerMeta} from "../../../types/auth-metas.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
 
@@ -19,7 +19,7 @@ const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 
 export const makeAppEditService = ({
 		rando, config, authPolicies, generateNickname,
-	}: AuthOptions) => apiContext<PlatformUserMeta, AppOwnerAuth>()({
+	}: AuthOptions) => apiContext<AppOwnerMeta, AppOwnerAuth>()({
 	policy: authPolicies.appOwnerPolicy,
 	expose: {
 

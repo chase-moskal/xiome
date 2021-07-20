@@ -1,51 +1,47 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
+import {apiContext} from "renraku/x/api/api-context.js"
 
 import {validateId} from "./validation/validate-id.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {UserAuth} from "../../../auth/policies/types/user-auth.js"
-import {UserMeta} from "../../../auth/policies/types/user-meta.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
-import {fetchUsers} from "../../../auth/topics/login/user/fetch-users.js"
+import {UserAuth, UserMeta} from "../../../auth2/types/auth-metas.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
-import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
 import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {fetchPermissionsDisplay} from "../../../auth/topics/permissions/fetch-permissions-display.js"
+import {fetchUsers} from "../../../auth2/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
+import {fetchPermissionsDisplay} from "../../../auth2/aspects/users/routines/permissions/fetch-permissions-display.js"
 
-export const roleAssignmentParts = ({
-		config,
-		authPolicies,
-	}: AdministrativeApiOptions) => asServiceParts<UserMeta, UserAuth>()({
-
+export const makeRoleAssignmentService = (
+		{config, authPolicies}: AdministrativeApiOptions
+	) => apiContext<UserMeta, UserAuth>()({
 	policy: async(meta, request) => {
 		const auth = await authPolicies.user.processAuth(meta, request)
 		auth.checker.requirePrivilege("administrate user roles")
 		return auth
 	},
-
 	expose: {
 
-		async fetchPermissions({tables, access}) {
+		async fetchPermissions({access, authTables}) {
 			return fetchPermissionsDisplay({
 				config,
 				access,
-				permissionsTables: tables.permissions,
+				permissionsTables: authTables.permissions,
 			})
 		},
 
-		async searchUsers({tables, access}, options: {term: string}) {
+		async searchUsers({access, authTables}, options: {term: string}) {
 			const {term} = runValidation(options, schema({
 				term: validateUserSearchTerm,
 			}))
 
 			const regex = new RegExp(escapeRegex(term), "i")
 
-			const profiles = await tables.user.profile.read({
+			const profiles = await authTables.users.profiles.read({
 				limit: 100,
 				conditions: DamnId.isId(term)
 					? or({equal: {userId: DamnId.fromString(term)}})
@@ -61,13 +57,13 @@ export const roleAssignmentParts = ({
 
 			const permissionsEngine = makePermissionsEngine({
 				isPlatform: access.appId === config.platform.appDetails.appId,
-				permissionsTables: tables.permissions,
+				permissionsTables: authTables.permissions,
 			})
 
 			const users = await fetchUsers({
 				userIds,
+				authTables,
 				permissionsEngine,
-				authTables: tables,
 			})
 
 			const usersAndRoles = await permissionsEngine.getUsersHaveRoles({
@@ -85,7 +81,7 @@ export const roleAssignmentParts = ({
 		},
 
 		async assignRoleToUser(
-				{tables},
+				{authTables},
 				options: {
 					roleId: string
 					userId: string
@@ -108,7 +104,7 @@ export const roleAssignmentParts = ({
 			const roleId = DamnId.fromString(roleIdString)
 			const userId = DamnId.fromString(userIdString)
 
-			const existing = await tables.permissions.userHasRole.one(find({
+			const existing = await authTables.permissions.userHasRole.one(find({
 				userId,
 				roleId,
 			}))
@@ -116,7 +112,7 @@ export const roleAssignmentParts = ({
 			if (existing?.hard)
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
-				await tables.permissions.userHasRole.assert({
+				await authTables.permissions.userHasRole.assert({
 					conditions: or({equal: {roleId, userId}}),
 					make: async() => ({
 						hard: false,
@@ -130,7 +126,7 @@ export const roleAssignmentParts = ({
 		},
 
 		async revokeRoleFromUser(
-				{tables},
+				{authTables},
 				options: {
 					roleId: string
 					userId: string
@@ -146,7 +142,7 @@ export const roleAssignmentParts = ({
 			const roleId = DamnId.fromString(roleIdString)
 			const userId = DamnId.fromString(userIdString)
 
-			const existing = await tables.permissions.userHasRole.one(find({
+			const existing = await authTables.permissions.userHasRole.one(find({
 				userId,
 				roleId,
 			}))
@@ -154,7 +150,7 @@ export const roleAssignmentParts = ({
 			if (existing?.hard)
 				throw new ApiError(400, "hard role assignment cannot be overwritten")
 			else
-				await tables.permissions.userHasRole.delete({
+				await authTables.permissions.userHasRole.delete({
 					conditions: or({equal: {roleId, userId}}),
 				})
 		},

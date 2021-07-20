@@ -2,99 +2,72 @@
 import {Policy} from "renraku/x/types/primitives/policy.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {StorePolicyOptions} from "./types/store-policy-options.js"
-import {MerchantAuth} from "./types/contexts/merchant-auth.js"
-import {MerchantMeta} from "./types/contexts/merchant-meta.js"
-import {CustomerAuth} from "./types/contexts/customer-auth.js"
-import {CustomerMeta} from "./types/contexts/customer-meta.js"
-import {ClerkMeta} from "./types/contexts/clerk-meta.js"
-import {ClerkAuth} from "./types/contexts/clerk-auth.js"
-import {ProspectMeta} from "./types/contexts/prosect-meta.js"
-import {ProspectAuth} from "./types/contexts/prosect-auth.js"
-import {StoreTables} from "../tables/types/store-tables.js"
-import {prepareNamespacerForTables} from "../../../auth/tables/baking/generic/prepare-namespacer-for-tables.js"
-import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
+import {ClerkAuth, ClerkMeta, CustomerAuth, CustomerMeta, MerchantAuth, MerchantMeta, ProspectAuth, ProspectMeta} from "./types/store-metas-and-auths.js"
 
-export function payPolicies({
-		tables,
+export function prepareStorePolicies({
 		authPolicies,
 		stripeComplex,
+		storeTables: unconstrainedStoreTables,
 	}: StorePolicyOptions) {
 
-	async function bakePayTables(appId: DamnId): Promise<StoreTables> {
-		return {
-			billing: await prepareNamespacerForTables(tables.billing)(appId),
-			merchant: await prepareNamespacerForTables(tables.merchant)(appId),
-		}
-	}
-
-	async function commonAuthProcessing(authTables: AuthTables, appId: DamnId) {
-		const tables = {...authTables, ...await bakePayTables(appId)}
-		return {tables}
-	}
-
 	/** a merchant owns apps, and links stripe accounts */
-	const merchant: Policy<MerchantMeta, MerchantAuth> = {
-		async processAuth(meta, request) {
-			const auth = await authPolicies.appOwner.processAuth(meta, request)
-			const {stripeLiaisonForPlatform} = stripeComplex
+	const merchantPolicy: Policy<MerchantMeta, MerchantAuth> = async(meta, request) => {
+		const auth = await authPolicies.appOwnerPolicy(meta, request)
+		const {stripeLiaisonForPlatform} = stripeComplex
+		async function authorizeMerchantForApp(appId: DamnId) {
+			const {authTables} = await auth.authorizeAppOwner(appId)
 			return {
-				...auth,
-				...await commonAuthProcessing(auth.tables, DamnId.fromString(auth.access.appId)),
-				stripeLiaisonForPlatform,
-				async getTablesNamespacedForApp(appId: DamnId) {
-					const authTables = await auth.getTablesNamespacedForApp(appId)
-					const payTables = await bakePayTables(appId)
-					return {...authTables, ...payTables}
-				},
+				authTables,
+				storeTables: unconstrainedStoreTables.namespaceForApp(appId),
 			}
+		}
+		return {
+			...auth,
+			authorizeMerchantForApp,
+			stripeLiaisonForPlatform,
 		}
 	}
 
 	/** a prospect user is checking if ecommerce is available */
-	const prospect: Policy<ProspectMeta, ProspectAuth> = {
-		async processAuth(meta, request) {
-			const auth = await authPolicies.anon.processAuth(meta, request)
-			const common = await commonAuthProcessing(
-				auth.tables,
-				DamnId.fromString(auth.access.appId),
-			)
-			const {stripeLiaisonForPlatform} = stripeComplex
-			async function getStripeAccount(id: string) {
-				return stripeLiaisonForPlatform.accounts.retrieve(id)
-			}
-			return {...auth, ...common, getStripeAccount}
+	const prospectPolicy: Policy<ProspectMeta, ProspectAuth> = async(meta, request) => {
+		const auth = await authPolicies.anonPolicy(meta, request)
+		const appId = DamnId.fromString(auth.access.appId)
+		const {stripeLiaisonForPlatform} = stripeComplex
+		async function getStripeAccount(id: string) {
+			return stripeLiaisonForPlatform.accounts.retrieve(id)
+		}
+		return {
+			...auth,
+			storeTables: unconstrainedStoreTables.namespaceForApp(appId),
+			getStripeAccount,
 		}
 	}
 
 	/** a customer is a user who buys things */
-	const customer: Policy<CustomerMeta, CustomerAuth> = {
-		async processAuth(meta, request) {
-			const auth = await authPolicies.user.processAuth(meta, request)
-			const common = await commonAuthProcessing(
-				auth.tables,
-				DamnId.fromString(auth.access.appId),
-			)
-			const {stripeAccountId} = await common.tables.merchant
-				.stripeAccounts
-				.one({conditions: false})
-			const stripeLiaisonForApp = stripeComplex
-				.connectStripeLiaisonForApp(stripeAccountId)
-			return {
-				...auth,
-				...common,
-				stripeLiaisonForApp,
-			}
+	const customerPolicy: Policy<CustomerMeta, CustomerAuth> = async(meta, request) => {
+		const auth = await authPolicies.userPolicy(meta, request)
+		const appId = DamnId.fromString(auth.access.appId)
+		const storeTables = unconstrainedStoreTables.namespaceForApp(appId)
+
+		const {stripeAccountId} = await storeTables.merchant.stripeAccounts
+			.one({conditions: false})
+
+		const stripeLiaisonForApp = stripeComplex
+			.connectStripeLiaisonForApp(stripeAccountId)
+
+		return {
+			...auth,
+			storeTables,
+			stripeLiaisonForApp,
 		}
 	}
 
 	/** a clerk edits products and subscriptions */
-	const clerk: Policy<ClerkMeta, ClerkAuth> = {
-		async processAuth(meta, request) {
-			const auth = await customer.processAuth(meta, request)
-			auth.checker.requirePrivilege("manage store")
-			return auth
-		}
+	const clerkPolicy: Policy<ClerkMeta, ClerkAuth> = async(meta, request) => {
+		const auth = await customerPolicy(meta, request)
+		auth.checker.requirePrivilege("manage store")
+		return auth
 	}
 
-	return {merchant, prospect, customer, clerk}
+	return {merchantPolicy, prospectPolicy, customerPolicy, clerkPolicy}
 }

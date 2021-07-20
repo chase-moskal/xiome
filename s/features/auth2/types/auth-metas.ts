@@ -42,6 +42,8 @@ export interface PlatformUserAuth extends Omit<UserAuth, "authTables" | "checker
 	checker: PrivilegeChecker<typeof platformPermissions["privileges"]>
 }
 
+export interface AppOwnerMeta extends PlatformUserMeta {}
+
 export interface AppOwnerAuth extends Omit<PlatformUserAuth, "authTables"> {
 	authTablesForPlatform: AuthTables
 	authorizeAppOwner(appId: DamnId): Promise<{authTables: AuthTables}>
