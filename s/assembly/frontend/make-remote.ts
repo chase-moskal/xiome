@@ -30,7 +30,7 @@ export function makeRemote({
 	})
 
 	const authMediator = installAuthMediator({
-		greenService: remote.auth.greenService,
+		greenService: remote.auth.users.greenService,
 	})
 
 	return {remote, authMediator}
