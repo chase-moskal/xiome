@@ -223,12 +223,12 @@ export function prepareApiConfigurator(configurators: {
 				// 	authTables: database.core,
 				// 	authPolicies,
 				// }),
-				// questions: questionsApi({
-				// 	rando,
-				// 	config,
-				// 	authPolicies,
-				// 	questionsTables: database.questions,
-				// }),
+				questions: questionsApi({
+					rando,
+					config,
+					authPolicies,
+					questionsTables: database.questionsTables,
+				}),
 			})
 		})()
 

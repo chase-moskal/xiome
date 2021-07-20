@@ -1,11 +1,12 @@
 
 import {html} from "lit-html"
-import {User} from "../../../auth/types/user.js"
 import {Question} from "../../api/types/question.js"
 import {renderQuestionBody} from "./render-question-body.js"
+import {User} from "../../../auth2/aspects/users/types/user.js"
+
 import heartSvg from "../../../../framework/icons/heart.svg.js"
-import heartFillSvg from "../../../../framework/icons/heart-fill.svg.js"
 import warningSvg from "../../../../framework/icons/warning.svg.js"
+import heartFillSvg from "../../../../framework/icons/heart-fill.svg.js"
 import warningFillSvg from "../../../../framework/icons/warning-fill.svg.js"
 
 export function renderQuestion({

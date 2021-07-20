@@ -4,10 +4,9 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
-import {AnonAuth} from "../../../../../auth/policies/types/anon-auth.js"
-import {AnonMeta} from "../../../../../auth/policies/types/anon-meta.js"
 import {QuestionsTables} from "../../../tables/types/questions-tables.js"
-import {prepareNamespacerForTables} from "../../../../../auth/tables/baking/generic/prepare-namespacer-for-tables.js"
+import {AnonAuth, AnonMeta} from "../../../../../auth2/types/auth-metas.js"
+import {UnconstrainedTables} from "../../../../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function spikeQuestionsAuth<
 		xMeta extends AnonMeta,
@@ -15,13 +14,14 @@ export async function spikeQuestionsAuth<
 	>(
 		meta: xMeta,
 		request: HttpRequest,
-		questionsTables: QuestionsTables,
+		questionsTables: UnconstrainedTables<QuestionsTables>,
 		basePolicy: Policy<xMeta, xAuth>,
 	) {
 
-	const auth = await basePolicy.processAuth(meta, request)
+	const auth = await basePolicy(meta, request)
+	const appId = DamnId.fromString(auth.access.appId)
 	return {
 		...auth,
-		questionsTables: await prepareNamespacerForTables(questionsTables)(DamnId.fromString(auth.access.appId)),
+		questionsTables: questionsTables.namespaceForApp(appId),
 	}
 }

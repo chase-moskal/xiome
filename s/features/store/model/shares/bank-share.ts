@@ -1,8 +1,8 @@
 
 import {storeCore} from "../core/store-core.js"
-import {Service} from "../../../../types/service.js"
+import {Service2} from "../../../../types/service2.js"
 import {TriggerBankPopup} from "./types/trigger-bank-popup.js"
-import {stripeConnectTopic} from "../../topics/stripe-connect-topic.js"
+import {makeStripeConnectService} from "../../api/services/stripe-connect-service.js"
 
 export function bankShare({
 		core: {state},
@@ -10,7 +10,7 @@ export function bankShare({
 		triggerBankPopup,
 	}: {
 		core: ReturnType<typeof storeCore>
-		stripeAccountsService: Service<typeof stripeConnectTopic>
+		stripeAccountsService: Service2<typeof makeStripeConnectService>
 		triggerBankPopup: TriggerBankPopup
 	}) {
 

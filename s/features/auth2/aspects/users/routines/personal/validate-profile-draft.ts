@@ -1,6 +1,6 @@
 
 import {ProfileDraft} from "./types/profile-draft.js"
-import {string, minLength, maxLength, notWhitespace, schema, one} from "../../../../toolbox/darkvalley.js"
+import {string, minLength, maxLength, notWhitespace, schema, one} from "../../../../../../toolbox/darkvalley.js"
 
 export const profileValidators = {
 	nickname: one(

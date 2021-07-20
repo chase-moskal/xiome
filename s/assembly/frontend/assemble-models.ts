@@ -1,12 +1,12 @@
 
-import {makeAppModel} from "../../features/auth/models/app-model.js"
-import {makeAuthModel} from "../../features/auth/models/auth-model2.js"
 // import {makeStoreModel} from "../../features/store/model/store-model.js"
 import {AssembleModelsOptions} from "./types/assemble-models-options.js"
-import {makePersonalModel} from "../../features/auth/models/personal-model.js"
-import {makePermissionsModel} from "../../features/auth/models/permissions-model.js"
 import {makeQuestionsModel} from "../../features/questions/model/questions-model.js"
+import {makeAppsModel} from "../../features/auth2/aspects/apps/models/apps-model.js"
+import {makeAccessModel} from "../../features/auth2/aspects/users/models/access-model.js"
+import {makePersonalModel} from "../../features/auth2/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../features/administrative/models/administrative-model.js"
+import {makePermissionsModel} from "../../features/auth2/aspects/permissions/models/permissions-model.js"
 
 export async function assembleModels({
 		appId,
@@ -16,9 +16,9 @@ export async function assembleModels({
 		authMediator,
 	}: AssembleModelsOptions) {
 
-	const authModel = makeAuthModel({
+	const authModel = makeAccessModel({
 		authMediator,
-		loginService: remote.auth.loginService,
+		loginService: remote.auth.users.loginService,
 	})
 
 	const {getValidAccess, reauthorize} = authModel
@@ -26,18 +26,17 @@ export async function assembleModels({
 	const personalModel = makePersonalModel({
 		reauthorize,
 		getAccess: getValidAccess,
-		personalService: remote.auth.personalService,
+		personalService: remote.auth.users.personalService,
 	})
 
-	const appModel = makeAppModel({
+	const appModel = makeAppsModel({
 		getAccess: getValidAccess,
-		appService: remote.auth.appService,
-		appEditService: remote.auth.appEditService,
-		manageAdminsService: remote.auth.manageAdminsService,
+		appService: remote.auth.apps.appService,
+		appEditService: remote.auth.apps.appEditService,
 	})
 
 	const permissionsModel = makePermissionsModel({
-		permissionsService: remote.auth.permissionsService,
+		permissionsService: remote.auth.permissions.permissionsService,
 		reauthorize,
 	})
 

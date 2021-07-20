@@ -20,7 +20,7 @@ export const makeRoleAssignmentService = (
 		{config, authPolicies}: AdministrativeApiOptions
 	) => apiContext<UserMeta, UserAuth>()({
 	policy: async(meta, request) => {
-		const auth = await authPolicies.user.processAuth(meta, request)
+		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("administrate user roles")
 		return auth
 	},

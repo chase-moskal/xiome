@@ -1,6 +1,6 @@
 
-import {Permit} from "../../auth/types/permit.js"
 import {User} from "../aspects/users/types/user.js"
+import {Permit} from "../aspects/permissions/types/permit.js"
 
 export interface AuthTokens {
 	accessToken: string

@@ -1,9 +1,9 @@
 
-import {makeAuthModel} from "../../../features/auth/models/auth-model2.js"
+import {makeAccessModel} from "../../../features/auth2/aspects/users/models/access-model.js"
 
 export async function loginWithLinkTokenOrUseExistingLogin({link, authModel}: {
 		link: string
-		authModel: ReturnType<typeof makeAuthModel>
+		authModel: ReturnType<typeof makeAccessModel>
 	}) {
 
 	const {searchParams} = new URL(link)

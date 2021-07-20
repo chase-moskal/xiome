@@ -1,7 +1,6 @@
 
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {AsDbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
-import {NakedNamespacedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
 
 export type UserTables = {
 	accounts: DbbyTable<AccountRow>

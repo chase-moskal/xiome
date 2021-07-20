@@ -1,7 +1,7 @@
 
-import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
+import {AuthTables} from "../../../auth2/types/auth-tables.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
+import {prepareAuthPolicies} from "../../../auth2/policies/prepare-auth-policies.js"
 
 export interface AdministrativeApiOptions {
 	config: SecretConfig

@@ -1,5 +1,4 @@
 
-import {User} from "../../auth/types/user.js"
 import styles from "./xio-profile-card.css.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {deepEqual} from "../../../toolbox/deep.js"
@@ -9,12 +8,13 @@ import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderDetails} from "./renders/render-details.js"
+import {User} from "../../auth2/aspects/users/types/user.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {ProfileDraft} from "../../auth/topics/personal/types/profile-draft.js"
 import {mixinStyles} from "../../../framework/component2/mixins/mixin-styles.js"
-import {profileValidators} from "../../auth/topics/personal/validate-profile-draft.js"
 import {Component2, property, html} from "../../../framework/component2/component2.js"
+import {ProfileDraft} from "../../auth2/aspects/users/routines/personal/types/profile-draft.js"
+import {profileValidators} from "../../auth2/aspects/users/routines/personal/validate-profile-draft.js"
 
 @mixinStyles(styles)
 export class XioProfileCard extends Component2 {

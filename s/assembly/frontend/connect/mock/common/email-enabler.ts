@@ -1,5 +1,5 @@
 
-import {SendEmail} from "../../../../../features/auth/types/emails/send-email.js"
+import {SendEmail} from "../../../../../features/auth2/types/emails/send-email.js"
 
 export function makeEmailEnabler(actuallySendEmail: SendEmail) {
 	let enabled = true

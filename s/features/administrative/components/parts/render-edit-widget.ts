@@ -1,10 +1,10 @@
 
 import {UserResult} from "../../api/types/user-result.js"
 import {html} from "../../../../framework/component2/component2.js"
-import {PermissionsDisplay} from "../../../auth/topics/permissions/types/permissions-display.js"
-import {RoleDisplay} from "../../../auth/topics/permissions/types/role-display.js"
-import {PrivilegeDisplay} from "../../../auth/topics/permissions/types/privilege-display.js"
 import {makeAdministrativeModel} from "../../models/administrative-model.js"
+import {RoleDisplay} from "../../../auth2/aspects/users/routines/permissions/types/role-display.js"
+import {PrivilegeDisplay} from "../../../auth2/aspects/users/routines/permissions/types/privilege-display.js"
+import {PermissionsDisplay} from "../../../auth2/aspects/users/routines/permissions/types/permissions-display.js"
 
 function sortAssignableFirst(roles: RoleDisplay[]) {
 	const assignable = roles.filter(role => role.assignable)

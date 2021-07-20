@@ -4,7 +4,6 @@ import lockSvg from "../../../../../../framework/icons/lock.svg.js"
 import wrenchSvg from "../../../../../../framework/icons/wrench.svg.js"
 
 import {makePermissionsModel} from "../../models/permissions-model.js"
-import {AuthModel} from "../../../../../auth/models/types/auth/auth-model.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {RoleDisplay} from "../../../users/routines/permissions/types/role-display.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
@@ -15,7 +14,6 @@ import {mixinStyles, html, property, Component3WithShare} from "../../../../../.
 @mixinStyles(styles)
 export class XiomePermissions extends Component3WithShare<{
 		modals: ModalSystem
-		authModel: AuthModel
 		permissionsModel: ReturnType<typeof makePermissionsModel>
 	}> {
 

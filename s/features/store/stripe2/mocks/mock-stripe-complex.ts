@@ -7,8 +7,8 @@ import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
 import {StripeLiaisonForApp} from "../types/stripe-liaison-app.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
+import {dbbyConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 import {StripeLiaisonForPlatform} from "../types/stripe-liaison-for-platform.js"
-import {prepareConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 
 export function mockStripeComplex({rando, tables, webhooks}: {
 		rando: Rando
@@ -63,8 +63,9 @@ export function mockStripeComplex({rando, tables, webhooks}: {
 
 	const rawTables = tables
 	function connectStripeLiaisonForApp(stripeConnectAccountId: string): StripeLiaisonForApp {
-		const tables = prepareConstrainTables(rawTables)({
-			"_connectedAccount": stripeConnectAccountId,
+		const tables = dbbyConstrainTables({
+			tables: rawTables,
+			namespace: {"_connectedAccount": stripeConnectAccountId},
 		})
 
 		function ignoreUndefined<X extends {}>(input: X): X {
