@@ -1,5 +1,5 @@
 
-import {AccessPayload} from "../../features/auth/types/tokens/access-payload.js"
+import {AccessPayload} from "../../features/auth2/types/auth-tokens.js"
 
 export function modelDataInitializationWidget({load, reset}: {
 		load: () => Promise<void>

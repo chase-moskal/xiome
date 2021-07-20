@@ -19,8 +19,9 @@ import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
 
 export const storeApi = ({
 		rando,
-		tables,
 		config,
+		authTables,
+		storeTables,
 		authPolicies,
 		stripeComplex,
 		shoppingOptions,
@@ -28,7 +29,8 @@ export const storeApi = ({
 	}: StoreApiOptions) => {
 
 	const policies = payPolicies({
-		tables,
+		authTables,
+		storeTables,
 		authPolicies,
 		stripeComplex,
 	})
