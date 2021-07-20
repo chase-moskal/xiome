@@ -1,13 +1,13 @@
 
 import {Suite, expect, assert} from "cynic"
 
+import {getRando} from "../get-rando.js"
 import {dbbyMemory} from "./dbby-memory.js"
 import {DamnId} from "../damnedb/damn-id.js"
 import {dbbyHardback} from "./dbby-hardback.js"
 import {and, or, find} from "./dbby-helpers.js"
 import {dbbyConstrain} from "./dbby-constrain.js"
 import {DbbyRow, DbbyTable} from "./dbby-types.js"
-import {getRando} from "../get-rando.js"
 
 type DemoUser = {
 	userId: string
@@ -25,11 +25,11 @@ async function setupThreeUserDemo() {
 	return dbby
 }
 
-function constrainAppTable<Row extends DbbyRow>(
-			table: DbbyTable<Row>,
+function constrainAppTable<xTable extends DbbyTable<DbbyRow>>(
+			table: xTable,
 			appId: string,
 		) {
-	return dbbyConstrain<Row, {appId: string}>(table, {appId})
+	return dbbyConstrain<{appId: string}, xTable>({namespace: {appId}, table})
 }
 
 export default <Suite>{

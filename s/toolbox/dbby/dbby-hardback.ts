@@ -1,4 +1,5 @@
 
+import {_dbbyTableSymbol} from "./dbby-table-symbol.js"
 import {DbbyConditional, DbbyRow, DbbyTable} from "./dbby-types.js"
 
 export function dbbyHardback<Row extends DbbyRow>({frontTable, backTable}: {
@@ -11,6 +12,7 @@ export function dbbyHardback<Row extends DbbyRow>({frontTable, backTable}: {
 	}
 
 	return {
+		[_dbbyTableSymbol]: true,
 		one,
 		create: frontTable.create,
 		update: frontTable.update,
