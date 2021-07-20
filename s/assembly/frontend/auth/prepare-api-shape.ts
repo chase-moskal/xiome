@@ -1,6 +1,6 @@
 
 import {asShape} from "renraku/x/identities/as-shape.js"
-import {_augment} from "renraku/x/types/symbols/augment-symbol.js"
+import {_meta} from "renraku/x/types/symbols/meta-symbol.js"
 
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
@@ -16,66 +16,92 @@ export function prepareApiShape({appId, storage}: {
 
 	let authMediator: AuthMediator
 
-	const standardAugment = {
-		getMeta: async() => ({
-			accessToken: await authMediator.getAccessToken(),
-		}),
-	}
+	const standardMeta = async() => ({
+		accessToken: await authMediator.getAccessToken(),
+	})
 
 	const shape = asShape<SystemApi>({
 		auth: {
-			greenService: {
-				[_augment]: {getMeta: async() => undefined},
-				authorize: true,
+			apps: {
+				appService: {
+					[_meta]: standardMeta,
+					deleteApp: true,
+					listApps: true,
+					registerApp: true,
+					updateApp: true,
+				},
+				adminService: {
+					[_meta]: standardMeta,
+					listAdmins: true,
+					revokeAdmin: true,
+					assignAdminByEmail: true,
+					assignPlatformUserAsAdmin: true,
+				},
 			},
-			loginService: {
-				[_augment]: standardAugment,
-				authenticateViaLoginToken: true,
-				sendLoginLink: true,
+			permissions: {
+
 			},
-			appService: {
-				[_augment]: standardAugment,
-				listApps: true,
-				registerApp: true,
-			},
-			appEditService: {
-				[_augment]: standardAugment,
-				deleteApp: true,
-				updateApp: true,
-			},
-			manageAdminsService: {
-				[_augment]: standardAugment,
-				listAdmins: true,
-				assignAdmin: true,
-				revokeAdmin: true,
-				assignPlatformUserAsAdmin: true,
-			},
-			personalService: {
-				[_augment]: standardAugment,
-				setProfile: true,
-			},
-			userService: {
-				[_augment]: standardAugment,
-				getUser: true,
-			},
-			permissionsService: {
-				[_augment]: standardAugment,
-				assignPrivilege: true,
-				createRole: true,
-				deleteRole: true,
-				fetchPermissions: true,
-				unassignPrivilege: true,
+			users: {
+				greenService: {
+					[_meta]: async() => undefined,
+				},
 			},
 		},
-		administrative: {
-			roleAssignmentService: {
-				[_augment]: standardAugment,
-				fetchPermissions: true,
-				searchUsers: true,
-				assignRoleToUser: true,
-				revokeRoleFromUser: true,
-			},
-		},
+
+		// auth: {
+		// 	greenService: {
+		// 		[_meta]: async() => undefined,
+		// 		authorize: true,
+		// 	},
+		// 	loginService: {
+		// 		[_meta]: standardMeta,
+		// 		authenticateViaLoginToken: true,
+		// 		sendLoginLink: true,
+		// 	},
+		// 	appService: {
+		// 		[_meta]: standardMeta,
+		// 		listApps: true,
+		// 		registerApp: true,
+		// 	},
+		// 	appEditService: {
+		// 		[_meta]: standardMeta,
+		// 		deleteApp: true,
+		// 		updateApp: true,
+		// 	},
+		// 	manageAdminsService: {
+		// 		[_meta]: standardMeta,
+		// 		listAdmins: true,
+		// 		assignAdmin: true,
+		// 		revokeAdmin: true,
+		// 		assignPlatformUserAsAdmin: true,
+		// 	},
+		// 	personalService: {
+		// 		[_meta]: standardMeta,
+		// 		setProfile: true,
+		// 	},
+		// 	userService: {
+		// 		[_meta]: standardMeta,
+		// 		getUser: true,
+		// 	},
+		// 	permissionsService: {
+		// 		[_meta]: standardMeta,
+		// 		assignPrivilege: true,
+		// 		createRole: true,
+		// 		deleteRole: true,
+		// 		fetchPermissions: true,
+		// 		unassignPrivilege: true,
+		// 	},
+		// },
+		// administrative: {
+		// 	roleAssignmentService: {
+		// 		[_meta]: standardMeta,
+		// 		fetchPermissions: true,
+		// 		searchUsers: true,
+		// 		assignRoleToUser: true,
+		// 		revokeRoleFromUser: true,
+		// 	},
+		// },
+
 		// // TODO reactivate store
 		// store: {
 		// 	stripeConnectService: {
@@ -109,23 +135,24 @@ export function prepareApiShape({appId, storage}: {
 		// 		},
 		// 	},
 		// },
-		questions: {
-			questionsReadingService: {
-				[_augment]: standardAugment,
-				fetchQuestions: true,
-			},
-			questionsPostingService: {
-				[_augment]: standardAugment,
-				postQuestion: true,
-				archiveQuestion: true,
-				likeQuestion: true,
-				reportQuestion: true,
-			},
-			questionsModerationService: {
-				[_augment]: standardAugment,
-				archiveBoard: true,
-			},
-		},
+
+		// questions: {
+		// 	questionsReadingService: {
+		// 		[_meta]: standardMeta,
+		// 		fetchQuestions: true,
+		// 	},
+		// 	questionsPostingService: {
+		// 		[_meta]: standardMeta,
+		// 		postQuestion: true,
+		// 		archiveQuestion: true,
+		// 		likeQuestion: true,
+		// 		reportQuestion: true,
+		// 	},
+		// 	questionsModerationService: {
+		// 		[_meta]: standardMeta,
+		// 		archiveBoard: true,
+		// 	},
+		// },
 	})
 
 	function installAuthMediator({greenService}: {

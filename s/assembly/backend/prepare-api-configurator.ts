@@ -3,32 +3,36 @@ import {asApi} from "renraku/x/identities/as-api.js"
 import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
 import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
 
-import {Database} from "./types/database.js"
 import {dbbyX} from "../../toolbox/dbby/dbby-x.js"
 import {waitForProperties} from "./tools/zippy.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
+import {objectMap} from "../../toolbox/object-map.js"
+import {authApi} from "../../features/auth2/auth-api.js"
 import {makeAuthApi} from "../../features/auth/auth-api.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {processBlueprint} from "./tools/process-blueprint.js"
 import {configureMongo} from "./configurators/configure-mongo.js"
 import {loginEmailRecaller} from "./tools/login-email-recaller.js"
 import {BlueprintForTables} from "./types/blueprint-for-tables.js"
+import {DatabaseNamespaced, DatabaseRaw} from "./types/database.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {namespaceKeyAppId} from "../../framework/api/namespace-key-app-id.js"
 import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
 import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 import {configureTokenFunctions} from "./configurators/configure-token-functions.js"
 import {configureMockFileStorage} from "./configurators/configure-mock-file-storage.js"
-import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
+import {prepareAuthPolicies} from "../../features/auth2/policies/prepare-auth-policies.js"
 import {prepareSendLoginEmail} from "../../features/auth/tools/emails/send-login-email.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
 import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 import {sendEmail as mockSendEmail} from "../../features/auth/tools/emails/mock-send-email.js"
 import {standardNicknameGenerator} from "../../features/auth/tools/nicknames/standard-nickname-generator.js"
+import {TablesToUnconstrained, Unconstrain, UnconstrainedTables} from "../../framework/api/types/table-namespacing-for-apps.js"
 
 export function prepareApiConfigurator(configurators: {
 		configureMongo: typeof configureMongo
@@ -76,15 +80,24 @@ export function prepareApiConfigurator(configurators: {
 		// database
 		//
 		const {database, mockStorage} = await (async (): Promise<{
-				database: Database
+				database: DatabaseRaw & Unconstrain<DatabaseNamespaced>
 				mockStorage: FlexStorage
 			}> => {
 
-			const blueprint: BlueprintForTables<Database> = {
-				core: {
-					app: {
-						app: true,
-						appOwnership: true,
+			const blueprintForRawDatabase: BlueprintForTables<DatabaseRaw> = {
+				appTables: {
+					apps: true,
+					owners: true,
+				},
+			}
+
+			const blueprintForNamespacedDatabase: BlueprintForTables<DatabaseNamespaced> = {
+				authTables: {
+					users: {
+						accounts: true,
+						emails: true,
+						latestLogins: true,
+						profiles: true,
 					},
 					permissions: {
 						privilege: true,
@@ -92,25 +105,18 @@ export function prepareApiConfigurator(configurators: {
 						roleHasPrivilege: true,
 						userHasRole: true,
 					},
-					user: {
-						account: true,
-						accountViaEmail: true,
-						accountViaGoogle: true,
-						latestLogin: true,
-						profile: true,
-					},
 				},
-				questions: {
+				questionsTables: {
 					questionLikes: true,
 					questionPosts: true,
 					questionReports: true,
 				},
-				store: {
+				storeTables: {
 					billing: {
 						customers: true,
 						storeInfo: true,
-						subscriptions: true,
 						subscriptionPlans: true,
+						subscriptions: true,
 					},
 					merchant: {
 						stripeAccounts: true,
@@ -119,14 +125,30 @@ export function prepareApiConfigurator(configurators: {
 			}
 
 			async function mockWithStorage(mockStorage: FlexStorage) {
-				return {
-					mockStorage,
-					database: <Database>await waitForProperties(
+				const databaseRaw = <DatabaseRaw>await waitForProperties(
+					processBlueprint({
+						blueprint: blueprintForRawDatabase,
+						process: path => dbbyX(mockStorage, path.join("-")),
+					})
+				)
+				const databaseUnconstrained = await (async() => {
+					const databaseNamespaced = <DatabaseNamespaced>await waitForProperties(
 						processBlueprint({
-							blueprint,
+							blueprint: blueprintForNamespacedDatabase,
 							process: path => dbbyX(mockStorage, path.join("-")),
 						})
 					)
+					return <Unconstrain<DatabaseNamespaced>>objectMap(
+						databaseNamespaced,
+						value => new UnconstrainedTables(value),
+					)
+				})()
+				return {
+					mockStorage,
+					database: {
+						...databaseRaw,
+						...databaseUnconstrained,
+					}
 				}
 			}
 
@@ -142,7 +164,8 @@ export function prepareApiConfigurator(configurators: {
 				}
 				default: {
 					return configurators.configureMongo({
-						blueprint,
+						blueprintForRawDatabase,
+						blueprintForNamespacedDatabase,
 						config: {...config, database: config.database},
 					})
 				}
@@ -170,7 +193,8 @@ export function prepareApiConfigurator(configurators: {
 		const {stripeComplex, mockStripeOperations} = await mockStripeCircuit({
 			rando,
 			tableStorage: mockStorage,
-			tables: {...database.core, ...database.store},
+			authTables: database.authTables,
+			storeTables: database.storeTables,
 		})
 
 		//
@@ -181,32 +205,32 @@ export function prepareApiConfigurator(configurators: {
 
 			const authPolicies = prepareAuthPolicies({
 				config,
-				tables: database.core,
+				appTables: database.appTables,
+				authTables: database.authTables,
 				verifyToken,
 			})
 
 			return asApi({
-				auth: makeAuthApi({
+				auth: authApi({
 					rando,
 					config,
 					authPolicies,
-					tables: database.core,
 					signToken,
 					verifyToken,
 					generateNickname,
 					sendLoginEmail: emails.sendLoginEmail,
 				}),
-				administrative: makeAdministrativeApi({
-					config,
-					authTables: database.core,
-					authPolicies,
-				}),
-				questions: questionsApi({
-					rando,
-					config,
-					authPolicies,
-					questionsTables: database.questions,
-				}),
+				// administrative: makeAdministrativeApi({
+				// 	config,
+				// 	authTables: database.core,
+				// 	authPolicies,
+				// }),
+				// questions: questionsApi({
+				// 	rando,
+				// 	config,
+				// 	authPolicies,
+				// 	questionsTables: database.questions,
+				// }),
 			})
 		})()
 

@@ -1,13 +1,16 @@
 
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {namespaceKeyAppId} from "../namespace-key-app-id.js"
-import {AsDbbyRow, DbbyTables} from "../../../toolbox/dbby/dbby-types.js"
 import {dbbyConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
+import {AsDbbyRow, DbbyRow, DbbyTable, DbbyTables, DbbyUnconstrainTables} from "../../../toolbox/dbby/dbby-types.js"
 
 export type AppNamespace = AsDbbyRow<{
 	[namespaceKeyAppId]: DamnId
 }>
 
+export type TablesToUnconstrained<xTables extends DbbyTables> = (
+	DbbyUnconstrainTables<AppNamespace, xTables>
+)
 
 export class UnconstrainedTables<xTables extends DbbyTables> {
 	constructor(private tables: xTables) {}
@@ -22,6 +25,9 @@ export class UnconstrainedTables<xTables extends DbbyTables> {
 	}
 }
 
+export type Unconstrain<xTables extends {[key: string]: DbbyTables}> = {
+	[P in keyof xTables]: UnconstrainedTables<xTables[P]>
+}
 
 // export type UnconstrainedTables<xTables extends DbbyTables> = (
 // 	DbbyUnconstrainTables<AppNamespaceRow, xTables>

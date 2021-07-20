@@ -5,17 +5,19 @@ import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {mockStripeComplex} from "./mock-stripe-complex.js"
 import {pubsub, pubsubs} from "../../../../toolbox/pubsub.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {AuthTables} from "../../../auth2/types/auth-tables.js"
 import {mockStripeTables} from "./tables/mock-stripe-tables.js"
 import {StoreTables} from "../../api/tables/types/store-tables.js"
-import {AuthTables} from "../../../auth/tables/types/auth-tables.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function mockStripeCircuit({
-		rando, tableStorage, tables: xiomeTables,
+		rando, tableStorage, authTables, storeTables,
 	}: {
 		rando: Rando
 		tableStorage: FlexStorage
-		tables: StoreTables & AuthTables
+		authTables: UnconstrainedTables<AuthTables>
+		storeTables: UnconstrainedTables<StoreTables>
 	}) {
 
 	const {
@@ -37,9 +39,10 @@ export async function mockStripeCircuit({
 	})
 
 	const webhooks = stripeWebhooks({
+		authTables,
+		storeTables,
 		stripeComplex,
 		logger: console,
-		tables: xiomeTables,
 	})
 
 	for (const [key, subscribe] of Object.entries(webhookSubscribers))
