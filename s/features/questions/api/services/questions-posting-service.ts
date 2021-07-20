@@ -1,33 +1,28 @@
 
+import {apiContext} from "renraku/x/api/api-context.js"
+
 import {Question} from "../types/question.js"
 import {QuestionDraft} from "../types/question-draft.js"
+import {UserMeta} from "../../../auth2/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {UserMeta} from "../../../auth/policies/types/user-meta.js"
-import {UserAuth} from "../../../auth/policies/types/user-auth.js"
 import {QuestionPostRow} from "../tables/types/questions-tables.js"
-import {QuestionsAuthParts} from "../types/questions-auth-parts.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
-import {asServiceParts} from "../../../../framework/api/as-service-parts.js"
+import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"
 import {validateQuestionDraft} from "./validation/validate-question-draft.js"
 import {throwProblems} from "../../../../toolbox/topic-validation/throw-problems.js"
+import {requireUserCanEditQuestion} from "./helpers/require-user-can-edit-question.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
-import {requireUserCanEditQuestion} from "./authorizers/require-user-can-edit-question.js"
 
-export const questionsPostingParts = (
-		options: QuestionsApiOptions
-	) => asServiceParts<
-		UserMeta,
-		QuestionsAuthParts & UserAuth
-	>()({
-
+export const makeQuestionsPostingService = (
+	options: QuestionsApiOptions
+	) => apiContext<UserMeta, QuestionsUserAuth>()({
 	policy: async(meta, request) => {
 		const auth = await authenticatedQuestionsPolicy(options)(meta, request)
 		auth.checker.requirePrivilege("post questions")
 		auth.checker.requireNotHavePrivilege("banned")
 		return auth
 	},
-
 	expose: {
 
 		async postQuestion(

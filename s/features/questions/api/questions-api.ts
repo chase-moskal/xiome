@@ -1,15 +1,14 @@
 
 import {asApi} from "renraku/x/identities/as-api.js"
 import {QuestionsApiOptions} from "./types/questions-api-options.js"
-import {questionsReadingParts} from "./services/questions-reading-parts.js"
-import {questionsPostingParts} from "./services/questions-posting-parts.js"
-import {assembleApiContext} from "../../../framework/api/assemble-api-context.js"
-import {questionsModerationParts} from "./services/questions-moderation-parts.js"
+import {makeQuestionsReadingService} from "./services/questions-reading-service.js"
+import {makeQuestionsPostingService} from "./services/questions-posting-service.js"
+import {makeQuestionsModerationService} from "./services/questions-moderation-service.js"
 
 export function questionsApi(options: QuestionsApiOptions) {
 	return asApi({
-		questionsReadingService: assembleApiContext(questionsReadingParts(options)),
-		questionsPostingService: assembleApiContext(questionsPostingParts(options)),
-		questionsModerationService: assembleApiContext(questionsModerationParts(options)),
+		questionsReadingService: makeQuestionsReadingService(options),
+		questionsPostingService: makeQuestionsPostingService(options),
+		questionsModerationService: makeQuestionsModerationService(options),
 	})
 }

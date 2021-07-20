@@ -1,16 +1,16 @@
 
-import {User} from "../../auth/types/user.js"
 import {merge} from "../../../toolbox/merge.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Question} from "../api/types/question.js"
+import {Service2} from "../../../types/service2.js"
 import {QuestionDraft} from "../api/types/question-draft.js"
+import {User} from "../../auth2/aspects/users/types/user.js"
+import {AccessPayload} from "../../auth2/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
-import {AccessPayload} from "../../auth/types/tokens/access-payload.js"
-import {GetBusiness} from "../../../framework/api/types/get-business.js"
-import {questionsReadingParts} from "../api/services/questions-reading-parts.js"
-import {questionsPostingParts} from "../api/services/questions-posting-parts.js"
-import {questionsModerationParts} from "../api/services/questions-moderation-parts.js"
+import {makeQuestionsReadingService} from "../api/services/questions-reading-service.js"
+import {makeQuestionsPostingService} from "../api/services/questions-posting-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
+import {makeQuestionsModerationService} from "../api/services/questions-moderation-service.js"
 
 export function makeQuestionsModel({
 		questionsReadingService,
@@ -18,9 +18,9 @@ export function makeQuestionsModel({
 		questionsModerationService,
 		getAccess,
 	}: {
-		questionsReadingService: GetBusiness<typeof questionsReadingParts>
-		questionsPostingService: GetBusiness<typeof questionsPostingParts>
-		questionsModerationService: GetBusiness<typeof questionsModerationParts>
+		questionsReadingService: Service2<typeof makeQuestionsReadingService>
+		questionsPostingService: Service2<typeof makeQuestionsPostingService>
+		questionsModerationService: Service2<typeof makeQuestionsModerationService>
 		getAccess: () => Op<AccessPayload>
 	}) {
 

@@ -2,7 +2,7 @@
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {namespaceKeyAppId} from "../namespace-key-app-id.js"
 import {dbbyConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
-import {AsDbbyRow, DbbyRow, DbbyTable, DbbyTables, DbbyUnconstrainTables} from "../../../toolbox/dbby/dbby-types.js"
+import {AsDbbyRow, DbbyTables, DbbyUnconstrainTables} from "../../../toolbox/dbby/dbby-types.js"
 
 export type AppNamespace = AsDbbyRow<{
 	[namespaceKeyAppId]: DamnId
