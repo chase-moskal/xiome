@@ -1,16 +1,16 @@
 
 import {storeCore} from "./core/store-core.js"
 import {bankShare} from "./shares/bank-share.js"
-import {Service} from "../../../types/service.js"
+import {Service2} from "../../../types/service2.js"
 import {ecommerceShare} from "./shares/ecommerce-share.js"
 import {AccessPayload} from "../../auth2/types/auth-tokens.js"
-import {shopkeepingTopic} from "../topics/shopkeeping-topic.js"
-import {statusCheckerTopic} from "../topics/status-checker-topic.js"
-import {statusTogglerTopic} from "../topics/status-toggler-topic.js"
-import {stripeConnectTopic} from "../topics/stripe-connect-topic.js"
 import {TriggerBankPopup} from "./shares/types/trigger-bank-popup.js"
+import {makeShopkeepingService} from "../api/services/shopkeeping-service.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {subscriptionPlanningShare} from "./shares/subscription-planning-share.js"
+import {makeStatusCheckerService} from "../api/services/status-checker-service.js"
+import {makeStatusTogglerService} from "../api/services/status-toggler-service.js"
+import {makeStripeConnectService} from "../api/services/stripe-connect-service.js"
 
 export function makeStoreModel({
 		appId,
@@ -23,10 +23,10 @@ export function makeStoreModel({
 	}: {
 		appId: string
 		storage: FlexStorage
-		shopkeepingService: Service<typeof shopkeepingTopic>
-		statusCheckerService: Service<typeof statusCheckerTopic>
-		statusTogglerService: Service<typeof statusTogglerTopic>
-		stripeAccountsService: Service<typeof stripeConnectTopic>
+		shopkeepingService: Service2<typeof makeShopkeepingService>
+		statusCheckerService: Service2<typeof makeStatusCheckerService>
+		statusTogglerService: Service2<typeof makeStatusTogglerService>
+		stripeAccountsService: Service2<typeof makeStripeConnectService>
 		triggerBankPopup: TriggerBankPopup
 	}) {
 

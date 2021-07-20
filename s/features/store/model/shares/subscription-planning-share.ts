@@ -1,20 +1,20 @@
 
 import {storeCore} from "../core/store-core.js"
 import {ops} from "../../../../framework/ops.js"
-import {Service} from "../../../../types/service.js"
 import {onesie} from "../../../../toolbox/onesie.js"
+import {Service2} from "../../../../types/service2.js"
 import {PlanningSituation} from "./types/planning-situation.js"
 import {AccessPayload} from "../../../auth2/types/auth-tokens.js"
-import {shopkeepingTopic} from "../../topics/shopkeeping-topic.js"
 import {userCanManageStore} from "./permissions-helpers/user-can-manage-store.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {makeShopkeepingService} from "../../api/services/shopkeeping-service.js"
 
 export function subscriptionPlanningShare({
 		shopkeepingService,
 		core: {state, actions},
 	}: {
 		core: ReturnType<typeof storeCore>
-		shopkeepingService: Service<typeof shopkeepingTopic>
+		shopkeepingService: Service2<typeof makeShopkeepingService>
 	}) {
 
 	const loadPlans = onesie(async function() {

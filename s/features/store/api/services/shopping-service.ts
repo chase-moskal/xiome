@@ -1,6 +1,6 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
-import {StoreServiceOptions} from "./types/store-service-options.js"
+import {StoreServiceOptions} from "../types/store-options.js"
 import {CustomerAuth, CustomerMeta} from "../policies/types/store-metas-and-auths.js"
 
 export const makeShoppingService = (

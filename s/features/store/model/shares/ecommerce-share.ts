@@ -2,13 +2,13 @@
 import {storeCore} from "../core/store-core.js"
 import {ops} from "../../../../framework/ops.js"
 import {onesie} from "../../../../toolbox/onesie.js"
-import {Service} from "../../../../types/service.js"
+import {Service2} from "../../../../types/service2.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
-import {StoreStatus} from "../../topics/types/store-status.js"
-import {statusCheckerTopic} from "../../topics/status-checker-topic.js"
-import {statusTogglerTopic} from "../../topics/status-toggler-topic.js"
+import {StoreStatus} from "../../api/services/types/store-status.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {storageCache} from "../../../../toolbox/flex-storage/cache/storage-cache.js"
+import {makeStatusCheckerService} from "../../api/services/status-checker-service.js"
+import {makeStatusTogglerService} from "../../api/services/status-toggler-service.js"
 import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
 
 export function ecommerceShare({
@@ -21,8 +21,8 @@ export function ecommerceShare({
 		appId: string
 		storage: FlexStorage
 		core: ReturnType<typeof storeCore>
-		statusCheckerService: Service<typeof statusCheckerTopic>
-		statusTogglerService: Service<typeof statusTogglerTopic>
+		statusCheckerService: Service2<typeof makeStatusCheckerService>
+		statusTogglerService: Service2<typeof makeStatusTogglerService>
 	}) {
 
 	const cache = storageCache({

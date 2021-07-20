@@ -1,6 +1,6 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
-import {StoreServiceOptions} from "./types/store-service-options.js"
+import {StoreServiceOptions} from "../types/store-options.js"
 import {ProspectAuth, ProspectMeta} from "../policies/types/store-metas-and-auths.js"
 import {StoreStatus} from "./types/store-status.js"
 import {determineStoreStatus} from "./utils/determine-store-status.js"
