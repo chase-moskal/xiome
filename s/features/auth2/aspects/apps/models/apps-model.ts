@@ -6,7 +6,7 @@ import {Op, ops} from "../../../../../framework/ops.js"
 import {AppModelOptions} from "./types/apps-model-options.js"
 import {happystate} from "../../../../../toolbox/happystate/happystate.js"
 
-export function makeAppModel({
+export function makeAppsModel({
 		appService,
 		appEditService,
 		getAccess,
