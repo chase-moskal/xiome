@@ -1,6 +1,6 @@
 
 import {AppDisplay} from "../../../types/app-display.js"
-import {Service2} from "../../../../../../../types/service2.js"
+import {Service} from "../../../../../../../types/service.js"
 import {emailValidator} from "../../../utils/admin-email-validator.js"
 import {makeAppEditService} from "../../../services/app-edit-service.js"
 import {adminManagerControls} from "./aspects/admin-manager-controls.js"
@@ -12,7 +12,7 @@ import {ValueChangeEvent} from "../../../../../../xio-components/inputs/events/v
 
 export function makeAdminManager({app, appEditService, query}: {
 		app: AppDisplay
-		appEditService: Service2<typeof makeAppEditService>
+		appEditService: Service<typeof makeAppEditService>
 		query: <E extends HTMLElement>(selector: string) => E
 	}) {
 

@@ -2,7 +2,7 @@
 import {asShape} from "renraku/x/identities/as-shape.js"
 import {_meta} from "renraku/x/types/symbols/meta-symbol.js"
 
-import {Service2} from "../../../types/service2.js"
+import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {makeAuthMediator} from "../../../features/auth2/mediator/auth-mediator.js"
@@ -177,7 +177,7 @@ export function prepareApiShape({appId, storage}: {
 	})
 
 	function installAuthMediator({greenService}: {
-			greenService: Service2<typeof makeGreenService>
+			greenService: Service<typeof makeGreenService>
 		}) {
 		authMediator = makeAuthMediator({
 			appId,

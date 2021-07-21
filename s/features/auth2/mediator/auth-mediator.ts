@@ -1,6 +1,6 @@
 
 import {pubsub} from "../../../toolbox/pubsub.js"
-import {Service2} from "../../../types/service2.js"
+import {Service} from "../../../types/service.js"
 import {isTokenValid} from "../utils/tokens/is-token-valid.js"
 import {AccessPayload, AuthTokens} from "../types/auth-tokens.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
@@ -15,7 +15,7 @@ export function makeAuthMediator({
 	}: {
 		appId: string
 		storage: FlexStorage
-		greenService: Service2<typeof makeGreenService>
+		greenService: Service<typeof makeGreenService>
 	}) {
 
 	const tokenChangeEvent = pubsub<() => void>()

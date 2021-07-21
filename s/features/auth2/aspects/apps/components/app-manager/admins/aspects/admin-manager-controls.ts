@@ -1,7 +1,7 @@
 
 import {AppDisplay} from "../../../../types/app-display.js"
 import {ops} from "../../../../../../../../framework/ops.js"
-import {Service2} from "../../../../../../../../types/service2.js"
+import {Service} from "../../../../../../../../types/service.js"
 import {makeAppEditService} from "../../../../services/app-edit-service.js"
 import {adminManagerStateAndActions} from "./admin-manager-state-and-actions.js"
 
@@ -12,7 +12,7 @@ export function adminManagerControls({
 		appEditService,
 	}: {
 		app: AppDisplay
-		appEditService: Service2<typeof makeAppEditService>
+		appEditService: Service<typeof makeAppEditService>
 		state: ReturnType<typeof adminManagerStateAndActions>["state"]
 		actions: ReturnType<typeof adminManagerStateAndActions>["actions"]
 	}) {

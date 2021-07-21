@@ -2,7 +2,7 @@
 import {merge} from "../../../toolbox/merge.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Question} from "../api/types/question.js"
-import {Service2} from "../../../types/service2.js"
+import {Service} from "../../../types/service.js"
 import {QuestionDraft} from "../api/types/question-draft.js"
 import {User} from "../../auth2/aspects/users/types/user.js"
 import {AccessPayload} from "../../auth2/types/auth-tokens.js"
@@ -18,9 +18,9 @@ export function makeQuestionsModel({
 		questionsModerationService,
 		getAccess,
 	}: {
-		questionsReadingService: Service2<typeof makeQuestionsReadingService>
-		questionsPostingService: Service2<typeof makeQuestionsPostingService>
-		questionsModerationService: Service2<typeof makeQuestionsModerationService>
+		questionsReadingService: Service<typeof makeQuestionsReadingService>
+		questionsPostingService: Service<typeof makeQuestionsPostingService>
+		questionsModerationService: Service<typeof makeQuestionsModerationService>
 		getAccess: () => Op<AccessPayload>
 	}) {
 

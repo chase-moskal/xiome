@@ -2,7 +2,7 @@
 import {storeCore} from "../core/store-core.js"
 import {ops} from "../../../../framework/ops.js"
 import {onesie} from "../../../../toolbox/onesie.js"
-import {Service2} from "../../../../types/service2.js"
+import {Service} from "../../../../types/service.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
@@ -21,8 +21,8 @@ export function ecommerceShare({
 		appId: string
 		storage: FlexStorage
 		core: ReturnType<typeof storeCore>
-		statusCheckerService: Service2<typeof makeStatusCheckerService>
-		statusTogglerService: Service2<typeof makeStatusTogglerService>
+		statusCheckerService: Service<typeof makeStatusCheckerService>
+		statusTogglerService: Service<typeof makeStatusTogglerService>
 	}) {
 
 	const cache = storageCache({

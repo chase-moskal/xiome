@@ -1,6 +1,6 @@
 
 import {Op, ops} from "../../../framework/ops.js"
-import {Service2} from "../../../types/service2.js"
+import {Service} from "../../../types/service.js"
 import {AccessPayload} from "../../auth2/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {makeRoleAssignmentService} from "../api/services/role-assignment-service.js"
@@ -12,7 +12,7 @@ export function makeAdministrativeModel({
 		roleAssignmentService,
 		reauthorize,
 	}: {
-		roleAssignmentService: Service2<typeof makeRoleAssignmentService>
+		roleAssignmentService: Service<typeof makeRoleAssignmentService>
 		reauthorize: () => Promise<void>
 	}) {
 
