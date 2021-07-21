@@ -56,14 +56,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				...Object.entries(hardPermissions.roles)
 					.map(([,role]) => role.roleId),
 			]
-			const result = usersHaveRolesRaw
-				.filter(u => roleIdsThatActuallyExist.includes(u.roleId.toString()))
-			const test = await permissionsTables.role.read({conditions: false})
-			debugger
-			return result
+			return usersHaveRolesRaw
+			.filter(u => roleIdsThatActuallyExist.includes(u.roleId.toString()))
 		})()
-
-		console.log("@@@@@@", usersHaveRoles)
 
 		return userIds.map(userId => {
 			const raw = usersHaveRoles.filter(r => r.userId.toString() === userId)

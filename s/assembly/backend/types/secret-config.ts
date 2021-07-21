@@ -12,7 +12,7 @@ export interface SecretConfig {
 	}
 	platform: ConfigPlatform
 	email: "mock-console" | ConfigEmailMailgun
-	database: "mock-file" | "mock-memory" | "mock-localstorage" | ConfigDatabaseMongo
+	database: "mock-storage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
 	crypto: {
 		keys: "mock-mode" | "environment-variables" | ConfigKeys

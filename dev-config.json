@@ -18,7 +18,7 @@
 		}
 	},
 	"email": "mock-console",
-	"database": "mock-memory",
+	"database": "mock-storage",
 	"stripe": "mock-mode",
 	"crypto": {
 		"keys": "mock-mode",

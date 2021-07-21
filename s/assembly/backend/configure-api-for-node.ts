@@ -9,5 +9,5 @@ export const configureApiForNode = prepareApiConfigurator({
 	configureMongo,
 	configureMailgun,
 	configureTokenFunctions,
-	configureMockFileStorage,
+	configureMockStorage: () => configureMockFileStorage("./data.json"),
 })

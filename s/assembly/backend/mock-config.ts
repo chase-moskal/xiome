@@ -23,7 +23,7 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 		},
 	},
 	email: "mock-console",
-	database: "mock-localstorage",
+	database: "mock-storage",
 	stripe: "mock-mode",
 	crypto: {
 		keys: "mock-mode",

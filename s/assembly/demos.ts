@@ -19,9 +19,6 @@ export async function demos() {
 
 	await xiome.models.accessModel.sendLoginLink("creative@xiome.io")
 
-	// TODO fix localstorage creep
-	console.log("demo tables increase every refresh??", await connection.backend.database.authTables.unconstrained.permissions.userHasRole.read({conditions: false}))
-
 	const demoComponents = {}
 	for (const [key, value] of Object.entries(xiome.components))
 		demoComponents[`Demo${key}`] = value

@@ -17,7 +17,7 @@ export async function mockConnectApp({
 		appWindowLink: string
 	}) {
 
-	const backend = await configureApiForBrowser(mockConfig({
+	const backend = await configureApiForBrowser(storage)(mockConfig({
 		platformHome: appWindowLink,
 		platformOrigins: origins,
 	}))
@@ -52,5 +52,5 @@ export async function mockConnectApp({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	return {appId, remote, authMediator, backend, popups}
+	return {appId, remote, storage, authMediator, backend, popups}
 }

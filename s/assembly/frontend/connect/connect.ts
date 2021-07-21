@@ -11,15 +11,17 @@ export async function connect({
 		platformOrigin = "https://xiome.io"
 	}: XiomeConfigConnected) {
 
+	const storage = simpleFlexStorage(window.localStorage)
+	
 	const {remote, authMediator} = makeRemote({
 		appId,
+		storage,
 		apiLink: `${apiOrigin}/`,
-		storage: simpleFlexStorage(window.localStorage),
 	})
 
 	wireMediatorBroadcastChannel(authMediator)
 
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 
-	return {appId, remote, authMediator, popups}
+	return {appId, remote, storage, authMediator, popups}
 }

@@ -26,22 +26,20 @@ import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {mockSendEmail} from "../../features/auth/utils/emails/mock-send-email.js"
 import {originsToDatabase} from "../../features/auth/utils/origins-to-database.js"
-import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
-import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 import {configureTokenFunctions} from "./configurators/configure-token-functions.js"
-import {configureMockFileStorage} from "./configurators/configure-mock-file-storage.js"
 import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
+import {prepareSendLoginEmail} from "../../features/auth/utils/emails/send-login-email.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
 import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 import {Unconstrain, UnconstrainedTables} from "../../framework/api/types/table-namespacing-for-apps.js"
-import {prepareSendLoginEmail} from "../../features/auth/utils/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../features/auth/utils/nicknames/standard-nickname-generator.js"
 
 export function prepareApiConfigurator(configurators: {
 		configureMongo: typeof configureMongo
 		configureMailgun: typeof configureMailgun
 		configureTokenFunctions: typeof configureTokenFunctions
-		configureMockFileStorage: typeof configureMockFileStorage
+		configureMockStorage: () => FlexStorage
+		// configureMockFileStorage: typeof configureMockFileStorage
 	}) {
 
 	return async function configureApi(config: SecretConfig) {
@@ -155,26 +153,13 @@ export function prepareApiConfigurator(configurators: {
 				}
 			}
 
-			const results = await (async() => {
-				switch (config.database) {
-					case "mock-file": {
-						return mockWithStorage(configurators.configureMockFileStorage("./data.json"))
-					}
-					case "mock-memory": {
-						return mockWithStorage(memoryFlexStorage())
-					}
-					case "mock-localstorage": {
-						return mockWithStorage(simpleFlexStorage(window.localStorage))
-					}
-					default: {
-						return configurators.configureMongo({
-							blueprintForRawDatabase,
-							blueprintForNamespacedDatabase,
-							config: {...config, database: config.database},
-						})
-					}
-				}
-			})()
+			const results = config.database === "mock-storage"
+				? await mockWithStorage(configurators.configureMockStorage())
+				: await configurators.configureMongo({
+					blueprintForRawDatabase,
+					blueprintForNamespacedDatabase,
+					config: {...config, database: config.database},
+				})
 
 			const bakedAppTables = await (async() => {
 				const platformApp = config.platform.appDetails
