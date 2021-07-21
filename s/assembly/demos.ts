@@ -17,7 +17,7 @@ export async function demos() {
 	const xiome = {...connection, ...frontend}
 	document.body.prepend(xiome.modalsElement)
 
-	await xiome.models.authModel.sendLoginLink("creative@xiome.io")
+	await xiome.models.accessModel.sendLoginLink("creative@xiome.io")
 
 	const demoComponents = {}
 	for (const [key, value] of Object.entries(xiome.components))

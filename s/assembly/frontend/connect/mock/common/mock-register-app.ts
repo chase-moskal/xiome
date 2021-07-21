@@ -19,9 +19,9 @@ export async function mockRegisterApp({
 		windowLink: window.location.href,
 	})
 
-	const {authModel, appModel} = mockWindowForPlatform.models
-	await authModel.sendLoginLink(ownerEmail)
-	await authModel.login(backend.emails.recallLatestLoginEmail().loginToken)
+	const {accessModel, appsModel: appModel} = mockWindowForPlatform.models
+	await accessModel.sendLoginLink(ownerEmail)
+	await accessModel.login(backend.emails.recallLatestLoginEmail().loginToken)
 
 	const {appId} = await appModel.registerApp({
 		label: "Mock App",

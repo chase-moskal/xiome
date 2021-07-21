@@ -16,12 +16,12 @@ export async function assembleModels({
 		authMediator,
 	}: AssembleModelsOptions) {
 
-	const authModel = makeAccessModel({
+	const accessModel = makeAccessModel({
 		authMediator,
 		loginService: remote.auth.users.loginService,
 	})
 
-	const {getValidAccess, reauthorize} = authModel
+	const {getValidAccess, reauthorize} = accessModel
 
 	const personalModel = makePersonalModel({
 		reauthorize,
@@ -29,7 +29,7 @@ export async function assembleModels({
 		personalService: remote.auth.users.personalService,
 	})
 
-	const appModel = makeAppsModel({
+	const appsModel = makeAppsModel({
 		getAccess: getValidAccess,
 		appService: remote.auth.apps.appService,
 		appEditService: remote.auth.apps.appEditService,
@@ -53,17 +53,17 @@ export async function assembleModels({
 
 	const administrativeModel = makeAdministrativeModel({
 		roleAssignmentService: remote.administrative.roleAssignmentService,
-		reauthorize: () => authModel.reauthorize(),
+		reauthorize: () => accessModel.reauthorize(),
 	})
 
 	const questionsModel = makeQuestionsModel({
 		...remote.questions,
-		getAccess: () => authModel.access,
+		getAccess: () => accessModel.access,
 	})
 
-	authModel.onAccessChange(async access => {
+	accessModel.onAccessChange(async access => {
 		await Promise.all([
-			appModel.accessChange(),
+			appsModel.accessChange(),
 			permissionsModel.accessChange(access),
 			// storeModel.accessChange(access),
 			questionsModel.accessChange(access),
@@ -72,8 +72,8 @@ export async function assembleModels({
 	})
 
 	return {
-		appModel,
-		authModel,
+		appsModel,
+		accessModel,
 		// storeModel,
 		personalModel,
 		questionsModel,

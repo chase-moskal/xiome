@@ -32,7 +32,7 @@ export async function assembleAndInitializeFrontend({
 	const components = getComponents({models, modals})
 
 	await loginWithLinkTokenOrUseExistingLogin({
-		authModel: models.authModel,
+		accessModel: models.accessModel,
 		link: window.location.toString(),
 	})
 

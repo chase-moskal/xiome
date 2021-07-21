@@ -9,18 +9,18 @@ import {XiomeLoginPanel} from "../../../features/auth2/aspects/users/components/
 import {XiomePermissions} from "../../../features/auth2/aspects/permissions/components/permissions/xiome-permissions.js"
 
 export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
-	const {authModel, appModel, personalModel, permissionsModel} = models
+	const {accessModel, appsModel: appModel, personalModel, permissionsModel} = models
 	return {
 		XiomeMyAvatar:
-			mixinAutotrack(authModel.track)(
+			mixinAutotrack(accessModel.track)(
 				mixinShare({
-					authModel,
+					accessModel,
 				})(XiomeMyAvatar)
 			),
 		XiomeLoginPanel:
-			mixinAutotrack(authModel.track)(
+			mixinAutotrack(accessModel.track)(
 				mixinShare({
-					authModel,
+					accessModel,
 				})(XiomeLoginPanel)
 			),
 		XiomeAppManager:
@@ -31,9 +31,9 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeAppManager)
 			),
 		XiomeMyAccount:
-			mixinAutotrack(authModel.track)(
+			mixinAutotrack(accessModel.track)(
 				mixinShare({
-					authModel,
+					accessModel,
 					personalModel,
 				})(XiomeMyAccount)
 			),

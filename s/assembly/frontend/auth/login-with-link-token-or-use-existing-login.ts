@@ -1,16 +1,16 @@
 
 import {makeAccessModel} from "../../../features/auth2/aspects/users/models/access-model.js"
 
-export async function loginWithLinkTokenOrUseExistingLogin({link, authModel}: {
+export async function loginWithLinkTokenOrUseExistingLogin({link, accessModel}: {
 		link: string
-		authModel: ReturnType<typeof makeAccessModel>
+		accessModel: ReturnType<typeof makeAccessModel>
 	}) {
 
 	const {searchParams} = new URL(link)
 	const loginToken = searchParams.get("login")
 
 	if (loginToken)
-		await authModel.login(loginToken)
+		await accessModel.login(loginToken)
 	else
-		await authModel.useExistingLogin()
+		await accessModel.useExistingLogin()
 }
