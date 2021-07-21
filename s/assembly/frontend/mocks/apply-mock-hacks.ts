@@ -5,7 +5,7 @@ import {hitchie} from "../../../toolbox/hitchie.js"
 import {mockConnect} from "../connect/mock/mock-connect.js"
 import {assembleAndInitializeFrontend} from "../assemble-and-initialize-frontend.js"
 
-export async function applyMockHacks({connection, frontend}: {
+export function applyMockHacks({connection, frontend}: {
 		connection: Await<ReturnType<typeof mockConnect>>
 		frontend: Await<ReturnType<typeof assembleAndInitializeFrontend>>
 	}) {
