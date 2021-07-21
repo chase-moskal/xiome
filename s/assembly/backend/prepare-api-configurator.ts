@@ -8,19 +8,24 @@ import {waitForProperties} from "./tools/zippy.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {objectMap} from "../../toolbox/object-map.js"
+import {DamnId} from "../../toolbox/damnedb/damn-id.js"
 import {authApi} from "../../features/auth/auth-api.js"
+import {dbbyMemory} from "../../toolbox/dbby/dbby-memory.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {processBlueprint} from "./tools/process-blueprint.js"
+import {dbbyHardback} from "../../toolbox/dbby/dbby-hardback.js"
 import {configureMongo} from "./configurators/configure-mongo.js"
 import {loginEmailRecaller} from "./tools/login-email-recaller.js"
 import {BlueprintForTables} from "./types/blueprint-for-tables.js"
 import {DatabaseNamespaced, DatabaseRaw} from "./types/database.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
+import {AppRow} from "../../features/auth/aspects/apps/types/app-tables.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {mockSendEmail} from "../../features/auth/utils/emails/mock-send-email.js"
+import {originsToDatabase} from "../../features/auth/utils/origins-to-database.js"
 import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
 import {simpleFlexStorage} from "../../toolbox/flex-storage/simple-flex-storage.js"
 import {configureTokenFunctions} from "./configurators/configure-token-functions.js"
@@ -150,23 +155,53 @@ export function prepareApiConfigurator(configurators: {
 				}
 			}
 
-			switch (config.database) {
-				case "mock-file": {
-					return mockWithStorage(configurators.configureMockFileStorage("./data.json"))
+			const results = await (async() => {
+				switch (config.database) {
+					case "mock-file": {
+						return mockWithStorage(configurators.configureMockFileStorage("./data.json"))
+					}
+					case "mock-memory": {
+						return mockWithStorage(memoryFlexStorage())
+					}
+					case "mock-localstorage": {
+						return mockWithStorage(simpleFlexStorage(window.localStorage))
+					}
+					default: {
+						return configurators.configureMongo({
+							blueprintForRawDatabase,
+							blueprintForNamespacedDatabase,
+							config: {...config, database: config.database},
+						})
+					}
 				}
-				case "mock-memory": {
-					return mockWithStorage(memoryFlexStorage())
+			})()
+
+			const bakedAppTables = await (async() => {
+				const platformApp = config.platform.appDetails
+				const {appTables} = results.database
+				return <typeof appTables>{
+					...appTables,
+					apps: dbbyHardback({
+						frontTable: appTables.apps,
+						backTable: await dbbyMemory<AppRow>([
+							{
+								appId: DamnId.fromString(platformApp.appId),
+								home: platformApp.home,
+								label: platformApp.label,
+								origins: originsToDatabase(platformApp.origins),
+								archived: false,
+							}
+						])
+					}),
 				}
-				case "mock-localstorage": {
-					return mockWithStorage(simpleFlexStorage(window.localStorage))
-				}
-				default: {
-					return configurators.configureMongo({
-						blueprintForRawDatabase,
-						blueprintForNamespacedDatabase,
-						config: {...config, database: config.database},
-					})
-				}
+			})()
+
+			return {
+				database: {
+					...results.database,
+					appTables: bakedAppTables,
+				},
+				mockStorage: results.mockStorage
 			}
 		})()
 

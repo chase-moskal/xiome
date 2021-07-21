@@ -71,7 +71,7 @@ export function prepareAuthPolicies({
 	const appOwnerPolicy: Policy<AppOwnerMeta, AppOwnerAuth> = async(meta, request) => {
 		const auth = await platformUserPolicy(meta, request)
 		async function authorizeAppOwner(appId: DamnId) {
-			const allowedToEditAnyApp = auth.checker.requirePrivilege("edit any app")
+			const allowedToEditAnyApp = auth.checker.hasPrivilege("edit any app")
 			const isOwnerOfApp = isUserOwnerOfApp({appId, appTables, access: auth.access})
 			const allowed = isOwnerOfApp || allowedToEditAnyApp
 			if (allowed)
