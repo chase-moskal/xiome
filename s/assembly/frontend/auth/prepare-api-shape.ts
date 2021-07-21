@@ -68,112 +68,32 @@ export function prepareApiShape({appId, storage}: {
 				},
 			},
 		},
-
-		// auth: {
-		// 	greenService: {
-		// 		[_meta]: async() => undefined,
-		// 		authorize: true,
-		// 	},
-		// 	loginService: {
-		// 		[_meta]: standardMeta,
-		// 		authenticateViaLoginToken: true,
-		// 		sendLoginLink: true,
-		// 	},
-		// 	appService: {
-		// 		[_meta]: standardMeta,
-		// 		listApps: true,
-		// 		registerApp: true,
-		// 	},
-		// 	appEditService: {
-		// 		[_meta]: standardMeta,
-		// 		deleteApp: true,
-		// 		updateApp: true,
-		// 	},
-		// 	manageAdminsService: {
-		// 		[_meta]: standardMeta,
-		// 		listAdmins: true,
-		// 		assignAdmin: true,
-		// 		revokeAdmin: true,
-		// 		assignPlatformUserAsAdmin: true,
-		// 	},
-		// 	personalService: {
-		// 		[_meta]: standardMeta,
-		// 		setProfile: true,
-		// 	},
-		// 	userService: {
-		// 		[_meta]: standardMeta,
-		// 		getUser: true,
-		// 	},
-		// 	permissionsService: {
-		// 		[_meta]: standardMeta,
-		// 		assignPrivilege: true,
-		// 		createRole: true,
-		// 		deleteRole: true,
-		// 		fetchPermissions: true,
-		// 		unassignPrivilege: true,
-		// 	},
-		// },
-		// administrative: {
-		// 	roleAssignmentService: {
-		// 		[_meta]: standardMeta,
-		// 		fetchPermissions: true,
-		// 		searchUsers: true,
-		// 		assignRoleToUser: true,
-		// 		revokeRoleFromUser: true,
-		// 	},
-		// },
-
-		// // TODO reactivate store
-		// store: {
-		// 	stripeConnectService: {
-		// 		[_augment]: standardAugment,
-		// 		getConnectDetails: true,
-		// 		generateConnectSetupLink: true,
-		// 	},
-		// 	shoppingService: {
-		// 		[_augment]: standardAugment,
-		// 		buySubscription: true,
-		// 		updateSubscription: true,
-		// 		endSubscription: true,
-		// 	},
-		// 	shopkeepingService: {
-		// 		[_augment]: standardAugment,
-		// 		listSubscriptionPlans: true,
-		// 		createSubscriptionPlan: true,
-		// 		updateSubscriptionPlan: true,
-		// 		deleteSubscriptionPlan: true,
-		// 		deactivateSubscriptionPlan: true,
-		// 	},
-		// 	ecommerce: {
-		// 		statusCheckerService: {
-		// 			[_augment]: standardAugment,
-		// 			getStoreStatus: true,
-		// 		},
-		// 		statusTogglerService: {
-		// 			[_augment]: standardAugment,
-		// 			disableEcommerce: true,
-		// 			enableEcommerce: true,
-		// 		},
-		// 	},
-		// },
-
-		// questions: {
-		// 	questionsReadingService: {
-		// 		[_meta]: standardMeta,
-		// 		fetchQuestions: true,
-		// 	},
-		// 	questionsPostingService: {
-		// 		[_meta]: standardMeta,
-		// 		postQuestion: true,
-		// 		archiveQuestion: true,
-		// 		likeQuestion: true,
-		// 		reportQuestion: true,
-		// 	},
-		// 	questionsModerationService: {
-		// 		[_meta]: standardMeta,
-		// 		archiveBoard: true,
-		// 	},
-		// },
+		administrative: {
+			roleAssignmentService: {
+				[_meta]: standardMeta,
+				assignRoleToUser: true,
+				fetchPermissions: true,
+				revokeRoleFromUser: true,
+				searchUsers: true,
+			},
+		},
+		questions: {
+			questionsModerationService: {
+				[_meta]: standardMeta,
+				archiveBoard: true,
+			},
+			questionsPostingService: {
+				[_meta]: standardMeta,
+				likeQuestion: true,
+				postQuestion: true,
+				reportQuestion: true,
+				archiveQuestion: true,
+			},
+			questionsReadingService: {
+				[_meta]: standardMeta,
+				fetchQuestions: true,
+			},
+		},
 	})
 
 	function installAuthMediator({greenService}: {
