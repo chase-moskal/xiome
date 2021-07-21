@@ -218,11 +218,10 @@ export function prepareApiConfigurator(configurators: {
 					generateNickname,
 					sendLoginEmail: emails.sendLoginEmail,
 				}),
-				// administrative: makeAdministrativeApi({
-				// 	config,
-				// 	authTables: database.core,
-				// 	authPolicies,
-				// }),
+				administrative: makeAdministrativeApi({
+					config,
+					authPolicies,
+				}),
 				questions: questionsApi({
 					rando,
 					config,

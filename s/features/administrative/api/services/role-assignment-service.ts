@@ -8,17 +8,18 @@ import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
 import {UserAuth, UserMeta} from "../../../auth2/types/auth-metas.js"
+import {AdministrativeOptions} from "../types/administrative-options.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
-import {AdministrativeApiOptions} from "../types/administrative-api-options.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchUsers} from "../../../auth2/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
 import {fetchPermissionsDisplay} from "../../../auth2/aspects/users/routines/permissions/fetch-permissions-display.js"
 
-export const makeRoleAssignmentService = (
-		{config, authPolicies}: AdministrativeApiOptions
-	) => apiContext<UserMeta, UserAuth>()({
+export const makeRoleAssignmentService = ({
+		config,
+		authPolicies,
+	}: AdministrativeOptions) => apiContext<UserMeta, UserAuth>()({
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("administrate user roles")
