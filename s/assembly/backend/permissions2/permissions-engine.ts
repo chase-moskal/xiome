@@ -57,7 +57,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 					.map(([,role]) => role.roleId),
 			]
 			return usersHaveRolesRaw
-			.filter(u => roleIdsThatActuallyExist.includes(u.roleId.toString()))
+				.filter(u => roleIdsThatActuallyExist.includes(u.roleId.toString()))
 		})()
 
 		return userIds.map(userId => {
@@ -151,9 +151,16 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.userHasRoles
 			const publicUserRoles = userHasRoles
 				.map(userHasRole => {
-					const roleRow = mergedRoles.find(row => row.roleId === userHasRole.roleId)
-					return {...userHasRole, ...roleRow}
+					const role = mergedRoles.find(
+						r => r.roleId.toString() === userHasRole.roleId.toString()
+					)
+					if (!role)
+						console.warn(`missing role "${userHasRole.roleId.toString()}"`)
+					return role
+						? {...userHasRole, ...role}
+						: undefined
 				})
+				.filter(r => !!r)
 				.filter(isCurrentlyWithinTimeframe)
 				.map(r => (<PublicUserRole>{
 					label: r.label,
