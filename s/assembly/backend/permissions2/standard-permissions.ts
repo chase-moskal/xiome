@@ -2,28 +2,28 @@
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 
 const commonPrivileges = {
-	"read questions": "22M8Tcp2xMg9hN5YxKkbffXpNHScTCnPXSXztzRnPXbC9RsD",
-	"post questions": "75KrRyRPRnZZZKrh2zcwB98MCsZX9HCwg66qrzYTSprdqSTf",
-	"like questions": "8qpc7M8nGkscwcSSW8d6Z7FyKGsxB8W5PWt2PCzk2sSJGgYb",
-	"report questions": "86qRZfryfMWSfRhmkWkpq6pRYWCybmyNsD8RfxS7RpTqXN9J",
+	"read questions": "5b19b929648cbbe26c052a5016892b370f048eead1e6a303a50b7f5234ec5161",
+	"post questions": "aeaae6139d05f77193ca7c272a65977c70cb188f3070359866237a5ade84ba15",
+	"like questions": "5490898c541d733956b28664e7536673842e73b289fc45ab9caf143138c14a3e",
+	"report questions": "f2f89d433f398b267e320e0e3b9929eb3934af5c02f7e3fb2e032fd19399ad21",
 }
 
 const commonPowerPrivileges = {
-	"edit any profile": "2Z5M2n7pg9nRhwztgqztK6rBTPnyfr6fxk6T29sdfRTNGTqp",
-	"customize permissions": "5Y5sBg2JtqqWnPXq5xXYRDB2cFygtc9StwN7GSZsBXzDBNNW",
-	"moderate questions": "5dHqPzNHGsYnbqkF252ZhWS25hwCGrBSS67RBpmfm7by9dGF",
-	"view stats": "2DWWssJp7G88kH9swMPxSZ529mXqn6kFM7zFMS9yn5P5RkGZ",
-	"administrate user roles": "6HpSB2ZGcCsDGwHHmHKZCqYgpPxSg5kyw8PYtx5R2m6zBxmt",
+	"edit any profile": "4240ca0331e8679a444c6c4c6a803d8a12893f1554460af426064b980164c8ee",
+	"customize permissions": "f380d9b4d1001da8dc86a6e0b6a0721b92ed8060c52cd4ba433e76cbd9efe6b5",
+	"moderate questions": "f6a3152a13f313a60f84d82ba8f7765afb19f70c04ef14688d802237a5d2ab5e",
+	"view stats": "092866ae6378833e43ec7001188aa1829d4cf2858e42da0ad3f44a2fedbcb07b",
+	"administrate user roles": "a072e9dd003a762e7d693658d8ac724be352b18da240843f691595c89020e350",
 }
 
 const platformPowerPrivileges = {
-	"edit any app": "77nZH9ksyDDBf6ptNZ9MNZzJdfMyWfG5PYbYwmmX6kTGMhkw",
-	"view platform stats": "2nth28xGTC6TbPNzCHf72pRchr8FpPyDbwMRTnTsppPk9DC8",
+	"edit any app": "e5fadb4b03badd6699b355ec43e1d150d6f4df81ecc291b5b742f06ebe62a0f8",
+	"view platform stats": "eec7d2ddc20df6080c4166a3dea0b2643b483ce61326cbefad95e45824810692",
 }
 
 const appPowerPrivileges = {
-	"manage store": "658Kh8yMybF8hNr55JGkbCYtwyJpFd6MfRhFPcYdGskbtbzG",
-	"give away freebies": "8R5fFWCJy8PMDJsPNkn8HqzpMGHBkMMfXz9HCzx7XdnrcKzJ",
+	"manage store": "c0ffc302f2a431a02fef22592ff2b4321944dfbfe29e7f6f83e13b6332e54b46",
+	"give away freebies": "38a7f04980f1de72b975cb5ae4be7b850aac2ca96b545ba6894daaa8b5d7c9cf",
 }
 
 const active = true
@@ -33,11 +33,11 @@ export const universalPermissions = asPermissions({
 	privileges: {
 		...commonPrivileges,
 		...commonPowerPrivileges,
-		"banned": "5BrX6GbqgzDnhsTGsX6xxqsxNSNdC2RzFZzntNXdGc7bmmkK",
+		"banned": "ffff9ebcbe8f69f3520ec574f5a1489a70bf04521d7a85fcbd25c54cc22802f1",
 	},
 	roles: {
 		"anonymous": {
-			roleId: "2tcdnygHqf9YXdtXWnk5hrzTWH5z9ynp6S8SFHXgdd67THDS",
+			roleId: "aaaa777dc7d7e9b5e9e0386abf0cf2f059cda4f71779cc910b85e8f504452b23",
 			public: true,
 			assignable: false,
 			hasPrivileges: {
@@ -48,7 +48,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"authenticated": {
-			roleId: "2NJPCdCByYJ9N2yPmY6TNypCbksyMwDhKtfhNKXRdsRPCMDK",
+			roleId: "bbbb642d549d06113953a01fb52a8e010150edc502b929395bfb32d250d44b1c",
 			public: false,
 			assignable: false,
 			hasPrivileges: {
@@ -58,7 +58,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"banned": {
-			roleId: "8FN9yGdMCBptMMCqHTHSJJ6PHtwpBWmtdPGGDzbTKCqdzsHC",
+			roleId: "dead633608412f8eefbb40f4678ef2bafaeb7883d09a6094dafe5f69dd6a8684",
 			public: true,
 			assignable: true,
 			hasPrivileges: {
@@ -68,7 +68,7 @@ export const universalPermissions = asPermissions({
 			},
 		},
 		"technician": {
-			roleId: "9DTMZY2NJm9HXMS7Tc2MYBf5HqcKWD98yNdZFNPrRhtb6yFq",
+			roleId: "9999d97119a83ea3853273a93e24ae0a1f2a994eccb21dacacab6ff860d8d869",
 			public: true,
 			assignable: false,
 			hasPrivileges: {
@@ -148,7 +148,7 @@ export const appPermissions = asPermissions({
 			}
 		},
 		"admin": {
-			roleId: "7KWz2MKkFynJ5FNBG86tChyXwGDkpBZcdJxCxpkmhrmnScqm",
+			roleId: "d21e66058b95b3b2e80c1a00c82abd56b8ec7a4b20f0424c2a00cc6ba352efeb",
 			public: true,
 			assignable: false,
 			hasPrivileges: {

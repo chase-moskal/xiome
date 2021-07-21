@@ -16,7 +16,7 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 			email: "chasemoskal@gmail.com",
 		},
 		appDetails: {
-			appId: "6Ns7WcB8xCqgSSMtqxZNCYXDK8N8qNM2cFRrwGggrTSD8TDx",
+			appId: "27a9f4e61286d562c85df1862e88c50e6b5c0707cc84e3e1df4aeb9d9c236814",
 			label: "Xiome Cloud",
 			home: platformHome,
 			origins: platformOrigins,

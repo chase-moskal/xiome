@@ -10,7 +10,7 @@ class XioPlayground extends Component2 {
 
 	@property({type: Object})
 	private user: User = {
-		userId: "8NSpzxSPHkgWfD79y2D96zZzhSrT2gbxDsxnpNGkGYpxwSSn",
+		userId: "bcd22b97940174ce94aee93347a652c775f8b5d021b291525eadc8d3dc3dd7d4",
 		profile: {
 			nickname: "Original Ostrich",
 			tagline: "i'm super cool",
