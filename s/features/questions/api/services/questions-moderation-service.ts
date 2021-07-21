@@ -1,7 +1,7 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {UserMeta} from "../../../auth2/types/auth-metas.js"
+import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"

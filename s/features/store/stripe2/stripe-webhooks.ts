@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 import {StripeComplex} from "./types/stripe-complex.js"
-import {AuthTables} from "../../auth2/types/auth-tables.js"
+import {AuthTables} from "../../auth/types/auth-tables.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {StoreTables} from "../api/tables/types/store-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"

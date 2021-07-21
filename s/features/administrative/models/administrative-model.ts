@@ -1,12 +1,12 @@
 
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
-import {AccessPayload} from "../../auth2/types/auth-tokens.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {makeRoleAssignmentService} from "../api/services/role-assignment-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
 import {makeAllowanceChecker} from "../../../assembly/backend/permissions2/tools/make-allowance-checker.js"
-import {PermissionsDisplay} from "../../auth2/aspects/users/routines/permissions/types/permissions-display.js"
+import {PermissionsDisplay} from "../../auth/aspects/users/routines/permissions/types/permissions-display.js"
 
 export function makeAdministrativeModel({
 		roleAssignmentService,

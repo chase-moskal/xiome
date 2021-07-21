@@ -1,6 +1,6 @@
 
 import {Privileges} from "../permissions-helpers.js"
-import {AccessPayload} from "../../../../features/auth2/types/auth-tokens.js"
+import {AccessPayload} from "../../../../features/auth/types/auth-tokens.js"
 
 export function makeAllowanceChecker<xPrivileges extends Privileges>(
 		access: AccessPayload,

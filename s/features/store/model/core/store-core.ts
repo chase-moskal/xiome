@@ -1,7 +1,7 @@
 
 import {StoreState} from "../types/store-state.js"
 import {Op, ops} from "../../../../framework/ops.js"
-import {AccessPayload} from "../../../auth2/types/auth-tokens.js"
+import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
 import {PlanningSituation} from "../shares/types/planning-situation.js"
 import {autowatcher} from "../../../../toolbox/autowatcher/autowatcher.js"

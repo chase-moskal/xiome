@@ -3,7 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 
 import {UserStats} from "../../types/user-stats.js"
 import {AuthTables} from "../../../../types/auth-tables.js"
-import {profileFromRow} from ".././profile/profile-from-row.js"
+import {profileFromRow} from "../profile/profile-from-row.js"
 import {or} from "../../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsEngine} from "../../../../../../assembly/backend/permissions2/types/permissions-engine.js"

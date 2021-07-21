@@ -1,13 +1,13 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {AnonMeta} from "../../../auth2/types/auth-metas.js"
+import {AnonMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsAnonAuth} from "../types/questions-metas-and-auths.js"
 import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
-import {fetchUsers} from "../../../auth2/aspects/users/routines/user/fetch-users.js"
+import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
 
 export const makeQuestionsReadingService = (

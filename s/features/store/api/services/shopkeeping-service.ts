@@ -9,7 +9,7 @@ import {ApiError} from "../../../../../../renraku/x/api/api-error.js"
 import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
 import {ClerkAuth, ClerkMeta} from "../policies/types/store-metas-and-auths.js"
 import {SubscriptionPlanRow} from "../tables/types/rows/subscription-plan-row.js"
-import {RoleRow} from "../../../auth2/aspects/permissions/types/permissions-tables.js"
+import {RoleRow} from "../../../auth/aspects/permissions/types/permissions-tables.js"
 import {SubscriptionPlanDraft} from "../tables/types/drafts/subscription-plan-draft.js"
 import {validateSubscriptionPlanDraft} from "./utils/validate-subscription-plan-draft.js"
 

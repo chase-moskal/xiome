@@ -2,7 +2,7 @@
 import {AnyPermissions} from "../permissions-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {appPermissions, platformPermissions} from "../standard-permissions.js"
-import {RoleHasPrivilegeRow} from "../../../../features/auth2/aspects/permissions/types/permissions-tables.js"
+import {RoleHasPrivilegeRow} from "../../../../features/auth/aspects/permissions/types/permissions-tables.js"
 
 export function permissionsMergingFacility({isPlatform}: {
 		isPlatform: boolean

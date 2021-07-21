@@ -4,7 +4,7 @@ import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {prepareStorePolicies} from "../policies/store-policies.js"
 import {StripeComplex} from "../../stripe2/types/stripe-complex.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {prepareAuthPolicies} from "../../../auth2/policies/prepare-auth-policies.js"
+import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 
 export interface StoreCommonOptions {

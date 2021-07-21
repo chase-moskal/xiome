@@ -2,11 +2,11 @@
 import {XiomeComponentOptions} from "./types/xiome-component-options.js"
 import {mixinHappy} from "../../../framework/component2/mixins/mixin-happy.js"
 import {mixinAutotrack, mixinShare} from "../../../framework/component2/component2.js"
-import {XiomeMyAvatar} from "../../../features/auth2/aspects/users/components/my-avatar/xiome-my-avatar.js"
-import {XiomeMyAccount} from "../../../features/auth2/aspects/users/components/my-account/xiome-my-account.js"
-import {XiomeAppManager} from "../../../features/auth2/aspects/apps/components/app-manager/xiome-app-manager.js"
-import {XiomeLoginPanel} from "../../../features/auth2/aspects/users/components/login-panel/xiome-login-panel.js"
-import {XiomePermissions} from "../../../features/auth2/aspects/permissions/components/permissions/xiome-permissions.js"
+import {XiomeMyAvatar} from "../../../features/auth/aspects/users/components/my-avatar/xiome-my-avatar.js"
+import {XiomeMyAccount} from "../../../features/auth/aspects/users/components/my-account/xiome-my-account.js"
+import {XiomeAppManager} from "../../../features/auth/aspects/apps/components/app-manager/xiome-app-manager.js"
+import {XiomeLoginPanel} from "../../../features/auth/aspects/users/components/login-panel/xiome-login-panel.js"
+import {XiomePermissions} from "../../../features/auth/aspects/permissions/components/permissions/xiome-permissions.js"
 
 export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 	const {accessModel, appsModel: appModel, personalModel, permissionsModel} = models

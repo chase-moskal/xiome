@@ -7,14 +7,14 @@ import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
-import {UserAuth, UserMeta} from "../../../auth2/types/auth-metas.js"
+import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
 import {AdministrativeOptions} from "../types/administrative-options.js"
 import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {fetchUsers} from "../../../auth2/aspects/users/routines/user/fetch-users.js"
+import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
-import {fetchPermissionsDisplay} from "../../../auth2/aspects/users/routines/permissions/fetch-permissions-display.js"
+import {fetchPermissionsDisplay} from "../../../auth/aspects/users/routines/permissions/fetch-permissions-display.js"
 
 export const makeRoleAssignmentService = ({
 		config,

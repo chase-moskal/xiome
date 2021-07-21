@@ -1,5 +1,5 @@
 
-import {User} from "../../../auth2/aspects/users/types/user.js"
+import {User} from "../../../auth/aspects/users/types/user.js"
 import {html} from "../../../../framework/component2/component2.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 

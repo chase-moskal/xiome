@@ -1,8 +1,8 @@
 
 import {nap} from "./toolbox/nap.js"
 import {ops} from "./framework/ops.js"
-import {User} from "./features/auth2/aspects/users/types/user.js"
-import {ProfileDraft} from "./features/auth2/aspects/users/routines/personal/types/profile-draft.js"
+import {User} from "./features/auth/aspects/users/types/user.js"
+import {ProfileDraft} from "./features/auth/aspects/users/routines/personal/types/profile-draft.js"
 import {Component2, mixinLightDom, registerComponents, html, property} from "./framework/component2/component2.js"
 
 @mixinLightDom

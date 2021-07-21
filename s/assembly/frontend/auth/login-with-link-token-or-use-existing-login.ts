@@ -1,5 +1,5 @@
 
-import {makeAccessModel} from "../../../features/auth2/aspects/users/models/access-model.js"
+import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
 
 export async function loginWithLinkTokenOrUseExistingLogin({link, accessModel}: {
 		link: string

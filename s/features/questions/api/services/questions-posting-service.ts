@@ -3,7 +3,7 @@ import {apiContext} from "renraku/x/api/api-context.js"
 
 import {Question} from "../types/question.js"
 import {QuestionDraft} from "../types/question-draft.js"
-import {UserMeta} from "../../../auth2/types/auth-metas.js"
+import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {QuestionPostRow} from "../tables/types/questions-tables.js"

@@ -5,9 +5,9 @@ import {_meta} from "renraku/x/types/symbols/meta-symbol.js"
 import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {makeAuthMediator} from "../../../features/auth2/mediator/auth-mediator.js"
-import {AuthMediator} from "../../../features/auth2/mediator/types/auth-mediator.js"
-import {makeGreenService} from "../../../features/auth2/aspects/users/services/green-service.js"
+import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
+import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
+import {makeGreenService} from "../../../features/auth/aspects/users/services/green-service.js"
 
 export function prepareApiShape({appId, storage}: {
 		appId: string

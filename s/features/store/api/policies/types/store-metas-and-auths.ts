@@ -3,10 +3,10 @@ import {Stripe} from "stripe"
 
 import {StoreTables} from "../../tables/types/store-tables.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {AuthTables} from "../../../../auth2/types/auth-tables.js"
+import {AuthTables} from "../../../../auth/types/auth-tables.js"
 import {StripeLiaisonForApp} from "../../../stripe2/types/stripe-liaison-app.js"
 import {StripeLiaisonForPlatform} from "../../../stripe2/types/stripe-liaison-for-platform.js"
-import {AnonAuth, AnonMeta, AppOwnerAuth, AppOwnerMeta, UserAuth, UserMeta} from "../../../../auth2/types/auth-metas.js"
+import {AnonAuth, AnonMeta, AppOwnerAuth, AppOwnerMeta, UserAuth, UserMeta} from "../../../../auth/types/auth-metas.js"
 
 export interface MerchantMeta extends AppOwnerMeta {}
 export interface MerchantAuth extends AppOwnerAuth {

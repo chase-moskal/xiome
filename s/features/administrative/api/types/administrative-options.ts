@@ -1,6 +1,6 @@
 
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {prepareAuthPolicies} from "../../../auth2/policies/prepare-auth-policies.js"
+import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 
 export interface AdministrativeOptions {
 	config: SecretConfig
