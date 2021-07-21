@@ -70,7 +70,7 @@
 		"mongodb": "^3.6.10",
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.8",
-		"renraku": "0.0.0-dev.39",
+		"renraku": "0.0.0-dev.40",
 		"stripe": "^8.160.0"
 	},
 	"keywords": [

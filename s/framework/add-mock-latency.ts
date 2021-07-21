@@ -1,6 +1,6 @@
 
 import {Api} from "renraku/x/types/api/api.js"
-import {Remote} from "../../../renraku/x/types/remote/remote.js"
+import {Remote} from "renraku/x/types/remote/remote.js"
 
 import {nap} from "../toolbox/nap.js"
 import {objectMap} from "../toolbox/object-map.js"
