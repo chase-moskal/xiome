@@ -1,7 +1,7 @@
 
 import {Await} from "../types/await.js"
 import {isNode as stockIsNode} from "./is-node.js"
-import {identifierFromBinary} from "./identifiers.js"
+// import {identifierFromBinary} from "./identifiers.js"
 import {DamnId} from "./damnedb/damn-id.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
@@ -37,10 +37,10 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		return view.getFloat64(0, true) - 1
 	}
 
-	function randomId_old() {
-		const buffer = randomBuffer(32)
-		return identifierFromBinary(buffer)
-	}
+	// function randomId_old() {
+	// 	const buffer = randomBuffer(32)
+	// 	return identifierFromBinary(buffer)
+	// }
 
 	function randomId() {
 		const buffer = randomBuffer(32)

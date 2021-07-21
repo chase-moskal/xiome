@@ -1,26 +1,31 @@
 
-import {encodeBase42, decodeBase42, isBase42} from "../binary/base42.js"
+import {encodeHex, decodeHex, isHex} from "../binary/hex.js"
 
 export class DamnId {
 
+	static fromBinary(binary: ArrayBuffer) {
+		return new DamnId(binary)
+	}
+
 	static fromString(text: string) {
-		const binary = decodeBase42(text)
+		const binary = decodeHex(text)
 		return new DamnId(binary)
 	}
 
 	static isId(text: string) {
-		return isBase42(text)
+		return text.length === 64 && isHex(text)
 	}
 
 	#binary: ArrayBuffer
 	#string: string
+
+	constructor(binary: ArrayBuffer) {
+		this.#binary = binary
+		this.#string = encodeHex(binary)
+	}
+
 	get binary() { return this.#binary }
 	get string() { return this.#string }
 	toBinary() { return this.#binary }
 	toString() { return this.#string }
-
-	constructor(binary: ArrayBuffer) {
-		this.#binary = binary
-		this.#string = encodeBase42(binary)
-	}
 }
