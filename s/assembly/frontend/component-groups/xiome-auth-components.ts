@@ -9,7 +9,7 @@ import {XiomeLoginPanel} from "../../../features/auth/aspects/users/components/l
 import {XiomePermissions} from "../../../features/auth/aspects/permissions/components/permissions/xiome-permissions.js"
 
 export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
-	const {accessModel, appsModel: appModel, personalModel, permissionsModel} = models
+	const {accessModel, appsModel, personalModel, permissionsModel} = models
 	return {
 		XiomeMyAvatar:
 			mixinAutotrack(accessModel.track)(
@@ -24,10 +24,10 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeLoginPanel)
 			),
 		XiomeAppManager:
-			mixinHappy(appModel.onStateChange)(
+			mixinHappy(appsModel.onStateChange)(
 				mixinShare({
 					modals,
-					appModel,
+					appsModel,
 				})(XiomeAppManager)
 			),
 		XiomeMyAccount:

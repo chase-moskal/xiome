@@ -17,12 +17,12 @@ import {Component3WithShare, mixinStyles, html} from "../../../../../../framewor
 
 @mixinStyles(styles)
 export class XiomeAppManager extends Component3WithShare<{
-		appModel: ReturnType<typeof makeAppsModel>
 		modals: ModalSystem
+		appsModel: ReturnType<typeof makeAppsModel>
 	}> {
 
 	init() {
-		this.share.appModel.loadApps()
+		this.share.appsModel.loadApps()
 	}
 
 	private appRegistrationForm = makeAppForm({
@@ -37,12 +37,12 @@ export class XiomeAppManager extends Component3WithShare<{
 		),
 		submit: async formDraft => {
 			const appDraft = formDraftToAppDraft(formDraft)
-			await this.share.appModel.registerApp(appDraft)
+			await this.share.appsModel.registerApp(appDraft)
 		},
 	})
 
 	private getAppState = strongRecordKeeper<string>()(appId => {
-		const app = this.share.appModel.getApp(appId)
+		const app = this.share.appsModel.getApp(appId)
 
 		const {actions, getState, onStateChange} = happystate({
 			state: {editMode: false},
@@ -68,13 +68,13 @@ export class XiomeAppManager extends Component3WithShare<{
 				),
 				submit: async formDraft => {
 					const appDraft = formDraftToAppDraft(formDraft)
-					await this.share.appModel.updateApp(app.appId, appDraft)
+					await this.share.appsModel.updateApp(app.appId, appDraft)
 				},
 			}),
 			adminManager: (() => {
 				const manager = makeAdminManager({
 					app,
-					appEditService: this.share.appModel.appEditService,
+					appEditService: this.share.appsModel.appEditService,
 					query: selector => this.shadowRoot
 						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
 						.querySelector(selector)
@@ -98,7 +98,7 @@ export class XiomeAppManager extends Component3WithShare<{
 			focusNthElement: 2,
 		})
 		if (userIsSure)
-			await this.share.appModel.deleteApp(app.appId)
+			await this.share.appsModel.deleteApp(app.appId)
 	}
 
 	private renderAppRegistration() {
@@ -211,7 +211,7 @@ export class XiomeAppManager extends Component3WithShare<{
 	}
 
 	render() {
-		const {appRecords} = this.share.appModel.state
+		const {appRecords} = this.share.appsModel.state
 		return html`
 			${renderOp(appRecords, records => Object.values(records).length
 				? this.renderAppList(records)
