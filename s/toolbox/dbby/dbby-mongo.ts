@@ -1,5 +1,5 @@
 
-import {Collection, FilterQuery} from "mongodb"
+import {Collection, Filter, Sort} from "mongodb"
 
 import {objectMap} from "../object-map.js"
 import {escapeRegex} from "../escape-regex.js"
@@ -72,18 +72,18 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 
 		async count(conditional) {
 			const query = prepareQuery(conditional)
-			return collection.count(query)
+			return collection.countDocuments(query)
 		},
 	}
 }
 
 function prepareQuery<Row extends DbbyRow>({
 		conditions
-	}: DbbyConditional<Row>): FilterQuery<{}> {
+	}: DbbyConditional<Row>): Filter<{}> {
 
 	if (!conditions) return {}
 
-	function recurse(tree: DbbyConditionTree<Row>): FilterQuery<{}> {
+	function recurse(tree: DbbyConditionTree<Row>): Filter<{}> {
 		const [operator, ...conds] = tree
 
 		const query = conds
@@ -102,13 +102,13 @@ function prepareQuery<Row extends DbbyRow>({
 
 function orderToSort<Row extends DbbyRow>(
 		order: DbbyOrder<Row>
-	): {[key: string]: -1 | 0 | 1} {
+	): Sort {
 	return objectMap(order, value =>
 		!!value
 			? value === "ascend"
 				? 1
 				: -1
-			: 0
+			: 1
 	)
 }
 
@@ -143,7 +143,7 @@ const mongoloids: {[key: string]: (value: any) => any} = {
 
 function conditionsToMongoQuery<Row extends DbbyRow>(
 			conditions: false | DbbyCondition<Row>
-		): FilterQuery<Row> {
+		): Filter<Row> {
 	return conditions
 		? <any>{
 			$and: [

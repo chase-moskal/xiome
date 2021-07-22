@@ -19,10 +19,7 @@ export async function configureMongo({
 		config: {database: ConfigDatabaseMongo} & SecretConfig
 	}) {
 
-	const mongo = await new mongodb.MongoClient(config.database.mongo.link, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	}).connect()
+	const mongo = await new mongodb.MongoClient(config.database.mongo.link).connect()
 	const db = mongo.db(config.database.mongo.db)
 
 	const databaseRaw = <DatabaseRaw>processBlueprint({
