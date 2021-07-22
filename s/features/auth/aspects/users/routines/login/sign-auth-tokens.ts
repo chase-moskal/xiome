@@ -1,6 +1,7 @@
 
+import {SignToken} from "redcrypto/x/types.js"
+
 import {fetchUser} from "../user/fetch-user.js"
-import {SignToken} from "redcrypto/dist/types.js"
 import {AuthTables} from "../../../../types/auth-tables.js"
 import {concurrent} from "../../../../../../toolbox/concurrent.js"
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"

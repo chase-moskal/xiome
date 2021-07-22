@@ -1,5 +1,5 @@
 
-import {SignToken, VerifyToken} from "redcrypto/dist/types.js"
+import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {prepareAuthPolicies} from "../policies/prepare-auth-policies.js"

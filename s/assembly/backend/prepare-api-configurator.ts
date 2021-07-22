@@ -1,7 +1,7 @@
 
 import {asApi} from "renraku/x/identities/as-api.js"
-import {mockSignToken} from "redcrypto/dist/curries/mock-sign-token.js"
-import {mockVerifyToken} from "redcrypto/dist/curries/mock-verify-token.js"
+import {mockSignToken} from "redcrypto/x/curries/mock-sign-token.js"
+import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {dbbyX} from "../../toolbox/dbby/dbby-x.js"
 import {waitForProperties} from "./tools/zippy.js"

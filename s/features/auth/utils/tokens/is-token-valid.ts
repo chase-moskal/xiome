@@ -1,8 +1,8 @@
 
-import {tokenDecode} from "redcrypto/dist/token-decode.js"
+import {tokenDecode} from "redcrypto/x/token-decode.js"
 import {isTokenTimingExpired} from "./is-token-timing-expired.js"
 
 export function isTokenValid(token: string | undefined) {
 	return !!token
-		&& !isTokenTimingExpired(tokenDecode(token).exp)
+		&& !isTokenTimingExpired(tokenDecode(token).data.exp)
 }

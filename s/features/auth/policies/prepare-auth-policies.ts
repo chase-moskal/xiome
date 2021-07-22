@@ -1,6 +1,6 @@
 
+import {VerifyToken} from "redcrypto/x/types.js"
 import {ApiError} from "renraku/x/api/api-error.js"
-import {VerifyToken} from "redcrypto/dist/types.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {AuthTables} from "../types/auth-tables.js"

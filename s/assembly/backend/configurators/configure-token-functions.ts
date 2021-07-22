@@ -1,6 +1,6 @@
 
-import {currySignToken} from "redcrypto/dist/curries/curry-sign-token.js"
-import {curryVerifyToken} from "redcrypto/dist/curries/curry-verify-token.js"
+import {currySignToken} from "redcrypto/x/curries/curry-sign-token.js"
+import {curryVerifyToken} from "redcrypto/x/curries/curry-verify-token.js"
 
 import {ConfigKeys} from "../types/config-keys.js"
 
