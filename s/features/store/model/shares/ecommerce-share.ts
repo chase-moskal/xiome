@@ -9,7 +9,7 @@ import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.j
 import {storageCache} from "../../../../toolbox/flex-storage/cache/storage-cache.js"
 import {makeStatusCheckerService} from "../../api/services/status-checker-service.js"
 import {makeStatusTogglerService} from "../../api/services/status-toggler-service.js"
-import {appPermissions} from "../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function ecommerceShare({
 		appId,

@@ -8,7 +8,7 @@ import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {signAuthTokens} from "../routines/login/sign-auth-tokens.js"
 import {assertEmailAccount} from "../routines/login/assert-email-account.js"
-import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 
 export const makeLoginService = ({
 		rando, config, authPolicies,

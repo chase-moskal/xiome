@@ -5,7 +5,7 @@ import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {AnonAuth, AnonMeta} from "../../../types/auth-metas.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 
 export const makeUserService = (
 		options: AuthOptions

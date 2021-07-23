@@ -1,7 +1,7 @@
 
 import {QuestionPostRow} from "../../tables/types/questions-tables.js"
 import {PrivilegeChecker} from "../../../../auth/aspects/permissions/types/privilege-checker.js"
-import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function requireUserCanEditQuestion({userId, questionPost, checker}: {
 		userId: string

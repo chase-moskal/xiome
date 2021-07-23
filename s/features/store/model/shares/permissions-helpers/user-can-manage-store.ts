@@ -1,6 +1,6 @@
 
 import {AccessPayload} from "../../../../auth/types/auth-tokens.js"
-import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function userCanManageStore(access: AccessPayload) {
 	const privileges = access?.permit.privileges

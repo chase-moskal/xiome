@@ -2,7 +2,7 @@
 import {AccessPayload} from "../../../../types/auth-tokens.js"
 import {PermissionsTables} from "../../../permissions/types/permissions-tables.js"
 import {SecretConfig} from "../../../../../../assembly/backend/types/secret-config.js"
-import {makePermissionsEngine} from "../../../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../../../assembly/backend/permissions/permissions-engine.js"
 
 export async function fetchPermissionsDisplay({
 		config, access, permissionsTables,

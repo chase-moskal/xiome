@@ -4,7 +4,7 @@ import {AccessPayload} from "../../../types/auth-tokens.js"
 import {happystate} from "../../../../../toolbox/happystate/happystate.js"
 import {PermissionsModelOptions} from "./types/permissions-model-options.js"
 import {PermissionsDisplay} from "../../users/routines/permissions/types/permissions-display.js"
-import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function makePermissionsModel({
 		permissionsService,

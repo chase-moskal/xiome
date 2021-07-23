@@ -13,7 +13,7 @@ import {AdminEmailDisplay} from "../types/admin-email-display.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
 import {AppOwnerAuth, AppOwnerMeta} from "../../../types/auth-metas.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
-import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
 const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 

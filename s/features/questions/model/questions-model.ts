@@ -9,7 +9,7 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {makeQuestionsReadingService} from "../api/services/questions-reading-service.js"
 import {makeQuestionsPostingService} from "../api/services/questions-posting-service.js"
-import {appPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {makeQuestionsModerationService} from "../api/services/questions-moderation-service.js"
 
 export function makeQuestionsModel({

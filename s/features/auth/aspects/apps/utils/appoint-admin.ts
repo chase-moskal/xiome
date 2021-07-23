@@ -5,7 +5,7 @@ import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {SecretConfig} from "../../../../../assembly/backend/types/secret-config.js"
 import {assertEmailAccount} from "../../users/routines/login/assert-email-account.js"
-import {appPermissions} from "../../../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
 const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 

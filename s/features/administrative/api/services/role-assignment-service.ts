@@ -13,7 +13,7 @@ import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
-import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {fetchPermissionsDisplay} from "../../../auth/aspects/users/routines/permissions/fetch-permissions-display.js"
 
 export const makeRoleAssignmentService = ({

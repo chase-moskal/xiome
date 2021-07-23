@@ -3,7 +3,7 @@
 // import {AuthTables} from "../../../../tables/types/auth-tables.js"
 // import {find, or} from "../../../../../../toolbox/dbby/dbby-mongo.js"
 // import {isCurrentlyWithinTimeframe} from "./is-currently-within-timeframe.js"
-// import {PermissionsEngine} from "../../../../../../assembly/backend/permissions2/types/permissions-engine.js"
+// import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/types/permissions-engine.js"
 
 // export async function fetchPublicUserRoles({userId, tables}: {
 // 			userId: string

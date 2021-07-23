@@ -8,7 +8,7 @@ import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsAnonAuth} from "../types/questions-metas-and-auths.js"
 import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
-import {makePermissionsEngine} from "../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 
 export const makeQuestionsReadingService = (
 	options: QuestionsApiOptions

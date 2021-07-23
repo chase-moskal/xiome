@@ -9,7 +9,7 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {GreenAuth, GreenMeta} from "../../../types/auth-metas.js"
 import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
-import {makePermissionsEngine} from "../../../../../assembly/backend/permissions2/permissions-engine.js"
+import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 
 export const makeGreenService = (
 		options: AuthOptions

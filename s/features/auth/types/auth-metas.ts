@@ -6,7 +6,7 @@ import {AppTables} from "../aspects/apps/types/app-tables.js"
 import {StatsHub} from "../aspects/permissions/types/stats-hub.js"
 import {PrivilegeChecker} from "../aspects/permissions/types/privilege-checker.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
-import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions2/standard-permissions.js"
+import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export type GreenMeta = undefined
 
