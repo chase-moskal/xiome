@@ -10,10 +10,10 @@ import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
-import {Component2WithShare, mixinStyles, html, property, query} from "../../../framework/component2/component2.js"
+import {AutowatcherComponentWithShare, mixinStyles, html, property, query} from "../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeQuestions extends Component2WithShare<{
+export class XiomeQuestions extends AutowatcherComponentWithShare<{
 		modals: ModalSystem
 		questionsModel: QuestionsModel
 	}> {

@@ -1,5 +1,5 @@
 
-import {Constructor, LitBase} from "../component-types.js"
+import {Constructor, LitBase} from "../types/component-types.js"
 import {AnyListener, Subscribe} from "../../../toolbox/pubsub.js"
 
 export function mixinHappy(...onStateChanges: Subscribe<AnyListener>[]) {

@@ -5,14 +5,14 @@ import {EnterPressEvent} from "./events/enter-press.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
-import {Component2, html, mixinStyles, mixinFocusable, property, query} from "../../../framework/component2/component2.js"
+import {AutowatcherComponent, html, mixinStyles, mixinFocusable, property, query} from "../../../framework/component/component.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 
  @mixinFocusable
  @mixinStyles(styles)
-export class XioTextInput<xParsedValue = string> extends Component2 {
+export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 
 	@property({type: String, reflect: true})
 	["initial"]: string = ""

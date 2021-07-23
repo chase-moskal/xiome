@@ -1,7 +1,7 @@
 
 import {Op} from "../ops.js"
 import {whenOpReady} from "./when-op-ready.js"
-import {html} from "../component2/component2.js"
+import {html} from "../component/component.js"
 
 export function renderOp<xValue, xResult>(
 		op: Op<xValue>,

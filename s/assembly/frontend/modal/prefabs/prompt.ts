@@ -1,5 +1,5 @@
 
-import {html} from "lit-html"
+import {html} from "../../../../framework/component/component.js"
 import {ModalSystem} from "../types/modal-system.js"
 import {ModalControls} from "../types/modal-controls.js"
 import {XioTextInput} from "../../../../features/xio-components/inputs/xio-text-input.js"

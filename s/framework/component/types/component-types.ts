@@ -1,6 +1,6 @@
 
-import {CSSResult, CSSResultArray, LitElement, PropertyValues} from "lit-element"
-import {Autowatcher, Track} from "../../toolbox/autowatcher/types/autowatcher-types.js"
+import {CSSResult, CSSResultArray, LitElement, PropertyValues} from "../component.js"
+import {Autowatcher, Track} from "../../../toolbox/autowatcher/types/autowatcher-types.js"
 
 export type Constructor<T extends {}> = new(...args: any[]) => T
 

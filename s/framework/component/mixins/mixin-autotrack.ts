@@ -1,6 +1,6 @@
 
-import {PropertyValues} from "../component2.js"
-import {Constructor, AutowatchComponent} from "../component-types.js"
+import {PropertyValues} from "../component.js"
+import {Constructor, AutowatchComponent} from "../types/component-types.js"
 import {Track} from "../../../toolbox/autowatcher/types/autowatcher-types.js"
 
 export function mixinAutotrack(...tracks: Track<any>[]) {

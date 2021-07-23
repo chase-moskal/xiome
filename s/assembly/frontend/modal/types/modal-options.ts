@@ -1,6 +1,6 @@
 
 import {ModalControls} from "./modal-controls.js"
-import {TemplateResult} from "../../../../framework/component2/component2.js"
+import {TemplateResult} from "../../../../framework/component/component.js"
 
 export interface PopupOptions {
 	focusNthElement: number

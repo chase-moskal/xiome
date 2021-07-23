@@ -1,11 +1,11 @@
 
 import styles from "./xio-button.css.js"
 import {PressEvent} from "./events/press-event.js"
-import {Component2, html, mixinStyles, property, mixinFocusable} from "../../../framework/component2/component2.js"
+import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component/component.js"
 
 @mixinFocusable
 @mixinStyles(styles)
-export class XioButton extends Component2 {
+export class XioButton extends AutowatcherComponent {
 
 	@property({type: Boolean, reflect: true})
 	["disabled"] = false

@@ -1,6 +1,6 @@
 
-import {TemplateResult} from "lit-html"
 import {ButtonOptions} from "./button-options.js"
+import {TemplateResult} from "../../../../framework/component/component.js"
 
 export interface ConfirmOptions {
 	title: string | TemplateResult

@@ -1,5 +1,5 @@
 
-import {css} from "../../../../../../framework/component2/component2.js"
+import {css} from "../../../../../../framework/component/component.js"
 export default css`
 
 * {

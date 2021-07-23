@@ -1,7 +1,7 @@
 
 import {mixinStyles} from "./mixins/mixin-styles.js"
 import {objectMap} from "../../toolbox/object-map.js"
-import {CSS, Constructor, LitBase} from "../component2/component-types.js"
+import {CSS, Constructor, LitBase} from "./types/component-types.js"
 
 export const themeComponents = <
 		xComponents extends {[key: string]: Constructor<LitBase>}

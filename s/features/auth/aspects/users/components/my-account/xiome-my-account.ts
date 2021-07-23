@@ -4,10 +4,10 @@ import {makeAccessModel} from "../../models/access-model.js"
 import {makePersonalModel} from "../../models/personal-model.js"
 import {ProfileDraft} from "../../routines/personal/types/profile-draft.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
-import {Component2WithShare, html, mixinStyles} from "../../../../../../framework/component2/component2.js"
+import {AutowatcherComponentWithShare, html, mixinStyles} from "../../../../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeMyAccount extends Component2WithShare<{
+export class XiomeMyAccount extends AutowatcherComponentWithShare<{
 		accessModel: ReturnType<typeof makeAccessModel>
 		personalModel: ReturnType<typeof makePersonalModel>
 	}> {

@@ -1,5 +1,5 @@
 
-import {Constructor} from "../component-types.js"
+import {Constructor} from "../types/component-types.js"
 
 export function mixinShare<S>(s: S) {
 	return function<C extends Constructor<{}>>(Base: C) {

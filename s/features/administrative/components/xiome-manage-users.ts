@@ -12,10 +12,10 @@ import {makeAdministrativeModel} from "../models/administrative-model.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {validateUserSearchTerm} from "../api/services/validation/validate-user-search-term.js"
-import {Component3WithShare, html, mixinStyles, property} from "../../../framework/component2/component2.js"
+import {ComponentWithShare, html, mixinStyles, property} from "../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeManageUsers extends Component3WithShare<{
+export class XiomeManageUsers extends ComponentWithShare<{
 		modals: ModalSystem
 		administrativeModel: ReturnType<typeof makeAdministrativeModel>
 	}> {

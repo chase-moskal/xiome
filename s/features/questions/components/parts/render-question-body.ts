@@ -1,5 +1,5 @@
 
-import {html} from "lit-html"
+import {html} from "../../../../framework/component/component.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {validateQuestionDraftContent} from "../../api/services/validation/validate-question-draft.js"

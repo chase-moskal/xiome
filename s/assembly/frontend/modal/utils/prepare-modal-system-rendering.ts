@@ -1,8 +1,7 @@
 
-import {render, html} from "lit-html"
-
 import {Modal} from "../types/modal.js"
 import modalSystemStyles from "../modal-system.css.js"
+import {render, html} from "../../../../framework/component/component.js"
 
 export function prepareModalSystemRendering(listModals: () => Modal[]) {
 

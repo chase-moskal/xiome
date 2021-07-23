@@ -1,5 +1,5 @@
 
-import {css} from "lit-element"
+import {css} from "../../../framework/component/component.js"
 export default css`
 
 *:focus {

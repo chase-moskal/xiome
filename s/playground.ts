@@ -3,10 +3,10 @@ import {nap} from "./toolbox/nap.js"
 import {ops} from "./framework/ops.js"
 import {User} from "./features/auth/aspects/users/types/user.js"
 import {ProfileDraft} from "./features/auth/aspects/users/routines/personal/types/profile-draft.js"
-import {Component2, mixinLightDom, registerComponents, html, property} from "./framework/component2/component2.js"
+import {AutowatcherComponent, mixinLightDom, registerComponents, html, property} from "./framework/component/component.js"
 
 @mixinLightDom
-class XioPlayground extends Component2 {
+class XioPlayground extends AutowatcherComponent {
 
 	@property({type: Object})
 	private user: User = {

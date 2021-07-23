@@ -1,5 +1,5 @@
 
-import {TemplateResult} from "lit-html"
+import {TemplateResult} from "../../../../framework/component/component.js"
 
 export interface ButtonOptions {
 	label: string | TemplateResult

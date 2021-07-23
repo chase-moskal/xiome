@@ -1,7 +1,7 @@
 
 import styles from "./xio-checkbox.css.js"
 import {CheckEvent} from "./events/check-event.js"
-import {Component2, html, mixinStyles, property, mixinFocusable} from "../../../framework/component2/component2.js"
+import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component/component.js"
 
 import checkIcon from "../../../framework/icons/check.svg.js"
 import spinnerIcon from "../../../framework/icons/spinner.svg.js"
@@ -10,7 +10,7 @@ import {Op, ops} from "../../../framework/ops.js"
 
 @mixinFocusable
 @mixinStyles(styles)
-export class XioCheckbox extends Component2 {
+export class XioCheckbox extends AutowatcherComponent {
 
 	@property()
 	private loading: Op<boolean> = ops.none()

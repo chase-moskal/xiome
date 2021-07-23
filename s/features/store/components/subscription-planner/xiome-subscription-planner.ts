@@ -7,10 +7,10 @@ import {PlanningSituation} from "../../model/shares/types/planning-situation.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
-import {Component2WithShare, mixinStyles, html, property} from "../../../../framework/component2/component2.js"
+import {AutowatcherComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeSubscriptionPlanner extends Component2WithShare<{
+export class XiomeSubscriptionPlanner extends AutowatcherComponentWithShare<{
 		modals: ModalSystem
 		subscriptionPlanning: ReturnType<typeof makeStoreModel>["shares"]["subscriptionPlanning"]
 	}> {

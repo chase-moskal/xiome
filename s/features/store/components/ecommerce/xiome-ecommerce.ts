@@ -4,10 +4,10 @@ import {makeStoreModel} from "../../model/store-model.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {Component2WithShare, mixinStyles, html} from "../../../../framework/component2/component2.js"
+import {AutowatcherComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeEcommerce extends Component2WithShare<{
+export class XiomeEcommerce extends AutowatcherComponentWithShare<{
 		modals: ModalSystem
 		ecommerce: ReturnType<typeof makeStoreModel>["shares"]["ecommerce"]
 	}> {

@@ -1,7 +1,6 @@
 
 import {XiomeComponentOptions} from "./types/xiome-component-options.js"
-import {mixinHappy} from "../../../framework/component2/mixins/mixin-happy.js"
-import {mixinAutotrack, mixinShare} from "../../../framework/component2/component2.js"
+import {mixinHappy, mixinAutotrack, mixinShare} from "../../../framework/component/component.js"
 import {XiomeMyAvatar} from "../../../features/auth/aspects/users/components/my-avatar/xiome-my-avatar.js"
 import {XiomeMyAccount} from "../../../features/auth/aspects/users/components/my-account/xiome-my-account.js"
 import {XiomeAppManager} from "../../../features/auth/aspects/apps/components/app-manager/xiome-app-manager.js"

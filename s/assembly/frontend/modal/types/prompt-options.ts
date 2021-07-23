@@ -1,7 +1,7 @@
 
-import {TemplateResult} from "lit-html"
 import {ButtonOptions} from "./button-options.js"
 import {Validator} from "../../../../toolbox/darkvalley.js"
+import {TemplateResult} from "../../../../framework/component/component.js"
 import {TextInputParser} from "../../../../features/xio-components/inputs/types/text-input-parser.js"
 
 export interface PromptOptions<xValue> {

@@ -1,7 +1,7 @@
 
-import {html} from "lit-html"
 import {renderQuestionBody} from "./render-question-body.js"
 import {User} from "../../../auth/aspects/users/types/user.js"
+import {html} from "../../../../framework/component/component.js"
 import {PressEvent} from "../../../xio-components/button/events/press-event.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 

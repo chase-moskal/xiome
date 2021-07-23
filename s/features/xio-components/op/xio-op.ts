@@ -3,10 +3,10 @@ import styles from "./xio-op.css.js"
 import {Op, ops} from "../../../framework/ops.js"
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgSpinner from "../../../framework/icons/spinner.svg.js"
-import {Component2, html, mixinStyles, property} from "../../../framework/component2/component2.js"
+import {AutowatcherComponent, html, mixinStyles, property} from "../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XioOp<xPayload = any> extends Component2 {
+export class XioOp<xPayload = any> extends AutowatcherComponent {
 
 	@property({type: String, reflect: true})
 	mode: string = "none"

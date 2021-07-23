@@ -1,11 +1,11 @@
 
 import styles from "./xiome-my-avatar.css.js"
 import {ops} from "../../../../../../framework/ops.js"
-import {Component2WithShare, html, mixinStyles} from "../../../../../../framework/component2/component2.js"
+import {AutowatcherComponentWithShare, html, mixinStyles} from "../../../../../../framework/component/component.js"
 import {makeAccessModel} from "../../models/access-model.js"
 
 @mixinStyles(styles)
-export class XiomeMyAvatar extends Component2WithShare<{accessModel: ReturnType<typeof makeAccessModel>}> {
+export class XiomeMyAvatar extends AutowatcherComponentWithShare<{accessModel: ReturnType<typeof makeAccessModel>}> {
 	render() {
 		const access = ops.value(this.share.accessModel.access)
 		const avatarSpec = access?.user?.profile.avatar

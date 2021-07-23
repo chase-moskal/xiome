@@ -1,5 +1,5 @@
 
-import {CSS, LitBaseClass} from "../component-types.js"
+import {CSS, LitBaseClass} from "../types/component-types.js"
 
 function arrayize<T>(item: T | T[]) {
 	return <T[]>[item].flat()

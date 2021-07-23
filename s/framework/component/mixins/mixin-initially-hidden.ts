@@ -1,5 +1,5 @@
 
-import {Constructor, CustomElement} from "../component-types.js"
+import {Constructor, CustomElement} from "../types/component-types.js"
 
 export function mixinInitiallyHidden<
 		C extends Constructor<CustomElement>

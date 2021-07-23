@@ -2,7 +2,7 @@
 import {applyMockHacks} from "./frontend/mocks/apply-mock-hacks.js"
 import {mockConnectApp} from "./frontend/connect/mock/mock-connect-app.js"
 import {memoryFlexStorage} from "../toolbox/flex-storage/memory-flex-storage.js"
-import {registerComponents} from "../framework/component2/register-components.js"
+import {registerComponents} from "../framework/component/register-components.js"
 import {assembleAndInitializeFrontend} from "./frontend/assemble-and-initialize-frontend.js"
 
 export async function demos() {

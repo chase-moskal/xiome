@@ -4,6 +4,11 @@ import {autowatcherCore} from "./core/autowatcher-core.js"
 import {AutowatcherLeakError} from "./core/autowatcher-errors.js"
 import {Action, Actions, Effect, Stakeout, Watcher} from "./types/autowatcher-types.js"
 
+//
+// deprecated
+// now we prefer to use happystate
+//
+
 export function autowatcher() {
 	const {context, subscribe, triggerObservation} = autowatcherCore()
 
