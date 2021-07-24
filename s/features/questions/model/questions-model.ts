@@ -1,11 +1,11 @@
 
 import {merge} from "../../../toolbox/merge.js"
 import {Op, ops} from "../../../framework/ops.js"
-import {Question} from "../api/types/question.js"
 import {Service} from "../../../types/service.js"
-import {QuestionDraft} from "../api/types/question-draft.js"
 import {User} from "../../auth/aspects/users/types/user.js"
+import {QuestionDraft} from "../api/types/question-draft.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {Question} from "../api/types/questions-and-answers.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {makeQuestionsReadingService} from "../api/services/questions-reading-service.js"
 import {makeQuestionsPostingService} from "../api/services/questions-posting-service.js"
@@ -181,7 +181,7 @@ export function makeQuestionsModel({
 
 			async likeQuestion(questionId: string, like: boolean) {
 				await questionsPostingService.likeQuestion({
-					like,
+					like: like,
 					questionId,
 				})
 				actions.setQuestionLike(questionId, like)

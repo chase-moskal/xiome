@@ -3,22 +3,22 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {vote} from "./helpers/vote.js"
-import {QuestionDraft} from "../types/question-draft.js"
+import {AnswerDraft} from "../types/answer-draft.js"
+import {Answer} from "../types/questions-and-answers.js"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
-import {Question} from "../types/questions-and-answers.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {boolean, schema} from "../../../../toolbox/darkvalley.js"
-import {QuestionPostRow} from "../tables/types/questions-tables.js"
+import {AnswerPostRow} from "../tables/types/questions-tables.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"
 import {validateQuestionDraft} from "./validation/validate-question-draft.js"
+import {requireUserCanEditAnswer} from "./helpers/require-user-can-edit-answer.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {requireUserCanEditQuestion} from "./helpers/require-user-can-edit-question.js"
 import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 
-export const makeQuestionsPostingService = (
+export const makeQuestionsAnsweringService = (
 		options: QuestionsApiOptions
 	) => apiContext<UserMeta, QuestionsUserAuth>()({
 
@@ -26,7 +26,7 @@ export const makeQuestionsPostingService = (
 		const auth = await authenticatedQuestionsPolicy(options)(meta, request)
 		auth.checker.requireNotHavePrivilege("banned")
 
-		const canPostQuestions = auth.checker.hasPrivilege("post questions")
+		const canPostQuestions = auth.checker.hasPrivilege("answer questions")
 		const isModerator = auth.checker.hasPrivilege("moderate questions")
 		const allowed = canPostQuestions || isModerator
 		if (!allowed)
@@ -37,66 +37,69 @@ export const makeQuestionsPostingService = (
 
 	expose: {
 
-		async postQuestion(
+		async postAnswer(
 				{access, questionsTables},
-				inputs: {questionDraft: QuestionDraft},
-			): Promise<Question> {
-			const {questionDraft} = runValidation(inputs, schema({
-				questionDraft: validateQuestionDraft,
-			}))
-			const row: QuestionPostRow = {
-				questionId: options.rando.randomId(),
+				inputs: {questionId: string, answerDraft: AnswerDraft},
+			) {
+			const {questionId: questionIdString, answerDraft} = runValidation(
+				inputs,
+				schema({
+					questionId: validateId,
+					answerDraft: validateQuestionDraft,
+				})
+			)
+			const row: AnswerPostRow = {
+				questionId: DamnId.fromString(questionIdString),
+				answerId: options.rando.randomId(),
 				authorUserId: DamnId.fromString(access.user.userId),
 				archive: false,
 				timePosted: Date.now(),
-				...questionDraft,
+				...answerDraft,
 			}
-			await questionsTables.questionPosts.create(row)
-			return {
-				archive: row.archive,
-				authorUserId: row.authorUserId.toString(),
+			await questionsTables.answerPosts.create(row)
+			const answer: Answer = {
+				answerId: row.answerId.toString(),
 				questionId: row.questionId.toString(),
+				board: row.board,
 				content: row.content,
 				timePosted: row.timePosted,
-				board: row.board,
-				likes: 0,
-				reports: 0,
 				liked: false,
+				likes: 0,
 				reported: false,
-				answers: [],
+				reports: 0,
 			}
+			return answer
 		},
 
-		async archiveQuestion(
-				{access: {user: {userId}}, questionsTables, checker},
-				inputs: {archive: boolean, questionId: string}
+		async archiveAnswer(
+				{access: {user: {userId}}, checker, questionsTables},
+				inputs: {archive: boolean, answerId: string},
 			) {
-			const {archive, questionId: questionIdString} = runValidation(
+			const {archive, answerId: answerIdString} = runValidation(
 				inputs,
 				schema({
 					archive: boolean(),
-					questionId: validateId,
+					answerId: validateId,
 				}),
 			)
-			const questionId = DamnId.fromString(questionIdString)
-			const questionPost = await questionsTables.questionPosts
-				.one(find({questionId}))
-			requireUserCanEditQuestion({userId, checker, questionPost})
-			await questionsTables.questionPosts.update({
-				...find({questionId}),
-				write: {archive: !!archive},
+			const answerId = DamnId.fromString(answerIdString)
+			const answerPost = await questionsTables.answerPosts.one(find({answerId}))
+			requireUserCanEditAnswer({userId, checker, answerPost})
+			await questionsTables.answerPosts.update({
+				...find({answerId}),
+				write: {archive},
 			})
 		},
 
-		async likeQuestion(
+		async likeAnswer(
 				{questionsTables, checker, access: {user: {userId: userIdString}}},
-				inputs: {like: boolean, questionId: string}
+				inputs: {like: boolean, answerId: string}
 			) {
-			const {like, questionId: questionIdString} = runValidation(
+			const {like, answerId: answerIdString} = runValidation(
 				inputs,
 				schema({
 					like: boolean(),
-					questionId: validateId,
+					answerId: validateId,
 				}),
 			)
 			checker.requirePrivilege("like questions")
@@ -104,19 +107,19 @@ export const makeQuestionsPostingService = (
 				status: like,
 				voteTable: questionsTables.likes,
 				userId: DamnId.fromString(userIdString),
-				itemId: DamnId.fromString(questionIdString),
+				itemId: DamnId.fromString(answerIdString),
 			})
 		},
 
-		async reportQuestion(
+		async reportAnswer(
 				{questionsTables, checker, access: {user: {userId: userIdString}}},
-				inputs: {report: boolean, questionId: string},
+				inputs: {report: boolean, answerId: string},
 			) {
-			const {report, questionId: questionIdString} = runValidation(
+			const {report, answerId: answerIdString} = runValidation(
 				inputs,
 				schema({
 					report: boolean(),
-					questionId: validateId,
+					answerId: validateId,
 				}),
 			)
 			checker.requirePrivilege("report questions")
@@ -124,7 +127,7 @@ export const makeQuestionsPostingService = (
 				status: report,
 				voteTable: questionsTables.reports,
 				userId: DamnId.fromString(userIdString),
-				itemId: DamnId.fromString(questionIdString),
+				itemId: DamnId.fromString(answerIdString),
 			})
 		},
 	},

@@ -168,6 +168,11 @@ export const origin = (): Validator<string> => value =>
 		? []
 		: ["invalid origin"]
 
+export const regex = (r: RegExp, error: string = "invalid string"): Validator<string> => value =>
+	r.test(value)
+		? []
+		: [error]
+
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 export const email = (): Validator<string> => value =>

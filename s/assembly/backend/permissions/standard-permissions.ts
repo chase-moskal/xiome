@@ -4,6 +4,7 @@ import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 const commonPrivileges = {
 	"read questions": "5b19b929648cbbe26c052a5016892b370f048eead1e6a303a50b7f5234ec5161",
 	"post questions": "aeaae6139d05f77193ca7c272a65977c70cb188f3070359866237a5ade84ba15",
+	"answer questions": "afaa00f7bc9ab09d3bbc61a26f6d9bc666cd9bb7ac270ebbdeba3cf4dd3ab9a9",
 	"like questions": "5490898c541d733956b28664e7536673842e73b289fc45ab9caf143138c14a3e",
 	"report questions": "f2f89d433f398b267e320e0e3b9929eb3934af5c02f7e3fb2e032fd19399ad21",
 }

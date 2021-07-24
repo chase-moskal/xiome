@@ -4,11 +4,12 @@ import {DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
 
 export type QuestionsTables = {
 	questionPosts: DbbyTable<QuestionPostRow>
-	questionLikes: DbbyTable<QuestionLikeRow>
-	questionReports: DbbyTable<QuestionReportRow>
+	answerPosts: DbbyTable<AnswerPostRow>
+	likes: DbbyTable<SimpleVoteRow>
+	reports: DbbyTable<SimpleVoteRow>
 }
 
-export type QuestionPostRow = {
+export type CommonContentItem = {
 	questionId: DamnId
 	authorUserId: DamnId
 	board: string
@@ -17,12 +18,13 @@ export type QuestionPostRow = {
 	timePosted: number
 }
 
-export type QuestionLikeRow = {
-	userId: DamnId
-	questionId: DamnId
-}
+export type QuestionPostRow = CommonContentItem
 
-export type QuestionReportRow = {
+export type AnswerPostRow = {
+	answerId: DamnId
+} & CommonContentItem
+
+export type SimpleVoteRow = {
 	userId: DamnId
-	questionId: DamnId
+	itemId: DamnId
 }

@@ -7,7 +7,8 @@ import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage
 export async function mockQuestionsTables(tableStorage: FlexStorage) {
 	return await mockStorageTables<QuestionsTables>(tableStorage, {
 		questionPosts: true,
-		questionLikes: true,
-		questionReports: true,
+		answerPosts: true,
+		likes: true,
+		reports: true,
 	})
 }

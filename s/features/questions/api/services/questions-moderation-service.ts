@@ -10,12 +10,14 @@ import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-p
 export const makeQuestionsModerationService = (
 	options: QuestionsApiOptions
 	) => apiContext<UserMeta, QuestionsUserAuth>()({
+
 	policy: async(meta, request) => {
 		const auth = await authenticatedQuestionsPolicy(options)(meta, request)
 		auth.checker.requirePrivilege("moderate questions")
 		auth.checker.requireNotHavePrivilege("banned")
 		return auth
 	},
+
 	expose: {
 
 		async archiveBoard(
@@ -28,5 +30,8 @@ export const makeQuestionsModerationService = (
 				write: {archive: true},
 			})
 		},
+
+		// TODO implement
+		async fetchReportedQuestions() {},
 	},
 })
