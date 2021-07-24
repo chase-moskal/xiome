@@ -1,41 +1,39 @@
 
-import {Question} from "../../types/question.js"
-import {or} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
+import {Question} from "../../types/questions-and-answers.js"
+import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+import {findAll, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {QuestionPostRow, QuestionsTables, SimpleVoteTable} from "../../tables/types/questions-tables.js"
 
-export async function resolveQuestions({userId, posts, questionsTables}: {
-		userId?: string
-		posts: QuestionPostRow[]
+export async function resolveQuestions({userId, questionPosts, questionsTables}: {
+		userId: DamnId
+		questionPosts: QuestionPostRow[]
 		questionsTables: QuestionsTables
 	}) {
 
-	const ids = posts.map(post => post.questionId)
+	const questionIds = questionPosts.map(post => post.questionId)
 
-	const likes = ids.length
-		? await questionsTables.questionLikes.read({
-			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
-		})
+	const answerPosts = questionIds.length
+		? await questionsTables.answerPosts
+			.read(findAll(questionIds, questionId => ({questionId})))
 		: []
 
-	const reports = ids.length
-		? await questionsTables.questionReports.read({
-			conditions: or(...ids.map(id => ({equal: {questionId: id}})))
-		})
-		: []
+	const questionLikes = await makeVoteCounter({
+		itemIds: questionIds,
+		voteTable: questionsTables.likes,
+	})
 
-	return ids.map(id => {
-		const questionPost = posts.find(post => post.questionId === id)
-		const questionLikes = likes.filter(like => like.questionId === id)
-		const questionReports = reports.filter(report => report.questionId === id)
+	const questionReports = await makeVoteCounter({
+		itemIds: questionIds,
+		voteTable: questionsTables.reports,
+	})
 
-		const userLike = questionLikes.find(like => like.userId.toString() === userId)
-		const userReport = questionReports.find(report => report.userId.toString() === userId)
-
-		return <Question>{
-			likes: questionLikes.length,
-			reports: questionReports.length,
-			liked: !!userLike,
-			reported: !!userReport,
+	return questionIds.map(questionId => {
+		const questionPost = questionPosts.find(post => post.questionId === questionId)
+		const question: Question = {
+			likes: questionLikes.countVotes(questionId),
+			reports: questionReports.countVotes(questionId),
+			liked: questionLikes.voteStatus(userId),
+			reported: questionReports.voteStatus(userId),
 
 			archive: questionPost.archive,
 			authorUserId: questionPost.authorUserId.toString(),
@@ -43,6 +41,28 @@ export async function resolveQuestions({userId, posts, questionsTables}: {
 			board: questionPost.board,
 			content: questionPost.content,
 			timePosted: questionPost.timePosted,
+
+			answers: [],
 		}
+		return question
 	})
+}
+
+async function makeVoteCounter({itemIds, voteTable}: {
+		itemIds: DamnId[]
+		voteTable: SimpleVoteTable
+	}) {
+	const votes = itemIds.length
+		? await voteTable.read(findAll(itemIds, itemId => ({itemId})))
+		: []
+	return {
+		countVotes(itemId: DamnId) {
+			return votes
+				.filter(vote => vote.itemId.toString() === itemId.toString())
+				.length
+		},
+		voteStatus(userId: DamnId) {
+			return !!votes.find(vote => vote.userId.toString() === userId.toString())
+		},
+	}
 }

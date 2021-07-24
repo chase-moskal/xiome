@@ -48,7 +48,7 @@ export const makeQuestionsReadingService = (
 				})
 
 				questions = await resolveQuestions({
-					posts,
+					questionPosts: posts,
 					questionsTables,
 					userId: access?.user?.userId,
 				})

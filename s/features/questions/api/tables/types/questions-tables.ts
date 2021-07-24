@@ -5,8 +5,8 @@ import {DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
 export type QuestionsTables = {
 	questionPosts: DbbyTable<QuestionPostRow>
 	answerPosts: DbbyTable<AnswerPostRow>
-	likes: DbbyTable<SimpleVoteRow>
-	reports: DbbyTable<SimpleVoteRow>
+	likes: SimpleVoteTable
+	reports: SimpleVoteTable
 }
 
 export type CommonContentItem = {
@@ -28,3 +28,5 @@ export type SimpleVoteRow = {
 	userId: DamnId
 	itemId: DamnId
 }
+
+export type SimpleVoteTable = DbbyTable<SimpleVoteRow>
