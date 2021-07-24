@@ -22,6 +22,10 @@ export function find<Row extends DbbyRow>(...rows: Partial<Row>[]) {
 		: {conditions: false as const}
 }
 
+export function findAll<V, R extends DbbyRow = DbbyRow>(values: V[], valueForRow: (v: V) => Partial<R>) {
+	return {conditions: or(...values.map(v => ({equal: valueForRow(v)})))}
+}
+
 export function isDbbyTable(x: any) {
 	return x && typeof x === "object" && x[_dbbyTableSymbol]
 }

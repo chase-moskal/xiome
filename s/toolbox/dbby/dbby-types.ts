@@ -55,8 +55,8 @@ export type DbbyConditionTree<Row extends DbbyRow> =
 
 export type DbbyConditions<Row extends DbbyRow> = false | DbbyConditionTree<Row>
 
-function main<Row extends DbbyRow>(cond: DbbyConditions<Row>) {}
-main<{a: boolean}>(["or", {equal: {a: true}}])
+// function main<Row extends DbbyRow>(cond: DbbyConditions<Row>) {}
+// main<{a: boolean}>(["or", {equal: {a: true}}])
 
 export interface DbbyConditional<Row extends DbbyRow> {
 	conditions: DbbyConditions<Row>
