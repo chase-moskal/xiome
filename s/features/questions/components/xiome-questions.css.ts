@@ -1,10 +1,19 @@
 
 import {css} from "../../../framework/component/component.js"
+
+const question2 = css`
+
+.question2 {
+	background: black;
+}
+
+`
+
 export default css`
 
-/* * {
+* {
 	outline: 1px solid #f002;
-} */
+}
 
 :host {
 	display: block;
@@ -38,7 +47,9 @@ slot[name="empty"] {
 	margin-top: 2em;
 }
 
-.question-expression {
+${question2}
+
+/* .question-expression {
 	display: flex;
 	flex-direction: row;
 }
@@ -190,7 +201,7 @@ xio-profile-card {
 	top: 0;
 	border-bottom-color: transparent;
 	border-top-color: var(--bg);
-}
+} */
 
 `
 

@@ -23,6 +23,9 @@ export function renderQuestionEditor({
 			<div class=editor-intro>
 				<p class=editor-heading>Post a new question</p>
 			</div>
+			<div class=editor-profile>
+				<xio-profile-card .user=${questionAuthor} show-details></xio-profile-card>
+			</div>
 			<div class=editor-textbox>
 				${renderQuestionBody({
 					content,
@@ -30,9 +33,6 @@ export function renderQuestionEditor({
 					timePosted: Date.now(),
 					handleValueChange,
 				})}
-			</div>
-			<div class=editor-profile>
-				<xio-profile-card .user=${questionAuthor} show-details></xio-profile-card>
 			</div>
 			<div class=editor-buttons>
 				<xio-button

@@ -47,38 +47,40 @@ export function renderQuestion({
 	}
 
 	return html`
-		<li data-question-id="${question.questionId}">
-			<div class=question-expression>
-				<div class=question-voting>
-					<button
-						data-vote=like
-						?data-active=${question.liked}
-						tabindex=0
-						title="${voting.like.title}"
-						@click=${voting.like.click}>
-							<span>${voting.like.icon}</span>
-							<span>${question.likes}</span>
-					</button>
-					<button
-						data-vote=report
-						?data-active=${question.reported}
-						tabindex=0
-						title="${voting.report.title}"
-						@click=${voting.report.click}>
-							<span>${voting.report.icon}</span>
-							<span>${question.reports}</span>
-					</button>
-				</div>
-				<div class=question-area>
-					<xio-profile-card .user=${author} show-details></xio-profile-card>
-					${renderQuestionBody({
-						editable: false,
-						content: question.content,
-						timePosted: question.timePosted,
-					})}
-				</div>
+		<li class=question2 data-question-id="${question.questionId}">
+			<div class=tophat>
+				<xio-profile-card .user=${author} show-details></xio-profile-card>
 			</div>
-			<div class=question-controls>
+			<div class=potato>
+			</div>
+			<div class=bar1>
+				<button
+					data-vote=like
+					?data-active=${question.liked}
+					tabindex=0
+					title="${voting.like.title}"
+					@click=${voting.like.click}>
+						<span>${voting.like.icon}</span>
+						<span>${question.likes}</span>
+				</button>
+			</div>
+			<div class=bubble>
+				${renderQuestionBody({
+					editable: false,
+					content: question.content,
+					timePosted: question.timePosted,
+				})}
+			</div>
+			<div class=bar2>
+				<button
+					data-vote=report
+					?data-active=${question.reported}
+					tabindex=0
+					title="${voting.report.title}"
+					@click=${voting.report.click}>
+						<span>${voting.report.icon}</span>
+						<span>${question.reports}</span>
+				</button>
 				${authority
 					? html`<xio-button @press=${handleDelete}>delete</xio-button>`
 					: null}
