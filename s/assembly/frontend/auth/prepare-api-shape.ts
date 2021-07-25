@@ -81,6 +81,7 @@ export function prepareApiShape({appId, storage}: {
 			questionsModerationService: {
 				[_meta]: standardMeta,
 				archiveBoard: true,
+				fetchReportedQuestions: true,
 			},
 			questionsPostingService: {
 				[_meta]: standardMeta,
@@ -92,6 +93,13 @@ export function prepareApiShape({appId, storage}: {
 			questionsReadingService: {
 				[_meta]: standardMeta,
 				fetchQuestions: true,
+			},
+			questionsAnsweringService: {
+				[_meta]: standardMeta,
+				archiveAnswer: true,
+				likeAnswer: true,
+				postAnswer: true,
+				reportAnswer: true,
 			},
 		},
 	})

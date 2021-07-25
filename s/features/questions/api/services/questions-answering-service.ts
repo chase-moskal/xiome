@@ -12,7 +12,7 @@ import {boolean, schema} from "../../../../toolbox/darkvalley.js"
 import {AnswerPostRow} from "../tables/types/questions-tables.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"
-import {validateQuestionDraft} from "./validation/validate-question-draft.js"
+import {validateAnswerDraft} from "./validation/validate-question-draft.js"
 import {requireUserCanEditAnswer} from "./helpers/require-user-can-edit-answer.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
@@ -45,22 +45,27 @@ export const makeQuestionsAnsweringService = (
 				inputs,
 				schema({
 					questionId: validateId,
-					answerDraft: validateQuestionDraft,
+					answerDraft: validateAnswerDraft,
 				})
 			)
+			const questionId = DamnId.fromString(questionIdString)
+			const questionPost = await questionsTables.questionPosts
+				.one(find({questionId}))
+			if (!questionPost)
+				throw new ApiError(400, "unknown questionId")
 			const row: AnswerPostRow = {
-				questionId: DamnId.fromString(questionIdString),
+				questionId,
 				answerId: options.rando.randomId(),
 				authorUserId: DamnId.fromString(access.user.userId),
 				archive: false,
 				timePosted: Date.now(),
+				board: questionPost.board,
 				...answerDraft,
 			}
 			await questionsTables.answerPosts.create(row)
 			const answer: Answer = {
 				answerId: row.answerId.toString(),
 				questionId: row.questionId.toString(),
-				board: row.board,
 				content: row.content,
 				timePosted: row.timePosted,
 				liked: false,

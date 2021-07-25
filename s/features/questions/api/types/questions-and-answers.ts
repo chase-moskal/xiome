@@ -10,7 +10,6 @@ export type Question = {
 } & Likeable & Reportable
 
 export type Answer = {
-	board: string
 	answerId: string
 	questionId: string
 	content: string

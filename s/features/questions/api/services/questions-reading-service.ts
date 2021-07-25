@@ -9,6 +9,7 @@ import {QuestionsAnonAuth} from "../types/questions-metas-and-auths.js"
 import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export const makeQuestionsReadingService = (
 	options: QuestionsApiOptions
@@ -25,13 +26,12 @@ export const makeQuestionsReadingService = (
 				{board}: {board: string},
 			) {
 
-			const posts = await questionsTables.questionPosts
-				.read({
-					...find({board, archive: false}),
-					limit: 100,
-					offset: 0,
-					order: {timePosted: "descend"},
-				})
+			const posts = await questionsTables.questionPosts.read({
+				...find({board, archive: false}),
+				limit: 100,
+				offset: 0,
+				order: {timePosted: "descend"},
+			})
 
 			let questions = []
 			let users = []
@@ -50,7 +50,9 @@ export const makeQuestionsReadingService = (
 				questions = await resolveQuestions({
 					questionPosts: posts,
 					questionsTables,
-					userId: access?.user?.userId,
+					userId: access?.user?.userId
+						? DamnId.fromString(access.user.userId)
+						: undefined,
 				})
 			}
 

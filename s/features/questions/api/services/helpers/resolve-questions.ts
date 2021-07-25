@@ -1,11 +1,12 @@
 
+import {makeVotingBooth} from "./voting-booth.js"
 import {Question} from "../../types/questions-and-answers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {findAll, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionPostRow, QuestionsTables, SimpleVoteTable} from "../../tables/types/questions-tables.js"
+import {findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
 
 export async function resolveQuestions({userId, questionPosts, questionsTables}: {
-		userId: DamnId
+		userId?: DamnId
 		questionPosts: QuestionPostRow[]
 		questionsTables: QuestionsTables
 	}) {
@@ -17,24 +18,28 @@ export async function resolveQuestions({userId, questionPosts, questionsTables}:
 			.read(findAll(questionIds, questionId => ({questionId})))
 		: []
 
-	const questionLikes = await makeVoteCounter({
+	const answerIds = answerPosts.map(post => post.answerId)
+
+	const boothDetails = {
+		userId,
+		likesTable: questionsTables.likes,
+		reportsTable: questionsTables.reports,
+	}
+
+	const questionsVotingBooth = await makeVotingBooth({
+		...boothDetails,
 		itemIds: questionIds,
-		voteTable: questionsTables.likes,
 	})
 
-	const questionReports = await makeVoteCounter({
-		itemIds: questionIds,
-		voteTable: questionsTables.reports,
+	const answersVotingBooth = await makeVotingBooth({
+		...boothDetails,
+		itemIds: answerIds,
 	})
 
 	return questionIds.map(questionId => {
 		const questionPost = questionPosts.find(post => post.questionId === questionId)
-		const question: Question = {
-			likes: questionLikes.countVotes(questionId),
-			reports: questionReports.countVotes(questionId),
-			liked: questionLikes.voteStatus(userId),
-			reported: questionReports.voteStatus(userId),
 
+		const question: Question = {
 			archive: questionPost.archive,
 			authorUserId: questionPost.authorUserId.toString(),
 			questionId: questionPost.questionId.toString(),
@@ -42,27 +47,18 @@ export async function resolveQuestions({userId, questionPosts, questionsTables}:
 			content: questionPost.content,
 			timePosted: questionPost.timePosted,
 
-			answers: [],
+			...questionsVotingBooth.getVotingDetails(questionId),
+
+			answers: answerPosts.map(answerPost => ({
+				answerId: answerPost.answerId.toString(),
+				questionId: answerPost.questionId.toString(),
+				content: answerPost.content,
+				timePosted: answerPost.timePosted,
+
+				...answersVotingBooth.getVotingDetails(answerPost.answerId),
+			})),
 		}
+
 		return question
 	})
-}
-
-async function makeVoteCounter({itemIds, voteTable}: {
-		itemIds: DamnId[]
-		voteTable: SimpleVoteTable
-	}) {
-	const votes = itemIds.length
-		? await voteTable.read(findAll(itemIds, itemId => ({itemId})))
-		: []
-	return {
-		countVotes(itemId: DamnId) {
-			return votes
-				.filter(vote => vote.itemId.toString() === itemId.toString())
-				.length
-		},
-		voteStatus(userId: DamnId) {
-			return !!votes.find(vote => vote.userId.toString() === userId.toString())
-		},
-	}
 }

@@ -108,9 +108,10 @@ export function prepareApiConfigurator(configurators: {
 					},
 				},
 				questionsTables: {
-					questionLikes: true,
+					likes: true,
+					reports: true,
+					answerPosts: true,
 					questionPosts: true,
-					questionReports: true,
 				},
 				storeTables: {
 					billing: {
