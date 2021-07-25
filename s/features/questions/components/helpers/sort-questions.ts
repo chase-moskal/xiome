@@ -1,5 +1,5 @@
 
-import {Question} from "../../api/types/question.js"
+import {Question} from "../../api/types/questions-and-answers.js"
 
 export function sortQuestions(questions: Question[], myUserId?: string) {
 
