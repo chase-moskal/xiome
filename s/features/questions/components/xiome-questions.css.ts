@@ -4,20 +4,145 @@ import {css} from "../../../framework/component/component.js"
 const question2 = css`
 
 .question2 {
-	background: black;
+	display: grid;
+	grid-template-rows: auto;
+	grid-template-columns: auto 1fr auto;
+	grid-template-areas:
+		".... tophat    ...."
+		"bar1 bubble    bar2"
+		".... buttonbar ....";
 }
+
+/* normal questions */
+
+.question2 .tophat { grid-area: tophat }
+.question2 .bar1 { grid-area: bar1 }
+.question2 .bar2 { grid-area: bar2 }
+.question2 .bubble { grid-area: bubble }
+.question2 .buttonbar { grid-area: buttonbar }
+
+.question2 .bar {
+	padding: 0.5em;
+	padding-top: 0.2em;
+	display: flex;
+	flex-direction: column;
+}
+
+.question2 .metabar {
+	font-size: 0.7em;
+	padding: 0 1.5em;
+	opacity: 0.6;
+}
+
+.question2 .tophat xio-profile-card {
+	width: 100%;
+}
+
+.question2 .bubble {
+	flex: 1 1 auto;
+	padding-left: 1em;
+}
+
+.question2 .bubble xio-text-input {
+	--xio-text-input-border-radius: 0 1em 1em 1em;
+	--xio-text-input-pad: 0.5em;
+}
+
+.question2 .bubble .textbox p {
+	border-radius: 0 1em 1em 1em;
+	border: 1px solid;
+	padding: 0.5em;
+	min-height: 4em;
+}
+
+[data-vote] {
+	display: block;
+	border: none;
+	font: inherit;
+	background: transparent;
+	color: inherit;
+}
+
+[data-vote] {
+	cursor: pointer;
+	opacity: 0.6;
+	user-select: none;
+}
+
+[data-vote="report"] {
+	opacity: 0.4;
+}
+
+[data-vote]:hover,
+[data-vote]:focus {
+	opacity: 1;
+}
+
+[data-vote="like"][data-active] {
+	color: var(--like-color);
+}
+
+[data-vote="report"][data-active] {
+	color: var(--report-color);
+}
+
+[data-vote] > span {
+	vertical-align: middle;
+}
+
+[data-vote] > span:nth-child(2) {
+	font-size: 0.9em;
+}
+
+[data-vote] svg {
+	width: 1.4em;
+	height: 1.4em;
+	position: relative;
+	top: 0.1em;
+}
+
+/* question editor */
+
+.intro {
+	margin-bottom: 1em;
+}
+
+.intro .heading {
+	font-size: 2em;
+}
+
+/* .question2.editor {
+	padding-left: 4em;
+	padding-right: 4em;
+}
+
+.question2.editor {
+	padding-left: 2.6em;
+} */
+
+.question2.editor .buttonbar {
+	text-align: right;
+	padding: 0.5em;
+}
+
+/* @media (max-width: 420px) {
+	.question2.editor {
+		padding-left: 2em;
+		padding-right: 0;
+	}
+} */
 
 `
 
 export default css`
 
-* {
+/* * {
 	outline: 1px solid #f002;
-}
+} */
 
 :host {
 	display: block;
-	max-width: 36em;
+	max-width: 42em;
 	--bg: var(--xiome-questions-body-background, #0006);
 	--color: var(--xiome-questions-body-color, #fff6);
 	--like-color: var(--xiome-questions-like-color, cyan);

@@ -19,14 +19,14 @@ export function renderQuestionEditor({
 		handleValueChange: (event: ValueChangeEvent<string>) => void
 	}) {
 	return html`
-		<div class=question-editor>
-			<div class=editor-intro>
-				<p class=editor-heading>Post a new question</p>
-			</div>
-			<div class=editor-profile>
+		<div class=intro>
+			<p class=heading>Post a new question</p>
+		</div>
+		<div class="question2 editor">
+			<div class=tophat>
 				<xio-profile-card .user=${questionAuthor} show-details></xio-profile-card>
 			</div>
-			<div class=editor-textbox>
+			<div class=bubble>
 				${renderQuestionBody({
 					content,
 					editable: true,
@@ -34,7 +34,7 @@ export function renderQuestionEditor({
 					handleValueChange,
 				})}
 			</div>
-			<div class=editor-buttons>
+			<div class=buttonbar>
 				<xio-button
 					?disabled=${!postable}
 					@press=${handlePost}

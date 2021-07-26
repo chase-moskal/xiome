@@ -51,9 +51,7 @@ export function renderQuestion({
 			<div class=tophat>
 				<xio-profile-card .user=${author} show-details></xio-profile-card>
 			</div>
-			<div class=potato>
-			</div>
-			<div class=bar1>
+			<div class="bar bar1">
 				<button
 					data-vote=like
 					?data-active=${question.liked}
@@ -71,7 +69,7 @@ export function renderQuestion({
 					timePosted: question.timePosted,
 				})}
 			</div>
-			<div class=bar2>
+			<div class="bar bar2">
 				<button
 					data-vote=report
 					?data-active=${question.reported}

@@ -20,11 +20,6 @@ export function renderQuestionBody({
 	
 	return html`
 		<div class=question-body ?data-editable=${editable}>
-			<div class=metabar>
-				<p>
-					${`${date} ${time}`}
-				</p>
-			</div>
 			<div class=textbox>
 				${editable
 					? html`
@@ -37,6 +32,9 @@ export function renderQuestionBody({
 					: html`
 						<p>${content}</p>
 					`}
+			</div>
+			<div class=metabar>
+				<p>${`${date} ${time}`}</p>
 			</div>
 		</div>
 	`
