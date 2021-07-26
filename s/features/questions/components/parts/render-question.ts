@@ -46,8 +46,13 @@ export function renderQuestion({
 			},
 	}
 
+	const linkClick = (handle: () => void) => (event: MouseEvent) => {
+		event.preventDefault()
+		handle()
+	}
+
 	return html`
-		<li class=question2 data-question-id="${question.questionId}">
+		<li class=question data-question-id="${question.questionId}">
 			<div class=tophat>
 				<xio-profile-card .user=${author} show-details></xio-profile-card>
 			</div>
@@ -80,7 +85,7 @@ export function renderQuestion({
 						<span>${question.reports}</span>
 				</button>
 				${authority
-					? html`<xio-button @press=${handleDelete}>delete</xio-button>`
+					? html`<a href="#" @click=${linkClick(handleDelete)}>delete</a>`
 					: null}
 			</div>
 		</li>

@@ -3,7 +3,7 @@ import {css} from "../../../framework/component/component.js"
 
 const question2 = css`
 
-.question2 {
+.question {
 	display: grid;
 	grid-template-rows: auto;
 	grid-template-columns: auto 1fr auto;
@@ -13,42 +13,63 @@ const question2 = css`
 		".... buttonbar ....";
 }
 
-/* normal questions */
+a {
+	opacity: 0.5;
+	color: inherit;
+	text-decoration: none;
+}
 
-.question2 .tophat { grid-area: tophat }
-.question2 .bar1 { grid-area: bar1 }
-.question2 .bar2 { grid-area: bar2 }
-.question2 .bubble { grid-area: bubble }
-.question2 .buttonbar { grid-area: buttonbar }
+a:hover, a:focus {
+	opacity: 0.8;
+	text-decoration: underline;
+}
 
-.question2 .bar {
+/*
+** normal questions
+*/
+
+.question .tophat { grid-area: tophat }
+.question .bar1 { grid-area: bar1 }
+.question .bar2 { grid-area: bar2 }
+.question .bubble { grid-area: bubble }
+.question .buttonbar { grid-area: buttonbar }
+
+.question .bar {
 	padding: 0.5em;
 	padding-top: 0.2em;
 	display: flex;
 	flex-direction: column;
 }
 
-.question2 .metabar {
+.question .bar > * + * {
+	margin-top: 0.3em;
+}
+
+.question .metabar {
 	font-size: 0.7em;
 	padding: 0 1.5em;
 	opacity: 0.6;
 }
 
-.question2 .tophat xio-profile-card {
+.question .tophat xio-profile-card {
 	width: 100%;
 }
 
-.question2 .bubble {
-	flex: 1 1 auto;
-	padding-left: 1em;
+.question .tophat xio-profile-card::part(detail) {
+	margin-bottom: 1em;
 }
 
-.question2 .bubble xio-text-input {
+.question .bubble {
+	flex: 1 1 auto;
+	/* padding-left: 1em; */
+}
+
+.question .bubble xio-text-input {
 	--xio-text-input-border-radius: 0 1em 1em 1em;
 	--xio-text-input-pad: 0.5em;
 }
 
-.question2 .bubble .textbox p {
+.question .bubble .textbox p {
 	border-radius: 0 1em 1em 1em;
 	border: 1px solid;
 	padding: 0.5em;
@@ -101,7 +122,9 @@ const question2 = css`
 	top: 0.1em;
 }
 
-/* question editor */
+/*
+** question editor
+*/
 
 .intro {
 	margin-bottom: 1em;
@@ -111,26 +134,16 @@ const question2 = css`
 	font-size: 2em;
 }
 
-/* .question2.editor {
-	padding-left: 4em;
-	padding-right: 4em;
-}
-
-.question2.editor {
-	padding-left: 2.6em;
-} */
-
-.question2.editor .buttonbar {
+.question.editor .buttonbar {
 	text-align: right;
 	padding: 0.5em;
 }
 
-/* @media (max-width: 420px) {
-	.question2.editor {
-		padding-left: 2em;
-		padding-right: 0;
-	}
-} */
+.question.editor {
+	padding-bottom: 2em;
+	margin-bottom: 2em;
+	border-bottom: 1px dashed;
+}
 
 `
 

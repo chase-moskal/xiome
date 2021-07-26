@@ -10,15 +10,29 @@ import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
-import {AutowatcherComponentWithShare, mixinStyles, html, property, query} from "../../../framework/component/component.js"
+import {mixinStyles, html, property, query, ComponentWithShare} from "../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeQuestions extends AutowatcherComponentWithShare<{
+export class XiomeQuestions extends ComponentWithShare<{
 		modals: ModalSystem
 		questionsModel: QuestionsModel
 	}> {
 
 	#boardModel: QuestionsBoardModel
+
+	#now = Date.now()
+	#updateNowInterval: NodeJS.Timer
+	connectedCallback() {
+		super.connectedCallback()
+		this.#updateNowInterval = setInterval(() => {
+			this.#now = Date.now()
+			this.requestUpdate()
+		}, 1000)
+	}
+	disconnectedCallback() {
+		clearInterval(this.#updateNowInterval)
+		super.disconnectedCallback()
+	}
 
 	@property({type: String, reflect: true})
 	board: string = "default"
@@ -26,7 +40,7 @@ export class XiomeQuestions extends AutowatcherComponentWithShare<{
 	@property({type: String})
 	draftText: string = ""
 
-	@query(".question-editor .question-body xio-text-input")
+	@query(".question.editor xio-text-input")
 	editorTextInput: XioTextInput
 
 	get postable() {
@@ -89,6 +103,7 @@ export class XiomeQuestions extends AutowatcherComponentWithShare<{
 				this.#boardModel.getPostingOp(),
 				() => renderQuestionEditor({
 					questionAuthor,
+					now: this.#now,
 					content: this.draftText,
 					postable: this.postable,
 					handlePost: this.handlePost,

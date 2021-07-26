@@ -6,12 +6,14 @@ import {PressEvent} from "../../../xio-components/button/events/press-event.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 
 export function renderQuestionEditor({
+		now,
 		content,
 		postable,
 		questionAuthor,
 		handlePost,
 		handleValueChange,
 	}: {
+		now: number
 		content: string
 		postable: boolean
 		questionAuthor: User
@@ -22,7 +24,7 @@ export function renderQuestionEditor({
 		<div class=intro>
 			<p class=heading>Post a new question</p>
 		</div>
-		<div class="question2 editor">
+		<div class="question editor">
 			<div class=tophat>
 				<xio-profile-card .user=${questionAuthor} show-details></xio-profile-card>
 			</div>
@@ -30,7 +32,7 @@ export function renderQuestionEditor({
 				${renderQuestionBody({
 					content,
 					editable: true,
-					timePosted: Date.now(),
+					timePosted: now,
 					handleValueChange,
 				})}
 			</div>

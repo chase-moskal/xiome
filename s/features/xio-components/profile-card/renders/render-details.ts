@@ -5,7 +5,7 @@ import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 
 export function renderDetails(user: User) {
 	return html`
-		<ul class=detail>
+		<ul class=detail part=detail>
 			<li>
 				<span>joined:</span>
 				<span>${formatDate(user.stats.joined).date}</span>
