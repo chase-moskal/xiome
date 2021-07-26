@@ -1,11 +1,10 @@
 
 import styles from "./xiome-questions.css.js"
+import {renderPost} from "./parts/post/render-post.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
-import {renderQuestion} from "./parts/render-question.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {renderQuestionEditor} from "./parts/render-question-editor.js"
 import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
@@ -40,7 +39,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 	@property({type: String})
 	draftText: string = ""
 
-	@query(".question.editor xio-text-input")
+	@query(".question-editor xio-text-input")
 	editorTextInput: XioTextInput
 
 	get postable() {
@@ -96,19 +95,36 @@ export class XiomeQuestions extends ComponentWithShare<{
 	private renderQuestionsEditor() {
 		const access = this.#boardModel.getAccess()
 		const permissions = this.#boardModel.getPermissions()
-		const questionAuthor = access?.user
+		const author = access?.user
 
 		return permissions["post questions"]
 			? renderOp(
 				this.#boardModel.getPostingOp(),
-				() => renderQuestionEditor({
-					questionAuthor,
-					now: this.#now,
-					content: this.draftText,
-					postable: this.postable,
-					handlePost: this.handlePost,
-					handleValueChange: this.handleValueChange,
-				})
+				() => html`
+					<div class=question-editor>
+						<div class=intro>
+							<p class=heading>Post a new question</p>
+						</div>
+						${renderPost({
+							author,
+							content: this.draftText,
+							editable: true,
+							children: null,
+							postId: undefined,
+							timePosted: this.#now,
+							likeable: undefined,
+							reportable: undefined,
+							buttonBar: html`
+								<xio-button
+									?disabled=${!this.postable}
+									@press=${this.handlePost}
+								>Post question</xio-button>
+							`,
+							handleValueChange: this.handleValueChange,
+							handleDelete: undefined,
+						})}
+					</div>
+				`
 			)
 			: null
 	}
@@ -161,14 +177,31 @@ export class XiomeQuestions extends ComponentWithShare<{
 							await this.#boardModel.reportQuestion(questionId, report)
 					}
 
-					return renderQuestion({
-						author,
-						authority,
-						question,
-						handleDelete,
-						handleLike,
-						handleReport,
-					})
+					return html`
+						<li class=question data-question-id="${question.questionId}">
+							${renderPost({
+								author,
+								editable: false,
+								children: null,
+								content: question.content,
+								postId: question.questionId,
+								timePosted: question.timePosted,
+								likeable: {
+									liked: question.liked,
+									likes: question.likes,
+									handleLike,
+								},
+								reportable: {
+									reported: question.reported,
+									reports: question.reports,
+									handleReport,
+								},
+								handleDelete: authority
+									? handleDelete
+									: undefined,
+							})}
+						</li>
+					`
 				})}
 			</ol>
 		`

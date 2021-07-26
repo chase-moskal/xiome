@@ -1,25 +1,25 @@
 
-import {html} from "../../../../framework/component/component.js"
-import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
-import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
-import {validateQuestionDraftContent} from "../../api/services/validation/validate-question-draft.js"
+import {html} from "../../../../../../framework/component/component.js"
+import {formatDate} from "../../../../../../toolbox/goodtimes/format-date.js"
+import {ValueChangeEvent} from "../../../../../xio-components/inputs/events/value-change-event.js"
+import {validateQuestionDraftContent} from "../../../../api/services/validation/validate-question-draft.js"
 
-export function renderQuestionBody({
+export function renderBubble({
 		content,
 		editable,
 		timePosted,
 		handleValueChange = () => {},
 	}: {
+		content: string
 		editable: boolean
 		timePosted: number
-		content?: string
 		handleValueChange?: (event: ValueChangeEvent<string>) => void
 	}) {
 
 	const {date, time} = formatDate(timePosted)
 	
 	return html`
-		<div class=question-body ?data-editable=${editable}>
+		<div class=bubble ?data-editable=${editable}>
 			<div class=textbox>
 				${editable
 					? html`
