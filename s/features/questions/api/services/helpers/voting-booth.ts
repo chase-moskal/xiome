@@ -17,10 +17,10 @@ export async function makeVotingBooth({userId, itemIds, likesTable, reportsTable
 				likes: likes.countVotes(itemId),
 				reports: reports.countVotes(itemId),
 				liked: userId
-					? likes.voteStatus(userId)
+					? likes.voteStatus({userId, itemId})
 					: false,
 				reported: userId
-					? reports.voteStatus(userId)
+					? reports.voteStatus({userId, itemId})
 					: false,
 			}
 		}
@@ -40,8 +40,15 @@ async function makeVoteCounter({itemIds, voteTable}: {
 				.filter(vote => vote.itemId.toString() === itemId.toString())
 				.length
 		},
-		voteStatus(userId: DamnId) {
-			return !!votes.find(vote => vote.userId.toString() === userId.toString())
+		voteStatus({userId, itemId}: {
+				userId: DamnId
+				itemId: DamnId
+			}) {
+			const votesByUser = votes
+				.filter(vote => vote.userId.toString() === userId.toString())
+			const userVotedForItem = !!votes
+				.find(vote => vote.itemId.toString() === itemId.toString())
+			return userVotedForItem
 		},
 	}
 }
