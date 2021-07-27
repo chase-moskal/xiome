@@ -1,93 +1,78 @@
 
-import heartSvg from "../../../../../framework/icons/heart.svg.js"
-import warningSvg from "../../../../../framework/icons/warning.svg.js"
-import heartFillSvg from "../../../../../framework/icons/heart-fill.svg.js"
-import warningFillSvg from "../../../../../framework/icons/warning-fill.svg.js"
-
 import {renderBubble} from "./bubble/render-bubble.js"
-import {User} from "../../../../auth/aspects/users/types/user.js"
-import {renderVotingUnit} from "./voting-unit/render-voting-unit.js"
-import {Likeable, Reportable} from "../../../api/types/questions-and-answers.js"
-import {html, TemplateResult} from "../../../../../framework/component/component.js"
-import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
+import {linkClick} from "./post-structure/link-click.js"
+import {AnyPost, PostType} from "./types/post-options.js"
+import {renderLiking} from "./post-structure/render-liking.js"
+import {renderReporting} from "./post-structure/render-reporting.js"
+import {html} from "../../../../../framework/component/component.js"
+import {renderPostStructure} from "./post-structure/render-post-structure.js"
 
-export function renderPost({
-		author, postId, content, timePosted, editable,
-		likeable, reportable, buttonBar,
-		handleDelete,
-		handleAnswer,
-		handleValueChange,
-	}: {
-		author: User
-		postId: string
-		content: string
-		timePosted: number
-		editable: boolean
-		buttonBar?: TemplateResult
-		likeable?: {handleLike: (status: boolean) => void} & Likeable
-		reportable?: {handleReport: (status: boolean) => void} & Reportable
-		handleDelete?: () => void
-		handleAnswer?: () => void
-		handleValueChange?: (event: ValueChangeEvent<string>) => void
-	}) {
+export function renderPost(options: AnyPost) {
+	const {author, content, timePosted, ...specificOptions} = options
+	switch (specificOptions.type) {
 
-	const linkClick = (handler: () => void) => (event: MouseEvent) => {
-		event.preventDefault()
-		handler()
+		case PostType.Question: {
+			const {liking, reporting, deletePost, toggleAnswerEditor} = specificOptions
+			return renderPostStructure({
+				postOptions: options,
+				bar1: html`
+					${renderLiking(liking)}
+				`,
+				bubble: renderBubble({
+					content,
+					timePosted,
+					editable: false,
+					handleValueChange: undefined,
+				}),
+				bar2: html`
+					${renderReporting(reporting)}
+					<a href="#" @click=${linkClick(deletePost)}>delete</a>
+					<a href="#" @click=${linkClick(toggleAnswerEditor)}>answer</a>
+				`,
+				buttonBar: undefined,
+			})
+		}
+
+		case PostType.Answer: {
+			const {liking, reporting, deletePost} = specificOptions
+			return renderPostStructure({
+				postOptions: options,
+				bar1: html`
+					${renderLiking(liking)}
+				`,
+				bubble: renderBubble({
+					content,
+					timePosted,
+					editable: false,
+					handleValueChange: undefined,
+				}),
+				bar2: html`
+					${renderReporting(reporting)}
+					<a href="#" @click=${linkClick(deletePost)}>delete</a>
+				`,
+				buttonBar: undefined,
+			})
+		}
+
+		case PostType.Editor: {
+			const {isPostable, changeDraftContent, submitPost} = specificOptions
+			return renderPostStructure({
+				postOptions: options,
+				bar1: null,
+				bubble: renderBubble({
+					content,
+					timePosted,
+					editable: true,
+					handleValueChange: changeDraftContent,
+				}),
+				bar2: null,
+				buttonBar: html`
+					<xio-button
+						?disabled=${!isPostable}
+						@click=${submitPost}
+							>post question</xio-button>
+				`,
+			})
+		}
 	}
-
-	return html`
-		<div class=post data-post-id="${postId}">
-			<div class=tophat>
-				<xio-profile-card .user=${author} show-details></xio-profile-card>
-			</div>
-			<div class="bar bar1">
-				${likeable
-					? renderVotingUnit({
-						dataVote: "like",
-						icon: likeable.liked
-							? heartFillSvg
-							: heartSvg,
-						title: likeable.liked
-							? "unlike this post"
-							: "like this post",
-						voteCount: likeable.likes,
-						voteCasted: likeable.liked,
-						castVote: status => likeable.handleLike(status),
-					})
-					: null}
-			</div>
-			${renderBubble({
-				editable,
-				content,
-				timePosted,
-				handleValueChange,
-			})}
-			<div class="bar bar2">
-				${reportable
-					? renderVotingUnit({
-						dataVote: "report",
-						icon: reportable.reported
-							? warningFillSvg
-							: warningSvg,
-						title: reportable.reported
-							? "unlike this post"
-							: "like this post",
-						voteCount: reportable.reports,
-						voteCasted: reportable.reported,
-						castVote: status => reportable.handleReport(status),
-					})
-					: null}
-				${handleDelete
-					? html`<a href="#" @click=${linkClick(handleDelete)}>delete</a>`
-					: null}
-				${handleAnswer
-					? html`<a href="#" @click=${linkClick(handleAnswer)}>answer</a>`
-					: null}
-			</div>
-			${buttonBar
-				? html`<div class=buttonbar>${buttonBar}</div>`
-				: null}
-		</div>
-	`
 }

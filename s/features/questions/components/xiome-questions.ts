@@ -2,16 +2,19 @@
 import styles from "./xiome-questions.css.js"
 import {renderPost} from "./parts/post/render-post.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
+import {Question} from "../api/types/questions-and-answers.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
+import {weakRecordKeeper} from "../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {mixinStyles, html, property, query, ComponentWithShare} from "../../../framework/component/component.js"
-import {Answer, Question} from "../api/types/questions-and-answers.js"
-import {weakRecordKeeper} from "../../../toolbox/record-keeper.js"
+import {happystate} from "../../../toolbox/happystate/happystate.js"
+import {PostType} from "./parts/post/types/post-options.js"
+
 
 @mixinStyles(styles)
 export class XiomeQuestions extends ComponentWithShare<{
@@ -53,7 +56,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 		this.#boardModel.loadQuestions()
 	}
 
-	private handlePost = async(event: PressEvent) => {
+	private handlePost = async() => {
 		const content = this.draftText
 		this.editorTextInput.text = ""
 		await this.#boardModel.postQuestion({
@@ -107,21 +110,13 @@ export class XiomeQuestions extends ComponentWithShare<{
 							<p class=heading>Post a new question</p>
 						</div>
 						${renderPost({
+							type: PostType.Editor,
 							author,
 							content: this.draftText,
-							editable: true,
-							postId: undefined,
+							isPostable: this.postable,
 							timePosted: this.#now,
-							likeable: undefined,
-							reportable: undefined,
-							buttonBar: html`
-								<xio-button
-									?disabled=${!this.postable}
-									@press=${this.handlePost}
-								>Post question</xio-button>
-							`,
-							handleValueChange: this.handleValueChange,
-							handleDelete: undefined,
+							submitPost: this.handlePost,
+							changeDraftContent: this.handleValueChange,
 						})}
 					</div>
 				`
@@ -133,6 +128,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 		const state = {
 			editMode: false,
 			draftText: "",
+			isPostable: () => !!state.draftText,
 			handlePost: () => {
 				console.log("POST LOL")
 			},
@@ -201,52 +197,36 @@ export class XiomeQuestions extends ComponentWithShare<{
 					return html`
 						<li class=question data-question-id="${question.questionId}">
 							${renderPost({
+								type: PostType.Question,
 								author,
-								editable: false,
 								content: question.content,
-								postId: question.questionId,
-								timePosted: question.timePosted,
-								likeable: {
+								deletePost: handleDelete,
+								liking: {
 									liked: question.liked,
 									likes: question.likes,
-									handleLike,
+									castLikeVote: handleLike,
 								},
-								reportable: {
+								postId: question.questionId,
+								reporting: {
 									reported: question.reported,
 									reports: question.reports,
-									handleReport,
+									castReportVote: handleReport,
 								},
-								handleDelete: authority
-									? handleDelete
-									: undefined,
-								handleAnswer: authority
-									? answerEditorState.toggleAnswerEditMode
-									: undefined,
+								timePosted: question.timePosted,
+								toggleAnswerEditor: answerEditorState.toggleAnswerEditMode,
 							})}
 							${answerEditorState.editMode
 								? html`
-									<p>ANSWERS</p>
-									<ol>
-										<li class=answer>
-											${renderPost({
-												author: myUser,
-												content: this.draftText,
-												editable: true,
-												postId: undefined,
-												timePosted: this.#now,
-												likeable: undefined,
-												reportable: undefined,
-												buttonBar: html`
-													<xio-button
-														?disabled=${!this.postable}
-														@press=${this.handlePost}
-													>Post question</xio-button>
-												`,
-												handleValueChange: answerEditorState.handleValueChange,
-												handleDelete: undefined,
-											})}
-										</li>
-									</ol>
+									<p>answer editor</p>
+									${renderPost({
+										author,
+										type: PostType.Editor,
+										timePosted: this.#now,
+										content: answerEditorState.draftText,
+										isPostable: answerEditorState.isPostable(),
+										submitPost: () => console.log("SUBMIT ANSWER"),
+										changeDraftContent: answerEditorState.handleValueChange,
+									})}
 								`
 								: null}
 						</li>
