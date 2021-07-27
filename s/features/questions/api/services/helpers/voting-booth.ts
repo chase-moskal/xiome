@@ -46,7 +46,7 @@ async function makeVoteCounter({itemIds, voteTable}: {
 			}) {
 			const votesByUser = votes
 				.filter(vote => vote.userId.toString() === userId.toString())
-			const userVotedForItem = !!votes
+			const userVotedForItem = !!votesByUser
 				.find(vote => vote.itemId.toString() === itemId.toString())
 			return userVotedForItem
 		},
