@@ -3,7 +3,7 @@ import {AnswerDraft} from "../../types/answer-draft.js"
 import {QuestionDraft} from "../../types/question-draft.js"
 import {maxLength, minLength, notWhitespace, one, schema, string} from "../../../../../toolbox/darkvalley.js"
 
-export const validateQuestionDraftContent = one(
+export const validatePostContent = one(
 	string(),
 	minLength(10),
 	maxLength(280),
@@ -12,9 +12,9 @@ export const validateQuestionDraftContent = one(
 
 export const validateQuestionDraft = schema<QuestionDraft>({
 	board: one(string(), minLength(1), maxLength(32), notWhitespace()),
-	content: validateQuestionDraftContent,
+	content: validatePostContent,
 })
 
 export const validateAnswerDraft = schema<AnswerDraft>({
-	content: validateQuestionDraftContent,
+	content: validatePostContent,
 })

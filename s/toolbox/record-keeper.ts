@@ -17,7 +17,6 @@ export function strongRecordKeeper<Key>() {
 	}
 }
 
-
 export function weakRecordKeeper<Key extends {}>() {
 	return function<State>(
 			makeState: (key: Key) => State

@@ -15,6 +15,7 @@ export function renderPost({
 		author, postId, content, timePosted, editable,
 		likeable, reportable, buttonBar,
 		handleDelete,
+		handleAnswer,
 		handleValueChange,
 	}: {
 		author: User
@@ -22,11 +23,11 @@ export function renderPost({
 		content: string
 		timePosted: number
 		editable: boolean
-		children?: TemplateResult
 		buttonBar?: TemplateResult
 		likeable?: {handleLike: (status: boolean) => void} & Likeable
 		reportable?: {handleReport: (status: boolean) => void} & Reportable
 		handleDelete?: () => void
+		handleAnswer?: () => void
 		handleValueChange?: (event: ValueChangeEvent<string>) => void
 	}) {
 
@@ -79,6 +80,9 @@ export function renderPost({
 					: null}
 				${handleDelete
 					? html`<a href="#" @click=${linkClick(handleDelete)}>delete</a>`
+					: null}
+				${handleAnswer
+					? html`<a href="#" @click=${linkClick(handleAnswer)}>answer</a>`
 					: null}
 			</div>
 			${buttonBar

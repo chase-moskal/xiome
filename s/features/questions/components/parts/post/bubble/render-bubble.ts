@@ -2,7 +2,7 @@
 import {html} from "../../../../../../framework/component/component.js"
 import {formatDate} from "../../../../../../toolbox/goodtimes/format-date.js"
 import {ValueChangeEvent} from "../../../../../xio-components/inputs/events/value-change-event.js"
-import {validateQuestionDraftContent} from "../../../../api/services/validation/validate-question-draft.js"
+import {validatePostContent} from "../../../../api/services/validation/validate-question-draft.js"
 
 export function renderBubble({
 		content,
@@ -25,7 +25,7 @@ export function renderBubble({
 					? html`
 						<xio-text-input
 							textarea
-							.validator=${validateQuestionDraftContent}
+							.validator=${validatePostContent}
 							@valuechange=${handleValueChange}
 						></xio-text-input>
 					`

@@ -10,6 +10,8 @@ import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
 import {mixinStyles, html, property, query, ComponentWithShare} from "../../../framework/component/component.js"
+import {Answer, Question} from "../api/types/questions-and-answers.js"
+import {weakRecordKeeper} from "../../../toolbox/record-keeper.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends ComponentWithShare<{
@@ -96,7 +98,6 @@ export class XiomeQuestions extends ComponentWithShare<{
 		const access = this.#boardModel.getAccess()
 		const permissions = this.#boardModel.getPermissions()
 		const author = access?.user
-
 		return permissions["post questions"]
 			? renderOp(
 				this.#boardModel.getPostingOp(),
@@ -109,7 +110,6 @@ export class XiomeQuestions extends ComponentWithShare<{
 							author,
 							content: this.draftText,
 							editable: true,
-							children: null,
 							postId: undefined,
 							timePosted: this.#now,
 							likeable: undefined,
@@ -129,10 +129,29 @@ export class XiomeQuestions extends ComponentWithShare<{
 			: null
 	}
 
+	#getAnswerEditorState = weakRecordKeeper<Question>()(question => {
+		const state = {
+			editMode: false,
+			draftText: "",
+			handlePost: () => {
+				console.log("POST LOL")
+			},
+			handleValueChange: (event: ValueChangeEvent<string>) => {
+				state.draftText = event.detail.value
+				this.requestUpdate()
+			},
+			toggleAnswerEditMode: () => {
+				state.editMode = !state.editMode
+				this.requestUpdate()
+			},
+		}
+		return state
+	})
+
 	private renderQuestionsList() {
 		const access = this.#boardModel.getAccess()
-		const myUserId = access?.user?.userId
-		const questions = sortQuestions(this.#boardModel.getQuestions(), myUserId)
+		const myUser = access?.user
+		const questions = sortQuestions(this.#boardModel.getQuestions(), myUser?.userId)
 		const permissions = this.#boardModel.getPermissions()
 
 		return html`
@@ -177,12 +196,13 @@ export class XiomeQuestions extends ComponentWithShare<{
 							await this.#boardModel.reportQuestion(questionId, report)
 					}
 
+					const answerEditorState = this.#getAnswerEditorState(question)
+
 					return html`
 						<li class=question data-question-id="${question.questionId}">
 							${renderPost({
 								author,
 								editable: false,
-								children: null,
 								content: question.content,
 								postId: question.questionId,
 								timePosted: question.timePosted,
@@ -199,7 +219,36 @@ export class XiomeQuestions extends ComponentWithShare<{
 								handleDelete: authority
 									? handleDelete
 									: undefined,
+								handleAnswer: authority
+									? answerEditorState.toggleAnswerEditMode
+									: undefined,
 							})}
+							${answerEditorState.editMode
+								? html`
+									<p>ANSWERS</p>
+									<ol>
+										<li class=answer>
+											${renderPost({
+												author: myUser,
+												content: this.draftText,
+												editable: true,
+												postId: undefined,
+												timePosted: this.#now,
+												likeable: undefined,
+												reportable: undefined,
+												buttonBar: html`
+													<xio-button
+														?disabled=${!this.postable}
+														@press=${this.handlePost}
+													>Post question</xio-button>
+												`,
+												handleValueChange: answerEditorState.handleValueChange,
+												handleDelete: undefined,
+											})}
+										</li>
+									</ol>
+								`
+								: null}
 						</li>
 					`
 				})}
