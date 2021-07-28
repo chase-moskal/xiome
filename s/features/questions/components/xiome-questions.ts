@@ -293,8 +293,19 @@ export class XiomeQuestions extends ComponentWithShare<{
 												reporting: {
 													reported: answer.reported,
 													reports: answer.reports,
-													castReportVote: report =>
-														this.#boardModel.reportAnswer(questionId, answer.answerId, report),
+													castReportVote: async report => {
+														const confirmed = report
+															? await this.share.modals.confirm({
+																title: "Report answer?",
+																body: "Are you sure you want to submit a report against this answer?",
+																yes: {vibe: "negative", label: "Submit report"},
+																no: {vibe: "neutral", label: "Nevermind"},
+																focusNthElement: 2,
+															})
+															: true
+														if (confirmed)
+															await this.#boardModel.reportAnswer(questionId, answer.answerId, report)
+													}
 												},
 												deletePost: canDeleteAnswer(answer)
 													? async() => {
