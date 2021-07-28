@@ -4,6 +4,7 @@ import {renderPost} from "./parts/post/render-post.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
 import {makeEditorState} from "./helpers/editor-state.js"
 import {PostType} from "./parts/post/types/post-options.js"
+import {Answer} from "../api/types/questions-and-answers.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
@@ -12,7 +13,6 @@ import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {mixinStyles, html, property, ComponentWithShare} from "../../../framework/component/component.js"
-import {Answer} from "../api/types/questions-and-answers.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends ComponentWithShare<{
