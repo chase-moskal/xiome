@@ -90,7 +90,7 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setAnswerLike(questionId: string, answerId: string, like: boolean) {
+			setAnswerLike(questionId: string, answerId: string, status: boolean) {
 				state.questions = state.questions.map(question =>
 					question.questionId === questionId
 						? {
@@ -99,10 +99,10 @@ export function makeQuestionsModel({
 								answer.answerId === answerId
 									? {
 										...answer,
-										liked: like,
-										like: answer.liked === like
+										liked: status,
+										likes: answer.liked === status
 											? answer.likes
-											: like
+											: status
 												? answer.likes + 1
 												: answer.likes - 1
 									}
@@ -112,7 +112,7 @@ export function makeQuestionsModel({
 						: {...question}
 				)
 			},
-			setAnswerReport(questionId: string, answerId: string, report: boolean) {
+			setAnswerReport(questionId: string, answerId: string, status: boolean) {
 				state.questions = state.questions.map(question =>
 					question.questionId === questionId
 						? {
@@ -121,10 +121,10 @@ export function makeQuestionsModel({
 								answer.answerId === answerId
 									? {
 										...answer,
-										reported: report,
-										reports: answer.reported === report
+										reported: status,
+										reports: answer.reported === status
 											? answer.reports
-											: report
+											: status
 												? answer.reports + 1
 												: answer.reports - 1
 									}

@@ -12,8 +12,8 @@ export function renderReporting(reporting: Reporting) {
 			? warningFillSvg
 			: warningSvg,
 		title: reporting.reported
-			? "unlike this post"
-			: "like this post",
+			? "unreport this post"
+			: "report this post",
 		voteCount: reporting.reports,
 		voteCasted: reporting.reported,
 		castVote: status => reporting.castReportVote(status),

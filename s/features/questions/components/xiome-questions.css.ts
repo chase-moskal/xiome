@@ -43,12 +43,24 @@ ${postCss}
 
 .answers {
 	list-style: none;
-	margin-left: 3em;
+	margin-left: 3.4em;
+	margin-right: 1em;
 	margin-bottom: 1em;
 }
 
 .answers > li {
+	
 	margin-top: 1em;
+}
+
+@media (max-width: 420px) {
+	.answers {
+		margin-left: 1em;
+		margin-right: 0;
+	}
+	.answers > li {
+		border-left: 1px solid;
+	}
 }
 
 /*
@@ -81,6 +93,7 @@ ${postCss}
 .answer-editor {
 	border: 1px dashed;
 	margin-left: 5em;
+	margin-top: 1em;
 }
 
 .answer-editor .intro {
