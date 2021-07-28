@@ -99,6 +99,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 			submitAnswer: async() => {
 				const {draftText} = getState()
 				resetEditor()
+				actions.toggleEditMode()
 				await this.#boardModel.postAnswer(questionId, {content: draftText})
 			},
 		}
@@ -150,7 +151,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 			? renderOp(
 				this.#boardModel.getPostingOp(),
 				() => html`
-					<div class=question-editor>
+					<div class="editor question-editor">
 						<div class=intro>
 							<p class=heading>Post a new question</p>
 						</div>
@@ -160,6 +161,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 							content: editorState.draftText,
 							isPostable: editorState.isPostable,
 							timePosted: this.#now,
+							postButtonText: "post question",
 							submitPost: editor.submitQuestion,
 							changeDraftContent: editor.actions.handleValueChange,
 						})}
@@ -255,17 +257,21 @@ export class XiomeQuestions extends ComponentWithShare<{
 							})}
 							${answerEditorState.editMode
 								? html`
-									<div class=answer-editor></div>
-									<p>answer editor</p>
-									${renderPost({
-										author,
-										type: PostType.Editor,
-										timePosted: this.#now,
-										content: answerEditorState.draftText,
-										isPostable: answerEditorState.isPostable,
-										submitPost: answerEditor.submitAnswer,
-										changeDraftContent: answerEditor.actions.handleValueChange,
-									})}
+									<div class="editor answer-editor">
+										<div class=intro>
+											<p class=heading>Post your answer</p>
+										</div>
+										${renderPost({
+											author,
+											type: PostType.Editor,
+											timePosted: this.#now,
+											content: answerEditorState.draftText,
+											isPostable: answerEditorState.isPostable,
+											postButtonText: "post answer",
+											submitPost: answerEditor.submitAnswer,
+											changeDraftContent: answerEditor.actions.handleValueChange,
+										})}
+									</div>
 								`
 								: null}
 							${question.answers.length ? html`

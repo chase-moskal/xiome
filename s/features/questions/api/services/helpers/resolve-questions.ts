@@ -15,7 +15,7 @@ export async function resolveQuestions({userId, questionPosts, questionsTables}:
 
 	const answerPosts = questionIds.length
 		? await questionsTables.answerPosts
-			.read(findAll(questionIds, questionId => ({questionId})))
+			.read(findAll(questionIds, questionId => ({questionId, archive: false})))
 		: []
 
 	const answerIds = answerPosts.map(post => post.answerId)
@@ -56,6 +56,7 @@ export async function resolveQuestions({userId, questionPosts, questionsTables}:
 					questionId: answerPost.questionId.toString(),
 					authorUserId: answerPost.authorUserId.toString(),
 					content: answerPost.content,
+					archive: answerPost.archive,
 					timePosted: answerPost.timePosted,
 
 					...answersVotingBooth.getVotingDetails(answerPost.answerId),

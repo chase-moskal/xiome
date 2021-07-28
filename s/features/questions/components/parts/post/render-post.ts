@@ -61,7 +61,7 @@ export function renderPost(options: AnyPost) {
 		}
 
 		case PostType.Editor: {
-			const {isPostable, changeDraftContent, submitPost} = specificOptions
+			const {isPostable, postButtonText, changeDraftContent, submitPost} = specificOptions
 			return renderPostStructure({
 				postOptions: options,
 				bar1: null,
@@ -76,7 +76,7 @@ export function renderPost(options: AnyPost) {
 					<xio-button
 						?disabled=${!isPostable}
 						@click=${submitPost}
-							>post question</xio-button>
+							>${postButtonText}</xio-button>
 				`,
 			})
 		}

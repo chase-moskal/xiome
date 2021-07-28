@@ -44,7 +44,11 @@ a:hover, a:focus {
 }
 
 .post .bar > * + * {
-	margin-top: 0.3em;
+	margin-top: 0.1em;
+}
+
+.post .bar.bar2 {
+	padding-top: 0;
 }
 
 .post .metabar {

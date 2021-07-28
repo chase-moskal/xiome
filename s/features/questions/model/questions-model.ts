@@ -240,6 +240,11 @@ export function makeQuestionsModel({
 				return getState().questions
 					.filter(question => question.board === board)
 					.filter(question => question.archive === false)
+					.map(question => ({
+						...question,
+						answers: question.answers
+							.filter(answer => answer.archive === false)
+					}))
 			},
 
 			getUser(userId: string) {

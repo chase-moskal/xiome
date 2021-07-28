@@ -14,6 +14,7 @@ export type Answer = {
 	questionId: string
 	authorUserId: string
 	content: string
+	archive: boolean
 	timePosted: number
 } & Likeable & Reportable
 

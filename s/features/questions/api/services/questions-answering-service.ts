@@ -71,6 +71,7 @@ export const makeQuestionsAnsweringService = (
 				timePosted: row.timePosted,
 				liked: false,
 				likes: 0,
+				archive: false,
 				reported: false,
 				reports: 0,
 			}

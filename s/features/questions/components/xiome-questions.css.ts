@@ -1,36 +1,6 @@
 
 import postCss from "./parts/post/post.css.js"
 import {css} from "../../../framework/component/component.js"
-
-const question2 = css`
-
-${postCss}
-
-/*
-** question editor
-*/
-
-.question-editor .intro {
-	margin-bottom: 1em;
-}
-
-.question-editor .intro .heading {
-	font-size: 2em;
-}
-
-.question-editor .buttonbar {
-	text-align: right;
-	padding: 0.5em;
-}
-
-.question-editor {
-	padding-bottom: 2em;
-	margin-bottom: 2em;
-	border-bottom: 1px dashed;
-}
-
-`
-
 export default css`
 
 /* * {
@@ -69,7 +39,54 @@ slot[name="empty"] {
 	margin-top: 2em;
 }
 
-${question2}
+${postCss}
+
+.answers {
+	list-style: none;
+	margin-left: 3em;
+	margin-bottom: 1em;
+}
+
+.answers > li {
+	margin-top: 1em;
+}
+
+/*
+** question editor
+*/
+
+.editor .intro {
+	margin-bottom: 1em;
+}
+
+.editor .intro .heading {
+	font-size: 2em;
+}
+
+.editor .buttonbar {
+	text-align: right;
+	padding: 0.5em;
+}
+
+.question-editor {
+	padding-bottom: 2em;
+	margin-bottom: 2em;
+	border-bottom: 1px dashed;
+}
+
+/*
+** answer editor
+*/
+
+.answer-editor {
+	border: 1px dashed;
+	margin-left: 5em;
+}
+
+.answer-editor .intro {
+	padding: 1em;
+}
+
 
 /* .question-expression {
 	display: flex;

@@ -49,6 +49,7 @@ export interface AnswerPost extends UniversalPostOptions, IdentifiablePost, Vota
 export interface PostEditor extends UniversalPostOptions {
 	type: PostType.Editor
 	isPostable: boolean
+	postButtonText: string
 	submitPost: () => void
 	changeDraftContent: (event: ValueChangeEvent<string>) => void
 }
