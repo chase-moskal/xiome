@@ -26,8 +26,12 @@ export function renderPost(options: AnyPost) {
 				}),
 				bar2: html`
 					${renderReporting(reporting)}
-					<a href="#" @click=${linkClick(deletePost)}>delete</a>
-					<a href="#" @click=${linkClick(toggleAnswerEditor)}>answer</a>
+					${deletePost
+						? html`<a href="#" @click=${linkClick(deletePost)}>delete</a>`
+						: null}
+					${toggleAnswerEditor
+						? html`<a href="#" @click=${linkClick(toggleAnswerEditor)}>answer</a>`
+						: null}
 				`,
 				buttonBar: undefined,
 			})
@@ -48,7 +52,9 @@ export function renderPost(options: AnyPost) {
 				}),
 				bar2: html`
 					${renderReporting(reporting)}
-					<a href="#" @click=${linkClick(deletePost)}>delete</a>
+					${deletePost
+						? html`<a href="#" @click=${linkClick(deletePost)}>delete</a>`
+						: null}
 				`,
 				buttonBar: undefined,
 			})

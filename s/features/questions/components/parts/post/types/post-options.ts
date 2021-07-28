@@ -34,12 +34,12 @@ export interface VotablePost {
 }
 
 export interface DeletablePost {
-	deletePost: () => void
+	deletePost: undefined | (() => void)
 }
 
 export interface QuestionPost extends UniversalPostOptions, IdentifiablePost, VotablePost, DeletablePost {
 	type: PostType.Question
-	toggleAnswerEditor: () => void
+	toggleAnswerEditor: undefined | (() => void)
 }
 
 export interface AnswerPost extends UniversalPostOptions, IdentifiablePost, VotablePost, DeletablePost {

@@ -2,19 +2,17 @@
 import styles from "./xiome-questions.css.js"
 import {renderPost} from "./parts/post/render-post.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
-import {Question} from "../api/types/questions-and-answers.js"
+import {makeEditorState} from "./helpers/editor-state.js"
+import {PostType} from "./parts/post/types/post-options.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
-import {weakRecordKeeper} from "../../../toolbox/record-keeper.js"
+import {happystate} from "../../../toolbox/happystate/happystate.js"
+import {strongRecordKeeper} from "../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
-import {PressEvent} from "../../xio-components/button/events/press-event.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
-import {mixinStyles, html, property, query, ComponentWithShare} from "../../../framework/component/component.js"
-import {happystate} from "../../../toolbox/happystate/happystate.js"
-import {PostType} from "./parts/post/types/post-options.js"
-
+import {mixinStyles, html, property, ComponentWithShare} from "../../../framework/component/component.js"
+import {Answer} from "../api/types/questions-and-answers.js"
 
 @mixinStyles(styles)
 export class XiomeQuestions extends ComponentWithShare<{
@@ -38,35 +36,80 @@ export class XiomeQuestions extends ComponentWithShare<{
 		super.disconnectedCallback()
 	}
 
+	#questionEditor = (() => {
+		const {actions, getState, onStateChange} = makeEditorState()
+		onStateChange(() => {this.requestUpdate()})
+		const getTextInput = (): XioTextInput => (
+			this.shadowRoot.querySelector(".question-editor xio-text-input")
+		)
+		const resetEditor = () => {
+			const input = getTextInput()
+			input.text = ""
+		}
+		return {
+			actions,
+			getState,
+			getTextInput,
+			submitQuestion: async() => {
+				const {draftText} = getState()
+				resetEditor()
+				await this.#boardModel.postQuestion({
+					board: this.#boardModel.getBoardName(),
+					content: draftText,
+				})
+			},
+		}
+	})()
+
+	#getAnswerEditor = strongRecordKeeper<string>()(questionId => {
+		const editorBasics = makeEditorState()
+		const answerSpecifics = happystate({
+			state: {
+				editMode: false,
+			},
+			actions: state => ({
+				toggleEditMode() {
+					state.editMode = !state.editMode
+				},
+			}),
+		})
+		editorBasics.onStateChange(() => {this.requestUpdate()})
+		answerSpecifics.onStateChange(() => {this.requestUpdate()})
+		const actions = {
+			...editorBasics.actions,
+			...answerSpecifics.actions,
+		}
+		const getState = () => ({
+			...editorBasics.getState(),
+			...answerSpecifics.getState(),
+		})
+		const getTextInput = (): XioTextInput => (
+			this.shadowRoot.querySelector(
+				`.questionslist li[data-question-id="${questionId}"] xio-text-input`
+			)
+		)
+		const resetEditor = () => {
+			const input = getTextInput()
+			input.text = ""
+		}
+		return {
+			actions,
+			getState,
+			getTextInput,
+			submitAnswer: async() => {
+				const {draftText} = getState()
+				resetEditor()
+				await this.#boardModel.postAnswer(questionId, {content: draftText})
+			},
+		}
+	})
+
 	@property({type: String, reflect: true})
 	board: string = "default"
-
-	@property({type: String})
-	draftText: string = ""
-
-	@query(".question-editor xio-text-input")
-	editorTextInput: XioTextInput
-
-	get postable() {
-		return !!this.draftText
-	}
 
 	init() {
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
-	}
-
-	private handlePost = async() => {
-		const content = this.draftText
-		this.editorTextInput.text = ""
-		await this.#boardModel.postQuestion({
-			content,
-			board: this.#boardModel.getBoardName(),
-		})
-	}
-
-	private handleValueChange = (event: ValueChangeEvent<string>) => {
-		this.draftText = event.detail.value
 	}
 
 	private renderQuestionsModerationPanel() {
@@ -101,6 +144,8 @@ export class XiomeQuestions extends ComponentWithShare<{
 		const access = this.#boardModel.getAccess()
 		const permissions = this.#boardModel.getPermissions()
 		const author = access?.user
+		const editor = this.#questionEditor
+		const editorState = editor.getState()
 		return permissions["post questions"]
 			? renderOp(
 				this.#boardModel.getPostingOp(),
@@ -112,37 +157,17 @@ export class XiomeQuestions extends ComponentWithShare<{
 						${renderPost({
 							type: PostType.Editor,
 							author,
-							content: this.draftText,
-							isPostable: this.postable,
+							content: editorState.draftText,
+							isPostable: editorState.isPostable,
 							timePosted: this.#now,
-							submitPost: this.handlePost,
-							changeDraftContent: this.handleValueChange,
+							submitPost: editor.submitQuestion,
+							changeDraftContent: editor.actions.handleValueChange,
 						})}
 					</div>
 				`
 			)
 			: null
 	}
-
-	#getAnswerEditorState = weakRecordKeeper<Question>()(question => {
-		const state = {
-			editMode: false,
-			draftText: "",
-			isPostable: () => !!state.draftText,
-			handlePost: () => {
-				console.log("POST LOL")
-			},
-			handleValueChange: (event: ValueChangeEvent<string>) => {
-				state.draftText = event.detail.value
-				this.requestUpdate()
-			},
-			toggleAnswerEditMode: () => {
-				state.editMode = !state.editMode
-				this.requestUpdate()
-			},
-		}
-		return state
-	})
 
 	private renderQuestionsList() {
 		const access = this.#boardModel.getAccess()
@@ -156,11 +181,14 @@ export class XiomeQuestions extends ComponentWithShare<{
 					const {questionId, authorUserId} = question
 					const author = this.#boardModel.getUser(authorUserId)
 
-					const isAuthor = (access && access.user)
-						? access.user.userId === author.userId
-						: false
-
-					const authority = permissions["moderate questions"] || isAuthor
+					const questionAuthorities = (() => {
+						const isAuthor = (access && access.user)
+							? access.user.userId === author.userId
+							: false
+						const canDelete = permissions["moderate questions"] || isAuthor
+						const canAnswer = permissions["answer questions"]
+						return {canDelete, canAnswer}
+					})()
 
 					const handleDelete = async() => {
 						const confirmed = await this.share.modals.confirm({
@@ -192,7 +220,13 @@ export class XiomeQuestions extends ComponentWithShare<{
 							await this.#boardModel.reportQuestion(questionId, report)
 					}
 
-					const answerEditorState = this.#getAnswerEditorState(question)
+					const answerEditor = this.#getAnswerEditor(questionId)
+					const answerEditorState = answerEditor.getState()
+
+					const canDeleteAnswer = (answer: Answer) => {
+						const isAuthor = access?.user?.userId === answer.authorUserId
+						return permissions["moderate questions"] || isAuthor
+					}
 
 					return html`
 						<li class=question data-question-id="${question.questionId}">
@@ -200,7 +234,9 @@ export class XiomeQuestions extends ComponentWithShare<{
 								type: PostType.Question,
 								author,
 								content: question.content,
-								deletePost: handleDelete,
+								deletePost: questionAuthorities.canDelete
+									? handleDelete
+									: undefined,
 								liking: {
 									liked: question.liked,
 									likes: question.likes,
@@ -213,22 +249,65 @@ export class XiomeQuestions extends ComponentWithShare<{
 									castReportVote: handleReport,
 								},
 								timePosted: question.timePosted,
-								toggleAnswerEditor: answerEditorState.toggleAnswerEditMode,
+								toggleAnswerEditor: questionAuthorities.canAnswer
+									? answerEditor.actions.toggleEditMode
+									: undefined,
 							})}
 							${answerEditorState.editMode
 								? html`
+									<div class=answer-editor></div>
 									<p>answer editor</p>
 									${renderPost({
 										author,
 										type: PostType.Editor,
 										timePosted: this.#now,
 										content: answerEditorState.draftText,
-										isPostable: answerEditorState.isPostable(),
-										submitPost: () => console.log("SUBMIT ANSWER"),
-										changeDraftContent: answerEditorState.handleValueChange,
+										isPostable: answerEditorState.isPostable,
+										submitPost: answerEditor.submitAnswer,
+										changeDraftContent: answerEditor.actions.handleValueChange,
 									})}
 								`
 								: null}
+							${question.answers.length ? html`
+								<ol class=answers>
+									${question.answers.map(answer => html`
+										<li class=answer data-answer-id="${answer.answerId}">
+											${renderPost({
+												type: PostType.Answer,
+												postId: answer.answerId,
+												author: this.#boardModel.getUser(answer.authorUserId),
+												content: answer.content,
+												timePosted: answer.timePosted,
+												liking: {
+													liked: answer.liked,
+													likes: answer.likes,
+													castLikeVote: like =>
+														this.#boardModel.likeAnswer(questionId, answer.answerId, like),
+												},
+												reporting: {
+													reported: answer.reported,
+													reports: answer.reports,
+													castReportVote: report =>
+														this.#boardModel.reportAnswer(questionId, answer.answerId, report),
+												},
+												deletePost: canDeleteAnswer(answer)
+													? async() => {
+														const confirmed = await this.share.modals.confirm({
+															title: "Delete answer?",
+															body: "Are you sure you want to delete this answer? This cannot be undone.",
+															yes: {vibe: "negative", label: "Delete answer"},
+															no: {vibe: "neutral", label: "Nevermind"},
+															focusNthElement: 2,
+														})
+														if (confirmed)
+															await this.#boardModel.archiveAnswer(questionId, answer.answerId, true)
+													}
+													: undefined,
+											})}
+										</li>
+									`)}
+								</ol>
+							` : null}
 						</li>
 					`
 				})}

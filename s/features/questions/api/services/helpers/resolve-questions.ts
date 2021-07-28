@@ -49,14 +49,17 @@ export async function resolveQuestions({userId, questionPosts, questionsTables}:
 
 			...questionsVotingBooth.getVotingDetails(questionId),
 
-			answers: answerPosts.map(answerPost => ({
-				answerId: answerPost.answerId.toString(),
-				questionId: answerPost.questionId.toString(),
-				content: answerPost.content,
-				timePosted: answerPost.timePosted,
+			answers: answerPosts
+				.filter(answer => answer.questionId.toString() === questionId.toString())
+				.map(answerPost => ({
+					answerId: answerPost.answerId.toString(),
+					questionId: answerPost.questionId.toString(),
+					authorUserId: answerPost.authorUserId.toString(),
+					content: answerPost.content,
+					timePosted: answerPost.timePosted,
 
-				...answersVotingBooth.getVotingDetails(answerPost.answerId),
-			})),
+					...answersVotingBooth.getVotingDetails(answerPost.answerId),
+				})),
 		}
 
 		return question

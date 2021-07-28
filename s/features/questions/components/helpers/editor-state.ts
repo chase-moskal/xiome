@@ -2,8 +2,8 @@
 import {happystate} from "../../../../toolbox/happystate/happystate.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 
-function makeEditorState() {
-	const {getState, actions} = happystate({
+export function makeEditorState() {
+	return happystate({
 		state: {
 			draftText: <string>"",
 			isPostable: <boolean>false,
@@ -11,6 +11,7 @@ function makeEditorState() {
 		actions: state => ({
 			handleValueChange(event: ValueChangeEvent<string>) {
 				state.draftText = event.detail.value
+				state.isPostable = !!state.draftText
 			},
 		}),
 	})

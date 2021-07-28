@@ -12,6 +12,7 @@ export type Question = {
 export type Answer = {
 	answerId: string
 	questionId: string
+	authorUserId: string
 	content: string
 	timePosted: number
 } & Likeable & Reportable

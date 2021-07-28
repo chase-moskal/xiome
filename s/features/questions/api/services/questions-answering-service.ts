@@ -66,6 +66,7 @@ export const makeQuestionsAnsweringService = (
 			const answer: Answer = {
 				answerId: row.answerId.toString(),
 				questionId: row.questionId.toString(),
+				authorUserId: row.authorUserId.toString(),
 				content: row.content,
 				timePosted: row.timePosted,
 				liked: false,
