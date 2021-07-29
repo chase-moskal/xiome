@@ -3,7 +3,7 @@ name: deploy to stage
 on:
   push:
     branches:
-    - master
+    - stage
 
 env:
   REGISTRY: ghcr.io
