@@ -17,6 +17,7 @@ import {requireUserCanEditAnswer} from "./helpers/require-user-can-edit-answer.j
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
+import {rateLimitAnswers} from "./helpers/rate-limiting.js"
 
 export const makeQuestionsAnsweringService = (
 		options: QuestionsApiOptions
@@ -53,10 +54,16 @@ export const makeQuestionsAnsweringService = (
 				.one(find({questionId}))
 			if (!questionPost)
 				throw new ApiError(400, "unknown questionId")
+			const userId = DamnId.fromString(access.user.userId)
+			await rateLimitAnswers({
+				userId,
+				questionId,
+				questionsTables,
+			})
 			const row: AnswerPostRow = {
 				questionId,
 				answerId: options.rando.randomId(),
-				authorUserId: DamnId.fromString(access.user.userId),
+				authorUserId: userId,
 				archive: false,
 				timePosted: Date.now(),
 				board: questionPost.board,

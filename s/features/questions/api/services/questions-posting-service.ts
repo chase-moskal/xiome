@@ -6,7 +6,7 @@ import {vote} from "./helpers/vote.js"
 import {QuestionDraft} from "../types/question-draft.js"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {Question} from "../types/questions-and-answers.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {and, find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {boolean, schema} from "../../../../toolbox/darkvalley.js"
 import {QuestionPostRow} from "../tables/types/questions-tables.js"
@@ -17,6 +17,8 @@ import {runValidation} from "../../../../toolbox/topic-validation/run-validation
 import {requireUserCanEditQuestion} from "./helpers/require-user-can-edit-question.js"
 import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
+import {day} from "../../../../toolbox/goodtimes/times.js"
+import {rateLimitQuestions} from "./helpers/rate-limiting.js"
 
 export const makeQuestionsPostingService = (
 		options: QuestionsApiOptions
@@ -44,6 +46,10 @@ export const makeQuestionsPostingService = (
 			const {questionDraft} = runValidation(inputs, schema({
 				questionDraft: validateQuestionDraft,
 			}))
+			await rateLimitQuestions({
+				questionsTables,
+				userId: DamnId.fromString(access.user.userId),
+			})
 			const row: QuestionPostRow = {
 				questionId: options.rando.randomId(),
 				authorUserId: DamnId.fromString(access.user.userId),
