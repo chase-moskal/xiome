@@ -262,7 +262,7 @@ export class XiomeQuestions extends ComponentWithShare<{
 											<p class=heading>Post your answer</p>
 										</div>
 										${renderPost({
-											author,
+											author: this.#boardModel.getAccess().user,
 											type: PostType.Editor,
 											timePosted: this.#now,
 											content: answerEditorState.draftText,

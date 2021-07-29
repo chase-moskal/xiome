@@ -4,7 +4,6 @@ import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 const commonPrivileges = {
 	"read questions": "5b19b929648cbbe26c052a5016892b370f048eead1e6a303a50b7f5234ec5161",
 	"post questions": "aeaae6139d05f77193ca7c272a65977c70cb188f3070359866237a5ade84ba15",
-	"answer questions": "afaa00f7bc9ab09d3bbc61a26f6d9bc666cd9bb7ac270ebbdeba3cf4dd3ab9a9",
 	"like questions": "5490898c541d733956b28664e7536673842e73b289fc45ab9caf143138c14a3e",
 	"report questions": "f2f89d433f398b267e320e0e3b9929eb3934af5c02f7e3fb2e032fd19399ad21",
 }
@@ -12,6 +11,7 @@ const commonPrivileges = {
 const commonPowerPrivileges = {
 	"edit any profile": "4240ca0331e8679a444c6c4c6a803d8a12893f1554460af426064b980164c8ee",
 	"customize permissions": "f380d9b4d1001da8dc86a6e0b6a0721b92ed8060c52cd4ba433e76cbd9efe6b5",
+	"answer questions": "afaa00f7bc9ab09d3bbc61a26f6d9bc666cd9bb7ac270ebbdeba3cf4dd3ab9a9",
 	"moderate questions": "f6a3152a13f313a60f84d82ba8f7765afb19f70c04ef14688d802237a5d2ab5e",
 	"view stats": "092866ae6378833e43ec7001188aa1829d4cf2858e42da0ad3f44a2fedbcb07b",
 	"administrate user roles": "a072e9dd003a762e7d693658d8ac724be352b18da240843f691595c89020e350",

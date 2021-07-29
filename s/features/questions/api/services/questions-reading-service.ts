@@ -3,22 +3,25 @@ import {apiContext} from "renraku/x/api/api-context.js"
 
 import {AnonMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {QuestionsAnonAuth} from "../types/questions-metas-and-auths.js"
 import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export const makeQuestionsReadingService = (
 	options: QuestionsApiOptions
 	) => apiContext<AnonMeta, QuestionsAnonAuth>()({
+
 	policy: async(meta, request) => {
 		const auth = await anonQuestionsPolicy(options)(meta, request)
 		auth.checker.requirePrivilege("read questions")
 		return auth
 	},
+
 	expose: {
 
 		async fetchQuestions(
@@ -33,30 +36,56 @@ export const makeQuestionsReadingService = (
 				order: {timePosted: "descend"},
 			})
 
-			let questions = []
-			let users = []
-			if (posts.length) {
-				const permissionsEngine = makePermissionsEngine({
-					isPlatform: access.appId === options.config.platform.appDetails.appId,
-					permissionsTables: authTables.permissions,
-				})
+			if (!posts.length)
+				return {users: [], questions: []}
 
-				users = await fetchUsers({
-					permissionsEngine,
+			const resolvedQuestions = await resolveQuestions({
+				questionsTables,
+				questionPosts: posts,
+				userId: access?.user?.userId
+					? DamnId.fromString(access.user.userId)
+					: undefined,
+			})
+
+			const userIds = (() => {
+				const ids: string[] = []
+				const rememberUserId = (userId: string) => {
+					if (!ids.includes(userId))
+						ids.push(userId)
+				}
+				for (const question of resolvedQuestions) {
+					rememberUserId(question.authorUserId)
+					for (const answer of question.answers)
+						rememberUserId(answer.authorUserId)
+				}
+				return ids
+			})()
+
+			const permissionsEngine = makePermissionsEngine({
+				permissionsTables: authTables.permissions,
+				isPlatform: access.appId === options.config.platform.appDetails.appId,
+			})
+
+			const bannedUserIds = (await permissionsEngine.getPrivilegesForUsers(userIds))
+				.filter(p => p.privileges.includes(appPermissions.privileges["banned"]))
+				.map(p => p.userId)
+
+			const users =
+				(await fetchUsers({
 					authTables,
-					userIds: posts.map(p => p.authorUserId),
-				})
+					permissionsEngine,
+					userIds: userIds.map(id => DamnId.fromString(id)),
+				}))
+					.filter(u => !bannedUserIds.includes(u.userId))
 
-				questions = await resolveQuestions({
-					questionPosts: posts,
-					questionsTables,
-					userId: access?.user?.userId
-						? DamnId.fromString(access.user.userId)
-						: undefined,
-				})
-			}
+			const questions = resolvedQuestions
+				.filter(q => !bannedUserIds.includes(q.authorUserId.toString()))
+				.map(q => ({
+					...q,
+					answers: q.answers.filter(a => !bannedUserIds.includes(a.authorUserId))
+				}))
 
-			return {questions, users}
+			return {users, questions}
 		},
 	},
 })

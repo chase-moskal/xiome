@@ -4,7 +4,7 @@ import {validator, depend as d, string, each, length, minLength, maxLength, notW
 export const appTokenDraftValidators = Object.freeze({
 	appId: validator<string>(d(
 		string(),
-		length(48),
+		length(64),
 	)),
 	label: validator<string>(d(
 		string(),

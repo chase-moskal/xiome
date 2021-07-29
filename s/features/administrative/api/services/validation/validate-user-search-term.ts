@@ -4,17 +4,5 @@ import {maxLength, minLength, one, string, validator} from "../../../../../toolb
 export const validateUserSearchTerm = validator<string>(one(
 	string(),
 	minLength(1),
-	maxLength(48),
+	maxLength(64),
 ))
-
-// export const validateUserSearchTerm = validator<string>(
-// 	one(
-// 		string(),
-// 		minLength(1),
-// 		branch(
-// 			profileValidators.nickname,
-// 			profileValidators.tagline,
-// 			validateId,
-// 		)
-// 	)
-// )
