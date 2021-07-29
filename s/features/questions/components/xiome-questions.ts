@@ -12,28 +12,22 @@ import {strongRecordKeeper} from "../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {mixinStyles, html, property, ComponentWithShare} from "../../../framework/component/component.js"
+import {mixinStyles, mixinTicker, html, property, ComponentWithShare} from "../../../framework/component/component.js"
+
+@mixinTicker(1000)
+class BaseComponent extends ComponentWithShare<{
+	modals: ModalSystem
+	questionsModel: QuestionsModel
+}> {}
 
 @mixinStyles(styles)
-export class XiomeQuestions extends ComponentWithShare<{
-		modals: ModalSystem
-		questionsModel: QuestionsModel
-	}> {
+export class XiomeQuestions extends BaseComponent {
 
 	#boardModel: QuestionsBoardModel
-
+	
 	#now = Date.now()
-	#updateNowInterval: NodeJS.Timer
-	connectedCallback() {
-		super.connectedCallback()
-		this.#updateNowInterval = setInterval(() => {
-			this.#now = Date.now()
-			this.requestUpdate()
-		}, 1000)
-	}
-	disconnectedCallback() {
-		clearInterval(this.#updateNowInterval)
-		super.disconnectedCallback()
+	tick() {
+		this.#now = Date.now()
 	}
 
 	#questionEditor = (() => {

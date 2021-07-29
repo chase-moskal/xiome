@@ -14,6 +14,7 @@ export * from "./mixins/mixin-initially-hidden.js"
 export * from "./mixins/mixin-light-dom.js"
 export * from "./mixins/mixin-share.js"
 export * from "./mixins/mixin-styles.js"
+export * from "./mixins/mixin-ticker.js"
 
 export * from "./theme-components.js"
 export * from "./register-components.js"
