@@ -3,15 +3,20 @@ import {makeEditorState} from "../../helpers/editor-state.js"
 import {QuestionsBoardModel} from "../../../model/types/board-model.js"
 import {strongRecordKeeper} from "../../../../../toolbox/record-keeper.js"
 import {happystate} from "../../../../../toolbox/happystate/happystate.js"
+import {happyCombine} from "../../../../../toolbox/happystate/happy-combine.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 
-export function makeAnswerEditorGetter({getBoardModel}: {
+export function makeAnswerEditorGetter({
+		requestUpdate, getBoardModel, getTextInput,
+	}: {
+		requestUpdate: () => void
 		getBoardModel: () => QuestionsBoardModel
+		getTextInput: (questionId: string) => XioTextInput
 	}) {
 
 	const getRecord = strongRecordKeeper<string>()(questionId => {
-		const editorBasics = makeEditorState()
-		const answerSpecifics = happystate({
+		const editorHappy = makeEditorState()
+		const answerHappy = happystate({
 			state: {
 				editMode: false,
 			},
@@ -21,33 +26,20 @@ export function makeAnswerEditorGetter({getBoardModel}: {
 				},
 			}),
 		})
-		editorBasics.onStateChange(() => {this.requestUpdate()})
-		answerSpecifics.onStateChange(() => {this.requestUpdate()})
-		const actions = {
-			...editorBasics.actions,
-			...answerSpecifics.actions,
-		}
-		const getState = () => ({
-			...editorBasics.getState(),
-			...answerSpecifics.getState(),
-		})
-		const getTextInput = (): XioTextInput => (
-			this.shadowRoot.querySelector(
-				`.questionslist li[data-question-id="${questionId}"] xio-text-input`
-			)
-		)
+		const happy = happyCombine(editorHappy)(answerHappy).combine()
+		happy.onStateChange(requestUpdate)
+
 		const resetEditor = () => {
-			const input = getTextInput()
+			const input = getTextInput(questionId)
 			input.text = ""
 		}
+
 		return {
-			actions,
-			getState,
-			getTextInput,
+			...happy,
 			submitAnswer: async() => {
-				const {draftText} = getState()
+				const {draftText} = happy.getState()
 				resetEditor()
-				actions.toggleEditMode()
+				happy.actions.toggleEditMode()
 				await getBoardModel().postAnswer(questionId, {content: draftText})
 			},
 		}

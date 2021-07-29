@@ -1,9 +1,16 @@
 
-import {pubsub} from "../pubsub.js"
 import {debounce2} from "../debounce2.js"
 import {deepClone, deepFreeze} from "../deep.js"
+import {AnyListener, pubsub, Subscribe} from "../pubsub.js"
 
-type Actions = {[key: string]: (...args: any[]) => void}
+export type Actions = {[key: string]: (...args: any[]) => void}
+
+export interface Happy<xState extends {}, xActions extends Actions> {
+	actions: xActions
+	getState: () => xState
+	clearStateListeners: () => void
+	onStateChange: Subscribe<AnyListener>
+}
 
 export function happystate<xState extends {}, xActions extends Actions>({
 		state: realState,
@@ -11,7 +18,7 @@ export function happystate<xState extends {}, xActions extends Actions>({
 	}: {
 		state: xState
 		actions: (state: xState) => xActions
-	}) {
+	}): Happy<xState, xActions> {
 
 	let frozenState = deepFreeze(deepClone(realState))
 
