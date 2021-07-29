@@ -2,17 +2,17 @@
 import styles from "./xiome-questions.css.js"
 import {renderPost} from "./parts/post/render-post.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
-import {makeEditorState} from "./helpers/editor-state.js"
 import {PostType} from "./parts/post/types/post-options.js"
 import {Answer} from "../api/types/questions-and-answers.js"
 import {QuestionsModel} from "../model/types/questions-model.js"
 import {QuestionsBoardModel} from "../model/types/board-model.js"
-import {happystate} from "../../../toolbox/happystate/happystate.js"
-import {strongRecordKeeper} from "../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {XioTextInput} from "../../xio-components/inputs/xio-text-input.js"
+import {makeQuestionEditor} from "./parts/editors/question-editor.js"
+import {makeAnswerEditorGetter} from "./parts/editors/answer-editor.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {mixinStyles, mixinTicker, html, property, ComponentWithShare} from "../../../framework/component/component.js"
+import {renderModerationPanel} from "./parts/render-moderation-panel.js"
+import {renderQuestionEditor} from "./parts/editors/render-question-editor.js"
 
 @mixinTicker(1000)
 class BaseComponent extends ComponentWithShare<{
@@ -22,82 +22,14 @@ class BaseComponent extends ComponentWithShare<{
 
 @mixinStyles(styles)
 export class XiomeQuestions extends BaseComponent {
-
 	#boardModel: QuestionsBoardModel
-	
+	#questionEditor = makeQuestionEditor({getBoardModel: () => this.#boardModel})
+	#getAnswerEditor = makeAnswerEditorGetter({getBoardModel: () => this.#boardModel})
 	#now = Date.now()
+
 	tick() {
 		this.#now = Date.now()
 	}
-
-	#questionEditor = (() => {
-		const {actions, getState, onStateChange} = makeEditorState()
-		onStateChange(() => {this.requestUpdate()})
-		const getTextInput = (): XioTextInput => (
-			this.shadowRoot.querySelector(".question-editor xio-text-input")
-		)
-		const resetEditor = () => {
-			const input = getTextInput()
-			input.text = ""
-		}
-		return {
-			actions,
-			getState,
-			getTextInput,
-			submitQuestion: async() => {
-				const {draftText} = getState()
-				resetEditor()
-				await this.#boardModel.postQuestion({
-					board: this.#boardModel.getBoardName(),
-					content: draftText,
-				})
-			},
-		}
-	})()
-
-	#getAnswerEditor = strongRecordKeeper<string>()(questionId => {
-		const editorBasics = makeEditorState()
-		const answerSpecifics = happystate({
-			state: {
-				editMode: false,
-			},
-			actions: state => ({
-				toggleEditMode() {
-					state.editMode = !state.editMode
-				},
-			}),
-		})
-		editorBasics.onStateChange(() => {this.requestUpdate()})
-		answerSpecifics.onStateChange(() => {this.requestUpdate()})
-		const actions = {
-			...editorBasics.actions,
-			...answerSpecifics.actions,
-		}
-		const getState = () => ({
-			...editorBasics.getState(),
-			...answerSpecifics.getState(),
-		})
-		const getTextInput = (): XioTextInput => (
-			this.shadowRoot.querySelector(
-				`.questionslist li[data-question-id="${questionId}"] xio-text-input`
-			)
-		)
-		const resetEditor = () => {
-			const input = getTextInput()
-			input.text = ""
-		}
-		return {
-			actions,
-			getState,
-			getTextInput,
-			submitAnswer: async() => {
-				const {draftText} = getState()
-				resetEditor()
-				actions.toggleEditMode()
-				await this.#boardModel.postAnswer(questionId, {content: draftText})
-			},
-		}
-	})
 
 	@property({type: String, reflect: true})
 	board: string = "default"
@@ -105,64 +37,6 @@ export class XiomeQuestions extends BaseComponent {
 	init() {
 		this.#boardModel = this.share.questionsModel.makeBoardModel(this.board)
 		this.#boardModel.loadQuestions()
-	}
-
-	private renderQuestionsModerationPanel() {
-		const permissions = this.#boardModel.getPermissions()
-		const board = this.#boardModel.getBoardName()
-		const handlePressPurgeButton = async() => {
-			const confirmed = await this.share.modals.confirm({
-				title: `Purge questions?`,
-				body: `Are you sure you want to delete all the questions on the board "${board}"? This cannot be undone.`,
-				yes: {vibe: "negative", label: "Purge all"},
-				no: {vibe: "neutral", label: "Nevermind"},
-				focusNthElement: 2,
-			})
-			if (confirmed)
-				await this.#boardModel.archiveBoard()
-		}
-		return permissions["moderate questions"]
-			? html`
-				<div class=questions-moderation-panel>
-					<h3>moderate questions board "${this.board}"</h3>
-					<xio-button
-						class=purge-button
-						@press=${handlePressPurgeButton}>
-							Purge all questions
-					</xio-button>
-				</div>
-			`
-			: null
-	}
-
-	private renderQuestionsEditor() {
-		const access = this.#boardModel.getAccess()
-		const permissions = this.#boardModel.getPermissions()
-		const author = access?.user
-		const editor = this.#questionEditor
-		const editorState = editor.getState()
-		return permissions["post questions"]
-			? renderOp(
-				this.#boardModel.getPostingOp(),
-				() => html`
-					<div class="editor question-editor">
-						<div class=intro>
-							<p class=heading>Post a new question</p>
-						</div>
-						${renderPost({
-							type: PostType.Editor,
-							author,
-							content: editorState.draftText,
-							isPostable: editorState.isPostable,
-							timePosted: this.#now,
-							postButtonText: "post question",
-							submitPost: editor.submitQuestion,
-							changeDraftContent: editor.actions.handleValueChange,
-						})}
-					</div>
-				`
-			)
-			: null
 	}
 
 	private renderQuestionsList() {
@@ -327,11 +201,25 @@ export class XiomeQuestions extends BaseComponent {
 	}
 
 	private renderQuestionsBoard() {
+		const now = this.#now
+		const {modals} = this.share
+		const questionEditor = this.#questionEditor
+	
+		const {archiveBoard} = this.#boardModel
+		const access = this.#boardModel.getAccess()
+		const board = this.#boardModel.getBoardName()
 		const boardOp = this.#boardModel.getBoardOp()
+		const postingOp = this.#boardModel.getPostingOp()
+		const permissions = this.#boardModel.getPermissions()
 		const numberOfQuestions = this.#boardModel.getQuestions().length
+
 		return renderOp(boardOp, () => html`
-			${this.renderQuestionsModerationPanel()}
-			${this.renderQuestionsEditor()}
+			${permissions["moderate questions"]
+				? renderModerationPanel({modals, board, archiveBoard})
+				: null}
+			${permissions["post questions"]
+				? renderQuestionEditor({now, access, postingOp, questionEditor})
+				: null}
 			${numberOfQuestions > 0
 				? this.renderQuestionsList()
 				: html`<slot name=empty><p>Be the first to post a question!</p></slot>`}
