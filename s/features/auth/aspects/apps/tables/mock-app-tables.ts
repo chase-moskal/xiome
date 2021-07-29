@@ -5,7 +5,7 @@ import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-stor
 
 export async function mockAppTables(storage: FlexStorage) {
 	return mockStorageTables<AppTables>(storage, {
-		apps: true,
+		registrations: true,
 		owners: true,
 	})
 }

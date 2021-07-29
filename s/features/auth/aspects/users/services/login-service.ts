@@ -22,7 +22,7 @@ export const makeLoginService = ({
 				{email}: {email: string},
 			) {
 			const appId = DamnId.fromString(access.appId)
-			const appRow = await appTables.apps.one(find({appId}))
+			const appRow = await appTables.registrations.one(find({appId}))
 			const {userId} = await assertEmailAccount({
 				rando, email, config, authTables, generateNickname,
 			})

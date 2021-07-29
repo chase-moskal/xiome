@@ -32,7 +32,7 @@ export const makeAppEditService = ({
 
 			await authorizeAppOwner(appId)
 
-			await appTables.apps.update({
+			await appTables.registrations.update({
 				...find({appId}),
 				whole: {
 					appId,
@@ -49,7 +49,7 @@ export const makeAppEditService = ({
 			}) {
 			const appId = DamnId.fromString(appIdString)
 			await authorizeAppOwner(appId)
-			await appTables.apps.update({
+			await appTables.registrations.update({
 				...find({appId}),
 				write: {archived: true},
 			})

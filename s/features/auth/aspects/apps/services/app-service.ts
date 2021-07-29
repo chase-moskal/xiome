@@ -28,7 +28,7 @@ export const makeAppService = ({
 
 			const ownerships = await appTables.owners.read(find({userId: ownerUserId}))
 			const appRows = ownerships.length
-				? await appTables.apps.read({
+				? await appTables.registrations.read({
 					conditions: and(
 						or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
 						{equal: {archived: false}},
@@ -60,7 +60,7 @@ export const makeAppService = ({
 
 			const appId = rando.randomId()
 			await Promise.all([
-				appTables.apps.create({
+				appTables.registrations.create({
 					appId,
 					label: appDraft.label,
 					home: appDraft.home,

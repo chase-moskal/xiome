@@ -3,11 +3,11 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {AsDbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
 
 export type AppTables = {
-	apps: DbbyTable<AppRow>
+	registrations: DbbyTable<AppRegistrationRow>
 	owners: DbbyTable<OwnerRow>
 }
 
-export type AppRow = AsDbbyRow<{
+export type AppRegistrationRow = AsDbbyRow<{
 	appId: DamnId
 	label: string
 	home: string

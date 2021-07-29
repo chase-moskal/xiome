@@ -32,7 +32,7 @@ export const makeGreenService = (
 				isPlatform: appId.toString() === options.config.platform.appDetails.appId,
 			})
 
-			const appRow = await appTables.apps.one(find({appId}))
+			const appRow = await appTables.registrations.one(find({appId}))
 
 			if (!appRow)
 				throw new ApiError(400, "incorrect app id")

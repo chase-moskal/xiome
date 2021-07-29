@@ -5,11 +5,11 @@ import {StoreTables} from "../../../features/store/api/tables/types/store-tables
 import {QuestionsTables} from "../../../features/questions/api/tables/types/questions-tables.js"
 
 export type DatabaseRaw = {
-	appTables: AppTables
+	apps: AppTables
 }
 
 export type DatabaseNamespaced = {
-	authTables: AuthTables
-	storeTables: StoreTables
-	questionsTables: QuestionsTables
+	auth: AuthTables
+	store: StoreTables
+	questions: QuestionsTables
 }

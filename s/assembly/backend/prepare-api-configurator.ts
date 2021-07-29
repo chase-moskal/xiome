@@ -20,13 +20,13 @@ import {BlueprintForTables} from "./types/blueprint-for-tables.js"
 import {DatabaseNamespaced, DatabaseRaw} from "./types/database.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
-import {AppRow} from "../../features/auth/aspects/apps/types/app-tables.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {mockSendEmail} from "../../features/auth/utils/emails/mock-send-email.js"
 import {originsToDatabase} from "../../features/auth/utils/origins-to-database.js"
 import {configureTokenFunctions} from "./configurators/configure-token-functions.js"
+import {AppRegistrationRow} from "../../features/auth/aspects/apps/types/app-tables.js"
 import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
 import {prepareSendLoginEmail} from "../../features/auth/utils/emails/send-login-email.js"
 import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-circuit.js"
@@ -86,14 +86,14 @@ export function prepareApiConfigurator(configurators: {
 			}> => {
 
 			const blueprintForRawDatabase: BlueprintForTables<DatabaseRaw> = {
-				appTables: {
-					apps: true,
+				apps: {
+					registrations: true,
 					owners: true,
 				},
 			}
 
 			const blueprintForNamespacedDatabase: BlueprintForTables<DatabaseNamespaced> = {
-				authTables: {
+				auth: {
 					users: {
 						accounts: true,
 						emails: true,
@@ -107,13 +107,13 @@ export function prepareApiConfigurator(configurators: {
 						userHasRole: true,
 					},
 				},
-				questionsTables: {
+				questions: {
 					likes: true,
 					reports: true,
 					answerPosts: true,
 					questionPosts: true,
 				},
-				storeTables: {
+				store: {
 					billing: {
 						customers: true,
 						storeInfo: true,
@@ -164,12 +164,12 @@ export function prepareApiConfigurator(configurators: {
 
 			const bakedAppTables = await (async() => {
 				const platformApp = config.platform.appDetails
-				const {appTables} = results.database
+				const {apps: appTables} = results.database
 				return <typeof appTables>{
 					...appTables,
-					apps: dbbyHardback({
-						frontTable: appTables.apps,
-						backTable: await dbbyMemory<AppRow>([
+					registrations: dbbyHardback({
+						frontTable: appTables.registrations,
+						backTable: await dbbyMemory<AppRegistrationRow>([
 							{
 								appId: DamnId.fromString(platformApp.appId),
 								home: platformApp.home,
@@ -185,7 +185,7 @@ export function prepareApiConfigurator(configurators: {
 			return {
 				database: {
 					...results.database,
-					appTables: bakedAppTables,
+					apps: bakedAppTables,
 				},
 				mockStorage: results.mockStorage
 			}
@@ -212,8 +212,8 @@ export function prepareApiConfigurator(configurators: {
 		const {stripeComplex, mockStripeOperations} = await mockStripeCircuit({
 			rando,
 			tableStorage: mockStorage,
-			authTables: database.authTables,
-			storeTables: database.storeTables,
+			authTables: database.auth,
+			storeTables: database.store,
 		})
 
 		//
@@ -224,8 +224,8 @@ export function prepareApiConfigurator(configurators: {
 
 			const authPolicies = prepareAuthPolicies({
 				config,
-				appTables: database.appTables,
-				authTables: database.authTables,
+				appTables: database.apps,
+				authTables: database.auth,
 				verifyToken,
 			})
 
@@ -247,7 +247,7 @@ export function prepareApiConfigurator(configurators: {
 					rando,
 					config,
 					authPolicies,
-					questionsTables: database.questionsTables,
+					questionsTables: database.questions,
 				}),
 			})
 		})()
