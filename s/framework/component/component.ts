@@ -1,10 +1,14 @@
 
-import {LitElement, PropertyValues} from "lit-element"
+import {LitElement, PropertyValues, TemplateResult} from "lit-element"
+
 import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
 
 export * from "lit-element"
 export {render} from "lit-html"
+
+export * from "./theme-components.js"
+export * from "./register-components.js"
 
 export * from "./mixins/mixin-autotrack.js"
 export * from "./mixins/mixin-autowatcher.js"
@@ -16,14 +20,14 @@ export * from "./mixins/mixin-share.js"
 export * from "./mixins/mixin-styles.js"
 export * from "./mixins/mixin-ticker.js"
 
-export * from "./theme-components.js"
-export * from "./register-components.js"
-
 export class Component extends mixinInitiallyHidden(LitElement) {
 	init() {}
 	firstUpdated(changes: PropertyValues) {
 		super.firstUpdated(changes)
 		this.init()
+	}
+	render(): TemplateResult {
+		throw new Error("component render method not implemented")
 	}
 }
 
