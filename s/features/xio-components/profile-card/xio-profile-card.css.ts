@@ -27,13 +27,14 @@ xio-avatar {
 	flex-basis: 8em;
 }
 
-.textfields {
+[part="nameplate"] {
 	flex: 1 1 auto;
 	margin-right: 1em;
+	margin-bottom: 0.5em;
 }
 
-.detail {
-	margin-top: 0.5em;
+[part="details"] {
+	margin-bottom: 0.5em;
 }
 
 .buttonbar {
@@ -68,7 +69,7 @@ xio-avatar {
 
 p[data-field=tagline] {
 	opacity: 0.7;
-	font-size: 0.8em;
+	font-size: 0.7em;
 	font-style: italic;
 }
 
@@ -81,20 +82,20 @@ xio-text-input + xio-text-input {
 	margin-top: 0.1em;
 }
 
-.detail {
+[part="details"] {
 	font-size: 0.7em;
 	list-style: none;
 }
 
-.detail > li {
+[part="details"] > li {
 	margin-top: 0.2em;
 }
 
-.detail > li > :first-child {
+[part="details"] > li > :first-child {
 	font-weight: bold;
 }
 
-.detail code {
+[part="details"] code {
 	font-size: 0.6em;
 	padding: 0.2em;
 	border-radius: 0.3em;

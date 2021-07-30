@@ -107,9 +107,9 @@ export class XioProfileCard extends AutowatcherComponent {
 		const avatarSpec = user.profile.avatar
 		return renderOp(this.#state.busy, () => html`
 			<div class=container ?data-readonly=${this.readonly}>
-				<xio-avatar .spec=${avatarSpec}></xio-avatar>
+				<xio-avatar part=avatar .spec=${avatarSpec}></xio-avatar>
 				<div class=box>
-					<div class=textfields>
+					<div part=nameplate>
 						${renderText({
 							field: "nickname",
 							text: user.profile.nickname,

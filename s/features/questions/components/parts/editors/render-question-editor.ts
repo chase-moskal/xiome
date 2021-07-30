@@ -18,7 +18,7 @@ export function renderQuestionEditor({
 	const author = access?.user
 	const editorState = questionEditor.getState()
 	return renderOp(postingOp, () => html`
-		<div class="editor question-editor">
+		<div class="editor question-editor" part=question-editor>
 			<div class=intro>
 				<p class=heading>Post a new question</p>
 			</div>

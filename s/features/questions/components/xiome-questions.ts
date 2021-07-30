@@ -35,7 +35,7 @@ export class XiomeQuestions extends BaseComponent {
 		requestUpdate: () => this.requestUpdate(),
 		getTextInput: (questionId: string) => (
 			this.shadowRoot.querySelector(
-				`.questionslist li[data-question-id="${questionId}"] xio-text-input`
+				`[part="questions-list"] li[data-question-id="${questionId}"] xio-text-input`
 			)
 		),
 	})
@@ -82,9 +82,9 @@ export class XiomeQuestions extends BaseComponent {
 
 			${questions.length > 0
 				? html`
-					<ol class=questionslist>
+					<ol part=questions-list>
 						${questions.map(question => html`
-							<li class=question data-question-id="${question.questionId}">
+							<li data-question-id="${question.questionId}">
 								${renderQuestion({
 									question,
 									now: this.#now,

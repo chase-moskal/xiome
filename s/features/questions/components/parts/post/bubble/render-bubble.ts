@@ -24,13 +24,14 @@ export function renderBubble({
 				${editable
 					? html`
 						<xio-text-input
+							part=bubble
 							textarea
 							.validator=${validatePostContent}
 							@valuechange=${handleValueChange}
 						></xio-text-input>
 					`
 					: html`
-						<p>${content}</p>
+						<p part=bubble>${content}</p>
 					`}
 			</div>
 			<div class=metabar>

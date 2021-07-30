@@ -61,10 +61,6 @@ a:hover, a:focus {
 	width: 100%;
 }
 
-.post .tophat xio-profile-card::part(detail) {
-	margin-bottom: 1em;
-}
-
 .post .bubble {
 	flex: 1 1 auto;
 	/* padding-left: 1em; */

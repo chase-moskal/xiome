@@ -98,9 +98,9 @@ export function renderQuestion({
 			? renderAnswerEditor({now, boardModel, answerEditor})
 			: null}
 		${question.answers.length ? html`
-			<ol class=answers>
+			<ol part=answers-list>
 				${question.answers.map(answer => html`
-					<li class=answer data-answer-id="${answer.answerId}">
+					<li part=answer data-answer-id="${answer.answerId}">
 						${renderAnswer({
 							answer,
 							modals,

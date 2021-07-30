@@ -29,34 +29,35 @@ slot[name="empty"] {
 	margin-top: 1em;
 }
 
-.questionslist {
+[part="questions-list"] {
 	list-style: none;
+
 }
 
-.questionslist > li {
+[part="questions-list"] > li {
 	margin-top: 2em;
 }
 
 ${postCss}
 
-.answers {
+[part="answers-list"] {
 	list-style: none;
 	margin-left: 3.4em;
 	margin-right: 1em;
 	margin-bottom: 1em;
 }
 
-.answers > li {
+[part="answers-list"] > li {
 	
 	margin-top: 1em;
 }
 
 @media (max-width: 420px) {
-	.answers {
+	[part="answers-list"] {
 		margin-left: 1em;
 		margin-right: 0;
 	}
-	.answers > li {
+	[part="answers-list"] > li {
 		border-left: 1px solid;
 	}
 }
