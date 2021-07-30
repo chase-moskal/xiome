@@ -81,7 +81,6 @@ export default <Suite>{
 		"create rows and read 'em back unconditionally": async() => {
 			const dbby = await setupThreeUserDemo()
 			const falseResults = await dbby.read({conditions: false})
-			console.log(falseResults)
 			return expect(falseResults.length).equals(3)
 		},
 		"empty and/or conditions explode": async() => {
