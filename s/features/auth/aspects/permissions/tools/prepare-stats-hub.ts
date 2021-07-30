@@ -17,7 +17,7 @@ export function prepareStatsHub({appTables, authTables}: {
 
 		async function throwForbiddenUser(appId: DamnId) {
 			const row = await appTables.owners.one(find({appId}))
-			if (row.userId !== userId)
+			if (row.userId.toString() !== userId.toString())
 				throw new ApiError(403, "forbidden")
 		}
 
