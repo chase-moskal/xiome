@@ -37,27 +37,27 @@
 		"stats": "ls -lah x/xiome.bundle.js x/xiome.bundle.min.js"
 	},
 	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^13.0.2",
-		"@types/node": "^16.4.1",
+		"@rollup/plugin-node-resolve": "^13.0.4",
+		"@types/node": "^16.4.7",
 		"@types/pug": "^2.0.5",
-		"chokidar-cli": "^2.1.0",
+		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.1.0-dev.16",
-		"es-module-shims": "^0.12.1",
+		"es-module-shims": "^0.12.2",
 		"importly": "0.1.0-dev.0",
 		"mkdirp": "^1.0.4",
 		"npm-run-all": "^4.1.5",
 		"pug-cli": "^1.0.0-alpha6",
 		"rimraf": "^3.0.2",
-		"rollup": "^2.53.3",
+		"rollup": "^2.55.1",
 		"rollup-plugin-sizes": "^1.0.4",
-		"sass": "^1.35.2",
+		"sass": "^1.36.0",
 		"serve": "^12.0.0",
 		"terser": "^5.7.1",
 		"typescript": "^4.3.5"
 	},
 	"dependencies": {
 		"@stripe/stripe-js": "^1.16.0",
-		"chalk": "^4.1.1",
+		"chalk": "^4.1.2",
 		"crosscall": "0.0.6-dev.22",
 		"form-data": "^4.0.0",
 		"js-yaml-chase-esm": "3.14.0-esm.2",
@@ -70,7 +70,7 @@
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.9",
 		"renraku": "0.0.0-dev.40",
-		"stripe": "^8.165.0"
+		"stripe": "^8.167.0"
 	},
 	"keywords": [
 		"components",
