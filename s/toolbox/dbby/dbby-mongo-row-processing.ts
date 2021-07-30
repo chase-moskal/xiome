@@ -1,10 +1,8 @@
 
-import bson from "bson"
+import {Binary} from "mongodb"
 import {DbbyRow} from "./dbby-types.js"
 import {objectMap} from "../object-map.js"
 import {DamnId} from "../damnedb/damn-id.js"
-
-const {Binary} = bson
 
 const toArrayBuffer = (buffer: Buffer): ArrayBuffer =>
 	new Uint8Array(buffer).buffer
@@ -26,7 +24,7 @@ export function valueUp(value: any, key: string): any {
 
 export function valueDown(value: any, key: string): any {
 	return value instanceof Binary
-		? new DamnId(toArrayBuffer(value.buffer)).string
+		? new DamnId(toArrayBuffer(value.buffer))
 		: value
 }
 
