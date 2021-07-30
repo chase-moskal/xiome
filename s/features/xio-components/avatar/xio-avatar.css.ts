@@ -16,8 +16,8 @@ export default css`
 	display: block;
 	width: 100%;
 	height: 100%;
-	color: #444;
-	background: #888;
+	color: var(--xio-avatar-color, #444);
+	background: var(--xio-avatar-background, #888);
 }
 
 .avatar[data-logged-in] {

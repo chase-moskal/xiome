@@ -8,8 +8,6 @@ export default css`
 	height: 3em;
 	padding: 0.2em;
 	border-radius: 0.3em;
-	color: #333;
-	background: #4448;
 }
 
 :host([logged-in]) .avatar {

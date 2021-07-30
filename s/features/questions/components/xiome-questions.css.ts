@@ -10,8 +10,6 @@ export default css`
 :host {
 	display: block;
 	max-width: 42em;
-	--bg: var(--xiome-questions-body-background, #0006);
-	--color: var(--xiome-questions-body-color, #fff6);
 	--like-color: var(--xiome-questions-like-color, cyan);
 	--report-color: var(--xiome-questions-report-color, #f90);
 }
