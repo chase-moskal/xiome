@@ -1,4 +1,6 @@
 
+import {isDefined} from "../../../../../../../toolbox/is-defined.js"
+
 export function isCurrentlyWithinTimeframe({timeframeStart, timeframeEnd}: {
 		timeframeStart: number
 		timeframeEnd: number
@@ -6,11 +8,11 @@ export function isCurrentlyWithinTimeframe({timeframeStart, timeframeEnd}: {
 
 	const time = Date.now()
 
-	const tooEarly = timeframeStart !== undefined
+	const tooEarly = isDefined(timeframeStart)
 		? time > timeframeStart
 		: false
 
-	const tooLate = timeframeEnd !== undefined
+	const tooLate = isDefined(timeframeEnd)
 		? time < timeframeEnd
 		: false
 
