@@ -16,6 +16,8 @@ export function renderLiking(liking: Liking) {
 			: "like this post",
 		voteCount: liking.likes,
 		voteCasted: liking.liked,
-		castVote: status => liking.castLikeVote(status),
+		castVote: liking.castLikeVote
+			? status => liking.castLikeVote(status)
+			: undefined,
 	})
 }

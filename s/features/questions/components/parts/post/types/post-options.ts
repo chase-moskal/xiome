@@ -21,11 +21,11 @@ export interface IdentifiablePost {
 }
 
 export interface Liking extends Likeable {
-	castLikeVote: (status: boolean) => void
+	castLikeVote?: (status: boolean) => void
 }
 
 export interface Reporting extends Reportable {
-	castReportVote: (status: boolean) => void
+	castReportVote?: (status: boolean) => void
 }
 
 export interface VotablePost {

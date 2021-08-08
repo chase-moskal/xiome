@@ -50,7 +50,19 @@ export function prepareQuestionsBoardModelGetter({
 						? access.permit.privileges.includes(
 							appPermissions.privileges["answer questions"]
 						)
-						: false
+						: false,
+				"like questions":
+					access
+						? access.permit.privileges.includes(
+							appPermissions.privileges["like questions"]
+						)
+						: false,
+				"report questions":
+					access
+						? access.permit.privileges.includes(
+							appPermissions.privileges["report questions"]
+						)
+						: false,
 			} as const
 		},
 

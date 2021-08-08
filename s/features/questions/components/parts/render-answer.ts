@@ -15,6 +15,10 @@ export function renderAnswer({
 		canDeleteAnswer: (answer: Answer) => boolean
 	}) {
 
+	const permissions = boardModel.getPermissions()
+	const canLike = permissions["like questions"]
+	const canReport = permissions["report questions"]
+
 	return renderPost({
 		type: PostType.Answer,
 		postId: answer.answerId,
@@ -24,25 +28,29 @@ export function renderAnswer({
 		liking: {
 			liked: answer.liked,
 			likes: answer.likes,
-			castLikeVote: like =>
-				boardModel.likeAnswer(questionId, answer.answerId, like),
+			castLikeVote: canLike
+				? like =>
+					boardModel.likeAnswer(questionId, answer.answerId, like)
+				: undefined,
 		},
 		reporting: {
 			reported: answer.reported,
 			reports: answer.reports,
-			castReportVote: async report => {
-				const confirmed = report
-					? await modals.confirm({
-						title: "Report answer?",
-						body: "Are you sure you want to submit a report against this answer?",
-						yes: {vibe: "negative", label: "Submit report"},
-						no: {vibe: "neutral", label: "Nevermind"},
-						focusNthElement: 2,
-					})
-					: true
-				if (confirmed)
-					await boardModel.reportAnswer(questionId, answer.answerId, report)
-			}
+			castReportVote: canReport
+				? async report => {
+					const confirmed = report
+						? await modals.confirm({
+							title: "Report answer?",
+							body: "Are you sure you want to submit a report against this answer?",
+							yes: {vibe: "negative", label: "Submit report"},
+							no: {vibe: "neutral", label: "Nevermind"},
+							focusNthElement: 2,
+						})
+						: true
+					if (confirmed)
+						await boardModel.reportAnswer(questionId, answer.answerId, report)
+				}
+				: undefined,
 		},
 		deletePost: canDeleteAnswer(answer)
 			? async() => {

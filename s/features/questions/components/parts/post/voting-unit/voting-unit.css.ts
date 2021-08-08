@@ -20,9 +20,13 @@ export default css`
 	opacity: 0.4;
 }
 
-[data-vote]:hover,
-[data-vote]:focus {
+[data-vote]:not([disabled]):hover,
+[data-vote]:not([disabled]):focus {
 	opacity: 1;
+}
+
+[data-vote][disabled] {
+	cursor: default;
 }
 
 [data-vote="like"][data-active] {

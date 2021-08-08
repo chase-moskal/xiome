@@ -14,18 +14,21 @@ export function renderVotingUnit({
 		voteCount: number
 		voteCasted: boolean
 		icon: SVGTemplateResult
-		castVote: (status: boolean) => void
+		castVote?: (status: boolean) => void
 	}) {
 
-	const handleClick = voteCasted
-		? () => castVote(false)
-		: () => castVote(true)
+	const handleClick = castVote
+		? voteCasted
+			? () => castVote(false)
+			: () => castVote(true)
+		: () => {}
 
 	return html`
 		<button
 			tabindex=0
 			data-vote="${dataVote}"
 			?data-active=${voteCasted}
+			?disabled=${!castVote}
 			title="${title}"
 			@click=${handleClick}>
 				<span>${icon}</span>

@@ -30,7 +30,9 @@ export function renderQuestion({
 			: false
 		const canDelete = permissions["moderate questions"] || isAuthor
 		const canAnswer = permissions["answer questions"]
-		return {canDelete, canAnswer}
+		const canLike = permissions["like questions"]
+		const canReport = permissions["report questions"]
+		return {canDelete, canAnswer, canLike, canReport}
 	})()
 
 	const handleDelete = async() => {
@@ -81,13 +83,17 @@ export function renderQuestion({
 			liking: {
 				liked: question.liked,
 				likes: question.likes,
-				castLikeVote: handleLike,
+				castLikeVote: questionAuthorities.canLike
+					? handleLike
+					: undefined,
 			},
 			postId: question.questionId,
 			reporting: {
 				reported: question.reported,
 				reports: question.reports,
-				castReportVote: handleReport,
+				castReportVote: questionAuthorities.canReport
+					? handleReport
+					: undefined,
 			},
 			timePosted: question.timePosted,
 			toggleAnswerEditor: questionAuthorities.canAnswer

@@ -16,6 +16,8 @@ export function renderReporting(reporting: Reporting) {
 			: "report this post",
 		voteCount: reporting.reports,
 		voteCasted: reporting.reported,
-		castVote: status => reporting.castReportVote(status),
+		castVote: reporting.castReportVote
+			? status => reporting.castReportVote(status)
+			: undefined,
 	})
 }
