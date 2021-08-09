@@ -24,7 +24,7 @@ export function renderBubble({
 				${editable
 					? html`
 						<xio-text-input
-							part=bubble
+							exportparts="textinput: bubble"
 							textarea
 							.validator=${validatePostContent}
 							@valuechange=${handleValueChange}

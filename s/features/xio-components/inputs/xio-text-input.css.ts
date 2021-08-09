@@ -51,19 +51,19 @@ slot {
 	flex-direction: column;
 }
 
-.inputbox {
+[part="inputbox"] {
 	display: block;
 	/* max-width: var(--width); */
 	position: relative;
 	flex: 1 1 auto;
 }
 
-:host([textarea]) .inputbox {
+:host([textarea]) [part="inputbox"] {
 	flex: 1 1 auto;
 	/* max-width: unset; */
 }
 
-.inputbox svg {
+[part="inputbox"] svg {
 	position: absolute;
 	display: block;
 	top: var(--pad);
@@ -73,11 +73,11 @@ slot {
 	pointer-events: none;
 }
 
-.container[data-valid] .inputbox svg {
+.container[data-valid] [part="inputbox"] svg {
 	color: var(--valid-color);
 }
 
-.container:not([data-valid]) .inputbox svg {
+.container:not([data-valid]) [part="inputbox"] svg {
 	color: var(--invalid-color);
 }
 
@@ -99,7 +99,7 @@ textarea {
 	min-height: var(--height);
 }
 
-.problems {
+[part="problems"] {
 	display: flex;
 	font: var(--problems-font);
 	padding: 0 calc(2 * var(--pad));
@@ -111,7 +111,7 @@ textarea {
 	color: var(--problems-color, var(--invalid-color));
 }
 
-.problems > li {
+[part="problems"] > li {
 	margin-top: 0.2em;
 }
 

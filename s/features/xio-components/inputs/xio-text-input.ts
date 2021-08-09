@@ -145,7 +145,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 			<div class=container ?data-valid=${valid}>
 				<label for=textinput part=label><slot></slot></label>
 				<div class=flexy>
-					<div class=inputbox part=inputbox>
+					<div part=inputbox>
 						${showValidation ? icon : null}
 						${textarea ? html`
 							<textarea
@@ -174,7 +174,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 								/>
 						`}
 					</div>
-					<ol class=problems part=problems>
+					<ol part=problems>
 						${showProblems
 							? problems.map(problem => html`
 								<li>${problem}</li>
