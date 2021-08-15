@@ -57,6 +57,7 @@
 	},
 	"dependencies": {
 		"@stripe/stripe-js": "^1.17.0",
+		"broadcastchannel-polyfill": "1.0.1",
 		"chalk": "^4.1.2",
 		"crosscall": "0.0.6-dev.22",
 		"form-data": "^4.0.0",

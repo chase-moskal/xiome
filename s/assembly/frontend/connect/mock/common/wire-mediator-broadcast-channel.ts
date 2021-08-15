@@ -1,4 +1,5 @@
 
+import "broadcastchannel-polyfill"
 import {AuthMediator} from "../../../../../features/auth/mediator/types/auth-mediator.js"
 
 export function wireMediatorBroadcastChannel(authMediator: AuthMediator) {
