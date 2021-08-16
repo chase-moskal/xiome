@@ -25,6 +25,7 @@ export async function mockConnectApp({
 
 	const apiLink = apiOrigin + "/"
 	const ownerEmail = "creative@xiome.io"
+	const adminEmail = "admin@xiome.io"
 
 	let appId = await storage.read<string>("mock-app")
 	if (!appId) {
@@ -32,6 +33,7 @@ export async function mockConnectApp({
 			apiLink,
 			backend,
 			ownerEmail,
+			adminEmail,
 			appOrigins: origins,
 		})
 		await storage.write<string>("mock-app", appId)

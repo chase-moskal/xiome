@@ -1,12 +1,12 @@
 
 import {AuthTables} from "../../../../types/auth-tables.js"
 import {Rando} from "../../../../../../toolbox/get-rando.js"
+import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
+import {initializeUserProfile} from "../profile/initialize-user-profile.js"
 import {SecretConfig} from "../../../../../../assembly/backend/types/secret-config.js"
 import {universalPermissions} from "../../../../../../assembly/backend/permissions/standard-permissions.js"
-import {generateAccountRow} from "./generate-account-row.js"
-import {initializeUserProfile} from "../profile/initialize-user-profile.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 
 const standardRoleIds = {
 	anonymous: universalPermissions.roles.anonymous.roleId,
@@ -23,6 +23,8 @@ export async function assertEmailAccount({
 		authTables: AuthTables
 		generateNickname: () => string
 	}) {
+
+	email = email.toLowerCase()
 
 	const accountViaEmail = await authTables.users.emails.assert({
 		...find({email}),

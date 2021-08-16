@@ -2,8 +2,8 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {appointAdmin} from "../utils/appoint-admin.js"
 import {AppDraft} from "../types/app-draft.js"
+import {appointAdmin} from "../utils/appoint-admin.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {validateAppDraft} from "../utils/validate-app-draft.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
@@ -116,7 +116,7 @@ export const makeAppEditService = ({
 			await appointAdmin({
 				rando,
 				config,
-				email,
+				email: email.toLowerCase(),
 				authTables,
 				generateNickname,
 			})

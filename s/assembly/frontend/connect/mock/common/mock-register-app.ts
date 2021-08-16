@@ -3,10 +3,11 @@ import {Await} from "../../../../../types/await.js"
 import {configureApiForNode} from "../../../../backend/configure-api-for-node.js"
 
 export async function mockRegisterApp({
-		apiLink, ownerEmail, appOrigins, backend
+		apiLink, ownerEmail, adminEmail, appOrigins, backend
 	}: {
 		apiLink: string
 		ownerEmail: string
+		adminEmail: string
 		appOrigins: string[]
 		backend: Await<ReturnType<typeof configureApiForNode>>
 	}) {
@@ -30,6 +31,11 @@ export async function mockRegisterApp({
 	})
 
 	console.log("mock: register app", appId)
+
+	await appsModel.appEditService.assignAdmin({
+		appId,
+		email: adminEmail,
+	})
 
 	// TODO reactivate store
 	// // link bank account with stripe

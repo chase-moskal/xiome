@@ -9,6 +9,8 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {signAuthTokens} from "../routines/login/sign-auth-tokens.js"
 import {assertEmailAccount} from "../routines/login/assert-email-account.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
+import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
+import {schema, email as emailValidator} from "../../../../../toolbox/darkvalley.js"
 
 export const makeLoginService = ({
 		rando, config, authPolicies,
@@ -19,8 +21,15 @@ export const makeLoginService = ({
 
 		async sendLoginLink(
 				{access, authTables, appTables},
-				{email}: {email: string},
+				inputs: {email: string},
 			) {
+
+			const {email: rawEmail} = runValidation(
+				inputs,
+				schema({email: emailValidator()}),
+			)
+			const email = rawEmail.toLowerCase()
+
 			const appId = DamnId.fromString(access.appId)
 			const appRow = await appTables.registrations.one(find({appId}))
 			const {userId} = await assertEmailAccount({
