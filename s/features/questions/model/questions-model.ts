@@ -1,9 +1,9 @@
 
 import {ops} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {makeQuestionsModelHappy} from "./parts/questions-model-happy.js"
-import {prepareQuestionsBoardModelGetter} from "./parts/quesitons-board-model.js"
 import {QuestionsModelOptions} from "./types/questions-model-options.js"
+import {makeQuestionsModelHappy} from "./parts/questions-model-happy.js"
+import {prepareQuestionsBoardModelGetter} from "./parts/questions-board-model.js"
 
 export function makeQuestionsModel(options: QuestionsModelOptions) {
 	const {questionsReadingService} = options
