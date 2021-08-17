@@ -112,7 +112,9 @@ export class XioProfileCard extends AutowatcherComponent {
 					<div part=nameplate>
 						${renderText({
 							field: "nickname",
-							text: user.profile.nickname,
+							text: this.profileDraft
+								? this.profileDraft.nickname
+								: user.profile.nickname,
 							input: this.readonly
 								? undefined
 								: {
@@ -125,7 +127,9 @@ export class XioProfileCard extends AutowatcherComponent {
 						})}
 						${renderText({
 							field: "tagline",
-							text: user.profile.tagline,
+							text: this.profileDraft
+								? this.profileDraft.tagline
+								: user.profile.tagline,
 							input: this.readonly
 								? undefined
 								: {

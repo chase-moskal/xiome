@@ -13,7 +13,7 @@ export class XiomeMyAccount extends AutowatcherComponentWithShare<{
 	}> {
 
 	private saveProfile = async(profileDraft: ProfileDraft) => {
-		this.share.personalModel.saveProfile(profileDraft)
+		await this.share.personalModel.saveProfile(profileDraft)
 	}
 
 	render() {
