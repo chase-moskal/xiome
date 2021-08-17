@@ -7,7 +7,7 @@ import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {QuestionsTables} from "../../tables/types/questions-tables.js"
 
 const timeframe = 1 * day
-const allowedNumberOfPostsInTimeframe = 5
+const allowedNumberOfPostsInTimeframe = 10
 
 export async function rateLimitQuestions({userId, questionsTables}: {
 		userId: DamnId
