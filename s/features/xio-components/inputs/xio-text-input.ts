@@ -120,6 +120,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 
 	init() {
 		this.draft = this.initial
+		this.lastDraft = this.initial
 		this.addEventListener("valuechange", this.onvaluechange)
 		this.addEventListener("enterpress", this.onenterpress)
 	}
