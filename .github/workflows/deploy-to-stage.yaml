@@ -11,11 +11,10 @@ env:
 jobs:
   stage-deployment:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
-
+    if: github.repository_owner == "chase-moskal"
     steps:
 
     ##
