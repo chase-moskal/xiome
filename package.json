@@ -11,7 +11,7 @@
 		"s"
 	],
 	"scripts": {
-		"build": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass compile-web-assets && run-s compile-bundle stats test",
+		"build": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass compile-web-assets && run-s cleanup-devstuff compile-bundle stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
 		"importmap": "importly --host=node_modules < package.json > x/importmap.json",
 		"compile-tsc": "tsc",
@@ -20,6 +20,7 @@
 		"compile-sass": "sass web/:x/",
 		"compile-web-assets": "cp web/favicon.png x/",
 		"compile-bundle": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/xiome.js -o x/xiome.bundle.js && terser x/xiome.bundle.js -cm --source-map --comments false -o x/xiome.bundle.min.js",
+		"cleanup-devstuff": "rimraf x/playground.* x/mocksite",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
 		"watch-pug": "npm run compile-pug-dev -s -- --watch",
 		"watch-sass": "npm run compile-sass -s -- --watch",
