@@ -15,7 +15,6 @@ export async function mockRegisterApp({
 	const mockBrowserForPlatform = await backend.mockBrowser()
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
 		apiLink,
-		latency: false,
 		appId: backend.platformAppId,
 		windowLink: window.location.href,
 	})

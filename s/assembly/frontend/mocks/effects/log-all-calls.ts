@@ -2,8 +2,8 @@
 import {Api} from "renraku/x/types/api/api.js"
 import {Remote} from "renraku/x/types/remote/remote.js"
 
-import {objectMap} from "../toolbox/object-map.js"
-import {Logger} from "../toolbox/logger/interfaces.js"
+import {objectMap} from "../../../../toolbox/object-map.js"
+import {Logger} from "../../../../toolbox/logger/interfaces.js"
 
 export function logAllCalls<xApi extends Api>({logger, fullyDebug, remote}: {
 		logger: Logger

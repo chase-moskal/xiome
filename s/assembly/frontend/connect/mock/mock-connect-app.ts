@@ -4,15 +4,13 @@ import {mockPopups} from "./common/mock-popups.js"
 import {mockConfig} from "../../../backend/mock-config.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
-import {MockLatency} from "../../../../framework/add-mock-latency.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {configureApiForBrowser} from "../../../backend/configure-api-for-browser.js"
 
 export async function mockConnectApp({
-		origins, latency, storage, appWindowLink,
+		origins, storage, appWindowLink,
 	}: {
 		origins: string[]
-		latency: MockLatency
 		storage: FlexStorage
 		appWindowLink: string
 	}) {
@@ -46,7 +44,6 @@ export async function mockConnectApp({
 		apiLink,
 		backend,
 		storage,
-		latency,
 		appWindowLink,
 	})
 
