@@ -1,9 +1,9 @@
 
-import {nap} from "./toolbox/nap.js"
-import {ops} from "./framework/ops.js"
-import {User} from "./features/auth/aspects/users/types/user.js"
-import {ProfileDraft} from "./features/auth/aspects/users/routines/personal/types/profile-draft.js"
-import {AutowatcherComponent, mixinLightDom, registerComponents, html, property} from "./framework/component/component.js"
+import {nap} from "../../toolbox/nap.js"
+import {ops} from "../../framework/ops.js"
+import {User} from "../auth/aspects/users/types/user.js"
+import {ProfileDraft} from "../auth/aspects/users/routines/personal/types/profile-draft.js"
+import {AutowatcherComponent, mixinLightDom, registerComponents, html, property} from "../../framework/component/component.js"
 
 @mixinLightDom
 class XioPlayground extends AutowatcherComponent {
@@ -40,20 +40,17 @@ class XioPlayground extends AutowatcherComponent {
 		const {user} = this
 		return html`
 
-			<p class=lowkey>xiome-questions</p>
-			<xiome-questions></xiome-questions>
-
-			<p class=lowkey>xio-profile-card: readonly</p>
+			<h3>xio-profile-card: readonly</h3>
 			<xio-profile-card show-details .user=${user}></xio-profile-card>
 
-			<p class=lowkey>xio-profile-card: editable</p>
+			<h3>xio-profile-card: editable</h3>
 			<xio-profile-card
 				show-details
 				.user=${user}
 				.saveProfile=${this.saveProfile}
 			></xio-profile-card>
 
-			<p class=lowkey>xio-op</p>
+			<h3>xio-op</h3>
 			<xio-op .op=${ops.loading()}></xio-op>
 		`
 	}

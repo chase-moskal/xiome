@@ -12,6 +12,7 @@ head
 
 	script(defer type="importmap-shim" src=`${base}/importmap.json`)
 	script(async defer type="module-shim" src=`${base}/xiome.js`)
+	script(async defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
 	script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
 
 	xiome-config(mock="app")
@@ -66,6 +67,10 @@ section
 	<xio-avatar spec='{"type": "simple", "value": 0.6}'></xio-avatar>
 	<xio-avatar spec='{"type": "simple", "value": 0.8}'></xio-avatar>
 	<xio-avatar spec='{"type": "simple", "value": 0.9}'></xio-avatar>
+
+section
+	h2 playground
+	xio-playground
 
 section
 	h2 questions
