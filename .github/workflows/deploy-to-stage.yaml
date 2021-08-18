@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: github.repository_owner == "chase-moskal"
+    if: github.repository_owner == 'chase-moskal'
     steps:
 
     ##
