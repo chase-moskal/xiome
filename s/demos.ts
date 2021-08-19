@@ -1,12 +1,12 @@
 
-import {applyMockHacks} from "./frontend/mocks/apply-mock-hacks.js"
-import {mockConnectApp} from "./frontend/connect/mock/mock-connect-app.js"
-import {addMockLatency} from "./frontend/mocks/effects/add-mock-latency.js"
-import {memoryFlexStorage} from "../toolbox/flex-storage/memory-flex-storage.js"
-import {registerComponents} from "../framework/component/register-components.js"
-import {assembleAndInitializeFrontend} from "./frontend/assemble-and-initialize-frontend.js"
+import {applyMockHacks} from "./assembly/frontend/mocks/apply-mock-hacks.js"
+import {memoryFlexStorage} from "./toolbox/flex-storage/memory-flex-storage.js"
+import {registerComponents} from "./framework/component/register-components.js"
+import {mockConnectApp} from "./assembly/frontend/connect/mock/mock-connect-app.js"
+import {addMockLatency} from "./assembly/frontend/mocks/effects/add-mock-latency.js"
+import {assembleAndInitializeFrontend} from "./assembly/frontend/assemble-and-initialize-frontend.js"
 
-export async function demos() {
+void async function demos() {
 	const connection = await mockConnectApp({
 		appWindowLink: window.location.href,
 		origins: [window.location.origin],
@@ -30,4 +30,4 @@ export async function demos() {
 		demoComponents[`Demo${key}`] = value
 
 	registerComponents(demoComponents)
-}
+}()

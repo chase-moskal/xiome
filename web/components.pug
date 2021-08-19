@@ -5,6 +5,9 @@ block append variables
 	- pageName = "components"
 	- pageSubtitle = "components"
 
+block append head
+	script(async defer src=`${base}/demos.bundle.min.js`)
+
 block maincontent
 	.page
 		.explainer
