@@ -1,5 +1,5 @@
 
-import {validator, one, branch, string, array, each, minLength, maxLength, notWhitespace, url, https, localhost, origin} from "../../../../../toolbox/darkvalley.js"
+import {validator, one, branch, string, array, each, minLength, maxLength, notWhitespace, url, https, localhost, origin, regex} from "../../../../../toolbox/darkvalley.js"
 
 const validateAppOrigin = one(
 	string(),
