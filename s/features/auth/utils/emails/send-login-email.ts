@@ -4,7 +4,6 @@ import {SendEmail} from "../../types/emails/send-email.js"
 import {minute} from "../../../../toolbox/goodtimes/times.js"
 import {escapeHtml} from "../../../../toolbox/escape-html.js"
 import {noop as html} from "../../../../toolbox/template-noop.js"
-import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {SendLoginEmail} from "../../aspects/users/types/emails/send-login-email.js"
 
 export function prepareSendLoginEmail({sendEmail}: {
