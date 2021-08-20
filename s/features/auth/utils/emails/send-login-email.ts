@@ -42,7 +42,7 @@ html`
 	<p>You can contact support by replying to this email.</p>
 	<ul style="padding-left: 0.5rem;">
 		<li>Logins powered by <a href="${platformLink}">${platformHost}</a></li>
-		<li><a href="${platformLink}">Policies and terms of service</a></li>
+		<li><a href="${legalLink}">Policies and terms of service</a></li>
 	</ul>
 	<p style="opacity: 0.3; font-size: 0.4em;">
 		${Date.now()}
