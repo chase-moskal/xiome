@@ -33,6 +33,9 @@ export async function assembleAndInitializeFrontend({
 	await loginWithLinkTokenOrUseExistingLogin({
 		accessModel: models.accessModel,
 		link: window.location.toString(),
+		afterLoginTokenProcessed: () => {
+			window.location.hash = ""
+		},
 	})
 
 	return {components, models, modals, modalsElement}
