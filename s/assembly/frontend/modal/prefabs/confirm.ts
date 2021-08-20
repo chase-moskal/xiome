@@ -41,17 +41,21 @@ export function prepareConfirm(
 						${typeof body == "string" ? html`<p>${body}</p>` : body}
 						<div data-buttons>
 							<xio-button
+								focusable
 								data-button=yes
 								data-vibe="${yes.vibe}"
 								@press=${onYes}>
 									${yes.label}
 							</xio-button>
-							<xio-button
-								data-button=no
-								data-vibe="${no.vibe}"
-								@press=${onNo}>
-									${no.label}
-							</xio-button>
+							${no ? html`
+								<xio-button
+									focusable
+									data-button=no
+									data-vibe="${no.vibe}"
+									@press=${onNo}>
+										${no.label}
+								</xio-button>
+							` : null}
 						</div>
 					</div>
 				`

@@ -4,6 +4,7 @@ import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AccessModelOptions} from "./types/access-model-options.js"
 import {isTokenValid} from "../../../utils/tokens/is-token-valid.js"
 import {autowatcher} from "../../../../../toolbox/autowatcher/autowatcher.js"
+import {AccessLoginExpiredError} from "./errors/access-errors.js"
 
 export function makeAccessModel({authMediator, loginService}: AccessModelOptions) {
 	const auto = autowatcher()
@@ -50,18 +51,20 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 
 		async login(loginToken: string) {
 			try {
-				if (isTokenValid(loginToken))
+				if (isTokenValid(loginToken)) 
 					await accessOperation(
 						loginService
 							.authenticateViaLoginToken({loginToken})
 							.then(tokens => authMediator.login(tokens))
 					)
 				else
-					actions.setAccess(ops.error("login link expired"))
+					throw new AccessLoginExpiredError()
 			}
 			catch (error) {
 				console.error(error)
-				actions.setAccess(ops.error("error with login"))
+				actions.setAccess(ops.none())
+				await accessOperation(authMediator.initialize())
+				throw error
 			}
 		},
 

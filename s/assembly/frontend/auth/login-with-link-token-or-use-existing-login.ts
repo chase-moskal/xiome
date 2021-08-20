@@ -3,19 +3,25 @@ import {parseQuery} from "../../../toolbox/parse-query.js"
 import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
 
 export async function loginWithLinkTokenOrUseExistingLogin({
-		link, accessModel, afterLoginTokenProcessed = () => {},
+		link, accessModel, onDone, onError,
 	}: {
 		link: string
 		accessModel: ReturnType<typeof makeAccessModel>
-		afterLoginTokenProcessed?: () => void
+		onDone: () => void
+		onError: (error: Error) => void
 	}) {
 
 	const {hash} = new URL(link)
 	const {login} = parseQuery<{login: string}>(hash)
 
 	if (login) {
-		await accessModel.login(login)
-		afterLoginTokenProcessed()
+		try {
+			await accessModel.login(login)
+		}
+		catch (error) {
+			onError(error)
+		}
+		onDone()
 	}
 	else
 		await accessModel.useExistingLogin()

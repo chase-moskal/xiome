@@ -1,13 +1,16 @@
 
+import {Remote} from "renraku/x/types/remote/remote.js"
+
 import {getComponents} from "./get-components.js"
 import {assembleModels} from "./assemble-models.js"
-import {Remote} from "renraku/x/types/remote/remote.js"
 import {SystemApi} from "../backend/types/system-api.js"
+import {html} from "../../framework/component/component.js"
 import {setupModalSystem} from "./modal/setup-modal-system.js"
 import {SystemPopups} from "./connect/system-popups/types/system-popups.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 import {AuthMediator} from "../../features/auth/mediator/types/auth-mediator.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "./auth/login-with-link-token-or-use-existing-login.js"
+import {AccessLoginExpiredError} from "../../features/auth/aspects/users/models/errors/access-errors.js"
 
 export async function assembleAndInitializeFrontend({
 		appId, popups, storage, authMediator, remote,
@@ -33,7 +36,19 @@ export async function assembleAndInitializeFrontend({
 	await loginWithLinkTokenOrUseExistingLogin({
 		accessModel: models.accessModel,
 		link: window.location.toString(),
-		afterLoginTokenProcessed: () => {
+		onError: error => {
+			if (error instanceof AccessLoginExpiredError)
+				modals.alert({
+					title: "expired login link",
+					body: "this login link has expired, please try again",
+				})
+			else
+				modals.alert({
+					title: "invalid login link",
+					body: "something is wrong with this login link, please try again",
+				})
+		},
+		onDone: () => {
 			window.location.hash = ""
 		},
 	})

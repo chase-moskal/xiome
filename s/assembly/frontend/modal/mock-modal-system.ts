@@ -21,6 +21,7 @@ export function mockModalSystem() {
 				modal: <any>{},
 			}
 		},
+		async alert() {},
 		async confirm() {
 			return nextModalResults.confirm
 		},
