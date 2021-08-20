@@ -114,7 +114,7 @@ export class XiomeLoginPanel extends AutowatcherComponentWithShare<{accessModel:
 				${ops.isReady(this.sentLoading)
 					? html`
 						<p>email sent to ${ops.value(this.sentLoading).email}</p>
-						<p>please wait a few minutes it to arrive</p>
+						<p>please wait a few minutes for it to arrive</p>
 						<xio-button @press=${this.resetSentLoading}>
 							restart
 						</xio-button>
