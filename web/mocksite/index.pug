@@ -11,11 +11,11 @@ head
 	title xiome mocksite
 
 	script(defer type="importmap-shim" src=`${base}/importmap.json`)
-	script(async defer type="module-shim" src=`${base}/xiome.js`)
+	script(async defer type="module-shim" src=`${base}/xiome-mock.js`)
 	script(async defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
 	script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
 
-	xiome-config(mock="app")
+	xiome-mock(mode="app")
 
 	//- xiome-config(
 	//- 	app="0d57ce040345c15f63c2403da6013055051db08597db30d95a95c71d39c725dd"

@@ -12,12 +12,11 @@ head
 	title xiome.io#{pageSubtitle && " – " + pageSubtitle}
 	link(rel="stylesheet" href=`${base}/styles.css`)
 	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
-
 	if debug
-		xiome-config(mock="platform")
+		xiome-mock(mode="platform")
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
-		script(async defer type="module-shim" src=`${base}/xiome.js`)
+		script(async defer type="module-shim" src=`${base}/xiome-mock.js`)
 		script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
 	else
 		script.
@@ -46,7 +45,6 @@ head
 			}
 			document.head.appendChild(config)
 		script(async defer src=`${base}/xiome.bundle.min.js`)
-
 	block head
 
 .stageplate

@@ -1,4 +1,4 @@
 
-export interface XiomeConfigMock {
-	mock: "app" | "platform"
+export interface XiomeMockConfig {
+	mode: "app" | "platform"
 }

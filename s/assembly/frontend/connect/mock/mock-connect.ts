@@ -1,17 +1,17 @@
 
 import {mockConnectApp} from "./mock-connect-app.js"
 import {mockConnectPlatform} from "./mock-connect-platform.js"
-import {XiomeConfigMock} from "../../types/xiome-config-mock.js"
+import {XiomeMockConfig} from "../../types/xiome-config-mock.js"
 import {simpleFlexStorage} from "../../../../toolbox/flex-storage/simple-flex-storage.js"
 
-export async function mockConnect(config: XiomeConfigMock) {
+export async function mockConnect(config: XiomeMockConfig) {
 	const options = {
 		origins: [window.location.origin],
 		storage: simpleFlexStorage(window.localStorage),
 		platformHome: window.location.href,
 		appWindowLink: window.location.href,
 	}
-	return config.mock === "platform"
+	return config.mode === "platform"
 		? await mockConnectPlatform(options)
 		: await mockConnectApp(options)
 }
