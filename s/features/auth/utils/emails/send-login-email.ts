@@ -23,7 +23,6 @@ export function prepareSendLoginEmail({sendEmail}: {
 
 		const loginLink = makeLoginLink({loginToken, home: appHome})
 		const minutesLeft = Math.round((lifespan / minute)).toFixed(0)
-		const expiry = formatDate(Date.now() + lifespan)
 		const safeLabel = escapeHtml(appLabel)
 		const platformHost = new URL(platformLink).host
 
@@ -35,19 +34,20 @@ export function prepareSendLoginEmail({sendEmail}: {
 			html: (
 html`
 <h1>Login link for ${safeLabel}</h1>
-<p>To login, click the link:</p>
-<p style="font-size: 1.2em; padding: 0.5rem;">
+<p style="font-size: 1.2em; padding-left: 0.5rem;">
 	<a href="${loginLink.toString()}">» Login to ${safeLabel} «</a>
 </p>
-<hr style="margin-top: 1em;"/>
-<div style="font-size: 0.8em; opacity: 0.7;">
-	<p>Expires in ${minutesLeft} minutes <span style="opacity: 0.7;">(${expiry.time})</span></p>
+<div style="opacity: 0.7; font-size: 0.8em; margin-top: 2rem;">
+	<p>Expires in ${minutesLeft} minutes.</p>
 	<p>If you didn't request this login link, just ignore it.</p>
-	<p>For customer support, you can reply directly to this email</p>
-	<ul>
+	<p>You can contact support by replying to this email.</p>
+	<ul style="padding-left: 0.5rem;">
 		<li>Logins powered by <a href="${platformLink}">${platformHost}</a></li>
 		<li><a href="${platformLink}">Policies and terms of service</a></li>
 	</ul>
+	<p style="opacity: 0.3; font-size: 0.4em;">
+		${Date.now()}
+	</p>
 </div>
 `
 			),
@@ -59,15 +59,17 @@ Login link for ${appLabel}
   » ${loginLink.toString()}
 
 
-Expires in ${minutesLeft} minutes (${expiry.time})
+Expires in ${minutesLeft} minutes
 
 If you didn't request this login link, just ignore it.
 
-For customer support, you can reply directly to this email.
+You can contact support by replying to this email.
 
   * Logins powered by ${platformLink}
 
   * Policies and terms of service ${legalLink}
+
+${Date.now()}
 `
 			),
 
