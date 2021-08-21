@@ -133,6 +133,8 @@ export const makeShopkeepingService = (
 				.update(stripePriceId, {active: false})
 	
 			// TODO cancel all stripe subscriptions
+			// actually, i guess we just... don't cancel any subscriptions
+			// stripe doesn't support it O_O
 	
 			await storeTables.billing.subscriptionPlans.update({
 				...find({subscriptionPlanId}),
