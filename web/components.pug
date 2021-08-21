@@ -20,20 +20,29 @@ block maincontent
 						span my account
 						span  component
 					p this component allows users to edit their profile
-					code.htmlcode.codeblock=`<xiome-login-panel show-logout>\n\t<xiome-my-account></xiome-my-account>\n</xiome-login-panel>`
+					code.htmlcode.codeblock=`<xiome-my-account></xiome-my-account>`
+				.demo
+					demo-xiome-my-account
+			li
+				.summary
+					h3
+						span login panel
+						span  component
+					p the component allows users to login or logout, and you control what's displayed in different states
+					code.htmlcode.codeblock=`<xiome-login-panel show-logout>\n\t<p>You are logged in</p>\n\t<p slot=logged-out>You are logged out</p>\n</xiome-login-panel>`
 				.demo
 					demo-xiome-login-panel(show-logout)
-						demo-xiome-my-account
+						p You are logged in
+						p(slot="logged-out") You are logged out
 			li
 				.summary
 					h3
 						span questions
 						span  component
 					p a community board where users can post questions
-					code.htmlcode.codeblock=`<xiome-login-panel>\n\t<xiome-questions board="default"></xiome-questions>\n</xiome-login-panel>`
+					code.htmlcode.codeblock=`<xiome-questions board=default></xiome-questions>`
 				.demo
-					demo-xiome-login-panel
-						demo-xiome-questions
+					demo-xiome-questions
 			li
 				.summary
 					h3
