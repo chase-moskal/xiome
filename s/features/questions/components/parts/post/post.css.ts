@@ -78,6 +78,10 @@ a:hover, a:focus {
 	min-height: 4em;
 }
 
+.post [part="bubble"] {
+	white-space: pre-wrap;
+}
+
 /*
 ** question editor
 */

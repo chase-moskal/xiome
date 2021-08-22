@@ -21,8 +21,8 @@ export async function demoQuestions(
 		const boardModel = tab.models.questionsModel.makeBoardModel("default")
 		await boardModel.loadQuestions()
 		await boardModel.likeQuestion(questionId, true)
-		const answer = await boardModel.postAnswer(questionId, {
-			content: "Approximately 700 pounds of wood, researchers say.",
+		await boardModel.postAnswer(questionId, {
+			content: "Researchers say,\nApproximately 700 pounds of wood.",
 		})
 	})
 }
