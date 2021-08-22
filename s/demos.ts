@@ -1,4 +1,5 @@
 
+import {demoQuestions} from "./assembly/frontend/demos/demo-questions.js"
 import {applyMockHacks} from "./assembly/frontend/mocks/apply-mock-hacks.js"
 import {memoryFlexStorage} from "./toolbox/flex-storage/memory-flex-storage.js"
 import {registerComponents} from "./framework/component/register-components.js"
@@ -12,6 +13,8 @@ void async function demos() {
 		origins: [window.location.origin],
 		storage: memoryFlexStorage(),
 	})
+
+	await demoQuestions(connection)
 
 	connection.remote = addMockLatency({
 		remote: connection.remote,

@@ -101,9 +101,11 @@ export function prepareQuestionsBoardModelGetter({
 			await loadQuestionsForBoard(board)
 		},
 
-		async postQuestion(questionDraft: QuestionDraft) {
+		async postQuestion({content}: {content: string}) {
 			const question = await ops.operation({
-				promise: questionsPostingService.postQuestion({questionDraft}),
+				promise: questionsPostingService.postQuestion({
+					questionDraft: {board, content}
+				}),
 				setOp: op => actions.setPostingOp(
 					ops.replaceValue(op, undefined)
 				),
@@ -111,6 +113,7 @@ export function prepareQuestionsBoardModelGetter({
 			actions.addQuestions([question])
 			const access = ops.value(getAccess())
 			actions.addUsers([access.user])
+			return question
 		},
 
 		async postAnswer(questionId: string, answerDraft: AnswerDraft) {
@@ -126,6 +129,7 @@ export function prepareQuestionsBoardModelGetter({
 			actions.addAnswer(answer)
 			const access = ops.value(getAccess())
 			actions.addUsers([access.user])
+			return answer
 		},
 
 		async likeQuestion(questionId: string, like: boolean) {

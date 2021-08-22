@@ -4,9 +4,9 @@ import {assembleModels} from "../assemble-models.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"
-import {MockLatency} from "./effects/add-mock-latency.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {MockStripeOperations} from "../../../features/store/stripe2/types/mock-stripe-operations.js"
+import {applyMockHacks} from "./apply-mock-hacks.js"
 
 export async function mockBrowser({api, mockStripeOperations}: {
 		api: SystemApi

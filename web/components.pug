@@ -6,7 +6,10 @@ block append variables
 	- pageSubtitle = "components"
 
 block append head
-	script(async defer src=`${base}/demos.bundle.min.js`)
+	if (debug)
+		script(type="module-shim" async defer src=`${base}/demos.js`)
+	else
+		script(async defer src=`${base}/demos.bundle.min.js`)
 
 block maincontent
 	.page

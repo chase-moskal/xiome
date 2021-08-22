@@ -27,7 +27,6 @@ export function makeQuestionEditor({
 			const {draftText} = getState()
 			resetEditor()
 			await getBoardModel().postQuestion({
-				board: getBoardModel().getBoardName(),
 				content: draftText,
 			})
 		},
