@@ -23,7 +23,7 @@ export async function mockWiredRemote({
 		origin: new URL(appWindowLink).origin,
 	})
 
-	wireMediatorBroadcastChannel(authMediator)
+	wireMediatorBroadcastChannel({appId, authMediator})
 
 	return {remote, authMediator}
 }

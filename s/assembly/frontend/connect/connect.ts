@@ -19,7 +19,7 @@ export async function connect({
 		apiLink: `${apiOrigin}/`,
 	})
 
-	wireMediatorBroadcastChannel(authMediator)
+	wireMediatorBroadcastChannel({appId, authMediator})
 
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 

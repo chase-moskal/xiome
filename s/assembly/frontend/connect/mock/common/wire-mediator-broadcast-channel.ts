@@ -2,8 +2,18 @@
 import "broadcastchannel-polyfill"
 import {AuthMediator} from "../../../../../features/auth/mediator/types/auth-mediator.js"
 
-export function wireMediatorBroadcastChannel(authMediator: AuthMediator) {
+type TokenChangeMessage = {
+	appId: string
+}
+
+export function wireMediatorBroadcastChannel({appId, authMediator}: {
+		appId: string
+		authMediator: AuthMediator
+	}) {
 	const channel = new BroadcastChannel("tokenChangeEvent")
-	authMediator.subscribeToTokenChange(() => channel.postMessage(undefined))
-	channel.onmessage = () => authMediator.initialize()
+	authMediator.subscribeToTokenChange(() => channel.postMessage(<TokenChangeMessage>{appId}))
+	channel.onmessage = (event: MessageEvent<TokenChangeMessage>) => {
+		if (event.data.appId === appId)
+			authMediator.initialize()
+	}
 }
