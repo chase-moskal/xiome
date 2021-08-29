@@ -8,9 +8,11 @@ import {xiomeAuthComponents} from "./component-groups/xiome-auth-components.js"
 import {XiomeComponentOptions} from "./component-groups/types/xiome-component-options.js"
 import {xiomeQuestionsComponents} from "./component-groups/xiome-questions-components.js"
 import {xiomeAdministrativeComponents} from "./component-groups/xiome-administrative-components.js"
+import {xiomeExampleComponents} from "./component-groups/xiome-example-components.js"
 
 export function getComponents(options: XiomeComponentOptions) {
 	return themeComponents(theme, {
+		...xiomeExampleComponents(options),
 		...xioComponents(),
 		...xiomeAuthComponents(options),
 

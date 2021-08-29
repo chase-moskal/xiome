@@ -1,8 +1,9 @@
 
 // import {makeStoreModel} from "../../features/store/model/store-model.js"
 import {AssembleModelsOptions} from "./types/assemble-models-options.js"
-import {makeQuestionsModel} from "../../features/questions/model/questions-model.js"
+import {makeExampleModel} from "../../features/example/model/example-model.js"
 import {makeAppsModel} from "../../features/auth/aspects/apps/models/apps-model.js"
+import {makeQuestionsModel} from "../../features/questions/model/questions-model.js"
 import {makeAccessModel} from "../../features/auth/aspects/users/models/access-model.js"
 import {makePersonalModel} from "../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../features/administrative/models/administrative-model.js"
@@ -22,6 +23,8 @@ export async function assembleModels({
 	})
 
 	const {getValidAccess, reauthorize} = accessModel
+
+	const exampleModel = makeExampleModel({})
 
 	const personalModel = makePersonalModel({
 		reauthorize,
@@ -63,6 +66,7 @@ export async function assembleModels({
 
 	accessModel.onAccessChange(async access => {
 		await Promise.all([
+			exampleModel.accessChange(access),
 			appsModel.accessChange(),
 			permissionsModel.accessChange(access),
 			// storeModel.accessChange(access),
@@ -72,6 +76,7 @@ export async function assembleModels({
 	})
 
 	return {
+		exampleModel,
 		appsModel,
 		accessModel,
 		// storeModel,
