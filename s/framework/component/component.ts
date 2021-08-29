@@ -3,6 +3,7 @@ import {LitElement, PropertyValues, TemplateResult} from "lit-element"
 
 import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
+import {LitBase} from "./types/component-types.js"
 
 export * from "lit-element"
 export {render} from "lit-html"

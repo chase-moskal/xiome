@@ -20,6 +20,11 @@ export interface LitBase extends
 	CustomElement
 		{}
 
+export interface ComponentBaseWithShare<xShare> extends LitBase {
+	readonly share: xShare
+	init(): void
+}
+
 export type CSS = CSSResult | CSSResultArray | CSSStyleSheet
 
 export interface LitBaseClass {
