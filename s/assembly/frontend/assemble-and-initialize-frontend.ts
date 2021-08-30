@@ -1,10 +1,9 @@
 
 import {Remote} from "renraku/x/types/remote/remote.js"
 
-import {getComponents} from "./get-components.js"
-import {assembleModels} from "./assemble-models.js"
+import {assembleModels} from "./models/assemble-models.js"
 import {SystemApi} from "../backend/types/system-api.js"
-import {html} from "../../framework/component/component.js"
+import {getComponents} from "./components/get-components.js"
 import {setupModalSystem} from "./modal/setup-modal-system.js"
 import {SystemPopups} from "./connect/system-popups/types/system-popups.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"

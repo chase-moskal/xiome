@@ -1,5 +1,5 @@
 
-import {makeRemote} from "../make-remote.js"
+import {makeRemote} from "./remote/make-remote.js"
 import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfig} from "../types/xiome-config-connected.js"
 import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"

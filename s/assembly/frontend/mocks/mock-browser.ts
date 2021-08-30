@@ -1,6 +1,6 @@
 
 import {mockRemote} from "./mock-remote.js"
-import {assembleModels} from "../assemble-models.js"
+import {assembleModels} from "../models/assemble-models.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"

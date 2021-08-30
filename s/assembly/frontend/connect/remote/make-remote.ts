@@ -2,8 +2,8 @@
 import {generateRemote} from "renraku/x/remote/generate-remote.js"
 import {makeJsonRequester} from "renraku/x/remote/make-json-requester.js"
 
-import {prepareApiShape} from "./auth/prepare-api-shape.js"
-import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {prepareApiShape} from "../../auth/prepare-api-shape.js"
+import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export function makeRemote({
 		appId,
