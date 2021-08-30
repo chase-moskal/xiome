@@ -13,7 +13,7 @@
 	"scripts": {
 		"build": "run-s clean && run-p importmap compile-tsc compile-pug compile-sass compile-web-assets && run-s cleanup-devstuff compile-bundles stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
-		"importmap": "importly --host=node_modules < package.json > x/importmap.json",
+		"importmap": "importly --host=node_modules --production < package-lock.json > x/importmap.json",
 		"compile-tsc": "tsc",
 		"compile-pug": "pug -o x web -O '{\"debug\": false}'",
 		"compile-pug-dev": "pug -o x web -O '{\"debug\": true}'",
@@ -45,7 +45,7 @@
 		"@types/node": "^16.6.1",
 		"@types/pug": "^2.0.5",
 		"chokidar-cli": "^3.0.0",
-		"cynic": "^0.1.0-dev.16",
+		"cynic": "0.1.0-dev.16",
 		"es-module-shims": "^0.12.2",
 		"importly": "0.1.0-dev.0",
 		"mkdirp": "^1.0.4",
