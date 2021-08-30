@@ -29,4 +29,4 @@ jobs:
     - name: npm install and build
       shell: bash
       run: |
-        npm install && npm run build
+        npm ci && npm run build
