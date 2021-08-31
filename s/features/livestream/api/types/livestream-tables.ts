@@ -1,12 +1,11 @@
 
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
 
 export type LivestreamTables = {
-	examplePosts: DbbyTable<ExamplePost>
+	shows: DbbyTable<LivestreamShow>
 }
 
-export type ExamplePost = {
-	exampleId: DamnId
-	something: string
+export type LivestreamShow = {
+	label: string
+	vimeoId: null | string
 }

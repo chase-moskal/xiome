@@ -86,8 +86,13 @@ export function each<xValue>(
 	}
 }
 
+export const defined = (): Validator<any> => value =>
+	(value === undefined || value === null)
+		? ["must be defined (not undefined or null)"]
+		: []
+
 export const notDefined = (): Validator<undefined> => value =>
-	typeof value !== undefined
+	(value !== undefined && value !== null)
 		? ["must be undefined or null"]
 		: []
 

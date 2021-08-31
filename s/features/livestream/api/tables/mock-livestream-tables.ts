@@ -5,6 +5,6 @@ import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage
 
 export async function mockLivestreamTables(tableStorage: FlexStorage) {
 	return await mockStorageTables<LivestreamTables>(tableStorage, {
-		examplePosts: true,
+		shows: true,
 	})
 }
