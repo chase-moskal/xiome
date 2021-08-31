@@ -1,9 +1,8 @@
 
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
-import {ExampleModelOptions} from "./types/example-model-options.js"
 
-export function makeExampleModel(options: ExampleModelOptions) {
+export function makeExampleModel(options: {}) {
 
 	const happy = happystate({
 		state: {},
