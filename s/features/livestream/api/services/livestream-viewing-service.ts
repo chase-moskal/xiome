@@ -1,12 +1,12 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {schema} from "../../../../toolbox/darkvalley.js"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {LivestreamAuth} from "../types/livestream-auths.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {LivestreamApiOptions} from "../types/livestream-api-options.js"
 import {validateShowLabel} from "../validation/livestream-validators.js"
+import {array, each, one, schema} from "../../../../toolbox/darkvalley.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 
 export const makeLivestreamViewingService = ({
@@ -22,17 +22,21 @@ export const makeLivestreamViewingService = ({
 
 	expose: {
 
-		async getShow({livestreamTables}, inputs: {label: string}) {
-			const {label} = runValidation(inputs, schema({
-				label: validateShowLabel,
+		async getShows({livestreamTables}, inputs: {
+				labels: string[]
+			}) {
+			const {labels} = runValidation(inputs, schema({
+				labels: one<string[]>(
+					each(validateShowLabel)
+				),
 			}))
-			const show = await livestreamTables.shows.one(
-				find({label})
+			const shows = await livestreamTables.shows.read(
+				findAll(labels, label => ({label}))
 			)
-			return {
-				label: show.label,
-				vimeoId: show.vimeoId,
-			}
+			return labels.map(label => {
+				return shows.find(show => show.label === label)
+					?? {label, vimeoId: null}
+			})
 		}
 	},
 })

@@ -121,7 +121,7 @@ export const max = (threshold: number): Validator<number> => value =>
 		? ["too big"]
 		: []
 
-export const array = (): Validator<string> => value =>
+export const array = (): Validator<any[]> => value =>
 	Array.isArray(value)
 		? []
 		: ["must be an array"]
