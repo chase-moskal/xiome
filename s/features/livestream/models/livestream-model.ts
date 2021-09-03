@@ -22,20 +22,29 @@ export function makeLivestreamModel({
 
 	const happy = happystate({
 		state: {
-			shows: <{[label: string]: LivestreamShow}>{},
+			access: <Op<AccessPayload>>ops.none(),
+			shows: <{[label: string]: Op<LivestreamShow>}>{},
 		},
 		actions: state => ({
-			setShows(...shows: LivestreamShow[]) {
-				const merged = {...state.shows}
-				for (const show of shows)
-					merged[show.label] = show
-				state.shows = merged
+			setAccess(op: Op<AccessPayload>) {
+				state.access = op
+			},
+			setShow(label: string, show: Op<LivestreamShow>) {
+				state.shows = {
+					...state.shows,
+					[label]: show,
+				}
 			},
 			clearShows() {
 				state.shows = {}
 			},
 		}),
 	})
+
+	function getShow(label: string) {
+		return happy.getState().shows[label]
+			?? ops.ready({label, vimeoId: null})
+	}
 
 	function getRights(): LivestreamRights {
 		const access = ops.value(getAccess())
@@ -52,39 +61,42 @@ export function makeLivestreamModel({
 				: LivestreamRights.Forbidden
 	}
 
-	function getShow(label: string) {
-		return happy.getState().shows[label] ?? {label, vimeoId: null}
-	}
-
-	async function refreshShow(label: string) {
+	async function loadShow(label: string) {
 		if (getRights() !== LivestreamRights.Forbidden)
-			happy.actions.setShows(
-				...await livestreamViewingService.getShows({
-					labels: [label],
-				})
-			)
+			ops.operation({
+				promise: livestreamViewingService.getShows({labels: [label]}).then(shows => shows[0]),
+				setOp: op => happy.actions.setShow(label, op),
+			})
 		else
 			happy.actions.clearShows()
 	}
 
 	async function refreshAllShows() {
-		if (getRights() !== LivestreamRights.Forbidden)
-			happy.actions.setShows(
-				...await livestreamViewingService.getShows({
-					labels: Object.keys(happy.getState().shows),
-				})
-			)
+		if (getRights() !== LivestreamRights.Forbidden) {
+			const labels = Object.keys(happy.getState().shows)
+			ops.operation({
+				promise: livestreamViewingService.getShows({labels}),
+				setOp: op => {
+					labels.forEach((label, index) => {
+						const show = ops.isReady(op)
+							? ops.value(op)[index]
+							: undefined
+						happy.actions.setShow(label, ops.replaceValue(op, show))
+					})
+				},
+			})
+		}
 		else
 			happy.actions.clearShows()
 	}
 
 	return {
 		...happy,
-		getAccess,
 		getShow,
 		getRights,
-		refreshShow: debounce3(200, refreshShow),
+		loadShow: debounce3(200, loadShow),
 		accessChange: async(access: AccessPayload) => {
+			happy.actions.setAccess(getAccess())
 			await refreshAllShows()
 		}
 	}

@@ -18,21 +18,21 @@ export class XiomeLivestream extends ComponentWithShare<{
 
 	updated(props) {
 		if (props.has("label") && props.get("label") !== this.label)
-			this.share.livestreamModel.refreshShow("label")
+			this.share.livestreamModel.loadShow(this.label)
 	}
 
-	#renderStreamViewer() {
-		const show = this.share.livestreamModel.getShow(this.label)
-		return html`
+	#renderStreamViewer = () => {
+		const showOp = this.share.livestreamModel.getShow(this.label)
+		return renderOp(showOp, show => html`
 			<p>
 				${show.vimeoId
-					? `vimeo id ${show.vimeoId}`
+					? `label "${show.label}", vimeo id ${show.vimeoId}`
 					: `no vimeo id for show "${show.label}"`}
 			</p>
-		`
+		`)
 	}
 
-	render() {
+	#renderForRights = () => {
 		switch (this.share.livestreamModel.getRights()) {
 			case LivestreamRights.Forbidden: return html`
 				<p>you are forbidden lol</p>
@@ -43,7 +43,15 @@ export class XiomeLivestream extends ComponentWithShare<{
 			`
 			case LivestreamRights.Moderator: return html`
 				<p>you are moderator</p>
+				${this.#renderStreamViewer()}
 			`
 		}
+	}
+
+	render() {
+		return renderOp(
+			this.share.livestreamModel.getState().access,
+			this.#renderForRights,
+		)
 	}
 }
