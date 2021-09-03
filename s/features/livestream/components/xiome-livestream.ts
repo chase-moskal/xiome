@@ -1,5 +1,5 @@
 
-import {makeLivestreamModel} from "../model/livestream-model.js"
+import {makeLivestreamModel} from "../models/livestream-model.js"
 import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
 import {ComponentWithShare, html, mixinStyles, property} from "../../../framework/component/component.js"
 
