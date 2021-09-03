@@ -5,9 +5,10 @@ import {debounce3} from "../../../toolbox/debounce2.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
+import {LivestreamRights} from "../components/types/livestream-rights.js"
 import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
-import {makeLivestreamModerationService} from "../api/services/livestream-moderation-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
+import {makeLivestreamModerationService} from "../api/services/livestream-moderation-service.js"
 
 export function makeLivestreamModel({
 		livestreamViewingService,
@@ -36,16 +37,19 @@ export function makeLivestreamModel({
 		}),
 	})
 
-	const getPermissions = () => {
+	function getRights(): LivestreamRights {
 		const access = ops.value(getAccess())
-		return {
-			canView: access
-				? access.permit.privileges.includes(appPermissions.privileges["view livestream"])
-				: false,
-			canModerate: access
-				? access.permit.privileges.includes(appPermissions.privileges["moderate livestream"])
-				: false,
-		}
+		const canView = access
+			? access.permit.privileges.includes(appPermissions.privileges["view livestream"])
+			: false
+		const canModerate = access
+			? access.permit.privileges.includes(appPermissions.privileges["moderate livestream"])
+			: false
+		return canModerate
+			? LivestreamRights.Moderator
+			: canView
+				? LivestreamRights.Viewer
+				: LivestreamRights.Forbidden
 	}
 
 	function getShow(label: string) {
@@ -53,31 +57,32 @@ export function makeLivestreamModel({
 	}
 
 	async function refreshShow(label: string) {
-		happy.actions.setShows(
-			...await livestreamViewingService.getShows({
-				labels: [label],
-			})
-		)
+		if (getRights() !== LivestreamRights.Forbidden)
+			happy.actions.setShows(
+				...await livestreamViewingService.getShows({
+					labels: [label],
+				})
+			)
+		else
+			happy.actions.clearShows()
 	}
 
 	async function refreshAllShows() {
-		const permissions = getPermissions()
-		if (permissions.canView) {
+		if (getRights() !== LivestreamRights.Forbidden)
 			happy.actions.setShows(
 				...await livestreamViewingService.getShows({
 					labels: Object.keys(happy.getState().shows),
 				})
 			)
-		}
-		else {
+		else
 			happy.actions.clearShows()
-		}
 	}
 
 	return {
 		...happy,
 		getAccess,
 		getShow,
+		getRights,
 		refreshShow: debounce3(200, refreshShow),
 		accessChange: async(access: AccessPayload) => {
 			await refreshAllShows()
