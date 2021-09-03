@@ -8,6 +8,7 @@ import {LivestreamApiOptions} from "../types/livestream-api-options.js"
 import {validateShowLabel} from "../validation/livestream-validators.js"
 import {array, each, one, schema} from "../../../../toolbox/darkvalley.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 
 export const makeLivestreamViewingService = ({
 		authPolicies,
@@ -17,7 +18,11 @@ export const makeLivestreamViewingService = ({
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("view livestream")
-		return {...auth, livestreamTables}
+		const appId = DamnId.fromString(auth.access.appId)
+		return {
+			...auth,
+			livestreamTables: livestreamTables.namespaceForApp(appId),
+		}
 	},
 
 	expose: {

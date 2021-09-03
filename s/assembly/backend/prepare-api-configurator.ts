@@ -33,6 +33,8 @@ import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-
 import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 import {Unconstrain, UnconstrainedTables} from "../../framework/api/types/table-namespacing-for-apps.js"
 import {standardNicknameGenerator} from "../../features/auth/utils/nicknames/standard-nickname-generator.js"
+import {exampleApi} from "../../features/example/api/example-api.js"
+import {livestreamApi} from "../../features/livestream/api/livestream-api.js"
 
 export function prepareApiConfigurator(configurators: {
 		configureMongo: typeof configureMongo
@@ -107,11 +109,17 @@ export function prepareApiConfigurator(configurators: {
 						userHasRole: true,
 					},
 				},
+				example: {
+					examplePosts: true,
+				},
 				questions: {
 					likes: true,
 					reports: true,
 					answerPosts: true,
 					questionPosts: true,
+				},
+				livestream: {
+					shows: true,
 				},
 				store: {
 					billing: {
@@ -249,6 +257,16 @@ export function prepareApiConfigurator(configurators: {
 					authPolicies,
 					questionsTables: database.questions,
 				}),
+				example: exampleApi({
+					rando,
+					config,
+					authPolicies,
+					exampleTables: database.example,
+				}),
+				livestream: livestreamApi({
+					authPolicies,
+					livestreamTables: database.livestream,
+				})
 			})
 		})()
 

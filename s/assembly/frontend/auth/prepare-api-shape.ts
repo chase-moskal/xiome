@@ -68,6 +68,12 @@ export function prepareApiShape({appId, storage}: {
 				},
 			},
 		},
+		example: {
+			exampleService: {
+				[_meta]: standardMeta,
+				exampleFunction: true,
+			},
+		},
 		administrative: {
 			roleAssignmentService: {
 				[_meta]: standardMeta,
@@ -100,6 +106,16 @@ export function prepareApiShape({appId, storage}: {
 				likeAnswer: true,
 				postAnswer: true,
 				reportAnswer: true,
+			},
+		},
+		livestream: {
+			livestreamViewingService: {
+				[_meta]: standardMeta,
+				getShows: true,
+			},
+			livestreamModerationService: {
+				[_meta]: standardMeta,
+				setShow: true,
 			},
 		},
 	})

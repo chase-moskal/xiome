@@ -2,7 +2,7 @@
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {ExampleApiOptions} from "../types/example-api-options.js"
 import {ExampleUserAuth} from "../types/example-metas-and-auth.js"
 
@@ -15,9 +15,10 @@ export const makeExampleService = ({
 
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
+		const appId = DamnId.fromString(auth.access.appId)
 		return {
 			...auth,
-			exampleTables,
+			exampleTables: exampleTables.namespaceForApp(appId),
 		}
 	},
 

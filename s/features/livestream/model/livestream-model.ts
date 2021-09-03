@@ -1,12 +1,12 @@
 
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
+import {debounce3} from "../../../toolbox/debounce2.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
 import {makeLivestreamModerationService} from "../api/services/livestream-moderation-service.js"
-import {debounce3} from "../../../toolbox/debounce2.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export function makeLivestreamModel({
@@ -52,7 +52,7 @@ export function makeLivestreamModel({
 		return happy.getState().shows[label] ?? {label, vimeoId: null}
 	}
 
-	async function refresh(label: string) {
+	async function refreshShow(label: string) {
 		happy.actions.setShows(
 			...await livestreamViewingService.getShows({
 				labels: [label],
@@ -60,7 +60,7 @@ export function makeLivestreamModel({
 		)
 	}
 
-	async function refreshAll() {
+	async function refreshAllShows() {
 		const permissions = getPermissions()
 		if (permissions.canView) {
 			happy.actions.setShows(
@@ -78,9 +78,9 @@ export function makeLivestreamModel({
 		...happy,
 		getAccess,
 		getShow,
-		refresh: debounce3(200, refresh),
+		refreshShow: debounce3(200, refreshShow),
 		accessChange: async(access: AccessPayload) => {
-			await refreshAll()
+			await refreshAllShows()
 		}
 	}
 }

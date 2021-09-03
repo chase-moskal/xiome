@@ -8,6 +8,7 @@ import {xiomeAuthComponents} from "./groups/xiome-auth-components.js"
 import {xiomeExampleComponents} from "./groups/xiome-example-components.js"
 import {xiomeQuestionsComponents} from "./groups/xiome-questions-components.js"
 import {xiomeAdministrativeComponents} from "./groups/xiome-administrative-components.js"
+import {xiomeLivestreamComponents} from "./groups/xiome-livestream-components.js"
 
 export function getComponents(options: XiomeComponentOptions) {
 	return themeComponents(theme, {
@@ -16,6 +17,7 @@ export function getComponents(options: XiomeComponentOptions) {
 		...xiomeAuthComponents(options),
 		...xiomeQuestionsComponents(options),
 		...xiomeAdministrativeComponents(options),
+		...xiomeLivestreamComponents(options),
 
 		// // TODO reactivate store
 		// ...xiomeStoreComponents(options),

@@ -8,6 +8,7 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
+import {makeLivestreamModel} from "../../../features/livestream/model/livestream-model.js"
 
 export async function assembleModels({
 		appId,
@@ -43,6 +44,11 @@ export async function assembleModels({
 		reauthorize,
 	})
 
+	const livestreamModel = makeLivestreamModel({
+		...remote.livestream,
+		getAccess: () => accessModel.access,
+	})
+
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
 	// 	appId,
@@ -72,6 +78,7 @@ export async function assembleModels({
 			// storeModel.accessChange(access),
 			questionsModel.accessChange(access),
 			administrativeModel.accessChange(access),
+			livestreamModel.accessChange(access),
 		])
 	})
 
@@ -82,6 +89,7 @@ export async function assembleModels({
 		// storeModel,
 		personalModel,
 		questionsModel,
+		livestreamModel,
 		permissionsModel,
 		administrativeModel,
 	}

@@ -2,8 +2,9 @@
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {LivestreamAuth} from "../types/livestream-auths.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {LivestreamApiOptions} from "../types/livestream-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {branch, maxLength, minLength, one, schema, string} from "../../../../toolbox/darkvalley.js"
@@ -16,7 +17,11 @@ export const makeLivestreamModerationService = ({
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("moderate livestream")
-		return {...auth, livestreamTables}
+		const appId = DamnId.fromString(auth.access.appId)
+		return {
+			...auth,
+			livestreamTables: livestreamTables.namespaceForApp(appId),
+		}
 	},
 
 	expose: {
