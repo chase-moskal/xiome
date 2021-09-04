@@ -6,19 +6,19 @@ import {XiomeMyAccount} from "../../../../features/auth/aspects/users/components
 import {XiomeAppManager} from "../../../../features/auth/aspects/apps/components/app-manager/xiome-app-manager.js"
 import {XiomeLoginPanel} from "../../../../features/auth/aspects/users/components/login-panel/xiome-login-panel.js"
 import {XiomePermissions} from "../../../../features/auth/aspects/permissions/components/permissions/xiome-permissions.js"
-import {mixinMadstateSubscriptions, mixinMadstateTracking} from "../../../../framework/component/mixins/mixin-madstate.js"
+import {mixinMadstateSubscriptions} from "../../../../framework/component/mixins/mixin-madstate.js"
 
 export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 	const {accessModel, appsModel, personalModel, permissionsModel} = models
 	return {
 		XiomeMyAvatar:
-			mixinHappy(accessModel.onStateChange)(
+			mixinMadstateSubscriptions(accessModel.subscribe)(
 				mixinShare({
 					accessModel,
 				})(XiomeMyAvatar)
 			),
 		XiomeLoginPanel:
-			mixinHappy(accessModel.onStateChange)(
+			mixinMadstateSubscriptions(accessModel.subscribe)(
 				mixinShare({
 					accessModel,
 				})(XiomeLoginPanel)

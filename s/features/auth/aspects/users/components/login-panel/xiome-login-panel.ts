@@ -6,10 +6,10 @@ import {email} from "../../../../../../toolbox/darkvalley.js"
 import {AccessPayload} from "../../../../types/auth-tokens.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
-import {AutowatcherComponentWithShare, html, mixinStyles, property, query} from "../../../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeLoginPanel extends AutowatcherComponentWithShare<{accessModel: ReturnType<typeof makeAccessModel>}> {
+export class XiomeLoginPanel extends ComponentWithShare<{accessModel: ReturnType<typeof makeAccessModel>}> {
 
 	@property({type: Boolean, reflect: true})
 	["show-logout"]: boolean = false
@@ -45,7 +45,7 @@ export class XiomeLoginPanel extends AutowatcherComponentWithShare<{accessModel:
 	}
 
 	subscribe() {
-		return this.share.accessModel.onStateChange(() => {
+		return this.share.accessModel.subscribe(() => {
 			this.resetSentLoading()
 		})
 	}

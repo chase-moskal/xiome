@@ -3,29 +3,23 @@ import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AccessLoginExpiredError} from "./errors/access-errors.js"
 import {AccessModelOptions} from "./types/access-model-options.js"
+import {madstate} from "../../../../../toolbox/madstate/madstate.js"
 import {isTokenValid} from "../../../utils/tokens/is-token-valid.js"
-import {happystate} from "../../../../../toolbox/happystate/happystate.js"
 
 export function makeAccessModel({authMediator, loginService}: AccessModelOptions) {
-	const happy = happystate({
-		state: {
-			accessOp: <Op<AccessPayload>>ops.none(),
-		},
-		actions: state => ({
-			setAccessOp(op: Op<AccessPayload>) {
-				state.accessOp = op
-			}
-		}),
+
+	const state = madstate({
+		accessOp: <Op<AccessPayload>>ops.none(),
 	})
 
 	authMediator.subscribeToAccessChange(access => {
-		happy.actions.setAccessOp(ops.ready(access))
+		state.writable.accessOp = ops.ready(access)
 	})
 
 	async function accessOperation(promise: Promise<AccessPayload>) {
 		return ops.operation({
 			promise,
-			setOp: op => happy.actions.setAccessOp(op),
+			setOp: op => state.writable.accessOp = op,
 		})
 	}
 
@@ -49,7 +43,7 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 			}
 			catch (error) {
 				console.error(error)
-				happy.actions.setAccessOp(ops.none())
+				state.writable.accessOp = ops.none()
 				await accessOperation(authMediator.initialize())
 				throw error
 			}
@@ -57,7 +51,7 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 		async logout() {
 			await ops.operation({
 				promise: authMediator.logout(),
-				setOp: op => happy.actions.setAccessOp(op),
+				setOp: op => state.writable.accessOp = op,
 			})
 		},
 		async reauthorize() {
@@ -66,13 +60,15 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 	}
 
 	return {
-		...happy,
+		readable: state.readable,
+		track: state.track,
+		subscribe: state.subscribe,
 		...loginFacilities,
 		getAccessOp() {
-			return happy.getState().accessOp
+			return state.readable.accessOp
 		},
 		getAccess() {
-			return ops.value(happy.getState().accessOp)
+			return ops.value(state.readable.accessOp)
 		},
 		getValidAccess() {
 			return authMediator.getValidAccess()
