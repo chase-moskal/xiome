@@ -64,10 +64,10 @@ export function makeAuthMediator({
 			await accessEvent.publish(access)
 			return access
 		},
-		async getAccess() {
+		async getValidAccess() {
 			return (await obtainAccessAndReauthorizeIfNecessary()).access
 		},
-		async getAccessToken() {
+		async getValidAccessToken() {
 			return (await obtainAccessAndReauthorizeIfNecessary()).accessToken
 		},
 		async login(tokens: AuthTokens) {

@@ -13,11 +13,11 @@ import {makeLivestreamModerationService} from "../api/services/livestream-modera
 export function makeLivestreamModel({
 		livestreamViewingService,
 		livestreamModerationService,
-		getAccess,
+		getAccessOp,
 	}: {
 		livestreamViewingService: Service<typeof makeLivestreamViewingService>
 		livestreamModerationService: Service<typeof makeLivestreamModerationService>
-		getAccess: () => Op<AccessPayload>
+		getAccessOp: () => Op<AccessPayload>
 	}) {
 
 	const happy = happystate({
@@ -47,7 +47,7 @@ export function makeLivestreamModel({
 	}
 
 	function getRights(): LivestreamRights {
-		const access = ops.value(getAccess())
+		const access = ops.value(getAccessOp())
 		const canView = access
 			? access.permit.privileges.includes(appPermissions.privileges["view livestream"])
 			: false
@@ -95,9 +95,9 @@ export function makeLivestreamModel({
 		getShow,
 		getRights,
 		loadShow: debounce3(200, loadShow),
-		accessChange: async(access: AccessPayload) => {
-			happy.actions.setAccess(getAccess())
+		async updateAccessOp(op: Op<AccessPayload>) {
+			happy.actions.setAccess(op)
 			await refreshAllShows()
-		}
+		},
 	}
 }

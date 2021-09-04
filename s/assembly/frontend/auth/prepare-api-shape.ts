@@ -17,7 +17,7 @@ export function prepareApiShape({appId, storage}: {
 	let authMediator: AuthMediator
 
 	const standardMeta = async() => ({
-		accessToken: await authMediator.getAccessToken(),
+		accessToken: await authMediator.getValidAccessToken(),
 	})
 
 	const shape = asShape<SystemApi>({

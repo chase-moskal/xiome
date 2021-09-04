@@ -1,43 +1,38 @@
 
 import {Op, ops} from "../../../../../framework/ops.js"
+import {AccessPayload} from "../../../types/auth-tokens.js"
+import {madstate} from "../../../../../toolbox/madstate/madstate.js"
 import {PersonalModelOptions} from "./types/personal-model-options.js"
 import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
-import {autowatcher} from "../../../../../toolbox/autowatcher/autowatcher.js"
 
 export function makePersonalModel({
 		personalService,
-		getAccess,
+		getAccessOp,
 		reauthorize,
 	}: PersonalModelOptions) {
 
-	const auto = autowatcher()
-
-	const state = auto.state({
-		submitDraftOp: <Op<void>>ops.ready(undefined)
-	})
-
-	const actions = auto.actions({
-		setSubmitDraft(op: Op<void>) {
-			state.submitDraftOp = op
-		},
+	const {readable, writable, track, subscribe} = madstate({
+		accessOp: <Op<AccessPayload>>getAccessOp(),
+		submitDraftOp: <Op<void>>ops.ready(undefined),
 	})
 
 	return {
-		get submitDraftOp() {
-			return state.submitDraftOp
-		},
+		track,
+		subscribe,
+		readable,
 		async saveProfile(profileDraft: ProfileDraft) {
 			await ops.operation({
 				promise: (async() => {
-					const {user: {userId}} = await getAccess()
+					const {user: {userId}} = ops.value(readable.accessOp)
 					await personalService.setProfile({userId, profileDraft})
 					await reauthorize()
 				})(),
 				errorReason: "error saving profile",
-				setOp(op) {
-					actions.setSubmitDraft(op)
-				},
+				setOp(op) { writable.submitDraftOp = op },
 			})
-		}
+		},
+		updateAccessOp(op: Op<AccessPayload>) {
+			writable.accessOp = op
+		},
 	}
 }

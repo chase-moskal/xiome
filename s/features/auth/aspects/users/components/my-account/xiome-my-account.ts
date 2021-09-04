@@ -1,14 +1,12 @@
 
 import styles from "./xiome-my-account.css.js"
-import {makeAccessModel} from "../../models/access-model.js"
 import {makePersonalModel} from "../../models/personal-model.js"
 import {ProfileDraft} from "../../routines/personal/types/profile-draft.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
-import {AutowatcherComponentWithShare, html, mixinStyles} from "../../../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles} from "../../../../../../framework/component/component.js"
 
 @mixinStyles(styles)
-export class XiomeMyAccount extends AutowatcherComponentWithShare<{
-		accessModel: ReturnType<typeof makeAccessModel>
+export class XiomeMyAccount extends ComponentWithShare<{
 		personalModel: ReturnType<typeof makePersonalModel>
 	}> {
 
@@ -17,7 +15,8 @@ export class XiomeMyAccount extends AutowatcherComponentWithShare<{
 	}
 
 	render() {
-		return renderOp(this.share.accessModel.access, ({user}) => html`
+		const {accessOp} = this.share.personalModel.readable
+		return renderOp(accessOp, ({user}) => html`
 			<xio-profile-card
 				show-details
 				.user=${user}

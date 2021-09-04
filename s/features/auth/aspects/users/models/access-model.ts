@@ -1,54 +1,41 @@
 
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
+import {AccessLoginExpiredError} from "./errors/access-errors.js"
 import {AccessModelOptions} from "./types/access-model-options.js"
 import {isTokenValid} from "../../../utils/tokens/is-token-valid.js"
-import {autowatcher} from "../../../../../toolbox/autowatcher/autowatcher.js"
-import {AccessLoginExpiredError} from "./errors/access-errors.js"
+import {happystate} from "../../../../../toolbox/happystate/happystate.js"
 
 export function makeAccessModel({authMediator, loginService}: AccessModelOptions) {
-	const auto = autowatcher()
-	const state = auto.state({
-		access: <Op<AccessPayload>>ops.none(),
-	})
-	const actions = auto.actions({
-		setAccess(op: Op<AccessPayload>) {
-			state.access = op
+	const happy = happystate({
+		state: {
+			accessOp: <Op<AccessPayload>>ops.none(),
 		},
+		actions: state => ({
+			setAccessOp(op: Op<AccessPayload>) {
+				state.accessOp = op
+			}
+		}),
 	})
 
 	authMediator.subscribeToAccessChange(access => {
-		actions.setAccess(ops.ready(access))
+		happy.actions.setAccessOp(ops.ready(access))
 	})
 
 	async function accessOperation(promise: Promise<AccessPayload>) {
 		return ops.operation({
 			promise,
-			setOp: op => actions.setAccess(op),
+			setOp: op => happy.actions.setAccessOp(op),
 		})
 	}
 
-	return {
-		track: auto.track,
-
-		get access() {
-			return state.access
-		},
-
-		onAccessChange: authMediator.subscribeToAccessChange,
-
-		async getValidAccess(): Promise<AccessPayload> {
-			return authMediator.getAccess()
-		},
-
+	const loginFacilities = {
 		async useExistingLogin() {
 			await accessOperation(authMediator.initialize())
 		},
-
 		async sendLoginLink(email: string) {
 			return loginService.sendLoginLink({email})
 		},
-
 		async login(loginToken: string) {
 			try {
 				if (isTokenValid(loginToken)) 
@@ -62,21 +49,33 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 			}
 			catch (error) {
 				console.error(error)
-				actions.setAccess(ops.none())
+				happy.actions.setAccessOp(ops.none())
 				await accessOperation(authMediator.initialize())
 				throw error
 			}
 		},
-
 		async logout() {
 			await ops.operation({
 				promise: authMediator.logout(),
-				setOp: op => actions.setAccess(op),
+				setOp: op => happy.actions.setAccessOp(op),
 			})
 		},
-
 		async reauthorize() {
 			await accessOperation(authMediator.reauthorize())
+		},
+	}
+
+	return {
+		...happy,
+		...loginFacilities,
+		getAccessOp() {
+			return happy.getState().accessOp
+		},
+		getAccess() {
+			return ops.value(happy.getState().accessOp)
+		},
+		getValidAccess() {
+			return authMediator.getValidAccess()
 		},
 	}
 }

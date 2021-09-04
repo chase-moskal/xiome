@@ -45,7 +45,7 @@ export class XiomeLoginPanel extends AutowatcherComponentWithShare<{accessModel:
 	}
 
 	subscribe() {
-		return this.share.accessModel.onAccessChange(() => {
+		return this.share.accessModel.onStateChange(() => {
 			this.resetSentLoading()
 		})
 	}
@@ -125,7 +125,7 @@ export class XiomeLoginPanel extends AutowatcherComponentWithShare<{accessModel:
 	}
 
 	render() {
-		const {access: accessOp} = this.share.accessModel
+		const accessOp = this.share.accessModel.getAccessOp()
 		return renderOp(accessOp, access => access?.user
 			? this.renderLoggedIn(access)
 			: this.renderLoggedOut()

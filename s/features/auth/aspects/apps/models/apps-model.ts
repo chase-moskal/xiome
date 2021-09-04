@@ -9,7 +9,7 @@ import {happystate} from "../../../../../toolbox/happystate/happystate.js"
 export function makeAppsModel({
 		appService,
 		appEditService,
-		getAccess,
+		getValidAccess,
 	}: AppModelOptions) {
 
 	const {actions, getState, onStateChange} = happystate({
@@ -59,7 +59,7 @@ export function makeAppsModel({
 	})
 
 	async function getUserId() {
-		const access = await getAccess()
+		const access = await getValidAccess()
 		return access?.user?.userId
 	}
 

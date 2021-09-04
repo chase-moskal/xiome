@@ -7,5 +7,5 @@ import {makeAppEditService} from "../../services/app-edit-service.js"
 export interface AppModelOptions {
 	appService: Service<typeof makeAppService>
 	appEditService: Service<typeof makeAppEditService>
-	getAccess: () => Promise<AccessPayload>
+	getValidAccess: () => Promise<AccessPayload>
 }

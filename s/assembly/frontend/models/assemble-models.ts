@@ -5,10 +5,10 @@ import {makeExampleModel} from "../../../features/example/models/example-model.j
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
 import {makeQuestionsModel} from "../../../features/questions/model/questions-model.js"
 import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
+import {makeLivestreamModel} from "../../../features/livestream/models/livestream-model.js"
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
-import {makeLivestreamModel} from "../../../features/livestream/models/livestream-model.js"
 
 export async function assembleModels({
 		appId,
@@ -23,20 +23,20 @@ export async function assembleModels({
 		loginService: remote.auth.users.loginService,
 	})
 
-	const {getValidAccess, reauthorize} = accessModel
+	const {getAccessOp, getAccess, getValidAccess, reauthorize} = accessModel
 
-	const exampleModel = makeExampleModel({})
+	const exampleModel = makeExampleModel({getAccessOp})
 
 	const personalModel = makePersonalModel({
-		reauthorize,
-		getAccess: getValidAccess,
 		personalService: remote.auth.users.personalService,
+		getAccessOp,
+		reauthorize,
 	})
 
 	const appsModel = makeAppsModel({
-		getAccess: getValidAccess,
 		appService: remote.auth.apps.appService,
 		appEditService: remote.auth.apps.appEditService,
+		getValidAccess,
 	})
 
 	const permissionsModel = makePermissionsModel({
@@ -46,7 +46,7 @@ export async function assembleModels({
 
 	const livestreamModel = makeLivestreamModel({
 		...remote.livestream,
-		getAccess: () => accessModel.access,
+		getAccessOp,
 	})
 
 	// // TODO reactivate store
@@ -67,18 +67,21 @@ export async function assembleModels({
 
 	const questionsModel = makeQuestionsModel({
 		...remote.questions,
-		getAccess: () => accessModel.access,
+		getAccess: getAccessOp,
 	})
 
-	accessModel.onAccessChange(async access => {
+	accessModel.onStateChange(async() => {
+		const access = getAccess()
+		const accessOp = getAccessOp()
 		await Promise.all([
-			exampleModel.accessChange(access),
+			exampleModel.updateAccessOp(accessOp),
+			personalModel.updateAccessOp(accessOp),
+			livestreamModel.updateAccessOp(accessOp),
 			appsModel.accessChange(),
 			permissionsModel.accessChange(access),
-			// storeModel.accessChange(access),
 			questionsModel.accessChange(access),
 			administrativeModel.accessChange(access),
-			livestreamModel.accessChange(access),
+			// storeModel.accessChange(access),
 		])
 	})
 

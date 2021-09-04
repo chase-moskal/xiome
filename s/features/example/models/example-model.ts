@@ -1,18 +1,27 @@
 
+import {Op} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 
-export function makeExampleModel(options: {}) {
+export function makeExampleModel({getAccessOp}: {
+		getAccessOp: () => Op<AccessPayload>
+	}) {
 
 	const happy = happystate({
-		state: {},
-		actions: state => ({}),
+		state: {
+			accessOp: <Op<AccessPayload>>getAccessOp(),
+		},
+		actions: state => ({
+			setAccessOp(op: Op<AccessPayload>) {
+				state.accessOp = op
+			},
+		}),
 	})
 
 	return {
 		...happy,
-		accessChange: (access: AccessPayload) => {
-
-		}
+		updateAccessOp: (op: Op<AccessPayload>) => {
+			happy.actions.setAccessOp(op)
+		},
 	}
 }
