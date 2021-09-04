@@ -1,7 +1,7 @@
 
 import {pubsub} from "../pubsub.js"
-import {debounce3} from "../debounce2.js"
 import {Readable} from "./parts/types.js"
+import {debounce3} from "../debounce2.js"
 import {debounceDelay} from "./parts/constants.js"
 import {MadstateReadonlyError} from "./parts/errors.js"
 import {trackingMechanics} from "./parts/tracking-mechanics.js"
@@ -20,7 +20,11 @@ export function madstate<xState extends {}>(actual: xState) {
 	})
 
 	const {publish, subscribe} = pubsub<(state: Readable<xState>) => void>()
-	const debouncedPublish = debounce3(debounceDelay, () => publish(readable))
+	const debouncedPublish = debounce3(debounceDelay, () => {
+		publish(readable)
+	})
+
+	let waiter: Promise<void> = Promise.resolve()
 
 	const writable = new Proxy(actual, {
 		get(t, key: string) {
@@ -31,7 +35,7 @@ export function madstate<xState extends {}>(actual: xState) {
 			tracking.avoidCircular(key)
 			actual[key] = value
 			tracking.triggerReactions(key)
-			debouncedPublish()
+			waiter = debouncedPublish()
 			return true
 		},
 	})
@@ -41,5 +45,9 @@ export function madstate<xState extends {}>(actual: xState) {
 		writable,
 		subscribe,
 		track: tracking.track,
+		get wait() {
+			return Promise.all([waiter, tracking.wait])
+				.then(() => undefined)
+		},
 	}
 }

@@ -1,8 +1,11 @@
 
 import {LitElement, PropertyValues, TemplateResult} from "lit-element"
+import {madstate} from "../../toolbox/madstate/madstate.js"
+import {ConstructorFor} from "../../types/constructor-for.js"
 
 import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
+import {mixinMadstateTracking} from "./mixins/mixin-madstate.js"
 import {LitBase} from "./types/component-types.js"
 
 export * from "lit-element"
@@ -42,7 +45,7 @@ export class ComponentWithShare<xShare> extends Component {
 	}
 }
 
-export class AutowatcherComponent extends mixinAutowatcher(mixinInitiallyHidden(LitElement)) {
+export class AutowatcherComponent extends mixinAutowatcher(mixinInitiallyHidden(<ConstructorFor<LitBase>>(<any>LitElement))) {
 	init() {}
 	firstUpdated(changes: PropertyValues) {
 		this.init()
