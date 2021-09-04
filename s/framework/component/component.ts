@@ -30,6 +30,21 @@ export class Component extends mixinInitiallyHidden(LitElement) {
 		super.firstUpdated(changes)
 		this.init()
 	}
+
+	#unsubscribe = () => {}
+	subscribe(): () => void {
+		return () => {}
+	}
+	connectedCallback() {
+		super.connectedCallback()
+		this.#unsubscribe = this.subscribe()
+	}
+	disconnectedCallback() {
+		super.disconnectedCallback()
+		this.#unsubscribe()
+		this.#unsubscribe = () => {}
+	}
+
 	render(): TemplateResult {
 		throw new Error("component render method not implemented")
 	}

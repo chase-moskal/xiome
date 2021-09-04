@@ -1,7 +1,7 @@
 
 import {LitElement} from "lit-element"
-import {Track} from "../../../toolbox/madstate/parts/types.js"
 import {Subscribe} from "../../../toolbox/pubsub.js"
+import {Track} from "../../../toolbox/madstate/parts/types.js"
 import {Constructor, LitBase} from "../types/component-types.js"
 
 export function mixinMadstateTracking(...tracks: Track[]) {

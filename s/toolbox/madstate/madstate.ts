@@ -45,9 +45,8 @@ export function madstate<xState extends {}>(actual: xState) {
 		writable,
 		subscribe,
 		track: tracking.track,
-		get wait() {
-			return Promise.all([waiter, tracking.wait])
-				.then(() => undefined)
+		async wait() {
+			await Promise.all([waiter, tracking.wait])
 		},
 	}
 }

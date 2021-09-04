@@ -8,7 +8,7 @@ export default <Suite>{
 		let fired = 0
 		state.subscribe(() => fired += 1)
 		state.writable.count += 1
-		await state.wait
+		await state.wait()
 		assert(fired === 1, "basic subscription should have fired")
 	},
 	async "track reactions are fired"() {
@@ -20,12 +20,12 @@ export default <Suite>{
 		})
 		state.writable.lol = true
 		state.writable.count += 1
-		await state.wait
+		await state.wait()
 		assert(fired === 2, "track reaction should have fired")
 		state.writable.count += 1
 		state.writable.count += 1
 		state.writable.count += 1
-		await state.wait
+		await state.wait()
 		assert(fired === 3, `track reactions are debounced (${fired})`)
 	},
 	async "readable throws error on write"() {
