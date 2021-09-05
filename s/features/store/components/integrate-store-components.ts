@@ -7,7 +7,7 @@
 // import {XiomeBankConnect} from "../../../features/store/components/bank-connect/xiome-bank-connect.js"
 // import {XiomeSubscriptionPlanner} from "../../../features/store/components/subscription-planner/xiome-subscription-planner.js"
 
-// export function xiomeStoreComponents({models, modals}: XiomeComponentOptions) {
+// export function integrateStoreComponents({models, modals}: XiomeComponentOptions) {
 // 	const {storeModel} = models
 // 	return {
 // 		XiomeEcommerce:
