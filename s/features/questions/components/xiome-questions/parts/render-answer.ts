@@ -1,9 +1,9 @@
 
 import {renderPost} from "./post/render-post.js"
 import {PostType} from "./post/types/post-options.js"
-import {Answer} from "../../api/types/questions-and-answers.js"
-import {QuestionsBoardModel} from "../../model/types/board-model.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {Answer} from "../../../api/types/questions-and-answers.js"
+import {QuestionsBoardModel} from "../../../model/types/board-model.js"
+import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 
 export function renderAnswer({
 		answer, questionId, modals, boardModel, canDeleteAnswer,

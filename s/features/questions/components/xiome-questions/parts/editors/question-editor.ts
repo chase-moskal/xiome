@@ -1,7 +1,7 @@
 
 import {makeEditorState} from "../../helpers/editor-state.js"
-import {QuestionsBoardModel} from "../../../model/types/board-model.js"
-import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
+import {QuestionsBoardModel} from "../../../../model/types/board-model.js"
+import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
 
 export function makeQuestionEditor({
 		requestUpdate, getTextInput, getBoardModel,

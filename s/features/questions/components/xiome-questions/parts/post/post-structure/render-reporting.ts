@@ -1,6 +1,6 @@
 
-import warningSvg from "../../../../../../framework/icons/warning.svg.js"
-import warningFillSvg from "../../../../../../framework/icons/warning-fill.svg.js"
+import warningSvg from "../../../../../../../framework/icons/warning.svg.js"
+import warningFillSvg from "../../../../../../../framework/icons/warning-fill.svg.js"
 
 import {Reporting} from "../types/post-options.js"
 import {renderVotingUnit} from "../voting-unit/render-voting-unit.js"

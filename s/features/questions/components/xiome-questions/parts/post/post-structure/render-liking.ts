@@ -1,6 +1,6 @@
 
-import heartSvg from "../../../../../../framework/icons/heart.svg.js"
-import heartFillSvg from "../../../../../../framework/icons/heart-fill.svg.js"
+import heartSvg from "../../../../../../../framework/icons/heart.svg.js"
+import heartFillSvg from "../../../../../../../framework/icons/heart-fill.svg.js"
 
 import {Liking} from "../types/post-options.js"
 import {renderVotingUnit} from "../voting-unit/render-voting-unit.js"

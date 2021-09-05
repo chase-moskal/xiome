@@ -1,11 +1,11 @@
 
 import {renderPost} from "../post/render-post.js"
-import {Op} from "../../../../../framework/ops.js"
+import {Op} from "../../../../../../framework/ops.js"
 import {PostType} from "../post/types/post-options.js"
 import {makeQuestionEditor} from "./question-editor.js"
-import {AccessPayload} from "../../../../auth/types/auth-tokens.js"
-import {html} from "../../../../../framework/component/component.js"
-import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
+import {AccessPayload} from "../../../../../auth/types/auth-tokens.js"
+import {html} from "../../../../../../framework/component/component.js"
+import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 
 export function renderQuestionEditor({
 		now, access, postingOp, questionEditor,

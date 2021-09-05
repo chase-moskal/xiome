@@ -1,7 +1,7 @@
 
-import {User} from "../../../../../auth/aspects/users/types/user.js"
-import {Likeable, Reportable} from "../../../../api/types/questions-and-answers.js"
-import {ValueChangeEvent} from "../../../../../xio-components/inputs/events/value-change-event.js"
+import {User} from "../../../../../../auth/aspects/users/types/user.js"
+import {Likeable, Reportable} from "../../../../../api/types/questions-and-answers.js"
+import {ValueChangeEvent} from "../../../../../../xio-components/inputs/events/value-change-event.js"
 
 export enum PostType {
 	Question,

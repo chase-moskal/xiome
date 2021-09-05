@@ -1,6 +1,6 @@
 
-import {happystate} from "../../../../toolbox/happystate/happystate.js"
-import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {happystate} from "../../../../../toolbox/happystate/happystate.js"
+import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 
 export function makeEditorState() {
 	return happystate({

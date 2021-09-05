@@ -2,15 +2,15 @@
 import styles from "./xiome-questions.css.js"
 import {sortQuestions} from "./helpers/sort-questions.js"
 import {renderQuestion} from "./parts/render-question.js"
-import {QuestionsModel} from "../model/types/questions-model.js"
-import {QuestionsBoardModel} from "../model/types/board-model.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
+import {QuestionsModel} from "../../model/types/questions-model.js"
+import {QuestionsBoardModel} from "../../model/types/board-model.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {makeQuestionEditor} from "./parts/editors/question-editor.js"
 import {makeAnswerEditorGetter} from "./parts/editors/answer-editor.js"
 import {renderModerationPanel} from "./parts/render-moderation-panel.js"
 import {renderQuestionEditor} from "./parts/editors/render-question-editor.js"
-import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {mixinStyles, mixinTicker, html, property, ComponentWithShare} from "../../../framework/component/component.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {mixinStyles, mixinTicker, html, property, ComponentWithShare} from "../../../../framework/component/component.js"
 
 @mixinTicker(1000)
 class BaseComponent extends ComponentWithShare<{

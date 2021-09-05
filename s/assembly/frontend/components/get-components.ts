@@ -8,7 +8,7 @@ import {integrateXioComponents} from "../../../features/xio-components/integrate
 import {integrateExampleComponents} from "../../../features/example/components/integrate-example-components.js"
 import {integrateLivestreamComponents} from "../../../features/livestream/components/integrate-livestream-components.js"
 
-import {xiomeQuestionsComponents} from "./groups/xiome-questions-components.js"
+import {integrateQuestionsComponents} from "../../../features/questions/components/integrate-questions-components.js"
 import {integrateAdministrativeComponents} from "../../../features/administrative/components/integrate-administrative-components.js"
 
 export function getComponents(options: XiomeComponentOptions) {
@@ -17,7 +17,7 @@ export function getComponents(options: XiomeComponentOptions) {
 		...integrateExampleComponents(options),
 		...integrateAuthComponents(options),
 		...integrateLivestreamComponents(options),
-		...xiomeQuestionsComponents(options),
+		...integrateQuestionsComponents(options),
 		...integrateAdministrativeComponents(options),
 
 		// // TODO reactivate store

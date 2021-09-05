@@ -1,10 +1,10 @@
 
 import {makeEditorState} from "../../helpers/editor-state.js"
-import {QuestionsBoardModel} from "../../../model/types/board-model.js"
-import {strongRecordKeeper} from "../../../../../toolbox/record-keeper.js"
-import {happystate} from "../../../../../toolbox/happystate/happystate.js"
-import {happyCombine} from "../../../../../toolbox/happystate/happy-combine.js"
-import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
+import {QuestionsBoardModel} from "../../../../model/types/board-model.js"
+import {strongRecordKeeper} from "../../../../../../toolbox/record-keeper.js"
+import {happystate} from "../../../../../../toolbox/happystate/happystate.js"
+import {happyCombine} from "../../../../../../toolbox/happystate/happy-combine.js"
+import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
 
 export function makeAnswerEditorGetter({
 		requestUpdate, getBoardModel, getTextInput,

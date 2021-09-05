@@ -1,11 +1,11 @@
 
 import {renderPost} from "./post/render-post.js"
 import {PostType} from "./post/types/post-options.js"
-import {html} from "../../../../framework/component/component.js"
+import {html} from "../../../../../framework/component/component.js"
 import {makeAnswerEditorGetter} from "./editors/answer-editor.js"
-import {QuestionsBoardModel} from "../../model/types/board-model.js"
-import {Answer, Question} from "../../api/types/questions-and-answers.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {QuestionsBoardModel} from "../../../model/types/board-model.js"
+import {Answer, Question} from "../../../api/types/questions-and-answers.js"
+import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 import {renderAnswer} from "./render-answer.js"
 import {renderAnswerEditor} from "./editors/render-answer-editor.js"
 
