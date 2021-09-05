@@ -1,11 +1,11 @@
 
-import {makeLivestreamModel} from "../models/livestream-model.js"
-import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles, property} from "../../../framework/component/component.js"
+import {makeLivestreamModel} from "../../models/livestream-model.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component/component.js"
 
 import styles from "./styles/xiome-livestream.css.js"
 import {LivestreamRights} from "./types/livestream-rights.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeLivestream extends ComponentWithShare<{
