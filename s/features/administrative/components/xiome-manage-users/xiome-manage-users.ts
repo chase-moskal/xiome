@@ -1,18 +1,18 @@
 
 import styles from "./xiome-manage-users.css.js"
-import wrenchSvg from "../../../framework/icons/wrench.svg.js"
+import wrenchSvg from "../../../../framework/icons/wrench.svg.js"
 
-import {Op, ops} from "../../../framework/ops.js"
-import {UserResult} from "../api/types/user-result.js"
-import {debounce3} from "../../../toolbox/debounce2.js"
+import {Op, ops} from "../../../../framework/ops.js"
+import {UserResult} from "../../api/types/user-result.js"
+import {debounce3} from "../../../../toolbox/debounce2.js"
 import {makeUserStates} from "./parts/make-user-states.js"
 import {renderEditWidget} from "./parts/render-edit-widget.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
-import {makeAdministrativeModel} from "../models/administrative-model.js"
-import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.js"
-import {ValueChangeEvent} from "../../xio-components/inputs/events/value-change-event.js"
-import {validateUserSearchTerm} from "../api/services/validation/validate-user-search-term.js"
-import {ComponentWithShare, html, mixinStyles, property} from "../../../framework/component/component.js"
+import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {makeAdministrativeModel} from "../../models/administrative-model.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {validateUserSearchTerm} from "../../api/services/validation/validate-user-search-term.js"
+import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component/component.js"
 
 @mixinStyles(styles)
 export class XiomeManageUsers extends ComponentWithShare<{
