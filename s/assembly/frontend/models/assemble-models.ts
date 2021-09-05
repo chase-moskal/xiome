@@ -76,7 +76,7 @@ export async function assembleModels({
 			exampleModel.updateAccessOp(accessOp),
 			personalModel.updateAccessOp(accessOp),
 			livestreamModel.updateAccessOp(accessOp),
-			appsModel.accessChange(),
+			appsModel.updateAccessOp(accessOp),
 			permissionsModel.updateAccessOp(accessOp),
 			questionsModel.accessChange(access),
 			administrativeModel.accessChange(access),

@@ -16,6 +16,10 @@ export class XiomeLivestream extends ComponentWithShare<{
 	@property({type: String, reflect: true})
 	label: string = "default"
 
+	get state() {
+		return this.share.livestreamModel.state
+	}
+
 	updated(props) {
 		if (props.has("label") && props.get("label") !== this.label)
 			this.share.livestreamModel.loadShow(this.label)
@@ -50,7 +54,7 @@ export class XiomeLivestream extends ComponentWithShare<{
 
 	render() {
 		return renderOp(
-			this.share.livestreamModel.getState().access,
+			this.state.accessOp,
 			this.#renderForRights,
 		)
 	}

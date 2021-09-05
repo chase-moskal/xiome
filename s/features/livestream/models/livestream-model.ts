@@ -3,6 +3,7 @@ import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {debounce3} from "../../../toolbox/debounce2.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {madstate} from "../../../toolbox/madstate/madstate.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
 import {happystate} from "../../../toolbox/happystate/happystate.js"
 import {LivestreamRights} from "../components/types/livestream-rights.js"
@@ -20,29 +21,43 @@ export function makeLivestreamModel({
 		getAccessOp: () => Op<AccessPayload>
 	}) {
 
-	const happy = happystate({
-		state: {
-			access: <Op<AccessPayload>>ops.none(),
-			shows: <{[label: string]: Op<LivestreamShow>}>{},
-		},
-		actions: state => ({
-			setAccess(op: Op<AccessPayload>) {
-				state.access = op
-			},
-			setShow(label: string, show: Op<LivestreamShow>) {
-				state.shows = {
-					...state.shows,
-					[label]: show,
-				}
-			},
-			clearShows() {
-				state.shows = {}
-			},
-		}),
+	const state = madstate({
+		accessOp: <Op<AccessPayload>>ops.none(),
+		shows: <{[label: string]: Op<LivestreamShow>}>{},
 	})
 
+	const actions = {
+		setShow(label: string, show: Op<LivestreamShow>) {
+			state.writable.shows = {
+				...state.writable.shows,
+				[label]: show,
+			}
+		},
+	}
+
+	// const happy = happystate({
+	// 	state: {
+	// 		access: <Op<AccessPayload>>ops.none(),
+	// 		shows: <{[label: string]: Op<LivestreamShow>}>{},
+	// 	},
+	// 	actions: state => ({
+	// 		setAccess(op: Op<AccessPayload>) {
+	// 			state.access = op
+	// 		},
+	// 		setShow(label: string, show: Op<LivestreamShow>) {
+	// 			state.shows = {
+	// 				...state.shows,
+	// 				[label]: show,
+	// 			}
+	// 		},
+	// 		clearShows() {
+	// 			state.shows = {}
+	// 		},
+	// 	}),
+	// })
+
 	function getShow(label: string) {
-		return happy.getState().shows[label]
+		return state.readable.shows[label]
 			?? ops.ready({label, vimeoId: null})
 	}
 
@@ -65,15 +80,15 @@ export function makeLivestreamModel({
 		if (getRights() !== LivestreamRights.Forbidden)
 			ops.operation({
 				promise: livestreamViewingService.getShows({labels: [label]}).then(shows => shows[0]),
-				setOp: op => happy.actions.setShow(label, op),
+				setOp: op => actions.setShow(label, op),
 			})
 		else
-			happy.actions.clearShows()
+			state.writable.shows = {}
 	}
 
 	async function refreshAllShows() {
 		if (getRights() !== LivestreamRights.Forbidden) {
-			const labels = Object.keys(happy.getState().shows)
+			const labels = Object.keys(state.readable.shows)
 			ops.operation({
 				promise: livestreamViewingService.getShows({labels}),
 				setOp: op => {
@@ -81,22 +96,23 @@ export function makeLivestreamModel({
 						const show = ops.isReady(op)
 							? ops.value(op)[index]
 							: undefined
-						happy.actions.setShow(label, ops.replaceValue(op, show))
+						actions.setShow(label, ops.replaceValue(op, show))
 					})
 				},
 			})
 		}
 		else
-			happy.actions.clearShows()
+			state.writable.shows = {}
 	}
 
 	return {
-		...happy,
+		state: state.readable,
+		subscribe: state.subscribe,
 		getShow,
 		getRights,
 		loadShow: debounce3(200, loadShow),
 		async updateAccessOp(op: Op<AccessPayload>) {
-			happy.actions.setAccess(op)
+			state.writable.accessOp = op
 			await refreshAllShows()
 		},
 	}

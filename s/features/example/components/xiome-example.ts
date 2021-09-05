@@ -4,6 +4,7 @@ import {ModalSystem} from "../../../assembly/frontend/modal/types/modal-system.j
 import {ComponentWithShare, html, mixinStyles} from "../../../framework/component/component.js"
 
 import styles from "./styles/xiome-example.css.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeExample extends ComponentWithShare<{
@@ -11,9 +12,16 @@ export class XiomeExample extends ComponentWithShare<{
 		exampleModel: ReturnType<typeof makeExampleModel>
 	}> {
 
+	get state() {
+		return this.share.exampleModel.state
+	}
+
 	render() {
-		return html`
-			<p>Example</p>
-		`
+		return renderOp(this.state.accessOp, access => html`
+			<p>Example Component</p>
+			${access?.user
+				? html`<p>Welcome, ${access.user.profile.nickname}</p>`
+				: html`<p>User is not logged in.</p>`}
+		`)
 	}
 }

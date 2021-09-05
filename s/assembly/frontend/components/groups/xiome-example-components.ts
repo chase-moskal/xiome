@@ -1,13 +1,13 @@
 
 import {XiomeComponentOptions} from "../types/xiome-component-options.js"
-import {mixinHappy, mixinShare} from "../../../../framework/component/component.js"
 import {XiomeExample} from "../../../../features/example/components/xiome-example.js"
+import {mixinMadstateSubscriptions, mixinShare} from "../../../../framework/component/component.js"
 
 export function xiomeExampleComponents({models, modals}: XiomeComponentOptions) {
 	const {exampleModel} = models
 	return {
 		XiomeExample:
-			mixinHappy(exampleModel.onStateChange)(
+			mixinMadstateSubscriptions(exampleModel.subscribe)(
 				mixinShare({
 					modals,
 					exampleModel,
