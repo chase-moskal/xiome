@@ -38,4 +38,12 @@ export default <Suite>{
 		state.writable.count += 1
 		assert(state.writable.count === 1)
 	},
+	async "forbid circular shit"() {
+		const state = madstate({count: 0})
+		expect(() => {
+			state.track(() => {
+				state.writable.count += state.readable.count
+			})
+		}).throws()
+	},
 }
