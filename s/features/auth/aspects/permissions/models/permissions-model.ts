@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
-import {happystate} from "../../../../../toolbox/happystate/happystate.js"
+import {madstate} from "../../../../../toolbox/madstate/madstate.js"
 import {PermissionsModelOptions} from "./types/permissions-model-options.js"
 import {PermissionsDisplay} from "../../users/routines/permissions/types/permissions-display.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
@@ -11,24 +11,15 @@ export function makePermissionsModel({
 		reauthorize,
 	}: PermissionsModelOptions) {
 
-	const {getState, actions, onStateChange} = happystate({
-		state: {
-			active: <boolean>false,
-			access: <AccessPayload>undefined,
-			permissionsDisplay: <Op<PermissionsDisplay>>ops.none(),
-		},
-		actions: state => ({
-			setActive(active: boolean) {
-				state.active = active
-			},
-			setPermissionsDisplay(op: Op<PermissionsDisplay>) {
-				state.permissionsDisplay = op
-			},
-			setAccess(access: AccessPayload) {
-				state.access = access
-			},
-		}),
+	const {readable, writable, subscribe, track} = madstate({
+		active: <boolean>false,
+		accessOp: <Op<AccessPayload>>ops.none(),
+		permissionsDisplay: <Op<PermissionsDisplay>>ops.none(),
 	})
+
+	function getAccess() {
+		return ops.value(readable.accessOp)
+	}
 
 	async function reload() {
 		await ops.operation({
@@ -36,12 +27,12 @@ export function makePermissionsModel({
 				.then(async() => getUserCanCustomizePermissions()
 					? permissionsService.fetchPermissions()
 					: undefined),
-			setOp: op => actions.setPermissionsDisplay(op),
+			setOp: op => writable.permissionsDisplay = op,
 		})
 	}
 
 	function getUserCanCustomizePermissions() {
-		const {access} = getState()
+		const access = getAccess()
 		return access?.user
 			? access.permit.privileges.includes(
 				appPermissions.privileges["customize permissions"]
@@ -50,7 +41,7 @@ export function makePermissionsModel({
 	}
 
 	async function initialize() {
-		actions.setActive(true)
+		writable.active = true
 		if (getUserCanCustomizePermissions())
 			await reload()
 	}
@@ -67,17 +58,19 @@ export function makePermissionsModel({
 	}
 
 	return {
-		onStateChange,
-		getState,
+		readable,
+		subscribe,
+		getAccess,
 		initialize,
 		getUserCanCustomizePermissions,
 		createRole: reloadAfter(permissionsService.createRole),
 		deleteRole: reloadAfter(permissionsService.deleteRole),
 		assignPrivilege: reloadAfter(permissionsService.assignPrivilege),
 		unassignPrivilege: reloadAfter(permissionsService.unassignPrivilege),
-		async accessChange(access: AccessPayload) {
-			actions.setAccess(access)
-			if (access?.user && getState().active)
+		async updateAccessOp(op: Op<AccessPayload>) {
+			writable.accessOp = op
+			const access = getAccess()
+			if (access?.user && writable.active)
 				await reload()
 		},
 	}

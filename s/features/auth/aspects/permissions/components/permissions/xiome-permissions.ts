@@ -217,11 +217,10 @@ export class XiomePermissions extends ComponentWithShare<{
 
 	render() {
 		const {permissionsModel} = this.share
-		const {getUserCanCustomizePermissions, getState} = permissionsModel
-		const state = getState()
+		const {getUserCanCustomizePermissions, readable} = permissionsModel
 		return getUserCanCustomizePermissions()
 			? renderOp(
-				state.permissionsDisplay,
+				readable.permissionsDisplay,
 				this.renderPermissions.bind(this),
 			)
 			: html`

@@ -37,7 +37,7 @@ export function xiomeAuthComponents({models, modals}: XiomeComponentOptions) {
 				})(XiomeMyAccount)
 			),
 		XiomePermissions:
-			mixinHappy(permissionsModel.onStateChange)(
+			mixinMadstateSubscriptions(permissionsModel.subscribe)(
 				mixinShare({
 					modals,
 					permissionsModel,
