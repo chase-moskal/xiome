@@ -6,7 +6,7 @@ import {serveletLoggerWithColors} from "renraku/x/servelet/logger/servelet-logge
 
 import {deathWithDignity} from "./toolbox/death-with-dignity.js"
 import {SecretConfig} from "./assembly/backend/types/secret-config.js"
-import {configureApiForNode} from "./assembly/backend/configure-api-for-node.js"
+import {backendForNode} from "./assembly/backend/backend-for-node.js"
 
 void async function main() {
 	deathWithDignity()
@@ -14,7 +14,7 @@ void async function main() {
 	console.log("starting server...")
 	const config = json5.parse<SecretConfig>(process.env.XIOME_CONFIG)
 
-	const {api} = await configureApiForNode(config)
+	const {api} = await backendForNode(config)
 	const serveletLogger = serveletLoggerWithColors(console, config.server.detailedLogs)
 	const servelet = makeJsonHttpServelet(api, serveletLogger)
 	const server = makeNodeHttpServer(servelet)

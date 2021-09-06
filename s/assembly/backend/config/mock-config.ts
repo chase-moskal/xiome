@@ -1,6 +1,6 @@
 
-import {SecretConfig} from "./types/secret-config.js"
-import {day, minute} from "../../toolbox/goodtimes/times.js"
+import {SecretConfig} from "../types/secret-config.js"
+import {day, minute} from "../../../toolbox/goodtimes/times.js"
 
 export const mockConfig = ({platformHome, platformOrigins}: {
 		platformHome: string

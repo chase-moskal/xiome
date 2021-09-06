@@ -1,11 +1,11 @@
 
 import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
-import {mockConfig} from "../../../backend/mock-config.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
+import {mockConfig} from "../../../backend/config/mock-config.js"
+import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
-import {configureApiForBrowser} from "../../../backend/configure-api-for-browser.js"
 
 export async function mockConnectApp({
 		origins, storage, appWindowLink,
@@ -15,7 +15,7 @@ export async function mockConnectApp({
 		appWindowLink: string
 	}) {
 
-	const backend = await configureApiForBrowser(storage)(mockConfig({
+	const backend = await backendForBrowser(storage)(mockConfig({
 		platformHome: appWindowLink,
 		platformOrigins: origins,
 	}))
