@@ -75,7 +75,7 @@ export function renderEditWidget({
 		})
 
 	async function ifChangingSelfThenReauthorize() {
-		if (userId === administrativeModel.getState().access?.user?.userId)
+		if (userId === administrativeModel.getAccess()?.user?.userId)
 			await administrativeModel.reauthorize()
 	}
 

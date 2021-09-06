@@ -2,7 +2,7 @@
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {happystate} from "../../../toolbox/happystate/happystate.js"
+import {madstate} from "../../../toolbox/madstate/madstate.js"
 import {makeRoleAssignmentService} from "../api/services/role-assignment-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {makeAllowanceChecker} from "../../../assembly/backend/permissions/tools/make-allowance-checker.js"
@@ -16,32 +16,26 @@ export function makeAdministrativeModel({
 		reauthorize: () => Promise<void>
 	}) {
 
-	const {actions, getState, onStateChange} = happystate({
-		state: {
-			access: <AccessPayload>undefined,
-			permissionsOp: <Op<PermissionsDisplay>>ops.none(),
-		},
-		actions: state => ({
-			setAccess(access: AccessPayload) {
-				state.access = access
-			},
-			setPermissionsOp(op: Op<PermissionsDisplay>) {
-				state.permissionsOp = op
-			},
-		}),
+	const state = madstate({
+		accessOp: <Op<AccessPayload>>undefined,
+		permissionsOp: <Op<PermissionsDisplay>>ops.none(),
 	})
+
+	function getAccess() {
+		return ops.value(state.readable.accessOp)
+	}
 
 	let initializedInDom = false
 
 	function allowanceChecker() {
-		return makeAllowanceChecker(getState().access, appPermissions.privileges)
+		return makeAllowanceChecker(getAccess(), appPermissions.privileges)
 	}
 
 	async function loadPermissions() {
 		if (initializedInDom && allowanceChecker()("administrate user roles"))
 			await ops.operation({
 				promise: roleAssignmentService.fetchPermissions(),
-				setOp: actions.setPermissionsOp,
+				setOp: op => state.writable.permissionsOp = op,
 			})
 	}
 
@@ -51,19 +45,20 @@ export function makeAdministrativeModel({
 	}
 
 	return {
-		getState,
-		onStateChange,
+		state: state.readable,
+		subscribe: state.subscribe,
+		getAccess,
 		initialize,
 		get isAllowed() {
 			return allowanceChecker()
-		},
-		accessChange: (access: AccessPayload) => {
-			actions.setAccess(access)
-			loadPermissions()
 		},
 		reauthorize,
 		searchUsers: roleAssignmentService.searchUsers,
 		assignRoleToUser: roleAssignmentService.assignRoleToUser,
 		revokeRoleFromUser: roleAssignmentService.revokeRoleFromUser,
+		async updateAccessOp(op: Op<AccessPayload>) {
+			state.writable.accessOp = op
+			loadPermissions()
+		},
 	}
 }

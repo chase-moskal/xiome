@@ -79,7 +79,7 @@ export async function assembleModels({
 			appsModel.updateAccessOp(accessOp),
 			permissionsModel.updateAccessOp(accessOp),
 			questionsModel.accessChange(access),
-			administrativeModel.accessChange(access),
+			administrativeModel.updateAccessOp(accessOp),
 			// storeModel.accessChange(access),
 		])
 	})

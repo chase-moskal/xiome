@@ -85,7 +85,7 @@ export class XiomeManageUsers extends ComponentWithShare<{
 	}
 
 	render() {
-		const {permissionsOp} = this.share.administrativeModel.getState()
+		const {permissionsOp} = this.share.administrativeModel.state
 
 		const allowed = this.share.administrativeModel
 			.isAllowed("administrate user roles")
