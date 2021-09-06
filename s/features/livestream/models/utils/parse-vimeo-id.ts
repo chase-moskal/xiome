@@ -10,7 +10,7 @@ export function parseVimeoId(field: string) {
 	const problems = validateVimeoId(vimeoId)
 
 	if (!problems.length)
-		return field
+		return vimeoId
 	else
 		throw new Error("invalid vimeo id")
 }

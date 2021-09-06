@@ -30,14 +30,17 @@ export const isUrl = (value: string) => url()(value).length === 0
 
 export const validateVimeoField = validator<string>(
 	string(),
-	minLength(1),
 	maxLength(2048),
-	value => isUrl(value)
-		? validateVimeoUrl(value)
-		: validateVimeoId(value),
+	value => value === ""
+		? []
+		: isUrl(value)
+			? validateVimeoUrl(value)
+			: validateVimeoId(value),
 )
 
 export const validateShowInput = schema({
 	label: validateShowLabel,
-	vimeoId: validateVimeoId,
+	vimeoId: (value: string) => value === ""
+		? []
+		: validateVimeoId(value),
 })

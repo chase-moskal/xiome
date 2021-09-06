@@ -6,8 +6,8 @@ import {LivestreamAuth} from "../types/livestream-auths.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {LivestreamApiOptions} from "../types/livestream-api-options.js"
+import {validateShowInput} from "../validation/livestream-validators.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {branch, maxLength, minLength, validator, schema, string} from "../../../../toolbox/darkvalley.js"
 
 export const makeLivestreamModerationService = ({
 		authPolicies,
@@ -30,15 +30,10 @@ export const makeLivestreamModerationService = ({
 				label: string
 				vimeoId: undefined | null | string
 			}) {
-			const {label, vimeoId} = runValidation(inputs, schema({
-				label: validator<string>(string(), maxLength(64), minLength(1)),
-				vimeoId: branch(
-					validator<string>(string(), minLength(1), maxLength(2048)),
-				),
-			}))
-			await livestreamTables.shows.assert({
+			const {label, vimeoId} = runValidation(inputs, validateShowInput)
+			await livestreamTables.shows.update({
 				...find({label}),
-				make: async() => ({label, vimeoId}),
+				write: {label, vimeoId},
 			})
 		}
 	},

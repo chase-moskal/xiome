@@ -6,9 +6,12 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamRights} from "./types/livestream-rights.js"
 import {madstate} from "../../../toolbox/madstate/madstate.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
-import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {makeLivestreamModerationService} from "../api/services/livestream-moderation-service.js"
+import {objectMap} from "../../../toolbox/object-map.js"
+
+// https://vimeo.com/122311493
 
 export function makeLivestreamModel({
 		livestreamViewingService,
@@ -21,6 +24,7 @@ export function makeLivestreamModel({
 	}) {
 
 	const state = madstate({
+		rights: LivestreamRights.Forbidden,
 		accessOp: <Op<AccessPayload>>ops.none(),
 		shows: <{[label: string]: Op<LivestreamShow>}>{},
 	})
@@ -32,28 +36,15 @@ export function makeLivestreamModel({
 				[label]: show,
 			}
 		},
+		clearShows() {
+			state.writable.shows = objectMap(state.writable.shows, () => ops.none())
+		},
 	}
 
 	function getShow(label: string): Op<LivestreamShow> {
 		return state.readable.shows[label]
 			?? ops.ready({label, vimeoId: null})
 	}
-
-	function getRights(): LivestreamRights {
-		const access = ops.value(getAccessOp())
-		const canView = access
-			? access.permit.privileges.includes(appPermissions.privileges["view livestream"])
-			: false
-		const canModerate = access
-			? access.permit.privileges.includes(appPermissions.privileges["moderate livestream"])
-			: false
-		return canModerate
-			? LivestreamRights.Moderator
-			: canView
-				? LivestreamRights.Viewer
-				: LivestreamRights.Forbidden
-	}
-
 
 	async function commitShow(show: LivestreamShow) {
 		return await ops.operation({
@@ -64,43 +55,58 @@ export function makeLivestreamModel({
 	}
 
 	async function loadShow(label: string) {
-		if (getRights() !== LivestreamRights.Forbidden)
+		if (state.readable.rights !== LivestreamRights.Forbidden) {
 			await ops.operation({
-				promise: livestreamViewingService.getShows({labels: [label]}).then(shows => shows[0]),
+				promise: livestreamViewingService.getShows({labels: [label]})
+					.then(shows => shows[0]),
 				setOp: op => stateActions.addShow(label, op),
 			})
-		else
-			state.writable.shows = {}
+		}
+		else {
+			stateActions.addShow(label, ops.none())
+		}
 	}
 
 	async function refreshAllShows() {
-		if (getRights() !== LivestreamRights.Forbidden) {
+		if (state.readable.rights !== LivestreamRights.Forbidden) {
 			const labels = Object.keys(state.readable.shows)
-			await ops.operation({
-				promise: livestreamViewingService.getShows({labels}),
-				setOp: op => {
-					labels.forEach((label, index) => {
-						const show = ops.isReady(op)
-							? ops.value(op)[index]
-							: undefined
-						stateActions.addShow(label, ops.replaceValue(op, show))
-					})
-				},
-			})
+			if (labels.length > 0)
+				await ops.operation({
+					promise: livestreamViewingService.getShows({labels}),
+					setOp: op => {
+						labels.forEach((label, index) => {
+							const show = ops.isReady(op)
+								? ops.value(op)[index]
+								: undefined
+							stateActions.addShow(label, ops.replaceValue(op, show))
+						})
+					},
+				})
 		}
 		else
-			state.writable.shows = {}
+			stateActions.clearShows()
 	}
 
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
 		getShow,
-		getRights,
 		commitShow,
 		loadShow: debounce3(200, loadShow),
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
+			{
+				const access = ops.value(getAccessOp())
+				const permitted = (priv: keyof typeof appPermissions.privileges) =>
+					access.permit.privileges.includes(appPermissions.privileges[priv])
+				state.writable.rights = !access
+					? LivestreamRights.Forbidden
+					: permitted("moderate livestream")
+						? LivestreamRights.Moderator
+						: permitted("view livestream")
+							? LivestreamRights.Viewer
+							: LivestreamRights.Forbidden
+			}
 			await refreshAllShows()
 		},
 	}

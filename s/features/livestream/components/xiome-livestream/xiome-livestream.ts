@@ -1,7 +1,7 @@
 
 import {makeLivestreamModel} from "../../models/livestream-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component/component.js"
 
 import styles from "./styles/xiome-livestream.css.js"
 import {LivestreamRights} from "../../models/types/livestream-rights.js"
@@ -10,6 +10,8 @@ import {validateVimeoField} from "../../api/validation/livestream-validators.js"
 import {generateVimeoUrl} from "../../models/utils/generate-vimeo-url.js"
 import {ops} from "../../../../framework/ops.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
+import {parseVimeoId} from "../../models/utils/parse-vimeo-id.js"
 
 @mixinStyles(styles)
 export class XiomeLivestream extends ComponentWithShare<{
@@ -40,9 +42,71 @@ export class XiomeLivestream extends ComponentWithShare<{
 		`)
 	}
 
+	#getCurrentVimeoId() {
+		const showOp = this.share.livestreamModel.getShow(this.label)
+		const show = ops.value(showOp)
+		return (show && show.vimeoId)
+			? show.vimeoId
+			: ""
+	}
+
+	#changed = false
+	#vimeoIdDraft: string
+
+	#vimeoFieldOnValueChange({detail: {value}}: ValueChangeEvent<string>) {
+		this.#changed = true
+		this.#vimeoIdDraft = value
+			? parseVimeoId(value)
+			: ""
+		this.requestUpdate()
+	}
+
+	#vimeoIdDraftIsDifferent() {
+		const showOp = this.share.livestreamModel.getShow(this.label)
+		return this.#changed && ops.isReady(showOp)
+			? this.#vimeoIdDraft !== this.#getCurrentVimeoId()
+			: false
+	}
+
+	#submitVimeoId() {
+		this.#changed = false
+		const vimeoId = this.#vimeoIdDraft
+		this.share.livestreamModel.commitShow({
+			vimeoId,
+			label: this.label,
+		})
+	}
+
+	#renderModBox = () => {
+		const showOp = this.share.livestreamModel.getShow(this.label)
+		const currentVimeoId = this.#getCurrentVimeoId()
+		const currentVimeoUrl = currentVimeoId.length
+			? generateVimeoUrl(currentVimeoId)
+			: ""
+		const draftIsDifferent = this.#vimeoIdDraftIsDifferent()
+		return renderOp(showOp, () => html`
+			<div class=modbox>
+				<xio-text-input
+					class=vimeo-field
+					.initial="${currentVimeoUrl}"
+					show-validation-when-empty
+					?hide-validation=${!draftIsDifferent}
+					.validator=${validateVimeoField}
+					?disabled=${!ops.isReady(showOp)}
+					@valuechange=${this.#vimeoFieldOnValueChange}>
+						vimeo url
+				</xio-text-input>
+				<xio-button
+					?disabled=${!draftIsDifferent}
+					@press=${this.#submitVimeoId}>
+						set livestream
+				</xio-button>
+			</div>
+		`)
+	}
+
 	#renderForRights = () => {
-		const {livestreamModel} = this.share
-		switch (this.share.livestreamModel.getRights()) {
+		switch (this.share.livestreamModel.state.rights) {
 			case LivestreamRights.Forbidden: return html`
 				<p>you are forbidden lol</p>
 			`
@@ -50,39 +114,18 @@ export class XiomeLivestream extends ComponentWithShare<{
 				<p>you are viewer</p>
 				${this.#renderStreamViewer()}
 			`
-			case LivestreamRights.Moderator: {
-				const showOp = livestreamModel.getShow(this.label)
-				const show = ops.value(showOp)
-				const initial = (show && show.vimeoId)
-					? generateVimeoUrl(show.vimeoId)
-					: ""
-				const onValueChange = (event: ValueChangeEvent<string>) => {
-					console.log("ON VALUE CHANGE", event)
-				}
-				return html`
-					<p>you are moderator</p>
-					<div class=modbox>
-						<xio-text-input
-							.initial="${initial}"
-							.validator=${validateVimeoField}
-							?disabled=${!ops.isReady(showOp)}
-							@valuechange=${onValueChange}>
-								vimeo url
-						</xio-text-input>
-					</div>
-					${this.#renderStreamViewer()}
-				`
-			}
+			case LivestreamRights.Moderator: return html`
+				<p>you are moderator</p>
+				${this.#renderModBox()}
+				${this.#renderStreamViewer()}
+			`
 		}
 	}
 
 	render() {
 		return renderOp(
 			this.state.accessOp,
-			() => renderOp(
-				this.share.livestreamModel.getShow(this.label),
-				this.#renderForRights,
-			)
+			this.#renderForRights
 		)
 	}
 }
