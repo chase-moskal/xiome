@@ -6,8 +6,8 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamRights} from "./types/livestream-rights.js"
 import {madstate} from "../../../toolbox/madstate/madstate.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
-import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
+import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
 import {makeLivestreamModerationService} from "../api/services/livestream-moderation-service.js"
 
 export function makeLivestreamModel({

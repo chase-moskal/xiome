@@ -1,8 +1,8 @@
 
-import {length, one, regex, string, validator} from "../../../../../toolbox/darkvalley.js"
+import {length, validator, regex, string} from "../../../../../toolbox/darkvalley.js"
 
-export const validateId = validator<string>(one(
+export const validateId = validator<string>(
 	string(),
 	length(64),
 	regex(/^[0-9a-z]{64}$/),
-))
+)

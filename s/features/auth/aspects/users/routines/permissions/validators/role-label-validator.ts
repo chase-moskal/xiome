@@ -1,7 +1,7 @@
 
-import {maxLength, minLength, notWhitespace, one, string} from "../../../../../../../toolbox/darkvalley.js"
+import {maxLength, minLength, notWhitespace, validator, string} from "../../../../../../../toolbox/darkvalley.js"
 
-export const roleLabelValidator = one<string>(
+export const roleLabelValidator = validator<string>(
 	string(),
 	minLength(1),
 	maxLength(16),

@@ -9,7 +9,7 @@ import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
 import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
 import {AdministrativeOptions} from "../types/administrative-options.js"
-import {schema, validator, boolean} from "../../../../toolbox/darkvalley.js"
+import {schema, boolean} from "../../../../toolbox/darkvalley.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
@@ -96,7 +96,7 @@ export const makeRoleAssignmentService = ({
 				runValidation(options, schema({
 					roleId: validateId,
 					userId: validateId,
-					isPublic: validator(boolean()),
+					isPublic: boolean(),
 					timeframeEnd: validateTimeframe,
 					timeframeStart: validateTimeframe,
 				}))

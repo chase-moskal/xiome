@@ -1,8 +1,8 @@
 
-import {validator, one, string, maxLength, email} from "../../../../../toolbox/darkvalley.js"
+import {validator, string, maxLength, email} from "../../../../../toolbox/darkvalley.js"
 
-export const emailValidator = validator<string>(one(
+export const emailValidator = validator<string>(
 	string(),
 	maxLength(256),
 	email(),
-))
+)

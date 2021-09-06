@@ -1,20 +1,20 @@
 
-import {maxLength, minLength, one, regex, schema, string, url} from "../../../../toolbox/darkvalley.js"
+import {maxLength, minLength, validator, regex, schema, string, url} from "../../../../toolbox/darkvalley.js"
 
-export const validateShowLabel = one<string>(
+export const validateShowLabel = validator<string>(
 	string(),
 	minLength(1),
 	maxLength(64),
 )
 
-export const validateVimeoId = one<string>(
+export const validateVimeoId = validator<string>(
 	string(),
 	minLength(1),
 	maxLength(64),
 	regex(/^\d+$/, "invalid vimeo id"),
 )
 
-export const validateVimeoUrl = one<string>(
+export const validateVimeoUrl = validator<string>(
 	string(),
 	maxLength(2048),
 	url(),
@@ -28,7 +28,7 @@ export const validateVimeoUrl = one<string>(
 
 export const isUrl = (value: string) => url()(value).length === 0
 
-export const validateVimeoField = one<string>(
+export const validateVimeoField = validator<string>(
 	string(),
 	minLength(1),
 	maxLength(2048),

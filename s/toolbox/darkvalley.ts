@@ -1,7 +1,21 @@
 
 export type Validator<xValue> = (value: xValue) => string[]
 
-export function validator<xValue>(...conditions: Validator<xValue>[]): Validator<xValue> {
+export function validator<xValue>(
+		...conditions: Validator<xValue>[]
+	): Validator<xValue> {
+	return value => {
+		let problems: string[] = []
+		for (const condition of conditions) {
+			problems = condition(value)
+			if (problems.length > 0)
+				break
+		}
+		return problems
+	}
+}
+
+export function multi<xValue>(...conditions: Validator<xValue>[]): Validator<xValue> {
 	return value => {
 		const problems: string[] = []
 		for (const condition of conditions) {
@@ -38,20 +52,6 @@ export function branch<xValue>(...conditions: Validator<xValue>[]): Validator<xV
 			? []
 			: results.flat()
 				.map((problem, index) => index > 0 ? `or, ${problem}` : problem)
-	}
-}
-
-export function one<xValue>(
-		...conditions: Validator<xValue>[]
-	): Validator<xValue> {
-	return value => {
-		let problems: string[] = []
-		for (const condition of conditions) {
-			problems = condition(value)
-			if (problems.length > 0)
-				break
-		}
-		return problems
 	}
 }
 

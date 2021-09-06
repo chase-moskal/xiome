@@ -7,7 +7,7 @@ import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {LivestreamApiOptions} from "../types/livestream-api-options.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {branch, maxLength, minLength, one, schema, string} from "../../../../toolbox/darkvalley.js"
+import {branch, maxLength, minLength, validator, schema, string} from "../../../../toolbox/darkvalley.js"
 
 export const makeLivestreamModerationService = ({
 		authPolicies,
@@ -31,9 +31,9 @@ export const makeLivestreamModerationService = ({
 				vimeoId: undefined | null | string
 			}) {
 			const {label, vimeoId} = runValidation(inputs, schema({
-				label: one<string>(string(), maxLength(64), minLength(1)),
+				label: validator<string>(string(), maxLength(64), minLength(1)),
 				vimeoId: branch(
-					one<string>(string(), minLength(1), maxLength(2048)),
+					validator<string>(string(), minLength(1), maxLength(2048)),
 				),
 			}))
 			await livestreamTables.shows.assert({
