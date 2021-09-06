@@ -1,6 +1,6 @@
 
-import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 import {prepareApiConfigurator} from "./prepare-api-configurator.js"
+import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
 
 class ConfigNotSupportedInBrowserError extends Error {
 	constructor(message: string) {

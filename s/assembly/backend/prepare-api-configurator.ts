@@ -18,9 +18,11 @@ import {configureMongo} from "./configurators/configure-mongo.js"
 import {loginEmailRecaller} from "./tools/login-email-recaller.js"
 import {BlueprintForTables} from "./types/blueprint-for-tables.js"
 import {DatabaseNamespaced, DatabaseRaw} from "./types/database.js"
+import {exampleApi} from "../../features/example/api/example-api.js"
 import {SendEmail} from "../../features/auth/types/emails/send-email.js"
 import {questionsApi} from "../../features/questions/api/questions-api.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {livestreamApi} from "../../features/livestream/api/livestream-api.js"
 import {configureMailgun} from "../backend/configurators/configure-mailgun.js"
 import {makeEmailEnabler} from "../frontend/connect/mock/common/email-enabler.js"
 import {mockSendEmail} from "../../features/auth/utils/emails/mock-send-email.js"
@@ -33,8 +35,6 @@ import {mockStripeCircuit} from "../../features/store/stripe2/mocks/mock-stripe-
 import {makeAdministrativeApi} from "../../features/administrative/api/administrative-api.js"
 import {Unconstrain, UnconstrainedTables} from "../../framework/api/types/table-namespacing-for-apps.js"
 import {standardNicknameGenerator} from "../../features/auth/utils/nicknames/standard-nickname-generator.js"
-import {exampleApi} from "../../features/example/api/example-api.js"
-import {livestreamApi} from "../../features/livestream/api/livestream-api.js"
 
 export function prepareApiConfigurator(configurators: {
 		configureMongo: typeof configureMongo
