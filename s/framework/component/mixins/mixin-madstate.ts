@@ -1,5 +1,4 @@
 
-import {LitElement} from "lit-element"
 import {Subscribe} from "../../../toolbox/pubsub.js"
 import {Track} from "../../../toolbox/madstate/parts/types.js"
 import {Constructor, LitBase} from "../types/component-types.js"
@@ -8,31 +7,43 @@ export function mixinMadstateTracking(...tracks: Track[]) {
 	return function<C extends Constructor<LitBase>>(Base: C) {
 		return class extends Base {
 
+			#tracks: Track[] = [...tracks]
 			#unsubscribes: (() => void)[] = []
 
 			render() {
-				return this.render()
+				return super.render && super.render()
 			}
 
-			renderTracking(track: Track) {
-				const observer = () => { this.render() }
-				const reaction = () => { if (this.isConnected) this.requestUpdate() }
-				this.#unsubscribes.push(
-					track(observer, reaction)
+			#subscribe = (track: Track) => {
+				return track(
+					() => { this.render() },
+					() => { this.requestUpdate() },
 				)
 			}
 
-			firstUpdated(...args: Parameters<LitElement["firstUpdated"]>) {
-				if (super.firstUpdated)
-					super.firstUpdated(...args)
-				for (const track of tracks)
-					this.renderTracking(track)
+			#sub(tracks: Track[]) {
+				this.#unsubscribes.push(...tracks.map(this.#subscribe))
 			}
 
-			stopRenderTracking() {
+			#unsub() {
 				for (const unsubscribe of this.#unsubscribes)
 					unsubscribe()
 				this.#unsubscribes = []
+			}
+
+			attachTracking(...newTracks: Track[]) {
+				this.#tracks.push(...newTracks)
+				this.#sub(newTracks)
+			}
+
+			connectedCallback() {
+				super.connectedCallback()
+				this.#sub(this.#tracks)
+			}
+
+			disconnectedCallback() {
+				super.disconnectedCallback()
+				this.#unsub()
 			}
 		}
 	}
@@ -46,12 +57,9 @@ export function mixinMadstateSubscriptions(...subscriptions: Subscribe[]) {
 
 			connectedCallback() {
 				super.connectedCallback()
-				const update = () => {
-					this.requestUpdate()
-				}
+				const update = () => { this.requestUpdate() }
 				this.#unsubscribes =
-					subscriptions
-						.map(subscription => subscription(update))
+					subscriptions.map(subscription => subscription(update))
 			}
 
 			disconnectedCallback() {
