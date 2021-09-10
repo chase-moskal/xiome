@@ -1,12 +1,10 @@
 
 import {LitElement, PropertyValues, TemplateResult} from "lit-element"
-import {madstate} from "../../toolbox/madstate/madstate.js"
-import {ConstructorFor} from "../../types/constructor-for.js"
 
+import {LitBase} from "./types/component-types.js"
+import {ConstructorFor} from "../../types/constructor-for.js"
 import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
-import {mixinMadstateTracking} from "./mixins/mixin-madstate.js"
-import {LitBase} from "./types/component-types.js"
 
 export * from "lit-element"
 export {render} from "lit-html"
