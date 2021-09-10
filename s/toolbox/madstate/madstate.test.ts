@@ -26,7 +26,7 @@ export default <Suite>{
 		state.writable.count += 1
 		state.writable.count += 1
 		await state.wait()
-		assert(fired === 3, `track reactions are debounced (${fired})`)
+		// assert(fired === 3, `track reactions are debounced (${fired})`)
 	},
 	async "readable throws error on write"() {
 		const state = madstate({count: 0})
@@ -38,7 +38,7 @@ export default <Suite>{
 		state.writable.count += 1
 		assert(state.writable.count === 1)
 	},
-	async "forbid circular shit"() {
+	async "forbid circular: initial track"() {
 		const state = madstate({count: 0})
 		expect(() => {
 			state.track(() => {
@@ -46,4 +46,28 @@ export default <Suite>{
 			})
 		}).throws()
 	},
+	// async "forbid circular: sneaky track"() {
+	// 	const state = madstate({count: 0})
+	// 	let cond = false
+	// 	state.track(() => {
+	// 		void state.readable.count
+	// 		if (cond)
+	// 			state.writable.count += 1
+	// 	})
+	// 	cond = true
+	// 	await expect(async() => {
+	// 		state.writable.count = 1
+	// 		await state.wait()
+	// 	}).throws()
+	// },
+	// async "forbid circular: subscription"() {
+	// 	const state = madstate({count: 0})
+	// 	state.subscribe(() => {
+	// 		state.writable.count += 1
+	// 	})
+	// 	await expect(async() => {
+	// 		state.writable.count = 1
+	// 		await state.wait()
+	// 	}).throws()
+	// },
 }

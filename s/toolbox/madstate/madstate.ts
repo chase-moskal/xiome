@@ -1,5 +1,5 @@
 
-import {pubsub} from "../pubsub.js"
+import {subbies} from "../subbies.js"
 import {Readable} from "./parts/types.js"
 import {debounce3} from "../debounce2.js"
 import {debounceDelay} from "./parts/constants.js"
@@ -9,33 +9,30 @@ import {trackingMechanics} from "./parts/tracking-mechanics.js"
 export function madstate<xState extends {}>(actual: xState) {
 	const tracking = trackingMechanics()
 
+	function get(t: any, key: string) {
+		tracking.reactionRegistration(key)
+		return actual[key]
+	}
+
 	const readable: Readable<xState> = new Proxy(actual, {
-		get(t, key: string) {
-			tracking.reactionRegistration(key)
-			return actual[key]
-		},
+		get,
 		set(t, key: string) {
-			throw new MadstateReadonlyError(`cannot set property "${key}"`)
+			throw new MadstateReadonlyError(`readonly state property "${key}"`)
 		},
 	})
 
-	const {publish, subscribe} = pubsub<(state: Readable<xState>) => void>()
-	const debouncedPublish = debounce3(debounceDelay, () => {
-		publish(readable)
-	})
+	const {publish: rawPublish, subscribe} = subbies<Readable<xState>>()
+	const publishReadable = debounce3(debounceDelay, () => rawPublish(readable))
 
 	let waiter: Promise<void> = Promise.resolve()
 
-	const writable = new Proxy(actual, {
-		get(t, key: string) {
-			tracking.reactionRegistration(key)
-			return actual[key]
-		},
+	const writable: xState = new Proxy(actual, {
+		get,
 		set(t, key: string, value) {
 			tracking.avoidCircular(key)
 			actual[key] = value
 			tracking.triggerReactions(key)
-			waiter = debouncedPublish()
+			waiter = publishReadable()
 			return true
 		},
 	})
