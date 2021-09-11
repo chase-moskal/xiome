@@ -4,6 +4,7 @@ import dbby from "./toolbox/dbby/dbby.test.js"
 import damnId from "./toolbox/damnedb/damn-id.test.js"
 import autowatcher from "./toolbox/autowatcher/autowatcher.test.js"
 import madstate from "./toolbox/madstate/madstate.test.js"
+import videos from "./features/videos/videos.test.js"
 
 export default <Suite>{
 	"toolbox": {
@@ -12,5 +13,8 @@ export default <Suite>{
 		damnId,
 		autowatcher,
 	},
-	// "features": {auth},
+	"features": {
+		// auth,
+		videos,
+	},
 }
