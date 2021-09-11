@@ -1,6 +1,6 @@
 
 import {subbies} from "../subbies.js"
-import {Readable} from "./parts/types.js"
+import {Observer, Reaction, Readable} from "./parts/types.js"
 import {debounce3} from "../debounce2.js"
 import {debounceDelay} from "./parts/constants.js"
 import {MadstateReadonlyError} from "./parts/errors.js"
@@ -31,7 +31,7 @@ export function madstate<xState extends {}>(actual: xState) {
 		set(t, key: string, value) {
 			tracking.avoidCircular(key)
 			actual[key] = value
-			tracking.triggerReactions(key)
+			tracking.triggerReactions(readable, key)
 			waiter = publishReadable()
 			return true
 		},
@@ -41,7 +41,9 @@ export function madstate<xState extends {}>(actual: xState) {
 		readable,
 		writable,
 		subscribe,
-		track: tracking.track,
+		track<X>(observer: Observer<xState, X>, reaction?: Reaction<X>) {
+			return tracking.track(readable, observer, reaction)
+		},
 		async wait() {
 			await Promise.all([waiter, tracking.wait])
 		},

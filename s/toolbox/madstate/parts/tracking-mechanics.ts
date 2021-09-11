@@ -1,19 +1,21 @@
 
-import {Reaction} from "./types.js"
 import {debounce3} from "../../debounce2.js"
 import {debounceDelay} from "./constants.js"
 import {MadstateCircularError} from "./errors.js"
+import {Observer, Reaction, Readable} from "./types.js"
 
 export function trackingMechanics() {
-	let activeTrack: {
-		identifier: symbol
-		reaction: Reaction
-	}
+	type Session<xState, X> = {observer: Observer<xState, X>, reaction?: Reaction<X>}
 
-	const reactionRecords = new Map<string, Map<symbol, Reaction>>()
+	let activeWatch: {
+		identifier: symbol
+		session: Session<any, any>
+	}
+	
+	const sessions = new Map<string, Map<symbol, Session<any, any>>>()
 
 	function unsubscribe(identifier: symbol) {
-		for (const [,record] of reactionRecords)
+		for (const [,record] of sessions)
 			record.delete(identifier)
 	}
 
@@ -23,43 +25,45 @@ export function trackingMechanics() {
 
 		get wait() { return waiter },
 
-		track(observer: () => void, reaction?: () => void) {
-			reaction = reaction ?? observer
+		track<xState, X>(state: Readable<xState>, observer: Observer<xState, X>, reaction?: Reaction<X>) {
 			const identifier = Symbol()
-			activeTrack = {identifier, reaction}
-			observer()
-			activeTrack = undefined
+			activeWatch = {identifier, session: {observer, reaction}}
+			observer(state)
+			activeWatch = undefined
 			return () => unsubscribe(identifier)
 		},
 
 		avoidCircular(key: string) {
-			if (activeTrack)
+			if (activeWatch)
 				throw new MadstateCircularError(`cannot set any properties within a reaction, not even "${key}"`)
 		},
 
 		triggerReactions: (() => {
-			const reactionsToTrigger: Set<string> = new Set()
-			const fireQueuedTriggers = debounce3(debounceDelay, () => {
-				for (const key of reactionsToTrigger)
-					for (const [,reaction] of reactionRecords.get(key) ?? [])
-						reaction()
-				reactionsToTrigger.clear()
+			const reactionsQueue: Set<string> = new Set()
+			const fireReactionsQueue = debounce3(debounceDelay, <xState>(state: Readable<xState>) => {
+				for (const key of reactionsQueue) {
+					for (const [,{observer, reaction}] of sessions.get(key) ?? []) {
+						if (reaction) reaction(observer(state))
+						else observer(state)
+					}
+				}
+				reactionsQueue.clear()
 			})
-			return (key: string) => {
-				reactionsToTrigger.add(key)
-				const promise = fireQueuedTriggers()
+			return <xState>(state: Readable<xState>, key: string) => {
+				reactionsQueue.add(key)
+				const promise = fireReactionsQueue(state)
 				waiter = waiter.then(() => promise)
 			}
 		})(),
 
 		reactionRegistration(key: string) {
-			if (activeTrack) {
-				let record = reactionRecords.get(key)
+			if (activeWatch) {
+				let record = sessions.get(key)
 				if (!record) {
 					record = new Map()
-					reactionRecords.set(key, record)
+					sessions.set(key, record)
 				}
-				record.set(activeTrack.identifier, activeTrack.reaction)
+				record.set(activeWatch.identifier, activeWatch.session)
 			}
 		},
 	}

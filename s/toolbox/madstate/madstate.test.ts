@@ -26,7 +26,19 @@ export default <Suite>{
 		state.writable.count += 1
 		state.writable.count += 1
 		await state.wait()
-		// assert(fired === 3, `track reactions are debounced (${fired})`)
+		assert(fired === 3, `track reactions should be debounced, 3 expected, got ${fired}`)
+	},
+	async "advanced tracks are fired"() {
+		const state = madstate({count: 0})
+		let fired = 0
+		state.track(({count}) => ({count}), () => { fired += 1 })
+		state.writable.count = 5
+		state.writable.count = 6
+		await state.wait()
+		assert(fired === 1, `advanced reaction should be debounced and fire once, got ${fired}`)
+		state.writable.count = 7
+		await state.wait()
+		assert(fired === 2, `advacned reaction should fire twice`)
 	},
 	async "readable throws error on write"() {
 		const state = madstate({count: 0})
