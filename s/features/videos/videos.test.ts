@@ -1,4 +1,7 @@
 
+import {mockRemote} from "renraku/x/remote/mock-remote.js"
+import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+
 import {ops} from "../../framework/ops.js"
 import {Suite, expect, assert} from "cynic"
 import {makeVideoModels} from "./models/video-models.js"
@@ -20,6 +23,16 @@ import {_context} from "renraku/x/types/symbols/context-symbol.js"
 import {DropFirst} from "renraku/x/types/tools/drop-first.js"
 import {VideoAuth} from "./types/video-auth.js"
 import {mockDacastSdk} from "./dacast/dacast-sdk.js"
+import {Policy} from "renraku/x/types/primitives/policy.js"
+import {Remote} from "renraku/x/types/remote/remote.js"
+import {Api} from "renraku/x/types/api/api.js"
+import {DamnId} from "../../toolbox/damnedb/damn-id.js"
+import {videoPrivileges} from "./api/video-privileges.js"
+import {prepareAuthPolicies} from "../auth/policies/prepare-auth-policies.js"
+import {mockAppTables} from "../auth/aspects/apps/tables/mock-app-tables.js"
+import {mockConfig} from "../../assembly/backend/config/mock-config.js"
+import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
+import {mockVideoMeta} from "./testing/mock-meta.js"
 
 interface SetupOptions {
 	privileges: string[]
@@ -28,74 +41,52 @@ interface SetupOptions {
 const badApiKey = "nnn"
 const goodApiKey = "yyy"
 
-const viewer = []
-const moderator = []
+const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
+
+const viewer = [viewPrivilege]
+const moderator = [
+	videoPrivileges["view all videos"],
+	videoPrivileges["moderate videos"],
+]
 const unworthy = []
-
-export type MockApiContext<xApiContext extends ApiContext<any, any, any, any>> = {
-	[P in keyof xApiContext]: xApiContext[P] extends ProcedureDescriptor<any, any, any, any, any>
-		? (...args: DropFirst<Parameters<xApiContext[P]["func"]>>) => ReturnType<xApiContext[P]["func"]>
-		: xApiContext[P] extends ApiContext<any, any , any, any>
-			? MockApiContext<xApiContext[P]>
-			: never
-}
-
-export function mockApiContext<xApiContext extends ApiContext<any, any, any, any>>(apiContext: xApiContext) {
-	return function(auth: xApiContext extends ApiContext<any, infer xAuth, any, any> ? xAuth : never): MockApiContext<xApiContext> {
-		function recurse(context: ApiContext<any, any, any, any>) {
-			return objectMap(context, value => {
-				if (value[_descriptor])
-					return (...args: any[]) => (<ProcedureDescriptor<any, any, any, any, any>>value).func(auth, ...args)
-				else if (value[_context])
-					return recurse(value)
-				else
-					throw new Error("error mocking api context")
-			})
-		}
-		return recurse(apiContext)
-	}
-}
 
 async function testingSetup({privileges}: SetupOptions) {
 	const dacastSdk = mockDacastSdk({goodApiKey})
 	const rando = await getRando()
+	const origin = "example.com"
 	const storage = memoryFlexStorage()
 	const videoTables = await mockStorageTables<VideoTables>(storage, {
 		dacastAccountLinks: true,
 	})
 	const authTables = await mockAuthTables(storage)
-	const videoAuth: VideoAuth = (() => {
-		const permit = {privileges}
-		return {
-			access: {
-				appId: "",
-				origins: [],
-				permit,
-				scope: {core: true},
-				user: {
-					profile: {
-						avatar: undefined,
-						nickname: "Steven Seagal",
-						tagline: "totally ripped and sweet",
-					},
-					roles: [],
-					stats: {
-						joined: Date.now(),
-					},
-					userId: rando.randomId().toString(),
-				},
-			},
-			authTables,
-			checker: makePrivilegeChecker(permit, appPermissions.privileges),
-			videoTables,
-		}
-	})()
+	// const auth = mockVideo({
+	// 	authTables,
+	// 	privileges,
+	// 	videoTables,
+	// 	userId: rando.randomId().toString(),
+	// })
+	const authPolicies = prepareAuthPolicies({
+		appTables: await mockAppTables(storage),
+		authTables: new UnconstrainedTables(authTables),
+		config: mockConfig({
+			platformHome: "",
+			platformOrigins: [],
+		}),
+		verifyToken: mockVerifyToken()
+	})
 	const numptyService = makeDacastService({
 		dacastSdk,
 		videoTables: new UnconstrainedTables(videoTables),
-		async basePolicy(meta, request) {return undefined},
+		basePolicy: authPolicies.anonPolicy,
 	})
-	const dacastService = mockApiContext(numptyService)(videoAuth)
+	const dacastService = mockRemote(numptyService).withMeta({
+		meta: await mockVideoMeta({
+			privileges,
+			origins: [origin],
+			userId: rando.randomId().toString(),
+		}),
+		request: mockHttpRequest({origin}),
+	})
 	return makeVideoModels({dacastService})
 }
 
@@ -124,8 +115,10 @@ export default <Suite>{
 		},
 		async "viewers cannot link dacast account"() {
 			const {dacastModel} = await testingSetup({privileges: viewer})
-			await dacastModel.linkAccount({apiKey: goodApiKey})
-			assert(ops.isError(dacastModel.state.linkedAccountOp), "should be rejected")
+			await expect(async() => {
+				await dacastModel.linkAccount({apiKey: goodApiKey})
+			}).throws()
+			assert(ops.isError(dacastModel.state.linkedAccountOp), "client-facing error should appear")
 		},
 	},
 	// "videos model": {

@@ -9,6 +9,8 @@ import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {DacastLinkDisplay, DacastLinkSecret} from "../../types/dacast-link.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {videoPrivileges} from "../video-privileges.js"
 
 function toLinkDisplay(
 		secret: undefined | DacastLinkSecret
@@ -31,8 +33,11 @@ export const makeDacastService = ({
 	policy: async(meta, request) => {
 		const auth = await basePolicy(meta, request)
 		const appId = DamnId.fromString(auth.access.appId)
+		const checker = makePrivilegeChecker(auth.access.permit, videoPrivileges)
+		checker.requirePrivilege("moderate videos")
 		return {
 			...auth,
+			checker,
 			videoTables: rawVideoTables.namespaceForApp(appId),
 		}
 	},
