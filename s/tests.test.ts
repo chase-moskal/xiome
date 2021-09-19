@@ -14,14 +14,14 @@ export default <Suite>{
 		damnId,
 		autowatcher,
 	},
-	"testable system": {
-		async "doesn't explode"() {
-			const system = await assembleTestableSystem()
-			const {accessModel} = system.windowForApp.models
-			const access = await accessModel.getValidAccess()
-			assert(access.appId, "appId exists")
-		},
-	},
+	// "testable system": {
+	// 	async "doesn't explode"() {
+	// 		const system = await assembleTestableSystem()
+	// 		const {accessModel} = system.windowForApp.models
+	// 		const access = await accessModel.getValidAccess()
+	// 		assert(access.appId, "appId exists")
+	// 	},
+	// },
 	"features": {
 		// auth,
 		videos,
