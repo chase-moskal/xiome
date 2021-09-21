@@ -2,16 +2,15 @@
 import {apiContext} from "renraku/x/api/api-context.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
-import * as Dacast from "../../dacast/types/dacast-types.js"
-
 import {videoPrivileges} from "../video-privileges.js"
 import {VideoTables} from "../../types/video-tables.js"
+import * as Dacast from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {DacastLinkDisplay, DacastLinkSecret} from "../../types/dacast-link.js"
-import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 function toLinkDisplay(
 		secret: undefined | DacastLinkSecret
@@ -55,7 +54,7 @@ export const makeDacastService = ({
 		},
 
 		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
-			const good = await verifyDacastApiKey
+			const good = await verifyDacastApiKey(apiKey)
 			const secret = good
 				? {apiKey, time: Date.now()}
 				: undefined

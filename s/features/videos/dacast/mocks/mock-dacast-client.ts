@@ -1,12 +1,14 @@
 
-import * as Dacast from "./types/dacast-types.js"
+import * as Dacast from "../types/dacast-types.js"
+import {fakeDacastData} from "./parts/fake-dacast-data.js"
 
-export const makeDacastClient: Dacast.MakeClient = ({apiKey}) => {
+export function mockDacastClient({goodApiKey}: {
+		goodApiKey: string
+	}): Dacast.MakeClient {
 
-	const dacastApiUrl = "https://developer.dacast.com/"
-	const rest = undefined
+	const data = fakeDacastData()
 
-	return {
+	return ({apiKey}) => ({
 		channels: {
 			get: async() => { throw new Error("todo") },
 			id: channelId => ({
@@ -34,5 +36,5 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey}) => {
 				}),
 			})
 		},
-	}
+	})
 }
