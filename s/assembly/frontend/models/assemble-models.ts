@@ -1,5 +1,4 @@
 
-// import {makeStoreModel} from "../../features/store/model/store-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
@@ -9,6 +8,7 @@ import {makeLivestreamModel} from "../../../features/livestream/models/livestrea
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
+import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 
 export async function assembleModels({
 		appId,
@@ -49,6 +49,10 @@ export async function assembleModels({
 		getAccessOp,
 	})
 
+	const videoModels = makeVideoModels({
+		dacastService: remote.videos.dacastService,
+	})
+
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
 	// 	appId,
@@ -80,6 +84,7 @@ export async function assembleModels({
 			permissionsModel.updateAccessOp(accessOp),
 			questionsModel.accessChange(access),
 			administrativeModel.updateAccessOp(accessOp),
+			videoModels.dacastModel.updateAccessOp(accessOp),
 			// storeModel.accessChange(access),
 		])
 	})
@@ -88,6 +93,7 @@ export async function assembleModels({
 		exampleModel,
 		appsModel,
 		accessModel,
+		videoModels,
 		// storeModel,
 		personalModel,
 		questionsModel,

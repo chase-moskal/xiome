@@ -68,6 +68,9 @@ export async function assimilateDatabase({
 				stripeAccounts: true,
 			},
 		},
+		videos: {
+			dacastAccountLinks: true,
+		},
 	}
 
 	async function mockWithStorage(mockStorage: FlexStorage) {

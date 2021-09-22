@@ -21,12 +21,10 @@ function toLinkDisplay(
 }
 
 export const makeDacastService = ({
-		dacast,
 		videoTables: rawVideoTables,
 		basePolicy,
 		verifyDacastApiKey,
 	}: {
-		dacast: Dacast.Client
 		videoTables: UnconstrainedTables<VideoTables>
 		basePolicy: Policy<AnonMeta, AnonAuth>
 		verifyDacastApiKey: Dacast.VerifyApiKey

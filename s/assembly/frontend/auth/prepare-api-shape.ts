@@ -118,6 +118,14 @@ export function prepareApiShape({appId, storage}: {
 				setShow: true,
 			},
 		},
+		videos: {
+			dacastService: {
+				[_meta]: standardMeta,
+				clearLink: true,
+				getLink: true,
+				setLink: true,
+			},
+		},
 	})
 
 	function installAuthMediator({greenService}: {

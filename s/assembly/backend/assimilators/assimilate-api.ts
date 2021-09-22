@@ -12,6 +12,7 @@ import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
+import {videosApi} from "../../../features/videos/api/videos-api.js"
 
 export async function assimilateApi({
 		config, rando,
@@ -61,6 +62,10 @@ export async function assimilateApi({
 		livestream: livestreamApi({
 			authPolicies,
 			livestreamTables: database.livestream,
-		})
+		}),
+		videos: videosApi({
+			authPolicies,
+			videoTables: database.videos,
+		}),
 	})
 }

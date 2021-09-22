@@ -37,11 +37,9 @@ export const roles = {
 	],
 }
 
-const makeDacastClient = mockDacastClient({goodApiKey})
 const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
 export async function videoTestingSetup({privileges}: SetupOptions) {
-	const dacast = makeDacastClient({apiKey: goodApiKey})
 	const rando = await getRando()
 	const origin = "example.com"
 	const storage = memoryFlexStorage()
@@ -59,7 +57,6 @@ export async function videoTestingSetup({privileges}: SetupOptions) {
 		verifyToken: mockVerifyToken()
 	})
 	const numptyService = makeDacastService({
-		dacast,
 		verifyDacastApiKey,
 		videoTables: new UnconstrainedTables(videoTables),
 		basePolicy: authPolicies.anonPolicy,
