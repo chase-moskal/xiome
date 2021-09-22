@@ -1,4 +1,5 @@
 
+import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 
 const commonPrivileges = {
@@ -17,6 +18,7 @@ const commonPowerPrivileges = {
 	"view stats": "092866ae6378833e43ec7001188aa1829d4cf2858e42da0ad3f44a2fedbcb07b",
 	"administrate user roles": "a072e9dd003a762e7d693658d8ac724be352b18da240843f691595c89020e350",
 	"moderate livestream": "a59d6ce7dd46e0bd7710d11cbc609cf5849e32deb13753eec8150e6fb40a43e9",
+	...videoPowerPrivileges,
 }
 
 const platformPowerPrivileges = {
