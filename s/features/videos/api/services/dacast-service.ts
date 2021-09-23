@@ -53,12 +53,14 @@ export const makeDacastService = ({
 
 		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
 			const good = await verifyDacastApiKey(apiKey)
-			const secret = good
-				? {apiKey, time: Date.now()}
-				: undefined
-			await videoTables.dacastAccountLinks.delete({conditions: false})
-			if (secret)
-				await videoTables.dacastAccountLinks.create(secret)
+			let secret: DacastLinkSecret
+			if (good) {
+				secret = {apiKey, time: Date.now()}
+				await videoTables.dacastAccountLinks.update({
+					conditions: false,
+					upsert: secret,
+				})
+			}
 			return toLinkDisplay(secret)
 		},
 

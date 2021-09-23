@@ -9,7 +9,7 @@ export function makeDacastModel({dacastService}: VideoModelsOptions) {
 
 	const state = madstate({
 		accessOp: ops.none() as Op<AccessPayload>,
-		linkedAccountOp: undefined as Op<undefined | DacastLinkDisplay>,
+		linkedAccountOp: ops.none() as Op<undefined | DacastLinkDisplay>,
 	})
 
 	return {
@@ -23,7 +23,7 @@ export function makeDacastModel({dacastService}: VideoModelsOptions) {
 			return ops.value(state.readable.linkedAccountOp)
 		},
 
-		async getLinkedAccount() {
+		async loadLinkedAccount() {
 			return ops.operation({
 				promise: dacastService.getLink(),
 				setOp: op => state.writable.linkedAccountOp = op,

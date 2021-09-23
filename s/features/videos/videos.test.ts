@@ -13,7 +13,7 @@ export default <Suite>{
 			const {dacastModel} = await videoTestingSetup({
 				privileges: roles.moderator,
 			})
-			expect(await dacastModel.getLinkedAccount()).not.ok()
+			expect(await dacastModel.loadLinkedAccount()).not.ok()
 			await dacastModel.linkAccount({apiKey: goodApiKey})
 			const {linkedAccount} = dacastModel
 			expect(linkedAccount).ok()
