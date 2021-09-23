@@ -1,4 +1,3 @@
-import * as rm from 'typed-rest-client/RestClient';
 
 export interface Content {
 	title: string
@@ -25,59 +24,37 @@ export interface Embed {
 export interface Client {
 	channels: {
 		get(): Promise<Channel[]>
-		post(channel: any): Promise<Channel>
 		id(channelId: string): {
-			delete(): Promise<unknown>
 			get(): Promise<Channel>
-			put(): Promise<Channel>
 			embed(embedType: string): {
 				get(): Promise<Embed>
 			}
-			deleteSplash(): Promise<unknown>
-			deleteThumbnail(): Promise<unknown>
-			postSplash(): Promise<Channel>
-			postThumbnail(): Promise<Channel>
 		}
 	}
 	vods: {
 		get(): Promise<Vod[]>
-		post(vod: any): Promise<Vod>
 		id(vodId: string): {
-			delete(): Promise<unknown>
 			get(): Promise<Vod>
-			put(vod: any): Promise<Vod>
 			embed(embedType: string): {
 				get(): Promise<Embed>
 			}
-			deleteSplash(): Promise<unknown>
-			postSplash(splash: any): Promise<Vod>
-			postThumbnail(thumbnail: any): Promise<Vod>
 		}
 	}
 	playlists: {
 		get(): Promise<Playlist[]>
-		post(playlist: any): Promise<Channel>
 		id(playlistId: string): {
-			delete(): Promise<unknown>
 			get(): Promise<Playlist>
-			put(playlist: any): Promise<Playlist>
-			putContent(content: any): Promise<Playlist>
 			embed(embedType: string): {
 				get(): Promise<Embed>
 			}
-			deleteSplash(): Promise<unknown>
-			deleteThumbnail(): Promise<unknown>
-			postSplash(splash: any): Promise<Playlist>
-			postThumbnail(thumbnail: any): Promise<Playlist>
 		}
 	}
 }
 
 export interface MakeClient {
-	(
-		apiKey: string,
-		options?: rm.IRequestOptions
-	): Client
+	({apiKey}: {
+		apiKey: string
+	}): Client
 }
 
 export interface VerifyApiKey {
