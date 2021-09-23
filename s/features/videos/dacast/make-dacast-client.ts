@@ -1,4 +1,4 @@
-import * as rm from 'typed-rest-client/RestClient';
+import * as rm from 'typed-rest-client/RestClient'
 import * as Dacast from './types/dacast-types.js'
 
 export const makeDacastClient: Dacast.MakeClient= (apiKey, options = {additionalHeaders: {'X-Api-Key': apiKey, 'X-Format': 'default'}}) => {
@@ -7,11 +7,11 @@ export const makeDacastClient: Dacast.MakeClient= (apiKey, options = {additional
 	return {
 		channels: {
 			get: async() => (await rest.get<Dacast.Channel[]>(`v2/channel`, options)).result!,
-      		post: async(channel: any) => (await rest.create<Dacast.Channel>(`v2/channel`, channel, options)).result!,
+			post: async(channel: any) => (await rest.create<Dacast.Channel>(`v2/channel`, channel, options)).result!,
 			id: (channelId: string) => ({
-       			delete: async() => (await rest.del(`v2/channel/${channelId}`, options)).result,
+				delete: async() => (await rest.del(`v2/channel/${channelId}`, options)).result,
 				get: async() => (await rest.get<Dacast.Channel>(`v2/channel/${channelId}`, options)).result!,
-       			put: async() => (await rest.replace<Dacast.Channel>(`v2/channel/${channelId}`, options)).result!,
+				put: async() => (await rest.replace<Dacast.Channel>(`v2/channel/${channelId}`, options)).result!,
 				embed: (embedType: string) => ({
 					get: async() => (await rest.get<Dacast.Embed>(`v2/channel/${channelId}/embed/${embedType}`, options)).result!
 				}),
@@ -23,11 +23,11 @@ export const makeDacastClient: Dacast.MakeClient= (apiKey, options = {additional
 		},
 		vods: {
 			get: async() => (await rest.get<Dacast.Vod[]>(`v2/vod`, options)).result!,
-      		post: async(vod: any)=> (await rest.create<Dacast.Vod>(`v2/vod`, vod, options)).result!,
+			post: async(vod: any)=> (await rest.create<Dacast.Vod>(`v2/vod`, vod, options)).result!,
 			id: (vodId: string) => ({
 				get: async() => (await rest.get<Dacast.Vod>(`v2/vod/${vodId}`, options)).result!,
-        		delete: async() => (await rest.del(`v2/vod/${vodId}`, options)).result,
-        		put: async(vod: any) => (await rest.replace<Dacast.Vod>(`v2/vod/${vodId}`, vod, options)).result!,
+				delete: async() => (await rest.del(`v2/vod/${vodId}`, options)).result,
+				put: async(vod: any) => (await rest.replace<Dacast.Vod>(`v2/vod/${vodId}`, vod, options)).result!,
 				embed: (embedType: string) => ({
 					get: async() => (await rest.get<Dacast.Embed>(`v2/vod/${vodId}/embed/${embedType}`, options)).result!,
 				}),
@@ -37,13 +37,13 @@ export const makeDacastClient: Dacast.MakeClient= (apiKey, options = {additional
 			})
 		},
 		playlists: {
-      		get: async() => (await rest.get<Dacast.Playlist[]>(`v2/playlists`, options)).result!,
-      		post: async(playlist: any) => (await rest.create<Dacast.Playlist>(`v2/playlists`, playlist, options)).result!,
+			get: async() => (await rest.get<Dacast.Playlist[]>(`v2/playlists`, options)).result!,
+			post: async(playlist: any) => (await rest.create<Dacast.Playlist>(`v2/playlists`, playlist, options)).result!,
 			id: (playlistsId: string) => ({
-       			delete: async() => (await rest.del(`v2/playlists/${playlistsId}`, options)).result,
+				delete: async() => (await rest.del(`v2/playlists/${playlistsId}`, options)).result,
 				get: async() => (await rest.get<Dacast.Playlist>(`v2/playlists/${playlistsId}`, options)).result!,
-        		put: async(playlist: any) => (await rest.replace<Dacast.Playlist>(`v2/playlists/${playlistsId}`, playlist, options)).result!,
-        		putContent: async(content: any) => (await rest.replace<Dacast.Playlist>(`v2/playlists/${playlistsId}/content`, content, options)).result!,
+				put: async(playlist: any) => (await rest.replace<Dacast.Playlist>(`v2/playlists/${playlistsId}`, playlist, options)).result!,
+				putContent: async(content: any) => (await rest.replace<Dacast.Playlist>(`v2/playlists/${playlistsId}/content`, content, options)).result!,
 				embed: (embedType: string) => ({
 					get: async() => (await rest.get<Dacast.Embed>(`v2/playlists/${playlistsId}/embed/${embedType}`, options)).result!,
 				}),
