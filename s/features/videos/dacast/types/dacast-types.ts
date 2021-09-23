@@ -51,9 +51,15 @@ export interface Client {
 	}
 }
 
+export interface Headers {
+	"X-Api-Key": string
+	"X-Format": "default"
+}
+
 export interface MakeClient {
-	({apiKey}: {
+	({}: {
 		apiKey: string
+		headers?: Partial<Headers>
 	}): Client
 }
 
