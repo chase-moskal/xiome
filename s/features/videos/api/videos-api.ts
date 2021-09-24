@@ -7,7 +7,7 @@ import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 import {mockDacastClient} from "../dacast/mocks/mock-dacast-client.js"
 
-import {goodApiKey} from "../testing/video-testing-setup.js"
+import {goodApiKey} from "../testing/video-setup.js"
 import {mockVerifyDacastApiKey} from "../dacast/mocks/mock-verify-dacast-api-key.js"
 
 export function videosApi({

@@ -19,14 +19,10 @@ import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-stora
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
-interface SetupOptions {
-	privileges: string[]
-}
-
 export const badApiKey = "nnn"
 export const goodApiKey = "yyy"
 
-const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
+export const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
 
 export const roles = {
 	unworthy: [],
@@ -39,7 +35,7 @@ export const roles = {
 
 const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
-export async function videoTestingSetup({privileges}: SetupOptions) {
+export async function videoSetup() {
 	const rando = await getRando()
 	const origin = "example.com"
 	const storage = memoryFlexStorage()
@@ -61,19 +57,27 @@ export async function videoTestingSetup({privileges}: SetupOptions) {
 		videoTables: new UnconstrainedTables(videoTables),
 		basePolicy: authPolicies.anonPolicy,
 	})
-	const dacastService = mockRemote(numptyService).withMeta({
-		meta: await mockVideoMeta({
-			privileges,
-			origins: [origin],
-			userId: rando.randomId().toString(),
-		}),
-		request: mockHttpRequest({origin}),
-	})
-	return makeVideoModels({dacastService})
-}
 
-export async function setupLinked(options: SetupOptions) {
-	const models = await videoTestingSetup(options)
-	await models.dacastModel.linkAccount({apiKey: goodApiKey})
-	return models
+	return {
+
+		async for(privileges: string[]) {
+			const dacastService = mockRemote(numptyService).withMeta({
+				meta: await mockVideoMeta({
+					privileges,
+					origins: [origin],
+					userId: rando.randomId().toString(),
+				}),
+				request: mockHttpRequest({origin}),
+			})
+			const models = makeVideoModels({dacastService})
+
+			return {
+				models,
+				async link() {
+					await models.dacastModel.linkAccount({apiKey: goodApiKey})
+					return models
+				},
+			}
+		}
+	}
 }

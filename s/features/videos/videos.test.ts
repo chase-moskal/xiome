@@ -2,17 +2,19 @@
 import {Suite, expect, assert} from "cynic"
 import {_context} from "renraku/x/types/symbols/context-symbol.js"
 import {_descriptor} from "renraku/x/types/symbols/descriptor-symbol.js"
+import {appPermissions} from "../../assembly/backend/permissions/standard-permissions.js"
 
 import {ops} from "../../framework/ops.js"
-import {badApiKey, goodApiKey, roles, videoTestingSetup} from "./testing/video-testing-setup.js"
+import {badApiKey, goodApiKey, roles, videoSetup, viewPrivilege} from "./testing/video-setup.js"
 
 export default <Suite>{
-	"dacast integration": {
+
+	"dacast model": {
 
 		async "dacast accounts can be linked, and unlinked"() {
-			const {dacastModel} = await videoTestingSetup({
-				privileges: roles.moderator,
-			})
+			const {dacastModel} = await videoSetup()
+				.then(s => s.for(roles.moderator))
+				.then(s => s.models)
 			expect(await dacastModel.loadLinkedAccount()).not.ok()
 			await dacastModel.linkAccount({apiKey: goodApiKey})
 			const {linkedAccount} = dacastModel
@@ -26,17 +28,17 @@ export default <Suite>{
 		},
 
 		async "invalid api keys are rejected"() {
-			const {dacastModel} = await videoTestingSetup({
-				privileges: roles.moderator,
-			})
+			const {dacastModel} = await videoSetup()
+				.then(s => s.for(roles.moderator))
+				.then(s => s.models)
 			const link = await dacastModel.linkAccount({apiKey: badApiKey})
 			expect(link).not.ok()
 		},
 
 		async "viewers cannot link dacast account"() {
-			const {dacastModel} = await videoTestingSetup({
-				privileges: roles.viewer,
-			})
+			const {dacastModel} = await videoSetup()
+				.then(s => s.for(roles.viewer))
+				.then(s => s.models)
 			await expect(async() => {
 				await dacastModel.linkAccount({apiKey: goodApiKey})
 			}).throws()
@@ -46,28 +48,68 @@ export default <Suite>{
 			)
 		},
 	},
-	// "videos model": {
-	// 	catalog: {
-	// 		async "mods can see whole available catalog"() {
-	// 			const {videosModel} = await setupLinked({privileges: moderator})
-	// 			await videosModel.initialize()
-	// 			const {catalogOp} = videosModel.state
-	// 		},
-	// 		async "viewers cannot see catalog"() {
-	// 			const {videosModel} = await setupLinked({privileges: viewer})
-	// 			await videosModel.initialize()
-	// 			const {catalogOp} = videosModel.state
-	// 			assert(!ops.isReady(catalogOp), "catalog should not be available to unprivileged user")
-	// 		},
-	// 	},
-	// 	async "mods can select a catalog item to display"() {
-	// 		const {videosModel} = await setupLinked({privileges: moderator})
-	// 		await videosModel.initialize()
-	// 		const {catalog} = videosModel
-	// 		await videosModel.setItem({item: catalog[0]})
-	// 	},
-	// 	async "unprivileged users are forbidden to view the playlist"() {return false},
-	// },
+
+	"content model": {
+
+		async "mods can view all available content"() {
+			const {contentModel} = await videoSetup()
+				.then(s => s.for(roles.moderator))
+				.then(s => s.link()))
+			assert(contentModel.allContent.length === 0, "all content should start empty")
+			await contentModel.load()
+			assert(contentModel.allContent.length, "all content should not be empty")
+		},
+
+		async "mods can create and manage views, which associate content with privileges"() {
+			const {contentModel} = await videoSetup()
+				.then(s => s.for(roles.moderator))
+				.then(s => s.link())
+			const label = "view"
+			await contentModel.load()
+			assert(contentModel.contentViews.length, "content views array should start empty")
+			assert(contentModel.getView(label), "specific content view should start undefined")
+			await contentModel.setView({
+				label,
+				privileges: [viewPrivilege],
+				dacastContent: contentModel.allContent[0],
+			})
+			assert(contentModel.contentViews.length === 1, "content view should be listed")
+			await contentModel.deleteView(label)
+			assert(contentModel.contentViews.length === 0, "content view should be deleted")
+		},
+
+		async "users can access view they have permission for"() {
+			const setup = await videoSetup()
+			const mod = await setup.for(roles.moderator)
+				.then(s => s.link())
+			const viewer = await setup.for(roles.viewer)
+				.then(s => s.models)
+			const unworthy = await setup.for(roles.unworthy)
+				.then(s => s.models)
+			const label = "view"
+			{
+				const {contentModel} = mod
+				await contentModel.load()
+				await contentModel.setView({
+					label,
+					privileges: [viewPrivilege],
+					dacastContent: contentModel.allContent[0],
+				})
+				expect(await contentModel.getView(label)).ok()
+			}
+			{
+				const {contentModel} = viewer
+				await contentModel.load()
+				expect(await contentModel.getView(label)).ok()
+			}
+			{
+				const {contentModel} = unworthy
+				await contentModel.load()
+				expect(await contentModel.getView(label)).not.ok()
+			}
+		},
+	},
+
 	// "xiome-vods": {
 	// 	async "admin can select a dacast playlist and viewership privilege"() {return false},
 	// 	async "privileged users can view the playlist"() {return false},
