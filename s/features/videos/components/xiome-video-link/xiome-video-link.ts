@@ -6,6 +6,7 @@ import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
+import {videoPrivileges} from "../../api/video-privileges.js"
 
 @mixinStyles(styles)
 export class XiomeVideoLink extends ComponentWithShare<{
@@ -37,7 +38,7 @@ export class XiomeVideoLink extends ComponentWithShare<{
 
 	#renderWhenUnlinked = () => {
 		return html`
-			<h2>Link your Dacast account</h2>
+			<h2>link your dacast account</h2>
 			<div class=linkbox>
 				<xio-text-input @valuechange=${this.#handleInputChange}>api key</xio-text-input>
 				<xio-button @press=${this.#handleLinkClick}>link</xio-button>
@@ -48,7 +49,9 @@ export class XiomeVideoLink extends ComponentWithShare<{
 			<div class=helpbox>
 				<p>how to find your dacast api key</p>
 				<ul>
-					<li>
+					<li>create a <a target=_blank href="https://dacast.com/">dacast</a> account</li>
+					<li>if you have a trial account, you must email support and ask them to activate your account's "api access"</li>
+					<li>generate an api key in your <a target=_blank href="https://app.dacast.com/settings/integrations">dacast integrations settings</a></li>
 				</ul>
 			</div>
 		`
@@ -56,7 +59,7 @@ export class XiomeVideoLink extends ComponentWithShare<{
 
 	#renderWhenLinked = (linkedAccount: DacastLinkDisplay) => {
 		return html`
-			<h2>Your Dacast account is linked</h2>
+			<h2>your dacast account is linked</h2>
 			<p>linked on ${formatDate(linkedAccount.time).full}</p>
 			<xio-button @press=${this.#handleUnlinkClick}>unlink</xio-button>
 		`
@@ -65,11 +68,13 @@ export class XiomeVideoLink extends ComponentWithShare<{
 	render() {
 		return renderOp(this.state.accessOp, access => html`
 			<div class=dacastbox>
-				${renderOp(this.state.linkedAccountOp, linkedAccount =>
-					linkedAccount
-						? this.#renderWhenLinked(linkedAccount)
-						: this.#renderWhenUnlinked()
-				)}
+				${access.permit.privileges.includes(videoPrivileges["moderate videos"])
+					? renderOp(this.state.linkedAccountOp, linkedAccount =>
+						linkedAccount
+							? this.#renderWhenLinked(linkedAccount)
+							: this.#renderWhenUnlinked()
+					)
+					: html`<p>you don't have permission to link video accounts</p>`}
 			</div>
 		`)
 	}
