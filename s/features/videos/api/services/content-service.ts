@@ -11,7 +11,7 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {DacastType, VideoCatalogItem, VideoView} from "../../types/video-concepts.js"
+import {VideoHosting, VideoView} from "../../types/video-concepts.js"
 import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
@@ -41,36 +41,29 @@ export const makeContentService = ({
 
 	expose: {
 
-		async fetchCatalog({videoTables, checker}): Promise<{
-				vods: VideoCatalogItem.Any[]
-				channels: VideoCatalogItem.Any[]
-				playlists: VideoCatalogItem.Any[]
-			}> {
+		async fetchCatalog({videoTables, checker}): Promise<VideoHosting.AnyContent[]> {
 			checker.requirePrivilege("moderate videos")
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
-				return {
-					vods: [],
-					channels: [],
-					playlists: [],
-				}
+				return []
 			const dacast = makeDacastClient({apiKey})
 			const results = await concurrent({
 				vods: dacast.vods.get(),
 				channels: dacast.channels.get(),
 				playlists: dacast.playlists.get(),
 			})
-			const convert = (type: DacastType, content: Dacast.Content) => ({
+			const convert = (type: VideoHosting.DacastType, content: Dacast.Content): VideoHosting.DacastContent => ({
 				type,
 				id: content.id,
+				title: content.title,
 				thumb: content.thumbnail,
 				provider: "dacast" as const,
 			})
-			return {
-				vods: results.vods.map(x => convert("vod", x)),
-				channels: results.channels.map(x => convert("channel", x)),
-				playlists: results.playlists.map(x => convert("playlist", x)),
-			}
+			return [
+				...results.vods.map(x => convert("vod", x)),
+				...results.channels.map(x => convert("channel", x)),
+				...results.playlists.map(x => convert("playlist", x)),
+			]
 		},
 
 		async writeView({videoTables, checker}, {
@@ -78,7 +71,7 @@ export const makeContentService = ({
 			}: {
 				label: string
 				privileges: string[]
-				content: VideoCatalogItem.Any
+				content: VideoHosting.AnyReference
 			}) {
 			checker.requirePrivilege("moderate videos")
 			await videoTables.viewDacast.update({
@@ -98,7 +91,7 @@ export const makeContentService = ({
 
 		async getView({videoTables, access, checker}, {label}: {
 				label: string
-			}) {
+			}): Promise<VideoView> {
 
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
@@ -119,13 +112,17 @@ export const makeContentService = ({
 			if (!hasExplicitPrivilege && !checker.hasPrivilege("view all videos"))
 				throw new Error(`user does not have access to video view "${label}"`)
 
-			return <VideoView>{
+			return {
 				privileges,
-				embed: await getDacastEmbed({
-					dacast: makeDacastClient({apiKey}),
-					type: dacastRow.type,
-					id: dacastRow.dacastId,
-				})
+				id: dacastRow.dacastId,
+				label,
+				provider: "dacast",
+				type: dacastRow.type,
+				// embed: await getDacastEmbed({
+				// 	dacast: makeDacastClient({apiKey}),
+				// 	type: dacastRow.type,
+				// 	id: dacastRow.dacastId,
+				// })
 			}
 		},
 	},

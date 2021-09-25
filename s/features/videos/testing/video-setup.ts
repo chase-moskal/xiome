@@ -18,6 +18,7 @@ import {mockVerifyDacastApiKey} from "../dacast/mocks/mock-verify-dacast-api-key
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {makeContentService} from "../api/services/content-service.js"
 
 export const badApiKey = "nnn"
 export const goodApiKey = "yyy"
@@ -39,9 +40,6 @@ export async function videoSetup() {
 	const rando = await getRando()
 	const origin = "example.com"
 	const storage = memoryFlexStorage()
-	const videoTables = await mockStorageTables<VideoTables>(storage, {
-		dacastAccountLinks: true,
-	})
 	const authTables = await mockAuthTables(storage)
 	const authPolicies = prepareAuthPolicies({
 		appTables: await mockAppTables(storage),
@@ -52,24 +50,39 @@ export async function videoSetup() {
 		}),
 		verifyToken: mockVerifyToken()
 	})
-	const numptyService = makeDacastService({
+	const basePolicy = authPolicies.anonPolicy
+	const videoTables = new UnconstrainedTables(
+		await mockStorageTables<VideoTables>(storage, {
+			dacastAccountLinks: true,
+			viewDacast: true,
+			viewPrivileges: true,
+		})
+	)
+	const rawDacastService = makeDacastService({
+		videoTables,
+		basePolicy,
 		verifyDacastApiKey,
-		videoTables: new UnconstrainedTables(videoTables),
-		basePolicy: authPolicies.anonPolicy,
+	})
+	const rawContentService = makeContentService({
+		videoTables,
+		basePolicy,
+		makeDacastClient: mockDacastClient({goodApiKey}),
 	})
 
 	return {
 
 		async for(privileges: string[]) {
-			const dacastService = mockRemote(numptyService).withMeta({
+			const options = {
 				meta: await mockVideoMeta({
 					privileges,
 					origins: [origin],
 					userId: rando.randomId().toString(),
 				}),
 				request: mockHttpRequest({origin}),
-			})
-			const models = makeVideoModels({dacastService})
+			}
+			const dacastService = mockRemote(rawDacastService).withMeta(options)
+			const contentService = mockRemote(rawContentService).withMeta(options)
+			const models = makeVideoModels({dacastService, contentService})
 
 			return {
 				models,

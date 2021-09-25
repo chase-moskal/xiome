@@ -1,54 +1,35 @@
 
-// export namespace VideoHosting {
-// 	export type Provider = "dacast"
-// 	export interface Base {
-// 		provider: Provider
-// 	}
-// 	export type DacastType = 
-// 		| "vod"
-// 		| "channel"
-// 		| "playlist"
-// 	export interface DacastReference extends Base {
-// 		provider: "dacast"
-// 		type: DacastType
-// 		id: string
-// 	}
-// 	export interface DacastContent extends DacastReference {
-// 		thumb: string
-// 		title: string
-// 		embed: string
-// 	}
-// 	export type AnyReference = DacastReference
-// 	export type AnyContent = DacastContent
-// }
-
-export type DacastType = 
-	| "vod"
-	| "channel"
-	| "playlist"
-
-export namespace VideoCatalogItem {
+export namespace VideoHosting {
 	export type Provider = "dacast"
 	export interface Base {
-		id: string
-		thumb: string
-		title: string
 		provider: Provider
 	}
-	export interface Dacast extends Base {
+	export type DacastType = 
+		| "vod"
+		| "channel"
+		| "playlist"
+	export interface DacastReference extends Base {
 		provider: "dacast"
 		type: DacastType
+		id: string
 	}
-	export type Any = Dacast
+	export interface DacastContent extends DacastReference {
+		thumb: string
+		title: string
+	}
+	export interface DacastEmbed extends DacastContent {
+		embed: string
+	}
+	export type AnyReference = DacastReference
+	export type AnyContent = DacastContent
+	export type AnyEmbed = DacastEmbed
 }
 
-export interface VideoView {
+export interface VideoView extends VideoHosting.AnyReference {
 	label: string
 	privileges: string[]
-
 }
 
-export interface VideoShow {
+export interface VideoShow extends VideoHosting.AnyEmbed {
 	label: string
-	embed: string
 }

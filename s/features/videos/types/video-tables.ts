@@ -1,6 +1,6 @@
 
 import {DacastLinkRow} from "./dacast-link.js"
-import {DacastType} from "./video-concepts.js"
+import {VideoHosting} from "./video-concepts.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
 
@@ -11,8 +11,8 @@ export type ViewPrivilegeRow = {
 
 export type ViewDacastRow = {
 	label: string
-	type: DacastType
 	dacastId: string
+	type: VideoHosting.DacastType
 }
 
 export type VideoTables = {

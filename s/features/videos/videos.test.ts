@@ -51,34 +51,34 @@ export default <Suite>{
 
 	"content model": {
 
-		async "mods can see catalog"() {
+		async "moderator can see catalog"() {
 			const {contentModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
 				.then(s => s.link())
 			assert(contentModel.catalog.length === 0, "catalog should start empty")
-			await contentModel.loadCatalog()
+			await contentModel.loadModerationData()
 			assert(contentModel.catalog.length, "catalog should not be empty")
 		},
 
-		async "mods can manage views, which associate content with privileges"() {
+		async "moderator can manage views"() {
 			const {contentModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
 				.then(s => s.link())
 			const label = "view"
-			await contentModel.loadCatalog()
+			await contentModel.loadModerationData()
 			assert(contentModel.views.length, "content views array should start empty")
 			assert(contentModel.getView(label), "specific content view should start undefined")
 			await contentModel.setView({
 				label,
 				privileges: [viewPrivilege],
-				dacastContent: contentModel.catalog[0],
+				content: contentModel.catalog[0],
 			})
 			assert(contentModel.views.length === 1, "content view should be listed")
 			await contentModel.deleteView(label)
 			assert(contentModel.views.length === 0, "content view should be deleted")
 		},
 
-		async "users can access view they have permission for"() {
+		async "users can access show they have permission for"() {
 			const setup = await videoSetup()
 			const mod = await setup.for(roles.moderator)
 				.then(s => s.link())
@@ -89,30 +89,26 @@ export default <Suite>{
 			const label = "view"
 			{
 				const {contentModel} = mod
-				await contentModel.loadCatalog()
+				await contentModel.loadModerationData()
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
-					dacastContent: contentModel.catalog[0],
+					content: contentModel.catalog[0],
 				})
-				expect(await contentModel.getView(label)).ok()
+				await contentModel.loadShow(label)
+				expect(contentModel.getView(label)).ok()
+				expect(contentModel.getShow(label)).ok()
 			}
 			{
 				const {contentModel} = viewer
-				await contentModel.loadCatalog()
-				expect(await contentModel.getView(label)).ok()
+				await contentModel.loadShow(label)
+				expect(contentModel.getShow(label)).ok()
 			}
 			{
 				const {contentModel} = unworthy
-				await contentModel.loadCatalog()
-				expect(await contentModel.getView(label)).not.ok()
+				await contentModel.loadShow(label)
+				expect(contentModel.getShow(label)).not.ok()
 			}
 		},
 	},
-
-	// "xiome-vods": {
-	// 	async "admin can select a dacast playlist and viewership privilege"() {return false},
-	// 	async "privileged users can view the playlist"() {return false},
-	// 	async "unprivileged users are forbidden to view the playlist"() {return false},
-	// },
 }

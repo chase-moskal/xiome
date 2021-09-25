@@ -1,15 +1,14 @@
 
 import * as Dacast from "../../../dacast/types/dacast-types.js"
-import {DacastType, VideoView} from "../../../types/video-concepts.js"
+import {VideoHosting} from "../../../types/video-concepts.js"
 
 const embedType: Dacast.EmbedType = "javascript"
 
 export async function getDacastEmbed({
-		id, type, dacast,
+		dacast, reference: {id, type},
 	}: {
-		id: string
-		type: DacastType
 		dacast: Dacast.Client
+		reference: VideoHosting.AnyReference
 	}): Promise<Dacast.Embed> {
 
 	switch (type) {
