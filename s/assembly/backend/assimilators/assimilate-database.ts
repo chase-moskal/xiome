@@ -70,6 +70,8 @@ export async function assimilateDatabase({
 		},
 		videos: {
 			dacastAccountLinks: true,
+			viewDacast: true,
+			viewPrivileges: true,
 		},
 	}
 

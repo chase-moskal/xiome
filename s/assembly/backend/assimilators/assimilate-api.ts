@@ -13,6 +13,9 @@ import {makeAdministrativeApi} from "../../../features/administrative/api/admini
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
 import {videosApi} from "../../../features/videos/api/videos-api.js"
+import {mockDacastClient} from "../../../features/videos/dacast/mocks/mock-dacast-client.js"
+import {mockVerifyDacastApiKey} from "../../../features/videos/dacast/mocks/mock-verify-dacast-api-key.js"
+import {badApiKey, goodApiKey} from "../../../features/videos/dacast/mocks/constants.js"
 
 export async function assimilateApi({
 		config, rando,
@@ -32,6 +35,9 @@ export async function assimilateApi({
 		appTables: database.apps,
 		authTables: database.auth,
 	})
+
+	const makeDacastClient = mockDacastClient({goodApiKey})
+	const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
 	return asApi({
 		auth: authApi({
@@ -66,6 +72,8 @@ export async function assimilateApi({
 		videos: videosApi({
 			authPolicies,
 			videoTables: database.videos,
+			makeDacastClient,
+			verifyDacastApiKey,
 		}),
 	})
 }

@@ -9,9 +9,9 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 
 	const state = madstate({
 		accessOp: ops.none() as Op<AccessPayload>,
-		catalog: ops.none() as Op<VideoHosting.AnyContent[]>,
-		views: ops.none() as Op<VideoView[]>,
-		shows: ops.none() as Op<VideoShow[]>,
+		catalogOp: ops.none() as Op<VideoHosting.AnyContent[]>,
+		viewsOp: ops.none() as Op<VideoView[]>,
+		showsOp: ops.none() as Op<VideoShow[]>,
 	})
 
 	return {
@@ -22,34 +22,48 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		},
 
 		async loadModerationData() {
-			// TODO implement lol
+			await ops.operation({
+				promise: contentService.fetchCatalog(),
+				setOp: op => state.writable.catalogOp = op,
+			})
 		},
 
 		async loadShow(label: string) {
-			// TODO implement lol
+			const oldShows = ops.value(state.readable.showsOp) ?? []
+			let updatedShow: VideoShow
+			await ops.operation({
+				setOp: op => state.writable.showsOp = op,
+				promise: contentService.getShow({label})
+					.then(show => updatedShow = show)
+					.then(show => [
+						...oldShows.filter(s => s.label !== label),
+						show,
+					]),
+			})
+			return updatedShow
 		},
 
 		get catalog() {
-			return ops.value(state.readable.catalog)
+			return ops.value(state.readable.catalogOp)
 		},
 
 		get views() {
-			return ops.value(state.readable.views)
+			return ops.value(state.readable.viewsOp)
 		},
 
 		get shows() {
-			return ops.value(state.readable.shows)
+			return ops.value(state.readable.showsOp)
 		},
 
 		getView(label: string) {
-			const views = ops.value(state.readable.views)
+			const views = ops.value(state.readable.viewsOp)
 			return views
 				? views.find(view => view.label === label)
 				: undefined
 		},
 
 		getShow(label: string) {
-			const shows = ops.value(state.readable.shows)
+			const shows = ops.value(state.readable.showsOp)
 			return shows
 				? shows.find(show => show.label === label)
 				: undefined
@@ -60,13 +74,22 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 				privileges: string[]
 				content: VideoHosting.AnyReference
 			}) {
-			await contentService.writeView(options)
-			// TODO update local state
+			const oldViews = ops.value(state.readable.viewsOp) ?? []
+			await ops.operation({
+				setOp: op => state.writable.viewsOp = op,
+				promise: contentService.writeView(options).then(() => [
+					...oldViews.filter(v => v.label !== options.label),
+				]),
+			})
 		},
 
 		async deleteView(label: string) {
-			// await contentService.deleteView(label)
-			// TODO update local state
+			const oldViews = ops.value(state.readable.viewsOp) ?? []
+			await ops.operation({
+				setOp: op => state.writable.viewsOp = op,
+				promise: contentService.deleteView({label})
+					.then(() => oldViews.filter(v => v.label !== label)),
+			})
 		},
 	}
 }

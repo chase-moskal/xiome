@@ -2,10 +2,10 @@
 import {Suite, expect, assert} from "cynic"
 import {_context} from "renraku/x/types/symbols/context-symbol.js"
 import {_descriptor} from "renraku/x/types/symbols/descriptor-symbol.js"
-import {appPermissions} from "../../assembly/backend/permissions/standard-permissions.js"
 
 import {ops} from "../../framework/ops.js"
-import {badApiKey, goodApiKey, roles, videoSetup, viewPrivilege} from "./testing/video-setup.js"
+import {badApiKey, goodApiKey} from "./dacast/mocks/constants.js"
+import {roles, videoSetup, viewPrivilege} from "./testing/video-setup.js"
 
 export default <Suite>{
 

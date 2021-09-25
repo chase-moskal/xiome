@@ -19,9 +19,7 @@ import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-stora
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 import {makeContentService} from "../api/services/content-service.js"
-
-export const badApiKey = "nnn"
-export const goodApiKey = "yyy"
+import {goodApiKey} from "../dacast/mocks/constants.js"
 
 export const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
 

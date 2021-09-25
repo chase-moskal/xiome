@@ -51,6 +51,7 @@ export async function assembleModels({
 
 	const videoModels = makeVideoModels({
 		dacastService: remote.videos.dacastService,
+		contentService: remote.videos.contentService,
 	})
 
 	// // TODO reactivate store

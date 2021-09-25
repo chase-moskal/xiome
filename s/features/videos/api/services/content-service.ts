@@ -11,12 +11,13 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {VideoHosting, VideoView} from "../../types/video-concepts.js"
+import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
 import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {isPermittedToView} from "./routines/is-permitted-to-view.js"
+import {getVideoView} from "./routines/get-video-view.js"
 
 export const makeContentService = ({
 		makeDacastClient,
@@ -92,38 +93,35 @@ export const makeContentService = ({
 		async getView({videoTables, access, checker}, {label}: {
 				label: string
 			}): Promise<VideoView> {
+			const apiKey = await getDacastApiKey(videoTables)
+			return apiKey
+				? getVideoView({
+					label,
+					apiKey,
+					checker,
+					videoTables,
+					userPrivileges: access.permit.privileges,
+				})
+				: undefined
+		},
 
+		async deleteView({}, {label}: {label: string}) {
+
+		},
+
+		async getShow({videoTables, access, checker}, {label}: {
+				label: string
+			}): Promise<VideoShow> {
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
 				return undefined
-
-			const dacastRow = await videoTables.viewDacast.one(find({label}))
-			if (!dacastRow)
-				return undefined
-
-			const privileges = await videoTables
-				.viewPrivileges.read(find({label}))
-				.then(rows => rows.map(row => row.privilegeId.toString()))
-
-			const hasExplicitPrivilege = isPermittedToView({
-				viewPrivileges: privileges,
+			const view = await getVideoView({
+				label,
+				apiKey,
+				checker,
+				videoTables,
 				userPrivileges: access.permit.privileges,
 			})
-			if (!hasExplicitPrivilege && !checker.hasPrivilege("view all videos"))
-				throw new Error(`user does not have access to video view "${label}"`)
-
-			return {
-				privileges,
-				id: dacastRow.dacastId,
-				label,
-				provider: "dacast",
-				type: dacastRow.type,
-				// embed: await getDacastEmbed({
-				// 	dacast: makeDacastClient({apiKey}),
-				// 	type: dacastRow.type,
-				// 	id: dacastRow.dacastId,
-				// })
-			}
 		},
 	},
 })

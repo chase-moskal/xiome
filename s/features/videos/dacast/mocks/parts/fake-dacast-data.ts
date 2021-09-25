@@ -18,6 +18,8 @@ export function fakeDacastData() {
 		return {
 			title: `Fake Title ${randomHex()}`,
 			online: true,
+			id: Math.random().toString(),
+			thumbnail: "thumb.jpg",
 			creation_date: "1999-12-25",
 			start_date: "1999-12-31",
 			end_date: "2000-01-01",
