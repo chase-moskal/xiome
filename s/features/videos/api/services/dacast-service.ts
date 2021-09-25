@@ -8,12 +8,12 @@ import * as Dacast from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
-import {DacastLinkDisplay, DacastLinkSecret} from "../../types/dacast-link.js"
+import {DacastLinkDisplay, DacastLinkRow} from "../../types/dacast-link.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 function toLinkDisplay(
-		secret: undefined | DacastLinkSecret
+		secret: undefined | DacastLinkRow
 	): DacastLinkDisplay {
 	return secret
 		? {time: secret.time}
@@ -53,7 +53,7 @@ export const makeDacastService = ({
 
 		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
 			const good = await verifyDacastApiKey(apiKey)
-			let secret: DacastLinkSecret
+			let secret: DacastLinkRow
 			if (good) {
 				secret = {apiKey, time: Date.now()}
 				await videoTables.dacastAccountLinks.update({

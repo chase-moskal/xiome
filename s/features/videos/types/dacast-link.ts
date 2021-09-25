@@ -1,5 +1,5 @@
 
-export type DacastLinkSecret = {
+export type DacastLinkRow = {
 	time: number
 	apiKey: string
 }

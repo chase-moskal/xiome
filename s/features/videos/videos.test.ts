@@ -51,31 +51,31 @@ export default <Suite>{
 
 	"content model": {
 
-		async "mods can view all available content"() {
+		async "mods can see catalog"() {
 			const {contentModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
-				.then(s => s.link()))
-			assert(contentModel.allContent.length === 0, "all content should start empty")
-			await contentModel.load()
-			assert(contentModel.allContent.length, "all content should not be empty")
+				.then(s => s.link())
+			assert(contentModel.catalog.length === 0, "catalog should start empty")
+			await contentModel.loadCatalog()
+			assert(contentModel.catalog.length, "catalog should not be empty")
 		},
 
-		async "mods can create and manage views, which associate content with privileges"() {
+		async "mods can manage views, which associate content with privileges"() {
 			const {contentModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
 				.then(s => s.link())
 			const label = "view"
-			await contentModel.load()
-			assert(contentModel.contentViews.length, "content views array should start empty")
+			await contentModel.loadCatalog()
+			assert(contentModel.views.length, "content views array should start empty")
 			assert(contentModel.getView(label), "specific content view should start undefined")
 			await contentModel.setView({
 				label,
 				privileges: [viewPrivilege],
-				dacastContent: contentModel.allContent[0],
+				dacastContent: contentModel.catalog[0],
 			})
-			assert(contentModel.contentViews.length === 1, "content view should be listed")
+			assert(contentModel.views.length === 1, "content view should be listed")
 			await contentModel.deleteView(label)
-			assert(contentModel.contentViews.length === 0, "content view should be deleted")
+			assert(contentModel.views.length === 0, "content view should be deleted")
 		},
 
 		async "users can access view they have permission for"() {
@@ -89,22 +89,22 @@ export default <Suite>{
 			const label = "view"
 			{
 				const {contentModel} = mod
-				await contentModel.load()
+				await contentModel.loadCatalog()
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
-					dacastContent: contentModel.allContent[0],
+					dacastContent: contentModel.catalog[0],
 				})
 				expect(await contentModel.getView(label)).ok()
 			}
 			{
 				const {contentModel} = viewer
-				await contentModel.load()
+				await contentModel.loadCatalog()
 				expect(await contentModel.getView(label)).ok()
 			}
 			{
 				const {contentModel} = unworthy
-				await contentModel.load()
+				await contentModel.loadCatalog()
 				expect(await contentModel.getView(label)).not.ok()
 			}
 		},

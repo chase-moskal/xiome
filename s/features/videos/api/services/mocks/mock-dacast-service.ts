@@ -1,11 +1,11 @@
 
-import {DacastLinkDisplay, DacastLinkSecret} from "../../types/dacast-link.js"
+import {DacastLinkDisplay, DacastLinkRow} from "../../../types/dacast-link.js"
 
 export function mockDacastService({goodApiKey}: {
 		goodApiKey: string
 	}) {
 
-	let link: DacastLinkSecret
+	let link: DacastLinkRow
 
 	function getLinkDisplay(): undefined | DacastLinkDisplay {
 		return link
