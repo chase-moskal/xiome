@@ -52,12 +52,21 @@ export default <Suite>{
 	"content model": {
 
 		async "moderator can see catalog"() {
-			const {contentModel} = await videoSetup()
-				.then(s => s.for(roles.moderator))
-				.then(s => s.link())
-			assert(contentModel.catalog.length === 0, "catalog should start empty")
-			await contentModel.loadModerationData()
-			assert(contentModel.catalog.length, "catalog should not be empty")
+			const setup = await videoSetup()
+			{
+				const {contentModel} = await setup.for(roles.moderator)
+					.then(s => s.link())
+				assert(contentModel.catalog.length === 0, "catalog should start empty")
+				await contentModel.loadModerationData()
+				assert(contentModel.catalog.length, "catalog should not be empty")
+			}
+			{
+				const {contentModel} = await setup.for(roles.viewer)
+					.then(s => s.models)
+				assert(contentModel.catalog.length === 0, "catalog should start empty")
+				await expect(async() => contentModel.loadModerationData())
+					.throws()
+			}
 		},
 
 		async "moderator can manage views"() {
