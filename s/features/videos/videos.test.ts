@@ -60,12 +60,14 @@ export default <Suite>{
 				await contentModel.loadModerationData()
 				assert(contentModel.catalog.length, "catalog should not be empty")
 			}
-			{
-				const {contentModel} = await setup.for(roles.viewer)
-					.then(s => s.models)
-				assert(contentModel.catalog.length === 0, "catalog should start empty")
-				await expect(async() => contentModel.loadModerationData())
-					.throws()
+			return {
+				async "viewers can't see the catalog"() {
+					const {contentModel} = await setup.for(roles.viewer)
+						.then(s => s.models)
+					assert(contentModel.catalog.length === 0, "catalog should start empty")
+					await expect(async() => contentModel.loadModerationData())
+						.throws()
+				},
 			}
 		},
 
@@ -102,17 +104,12 @@ export default <Suite>{
 			}
 		},
 
-		async "users can access show they have permission for"() {
+		async "users can access shows"() {
 			const setup = await videoSetup()
-			const mod = await setup.for(roles.moderator)
-				.then(s => s.link())
-			const viewer = await setup.for(roles.viewer)
-				.then(s => s.models)
-			const unworthy = await setup.for(roles.unworthy)
-				.then(s => s.models)
 			const label = "view"
 			{
-				const {contentModel} = mod
+				const {contentModel} = await setup.for(roles.moderator)
+					.then(s => s.link())
 				await contentModel.loadModerationData()
 				await contentModel.setView({
 					label,
@@ -123,15 +120,19 @@ export default <Suite>{
 				expect(contentModel.getView(label)).ok()
 				expect(contentModel.getShow(label)).ok()
 			}
-			{
-				const {contentModel} = viewer
-				await contentModel.loadShow(label)
-				expect(contentModel.getShow(label)).ok()
-			}
-			{
-				const {contentModel} = unworthy
-				await contentModel.loadShow(label)
-				expect(contentModel.getShow(label)).not.ok()
+			return {
+				async "viewer can access show"() {
+					const {contentModel} = await setup.for(roles.viewer)
+						.then(s => s.models)
+					await contentModel.loadShow(label)
+					expect(contentModel.getShow(label)).ok()
+				},
+				async "unworthy cannot access show"() {
+					const {contentModel} = await setup.for(roles.unworthy)
+						.then(s => s.models)
+					await contentModel.loadShow(label)
+					expect(contentModel.getShow(label)).not.ok()
+				},
 			}
 		},
 	},
