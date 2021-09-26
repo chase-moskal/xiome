@@ -26,6 +26,10 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 				promise: contentService.fetchCatalog(),
 				setOp: op => state.writable.catalogOp = op,
 			})
+			await ops.operation({
+				promise: contentService.getViews(),
+				setOp: op => state.writable.viewsOp = op,
+			})
 		},
 
 		async loadShow(label: string) {

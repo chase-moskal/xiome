@@ -23,12 +23,13 @@ export async function setViewPermissions({
 	const unwantedPrivileges =
 		oldPrivileges.filter(oldPrivilegeNotFoundInNewPrivileges)
 
-	await videoTables.viewPrivileges.delete(
-		findAll<string, ViewPrivilegeRow>(unwantedPrivileges, p => ({
-			label,
-			privilegeId: DamnId.fromString(p),
-		}))
-	)
+	if (unwantedPrivileges.length)
+		await videoTables.viewPrivileges.delete(
+			findAll<string, ViewPrivilegeRow>(unwantedPrivileges, p => ({
+				label,
+				privilegeId: DamnId.fromString(p),
+			}))
+		)
 
 	// add new privileges
 

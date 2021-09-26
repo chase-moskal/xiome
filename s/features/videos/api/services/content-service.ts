@@ -20,6 +20,8 @@ import {isPermittedToView} from "./routines/is-permitted-to-view.js"
 import {getVideoView} from "./routines/get-video-view.js"
 import {getDacastContent} from "./routines/get-dacast-content.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
+import {ApiError} from "../../../../../../renraku/x/api/api-error.js"
+import {viewPrivilege} from "../../testing/video-setup.js"
 
 export const makeContentService = ({
 		makeDacastClient,
@@ -92,22 +94,30 @@ export const makeContentService = ({
 			})
 		},
 
-		async getView({videoTables, access, checker}, {label}: {
-				label: string
-			}): Promise<VideoView> {
-			const apiKey = await getDacastApiKey(videoTables)
-			return apiKey
-				? getVideoView({
-					label,
-					checker,
-					videoTables,
-					userPrivileges: access.permit.privileges,
-				})
-				: undefined
+		async getViews({videoTables, checker}): Promise<VideoView[]> {
+			checker.requirePrivilege("moderate videos")
+			const viewDacastRows = await videoTables.viewDacast.read({
+				conditions: false,
+			})
+			const viewPrivilegeRows = await videoTables.viewPrivileges.read({
+				conditions: false,
+			})
+			return viewDacastRows.map(dacastRow => {
+				const privileges = viewPrivilegeRows
+					.filter(privilegeRow => privilegeRow.label === dacastRow.label)
+					.map(r => r.privilegeId.toString())
+				return {
+					id: dacastRow.dacastId,
+					label: dacastRow.label,
+					privileges,
+					provider: "dacast",
+					type: dacastRow.type,
+				}
+			})
 		},
 
-		async deleteView({}, {label}: {label: string}) {
-
+		async deleteView({videoTables}, {label}: {label: string}) {
+			await videoTables.viewDacast.delete(find({label}))
 		},
 
 		async getShow({videoTables, access, checker}, {label}: {

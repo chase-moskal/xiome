@@ -70,21 +70,36 @@ export default <Suite>{
 		},
 
 		async "moderator can manage views"() {
-			const {contentModel} = await videoSetup()
-				.then(s => s.for(roles.moderator))
-				.then(s => s.link())
-			const label = "view"
-			await contentModel.loadModerationData()
-			assert(contentModel.views.length === 0, "content views array should start empty")
-			assert(!contentModel.getView(label), "specific content view should start undefined")
-			await contentModel.setView({
-				label,
-				privileges: [viewPrivilege],
-				reference: contentModel.catalog[0],
-			})
-			assert(contentModel.views.length === 1, "content view should be listed")
-			await contentModel.deleteView(label)
-			assert(contentModel.views.length === 0, "content view should be deleted")
+			const setup = await videoSetup()
+			{
+				const {contentModel} = await setup.for(roles.moderator)
+					.then(s => s.link())
+				const label = "view"
+				const label2 = "view2"
+				await contentModel.loadModerationData()
+				assert(contentModel.views.length === 0, "content views array should start empty")
+				assert(!contentModel.getView(label), "specific content view should start undefined")
+				await contentModel.setView({
+					label,
+					privileges: [viewPrivilege],
+					reference: contentModel.catalog[0],
+				})
+				assert(contentModel.views.length === 1, "content view should be listed")
+				await contentModel.setView({
+					label: label2,
+					privileges: [viewPrivilege],
+					reference: contentModel.catalog[1],
+				})
+				assert(contentModel.views.length === 2, "content view should be listed")
+				await contentModel.deleteView(label)
+				assert(contentModel.views.length === 1, "content view should be deleted")
+			}
+			{
+				const {contentModel} = await setup.for(roles.moderator)
+					.then(s => s.models)
+				await contentModel.loadModerationData()
+				assert(contentModel.views.length === 1, "other moderator should be able to see previous set views")
+			}
 		},
 
 		async "users can access show they have permission for"() {
