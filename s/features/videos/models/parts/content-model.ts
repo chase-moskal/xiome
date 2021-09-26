@@ -14,6 +14,21 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		showsOp: ops.none() as Op<VideoShow[]>,
 	})
 
+	async function loadShow(label: string) {
+		const oldShows = ops.value(state.readable.showsOp) ?? []
+		let updatedShow: VideoShow
+		await ops.operation({
+			setOp: op => state.writable.showsOp = op,
+			promise: contentService.getShow({label})
+				.then(show => updatedShow = show)
+				.then(show => [
+					...oldShows.filter(s => s.label !== label),
+					...(show ? [show] : []),
+				]),
+		})
+		return updatedShow
+	}
+
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
@@ -32,20 +47,7 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 			})
 		},
 
-		async loadShow(label: string) {
-			const oldShows = ops.value(state.readable.showsOp) ?? []
-			let updatedShow: VideoShow
-			await ops.operation({
-				setOp: op => state.writable.showsOp = op,
-				promise: contentService.getShow({label})
-					.then(show => updatedShow = show)
-					.then(show => [
-						...oldShows.filter(s => s.label !== label),
-						...(show ? [show] : []),
-					]),
-			})
-			return updatedShow
-		},
+		loadShow,
 
 		get catalog() {
 			return ops.value(state.readable.catalogOp) ?? []
@@ -90,6 +92,7 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 					},
 				]),
 			})
+			await loadShow(options.label)
 		},
 
 		async deleteView(label: string) {
@@ -99,6 +102,11 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 				promise: contentService.deleteView({label})
 					.then(() => oldViews.filter(v => v.label !== label)),
 			})
+			const oldShows = ops.value(state.readable.showsOp) ?? []
+			state.writable.showsOp = ops.replaceValue(
+				state.readable.showsOp,
+				oldShows.filter(s => s.label !== label),
+			)
 		},
 	}
 }

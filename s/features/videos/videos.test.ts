@@ -135,5 +135,40 @@ export default <Suite>{
 				},
 			}
 		},
+
+		async "shows are updated when view is updated"() {
+			const setup = await videoSetup()
+			const label = "view"
+			const label2 = "view2"
+			{
+				const {contentModel} = await setup.for(roles.moderator)
+					.then(s => s.link())
+				await contentModel.loadModerationData()
+				await contentModel.loadShow(label)
+				expect(contentModel.getShow(label)).not.ok()
+				await contentModel.setView({
+					label,
+					privileges: [viewPrivilege],
+					reference: contentModel.catalog[0],
+				})
+				await contentModel.loadShow(label)
+				expect(contentModel.getShow(label)).ok()
+				await contentModel.setView({
+					label: label2,
+					privileges: [viewPrivilege],
+					reference: contentModel.catalog[1],
+				})
+				expect(contentModel.getShow(label2)).ok()
+				await contentModel.deleteView(label)
+				expect(contentModel.getShow(label)).not.ok()
+				await contentModel.setView({
+					label: label2,
+					privileges: [viewPrivilege],
+					reference: contentModel.catalog[2],
+				})
+				expect(contentModel.getShow(label2).id)
+					.equals(contentModel.catalog[2].id)
+			}
+		},
 	},
 }
