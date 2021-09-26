@@ -37,22 +37,26 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 					.then(show => updatedShow = show)
 					.then(show => [
 						...oldShows.filter(s => s.label !== label),
-						show,
-					]),
+						...(show ? [show] : []),
+					])
+					.catch(error => {
+						console.log("GOTCHYA", error)
+						throw error
+					}),
 			})
 			return updatedShow
 		},
 
 		get catalog() {
-			return ops.value(state.readable.catalogOp)
+			return ops.value(state.readable.catalogOp) ?? []
 		},
 
 		get views() {
-			return ops.value(state.readable.viewsOp)
+			return ops.value(state.readable.viewsOp) ?? []
 		},
 
 		get shows() {
-			return ops.value(state.readable.showsOp)
+			return ops.value(state.readable.showsOp) ?? []
 		},
 
 		getView(label: string) {
@@ -72,13 +76,18 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		async setView(options: {
 				label: string
 				privileges: string[]
-				content: VideoHosting.AnyReference
+				reference: VideoHosting.AnyReference
 			}) {
 			const oldViews = ops.value(state.readable.viewsOp) ?? []
 			await ops.operation({
 				setOp: op => state.writable.viewsOp = op,
 				promise: contentService.writeView(options).then(() => [
 					...oldViews.filter(v => v.label !== options.label),
+					{
+						...options.reference,
+						label: options.label,
+						privileges: options.privileges,
+					},
 				]),
 			})
 		},

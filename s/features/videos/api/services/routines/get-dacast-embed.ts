@@ -12,13 +12,9 @@ export async function getDacastEmbed({
 	}): Promise<Dacast.Embed> {
 
 	switch (type) {
-		case "vod":
-			return dacast.vods.id(id).embed(embedType).get()
-		case "channel":
-			return dacast.channels.id(id).embed(embedType).get()
-		case "playlist":
-			return dacast.playlists.id(id).embed(embedType).get()
-		default:
-			throw new Error(`unknown dacast type "${type}"`)
+		case "vod": return dacast.vods.id(id).embed(embedType).get()
+		case "channel": return dacast.channels.id(id).embed(embedType).get()
+		case "playlist": return dacast.playlists.id(id).embed(embedType).get()
+		default: throw new Error(`unknown dacast type "${type}"`)
 	}
 }

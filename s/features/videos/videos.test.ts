@@ -66,12 +66,12 @@ export default <Suite>{
 				.then(s => s.link())
 			const label = "view"
 			await contentModel.loadModerationData()
-			assert(contentModel.views.length, "content views array should start empty")
-			assert(contentModel.getView(label), "specific content view should start undefined")
+			assert(contentModel.views.length === 0, "content views array should start empty")
+			assert(!contentModel.getView(label), "specific content view should start undefined")
 			await contentModel.setView({
 				label,
 				privileges: [viewPrivilege],
-				content: contentModel.catalog[0],
+				reference: contentModel.catalog[0],
 			})
 			assert(contentModel.views.length === 1, "content view should be listed")
 			await contentModel.deleteView(label)
@@ -93,7 +93,7 @@ export default <Suite>{
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
-					content: contentModel.catalog[0],
+					reference: contentModel.catalog[0],
 				})
 				await contentModel.loadShow(label)
 				expect(contentModel.getView(label)).ok()

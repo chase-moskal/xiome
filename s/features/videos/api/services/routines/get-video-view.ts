@@ -1,16 +1,15 @@
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {PrivilegeChecker} from "../../../../auth/aspects/permissions/types/privilege-checker.js"
+
+import {videoPrivileges} from "../../video-privileges.js"
 import {VideoView} from "../../../types/video-concepts.js"
 import {VideoTables} from "../../../types/video-tables.js"
-import {videoPrivileges} from "../../video-privileges.js"
-import {getDacastApiKey} from "./get-dacast-api-key.js"
 import {isPermittedToView} from "./is-permitted-to-view.js"
+import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {PrivilegeChecker} from "../../../../auth/aspects/permissions/types/privilege-checker.js"
 
 export async function getVideoView({
-		label, apiKey, videoTables, checker, userPrivileges,
+		label, videoTables, checker, userPrivileges,
 	}: {
 		label: string
-		apiKey: string
 		userPrivileges: string[]
 		videoTables: VideoTables
 		checker: PrivilegeChecker<typeof videoPrivileges>
@@ -29,7 +28,7 @@ export async function getVideoView({
 		userPrivileges,
 	})
 	if (!hasExplicitPrivilege && !checker.hasPrivilege("view all videos"))
-		throw new Error(`user does not have access to video view "${label}"`)
+		return undefined
 
 	return {
 		privileges,

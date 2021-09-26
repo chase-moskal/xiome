@@ -18,6 +18,8 @@ import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {isPermittedToView} from "./routines/is-permitted-to-view.js"
 import {getVideoView} from "./routines/get-video-view.js"
+import {getDacastContent} from "./routines/get-dacast-content.js"
+import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 
 export const makeContentService = ({
 		makeDacastClient,
@@ -53,12 +55,12 @@ export const makeContentService = ({
 				channels: dacast.channels.get(),
 				playlists: dacast.playlists.get(),
 			})
-			const convert = (type: VideoHosting.DacastType, content: Dacast.Content): VideoHosting.DacastContent => ({
+			const convert = (
+					type: VideoHosting.DacastType,
+					contentFromDacast: Dacast.Content
+				) => ingestDacastContent({
 				type,
-				id: content.id,
-				title: content.title,
-				thumb: content.thumbnail,
-				provider: "dacast" as const,
+				contentFromDacast,
 			})
 			return [
 				...results.vods.map(x => convert("vod", x)),
@@ -68,19 +70,19 @@ export const makeContentService = ({
 		},
 
 		async writeView({videoTables, checker}, {
-				label, privileges, content,
+				label, privileges, reference,
 			}: {
 				label: string
 				privileges: string[]
-				content: VideoHosting.AnyReference
+				reference: VideoHosting.AnyReference
 			}) {
 			checker.requirePrivilege("moderate videos")
 			await videoTables.viewDacast.update({
 				...find({label}),
 				whole: {
 					label,
-					type: content.type,
-					dacastId: content.id,
+					type: reference.type,
+					dacastId: reference.id,
 				},
 			})
 			await setViewPermissions({
@@ -97,7 +99,6 @@ export const makeContentService = ({
 			return apiKey
 				? getVideoView({
 					label,
-					apiKey,
 					checker,
 					videoTables,
 					userPrivileges: access.permit.privileges,
@@ -117,11 +118,29 @@ export const makeContentService = ({
 				return undefined
 			const view = await getVideoView({
 				label,
-				apiKey,
 				checker,
 				videoTables,
 				userPrivileges: access.permit.privileges,
 			})
+			if (!view)
+				return undefined
+			const dacast = makeDacastClient({apiKey})
+			const contentFromDacast = await getDacastContent({
+				dacast,
+				reference: view,
+			})
+			const embed = await getDacastEmbed({
+				dacast: makeDacastClient({apiKey}),
+				reference: view,
+			})
+			return {
+				...ingestDacastContent({
+					type: view.type,
+					contentFromDacast
+				}),
+				label,
+				embed,
+			}
 		},
 	},
 })
