@@ -42,11 +42,7 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 					.then(show => [
 						...oldShows.filter(s => s.label !== label),
 						...(show ? [show] : []),
-					])
-					.catch(error => {
-						console.log("GOTCHYA", error)
-						throw error
-					}),
+					]),
 			})
 			return updatedShow
 		},
