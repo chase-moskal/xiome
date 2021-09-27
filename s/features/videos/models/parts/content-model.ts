@@ -85,6 +85,18 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 
 		initialize,
 
+		get allowance() {
+			const access = ops.value(state.readable.accessOp)
+			const can = (p: keyof typeof videoPrivileges) =>
+				access
+					? access.permit.privileges.includes(videoPrivileges[p])
+					: false
+			return {
+				canModerateVideos: can("moderate videos"),
+				canViewAllVideos: can("view all videos"),
+			}
+		},
+
 		get catalog() {
 			return ops.value(state.readable.catalogOp) ?? []
 		},
