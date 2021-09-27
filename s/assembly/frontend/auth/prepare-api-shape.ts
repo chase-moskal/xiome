@@ -129,7 +129,7 @@ export function prepareApiShape({appId, storage}: {
 				[_meta]: standardMeta,
 				deleteView: true,
 				fetchCatalog: true,
-				getShow: true,
+				getShows: true,
 				getViews: true,
 				writeView: true,
 			},

@@ -53,11 +53,12 @@ export default <Suite>{
 
 		async "moderator can see catalog"() {
 			const setup = await videoSetup()
+			const label = "default"
 			{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.link())
 				assert(contentModel.catalog.length === 0, "catalog should start empty")
-				await contentModel.loadModerationData()
+				await contentModel.initialize(label)
 				assert(contentModel.catalog.length, "catalog should not be empty")
 			}
 			return {
@@ -65,20 +66,20 @@ export default <Suite>{
 					const {contentModel} = await setup.for(roles.viewer)
 						.then(s => s.models)
 					assert(contentModel.catalog.length === 0, "catalog should start empty")
-					await expect(async() => contentModel.loadModerationData())
-						.throws()
+					await contentModel.initialize(label)
+					expect(contentModel.views.length).equals(0)
 				},
 			}
 		},
 
 		async "moderator can manage views"() {
 			const setup = await videoSetup()
+			const label = "view"
+			const label2 = "view2"
 			{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.link())
-				const label = "view"
-				const label2 = "view2"
-				await contentModel.loadModerationData()
+				await contentModel.initialize(label)
 				assert(contentModel.views.length === 0, "content views array should start empty")
 				assert(!contentModel.getView(label), "specific content view should start undefined")
 				await contentModel.setView({
@@ -99,7 +100,7 @@ export default <Suite>{
 			{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.models)
-				await contentModel.loadModerationData()
+				await contentModel.initialize(label)
 				assert(contentModel.views.length === 1, "other moderator should be able to see previous set views")
 			}
 		},
@@ -110,13 +111,12 @@ export default <Suite>{
 			{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.link())
-				await contentModel.loadModerationData()
+				await contentModel.initialize(label)
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[0],
 				})
-				await contentModel.loadShow(label)
 				expect(contentModel.getView(label)).ok()
 				expect(contentModel.getShow(label)).ok()
 			}
@@ -124,13 +124,13 @@ export default <Suite>{
 				async "viewer can access show"() {
 					const {contentModel} = await setup.for(roles.viewer)
 						.then(s => s.models)
-					await contentModel.loadShow(label)
+					await contentModel.initialize(label)
 					expect(contentModel.getShow(label)).ok()
 				},
 				async "unworthy cannot access show"() {
 					const {contentModel} = await setup.for(roles.unworthy)
 						.then(s => s.models)
-					await contentModel.loadShow(label)
+					await contentModel.initialize(label)
 					expect(contentModel.getShow(label)).not.ok()
 				},
 			}
@@ -143,15 +143,13 @@ export default <Suite>{
 			{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.link())
-				await contentModel.loadModerationData()
-				await contentModel.loadShow(label)
+				await contentModel.initialize(label)
 				expect(contentModel.getShow(label)).not.ok()
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[0],
 				})
-				await contentModel.loadShow(label)
 				expect(contentModel.getShow(label)).ok()
 				await contentModel.setView({
 					label: label2,

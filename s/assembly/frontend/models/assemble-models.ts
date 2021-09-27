@@ -86,6 +86,7 @@ export async function assembleModels({
 			questionsModel.accessChange(access),
 			administrativeModel.updateAccessOp(accessOp),
 			videoModels.dacastModel.updateAccessOp(accessOp),
+			videoModels.contentModel.updateAccessOp(accessOp),
 			// storeModel.accessChange(access),
 		])
 	})

@@ -3,7 +3,7 @@ import {apiContext} from "renraku/x/api/api-context.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {videoPrivileges} from "../video-privileges.js"
-import {VideoTables, ViewPrivilegeRow} from "../../types/video-tables.js"
+import {VideoTables} from "../../types/video-tables.js"
 import * as Dacast from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
@@ -12,16 +12,13 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
-import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
-import {isPermittedToView} from "./routines/is-permitted-to-view.js"
-import {getVideoView} from "./routines/get-video-view.js"
 import {getDacastContent} from "./routines/get-dacast-content.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
-import {ApiError} from "../../../../../../renraku/x/api/api-error.js"
-import {viewPrivilege} from "../../testing/video-setup.js"
+import {getVideoViews} from "./routines/get-video-views.js"
 
 export const makeContentService = ({
 		makeDacastClient,
@@ -120,37 +117,40 @@ export const makeContentService = ({
 			await videoTables.viewDacast.delete(find({label}))
 		},
 
-		async getShow({videoTables, access, checker}, {label}: {
-				label: string
-			}): Promise<VideoShow> {
+		async getShows({videoTables, access, checker}, {labels}: {
+				labels: string[]
+			}) {
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
-				return undefined
-			const view = await getVideoView({
-				label,
+				return []
+
+			const views = await getVideoViews({
+				labels,
 				checker,
 				videoTables,
 				userPrivileges: access.permit.privileges,
 			})
-			if (!view)
-				return undefined
+
 			const dacast = makeDacastClient({apiKey})
-			const contentFromDacast = await getDacastContent({
-				dacast,
-				reference: view,
-			})
-			const embed = await getDacastEmbed({
-				dacast: makeDacastClient({apiKey}),
-				reference: view,
-			})
-			return {
-				...ingestDacastContent({
-					type: view.type,
-					contentFromDacast
-				}),
-				label,
-				embed,
-			}
+			return Promise.all(
+				views.map(async view => {
+					if (!view)
+						return undefined
+					const [contentFromDacast, embed] = await Promise.all([
+						getDacastContent({dacast, reference: view}),
+						getDacastEmbed({dacast, reference: view}),
+					])
+					const show: VideoShow = {
+						...ingestDacastContent({
+							type: view.type,
+							contentFromDacast,
+						}),
+						label: view.label,
+						embed,
+					}
+					return show
+				})
+			)
 		},
 	},
 })

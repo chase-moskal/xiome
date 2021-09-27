@@ -4,6 +4,7 @@ import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {madstate} from "../../../../toolbox/madstate/madstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
+import {videoPrivileges} from "../../api/video-privileges.js"
 
 export function makeContentModel({contentService}: VideoModelsOptions) {
 
@@ -14,12 +15,31 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		showsOp: ops.none() as Op<VideoShow[]>,
 	})
 
+	async function loadModerationData() {
+		const access = ops.value(state.readable.accessOp)
+		const isModerator = access && access.permit
+			.privileges.includes(videoPrivileges["moderate videos"])
+		if (isModerator) {
+			await Promise.all([
+				ops.operation({
+					promise: contentService.fetchCatalog(),
+					setOp: op => state.writable.catalogOp = op,
+				}),
+				ops.operation({
+					promise: contentService.getViews(),
+					setOp: op => state.writable.viewsOp = op,
+				}),
+			])
+		}
+	}
+
 	async function loadShow(label: string) {
 		const oldShows = ops.value(state.readable.showsOp) ?? []
 		let updatedShow: VideoShow
 		await ops.operation({
 			setOp: op => state.writable.showsOp = op,
-			promise: contentService.getShow({label})
+			promise: contentService.getShows({labels: [label]})
+				.then(shows => shows[0])
 				.then(show => updatedShow = show)
 				.then(show => [
 					...oldShows.filter(s => s.label !== label),
@@ -29,25 +49,41 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		return updatedShow
 	}
 
+	async function refreshShows() {
+		const oldShows = ops.value(state.readable.showsOp) ?? []
+		const labels = oldShows.map(s => s.label)
+		if (labels.length)
+			await ops.operation({
+				setOp: op => state.writable.showsOp = op,
+				promise: contentService.getShows({labels})
+					.then(shows => shows.filter(s => !!s))
+			})
+	}
+
+	let alreadyInitialized = false
+	async function initialize(label: string) {
+		if (!alreadyInitialized) {
+			alreadyInitialized = true
+			await Promise.all([
+				loadShow(label),
+				loadModerationData(),
+			])
+		}
+	}
+
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
-		updateAccessOp(op: Op<AccessPayload>) {
+		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
+			state.writable.catalogOp = ops.none()
+			state.writable.viewsOp = ops.none()
+			state.writable.showsOp = ops.none()
+			await refreshShows()
+			await loadModerationData()
 		},
 
-		async loadModerationData() {
-			await ops.operation({
-				promise: contentService.fetchCatalog(),
-				setOp: op => state.writable.catalogOp = op,
-			})
-			await ops.operation({
-				promise: contentService.getViews(),
-				setOp: op => state.writable.viewsOp = op,
-			})
-		},
-
-		loadShow,
+		initialize,
 
 		get catalog() {
 			return ops.value(state.readable.catalogOp) ?? []

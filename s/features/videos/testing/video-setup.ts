@@ -20,6 +20,8 @@ import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-ta
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 import {makeContentService} from "../api/services/content-service.js"
 import {goodApiKey} from "../dacast/mocks/constants.js"
+import {HttpRequest} from "../../../../../renraku/x/types/http/http-request.js"
+import {ops} from "../../../framework/ops.js"
 
 export const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
 
@@ -81,6 +83,15 @@ export async function videoSetup() {
 			const dacastService = mockRemote(rawDacastService).withMeta(options)
 			const contentService = mockRemote(rawContentService).withMeta(options)
 			const models = makeVideoModels({dacastService, contentService})
+			const {access} = await basePolicy(
+				options.meta,
+				<HttpRequest>options.request,
+			)
+
+			await Promise.all([
+				models.dacastModel.updateAccessOp(ops.ready(access)),
+				models.contentModel.updateAccessOp(ops.ready(access)),
+			])
 
 			return {
 				models,
