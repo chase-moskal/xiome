@@ -1,10 +1,9 @@
 
 import styles from "./xiome-video-display.css.js"
+import {VideoView} from "../../types/video-concepts.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
-import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {VideoHosting, VideoView} from "../../types/video-concepts.js"
+import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
 
 @mixinStyles(styles)
 export class XiomeVideoDisplay extends ComponentWithShare<{
@@ -30,12 +29,16 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	}
 
 	#renderView(view: VideoView) {
+		const onDeleteClick = () => {
+			this.model.deleteView(view.label)
+		}
 		return html`
 			<div class="view">
 				<p>label: ${view.label}</p>
 				<p>provider: ${view.provider}</p>
 				<p>type: ${view.type}</p>
 				<p>id: ${view.id}</p>
+				<button @click=${onDeleteClick}>delete view</button>
 			</div>
 		`
 	}
@@ -76,6 +79,8 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	#renderControls() {
 		const {model, label} = this
 		const currentView = model.getView(label)
+		const otherViews = model.views
+			.filter(view => view.label !== label)
 		return html`
 			<h2>
 				<span>video display controls</span>
@@ -88,19 +93,30 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 				${currentView
 					? this.#renderView(currentView)
 					: this.#renderViewCreator(label)}
-				<p>all other views</p>
-				<ol>
-					${model.views
-						.filter(view => view.label !== label)
-						.map(view => this.#renderView(view))}
-				</ol>
+				${otherViews.length
+					? html`
+						<p>all other views</p>
+						<div class="otherviews">
+							${otherViews.map(
+								view => this.#renderView(view)
+							)}
+						</div>
+					`
+					: null}
 			` : null}
 		`
 	}
 
 	#renderShow() {
-		return html`
-			<p>enjoy the show</p>
+		const show = this.model.getShow(this.label)
+		return show ? html`
+			<p>show ${show.title}</p>
+			<ul>
+				<li>${show.id}</li>
+				<li>${show.embed}</li>
+			</ul>
+		` : html`
+			<p>no show</p>
 		`
 	}
 
