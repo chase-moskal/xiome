@@ -22,6 +22,7 @@ import {makeContentService} from "../api/services/content-service.js"
 import {goodApiKey} from "../dacast/mocks/constants.js"
 import {HttpRequest} from "../../../../../renraku/x/types/http/http-request.js"
 import {ops} from "../../../framework/ops.js"
+import {dacastForVideosFeature} from "../api/dacast-for-videos-feature.js"
 
 export const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
 
@@ -66,7 +67,9 @@ export async function videoSetup() {
 	const rawContentService = makeContentService({
 		videoTables,
 		basePolicy,
-		makeDacastClient: mockDacastClient({goodApiKey}),
+		getDacastClient: dacastForVideosFeature(
+			mockDacastClient({goodApiKey})
+		),
 	})
 
 	return {

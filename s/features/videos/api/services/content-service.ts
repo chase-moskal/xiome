@@ -11,7 +11,7 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
+import {GetDacastClient, VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
@@ -21,12 +21,12 @@ import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {getVideoViews} from "./routines/get-video-views.js"
 
 export const makeContentService = ({
-		makeDacastClient,
 		videoTables: rawVideoTables,
 		basePolicy,
+		getDacastClient,
 	}: {
-		makeDacastClient: Dacast.MakeClient
 		videoTables: UnconstrainedTables<VideoTables>
+		getDacastClient: GetDacastClient
 		basePolicy: Policy<AnonMeta, AnonAuth>
 	}) => apiContext<VideoMeta, VideoAuth>()({
 
@@ -48,7 +48,7 @@ export const makeContentService = ({
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
 				return []
-			const dacast = makeDacastClient({apiKey})
+			const dacast = getDacastClient(apiKey)
 			const results = await concurrent({
 				vods: dacast.vods.get(),
 				channels: dacast.channels.get(),
@@ -113,7 +113,8 @@ export const makeContentService = ({
 			})
 		},
 
-		async deleteView({videoTables}, {label}: {label: string}) {
+		async deleteView({videoTables, checker}, {label}: {label: string}) {
+			checker.requirePrivilege("moderate videos")
 			await videoTables.viewDacast.delete(find({label}))
 		},
 
@@ -131,7 +132,7 @@ export const makeContentService = ({
 				userPrivileges: access.permit.privileges,
 			})
 
-			const dacast = makeDacastClient({apiKey})
+			const dacast = getDacastClient(apiKey)
 			return Promise.all(
 				views.map(async view => {
 					if (!view)

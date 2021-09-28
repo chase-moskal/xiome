@@ -18,7 +18,7 @@ export class XiomeVideoLink extends ComponentWithShare<{
 	}
 
 	async init() {
-		await this.share.dacastModel.loadLinkedAccount()
+		await this.share.dacastModel.initialize()
 	}
 
 	#linkFailed = false

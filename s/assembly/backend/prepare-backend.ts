@@ -9,6 +9,7 @@ import {assimilateEmails} from "./assimilators/assimilate-emails.js"
 import {assimilateCrypto} from "./assimilators/assimilate-crypto.js"
 import {assimilateStripe} from "./assimilators/assimilate-stripe.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
+import {mockDacastClient} from "../../features/videos/dacast/mocks/mock-dacast-client.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {
@@ -27,12 +28,15 @@ export function prepareBackend(configurators: Configurators) {
 			mockStorage,
 		})
 
+		const makeDacastClient = mockDacastClient({goodApiKey: "yyy"})
+
 		const api = await assimilateApi({
 			...options,
 			database,
 			signToken,
 			verifyToken,
 			sendLoginEmail: emails.sendLoginEmail,
+			getDacastClient: apiKey => makeDacastClient({apiKey}),
 		})
 
 		return {

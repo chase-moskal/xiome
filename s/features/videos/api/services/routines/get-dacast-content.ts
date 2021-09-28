@@ -15,8 +15,6 @@ export async function getDacastContent({
 	if (provider !== "dacast")
 		throw new ApiError(500, `video content provider mismatch (expected "dacast", got "${provider}")`)
 
-	debugger
-	
 	switch (type) {
 		case "vod": return dacast.vods.id(id).get()
 		case "channel": return dacast.channels.id(id).get()

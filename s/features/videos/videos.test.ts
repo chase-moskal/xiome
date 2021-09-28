@@ -15,7 +15,7 @@ export default <Suite>{
 			const {dacastModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
 				.then(s => s.models)
-			expect(await dacastModel.loadLinkedAccount()).not.ok()
+			expect(await dacastModel.initialize()).not.ok()
 			await dacastModel.linkAccount({apiKey: goodApiKey})
 			const {linkedAccount} = dacastModel
 			expect(linkedAccount).ok()
@@ -31,6 +31,7 @@ export default <Suite>{
 			const {dacastModel} = await videoSetup()
 				.then(s => s.for(roles.moderator))
 				.then(s => s.models)
+			await dacastModel.initialize()
 			const link = await dacastModel.linkAccount({apiKey: badApiKey})
 			expect(link).not.ok()
 		},
@@ -39,6 +40,7 @@ export default <Suite>{
 			const {dacastModel} = await videoSetup()
 				.then(s => s.for(roles.viewer))
 				.then(s => s.models)
+			await dacastModel.initialize()
 			await expect(async() => {
 				await dacastModel.linkAccount({apiKey: goodApiKey})
 			}).throws()

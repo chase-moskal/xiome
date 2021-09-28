@@ -84,6 +84,7 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		},
 
 		initialize,
+		loadModerationData,
 
 		get allowance() {
 			const access = ops.value(state.readable.accessOp)

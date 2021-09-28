@@ -2,6 +2,7 @@
 import {VideoTables} from "../types/video-tables.js"
 import {asApi} from "renraku/x/identities/as-api.js"
 import * as Dacast from "../dacast/types/dacast-types.js"
+import {GetDacastClient} from "../types/video-concepts.js"
 import {makeDacastService} from "./services/dacast-service.js"
 import {makeContentService} from "./services/content-service.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
@@ -10,12 +11,12 @@ import {UnconstrainedTables} from "../../../framework/api/types/table-namespacin
 export function videosApi({
 		videoTables,
 		authPolicies,
-		makeDacastClient,
+		getDacastClient,
 		verifyDacastApiKey,
 	}: {
 		videoTables: UnconstrainedTables<VideoTables>
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
-		makeDacastClient: Dacast.MakeClient
+		getDacastClient: GetDacastClient
 		verifyDacastApiKey: Dacast.VerifyApiKey
 	}) {
 
@@ -31,7 +32,7 @@ export function videosApi({
 		}),
 		contentService: makeContentService({
 			...options,
-			makeDacastClient,
+			getDacastClient,
 		}),
 	})
 }
