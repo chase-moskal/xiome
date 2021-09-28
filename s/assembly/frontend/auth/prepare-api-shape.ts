@@ -127,10 +127,9 @@ export function prepareApiShape({appId, storage}: {
 			},
 			contentService: {
 				[_meta]: standardMeta,
+				fetchModerationData: true,
 				deleteView: true,
-				fetchCatalog: true,
 				getShows: true,
-				getViews: true,
 				writeView: true,
 			},
 		},

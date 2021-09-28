@@ -5,13 +5,17 @@ import {madstate} from "../../../../toolbox/madstate/madstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
 import {videoPrivileges} from "../../api/video-privileges.js"
+import {PrivilegeDisplay} from "../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
-export function makeContentModel({contentService}: VideoModelsOptions) {
+export function makeContentModel({
+		contentService,
+	}: VideoModelsOptions) {
 
 	const state = madstate({
 		accessOp: ops.none() as Op<AccessPayload>,
 		catalogOp: ops.none() as Op<VideoHosting.AnyContent[]>,
 		viewsOp: ops.none() as Op<VideoView[]>,
+		privilegesOp: ops.none() as Op<PrivilegeDisplay[]>,
 		showsOp: ops.none() as Op<VideoShow[]>,
 	})
 
@@ -20,16 +24,25 @@ export function makeContentModel({contentService}: VideoModelsOptions) {
 		const isModerator = access && access.permit
 			.privileges.includes(videoPrivileges["moderate videos"])
 		if (isModerator) {
-			await Promise.all([
-				ops.operation({
-					promise: contentService.fetchCatalog(),
-					setOp: op => state.writable.catalogOp = op,
-				}),
-				ops.operation({
-					promise: contentService.getViews(),
-					setOp: op => state.writable.viewsOp = op,
-				}),
-			])
+			await ops.operation({
+				promise: contentService.fetchModerationData(),
+				setOp: op => {
+					const data = ops.value(op)
+					console.log("DATYA", data)
+					state.writable.catalogOp = ops.replaceValue(
+						op,
+						data?.catalog,
+					)
+					state.writable.viewsOp = ops.replaceValue(
+						op,
+						data?.views,
+					)
+					state.writable.privilegesOp = ops.replaceValue(
+						op,
+						data?.privileges,
+					)
+				},
+			})
 		}
 	}
 

@@ -9,6 +9,7 @@ import {makePersonalModel} from "../../../features/auth/aspects/users/models/per
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
+import {ops} from "../../../framework/ops.js"
 
 export async function assembleModels({
 		appId,

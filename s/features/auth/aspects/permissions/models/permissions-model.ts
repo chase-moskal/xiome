@@ -11,7 +11,7 @@ export function makePermissionsModel({
 		reauthorize,
 	}: PermissionsModelOptions) {
 
-	const {readable, writable, subscribe} = madstate({
+	const {readable, writable, subscribe, track} = madstate({
 		active: <boolean>false,
 		accessOp: <Op<AccessPayload>>ops.none(),
 		permissionsDisplay: <Op<PermissionsDisplay>>ops.none(),
@@ -60,6 +60,7 @@ export function makePermissionsModel({
 	return {
 		readable,
 		subscribe,
+		track,
 		getAccess,
 		initialize,
 		getUserCanCustomizePermissions,

@@ -85,7 +85,10 @@ export async function videoSetup() {
 			}
 			const dacastService = mockRemote(rawDacastService).withMeta(options)
 			const contentService = mockRemote(rawContentService).withMeta(options)
-			const models = makeVideoModels({dacastService, contentService})
+			const models = makeVideoModels({
+				dacastService,
+				contentService,
+			})
 			const {access} = await basePolicy(
 				options.meta,
 				<HttpRequest>options.request,

@@ -19,6 +19,9 @@ import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {getDacastContent} from "./routines/get-dacast-content.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {getVideoViews} from "./routines/get-video-views.js"
+import {getAllViews} from "./routines/get-all-views.js"
+import {getCatalog} from "./routines/get-catalog.js"
+import {getAllPrivileges} from "./routines/get-all-privileges.js"
 
 export const makeContentService = ({
 		videoTables: rawVideoTables,
@@ -43,29 +46,21 @@ export const makeContentService = ({
 
 	expose: {
 
-		async fetchCatalog({videoTables, checker}): Promise<VideoHosting.AnyContent[]> {
+		async fetchModerationData({authTables, videoTables, checker}) {
+
 			checker.requirePrivilege("moderate videos")
+
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
-				return []
+				return undefined
+
 			const dacast = getDacastClient(apiKey)
-			const results = await concurrent({
-				vods: dacast.vods.get(),
-				channels: dacast.channels.get(),
-				playlists: dacast.playlists.get(),
+
+			return concurrent({
+				catalog: await getCatalog({dacast}),
+				views: await getAllViews({videoTables}),
+				privileges: await getAllPrivileges({authTables}),
 			})
-			const convert = (
-					type: VideoHosting.DacastType,
-					contentFromDacast: Dacast.Content
-				) => ingestDacastContent({
-				type,
-				contentFromDacast,
-			})
-			return [
-				...results.vods.map(x => convert("vod", x)),
-				...results.channels.map(x => convert("channel", x)),
-				...results.playlists.map(x => convert("playlist", x)),
-			]
 		},
 
 		async writeView({videoTables, checker}, {
@@ -88,28 +83,6 @@ export const makeContentService = ({
 				label,
 				privileges,
 				videoTables,
-			})
-		},
-
-		async getViews({videoTables, checker}): Promise<VideoView[]> {
-			checker.requirePrivilege("moderate videos")
-			const viewDacastRows = await videoTables.viewDacast.read({
-				conditions: false,
-			})
-			const viewPrivilegeRows = await videoTables.viewPrivileges.read({
-				conditions: false,
-			})
-			return viewDacastRows.map(dacastRow => {
-				const privileges = viewPrivilegeRows
-					.filter(privilegeRow => privilegeRow.label === dacastRow.label)
-					.map(r => r.privilegeId.toString())
-				return {
-					id: dacastRow.dacastId,
-					label: dacastRow.label,
-					privileges,
-					provider: "dacast",
-					type: dacastRow.type,
-				}
 			})
 		},
 
