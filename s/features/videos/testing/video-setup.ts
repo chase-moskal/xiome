@@ -65,6 +65,10 @@ export async function videoSetup() {
 		verifyDacastApiKey,
 	})
 	const rawContentService = makeContentService({
+		config: mockConfig({
+			platformHome: `https://xiome.io/`,
+			platformOrigins: [`https://xiome.io`],
+		}),
 		videoTables,
 		basePolicy,
 		getDacastClient: dacastForVideosFeature(

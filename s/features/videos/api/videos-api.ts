@@ -7,13 +7,16 @@ import {makeDacastService} from "./services/dacast-service.js"
 import {makeContentService} from "./services/content-service.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 
 export function videosApi({
+		config,
 		videoTables,
 		authPolicies,
 		getDacastClient,
 		verifyDacastApiKey,
 	}: {
+		config: SecretConfig
 		videoTables: UnconstrainedTables<VideoTables>
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
 		getDacastClient: GetDacastClient
@@ -21,6 +24,7 @@ export function videosApi({
 	}) {
 
 	const options = {
+		config,
 		videoTables,
 		basePolicy: authPolicies.anonPolicy,
 	}

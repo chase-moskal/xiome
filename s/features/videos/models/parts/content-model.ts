@@ -28,7 +28,6 @@ export function makeContentModel({
 				promise: contentService.fetchModerationData(),
 				setOp: op => {
 					const data = ops.value(op)
-					console.log("DATYA", data)
 					state.writable.catalogOp = ops.replaceValue(
 						op,
 						data?.catalog,

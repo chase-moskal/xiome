@@ -22,12 +22,15 @@ import {getVideoViews} from "./routines/get-video-views.js"
 import {getAllViews} from "./routines/get-all-views.js"
 import {getCatalog} from "./routines/get-catalog.js"
 import {getAllPrivileges} from "./routines/get-all-privileges.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 
 export const makeContentService = ({
+		config,
 		videoTables: rawVideoTables,
 		basePolicy,
 		getDacastClient,
 	}: {
+		config: SecretConfig
 		videoTables: UnconstrainedTables<VideoTables>
 		getDacastClient: GetDacastClient
 		basePolicy: Policy<AnonMeta, AnonAuth>
@@ -46,20 +49,25 @@ export const makeContentService = ({
 
 	expose: {
 
-		async fetchModerationData({authTables, videoTables, checker}) {
-
+		async fetchModerationData({
+				access,
+				authTables,
+				videoTables,
+				checker,
+			}) {
 			checker.requirePrivilege("moderate videos")
-
 			const apiKey = await getDacastApiKey(videoTables)
 			if (!apiKey)
 				return undefined
-
 			const dacast = getDacastClient(apiKey)
-
 			return concurrent({
 				catalog: await getCatalog({dacast}),
 				views: await getAllViews({videoTables}),
-				privileges: await getAllPrivileges({authTables}),
+				privileges: await getAllPrivileges({
+					access,
+					permissionsTables: authTables.permissions,
+					platformAppId: config.platform.appDetails.appId,
+				}),
 			})
 		},
 

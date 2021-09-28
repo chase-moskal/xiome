@@ -70,6 +70,7 @@ export async function assimilateApi({
 			livestreamTables: database.livestream,
 		}),
 		videos: videosApi({
+			config,
 			authPolicies,
 			videoTables: database.videos,
 			getDacastClient,
