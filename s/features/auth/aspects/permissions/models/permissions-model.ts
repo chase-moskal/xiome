@@ -3,9 +3,9 @@ import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {madstate} from "../../../../../toolbox/madstate/madstate.js"
 import {PermissionsModelOptions} from "./types/permissions-model-options.js"
+import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 import {PermissionsDisplay} from "../../users/routines/permissions/types/permissions-display.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
-import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 
 export function makePermissionsModel({
 		permissionsService,

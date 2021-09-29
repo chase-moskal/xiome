@@ -191,7 +191,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				.map(({hard, label, time, privilegeId}) => ({
 					hard,
 					label,
-					time,
+					time: time ?? 0,
 					privilegeId: privilegeId.toString(),
 				}))
 		}
@@ -236,7 +236,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 						label: result.label,
 						hard: result.hard,
 						public: result.public,
-						time: result.time,
+						time: result.time ?? 0,
 					}))
 			})(),
 			privileges: getAllPrivileges(),
@@ -247,9 +247,9 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				const soft = await permissionsTables.roleHasPrivilege.read(all)
 				return mergeRoleHasPrivileges({hard, soft})
 					.map(({active, privilegeId, immutable, roleId, time}) => ({
-						time,
 						active,
 						immutable,
+						time: time ?? 0,
 						roleId: roleId.toString(),
 						privilegeId: privilegeId.toString(),
 					}))
