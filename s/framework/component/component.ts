@@ -30,9 +30,15 @@ export class Component extends mixinInitiallyHidden(LitElement) {
 		this.init()
 	}
 
+	#subscriptions: (() => () => void)[] = []
+	addSubscription(subscribe: () => () => void) {
+		this.#subscriptions.push(subscribe)
+	}
+
 	#unsubscribe = () => {}
 	subscribe(): () => void {
-		return () => {}
+		const unsubscribes = this.#subscriptions.map(s => s())
+		return () => unsubscribes.forEach(u => u())
 	}
 	connectedCallback() {
 		super.connectedCallback()
