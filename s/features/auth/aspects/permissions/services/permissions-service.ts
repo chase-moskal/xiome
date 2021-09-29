@@ -91,5 +91,17 @@ export const makePermissionsService = ({
 				},
 			})
 		},
+
+		async deletePrivilege({authTables}, {privilegeId: privilegeIdString}: {
+				privilegeId: string
+			}) {
+			const privilegeId = DamnId.fromString(privilegeIdString)
+			await Promise.all([
+				authTables.permissions
+					.roleHasPrivilege.delete(find({privilegeId})),
+				authTables.permissions
+					.privilege.delete(find({privilegeId})),
+			])
+		},
 	},
 })

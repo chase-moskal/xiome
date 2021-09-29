@@ -68,6 +68,7 @@ export function makePermissionsModel({
 		deleteRole: reloadAfter(permissionsService.deleteRole),
 		assignPrivilege: reloadAfter(permissionsService.assignPrivilege),
 		unassignPrivilege: reloadAfter(permissionsService.unassignPrivilege),
+		deletePrivilege: reloadAfter(permissionsService.deletePrivilege),
 		async updateAccessOp(op: Op<AccessPayload>) {
 			writable.accessOp = op
 			const access = getAccess()

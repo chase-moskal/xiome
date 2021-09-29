@@ -3,7 +3,7 @@ import theme from "../../../framework/theme.css.js"
 import {XiomeComponentOptions} from "./types/xiome-component-options.js"
 import {themeComponents} from "../../../framework/component/component.js"
 
-import {integrateAuthComponents} from "../../../features/auth/aspects/xiome-auth-components.js"
+import {integrateAuthComponents} from "../../../features/auth/aspects/integrate-auth-components.js"
 import {integrateVideoComponents} from "../../../features/videos/components/integrate-video-components.js"
 import {integrateXioComponents} from "../../../features/xio-components/integrate-xio-components.js"
 import {integrateExampleComponents} from "../../../features/example/components/integrate-example-components.js"
