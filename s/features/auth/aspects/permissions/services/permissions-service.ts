@@ -43,6 +43,7 @@ export const makePermissionsService = ({
 				public: true,
 				assignable: true,
 				roleId: rando.randomId(),
+				time: Date.now(),
 			})
 		},
 	
@@ -75,6 +76,7 @@ export const makePermissionsService = ({
 					privilegeId,
 					active: true,
 					immutable: false,
+					time: Date.now(),
 				},
 			})
 		},
@@ -92,6 +94,7 @@ export const makePermissionsService = ({
 					privilegeId,
 					active: false,
 					immutable: false,
+					time: Date.now(),
 				},
 			})
 		},
@@ -100,13 +103,15 @@ export const makePermissionsService = ({
 			const privilege: PrivilegeRow = {
 				label,
 				hard: false,
-				privilegeId: rando.randomId()
+				privilegeId: rando.randomId(),
+				time: Date.now(),
 			}
 			await authTables.permissions.privilege.create(privilege)
 			return {
 				hard: privilege.hard,
 				label: privilege.label,
 				privilegeId: privilege.privilegeId.toString(),
+				time: Date.now(),
 			}
 		},
 

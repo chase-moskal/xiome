@@ -5,4 +5,5 @@ export interface RoleDisplay {
 	hard: boolean
 	public: boolean
 	assignable: boolean
+	time: number
 }

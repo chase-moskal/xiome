@@ -10,5 +10,6 @@ export interface PermissionsDisplay {
 		privilegeId: string
 		active: boolean
 		immutable: boolean
+		time: number
 	}[]
 }

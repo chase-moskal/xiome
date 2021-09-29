@@ -65,6 +65,7 @@ export function permissionsMergingFacility({isPlatform}: {
 				privilegeId: DamnId.fromString(hardy.privilegeId),
 				active: hardy.active,
 				immutable: hardy.immutable,
+				time: 0,
 			}
 		}
 

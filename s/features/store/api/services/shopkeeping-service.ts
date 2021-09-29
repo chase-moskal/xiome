@@ -63,6 +63,7 @@ export const makeShopkeepingService = (
 				label: draft.label,
 				roleId: options.generateId(),
 				assignable: true,
+				time: Date.now(),
 			}
 	
 			const plan: SubscriptionPlanRow = {

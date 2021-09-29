@@ -122,6 +122,7 @@ export const makeRoleAssignmentService = ({
 						userId,
 						timeframeEnd,
 						timeframeStart,
+						time: Date.now(),
 					}),
 				})
 		},

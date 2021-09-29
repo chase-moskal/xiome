@@ -36,6 +36,7 @@ export async function appointAdmin({
 			public: true,
 			timeframeEnd: undefined,
 			timeframeStart: undefined,
+			time: Date.now()
 		})
 	})
 }

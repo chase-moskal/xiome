@@ -49,6 +49,7 @@ export async function assertEmailAccount({
 				roleId: DamnId.fromString(standardRoleIds.anonymous),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
+				time: Date.now(),
 			})
 
 			const assignAuthenticated = authTables.permissions.userHasRole.create({
@@ -58,6 +59,7 @@ export async function assertEmailAccount({
 				roleId: DamnId.fromString(standardRoleIds.authenticated),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
+				time: Date.now(),
 			})
 
 			const assignTechnician = isTechnician
@@ -68,6 +70,7 @@ export async function assertEmailAccount({
 					timeframeEnd: undefined,
 					roleId: DamnId.fromString(standardRoleIds.technician),
 					timeframeStart: undefined,
+					time: Date.now(),
 				})
 				: Promise.resolve()
 

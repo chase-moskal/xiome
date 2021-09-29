@@ -5,6 +5,7 @@ import {madstate} from "../../../../../toolbox/madstate/madstate.js"
 import {PermissionsModelOptions} from "./types/permissions-model-options.js"
 import {PermissionsDisplay} from "../../users/routines/permissions/types/permissions-display.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
+import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 
 export function makePermissionsModel({
 		permissionsService,
@@ -21,11 +22,31 @@ export function makePermissionsModel({
 		return ops.value(readable.accessOp)
 	}
 
+	function sortPermissions(permissions: PermissionsDisplay): PermissionsDisplay {
+		const softPrivileges: PrivilegeDisplay[] = []
+		const hardPrivileges: PrivilegeDisplay[] = []
+
+		for (const privilege of permissions.privileges) {
+			if (privilege.hard) hardPrivileges.push(privilege)
+			else softPrivileges.push(privilege)
+		}
+
+		softPrivileges.sort(
+			(a: {time: number}, b: {time: number}) =>
+				b.time - a.time
+		)
+
+		return {
+			...permissions,
+			privileges: [...softPrivileges, ...hardPrivileges],
+		}
+	}
+
 	async function reload() {
 		await ops.operation({
 			promise: Promise.resolve()
 				.then(async() => getUserCanCustomizePermissions()
-					? permissionsService.fetchPermissions()
+					? permissionsService.fetchPermissions().then(sortPermissions)
 					: undefined),
 			setOp: op => writable.permissionsDisplay = op,
 		})

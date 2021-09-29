@@ -12,6 +12,7 @@ export type PermissionsTables = {
 export type RoleRow = AsDbbyRow<{
 	roleId: DamnId
 	label: string
+	time: number
 
 	// hardcoded roles cannot be deleted
 	hard: boolean
@@ -27,6 +28,7 @@ export type PrivilegeRow = AsDbbyRow<{
 	privilegeId: DamnId
 	label: string
 	hard: boolean
+	time: number
 }>
 
 export type UserHasRoleRow = AsDbbyRow<{
@@ -36,6 +38,7 @@ export type UserHasRoleRow = AsDbbyRow<{
 	timeframeEnd: undefined | number
 	public: boolean
 	hard: boolean
+	time: number
 }>
 
 export type RoleHasPrivilegeRow = AsDbbyRow<{
@@ -43,4 +46,5 @@ export type RoleHasPrivilegeRow = AsDbbyRow<{
 	privilegeId: DamnId
 	immutable: boolean
 	active: boolean
+	time: number
 }>
