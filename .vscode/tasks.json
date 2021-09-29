@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "build -s",
+			"script": "compile-tsc",
 			"problemMatcher": [
 				"$tsc"
 			],
