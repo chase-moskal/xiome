@@ -46,6 +46,8 @@ export function prepareApiShape({appId, storage}: {
 					deleteRole: true,
 					fetchPermissions: true,
 					unassignPrivilege: true,
+					createPrivilege: true,
+					deletePrivilege: true,
 				},
 			},
 			users: {

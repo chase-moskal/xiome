@@ -14,25 +14,25 @@ import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
-import {fetchPermissionsDisplay} from "../../../auth/aspects/users/routines/permissions/fetch-permissions-display.js"
+import {PermissionsAuth, PermissionsMeta} from "../../../auth/aspects/permissions/types/permissions-auth-and-metas.js"
 
 export const makeRoleAssignmentService = ({
 		config,
 		authPolicies,
-	}: AdministrativeOptions) => apiContext<UserMeta, UserAuth>()({
+	}: AdministrativeOptions) => apiContext<PermissionsMeta, PermissionsAuth>()({
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("administrate user roles")
-		return auth
+		const engine = makePermissionsEngine({
+			permissionsTables: auth.authTables.permissions,
+			isPlatform: auth.access.appId === config.platform.appDetails.appId,
+		})
+		return {...auth, engine}
 	},
 	expose: {
 
-		async fetchPermissions({access, authTables}) {
-			return fetchPermissionsDisplay({
-				config,
-				access,
-				permissionsTables: authTables.permissions,
-			})
+		async fetchPermissions({engine}) {
+			return engine.getPermissionsDisplay()
 		},
 
 		async searchUsers({access, authTables}, options: {term: string}) {

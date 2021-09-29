@@ -2,7 +2,7 @@
 import {merge} from "../../../toolbox/merge.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {find, or} from "../../../toolbox/dbby/dbby-helpers.js"
+import {find, findAll, or} from "../../../toolbox/dbby/dbby-helpers.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
 import {PublicUserRole} from "../../../features/auth/aspects/users/types/public-user-role.js"
 import {PermissionsTables, PrivilegeRow, RoleRow} from "../../../features/auth/aspects/permissions/types/permissions-tables.js"
@@ -174,6 +174,44 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		return userIds.map(assemblePublicRolesForEachUser)
 	}
 
+	const {getPrivileges, getAllPrivileges} = (() => {
+		function getAllHardPrivileges(): PrivilegeRow[] {
+			return Object.entries(hardPermissions.privileges)
+				.map(([label, privilegeId]) => ({
+					privilegeId: DamnId.fromString(privilegeId),
+					label,
+					hard: true,
+				}))
+		}
+		function mergePrivileges(soft: PrivilegeRow[], hard: PrivilegeRow[]) {
+			return merge(soft, hard, (a, b) => a.privilegeId === b.privilegeId)
+				.map(({hard, label, privilegeId}) => ({
+					hard,
+					label,
+					privilegeId: privilegeId.toString(),
+				}))
+		}
+		return {
+			async getPrivileges(privilegeIds: string[]) {
+				const soft = privilegeIds.length
+					? await permissionsTables.privilege
+						.read(findAll(privilegeIds, id => ({
+							privilegeId: DamnId.fromString(id)
+						})))
+					: []
+				const hard = getAllHardPrivileges()
+					.filter(p => privilegeIds.includes(p.privilegeId.toString()))
+				return mergePrivileges(soft, hard)
+			},
+			async getAllPrivileges() {
+				const soft = await permissionsTables.privilege.read({conditions: false})
+				const hard = getAllHardPrivileges()
+				return mergePrivileges(soft, hard)
+			},
+		}
+	})()
+
+
 	async function getPermissionsDisplay() {
 		const all = {conditions: false} as const
 		return concurrent({
@@ -196,21 +234,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 						public: result.public,
 					}))
 			})(),
-			privileges: (async() => {
-				const soft = await permissionsTables.privilege.read(all)
-				const hard: PrivilegeRow[] = Object.entries(hardPermissions.privileges)
-					.map(([label, privilegeId]) => ({
-						privilegeId: DamnId.fromString(privilegeId),
-						label,
-						hard: true,
-					}))
-				return merge(soft, hard, (a, b) => a.privilegeId === b.privilegeId)
-					.map(({hard, label, privilegeId}) => ({
-						hard,
-						label,
-						privilegeId: privilegeId.toString(),
-					}))
-			})(),
+			privileges: getAllPrivileges(),
 			rolesHavePrivileges: (async() => {
 				const roleIds = Object.values(hardPermissions.roles)
 					.map(role => role.roleId)
@@ -247,6 +271,8 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		getPrivilegesForUsers,
 		getPublicRolesForUsers,
 		getPermissionsDisplay,
+		getPrivileges,
+		getAllPrivileges,
 		getUserPrivileges,
 	}
 }

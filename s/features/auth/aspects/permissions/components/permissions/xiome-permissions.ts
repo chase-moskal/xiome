@@ -116,6 +116,9 @@ export class XiomePermissions extends ComponentWithShare<{
 				?data-immutable=${immutable}
 				@press=${onPrivilegeClick}>
 					<div>
+						${hard
+							? html`<div class=icon>${wrenchSvg}</div>`
+							: null}
 						${immutable
 							? html`<div class=icon>${lockSvg}</div>`
 							: null}

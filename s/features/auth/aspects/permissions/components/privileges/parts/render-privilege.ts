@@ -1,5 +1,5 @@
 
-import lockSvg from "../../../../../../../framework/icons/lock.svg.js"
+import wrench from "../../../../../../../framework/icons/wrench.svg.js"
 import cancelSvg from "../../../../../../../framework/icons/cancel.svg.js"
 
 import {html} from "../../../../../../../framework/component/component.js"
@@ -13,26 +13,31 @@ export function renderPrivilege({
 		onDeleteClick: () => void
 	}) {
 
-	function renderLockedIcon() {
+	function renderSystemIcon() {
 		return html`
-			<div class="icon locked">
-				${lockSvg}
+			<div class="icon system">
+				${wrench}
 			</div>
 		`
 	}
 
 	function renderDeleteButton() {
 		return html`
-			<xio-button @press=${onDeleteClick}>
-				${cancelSvg}
+			<xio-button
+				title="delete privilege"
+				class="icon delete"
+				@press=${onDeleteClick}>
+					${cancelSvg}
 			</xio-button>
 		`
 	}
 
 	return html`
-		<div class=privilege title="${privilegeId}">
-			${hard ? renderLockedIcon() : renderDeleteButton()}
-			<span class=text>${label}</span>
+		<div
+			class=privilege
+			?data-hard=${hard}>
+				${hard ? renderSystemIcon() : renderDeleteButton()}
+				<span class=text>${label}</span>
 		</div>
 	`
 }

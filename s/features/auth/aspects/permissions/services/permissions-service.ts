@@ -3,28 +3,32 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {AuthOptions} from "../../../types/auth-options.js"
-import {UserAuth, UserMeta} from "../../../types/auth-metas.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {fetchPermissionsDisplay} from "../../users/routines/permissions/fetch-permissions-display.js"
+import {PermissionsAuth, PermissionsMeta} from "../types/permissions-auth-and-metas.js"
 import {roleLabelValidator} from "../../users/routines/permissions/validators/role-label-validator.js"
+import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
+import {PrivilegeRow} from "../types/permissions-tables.js"
+import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 
 export const makePermissionsService = ({
 		rando, config, authPolicies,
-	}: AuthOptions) => apiContext<UserMeta, UserAuth>()({
+	}: AuthOptions) => apiContext<PermissionsMeta, PermissionsAuth>()({
+
 	policy: async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		auth.checker.requirePrivilege("customize permissions")
-		return auth
+		const engine = makePermissionsEngine({
+			permissionsTables: auth.authTables.permissions,
+			isPlatform: auth.access.appId === config.platform.appDetails.appId,
+		})
+		return {...auth, engine}
 	},
+
 	expose: {
 
-		async fetchPermissions({access, authTables}) {
-			return fetchPermissionsDisplay({
-				config,
-				access,
-				permissionsTables: authTables.permissions,
-			})
+		async fetchPermissions({engine}) {
+			return engine.getPermissionsDisplay()
 		},
 	
 		async createRole({authTables}, {label}: {label: string}) {
@@ -92,10 +96,32 @@ export const makePermissionsService = ({
 			})
 		},
 
-		async deletePrivilege({authTables}, {privilegeId: privilegeIdString}: {
+		async createPrivilege({authTables}, {label}: {label: string}): Promise<PrivilegeDisplay> {
+			const privilege: PrivilegeRow = {
+				label,
+				hard: false,
+				privilegeId: rando.randomId()
+			}
+			await authTables.permissions.privilege.create(privilege)
+			return {
+				hard: privilege.hard,
+				label: privilege.label,
+				privilegeId: privilege.privilegeId.toString(),
+			}
+		},
+
+		async deletePrivilege({engine, authTables}, {privilegeId: privilegeIdString}: {
 				privilegeId: string
 			}) {
 			const privilegeId = DamnId.fromString(privilegeIdString)
+			const [privilege] = await engine.getPrivileges([privilegeId.toString()])
+
+			if (!privilege)
+				throw new ApiError(400, `cannot delete missing privilege "${privilege.privilegeId.toString()}"`)
+
+			if (privilege.hard)
+				throw new ApiError(400, `cannot delete hard privilege "${privilege.privilegeId.toString()}"`)
+
 			await Promise.all([
 				authTables.permissions
 					.roleHasPrivilege.delete(find({privilegeId})),

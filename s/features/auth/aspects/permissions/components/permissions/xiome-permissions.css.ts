@@ -48,8 +48,8 @@ export default css`
 	--xio-button-disabled-opacity: 0.6;
 }
 
-[part=plate] xio-button[data-soft] {
-	color: red;
+[part=plate] xio-button[data-hard] {
+	opacity: 0.6;
 }
 
 [part=plate] xio-button[data-selected]::part(button) {
