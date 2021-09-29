@@ -28,6 +28,7 @@ export class XiomePrivileges extends ComponentWithShare<{
 	#clearCreatorTextInput() {
 		const input = this.shadowRoot.querySelector<XioTextInput>(".creator xio-text-input")
 		input.text = ""
+		input.dispatchValueChange()
 	}
 
 	async #createPrivilege() {

@@ -88,7 +88,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 	private draft: string = ""
 	private lastDraft: string = ""
 
-	private dispatchValueChange = () => {
+	dispatchValueChange = () => {
 		const {draft, lastDraft} = this
 		if (draft !== lastDraft)
 			this.dispatchEvent(new ValueChangeEvent(this.value))
