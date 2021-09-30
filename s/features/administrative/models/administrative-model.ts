@@ -17,8 +17,8 @@ export function makeAdministrativeModel({
 	}) {
 
 	const state = madstate({
-		accessOp: <Op<AccessPayload>>undefined,
-		permissionsOp: <Op<PermissionsDisplay>>ops.none(),
+		accessOp: ops.none() as Op<AccessPayload>,
+		permissionsOp: ops.none() as Op<PermissionsDisplay>,
 	})
 
 	function getAccess() {
