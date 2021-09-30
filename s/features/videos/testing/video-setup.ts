@@ -39,6 +39,7 @@ const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
 export async function videoSetup() {
 	const rando = await getRando()
+	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
@@ -80,10 +81,10 @@ export async function videoSetup() {
 			const options = {
 				meta: await mockVideoMeta({
 					privileges,
-					origins: [origin],
+					origins: [appOrigin],
 					userId: rando.randomId().toString(),
 				}),
-				request: mockHttpRequest({origin}),
+				request: mockHttpRequest({origin: appOrigin}),
 			}
 			const dacastService = mockRemote(rawDacastService).withMeta(options)
 			const contentService = mockRemote(rawContentService).withMeta(options)

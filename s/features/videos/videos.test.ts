@@ -133,7 +133,7 @@ export default <Suite>{
 					const {contentModel} = await setup.for(roles.unworthy)
 						.then(s => s.models)
 					await contentModel.initialize(label)
-					expect(contentModel.getShow(label)).not.ok()
+					expect(contentModel.getShow(label)?.details).not.ok()
 				},
 			}
 		},
@@ -146,27 +146,27 @@ export default <Suite>{
 				const {contentModel} = await setup.for(roles.moderator)
 					.then(s => s.link())
 				await contentModel.initialize(label)
-				expect(contentModel.getShow(label)).not.ok()
+				expect(contentModel.getShow(label)?.details).not.ok()
 				await contentModel.setView({
 					label,
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[0],
 				})
-				expect(contentModel.getShow(label)).ok()
+				expect(contentModel.getShow(label)?.details).ok()
 				await contentModel.setView({
 					label: label2,
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[1],
 				})
-				expect(contentModel.getShow(label2)).ok()
+				expect(contentModel.getShow(label2)?.details).ok()
 				await contentModel.deleteView(label)
-				expect(contentModel.getShow(label)).not.ok()
+				expect(contentModel.getShow(label)?.details).not.ok()
 				await contentModel.setView({
 					label: label2,
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[2],
 				})
-				expect(contentModel.getShow(label2).id)
+				expect(contentModel.getShow(label2).details.id)
 					.equals(contentModel.catalog[2].id)
 			}
 		},

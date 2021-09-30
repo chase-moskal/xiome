@@ -123,20 +123,23 @@ export const makeContentService = ({
 
 			const dacast = getDacastClient(apiKey)
 			return Promise.all(
-				views.map(async view => {
+				views.map(async(view, index) => {
+					const label = labels[index]
 					if (!view)
-						return undefined
+						return {label, details: undefined}
 					const [contentFromDacast, embed] = await Promise.all([
 						getDacastContent({dacast, reference: view}),
 						getDacastEmbed({dacast, reference: view}),
 					])
 					const show: VideoShow = {
-						...ingestDacastContent({
-							type: view.type,
-							contentFromDacast,
-						}),
-						label: view.label,
-						embed,
+						label,
+						details: {
+							...ingestDacastContent({
+								type: view.type,
+								contentFromDacast,
+							}),
+							embed,
+						},
 					}
 					return show
 				})

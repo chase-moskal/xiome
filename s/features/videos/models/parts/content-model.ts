@@ -19,6 +19,8 @@ export function makeContentModel({
 		showsOp: ops.none() as Op<VideoShow[]>,
 	})
 
+	const activeShowLabels = new Set<string>()
+
 	async function loadModerationData() {
 		const access = ops.value(state.readable.accessOp)
 		const isModerator = access && access.permit
@@ -46,6 +48,7 @@ export function makeContentModel({
 	}
 
 	async function loadShow(label: string) {
+		activeShowLabels.add(label)
 		const oldShows = ops.value(state.readable.showsOp) ?? []
 		let updatedShow: VideoShow
 		await ops.operation({
@@ -55,15 +58,14 @@ export function makeContentModel({
 				.then(show => updatedShow = show)
 				.then(show => [
 					...oldShows.filter(s => s.label !== label),
-					...(show ? [show] : []),
+					...(show ? [show] : [{label, details: undefined}]),
 				]),
 		})
 		return updatedShow
 	}
 
 	async function refreshShows() {
-		const oldShows = ops.value(state.readable.showsOp) ?? []
-		const labels = oldShows.map(s => s.label)
+		const labels = Array.from(activeShowLabels)
 		if (labels.length)
 			await ops.operation({
 				setOp: op => state.writable.showsOp = op,
@@ -90,7 +92,6 @@ export function makeContentModel({
 			state.writable.accessOp = op
 			state.writable.catalogOp = ops.none()
 			state.writable.viewsOp = ops.none()
-			state.writable.showsOp = ops.none()
 			await refreshShows()
 			await loadModerationData()
 		},

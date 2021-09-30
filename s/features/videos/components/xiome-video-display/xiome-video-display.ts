@@ -1,10 +1,9 @@
 
 import styles from "./xiome-video-display.css.js"
-import {VideoView} from "../../types/video-concepts.js"
+import {videoControls} from "./parts/controls/video-controls.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
-import {videoControls} from "./parts/controls/video-controls.js"
 
 @mixinStyles(styles)
 export class XiomeVideoDisplay extends ComponentWithShare<{
@@ -34,11 +33,11 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 
 	#renderShow() {
 		const show = this.model.getShow(this.label)
-		return show ? html`
-			<p>show ${show.title}</p>
+		return show?.details ? html`
+			<p>show ${show.details.title}</p>
 			<ul>
-				<li>${show.id}</li>
-				<li>${show.embed}</li>
+				<li>${show.details.id}</li>
+				<li>${show.details.embed}</li>
 			</ul>
 		` : html`
 			<p>no show</p>

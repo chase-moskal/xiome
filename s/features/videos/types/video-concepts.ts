@@ -35,6 +35,7 @@ export interface VideoView extends VideoHosting.AnyReference {
 	privileges: string[]
 }
 
-export interface VideoShow extends VideoHosting.AnyEmbed {
+export interface VideoShow {
 	label: string
+	details?: VideoHosting.AnyEmbed
 }
