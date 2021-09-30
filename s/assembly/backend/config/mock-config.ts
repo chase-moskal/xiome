@@ -22,6 +22,7 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 			origins: platformOrigins,
 		},
 	},
+	dacast: "mock-mode",
 	email: "mock-console",
 	database: "mock-storage",
 	stripe: "mock-mode",

@@ -19,4 +19,5 @@ export const backendForBrowser = (storage: FlexStorage) => prepareBackend({
 	configureMailgun: nope("config.email.mailgun not supported in browser"),
 	configureTokenFunctions: nope("config.crypto.keys must be 'mock-mode' in browser"),
 	configureMockStorage: () => storage,
+	configureDacast: () => nope("config.dacast must be in 'mock-mode' in browser")
 })
