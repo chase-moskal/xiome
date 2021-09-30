@@ -11,6 +11,8 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {DacastLinkDisplay, DacastLinkRow} from "../../types/dacast-link.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
+import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 
 function toLinkDisplay(
 		secret: undefined | DacastLinkRow
@@ -21,10 +23,12 @@ function toLinkDisplay(
 }
 
 export const makeDacastService = ({
+		config,
 		videoTables: rawVideoTables,
 		basePolicy,
 		verifyDacastApiKey,
 	}: {
+		config: SecretConfig
 		videoTables: UnconstrainedTables<VideoTables>
 		basePolicy: Policy<AnonMeta, AnonAuth>
 		verifyDacastApiKey: Dacast.VerifyApiKey
@@ -35,9 +39,14 @@ export const makeDacastService = ({
 		const appId = DamnId.fromString(auth.access.appId)
 		const checker = makePrivilegeChecker(auth.access.permit, videoPrivileges)
 		checker.requirePrivilege("moderate videos")
+		const engine = makePermissionsEngine({
+			isPlatform: auth.access.appId === config.platform.appDetails.appId,
+			permissionsTables: auth.authTables.permissions,
+		})
 		return {
 			...auth,
 			checker,
+			engine,
 			videoTables: rawVideoTables.namespaceForApp(appId),
 		}
 	},

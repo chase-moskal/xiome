@@ -106,6 +106,18 @@ export const ops = {
 			ready: () => "ready",
 		})
 	},
+	combine(...ops: Op<any>[]): Op<void> {
+		const isAnyError = !!ops.find(op => op.mode === Ops.Mode.Error)
+		const isAnyLoading = !!ops.find(op => op.mode === Ops.Mode.Loading)
+		const isAnyNotReady = !!ops.find(op => op.mode !== Ops.Mode.Ready)
+		return isAnyError
+			? {mode: Ops.Mode.Error, reason: "error"}
+			: isAnyLoading
+				? {mode: Ops.Mode.Loading}
+				: isAnyNotReady
+					? {mode: Ops.Mode.None}
+					: {mode: Ops.Mode.Ready, value: undefined}
+	},
 	debug(op: Op<any>) {
 		return ops.select(op, {
 			none: () => [`<op {mode: None}>`],

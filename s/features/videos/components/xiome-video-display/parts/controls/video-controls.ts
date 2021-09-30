@@ -6,16 +6,19 @@ import {renderViewCreator} from "./render-view-creator.js"
 import {renderView} from "./render-view.js"
 
 export function videoControls({
+		queryAll,
 		contentModel: model,
 		requestUpdate,
 	}: {
 		contentModel: ReturnType<typeof makeContentModel>
 		requestUpdate: () => void
+		queryAll: <E extends HTMLElement>(selector: string) => E[]
 	}) {
 
 	const {readable, writable, subscribe} = madstate({
 		open: false,
-		catalogSelectionIndex: 0,
+		selectedContent: 0,
+		selectedPrivileges: [] as string[],
 	})
 
 	const toggleControls = () => {
@@ -40,17 +43,25 @@ export function videoControls({
 					? renderView({
 						view: currentView,
 						onDeleteClick: () => model.deleteView(label),
+						getPrivilegeDisplay: id => model.getPrivilege(id),
 					})
 					: renderViewCreator({
+						queryAll,
 						catalogOp: model.state.catalogOp,
-						setCatalogSelection: index => {
-							writable.catalogSelectionIndex = index
+						privilegesOp: model.state.privilegesOp,
+						isCreateButtonDisabled: readable.selectedContent === undefined
+							|| readable.selectedPrivileges.length === 0,
+						onCatalogSelect: index => {
+							writable.selectedContent = index
+						},
+						onPrivilegesSelect: privileges => {
+							writable.selectedPrivileges = privileges
 						},
 						onCreateClick: () => {
-							const content = model.catalog[readable.catalogSelectionIndex]
+							const content = model.catalog[readable.selectedContent]
 							model.setView({
 								label,
-								privileges: [],
+								privileges: readable.selectedPrivileges,
 								reference: {
 									id: content.id,
 									type: content.type,
@@ -67,6 +78,7 @@ export function videoControls({
 								view => renderView({
 									view,
 									onDeleteClick: () => model.deleteView(view.label),
+									getPrivilegeDisplay: id => model.getPrivilege(id),
 								})
 							)}
 						</div>

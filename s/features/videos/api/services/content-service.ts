@@ -23,6 +23,7 @@ import {getAllViews} from "./routines/get-all-views.js"
 import {getCatalog} from "./routines/get-catalog.js"
 import {getAllPrivileges} from "./routines/get-all-privileges.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 
 export const makeContentService = ({
 		config,
@@ -40,8 +41,13 @@ export const makeContentService = ({
 		const auth = await basePolicy(meta, request)
 		const appId = DamnId.fromString(auth.access.appId)
 		const checker = makePrivilegeChecker(auth.access.permit, videoPrivileges)
+		const engine = makePermissionsEngine({
+			isPlatform: auth.access.appId === config.platform.appDetails.appId,
+			permissionsTables: auth.authTables.permissions,
+		})
 		return {
 			...auth,
+			engine,
 			checker,
 			videoTables: rawVideoTables.namespaceForApp(appId),
 		}
@@ -71,7 +77,7 @@ export const makeContentService = ({
 			})
 		},
 
-		async writeView({videoTables, checker}, {
+		async writeView({videoTables, checker, engine}, {
 				label, privileges, reference,
 			}: {
 				label: string
@@ -89,6 +95,7 @@ export const makeContentService = ({
 			})
 			await setViewPermissions({
 				label,
+				engine,
 				privileges,
 				videoTables,
 			})
@@ -97,6 +104,7 @@ export const makeContentService = ({
 		async deleteView({videoTables, checker}, {label}: {label: string}) {
 			checker.requirePrivilege("moderate videos")
 			await videoTables.viewDacast.delete(find({label}))
+			await videoTables.viewPrivileges.delete(find({label}))
 		},
 
 		async getShows({videoTables, access, checker}, {labels}: {

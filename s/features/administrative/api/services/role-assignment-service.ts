@@ -7,12 +7,11 @@ import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
-import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
-import {AdministrativeOptions} from "../types/administrative-options.js"
 import {schema, boolean} from "../../../../toolbox/darkvalley.js"
+import {AdministrativeOptions} from "../types/administrative-options.js"
 import {validateUserSearchTerm} from "./validation/validate-user-search-term.js"
-import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {PermissionsAuth, PermissionsMeta} from "../../../auth/aspects/permissions/types/permissions-auth-and-metas.js"
 
@@ -35,7 +34,7 @@ export const makeRoleAssignmentService = ({
 			return engine.getPermissionsDisplay()
 		},
 
-		async searchUsers({access, authTables}, options: {term: string}) {
+		async searchUsers({access, engine, authTables}, options: {term: string}) {
 			const {term} = runValidation(options, schema({
 				term: validateUserSearchTerm,
 			}))
@@ -56,18 +55,13 @@ export const makeRoleAssignmentService = ({
 			if (!userIds.length)
 				return []
 
-			const permissionsEngine = makePermissionsEngine({
-				isPlatform: access.appId === config.platform.appDetails.appId,
-				permissionsTables: authTables.permissions,
-			})
-
 			const users = await fetchUsers({
 				userIds,
 				authTables,
-				permissionsEngine,
+				permissionsEngine: engine,
 			})
 
-			const usersAndRoles = await permissionsEngine.getUsersHaveRoles({
+			const usersAndRoles = await engine.getUsersHaveRoles({
 				userIds: users.map(user => user.userId),
 				onlyGetPublicRoles: false,
 			})

@@ -39,16 +39,16 @@ const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
 export async function videoSetup() {
 	const rando = await getRando()
-	const origin = "example.com"
+	const config = mockConfig({
+		platformHome: `https://xiome.io/`,
+		platformOrigins: ["xiome.io"],
+	})
 	const storage = memoryFlexStorage()
 	const authTables = await mockAuthTables(storage)
 	const authPolicies = prepareAuthPolicies({
+		config,
 		appTables: await mockAppTables(storage),
 		authTables: new UnconstrainedTables(authTables),
-		config: mockConfig({
-			platformHome: "",
-			platformOrigins: [],
-		}),
 		verifyToken: mockVerifyToken()
 	})
 	const basePolicy = authPolicies.anonPolicy
@@ -60,15 +60,13 @@ export async function videoSetup() {
 		})
 	)
 	const rawDacastService = makeDacastService({
+		config,
 		videoTables,
 		basePolicy,
 		verifyDacastApiKey,
 	})
 	const rawContentService = makeContentService({
-		config: mockConfig({
-			platformHome: `https://xiome.io/`,
-			platformOrigins: [`https://xiome.io`],
-		}),
+		config,
 		videoTables,
 		basePolicy,
 		getDacastClient: dacastForVideosFeature(

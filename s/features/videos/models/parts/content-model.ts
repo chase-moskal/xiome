@@ -1,10 +1,10 @@
 
 import {Op, ops} from "../../../../framework/ops.js"
+import {videoPrivileges} from "../../api/video-privileges.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {madstate} from "../../../../toolbox/madstate/madstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
-import {videoPrivileges} from "../../api/video-privileges.js"
 import {PrivilegeDisplay} from "../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export function makeContentModel({
@@ -118,22 +118,27 @@ export function makeContentModel({
 			return ops.value(state.readable.viewsOp) ?? []
 		},
 
+		get privileges() {
+			return ops.value(state.readable.privilegesOp) ?? []
+		},
+
 		get shows() {
 			return ops.value(state.readable.showsOp) ?? []
 		},
 
 		getView(label: string) {
-			const views = ops.value(state.readable.viewsOp)
-			return views
-				? views.find(view => view.label === label)
-				: undefined
+			return (ops.value(state.readable.viewsOp) ?? [])
+				.find(view => view.label === label)
+		},
+
+		getPrivilege(id: string) {
+			return (ops.value(state.readable.privilegesOp) ?? [])
+				.find(p => p.privilegeId === id)
 		},
 
 		getShow(label: string) {
-			const shows = ops.value(state.readable.showsOp)
-			return shows
-				? shows.find(show => show.label === label)
-				: undefined
+			return (ops.value(state.readable.showsOp) ?? [])
+				.find(show => show.label === label)
 		},
 
 		async setView(options: {

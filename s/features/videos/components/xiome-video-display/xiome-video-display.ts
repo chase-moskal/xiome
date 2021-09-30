@@ -22,6 +22,7 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 		const controls = videoControls({
 			contentModel: this.model,
 			requestUpdate: () => this.requestUpdate(),
+			queryAll: s => Array.from(this.shadowRoot.querySelectorAll(s)),
 		})
 		this.addSubscription(controls.subscribe)
 		return controls
