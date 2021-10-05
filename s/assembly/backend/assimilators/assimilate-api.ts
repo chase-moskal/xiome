@@ -5,17 +5,17 @@ import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 import {DatabaseFinal} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
+import {videosApi} from "../../../features/videos/api/videos-api.js"
 import {exampleApi} from "../../../features/example/api/example-api.js"
+import {Dacast} from "../../../features/videos/dacast/types/dacast-types.js"
 import {goodApiKey} from "../../../features/videos/dacast/mocks/constants.js"
 import {questionsApi} from "../../../features/questions/api/questions-api.js"
 import {livestreamApi} from "../../../features/livestream/api/livestream-api.js"
-import {GetDacastClient} from "../../../features/videos/types/video-concepts.js"
 import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-policies.js"
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
-import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
-import {videosApi} from "../../../features/videos/api/videos-api.js"
 import {mockVerifyDacastApiKey} from "../../../features/videos/dacast/mocks/mock-verify-dacast-api-key.js"
+import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
 
 export async function assimilateApi({
 		config, rando, database,
@@ -25,7 +25,7 @@ export async function assimilateApi({
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken
-		getDacastClient: GetDacastClient
+		getDacastClient: Dacast.GetClient
 	} & AssimilatorOptions) {
 
 	const generateNickname = standardNicknameGenerator({rando})

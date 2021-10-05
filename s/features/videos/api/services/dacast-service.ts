@@ -4,7 +4,6 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {videoPrivileges} from "../video-privileges.js"
 import {VideoTables} from "../../types/video-tables.js"
-import * as Dacast from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
@@ -13,6 +12,7 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
+import {Dacast} from "../../dacast/types/dacast-types.js"
 
 function toLinkDisplay(
 		secret: undefined | DacastLinkRow

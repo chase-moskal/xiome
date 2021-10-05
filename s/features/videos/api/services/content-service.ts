@@ -2,28 +2,28 @@
 import {apiContext} from "renraku/x/api/api-context.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
+import {getCatalog} from "./routines/get-catalog.js"
 import {videoPrivileges} from "../video-privileges.js"
+import {getAllViews} from "./routines/get-all-views.js"
 import {VideoTables} from "../../types/video-tables.js"
-import * as Dacast from "../../dacast/types/dacast-types.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
-import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
-import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {Dacast} from "../../dacast/types/dacast-types.js"
+import {getVideoViews} from "./routines/get-video-views.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {GetDacastClient, VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
+import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
+import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
-import {setViewPermissions} from "./routines/set-view-permissions.js"
-import {getDacastContent} from "./routines/get-dacast-content.js"
-import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
-import {getVideoViews} from "./routines/get-video-views.js"
-import {getAllViews} from "./routines/get-all-views.js"
-import {getCatalog} from "./routines/get-catalog.js"
 import {getAllPrivileges} from "./routines/get-all-privileges.js"
+import {getDacastContent} from "./routines/get-dacast-content.js"
+import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
+import {setViewPermissions} from "./routines/set-view-permissions.js"
+import {VideoHosting, VideoShow} from "../../types/video-concepts.js"
+import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
+import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
+import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 export const makeContentService = ({
 		config,
@@ -33,7 +33,7 @@ export const makeContentService = ({
 	}: {
 		config: SecretConfig
 		videoTables: UnconstrainedTables<VideoTables>
-		getDacastClient: GetDacastClient
+		getDacastClient: Dacast.GetClient
 		basePolicy: Policy<AnonMeta, AnonAuth>
 	}) => apiContext<VideoMeta, VideoAuth>()({
 

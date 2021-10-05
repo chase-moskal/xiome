@@ -1,9 +1,8 @@
 
-import {VideoTables} from "../../../types/video-tables.js"
-import * as Dacast from "../../../dacast/types/dacast-types.js"
-import {concurrent} from "../../../../../toolbox/concurrent.js"
+import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
 import {ingestDacastContent} from "./ingest-dacast-content.js"
+import {concurrent} from "../../../../../toolbox/concurrent.js"
 
 export async function getCatalog({dacast}: {
 		dacast: Dacast.Client

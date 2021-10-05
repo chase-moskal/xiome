@@ -1,8 +1,8 @@
 
 
 import {ApiError} from "renraku/x/api/api-error.js"
+import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
-import * as Dacast from "../../../dacast/types/dacast-types.js"
 
 export async function getDacastContent({
 		dacast,

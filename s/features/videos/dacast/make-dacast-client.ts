@@ -1,5 +1,5 @@
 
-import * as Dacast from "./types/dacast-types.js"
+import {Dacast} from "./types/dacast-types.js"
 import {RestClient} from "typed-rest-client/RestClient.js"
 
 export const makeDacastClient: Dacast.MakeClient= ({

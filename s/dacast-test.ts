@@ -1,6 +1,7 @@
 
+import {Dacast} from "./features/videos/dacast/types/dacast-types.js"
 import {makeDacastClient} from "./features/videos/dacast/make-dacast-client.js"
-import {verifyDacastApiKey} from "./features/videos/dacast/verify-dacast-api-key.js"
+import {makeDacastApiKeyVerifier} from "./features/videos/dacast/make-dacast-api-key-verifier.js"
 
 async function logAbout(title: string, f: () => Promise<any>) {
 	try {
@@ -14,9 +15,11 @@ async function logAbout(title: string, f: () => Promise<any>) {
 ////////
 
 const apiKey = (process.argv[2] ?? "").trim()
-
 if (!apiKey.length)
 	console.error("api key argument required")
+
+const getDacastClient: Dacast.GetClient = apiKey => makeDacastClient({apiKey})
+const verifyDacastApiKey = makeDacastApiKeyVerifier(getDacastClient)
 
 const valid = await verifyDacastApiKey(apiKey)
 console.log({valid})

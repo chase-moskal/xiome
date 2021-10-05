@@ -1,6 +1,6 @@
 
+import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
-import * as Dacast from "../../../dacast/types/dacast-types.js"
 
 export function ingestDacastContent({
 		type,

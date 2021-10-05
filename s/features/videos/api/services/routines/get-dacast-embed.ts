@@ -1,5 +1,5 @@
 
-import * as Dacast from "../../../dacast/types/dacast-types.js"
+import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
 
 const embedType: Dacast.EmbedType = "javascript"

@@ -1,13 +1,13 @@
 
 import {AssimilatorOptions} from "../types/assilimator-options.js"
-import {GetDacastClient} from "../../../features/videos/types/video-concepts.js"
-import {mockDacastClient} from "../../../features/videos/dacast/mocks/mock-dacast-client.js"
 import {goodApiKey} from "../../../features/videos/dacast/mocks/constants.js"
+import {mockDacastClient} from "../../../features/videos/dacast/mocks/mock-dacast-client.js"
+import {Dacast} from "../../../features/videos/dacast/types/dacast-types.js"
 
 export function assimilateDacast({
 		config,
 		configureDacast,
-	}: AssimilatorOptions): GetDacastClient {
+	}: AssimilatorOptions): Dacast.GetClient {
 
 	if (config.dacast === "mock-mode") {
 		return (apiKey: string) =>
