@@ -1,9 +1,9 @@
 
+import {renderView} from "./render-view.js"
+import {renderViewCreator} from "./render-view-creator.js"
 import {html} from "../../../../../../framework/component/component.js"
 import {madstate} from "../../../../../../toolbox/madstate/madstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
-import {renderViewCreator} from "./render-view-creator.js"
-import {renderView} from "./render-view.js"
 
 export function videoControls({
 		queryAll,
@@ -17,7 +17,7 @@ export function videoControls({
 
 	const {readable, writable, subscribe} = madstate({
 		open: false,
-		selectedContent: 0,
+		selectedContent: undefined as number | undefined,
 		selectedPrivileges: [] as string[],
 	})
 
@@ -49,7 +49,8 @@ export function videoControls({
 						queryAll,
 						catalogOp: model.state.catalogOp,
 						privilegesOp: model.state.privilegesOp,
-						isCreateButtonDisabled: readable.selectedContent === undefined
+						isCreateButtonDisabled:
+							readable.selectedContent === undefined
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
@@ -59,6 +60,8 @@ export function videoControls({
 						},
 						onCreateClick: () => {
 							const content = model.catalog[readable.selectedContent]
+							writable.selectedContent = undefined
+							writable.selectedPrivileges = []
 							model.setView({
 								label,
 								privileges: readable.selectedPrivileges,

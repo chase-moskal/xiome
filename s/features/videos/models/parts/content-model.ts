@@ -32,15 +32,15 @@ export function makeContentModel({
 					const data = ops.value(op)
 					state.writable.catalogOp = ops.replaceValue(
 						op,
-						data?.catalog,
+						data?.catalog ?? [],
 					)
 					state.writable.viewsOp = ops.replaceValue(
 						op,
-						data?.views,
+						data?.views ?? [],
 					)
 					state.writable.privilegesOp = ops.replaceValue(
 						op,
-						data?.privileges,
+						data?.privileges ?? [],
 					)
 				},
 			})

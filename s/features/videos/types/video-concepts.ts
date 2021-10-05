@@ -1,3 +1,4 @@
+import {PrivilegeDisplay} from "../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export namespace VideoHosting {
 	export type Provider = "dacast"
@@ -33,4 +34,10 @@ export interface VideoView extends VideoHosting.AnyReference {
 export interface VideoShow {
 	label: string
 	details?: VideoHosting.AnyEmbed
+}
+
+export interface VideoModerationData {
+	views: VideoView[]
+	catalog: VideoHosting.AnyContent[]
+	privileges: PrivilegeDisplay[]
 }

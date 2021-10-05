@@ -11,7 +11,7 @@ export function mockDacastClient({goodApiKey}: {
 		const id = count++
 		return {
 			id: id.toString(),
-			title: `${type} title ${id}`,
+			title: `content ${id}`,
 			online: true,
 			thumbnail: "thumb.jpg",
 			creation_date: "1999-12-25",

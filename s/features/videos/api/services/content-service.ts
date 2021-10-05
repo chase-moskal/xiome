@@ -18,9 +18,9 @@ import {getAllPrivileges} from "./routines/get-all-privileges.js"
 import {getDacastContent} from "./routines/get-dacast-content.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
-import {VideoHosting, VideoShow} from "../../types/video-concepts.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
+import {VideoHosting, VideoModerationData, VideoShow} from "../../types/video-concepts.js"
 import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
@@ -60,20 +60,21 @@ export const makeContentService = ({
 				authTables,
 				videoTables,
 				checker,
-			}) {
+			}): Promise<VideoModerationData> {
 			checker.requirePrivilege("moderate videos")
-			const apiKey = await getDacastApiKey(videoTables)
-			if (!apiKey)
-				return undefined
-			const dacast = getDacastClient(apiKey)
 			return concurrent({
-				catalog: await getCatalog({dacast}),
-				views: await getAllViews({videoTables}),
-				privileges: await getAllPrivileges({
+				views: getAllViews({videoTables}),
+				privileges: getAllPrivileges({
 					access,
 					permissionsTables: authTables.permissions,
 					platformAppId: config.platform.appDetails.appId,
 				}),
+				catalog: getDacastApiKey(videoTables)
+					.then(async(apiKey): Promise<VideoHosting.AnyContent[]> =>
+						apiKey
+							? getCatalog({dacast: getDacastClient(apiKey)})
+							: []
+					),
 			})
 		},
 

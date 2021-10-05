@@ -31,37 +31,52 @@ export function renderViewCreator({
 		)
 	}
 
-	return html`
-		<p>create view</p>
-		<div class=create-content>
-			<p>select content for this view</p>
-			${renderOp(catalogOp, catalog => html`
-				<select @change=${onCatalogSelectChange}>
-					${catalog.map(({provider, type, title}, index) => html`
-						<option value=${index}>
-							${`${provider} ${type} ${title}`}
-						</option>
-					`)}
-				</select>
-			`)}
-		</div>
-		<div class=create-privileges>
-			<p>select which privileges have access</p>
-			${renderOp(privilegesOp, privileges => html`
+	function renderContentSelector() {
+		const catalog = ops.value(catalogOp)
+		return html`
+			<div class=create-content>
+				${catalog.length ? html`
+					<p>select content for this view</p>
+					<select @change=${onCatalogSelectChange}>
+						<option disabled selected>(select video content)</option>
+						${catalog.map(({provider, type, title}, index) => html`
+							<option value=${index}>
+								${`${provider} ${type} ${title}`}
+							</option>
+						`)}
+					</select>
+				` : html`
+					<p>no available video content (are your video accounts linked?)</p>
+				`}
+			</div>
+		`
+	}
+
+	function renderPrivilegeSelector() {
+		const privileges = ops.value(privilegesOp)
+		return html`
+			<div class=create-privileges>
+				<p>select which privileges have access</p>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`
 						<option value="${privilege.privilegeId}">${privilege.label}</option>
 					`)}
 				</select>
-			`)}
-		</div>
-		${renderOp(ops.combine(catalogOp, privilegesOp), () => html`
+			</div>
+		`
+	}
+
+	return renderOp(ops.combine(catalogOp, privilegesOp), () => html`
+		<div class=create-view>
+			<p>create view</p>
+			${renderContentSelector()}
+			${renderPrivilegeSelector()}
 			<xio-button
 				class=create-button
 				?disabled=${isCreateButtonDisabled}
 				@press=${onCreateClick}>
 					create view
 			</xio-button>
-		`)}
-	`
+		</div>
+	`)
 }
