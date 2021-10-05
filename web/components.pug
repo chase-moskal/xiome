@@ -7,9 +7,9 @@ block append variables
 
 block append head
 	if (debug)
-		script(type="module-shim" async defer src=`${base}/demos.js`)
+		script(defer type="module-shim" src=`${base}/demos.js`)
 	else
-		script(async defer src=`${base}/demos.bundle.min.js`)
+		script(defer src=`${base}/demos.bundle.min.js`)
 
 block maincontent
 	.page

@@ -13,9 +13,9 @@ head
 	if mode === "mock"
 		xiome-mock(mode="app")
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
-		script(async defer type="module-shim" src=`${base}/xiome-mock.js`)
-		script(async defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
-		script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
+		script(defer type="module-shim" src=`${base}/xiome-mock.js`)
+		script(defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
+		script(defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
 
 	else if mode === "local"
 		xiome-config(
@@ -24,9 +24,9 @@ head
 			api="http://localhost:8000"
 		)
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
-		script(async defer type="module-shim" src=`${base}/xiome.js`)
-		script(async defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
-		script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
+		script(defer type="module-shim" src=`${base}/xiome.js`)
+		script(defer type="module-shim" src=`${base}/features/xio-components/playground.js`)
+		script(defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
 
 	style.
 		* {

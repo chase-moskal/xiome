@@ -1,6 +1,5 @@
 
 import "menutown"
-import "./toolbox/mobx-necessary-hack.js"
 import "./assembly/frontend/types/window-globals.js"
 
 import {assembleXiomeMock} from "./assembly/assemble-mocks.js"
