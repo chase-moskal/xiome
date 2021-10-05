@@ -12,12 +12,23 @@ head
 	title xiome.io#{pageSubtitle && " – " + pageSubtitle}
 	link(rel="stylesheet" href=`${base}/styles.css`)
 	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
-	if debug
+
+	if mode === "mock"
 		xiome-mock(mode="platform")
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
-		script(async defer type="module-shim" src=`${base}/toolbox/mobx-necessary-hack.js`)
 		script(async defer type="module-shim" src=`${base}/xiome-mock.js`)
 		script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
+
+	else if mode === "local"
+		xiome-config(
+			app="77772a748c61250b85b84b6fcee3d2c5f9b3b62afa29adf1afbcfe73c0a7217f"
+			platform="http://localhost:5000"
+			api="http://localhost:8000"
+		)
+		script(defer type="importmap-shim" src=`${base}/importmap.json`)
+		script(async defer type="module-shim" src=`${base}/xiome.js`)
+		script(async defer src=`${base}/../node_modules/es-module-shims/dist/es-module-shims.js`)
+
 	else
 		script.
 			const config = document.createElement("xiome-config")
@@ -45,6 +56,7 @@ head
 			}
 			document.head.appendChild(config)
 		script(async defer src=`${base}/xiome.bundle.min.js`)
+
 	block head
 
 .stageplate

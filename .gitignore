@@ -1,6 +1,7 @@
 
 /x
 /s/**/_*
+/data.json
 /node_modules
 
 /*.pem
