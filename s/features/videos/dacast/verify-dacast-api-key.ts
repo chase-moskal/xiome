@@ -5,7 +5,7 @@ import {makeDacastClient} from "./make-dacast-client.js"
 export const verifyDacastApiKey: VerifyApiKey = async apiKey => {
 	const dacastClient = makeDacastClient({apiKey})
 	try {
-		await dacastClient.channels.get()
+		await dacastClient.vods.get()
 		return true
 	}
 	catch (error) {
