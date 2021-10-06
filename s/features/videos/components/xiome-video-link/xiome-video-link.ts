@@ -29,10 +29,12 @@ export class XiomeVideoLink extends ComponentWithShare<{
 	#handleLinkClick = async() => {
 		this.#linkFailed = false
 		const apiKey = this.#apiKeyDraft
+		this.#apiKeyDraft = ""
 		const link = await this.share.dacastModel.linkAccount({apiKey})
 		this.#linkFailed = !link
 	}
 	#handleUnlinkClick = async() => {
+		this.#apiKeyDraft = ""
 		await this.share.dacastModel.unlinkAccount()
 	}
 
