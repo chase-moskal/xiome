@@ -6,9 +6,10 @@ import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export function renderViewCreator({
-		privilegesOp, catalogOp, isCreateButtonDisabled,
+		isContentSelected, isCreateButtonDisabled, privilegesOp, catalogOp,
 		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick,
 	}: {
+		isContentSelected: boolean
 		isCreateButtonDisabled: boolean
 		privilegesOp: Op<PrivilegeDisplay[]>
 		catalogOp: Op<VideoHosting.AnyContent[]>
@@ -70,7 +71,9 @@ export function renderViewCreator({
 		<div class=create-view>
 			<p>create view</p>
 			${renderContentSelector()}
-			${renderPrivilegeSelector()}
+			${isContentSelected
+				? renderPrivilegeSelector()
+				: null}
 			<xio-button
 				class=create-button
 				?disabled=${isCreateButtonDisabled}

@@ -49,6 +49,7 @@ export function videoControls({
 						queryAll,
 						catalogOp: model.state.catalogOp,
 						privilegesOp: model.state.privilegesOp,
+						isContentSelected: readable.selectedContent !== undefined,
 						isCreateButtonDisabled:
 							readable.selectedContent === undefined
 							|| readable.selectedPrivileges.length === 0,
