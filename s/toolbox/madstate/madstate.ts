@@ -1,7 +1,7 @@
 
 import {subbies} from "../subbies.js"
 import {Observer, Reaction, Readable} from "./parts/types.js"
-import {debounce3} from "../debounce2.js"
+import {debounce} from "../debounce/debounce.js"
 import {debounceDelay} from "./parts/constants.js"
 import {MadstateReadonlyError} from "./parts/errors.js"
 import {trackingMechanics} from "./parts/tracking-mechanics.js"
@@ -22,7 +22,7 @@ export function madstate<xState extends {}>(actual: xState) {
 	})
 
 	const {publish: rawPublish, subscribe} = subbies<Readable<xState>>()
-	const publishReadable = debounce3(debounceDelay, () => rawPublish(readable))
+	const publishReadable = debounce(debounceDelay, () => rawPublish(readable))
 
 	let waiter: Promise<void> = Promise.resolve()
 

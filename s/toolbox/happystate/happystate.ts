@@ -1,5 +1,5 @@
 
-import {debounce2} from "../debounce2.js"
+import {debounce} from "../debounce/debounce.js"
 import {deepClone, deepFreeze} from "../deep.js"
 import {AnyListener, pubsub, Subscribe} from "../pubsub.js"
 
@@ -30,7 +30,7 @@ export function happystate<xState extends {}, xActions extends Actions>({
 		dispose: clearStateListeners,
 	} = pubsub()
 
-	const change = debounce2(1, publish)
+	const change = debounce(1, publish)
 
 	const augmentedActions = <Actions>{}
 

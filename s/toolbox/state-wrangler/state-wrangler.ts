@@ -1,5 +1,5 @@
 
-import {debounce2} from "../debounce2.js"
+import {debounce} from "../debounce/debounce.js"
 import {objectMap} from "../object-map.js"
 import {deepClone, deepFreeze} from "../deep.js"
 import {Action, Reducers, StateWranglerOptions} from "./types/state-wrangler-types.js"
@@ -12,7 +12,7 @@ export function stateWrangler<xState>({
 
 	let latest: xState
 
-	const render2 = debounce2(1, () => render(latest))
+	const render2 = debounce(1, () => render(latest))
 
 	function commit(state: xState) {
 		latest = <xState>deepFreeze(deepClone(state))

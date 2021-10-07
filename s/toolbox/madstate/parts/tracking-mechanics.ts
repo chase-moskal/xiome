@@ -1,5 +1,5 @@
 
-import {debounce3} from "../../debounce2.js"
+import {debounce} from "../../debounce/debounce.js"
 import {debounceDelay} from "./constants.js"
 import {MadstateCircularError} from "./errors.js"
 import {Observer, Reaction, Readable} from "./types.js"
@@ -40,7 +40,7 @@ export function trackingMechanics() {
 
 		triggerReactions: (() => {
 			const reactionsQueue: Set<string> = new Set()
-			const fireReactionsQueue = debounce3(debounceDelay, <xState>(state: Readable<xState>) => {
+			const fireReactionsQueue = debounce(debounceDelay, <xState>(state: Readable<xState>) => {
 				for (const key of reactionsQueue) {
 					for (const [,{observer, reaction}] of sessions.get(key) ?? []) {
 						if (reaction) reaction(observer(state))

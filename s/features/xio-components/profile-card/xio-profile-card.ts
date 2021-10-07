@@ -4,11 +4,11 @@ import {Op, ops} from "../../../framework/ops.js"
 import {deepEqual} from "../../../toolbox/deep.js"
 import {renderText} from "./renders/render-text.js"
 import {renderRoles} from "./renders/render-roles.js"
-import {debounce2} from "../../../toolbox/debounce2.js"
 import {select} from "../../../toolbox/select/select.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderDetails} from "./renders/render-details.js"
 import {User} from "../../auth/aspects/users/types/user.js"
+import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {mixinStyles} from "../../../framework/component/mixins/mixin-styles.js"
@@ -84,7 +84,7 @@ export class XioProfileCard extends AutowatcherComponent {
 		return {profileDraft, isChanged}
 	}
 
-	private handleChange = debounce2(200, () => {
+	private handleChange = debounce(200, () => {
 		if (!this.user) return
 		const {profileDraft, isChanged} = this.generateNewProfileDraftFromInputs()
 		this.profileDraft = isChanged ? profileDraft : undefined

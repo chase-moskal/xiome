@@ -4,7 +4,7 @@ import wrenchSvg from "../../../../framework/icons/wrench.svg.js"
 
 import {Op, ops} from "../../../../framework/ops.js"
 import {UserResult} from "../../api/types/user-result.js"
-import {debounce3} from "../../../../toolbox/debounce2.js"
+import {debounce} from "../../../../toolbox/debounce/debounce.js"
 import {makeUserStates} from "./parts/make-user-states.js"
 import {renderEditWidget} from "./parts/render-edit-widget.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
@@ -56,7 +56,7 @@ export class XiomeManageUsers extends ComponentWithShare<{
 	@property({type: String})
 	private searchText: string = ""
 
-	private debouncedSearchUsers = debounce3(
+	private debouncedSearchUsers = debounce(
 		1000,
 		async(term: string) =>
 			term

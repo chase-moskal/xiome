@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
-import {debounce3} from "../../../toolbox/debounce2.js"
+import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamRights} from "./types/livestream-rights.js"
 import {madstate} from "../../../toolbox/madstate/madstate.js"
@@ -92,7 +92,7 @@ export function makeLivestreamModel({
 		subscribe: state.subscribe,
 		getShow,
 		commitShow,
-		loadShow: debounce3(200, loadShow),
+		loadShow: debounce(200, loadShow),
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
 			{
