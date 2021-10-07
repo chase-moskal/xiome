@@ -1,50 +1,38 @@
 
 import {Dacast} from "./types/dacast-types.js"
-import {RestClient} from "typed-rest-client/RestClient.js"
+import {dacastRestModern} from "./parts/dacast-rest-modern.js"
+import {dacastRestLegacy} from "./parts/dacast-rest-legacy.js"
 
-export const makeDacastClient: Dacast.MakeClient= ({
-		apiKey,
-		headers: moreHeaders = {}
-	}) => {
+export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 
-	const headers: Dacast.Headers = {
-		"X-Api-Key": apiKey,
-		"X-Format": "default",
-		...moreHeaders,
-	}
-
-	const dacastApiUrl = "https://developer.dacast.com"
-	const rest = new RestClient("xiome", dacastApiUrl, undefined, {headers})
-	
-	function get<R>(url: string) {
-		return async() => (await rest.get<R>(url)).result
-	}
+	const modern = dacastRestModern({apiKey, headers})
+	const legacy = dacastRestLegacy({apiKey, headers})
 
 	return {
 		channels: {
-			get: get<Dacast.Channel[]>(`/v2/channel`),
+			get: legacy.get<Dacast.Channel[]>(`/v2/channel`),
 			id: (channelId: string) => ({
-				get: get<Dacast.Channel>(`/v2/channel/${channelId}`),
+				get: modern.get<Dacast.Channel>(`/v2/channel/${channelId}`),
 				embed: (embedType: string) => ({
-					get: get<Dacast.Embed>(`v2/channel/${channelId}/embed/${embedType}`),
+					get: modern.get<Dacast.Embed>(`v2/channel/${channelId}/embed/${embedType}`),
 				}),
 			})
 		},
 		vods: {
-			get: get<Dacast.Vod[]>(`/v2/vod`),
+			get: modern.get<Dacast.Vod[]>(`/v2/vod`),
 			id: (vodId: string) => ({
-				get: get<Dacast.Vod>(`/v2/vod/${vodId}`),
+				get: modern.get<Dacast.Vod>(`/v2/vod/${vodId}`),
 				embed: (embedType: string) => ({
-					get: get<Dacast.Embed>(`/v2/vod/${vodId}/embed/${embedType}`),
+					get: modern.get<Dacast.Embed>(`/v2/vod/${vodId}/embed/${embedType}`),
 				}),
 			})
 		},
 		playlists: {
-			get: get<Dacast.Playlist[]>(`/v2/playlists`),
+			get: modern.get<Dacast.Playlist[]>(`/v2/playlists`),
 			id: (playlistsId: string) => ({
-				get: get<Dacast.Playlist>(`/v2/playlists/${playlistsId}`),
+				get: modern.get<Dacast.Playlist>(`/v2/playlists/${playlistsId}`),
 				embed: (embedType: string) => ({
-					get: get<Dacast.Embed>(`/v2/playlists/${playlistsId}/embed/${embedType}`),
+					get: modern.get<Dacast.Embed>(`/v2/playlists/${playlistsId}/embed/${embedType}`),
 				}),
 			})
 		},
