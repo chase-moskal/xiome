@@ -18,7 +18,7 @@ export function renderText({field, text, input}: {
 		? html`
 			<xio-text-input
 				data-field="${field}"
-				initial=${text}
+				text="${text}"
 				part="xiotextinput"
 				exportparts="${`
 					label: xiotextinput-label,

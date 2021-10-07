@@ -9,6 +9,7 @@ import {AutowatcherComponent, html, mixinStyles, mixinFocusable, property} from 
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import {debounce} from "../../../toolbox/debounce/debounce.js"
 
  @mixinFocusable
  @mixinStyles(styles)
@@ -71,6 +72,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 		return this.draft
 	}
 
+	@property({type: String})
 	set text(value: string) {
 		const {input} = this
 		if (input) {
@@ -107,7 +109,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 		this.draft = this.input.value
 	}
 
-	private handleInputKeyUp = (event: KeyboardEvent) => {
+	private handleInputKeyUp = debounce(250, (event: KeyboardEvent) => {
 		this.updateFromRawInput()
 		if (!this.textarea && event.key === "Enter") {
 			this.dispatchEnterPress()
@@ -115,7 +117,7 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 		else {
 			this.dispatchValueChange()
 		}
-	}
+	})
 
 	private handleInputChange = () => {
 		this.updateFromRawInput()
