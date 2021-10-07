@@ -38,8 +38,15 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 	@property({type: Boolean, reflect: true})
 	["hidden"]: boolean = false
 
+	private get input(): HTMLInputElement | HTMLTextAreaElement {
+		return this.shadowRoot
+			? this.shadowRoot.querySelector("#textinput")
+			: undefined
+	}
+
 	focus() {
-		this.shadowRoot.querySelector<HTMLElement>("#textinput").focus()
+		if (this.input)
+			this.input.focus()
 	}
 
 	@property({type: Function})
@@ -80,10 +87,6 @@ export class XioTextInput<xParsedValue = string> extends AutowatcherComponent {
 
 	onenterpress: (event: EnterPressEvent) => void =
 		() => {}
-
-	private get input(): HTMLInputElement | HTMLTextAreaElement {
-		return this.shadowRoot.querySelector("#textinput")
-	}
 
 	@property({type: String})
 	private draft: string = ""
