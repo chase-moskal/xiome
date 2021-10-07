@@ -16,7 +16,7 @@ async function logAbout(title: string, f: () => Promise<any>) {
 
 const apiKey = (process.argv[2] ?? "").trim()
 if (!apiKey.length)
-	console.error("api key argument required")
+	throw new Error("api key argument required")
 
 const getDacastClient: Dacast.GetClient = apiKey => makeDacastClient({apiKey})
 const verifyDacastApiKey = makeDacastApiKeyVerifier(getDacastClient)
