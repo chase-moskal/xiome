@@ -1,13 +1,13 @@
 
-import {LitElement, PropertyValues, TemplateResult} from "lit-element"
+import {LitElement, PropertyValues, TemplateResult} from "lit"
 
 import {LitBase} from "./types/component-types.js"
 import {ConstructorFor} from "../../types/constructor-for.js"
 import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
 
-export * from "lit-element"
-export {render} from "lit-html"
+export * from "lit"
+export * from "lit/decorators.js"
 
 export * from "./theme-components.js"
 export * from "./register-components.js"
