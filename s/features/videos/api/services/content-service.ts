@@ -128,7 +128,7 @@ export const makeContentService = ({
 					const label = labels[index]
 					if (!view)
 						return {label, details: undefined}
-					const [contentFromDacast, embed] = await Promise.all([
+					const [data, embed] = await Promise.all([
 						getDacastContent({dacast, reference: view}),
 						getDacastEmbed({dacast, reference: view}),
 					])
@@ -137,7 +137,7 @@ export const makeContentService = ({
 						details: {
 							...ingestDacastContent({
 								type: view.type,
-								contentFromDacast,
+								data,
 							}),
 							embed,
 						},

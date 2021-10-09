@@ -1,20 +1,27 @@
 
+import {DacastData} from "../../../dacast/types/dacast-data.js"
 import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
 
 export function ingestDacastContent({
 		type,
-		contentFromDacast,
+		data,
 	}: {
 		type: VideoHosting.DacastType,
-		contentFromDacast: Dacast.Content,
+		data: DacastData.Common,
 	}): VideoHosting.DacastContent {
+
+	const pictures = (data.pictures ?? [])
+	const picture = pictures[0]
+	const thumb = picture
+		? (picture.thumbnail ?? [])[0]
+		: undefined
 
 	return {
 		type,
-		id: contentFromDacast.id,
-		title: contentFromDacast.title,
-		thumb: contentFromDacast.thumbnail,
+		thumb,
+		id: data.id,
+		title: data.title,
 		provider: "dacast" as const,
 	}
 }

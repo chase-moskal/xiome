@@ -1,8 +1,8 @@
 
-
 import {ApiError} from "renraku/x/api/api-error.js"
 import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
+import {DacastData} from "../../../dacast/types/dacast-data.js"
 
 export async function getDacastContent({
 		dacast,
@@ -10,7 +10,7 @@ export async function getDacastContent({
 	}: {
 		dacast: Dacast.Client
 		reference: VideoHosting.DacastReference
-	}): Promise<Dacast.Content> {
+	}): Promise<DacastData.Common> {
 
 	if (provider !== "dacast")
 		throw new ApiError(500, `video content provider mismatch (expected "dacast", got "${provider}")`)

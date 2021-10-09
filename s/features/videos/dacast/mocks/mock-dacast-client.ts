@@ -1,5 +1,6 @@
 
 import {Dacast} from "../types/dacast-types.js"
+import {DacastData} from "../types/dacast-data.js"
 
 export function mockDacastClient({goodApiKey}: {
 		goodApiKey: string
@@ -7,16 +8,13 @@ export function mockDacastClient({goodApiKey}: {
 
 	let count = 1
 
-	function fakeContent(type: string): Dacast.Content {
+	function fakeContent(type: string): DacastData.Common {
 		const id = count++
 		return {
 			id: id.toString(),
 			title: `content ${id}`,
 			online: true,
-			thumbnail: "thumb.jpg",
 			creation_date: "1999-12-25",
-			start_date: "1999-12-31",
-			end_date: "2000-01-01",
 		}
 	}
 
@@ -27,7 +25,9 @@ export function mockDacastClient({goodApiKey}: {
 	}
 
 	return ({apiKey}) => {
-		function resource(content: Dacast.Content[]) {
+
+		function resource<xData extends DacastData.Common>(content: xData[]) {
+
 			function fun<F extends (...args: any[]) => any>(f: F) {
 				return <F>((...args) => {
 					if (apiKey !== goodApiKey)
@@ -35,8 +35,22 @@ export function mockDacastClient({goodApiKey}: {
 					return f(...args)
 				})
 			}
+
+			function paginate(content: xData[]): Dacast.Paginated<xData> {
+				return {
+					totalCount: content.length.toString(),
+					data: content,
+					paging: {
+						last: "",
+						next: "",
+						previous: "",
+						self: "",
+					},
+				}
+			}
+
 			return {
-				get: fun(async() => content),
+				get: fun(async() => paginate(content)),
 				id: (contentId: string) => ({
 					get: fun(async() => content.find(c => c.id === contentId)),
 					embed: (embedType: Dacast.EmbedType) => ({
@@ -45,10 +59,11 @@ export function mockDacastClient({goodApiKey}: {
 				}),
 			}
 		}
+
 		return {
-			vods: resource(data.vods),
-			channels: resource(data.channels),
-			playlists: resource(data.playlists),
+			vods: resource(data.vods as DacastData.Vod[]),
+			channels: resource(data.channels as DacastData.Channel[]),
+			playlists: resource(data.playlists as DacastData.Playlist[]),
 		}
 	}
 }

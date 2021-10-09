@@ -1,54 +1,48 @@
 
+import {DacastData} from "./dacast-data.js"
+
 export namespace Dacast {
 
-	export interface Content {
-		id: string
-		title: string
-		online: boolean
-		creation_date: string
-		start_date: string
-		end_date: string
-		thumbnail: string
-	}
-
-	export enum ContentType {
-		Channel,
-		Vod,
-		Playlist,
+	export interface Paginated<xData extends DacastData.Common> {
+		data: xData[]
+		paging: {
+			self?: string
+			last?: string
+			next?: string
+			previous?: string
+		}
+		totalCount: string
 	}
 
 	export type EmbedType =
 		| "javascript"
 		| "iframe"
 
-	export interface Channel extends Content {}
-	export interface Vod extends Content{}
-	export interface Playlist extends Content {}
 	export type Embed = string
 
 	export interface Client {
 		channels: {
-			get(): Promise<Channel[]>
+			get(): Promise<Paginated<DacastData.Channel>>
 			id(channelId: string): {
-				get(): Promise<Channel>
+				get(): Promise<DacastData.Channel>
 				embed(embedType: EmbedType): {
 					get(): Promise<Embed>
 				}
 			}
 		}
 		vods: {
-			get(): Promise<Vod[]>
+			get(): Promise<Paginated<DacastData.Vod>>
 			id(vodId: string): {
-				get(): Promise<Vod>
+				get(): Promise<DacastData.Vod>
 				embed(embedType: EmbedType): {
 					get(): Promise<Embed>
 				}
 			}
 		}
 		playlists: {
-			get(): Promise<Playlist[]>
+			get(): Promise<Paginated<DacastData.Playlist>>
 			id(playlistId: string): {
-				get(): Promise<Playlist>
+				get(): Promise<DacastData.Playlist>
 				embed(embedType: EmbedType): {
 					get(): Promise<Embed>
 				}

@@ -3,6 +3,7 @@ import {Dacast} from "../../../dacast/types/dacast-types.js"
 import {VideoHosting} from "../../../types/video-concepts.js"
 import {ingestDacastContent} from "./ingest-dacast-content.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
+import {DacastData} from "../../../dacast/types/dacast-data.js"
 
 export async function getCatalog({dacast}: {
 		dacast: Dacast.Client
@@ -13,16 +14,20 @@ export async function getCatalog({dacast}: {
 		channels: dacast.channels.get(),
 		playlists: dacast.playlists.get(),
 	})
-	const convert = (
+
+	function convert2(
 			type: VideoHosting.DacastType,
-			contentFromDacast: Dacast.Content
-		) => ingestDacastContent({
-		type,
-		contentFromDacast,
-	})
+			paginated: Dacast.Paginated<DacastData.Common>
+		) {
+		return paginated.data.map(data => ingestDacastContent({
+			type,
+			data,
+		}))
+	}
+
 	return [
-		...results.vods.map(x => convert("vod", x)),
-		...results.channels.map(x => convert("channel", x)),
-		...results.playlists.map(x => convert("playlist", x)),
+		...convert2("vod", results.vods),
+		...convert2("channel", results.channels),
+		...convert2("playlist", results.playlists),
 	]
 }
