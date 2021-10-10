@@ -9,6 +9,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 
 	const modern = dacastRestModern({apiKey, headers})
 	const legacy = dacastRestLegacy({apiKey, headers})
+
 	const hacks = {
 		getEmbed: (
 			(embedType: Dacast.EmbedType, restResource: string) =>
@@ -22,7 +23,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 	return {
 		channels: {
 			get: legacy.get(`/v2/channel`),
-			id: (channelId: string) => ({
+			id: channelId => ({
 				get: modern.get(`/v2/channel/${channelId}`),
 				embed: embedType => ({
 					get: hacks.getEmbed(embedType, `/v2/channel/${channelId}/embed/${embedType}`)
@@ -31,7 +32,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 		},
 		vods: {
 			get: modern.get(`/v2/vod`),
-			id: (vodId: string) => ({
+			id: vodId => ({
 				get: modern.get(`/v2/vod/${vodId}`),
 				embed: embedType => ({
 					get: hacks.getEmbed(embedType, `/v2/vod/${vodId}/embed/${embedType}`)
