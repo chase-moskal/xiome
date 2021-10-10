@@ -9,7 +9,7 @@ import {SecretConfig} from "../../../../../../assembly/backend/types/secret-conf
 import {universalPermissions} from "../../../../../../assembly/backend/permissions/standard-permissions.js"
 
 const standardRoleIds = {
-	anonymous: universalPermissions.roles.anonymous.roleId,
+	everybody: universalPermissions.roles.everybody.roleId,
 	authenticated: universalPermissions.roles.authenticated.roleId,
 	technician: universalPermissions.roles.technician.roleId,
 }
@@ -42,11 +42,11 @@ export async function assertEmailAccount({
 				generateNickname,
 			})
 
-			const assignAnonymous = authTables.permissions.userHasRole.create({
+			const assignEverybody = authTables.permissions.userHasRole.create({
 				userId,
 				hard: true,
 				public: false,
-				roleId: DamnId.fromString(standardRoleIds.anonymous),
+				roleId: DamnId.fromString(standardRoleIds.everybody),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 				time: Date.now(),
@@ -77,7 +77,7 @@ export async function assertEmailAccount({
 			await Promise.all([
 				createAccount,
 				createProfile,
-				assignAnonymous,
+				assignEverybody,
 				assignAuthenticated,
 				assignTechnician,
 			])

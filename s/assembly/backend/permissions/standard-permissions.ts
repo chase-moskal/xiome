@@ -2,6 +2,8 @@
 import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
 
+export const universalPrivilege = "c1cb5ac1000af6081ff47e80804de7542b57a1425c3faac8153e708aaf79271a"
+
 const commonPrivileges = {
 	"read questions": "5b19b929648cbbe26c052a5016892b370f048eead1e6a303a50b7f5234ec5161",
 	"post questions": "aeaae6139d05f77193ca7c272a65977c70cb188f3070359866237a5ade84ba15",
@@ -38,16 +40,18 @@ export const universalPermissions = asPermissions({
 	privileges: {
 		...commonPrivileges,
 		...commonPowerPrivileges,
+		"universal": universalPrivilege,
 		"banned": "ffff9ebcbe8f69f3520ec574f5a1489a70bf04521d7a85fcbd25c54cc22802f1",
 	},
 	roles: {
-		"anonymous": {
+		"everybody": {
 			roleId: "aaaa777dc7d7e9b5e9e0386abf0cf2f059cda4f71779cc910b85e8f504452b23",
 			public: true,
 			assignable: false,
 			hasPrivileges: {
 				...immutable(INACTIVE, commonPrivileges),
 				...immutable(INACTIVE, commonPowerPrivileges),
+				"universal": {active: true, immutable: true},
 				"banned": {active: false, immutable: true},
 				"read questions": {active: true, immutable: false},
 			},
@@ -59,6 +63,7 @@ export const universalPermissions = asPermissions({
 			hasPrivileges: {
 				...mutable(active, commonPrivileges),
 				...immutable(INACTIVE, commonPowerPrivileges),
+				"universal": {active: false, immutable: true},
 				"banned": {active: false, immutable: true},
 			},
 		},
@@ -69,6 +74,7 @@ export const universalPermissions = asPermissions({
 			hasPrivileges: {
 				...immutable(INACTIVE, commonPrivileges),
 				...immutable(INACTIVE, commonPowerPrivileges),
+				"universal": {active: false, immutable: true},
 				"banned": {active: true, immutable: true},
 			},
 		},
@@ -79,6 +85,7 @@ export const universalPermissions = asPermissions({
 			hasPrivileges: {
 				...immutable(active, commonPrivileges),
 				...immutable(active, commonPowerPrivileges),
+				"universal": {active: false, immutable: true},
 				"banned": {active: false, immutable: true},
 			},
 		},
@@ -92,10 +99,10 @@ export const platformPermissions = asPermissions({
 	},
 	roles: {
 		...universalPermissions.roles,
-		"anonymous": {
-			...universalPermissions.roles.anonymous,
+		"everybody": {
+			...universalPermissions.roles.everybody,
 			hasPrivileges: {
-				...universalPermissions.roles.anonymous.hasPrivileges,
+				...universalPermissions.roles.everybody.hasPrivileges,
 				...immutable(INACTIVE, platformPowerPrivileges),
 			}
 		},
@@ -131,10 +138,10 @@ export const appPermissions = asPermissions({
 	},
 	roles: {
 		...universalPermissions.roles,
-		"anonymous": {
-			...universalPermissions.roles.anonymous,
+		"everybody": {
+			...universalPermissions.roles.everybody,
 			hasPrivileges: {
-				...universalPermissions.roles.anonymous.hasPrivileges,
+				...universalPermissions.roles.everybody.hasPrivileges,
 				...immutable(INACTIVE, appPowerPrivileges),
 			}
 		},
@@ -160,6 +167,7 @@ export const appPermissions = asPermissions({
 				...immutable(active, appPowerPrivileges),
 				...immutable(active, commonPrivileges),
 				...immutable(active, commonPowerPrivileges),
+				"universal": {active: false, immutable: true},
 				"banned": {active: false, immutable: true},
 			},
 		},

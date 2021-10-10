@@ -22,7 +22,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 	} = permissionsMergingFacility({isPlatform})
 
 	async function getAnonymousPrivileges() {
-		const roleId = hardPermissions.roles.anonymous.roleId
+		const roleId = hardPermissions.roles.everybody.roleId
 		const hard = getHardPrivilegeDetails(roleId)
 		const soft = await permissionsTables.roleHasPrivilege
 			.read(find({roleId: DamnId.fromString(roleId)}))
