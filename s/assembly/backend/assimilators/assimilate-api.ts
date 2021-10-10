@@ -8,24 +8,24 @@ import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {videosApi} from "../../../features/videos/api/videos-api.js"
 import {exampleApi} from "../../../features/example/api/example-api.js"
 import {Dacast} from "../../../features/videos/dacast/types/dacast-types.js"
-import {goodApiKey} from "../../../features/videos/dacast/mocks/constants.js"
+import {goodApiKey} from "../../../features/videos/dacast/mocks/parts/mock-dacast-constants.js"
 import {questionsApi} from "../../../features/questions/api/questions-api.js"
 import {livestreamApi} from "../../../features/livestream/api/livestream-api.js"
 import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-policies.js"
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
-import {mockVerifyDacastApiKey} from "../../../features/videos/dacast/mocks/mock-verify-dacast-api-key.js"
+import {mockVerifyDacastApiKey} from "../../../features/videos/dacast/mocks/parts/mock-verify-dacast-api-key.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
 
 export async function assimilateApi({
-		config, rando, database,
-		sendLoginEmail, signToken, verifyToken, getDacastClient,
+		config, rando, database, dacastSdk,
+		sendLoginEmail, signToken, verifyToken,
 	}: {
 		database: DatabaseFinal
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken
-		getDacastClient: Dacast.GetClient
+		dacastSdk: Dacast.Sdk
 	} & AssimilatorOptions) {
 
 	const generateNickname = standardNicknameGenerator({rando})
@@ -36,8 +36,6 @@ export async function assimilateApi({
 		appTables: database.apps,
 		authTables: database.auth,
 	})
-
-	const verifyDacastApiKey = mockVerifyDacastApiKey({goodApiKey})
 
 	return asApi({
 		auth: authApi({
@@ -71,10 +69,9 @@ export async function assimilateApi({
 		}),
 		videos: videosApi({
 			config,
+			dacastSdk,
 			authPolicies,
 			videoTables: database.videos,
-			getDacastClient,
-			verifyDacastApiKey,
 		}),
 	})
 }

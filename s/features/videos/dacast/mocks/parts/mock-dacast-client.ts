@@ -1,6 +1,6 @@
 
-import {Dacast} from "../types/dacast-types.js"
-import {DacastData} from "../types/dacast-data.js"
+import {Dacast} from "../../types/dacast-types.js"
+import {DacastData} from "../../types/dacast-data.js"
 
 export function mockDacastClient({goodApiKey}: {
 		goodApiKey: string
@@ -11,9 +11,9 @@ export function mockDacastClient({goodApiKey}: {
 	function fakeContent(type: string): DacastData.Common {
 		const id = count++
 		return {
+			online: true,
 			id: id.toString(),
 			title: `content ${id}`,
-			online: true,
 			creation_date: "1999-12-25",
 		}
 	}

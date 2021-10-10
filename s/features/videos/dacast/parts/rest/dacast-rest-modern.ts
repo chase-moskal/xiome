@@ -1,16 +1,17 @@
 
-import {Dacast} from "../types/dacast-types.js"
+import {Dacast} from "../../types/dacast-types.js"
 import {RestClient} from "typed-rest-client/RestClient.js"
-import {makeQueryString, QueryData} from "../../../../toolbox/make-query-string.js"
+import {makeQueryString, QueryData} from "../../../../../toolbox/make-query-string.js"
 
-const dacastApiUrl = "https://api.dacast.com"
+const dacastApiUrl = "https://developer.dacast.com"
 
-export function dacastRestLegacy({apiKey, headers: moreHeaders}: {
+export function dacastRestModern({apiKey, headers: moreHeaders}: {
 		apiKey: string,
 		headers: Partial<Dacast.Headers>
 	}) {
 
-	const headers: Omit<Dacast.Headers, "X-Api-Key"> = {
+	const headers = {
+		"X-Api-Key": apiKey,
 		"X-Format": "default",
 		...moreHeaders,
 	}
@@ -22,8 +23,7 @@ export function dacastRestLegacy({apiKey, headers: moreHeaders}: {
 			queryDefaults: QueryData = {}
 		) {
 		return async function(queryAdditions: xQuery = {} as xQuery) {
-			const augmentedQueryDefaults = {"apikey": apiKey, ...queryDefaults}
-			const query = {...augmentedQueryDefaults, ...queryAdditions}
+			const query: xQuery = {...queryDefaults, ...queryAdditions}
 			const urlWithQuery = url + makeQueryString(query)
 			return (await rest.get<xResult>(urlWithQuery)).result
 		}

@@ -1,5 +1,5 @@
 
-import {Dacast} from "../types/dacast-types.js"
+import {Dacast} from "../../types/dacast-types.js"
 
 export function mockVerifyDacastApiKey({goodApiKey}: {
 		goodApiKey: string

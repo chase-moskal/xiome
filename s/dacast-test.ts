@@ -1,7 +1,5 @@
 
-import {Dacast} from "./features/videos/dacast/types/dacast-types.js"
-import {makeDacastClient} from "./features/videos/dacast/make-dacast-client.js"
-import {makeDacastApiKeyVerifier} from "./features/videos/dacast/make-dacast-api-key-verifier.js"
+import {makeDacastSdk} from "./features/videos/dacast/make-dacast-sdk.js"
 
 async function log<R>(title: string, f: () => Promise<R>) {
 	let result: R
@@ -21,13 +19,13 @@ const apiKey = (process.argv[2] ?? "").trim()
 if (!apiKey.length)
 	throw new Error("api key argument required")
 
-const getDacastClient: Dacast.GetClient = apiKey => makeDacastClient({apiKey})
-const verifyDacastApiKey = makeDacastApiKeyVerifier(getDacastClient)
 
-const valid = await verifyDacastApiKey(apiKey)
-console.log({valid})
+const dacastSdk = makeDacastSdk()
 
-const dacast = makeDacastClient({apiKey})
+const valid = await dacastSdk.verifyApiKey(apiKey)
+console.log("api key:", {valid})
+
+const dacast = dacastSdk.getClient(apiKey)
 
 //
 // vods test

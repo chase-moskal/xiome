@@ -27,13 +27,13 @@ import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make
 
 export const makeContentService = ({
 		config,
+		dacastSdk,
 		videoTables: rawVideoTables,
 		basePolicy,
-		getDacastClient,
 	}: {
 		config: SecretConfig
+		dacastSdk: Dacast.Sdk
 		videoTables: UnconstrainedTables<VideoTables>
-		getDacastClient: Dacast.GetClient
 		basePolicy: Policy<AnonMeta, AnonAuth>
 	}) => apiContext<VideoMeta, VideoAuth>()({
 
@@ -72,7 +72,7 @@ export const makeContentService = ({
 				catalog: getDacastApiKey(videoTables)
 					.then(async(apiKey): Promise<VideoHosting.AnyContent[]> =>
 						apiKey
-							? getCatalog({dacast: getDacastClient(apiKey)})
+							? getCatalog({dacast: dacastSdk.getClient(apiKey)})
 							: []
 					),
 			})
@@ -122,7 +122,7 @@ export const makeContentService = ({
 				userPrivileges: access.permit.privileges,
 			})
 
-			const dacast = getDacastClient(apiKey)
+			const dacast = dacastSdk.getClient(apiKey)
 			return Promise.all(
 				views.map(async(view, index) => {
 					const label = labels[index]

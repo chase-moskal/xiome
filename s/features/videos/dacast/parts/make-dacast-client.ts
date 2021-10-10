@@ -1,7 +1,7 @@
 
-import {Dacast} from "./types/dacast-types.js"
-import {dacastRestModern} from "./parts/dacast-rest-modern.js"
-import {dacastRestLegacy} from "./parts/dacast-rest-legacy.js"
+import {Dacast} from "../types/dacast-types.js"
+import {dacastRestModern} from "./rest/dacast-rest-modern.js"
+import {dacastRestLegacy} from "./rest/dacast-rest-legacy.js"
 
 export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 

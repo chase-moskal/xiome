@@ -24,14 +24,14 @@ function toLinkDisplay(
 
 export const makeDacastService = ({
 		config,
+		dacastSdk,
 		videoTables: rawVideoTables,
 		basePolicy,
-		verifyDacastApiKey,
 	}: {
 		config: SecretConfig
+		dacastSdk: Dacast.Sdk
 		videoTables: UnconstrainedTables<VideoTables>
 		basePolicy: Policy<AnonMeta, AnonAuth>
-		verifyDacastApiKey: Dacast.VerifyApiKey
 	}) => apiContext<VideoMeta, VideoAuth>()({
 
 	policy: async(meta, request) => {
@@ -61,14 +61,18 @@ export const makeDacastService = ({
 		},
 
 		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
-			const good = await verifyDacastApiKey(apiKey)
+			console.log("SETTING LINK", apiKey)
+			const good = await dacastSdk.verifyApiKey(apiKey)
+			console.log("VERIFY", good)
 			let secret: DacastLinkRow
 			if (good) {
 				secret = {apiKey, time: Date.now()}
+				console.log("SECRET", secret)
 				await videoTables.dacastAccountLinks.update({
 					conditions: false,
 					upsert: secret,
 				})
+				console.log("DONE")
 			}
 			return toLinkDisplay(secret)
 		},

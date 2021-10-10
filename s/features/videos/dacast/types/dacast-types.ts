@@ -69,4 +69,9 @@ export namespace Dacast {
 	export interface VerifyApiKey {
 		(apiKey: string): Promise<boolean>
 	}
+
+	export interface Sdk {
+		getClient: GetClient
+		verifyApiKey: VerifyApiKey
+	}
 }

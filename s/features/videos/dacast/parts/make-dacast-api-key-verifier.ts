@@ -1,5 +1,5 @@
 
-import {Dacast} from "./types/dacast-types.js"
+import {Dacast} from "../types/dacast-types.js"
 
 export function makeDacastApiKeyVerifier(getDacastClient: Dacast.GetClient): Dacast.VerifyApiKey {
 	return async apiKey => {

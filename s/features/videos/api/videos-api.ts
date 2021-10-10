@@ -12,14 +12,12 @@ export function videosApi({
 		config,
 		videoTables,
 		authPolicies,
-		getDacastClient,
-		verifyDacastApiKey,
+		dacastSdk,
 	}: {
 		config: SecretConfig
 		videoTables: UnconstrainedTables<VideoTables>
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
-		getDacastClient: Dacast.GetClient
-		verifyDacastApiKey: Dacast.VerifyApiKey
+		dacastSdk: Dacast.Sdk
 	}) {
 
 	const options = {
@@ -31,11 +29,11 @@ export function videosApi({
 	return asApi({
 		dacastService: makeDacastService({
 			...options,
-			verifyDacastApiKey,
+			dacastSdk,
 		}),
 		contentService: makeContentService({
 			...options,
-			getDacastClient,
+			dacastSdk,
 		}),
 	})
 }
