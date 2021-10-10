@@ -92,8 +92,12 @@ export function makeContentModel({
 			state.writable.accessOp = op
 			state.writable.catalogOp = ops.none()
 			state.writable.viewsOp = ops.none()
-			await refreshShows()
 			await loadModerationData()
+			await refreshShows()
+		},
+		async onVideoHostingUpdate() {
+			await loadModerationData()
+			await refreshShows()
 		},
 
 		initialize,

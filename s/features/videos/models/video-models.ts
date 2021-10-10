@@ -8,7 +8,7 @@ import {VideoModelsOptions} from "./types/video-models-options.js"
 export function makeVideoModels(options: VideoModelsOptions) {
 	const dacastModel = makeDacastModel(options)
 	const contentModel = makeContentModel(options)
-	dacastModel.onLinkChange(contentModel.loadModerationData)
+	dacastModel.onLinkChange(contentModel.onVideoHostingUpdate)
 	return {
 		dacastModel,
 		contentModel,
