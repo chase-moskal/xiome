@@ -60,12 +60,13 @@ export function videoControls({
 							writable.selectedPrivileges = privileges
 						},
 						onCreateClick: () => {
-							const content = model.catalog[readable.selectedContent]
+							const {selectedContent, selectedPrivileges} = readable
 							writable.selectedContent = undefined
 							writable.selectedPrivileges = []
+							const content = model.catalog[selectedContent]
 							model.setView({
 								label,
-								privileges: readable.selectedPrivileges,
+								privileges: selectedPrivileges,
 								reference: {
 									id: content.id,
 									type: content.type,

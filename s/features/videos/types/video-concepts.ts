@@ -1,18 +1,16 @@
 
 import {PrivilegeDisplay} from "../../auth/aspects/users/routines/permissions/types/privilege-display.js"
+import {DacastData} from "../dacast/types/dacast-data.js"
 
 export namespace VideoHosting {
 	export type Provider = "dacast"
 	export interface Base {
 		provider: Provider
 	}
-	export type DacastType = 
-		| "vod"
-		| "channel"
-		| "playlist"
+	
 	export interface DacastReference extends Base {
 		provider: "dacast"
-		type: DacastType
+		type: DacastData.ContentType
 		id: string
 	}
 	export interface DacastContent extends DacastReference {

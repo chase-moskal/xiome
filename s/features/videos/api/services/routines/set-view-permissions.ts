@@ -16,12 +16,15 @@ export async function setViewPermissions({
 		engine: PermissionsEngine
 	}) {
 
-	// select only privileges that actually exist
-	const privileges = await engine.getPrivileges(privilegesInput)
-		.then(displays => displays.map(d => d.privilegeId.toString()))
-
 	// delete all privileges associated with this view
 	await videoTables.viewPrivileges.delete(find({label}))
+
+	// select only privileges that actually exist
+	const privileges = await engine.getPrivileges(privilegesInput)
+		.then(displays => displays
+			.filter(d => !!d)
+			.map(d => d.privilegeId.toString())
+		)
 
 	// add new privileges for this view
 	await videoTables.viewPrivileges.create(

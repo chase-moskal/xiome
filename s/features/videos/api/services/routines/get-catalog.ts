@@ -16,7 +16,7 @@ export async function getCatalog({dacast}: {
 	})
 
 	function convert2(
-			type: VideoHosting.DacastType,
+			type: DacastData.ContentType,
 			paginated: Dacast.Paginated<DacastData.Common>
 		) {
 		return paginated.data.map(data => ingestDacastContent({

@@ -1,6 +1,11 @@
 
 export namespace DacastData {
 
+	export type ContentType = 
+		| "vod"
+		| "channel"
+		| "playlist"
+
 	export interface Picture {
 		splashscreen: string[]
 		thumbnail: string[]

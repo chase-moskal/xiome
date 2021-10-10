@@ -6,7 +6,7 @@ export function ingestDacastContent({
 		type,
 		data,
 	}: {
-		type: VideoHosting.DacastType,
+		type: DacastData.ContentType,
 		data: DacastData.Common,
 	}): VideoHosting.DacastContent {
 

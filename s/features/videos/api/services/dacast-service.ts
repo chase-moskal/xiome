@@ -61,18 +61,14 @@ export const makeDacastService = ({
 		},
 
 		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
-			console.log("SETTING LINK", apiKey)
 			const good = await dacastSdk.verifyApiKey(apiKey)
-			console.log("VERIFY", good)
 			let secret: DacastLinkRow
 			if (good) {
 				secret = {apiKey, time: Date.now()}
-				console.log("SECRET", secret)
 				await videoTables.dacastAccountLinks.update({
 					conditions: false,
 					upsert: secret,
 				})
-				console.log("DONE")
 			}
 			return toLinkDisplay(secret)
 		},
