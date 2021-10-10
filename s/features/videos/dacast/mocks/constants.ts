@@ -1,3 +1,3 @@
 
-export const goodApiKey = "yyy"
-export const badApiKey = "nnn"
+export const goodApiKey = "good"
+export const badApiKey = "bad"
