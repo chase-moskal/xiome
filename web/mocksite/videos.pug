@@ -1,0 +1,14 @@
+
+extends ../_templates/_mocksite.pug
+
+block main
+
+	section
+		h2 videos
+		xiome-video-link
+		xiome-video-display
+
+	section
+		h2 your account
+		xiome-login-panel(show-logout)
+			xiome-my-account
