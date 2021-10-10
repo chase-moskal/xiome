@@ -18,7 +18,9 @@ export namespace Dacast {
 		| "javascript"
 		| "iframe"
 
-	export type Embed = string
+	export interface Embed {
+		code: string
+	}
 
 	export interface Client {
 		channels: {

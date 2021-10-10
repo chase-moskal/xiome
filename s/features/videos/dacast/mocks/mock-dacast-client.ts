@@ -54,7 +54,7 @@ export function mockDacastClient({goodApiKey}: {
 				id: (contentId: string) => ({
 					get: fun(async() => content.find(c => c.id === contentId)),
 					embed: (embedType: Dacast.EmbedType) => ({
-						get: fun(async() => `fake-embed`),
+						get: fun(async() => ({code: `fake-embed`})),
 					}),
 				}),
 			}
