@@ -18,6 +18,12 @@ export function mockDacastClient({goodApiKey}: {
 		}
 	}
 
+	function fakeEmbedCode(type: Dacast.EmbedType) {
+		return type === "iframe"
+			? "<iframe src=\"https://iframe.dacast.com/vod/0ffd60be-91b7-22b0-1353-7dba7af43261/db07d056-2170-3940-cc4a-4e1add8b504b\"  width=\"512\" height=\"288 frameborder=\"0\" scrolling=\"no\" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>"
+			: "<script id=\"0ffd60be-91b7-22b0-1353-7dba7af43261-vod-db07d056-2170-3940-cc4a-4e1add8b504b\" width=\"100%\" height=\"100%\" src=\"https://player.dacast.com/js/player.js?contentId=0ffd60be-91b7-22b0-1353-7dba7af43261-vod-db07d056-2170-3940-cc4a-4e1add8b504b\"  class=\"dacast-video\"></script>"
+	}
+
 	const data = {
 		vods: [0, 0].map(() => fakeContent("vod")),
 		channels: [0, 0].map(() => fakeContent("channel")),
@@ -54,7 +60,7 @@ export function mockDacastClient({goodApiKey}: {
 				id: (contentId: string) => ({
 					get: fun(async() => content.find(c => c.id === contentId)),
 					embed: (embedType: Dacast.EmbedType) => ({
-						get: fun(async() => ({code: `fake-embed`})),
+						get: fun(async() => ({code: fakeEmbedCode(embedType)})),
 					}),
 				}),
 			}
