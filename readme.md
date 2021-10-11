@@ -14,89 +14,9 @@
 
 ## xiome installation
 
-1. **setup your community on https://xiome.io/setup**  
-  xiome cloud needs to know your website's homepage
-
-1. **copy-paste your community's installation snippet**  
-  every page using xiome components needs the install snippet in your website's html `<head>`
-
-1. **copy-paste components wherever you want!**  
-  now you're ready to start pasting in components, from the reference below, however you wish. go crazy!
-
-<br/>
-
-## xiome component reference
-
-### 🔐 **components for logins and accounts**
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-login-panel\>***
-- so users can login to your community
-- can be used to hide content from users who are not-logged-in
-- ```html
-  <xiome-login-panel show-logout>
-    <p>hello, you are logged in</p>
-    <p slot="logged-out">sorry, you are logged out</p>
-  </xiome-login-panel>
-  ```
-  - `show-logout` — show a logout button
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-my-account\>***
-- so users can edit their own profile
-- ```html
-  <xiome-my-account></xiome-my-account>
-  ```
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-my-avatar\>***
-- display the user's own avatar
-- ```html
-  <xiome-my-avatar></xiome-my-avatar>
-  ```
-
-### 🕹️ **components to engage users**
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-questions\>***
-- a questions and answers board
-- designed for influencers to communicate with their audience
-- ```html
-  <xiome-questions board="default"></xiome-questions>
-  ```
-  - `board="default"` — identify which board to display.  
-    you can have as many boards as you want.
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-video-display\>***
-- display a video or livestream to your users
-- admins get a control panel to customize which video is displayed
-- *(a video hosting account must be linked using `<xiome-video-link>`)*
-- ```html
-  <xiome-video-display label="default"></xiome-video-display>
-  ```
-  - `label="default"` — identify which video you want to display.  
-    give it any name you like.
-
-### 🔧 **components for administrators**
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-manage-users\>***
-- search widget for finding users and changing their permissions
-- ```html
-  <xiome-manage-users></xiome-manage-users>
-  ```
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-permissions\>***
-- customize permissions within your community
-- ```html
-  <xiome-permissions></xiome-permissions>
-  ```
-
-#### &nbsp;&nbsp;⚙️ ***\<xiome-video-link\>***
-- admins can link a video hosting account to your community
-- this allows admins to select any of the linked account's videos to display
-- ```html
-  <xiome-video-link></xiome-video-link>
-  ```
-
-### 🎷 **components that don't need cloud power to run**
-
-- documentation for these coming soon
+1. create your community at https://xiome.io/setup
+2. copy-paste your community's insall snippet into your web page's html `<head>`
+3. copy-paste any components you want from https://xiome.io/components into your website's `<body>`
 
 <br/>
 
