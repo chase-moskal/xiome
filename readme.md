@@ -1,11 +1,13 @@
 
 # 💠 [xiome.io](https://xiome.io/)
 
+<br/>
+
 ## open source cloud-powered web components
 
 - 🔌 xiome components are universal plugins for websites
 - 🛡️ let your users enjoy a passwordless login experience
-- 🙌 engage your users with features like forums
+- 🙌 engage your users with cool features, like a questions board
 - 💰 monetize your audience with subscriptions and paywalls
 - ☁️ let xiome cloud do the heavy lifting running the servers
 - ⚡ jumpstart your app by using xiome's auth system
