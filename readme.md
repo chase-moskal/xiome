@@ -35,9 +35,10 @@
   - `npm run build` to build the project
 
 &nbsp;⚙️ **during your development session**
-- run these processes, each in their own terminal
+- run these background processes, each in their own terminal
   - `npm run watch` to continually rebuild source files on save
-  - `npm start` to run a local http server at http://localhost:5000/
+  - `npm start` to run a local http server at http://localhost:5000/  
+    *(if npm start fails, try it again, it often works the second time)*
   - *note:* [tmux](https://en.wikipedia.org/wiki/Tmux) is a great way to split terminal windows
   - *note:* of course, when you're done, end each process by pressing `ctrl+c`
 - open vscode by running `code .`
