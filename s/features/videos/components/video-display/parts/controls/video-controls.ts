@@ -2,7 +2,7 @@
 import {renderView} from "./render-view.js"
 import {renderViewCreator} from "./render-view-creator.js"
 import {html} from "../../../../../../framework/component/component.js"
-import {madstate} from "../../../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
 
 export function videoControls({
@@ -15,7 +15,7 @@ export function videoControls({
 		queryAll: <E extends HTMLElement>(selector: string) => E[]
 	}) {
 
-	const {readable, writable, subscribe} = madstate({
+	const {readable, writable, subscribe} = snapstate({
 		open: false,
 		selectedContent: undefined as number | undefined,
 		selectedPrivileges: [] as string[],

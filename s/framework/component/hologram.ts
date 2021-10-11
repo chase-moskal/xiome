@@ -1,6 +1,6 @@
 
-import {madstate} from "../../toolbox/madstate/madstate.js"
-import {Readable} from "../../toolbox/madstate/parts/types.js"
+import {snapstate} from "../../toolbox/snapstate/snapstate.js"
+import {Readable} from "../../toolbox/snapstate/parts/types.js"
 
 export type Type =
 	| typeof String
@@ -24,12 +24,12 @@ export type Properties = {[key: string]: any}
 export function hologramComponent<Required extends Properties, Optional extends Properties>({}: {
 		required: Required
 		optional: Optional
-		init({}: ReturnType<typeof madstate>): void
+		init({}: ReturnType<typeof snapstate>): void
 		render(readable: Readable<Required & Partial<Optional>>): any
 	}) {
 
 	type State = Required & Partial<Optional>
-	const state = madstate<State>(<any>{})
+	const state = snapstate<State>(<any>{})
 
 	const Component = class extends HTMLElement {}
 

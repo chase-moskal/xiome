@@ -5,7 +5,7 @@ import {AppDisplay} from "../types/app-display.js"
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AppModelOptions} from "./types/apps-model-options.js"
-import {madstate} from "../../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 
 export function makeAppsModel({
 		appService,
@@ -13,7 +13,7 @@ export function makeAppsModel({
 		getValidAccess,
 	}: AppModelOptions) {
 
-	const {readable, writable, subscribe} = madstate({
+	const {readable, writable, subscribe} = snapstate({
 		active: false,
 		appRecords: <Op<AppRecords>>ops.none(),
 		addingNewApp: <Op<null>>ops.none(),

@@ -3,12 +3,12 @@ import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AccessLoginExpiredError} from "./errors/access-errors.js"
 import {AccessModelOptions} from "./types/access-model-options.js"
-import {madstate} from "../../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 import {isTokenValid} from "../../../utils/tokens/is-token-valid.js"
 
 export function makeAccessModel({authMediator, loginService}: AccessModelOptions) {
 
-	const state = madstate({
+	const state = snapstate({
 		accessOp: <Op<AccessPayload>>ops.none(),
 	})
 

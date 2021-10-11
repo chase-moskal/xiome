@@ -4,13 +4,13 @@ import {subbies} from "../../../../toolbox/subbies.js"
 import {DacastLinkDisplay} from "../../types/dacast-link.js"
 import {videoPrivileges} from "../../api/video-privileges.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {madstate} from "../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 
 export function makeDacastModel({dacastService}: VideoModelsOptions) {
 
 	const linkChange = subbies<DacastLinkDisplay | undefined>()
-	const state = madstate({
+	const state = snapstate({
 		accessOp: ops.none() as Op<AccessPayload>,
 		linkedAccountOp: ops.none() as Op<undefined | DacastLinkDisplay>,
 	})

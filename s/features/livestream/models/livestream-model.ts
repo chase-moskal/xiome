@@ -4,7 +4,7 @@ import {Service} from "../../../types/service.js"
 import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {LivestreamRights} from "./types/livestream-rights.js"
-import {madstate} from "../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {LivestreamShow} from "../api/types/livestream-tables.js"
 import {makeLivestreamViewingService} from "../api/services/livestream-viewing-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
@@ -23,7 +23,7 @@ export function makeLivestreamModel({
 		getAccessOp: () => Op<AccessPayload>
 	}) {
 
-	const state = madstate({
+	const state = snapstate({
 		rights: LivestreamRights.Forbidden,
 		accessOp: <Op<AccessPayload>>ops.none(),
 		shows: <{[label: string]: Op<LivestreamShow>}>{},

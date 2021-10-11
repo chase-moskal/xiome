@@ -1,9 +1,9 @@
 
 import {Subscribe} from "../../../toolbox/pubsub.js"
-import {Track} from "../../../toolbox/madstate/parts/types.js"
+import {Track} from "../../../toolbox/snapstate/parts/types.js"
 import {Constructor, LitBase} from "../types/component-types.js"
 
-export function mixinMadstateTracking(...tracks: Track[]) {
+export function mixinSnapstateTracking(...tracks: Track[]) {
 	return function<C extends Constructor<LitBase>>(Base: C) {
 		return class extends Base {
 
@@ -49,7 +49,7 @@ export function mixinMadstateTracking(...tracks: Track[]) {
 	}
 }
 
-export function mixinMadstateSubscriptions(...subscriptions: Subscribe[]) {
+export function mixinSnapstateSubscriptions(...subscriptions: Subscribe[]) {
 	return function<C extends Constructor<LitBase>>(Base: C) {
 		return class extends Base {
 

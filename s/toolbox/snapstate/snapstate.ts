@@ -3,10 +3,10 @@ import {subbies} from "../subbies.js"
 import {Observer, Reaction, Readable} from "./parts/types.js"
 import {debounce} from "../debounce/debounce.js"
 import {debounceDelay} from "./parts/constants.js"
-import {MadstateReadonlyError} from "./parts/errors.js"
+import {SnapstateReadonlyError} from "./parts/errors.js"
 import {trackingMechanics} from "./parts/tracking-mechanics.js"
 
-export function madstate<xState extends {}>(actual: xState) {
+export function snapstate<xState extends {}>(actual: xState) {
 	const tracking = trackingMechanics()
 
 	function get(t: any, key: string) {
@@ -17,7 +17,7 @@ export function madstate<xState extends {}>(actual: xState) {
 	const readable: Readable<xState> = new Proxy(actual, {
 		get,
 		set(t, key: string) {
-			throw new MadstateReadonlyError(`readonly state property "${key}"`)
+			throw new SnapstateReadonlyError(`readonly state property "${key}"`)
 		},
 	})
 

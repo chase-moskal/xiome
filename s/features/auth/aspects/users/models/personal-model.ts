@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
-import {madstate} from "../../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 import {PersonalModelOptions} from "./types/personal-model-options.js"
 import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
 
@@ -11,7 +11,7 @@ export function makePersonalModel({
 		reauthorize,
 	}: PersonalModelOptions) {
 
-	const {readable, writable, track, subscribe} = madstate({
+	const {readable, writable, track, subscribe} = snapstate({
 		accessOp: <Op<AccessPayload>>getAccessOp(),
 		submitDraftOp: <Op<void>>ops.ready(undefined),
 	})

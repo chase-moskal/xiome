@@ -1,13 +1,13 @@
 
 import {Op} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {madstate} from "../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 
 export function makeExampleModel({getAccessOp}: {
 		getAccessOp: () => Op<AccessPayload>
 	}) {
 
-	const state = madstate({
+	const state = snapstate({
 		accessOp: <Op<AccessPayload>>getAccessOp(),
 	})
 

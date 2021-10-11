@@ -1,10 +1,10 @@
 
 import {Suite, assert, expect} from "cynic"
-import {madstate} from "./madstate.js"
+import {snapstate} from "./snapstate.js"
 
 export default <Suite>{
 	async "subscriptions are fired"() {
-		const state = madstate({count: 0})
+		const state = snapstate({count: 0})
 		let fired = 0
 		state.subscribe(() => fired += 1)
 		state.writable.count += 1
@@ -12,7 +12,7 @@ export default <Suite>{
 		assert(fired === 1, "basic subscription should have fired")
 	},
 	async "track reactions are fired"() {
-		const state = madstate({count: 0, lol: false})
+		const state = snapstate({count: 0, lol: false})
 		let fired = 0
 		state.track(() => {
 			void state.readable.count
@@ -29,7 +29,7 @@ export default <Suite>{
 		assert(fired === 3, `track reactions should be debounced, 3 expected, got ${fired}`)
 	},
 	async "advanced tracks are fired"() {
-		const state = madstate({count: 0})
+		const state = snapstate({count: 0})
 		const counts = []
 		state.track(({count}) => ({count}), ({count}) => { counts.push(count) })
 		state.writable.count = 5
@@ -43,17 +43,17 @@ export default <Suite>{
 		expect(counts[1]).equals(7)
 	},
 	async "readable throws error on write"() {
-		const state = madstate({count: 0})
+		const state = snapstate({count: 0})
 		expect(() => (<any>state).readable.count += 1)
 			.throws()
 	},
 	async "writable can read"() {
-		const state = madstate({count: 0})
+		const state = snapstate({count: 0})
 		state.writable.count += 1
 		assert(state.writable.count === 1)
 	},
 	async "forbid circular: initial track"() {
-		const state = madstate({count: 0})
+		const state = snapstate({count: 0})
 		expect(() => {
 			state.track(() => {
 				state.writable.count += state.readable.count
@@ -61,7 +61,7 @@ export default <Suite>{
 		}).throws()
 	},
 	// async "forbid circular: sneaky track"() {
-	// 	const state = madstate({count: 0})
+	// 	const state = snapstate({count: 0})
 	// 	let cond = false
 	// 	state.track(() => {
 	// 		void state.readable.count
@@ -75,7 +75,7 @@ export default <Suite>{
 	// 	}).throws()
 	// },
 	// async "forbid circular: subscription"() {
-	// 	const state = madstate({count: 0})
+	// 	const state = snapstate({count: 0})
 	// 	state.subscribe(() => {
 	// 		state.writable.count += 1
 	// 	})

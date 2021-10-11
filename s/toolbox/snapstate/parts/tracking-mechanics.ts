@@ -1,7 +1,7 @@
 
 import {debounce} from "../../debounce/debounce.js"
 import {debounceDelay} from "./constants.js"
-import {MadstateCircularError} from "./errors.js"
+import {SnapstateCircularError} from "./errors.js"
 import {Observer, Reaction, Readable} from "./types.js"
 
 export function trackingMechanics() {
@@ -35,7 +35,7 @@ export function trackingMechanics() {
 
 		avoidCircular(key: string) {
 			if (activeWatch)
-				throw new MadstateCircularError(`cannot set any properties within a reaction, not even "${key}"`)
+				throw new SnapstateCircularError(`cannot set any properties within a reaction, not even "${key}"`)
 		},
 
 		triggerReactions: (() => {

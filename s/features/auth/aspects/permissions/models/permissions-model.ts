@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
-import {madstate} from "../../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 import {PermissionsModelOptions} from "./types/permissions-model-options.js"
 import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 import {PermissionsDisplay} from "../../users/routines/permissions/types/permissions-display.js"
@@ -12,7 +12,7 @@ export function makePermissionsModel({
 		reauthorize,
 	}: PermissionsModelOptions) {
 
-	const {readable, writable, subscribe, track} = madstate({
+	const {readable, writable, subscribe, track} = snapstate({
 		active: <boolean>false,
 		accessOp: <Op<AccessPayload>>ops.none(),
 		permissionsDisplay: <Op<PermissionsDisplay>>ops.none(),

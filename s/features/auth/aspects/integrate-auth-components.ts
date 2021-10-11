@@ -1,5 +1,5 @@
 
-import {mixinShare, mixinMadstateSubscriptions} from "../../../framework/component/component.js"
+import {mixinShare, mixinSnapstateSubscriptions} from "../../../framework/component/component.js"
 import {XiomeComponentOptions} from "../../../assembly/frontend/components/types/xiome-component-options.js"
 
 import {XiomeAppManager} from "./apps/components/app-manager/xiome-app-manager.js"
@@ -15,39 +15,39 @@ export function integrateAuthComponents({models, modals}: XiomeComponentOptions)
 	const {accessModel, appsModel, personalModel, permissionsModel} = models
 	return {
 		XiomeMyAvatar:
-			mixinMadstateSubscriptions(accessModel.subscribe)(
+			mixinSnapstateSubscriptions(accessModel.subscribe)(
 				mixinShare({
 					accessModel,
 				})(XiomeMyAvatar)
 			),
 		XiomeLoginPanel:
-			mixinMadstateSubscriptions(accessModel.subscribe)(
+			mixinSnapstateSubscriptions(accessModel.subscribe)(
 				mixinShare({
 					accessModel,
 				})(XiomeLoginPanel)
 			),
 		XiomeAppManager:
-			mixinMadstateSubscriptions(appsModel.subscribe)(
+			mixinSnapstateSubscriptions(appsModel.subscribe)(
 				mixinShare({
 					modals,
 					appsModel,
 				})(XiomeAppManager)
 			),
 		XiomeMyAccount:
-			mixinMadstateSubscriptions(personalModel.subscribe)(
+			mixinSnapstateSubscriptions(personalModel.subscribe)(
 				mixinShare({
 					personalModel,
 				})(XiomeMyAccount)
 			),
 		XiomePermissions:
-			mixinMadstateSubscriptions(permissionsModel.subscribe)(
+			mixinSnapstateSubscriptions(permissionsModel.subscribe)(
 				mixinShare({
 					modals,
 					permissionsModel,
 				})(XiomePermissions)
 			),
 		XiomePrivileges:
-			mixinMadstateSubscriptions(permissionsModel.subscribe)(
+			mixinSnapstateSubscriptions(permissionsModel.subscribe)(
 				mixinShare({
 					modals,
 					permissionsModel,

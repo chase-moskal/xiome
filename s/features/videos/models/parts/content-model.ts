@@ -2,7 +2,7 @@
 import {Op, ops} from "../../../../framework/ops.js"
 import {videoPrivileges} from "../../api/video-privileges.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {madstate} from "../../../../toolbox/madstate/madstate.js"
+import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
 import {PrivilegeDisplay} from "../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
@@ -11,7 +11,7 @@ export function makeContentModel({
 		contentService,
 	}: VideoModelsOptions) {
 
-	const state = madstate({
+	const state = snapstate({
 		accessOp: ops.none() as Op<AccessPayload>,
 		catalogOp: ops.none() as Op<VideoHosting.AnyContent[]>,
 		viewsOp: ops.none() as Op<VideoView[]>,
