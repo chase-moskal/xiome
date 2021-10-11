@@ -1,11 +1,18 @@
 
 extends ../_templates/_mocksite.pug
 
+block head
+	style.
+		::part(iframe) {
+			aspect-ratio: 16 / 9;
+		}
+
 block main
 
 	section
 		h2 videos
 		xiome-video-hosting
+		br
 		xiome-video-display
 
 	section

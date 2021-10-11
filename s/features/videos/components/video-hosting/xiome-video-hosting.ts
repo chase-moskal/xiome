@@ -90,7 +90,7 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 							? this.#renderWhenLinked(linkedAccount)
 							: this.#renderWhenUnlinked()
 					)
-					: html`<p>you don't have permission to link video accounts</p>`}
+					: html`<slot name=forbidden>you don't have permission to edit video hosting settings</slot>`}
 			</div>
 		`)
 	}

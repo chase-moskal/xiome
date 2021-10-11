@@ -1,10 +1,11 @@
 
 import styles from "./xiome-video-display.css.js"
+import {VideoHosting} from "../../types/video-concepts.js"
 import {videoControls} from "./parts/controls/video-controls.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {parseDacastIframeSrc} from "../../dacast/utils/parse-dacast-iframe-src.js"
 import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
-import {VideoHosting} from "../../types/video-concepts.js"
 
 @mixinStyles(styles)
 export class XiomeVideoDisplay extends ComponentWithShare<{
@@ -33,15 +34,20 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	}
 
 	#embeds = (() => {
-		const map = new WeakMap<VideoHosting.AnyEmbed, HTMLDivElement>()
+		const map = new Map<string, HTMLDivElement>()
 		return {
 			obtain(details: VideoHosting.AnyEmbed) {
-				let div = map.get(details)
+				if (details.provider !== "dacast")
+					throw new Error(`unsupported video provider "${details.provider}"`)
+				let div = map.get(details.id)
 				if (!div) {
 					div = document.createElement("div")
-					div.innerHTML = details.embed
 					div.setAttribute("data-id", details.id)
-					map.set(details, div)
+					const iframe = document.createElement("iframe")
+					iframe.src = parseDacastIframeSrc(details.embed)
+					iframe.setAttribute("part", "iframe")
+					div.appendChild(iframe)
+					map.set(details.id, div)
 				}
 				return div
 			},
@@ -51,10 +57,11 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	#renderShow() {
 		const show = this.model.getShow(this.label)
 		return show?.details ? html`
-			<p>show ${show.details.title}</p>
+			<slot name=title>${show.details.title}</slot>
 			${this.#embeds.obtain(show.details) ?? "(embed missing)"}
+			<slot></slot>
 		` : html`
-			<p>no show</p>
+			<slot name=no-show></slot>
 		`
 	}
 

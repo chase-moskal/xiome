@@ -2,23 +2,14 @@
 import {Dacast} from "../types/dacast-types.js"
 import {dacastRestModern} from "./rest/dacast-rest-modern.js"
 import {dacastRestLegacy} from "./rest/dacast-rest-legacy.js"
-import {QueryData} from "../../../../toolbox/make-query-string.js"
-import {fixBrokenDacastEmbeds} from "./hacks/fix-broken-dacast-embeds.js"
 
-export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
+export const makeDacastClient: Dacast.MakeClient = ({
+		apiKey,
+		headers = {}
+	}) => {
 
 	const modern = dacastRestModern({apiKey, headers})
 	const legacy = dacastRestLegacy({apiKey, headers})
-
-	const hacks = {
-		getEmbed: (
-			(embedType: Dacast.EmbedType, restResource: string) =>
-				async(query?: QueryData) => {
-					const embed = await modern.get(restResource)(query) as Dacast.Embed
-					return fixBrokenDacastEmbeds({embed, embedType})
-				}
-		),
-	}
 
 	return {
 		channels: {
@@ -26,7 +17,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 			id: channelId => ({
 				get: modern.get(`/v2/channel/${channelId}`),
 				embed: embedType => ({
-					get: hacks.getEmbed(embedType, `/v2/channel/${channelId}/embed/${embedType}`)
+					get: modern.get(`/v2/channel/${channelId}/embed/${embedType}`),
 				})
 			})
 		},
@@ -35,7 +26,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 			id: vodId => ({
 				get: modern.get(`/v2/vod/${vodId}`),
 				embed: embedType => ({
-					get: hacks.getEmbed(embedType, `/v2/vod/${vodId}/embed/${embedType}`)
+					get: modern.get(`/v2/vod/${vodId}/embed/${embedType}`),
 				}),
 			})
 		},
@@ -44,7 +35,7 @@ export const makeDacastClient: Dacast.MakeClient = ({apiKey, headers = {}}) => {
 			id: playlistId => ({
 				get: modern.get(`/v2/playlists/${playlistId}`),
 				embed: embedType => ({
-					get: hacks.getEmbed(embedType, `/v2/playlists/${playlistId}/embed/${embedType}`),
+					get: modern.get(`/v2/playlists/${playlistId}/embed/${embedType}`),
 				}),
 			})
 		},
