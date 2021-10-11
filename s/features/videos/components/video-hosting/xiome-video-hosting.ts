@@ -1,15 +1,16 @@
 
-import styles from "./xiome-video-link.css.js"
 import {DacastLinkDisplay} from "../../types/dacast-link.js"
+import {videoPrivileges} from "../../api/video-privileges.js"
 import {makeDacastModel} from "../../models/parts/dacast-model.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
-import {videoPrivileges} from "../../api/video-privileges.js"
+
+import styles from "./xiome-video-hosting.css.js"
 
 @mixinStyles(styles)
-export class XiomeVideoLink extends ComponentWithShare<{
+export class XiomeVideoHosting extends ComponentWithShare<{
 		dacastModel: ReturnType<typeof makeDacastModel>
 	}> {
 

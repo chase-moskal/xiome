@@ -1,17 +1,17 @@
 
-import {XiomeVideoLink} from "./xiome-video-link/xiome-video-link.js"
+import {XiomeVideoHosting} from "./video-hosting/xiome-video-hosting.js"
+import {XiomeVideoDisplay} from "./video-display/xiome-video-display.js"
 import {mixinMadstateSubscriptions, mixinShare} from "../../../framework/component/component.js"
 import {XiomeComponentOptions} from "../../../assembly/frontend/components/types/xiome-component-options.js"
-import {XiomeVideoDisplay} from "./xiome-video-display/xiome-video-display.js"
 
 export function integrateVideoComponents({models}: XiomeComponentOptions) {
 	const {dacastModel, contentModel} = models.videoModels
 	return {
-		XiomeVideoLink: (
+		XiomeVideoHosting: (
 			mixinMadstateSubscriptions(dacastModel.subscribe)(
 				mixinShare({
 					dacastModel,
-				})(XiomeVideoLink)
+				})(XiomeVideoHosting)
 			)
 		),
 		XiomeVideoDisplay: (
