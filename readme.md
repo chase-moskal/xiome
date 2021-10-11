@@ -17,7 +17,7 @@
 ## xiome installation
 
 1. create your community at https://xiome.io/setup
-2. copy-paste your community's insall snippet into your web page's html `<head>`
+2. copy-paste your community's install snippet into your web page's html `<head>`
 3. copy-paste any components you want from https://xiome.io/components into your website's `<body>`
 
 <br/>
