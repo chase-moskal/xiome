@@ -86,6 +86,11 @@ export function each<xValue>(
 	}
 }
 
+export const is = <X>(x: X): Validator<X> => value =>
+	value === x
+		? []
+		: ["wrong value"]
+
 export const defined = (): Validator<any> => value =>
 	(value === undefined || value === null)
 		? ["must be defined (not undefined or null)"]
@@ -144,6 +149,11 @@ export const maxLength = (max: number): Validator<{length: number}> => value =>
 export const notWhitespace = (): Validator<string> => value =>
 	value.length > 0 && value.trim().length === 0
 		? ["can't be all whitespace"]
+		: []
+
+export const zeroWhitespace = (): Validator<string> => value =>
+	/\s/.test(value)
+		? ["must not have any spaces"]
 		: []
 
 export const url = (): Validator<string> => value => {

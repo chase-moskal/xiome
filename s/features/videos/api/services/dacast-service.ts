@@ -4,15 +4,18 @@ import {Policy} from "renraku/x/types/primitives/policy.js"
 
 import {videoPrivileges} from "../video-privileges.js"
 import {VideoTables} from "../../types/video-tables.js"
+import {schema} from "../../../../toolbox/darkvalley.js"
+import {Dacast} from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {VideoAuth, VideoMeta} from "../../types/video-auth.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {DacastLinkDisplay, DacastLinkRow} from "../../types/dacast-link.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
-import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
-import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {Dacast} from "../../dacast/types/dacast-types.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
+import {validateDacastApiKeyAllowingMock} from "../validation/validate-dacast-api-key.js"
+import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
+import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 function toLinkDisplay(
 		secret: undefined | DacastLinkRow
@@ -60,7 +63,13 @@ export const makeDacastService = ({
 			return toLinkDisplay(secret)
 		},
 
-		async setLink({videoTables}, {apiKey}: {apiKey: string}) {
+		async setLink({videoTables}, inputs: {apiKey: string}) {
+			const {apiKey} = runValidation(
+				inputs,
+				schema({
+					apiKey: validateDacastApiKeyAllowingMock,
+				}),
+			)
 			const good = await dacastSdk.verifyApiKey(apiKey)
 			let secret: DacastLinkRow
 			if (good) {

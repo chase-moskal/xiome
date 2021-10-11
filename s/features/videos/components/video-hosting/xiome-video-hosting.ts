@@ -5,6 +5,7 @@ import {makeDacastModel} from "../../models/parts/dacast-model.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {validateDacastApiKeyAllowingMock} from "../../api/validation/validate-dacast-api-key.js"
 import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
 
 import styles from "./xiome-video-hosting.css.js"
@@ -26,13 +27,16 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 	#apiKeyDraft = ""
 	#handleInputChange = ({detail: {value}}: ValueChangeEvent<string>) => {
 		this.#apiKeyDraft = value
+		this.requestUpdate()
 	}
 	#handleLinkClick = async() => {
-		this.#linkFailed = false
 		const apiKey = this.#apiKeyDraft
-		this.#apiKeyDraft = ""
-		const link = await this.share.dacastModel.linkAccount({apiKey})
-		this.#linkFailed = !link
+		if (apiKey) {
+			this.#linkFailed = false
+			this.#apiKeyDraft = ""
+			const link = await this.share.dacastModel.linkAccount({apiKey})
+			this.#linkFailed = !link
+		}
 	}
 	#handleUnlinkClick = async() => {
 		this.#apiKeyDraft = ""
@@ -43,8 +47,17 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 		return html`
 			<h2>link your dacast account</h2>
 			<div class=linkbox>
-				<xio-text-input @valuechange=${this.#handleInputChange}>api key</xio-text-input>
-				<xio-button @press=${this.#handleLinkClick}>link</xio-button>
+				<xio-text-input
+					.validator=${validateDacastApiKeyAllowingMock}
+					@enterpress=${this.#handleLinkClick}
+					@valuechange=${this.#handleInputChange}>
+						api key
+				</xio-text-input>
+				<xio-button
+					?disabled=${!this.#apiKeyDraft}
+					@press=${this.#handleLinkClick}>
+						link
+				</xio-button>
 			</div>
 			${this.#linkFailed
 				? html`<p class=failed>dacast rejected the api link</p>`
@@ -52,9 +65,9 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 			<div class=helpbox>
 				<p>how to find your dacast api key</p>
 				<ul>
-					<li>create a <a target=_blank href="https://dacast.com/">dacast</a> account</li>
+					<li>create a <a part=link target=_blank href="https://dacast.com/">dacast</a> account</li>
 					<li>if you have a trial account, you must email support and ask them to activate your account's "api access"</li>
-					<li>generate an api key in your <a target=_blank href="https://app.dacast.com/settings/integrations">dacast integrations settings</a></li>
+					<li>generate an api key in your <a part=link target=_blank href="https://app.dacast.com/settings/integrations">dacast integrations settings</a></li>
 				</ul>
 			</div>
 		`
