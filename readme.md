@@ -10,12 +10,12 @@
 - if you're on windows, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux)
 
 &nbsp;🛠️ **initial setup**
-- fork the project on github, and clone your fork
+- fork the xiome project on github, and git clone your fork
 - open a terminal in your cloned directory, and run these commands
   - `npm install` to install the project's dependencies
   - `npm run build` to build the project
 
-&nbsp;⚙️ **whenever you're developing**
+&nbsp;⚙️ **during your development session**
 - run these processes, each in their own terminal
   - `npm run watch` to continually rebuild source files on save
   - `npm start` to run a local http server at http://localhost:5000/
