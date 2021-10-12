@@ -1,5 +1,5 @@
 
-import {html, SVGTemplateResult} from "../../../../../../../framework/component/component.js"
+import {html, SVGTemplateResult} from "../../../../../../../framework/component.js"
 
 export function renderVotingUnit({
 		title,

@@ -2,7 +2,7 @@
 import {renderPost} from "../post/render-post.js"
 import {PostType} from "../post/types/post-options.js"
 import {makeAnswerEditorGetter} from "./answer-editor.js"
-import {html} from "../../../../../../framework/component/component.js"
+import {html} from "../../../../../../framework/component.js"
 import {QuestionsBoardModel} from "../../../../model/types/board-model.js"
 
 export function renderAnswerEditor({

@@ -1,5 +1,5 @@
 
-import {html} from "../../../../../../../framework/component/component.js"
+import {html} from "../../../../../../../framework/component.js"
 import {formatDate} from "../../../../../../../toolbox/goodtimes/format-date.js"
 import {ValueChangeEvent} from "../../../../../../xio-components/inputs/events/value-change-event.js"
 import {validatePostContent} from "../../../../../api/services/validation/validate-question-draft.js"

@@ -1,6 +1,6 @@
 
 import {XiomeManageUsers} from "./xiome-manage-users/xiome-manage-users.js"
-import {mixinSnapstateSubscriptions, mixinShare} from "../../../framework/component/component.js"
+import {mixinSnapstateSubscriptions, mixinShare} from "../../../framework/component.js"
 import {XiomeComponentOptions} from "../../../assembly/frontend/components/types/xiome-component-options.js"
 
 export function integrateAdministrativeComponents({models, modals}: XiomeComponentOptions) {

@@ -1,5 +1,5 @@
 
-import {html} from "../../../../../../../framework/component/component.js"
+import {html} from "../../../../../../../framework/component.js"
 
 export function renderXiomeConfig(appId: string) {
 	const h = (syntax: string, s: string) => html`<span data-syntax=${syntax}>${s}</span>`

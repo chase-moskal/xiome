@@ -1,5 +1,5 @@
 
-import {mixinShare, mixinSnapstateSubscriptions} from "../../../framework/component/component.js"
+import {mixinShare, mixinSnapstateSubscriptions} from "../../../framework/component.js"
 import {XiomeComponentOptions} from "../../../assembly/frontend/components/types/xiome-component-options.js"
 
 import {XiomeAppManager} from "./apps/components/app-manager/xiome-app-manager.js"

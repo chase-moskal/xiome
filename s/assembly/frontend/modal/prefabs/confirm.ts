@@ -1,5 +1,5 @@
 
-import {html} from "../../../../framework/component/component.js"
+import {html} from "../../../../framework/component.js"
 import {ModalSystem} from "../types/modal-system.js"
 
 export function prepareConfirm(

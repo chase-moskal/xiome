@@ -1,7 +1,7 @@
 
 import {makeLivestreamModel} from "../../models/livestream-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 import styles from "./styles/xiome-livestream.css.js"
 import {LivestreamRights} from "../../models/types/livestream-rights.js"

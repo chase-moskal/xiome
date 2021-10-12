@@ -1,5 +1,5 @@
 
-import {PropertyValues} from "../component.js"
+import {PropertyValues} from "../../component.js"
 import {Constructor, AutowatchComponent} from "../types/component-types.js"
 import {Track} from "../../../toolbox/autowatcher/types/autowatcher-types.js"
 

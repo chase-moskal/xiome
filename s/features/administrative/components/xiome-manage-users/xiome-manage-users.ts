@@ -12,7 +12,7 @@ import {makeAdministrativeModel} from "../../models/administrative-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {validateUserSearchTerm} from "../../api/services/validation/validate-user-search-term.js"
-import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeManageUsers extends ComponentWithShare<{

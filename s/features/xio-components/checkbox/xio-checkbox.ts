@@ -1,7 +1,7 @@
 
 import styles from "./xio-checkbox.css.js"
 import {CheckEvent} from "./events/check-event.js"
-import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component/component.js"
+import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
 
 import checkIcon from "../../../framework/icons/check.svg.js"
 import spinnerIcon from "../../../framework/icons/spinner.svg.js"

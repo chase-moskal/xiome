@@ -1,7 +1,7 @@
 
 import {renderView} from "./render-view.js"
 import {renderViewCreator} from "./render-view-creator.js"
-import {html} from "../../../../../../framework/component/component.js"
+import {html} from "../../../../../../framework/component.js"
 import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
 

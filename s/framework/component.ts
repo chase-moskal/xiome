@@ -1,27 +1,27 @@
 
 import {LitElement, PropertyValues, TemplateResult} from "lit"
 
-import {LitBase} from "./types/component-types.js"
-import {ConstructorFor} from "../../types/constructor-for.js"
-import {mixinAutowatcher} from "./mixins/mixin-autowatcher.js"
-import {mixinInitiallyHidden} from "./mixins/mixin-initially-hidden.js"
+import {LitBase} from "./component/types/component-types.js"
+import {ConstructorFor} from "../types/constructor-for.js"
+import {mixinAutowatcher} from "./component/mixins/mixin-autowatcher.js"
+import {mixinInitiallyHidden} from "./component/mixins/mixin-initially-hidden.js"
 
 export * from "lit"
 export * from "lit/decorators.js"
 
-export * from "./theme-components.js"
-export * from "./register-components.js"
+export * from "./component/theme-components.js"
+export * from "./component/register-components.js"
 
-export * from "./mixins/mixin-autotrack.js"
-export * from "./mixins/mixin-autowatcher.js"
-export * from "./mixins/mixin-happy.js"
-export * from "./mixins/mixin-focusable.js"
-export * from "./mixins/mixin-initially-hidden.js"
-export * from "./mixins/mixin-light-dom.js"
-export * from "./mixins/mixin-snapstate.js"
-export * from "./mixins/mixin-share.js"
-export * from "./mixins/mixin-styles.js"
-export * from "./mixins/mixin-ticker.js"
+export * from "./component/mixins/mixin-autotrack.js"
+export * from "./component/mixins/mixin-autowatcher.js"
+export * from "./component/mixins/mixin-happy.js"
+export * from "./component/mixins/mixin-focusable.js"
+export * from "./component/mixins/mixin-initially-hidden.js"
+export * from "./component/mixins/mixin-light-dom.js"
+export * from "./component/mixins/mixin-snapstate.js"
+export * from "./component/mixins/mixin-share.js"
+export * from "./component/mixins/mixin-styles.js"
+export * from "./component/mixins/mixin-ticker.js"
 
 export class Component extends mixinInitiallyHidden(LitElement) {
 	init() {}

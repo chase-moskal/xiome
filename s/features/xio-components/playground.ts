@@ -3,7 +3,7 @@ import {nap} from "../../toolbox/nap.js"
 import {ops} from "../../framework/ops.js"
 import {User} from "../auth/aspects/users/types/user.js"
 import {ProfileDraft} from "../auth/aspects/users/routines/personal/types/profile-draft.js"
-import {AutowatcherComponent, mixinLightDom, registerComponents, html, property} from "../../framework/component/component.js"
+import {AutowatcherComponent, mixinLightDom, registerComponents, html, property} from "../../framework/component.js"
 
 @mixinLightDom
 class XioPlayground extends AutowatcherComponent {

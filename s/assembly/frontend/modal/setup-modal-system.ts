@@ -2,7 +2,7 @@
 import {trapFocus} from "./utils/trap-focus.js"
 import {preparePrompt} from "./prefabs/prompt.js"
 import {prepareConfirm} from "./prefabs/confirm.js"
-import {html} from "../../../framework/component/component.js"
+import {html} from "../../../framework/component.js"
 import {prepareModalSystemRendering} from "./utils/prepare-modal-system-rendering.js"
 
 import {Modal} from "./types/modal.js"

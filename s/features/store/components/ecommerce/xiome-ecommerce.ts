@@ -4,7 +4,7 @@ import {makeStoreModel} from "../../model/store-model.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {AutowatcherComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
+import {AutowatcherComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeEcommerce extends AutowatcherComponentWithShare<{

@@ -12,7 +12,7 @@ import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {mixinStyles} from "../../../framework/component/mixins/mixin-styles.js"
-import {AutowatcherComponent, property, html} from "../../../framework/component/component.js"
+import {AutowatcherComponent, property, html} from "../../../framework/component.js"
 import {ProfileDraft} from "../../auth/aspects/users/routines/personal/types/profile-draft.js"
 import {profileValidators} from "../../auth/aspects/users/routines/personal/validate-profile-draft.js"
 

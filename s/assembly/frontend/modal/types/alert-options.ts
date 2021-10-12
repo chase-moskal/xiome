@@ -1,6 +1,6 @@
 
 import {ButtonOptions} from "./button-options.js"
-import {TemplateResult} from "../../../../framework/component/component.js"
+import {TemplateResult} from "../../../../framework/component.js"
 
 export interface AlertOptions {
 	title: string | TemplateResult

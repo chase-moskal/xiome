@@ -1,5 +1,5 @@
 
-import {css} from "../../../../../../framework/component/component.js"
+import {css} from "../../../../../../framework/component.js"
 import adminManagerCss from "./admins/admin-manager.css.js"
 export default css`
 

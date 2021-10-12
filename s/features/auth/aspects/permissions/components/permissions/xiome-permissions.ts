@@ -9,7 +9,7 @@ import {RoleDisplay} from "../../../users/routines/permissions/types/role-displa
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
 import {PermissionsDisplay} from "../../../users/routines/permissions/types/permissions-display.js"
 import {roleLabelValidator} from "../../../users/routines/permissions/validators/role-label-validator.js"
-import {mixinStyles, html, property, ComponentWithShare} from "../../../../../../framework/component/component.js"
+import {mixinStyles, html, property, ComponentWithShare} from "../../../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomePermissions extends ComponentWithShare<{

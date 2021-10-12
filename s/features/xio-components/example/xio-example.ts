@@ -1,6 +1,6 @@
 
 import styles from "./xio-example.css.js"
-import {AutowatcherComponent, html, mixinStyles} from "../../../framework/component/component.js"
+import {AutowatcherComponent, html, mixinStyles} from "../../../framework/component.js"
 
  @mixinStyles(styles)
 export class XioExample extends AutowatcherComponent {

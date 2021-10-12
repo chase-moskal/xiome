@@ -2,7 +2,7 @@
 import wrench from "../../../../../../../framework/icons/wrench.svg.js"
 import cancelSvg from "../../../../../../../framework/icons/cancel.svg.js"
 
-import {html} from "../../../../../../../framework/component/component.js"
+import {html} from "../../../../../../../framework/component.js"
 import {PrivilegeDisplay} from "../../../../users/routines/permissions/types/privilege-display.js"
 
 export function renderPrivilege({

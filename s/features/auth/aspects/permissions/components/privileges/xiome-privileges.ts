@@ -9,7 +9,7 @@ import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
 import {PrivilegeDisplay} from "../../../users/routines/permissions/types/privilege-display.js"
 import {ValueChangeEvent} from "../../../../../xio-components/inputs/events/value-change-event.js"
-import {mixinStyles, html, ComponentWithShare} from "../../../../../../framework/component/component.js"
+import {mixinStyles, html, ComponentWithShare} from "../../../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomePrivileges extends ComponentWithShare<{

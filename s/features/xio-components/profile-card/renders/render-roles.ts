@@ -1,6 +1,6 @@
 
 import {User} from "../../../auth/aspects/users/types/user.js"
-import {html} from "../../../../framework/component/component.js"
+import {html} from "../../../../framework/component.js"
 
 export function renderRoles(user: User) {
 	return html`

@@ -1,5 +1,5 @@
 
-import {TemplateResult} from "../../../../framework/component/component.js"
+import {TemplateResult} from "../../../../framework/component.js"
 
 export interface Modal {
 	render(): TemplateResult

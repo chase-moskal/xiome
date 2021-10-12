@@ -6,7 +6,7 @@ import {makeStoreModel} from "../../model/store-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {StripeAccountDetails} from "../../api/services/types/stripe-account-details.js"
-import {AutowatcherComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
+import {AutowatcherComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeBankConnect extends AutowatcherComponentWithShare<{

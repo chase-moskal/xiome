@@ -1,6 +1,6 @@
 
 import {IdentifiablePost, UniversalPostOptions} from "../types/post-options.js"
-import {html, TemplateResult} from "../../../../../../../framework/component/component.js"
+import {html, TemplateResult} from "../../../../../../../framework/component.js"
 
 export function renderPostStructure({postOptions, bar1, bubble, bar2, buttonBar}: {
 		postOptions: UniversalPostOptions & Partial<IdentifiablePost>

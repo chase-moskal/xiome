@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../../../../framework/ops.js"
 import {VideoHosting} from "../../../../types/video-concepts.js"
-import {html} from "../../../../../../framework/component/component.js"
+import {html} from "../../../../../../framework/component.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 

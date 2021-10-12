@@ -1,5 +1,5 @@
 
-import {css} from "../../../../../../framework/component/component.js"
+import {css} from "../../../../../../framework/component.js"
 import votingUnitCss from "./voting-unit/voting-unit.css.js"
 export default css`
 

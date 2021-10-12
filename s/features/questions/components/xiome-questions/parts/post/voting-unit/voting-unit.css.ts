@@ -1,5 +1,5 @@
 
-import {css} from "../../../../../../../framework/component/component.js"
+import {css} from "../../../../../../../framework/component.js"
 export default css`
 
 [data-vote] {

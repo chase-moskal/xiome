@@ -1,7 +1,7 @@
 
 import {makeExampleModel} from "../../models/example-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles} from "../../../../framework/component/component.js"
+import {ComponentWithShare, html, mixinStyles} from "../../../../framework/component.js"
 
 import styles from "./xiome-example.css.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"

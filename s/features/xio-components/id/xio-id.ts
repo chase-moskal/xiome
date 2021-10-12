@@ -1,7 +1,7 @@
 
 import styles from "./xio-id.css.js"
 import clipboardIcon from "../../../framework/icons/clipboard.svg.js"
-import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component/component.js"
+import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
 
 @mixinFocusable
 @mixinStyles(styles)

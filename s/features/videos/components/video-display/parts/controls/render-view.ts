@@ -1,6 +1,6 @@
 
 import {VideoView} from "../../../../types/video-concepts.js"
-import {html} from "../../../../../../framework/component/component.js"
+import {html} from "../../../../../../framework/component.js"
 import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export function renderView({view, onDeleteClick, getPrivilegeDisplay}: {

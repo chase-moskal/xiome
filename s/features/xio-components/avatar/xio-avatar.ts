@@ -3,7 +3,7 @@ import styles from "./xio-avatar.css.js"
 import svgSilhouette from "../../../framework/icons/silhouette.svg.js"
 
 import {getNiceColors} from "./helpers/get-nice-colors.js"
-import {Component, property, html, mixinStyles} from "../../../framework/component/component.js"
+import {Component, property, html, mixinStyles} from "../../../framework/component.js"
 import {XioAvatarBlankSpec, XioAvatarImageSpec, XioAvatarSimpleSpec, XioAvatarSpec} from "./types/xio-avatar-types.js"
 
 @mixinStyles(styles)

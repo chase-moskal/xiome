@@ -5,7 +5,7 @@ import {EnterPressEvent} from "./events/enter-press.js"
 import {TextInputParser} from "./types/text-input-parser.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
-import {AutowatcherComponent, html, mixinStyles, mixinFocusable, property} from "../../../framework/component/component.js"
+import {AutowatcherComponent, html, mixinStyles, mixinFocusable, property} from "../../../framework/component.js"
 
 import svgWarning from "../../../framework/icons/warning.svg.js"
 import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"

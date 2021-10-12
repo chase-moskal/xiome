@@ -1,6 +1,6 @@
 
 import {Validator} from "../../../../toolbox/darkvalley.js"
-import {html} from "../../../../framework/component/component.js"
+import {html} from "../../../../framework/component.js"
 import {ValueChangeEvent} from "../../inputs/events/value-change-event.js"
 
 export function renderText({field, text, input}: {

@@ -4,7 +4,7 @@ import {linkClick} from "./post-structure/link-click.js"
 import {AnyPost, PostType} from "./types/post-options.js"
 import {renderLiking} from "./post-structure/render-liking.js"
 import {renderReporting} from "./post-structure/render-reporting.js"
-import {html} from "../../../../../../framework/component/component.js"
+import {html} from "../../../../../../framework/component.js"
 import {renderPostStructure} from "./post-structure/render-post-structure.js"
 
 export function renderPost(options: AnyPost) {

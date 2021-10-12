@@ -6,7 +6,7 @@ import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {validateDacastApiKeyAllowingMock} from "../../api/validation/validate-dacast-api-key.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component/component.js"
+import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 
 import styles from "./xiome-video-hosting.css.js"
 

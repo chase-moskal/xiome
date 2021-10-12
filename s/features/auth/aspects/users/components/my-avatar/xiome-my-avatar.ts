@@ -2,7 +2,7 @@
 import styles from "./xiome-my-avatar.css.js"
 import {makeAccessModel} from "../../models/access-model.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
-import {AutowatcherComponentWithShare, html, mixinStyles} from "../../../../../../framework/component/component.js"
+import {AutowatcherComponentWithShare, html, mixinStyles} from "../../../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeMyAvatar extends AutowatcherComponentWithShare<{

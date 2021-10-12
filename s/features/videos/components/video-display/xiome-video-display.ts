@@ -5,7 +5,7 @@ import {videoControls} from "./parts/controls/video-controls.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {parseDacastIframeSrc} from "../../dacast/utils/parse-dacast-iframe-src.js"
-import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
+import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeVideoDisplay extends ComponentWithShare<{

@@ -7,7 +7,7 @@ import {PlanningSituation} from "../../model/shares/types/planning-situation.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
-import {AutowatcherComponentWithShare, mixinStyles, html, property} from "../../../../framework/component/component.js"
+import {AutowatcherComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeSubscriptionPlanner extends AutowatcherComponentWithShare<{

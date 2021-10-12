@@ -1,5 +1,5 @@
 
-import {html} from "../../../../../framework/component/component.js"
+import {html} from "../../../../../framework/component.js"
 
 export function renderIdentifier({id, label}: {
 		id: string

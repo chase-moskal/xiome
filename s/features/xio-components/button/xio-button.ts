@@ -1,7 +1,7 @@
 
 import styles from "./xio-button.css.js"
 import {PressEvent} from "./events/press-event.js"
-import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component/component.js"
+import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
 
 @mixinFocusable
 @mixinStyles(styles)

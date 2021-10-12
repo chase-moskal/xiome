@@ -6,7 +6,7 @@ import {Validator} from "../../../../../../../toolbox/darkvalley.js"
 import {validateAppFormDraft} from "./utils/validate-app-form-draft.js"
 import {getEmptyAppFormDraft} from "./utils/get-empty-app-form-draft.js"
 import {appDraftValidators} from "../../../utils/app-draft-validators.js"
-import {html} from "../../../../../../../framework/component/component.js"
+import {html} from "../../../../../../../framework/component.js"
 import {XioTextInput} from "../../../../../../xio-components/inputs/xio-text-input.js"
 import {TextInputParser} from "../../../../../../xio-components/inputs/types/text-input-parser.js"
 
