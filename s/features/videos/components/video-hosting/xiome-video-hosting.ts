@@ -48,10 +48,10 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 			<h2>link your dacast account</h2>
 			<div class=linkbox>
 				<xio-text-input
+					placeholder="api key"
 					.validator=${validateDacastApiKeyAllowingMock}
 					@enterpress=${this.#handleLinkClick}
 					@valuechange=${this.#handleInputChange}>
-						api key
 				</xio-text-input>
 				<xio-button
 					?disabled=${!this.#apiKeyDraft}
