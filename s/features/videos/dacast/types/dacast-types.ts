@@ -4,7 +4,7 @@ import {DacastData} from "./dacast-data.js"
 export namespace Dacast {
 
 	export interface Paginated<xData extends DacastData.Common> {
-		data: xData[]
+		data?: xData[]
 		paging: {
 			self?: string
 			last?: string

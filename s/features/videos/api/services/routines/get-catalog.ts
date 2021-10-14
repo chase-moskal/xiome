@@ -19,7 +19,7 @@ export async function getCatalog({dacast}: {
 			type: DacastData.ContentType,
 			paginated: Dacast.Paginated<DacastData.Common>
 		) {
-		return paginated.data.map(data => ingestDacastContent({
+		return (paginated?.data ?? []).map(data => ingestDacastContent({
 			type,
 			data,
 		}))
