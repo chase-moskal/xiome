@@ -7,6 +7,7 @@ import videos from "./features/videos/videos.test.js"
 import damnId from "./toolbox/damnedb/damn-id.test.js"
 import snapstate from "./toolbox/snapstate/snapstate.test.js"
 import autowatcher from "./toolbox/autowatcher/autowatcher.test.js"
+import sortQuestions from "./features/questions/components/xiome-questions/helpers/sort-questions.test.js"
 
 export default <Suite>{
 	"toolbox": {
@@ -19,5 +20,8 @@ export default <Suite>{
 	"features": {
 		// auth,
 		videos,
+		questions: {
+			sortQuestions,
+		},
 	},
 }
