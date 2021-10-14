@@ -43,6 +43,19 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 		await this.share.dacastModel.unlinkAccount()
 	}
 
+	#showHelp = () => {
+		return html`
+			<div class=helpbox>
+				<p>how to find your dacast api key</p>
+				<ul>
+					<li>create a <a part=link target=_blank href="https://dacast.com/">dacast</a> account</li>
+					<li>if you have a trial account, you must email support and ask them to activate your account's "api access"</li>
+					<li>generate an api key in your <a part=link target=_blank href="https://app.dacast.com/settings/integrations">dacast integrations settings</a></li>
+				</ul>
+			</div>
+		`
+	}
+
 	#renderWhenUnlinked = () => {
 		return html`
 			<h2>link your dacast account</h2>
@@ -54,6 +67,12 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 					@valuechange=${this.#handleInputChange}>
 				</xio-text-input>
 				<xio-button
+					class=helpBtn
+					@press=${() => this.#showHelp}>
+						help
+				</xio-button>
+				<xio-button
+					class=linkBtn
 					?disabled=${!this.#apiKeyDraft}
 					@press=${this.#handleLinkClick}>
 						link
@@ -62,14 +81,6 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 			${this.#linkFailed
 				? html`<p class=failed>dacast rejected the api link</p>`
 				: null}
-			<div class=helpbox>
-				<p>how to find your dacast api key</p>
-				<ul>
-					<li>create a <a part=link target=_blank href="https://dacast.com/">dacast</a> account</li>
-					<li>if you have a trial account, you must email support and ask them to activate your account's "api access"</li>
-					<li>generate an api key in your <a part=link target=_blank href="https://app.dacast.com/settings/integrations">dacast integrations settings</a></li>
-				</ul>
-			</div>
 		`
 	}
 
