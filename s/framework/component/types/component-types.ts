@@ -16,7 +16,7 @@ export interface CustomElement extends HTMLElement {
 }
 
 export interface LitBase extends
-		Pick<LitElement, "requestUpdate">,
+		Pick<LitElement, "requestUpdate" | "updateComplete">,
 		CustomElement {
 	render?(): ReturnType<LitElement["render"]>
 	firstUpdated?(...p: Parameters<LitElement["firstUpdated"]>): ReturnType<LitElement["firstUpdated"]>
