@@ -91,13 +91,22 @@ export class XioProfileCard extends AutowatcherComponent {
 	})
 
 	private handleSave = async() => {
+		const {profileDraft} = this
 		await ops.operation({
-			promise: this.saveProfile(this.profileDraft)
+			promise: this.saveProfile(profileDraft)
 				.finally(() => {
 					this.profileDraft = null
 				}),
 			setOp: op => this.#actions.setBusy(op),
 		})
+		const setToTextField = (field: string, text: string) => {
+			const input = this.shadowRoot.querySelector<XioTextInput>(
+				`xio-text-input[data-field="${field}"]`
+			)
+			input.text = text
+		}
+		setToTextField("nickname", profileDraft.nickname)
+		setToTextField("tagline", profileDraft.tagline)
 	}
 
 	render() {
@@ -112,7 +121,7 @@ export class XioProfileCard extends AutowatcherComponent {
 					<div part=nameplate>
 						${renderText({
 							field: "nickname",
-							text: this.profileDraft
+							initial: this.profileDraft
 								? this.profileDraft.nickname
 								: user.profile.nickname,
 							input: this.readonly
@@ -127,7 +136,7 @@ export class XioProfileCard extends AutowatcherComponent {
 						})}
 						${renderText({
 							field: "tagline",
-							text: this.profileDraft
+							initial: this.profileDraft
 								? this.profileDraft.tagline
 								: user.profile.tagline,
 							input: this.readonly
