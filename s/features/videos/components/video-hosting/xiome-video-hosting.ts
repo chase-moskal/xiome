@@ -1,12 +1,14 @@
 
 import {DacastLinkDisplay} from "../../types/dacast-link.js"
 import {videoPrivileges} from "../../api/video-privileges.js"
+import clockIcon from "../../../../framework/icons/clock.svg.js"
 import {makeDacastModel} from "../../models/parts/dacast-model.js"
+import warningIcon from "../../../../framework/icons/warning.svg.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {validateDacastApiKeyAllowingMock} from "../../api/validation/validate-dacast-api-key.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 
 import styles from "./xiome-video-hosting.css.js"
 
@@ -23,6 +25,7 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 		await this.share.dacastModel.initialize()
 	}
 
+	#showHelp = false
 	#linkFailed = false
 	#apiKeyDraft = ""
 	#handleInputChange = ({detail: {value}}: ValueChangeEvent<string>) => {
@@ -43,7 +46,12 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 		await this.share.dacastModel.unlinkAccount()
 	}
 
-	#showHelp = () => {
+	#toggleHelp = () => {
+		this.#showHelp = !this.#showHelp
+		this.requestUpdate()
+	}
+
+	#renderHelp = () => {
 		return html`
 			<div class=helpbox>
 				<p>how to find your dacast api key</p>
@@ -68,8 +76,10 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 				</xio-text-input>
 				<xio-button
 					class=helpBtn
-					@press=${() => this.#showHelp}>
-						help
+					@press=${this.#toggleHelp}>
+						${this.#showHelp
+							? "hide help"
+							: "show help"}
 				</xio-button>
 				<xio-button
 					class=linkBtn
@@ -79,7 +89,10 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 				</xio-button>
 			</div>
 			${this.#linkFailed
-				? html`<p class=failed>dacast rejected the api link</p>`
+				? html`<div class=failed>${warningIcon} &nbsp <p>dacast rejected the api link</p> </div>`
+				: null}
+			${this.#showHelp
+				? this.#renderHelp()
 				: null}
 		`
 	}
@@ -87,7 +100,10 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 	#renderWhenLinked = (linkedAccount: DacastLinkDisplay) => {
 		return html`
 			<h2>your dacast account is linked</h2>
-			<p>linked on ${formatDate(linkedAccount.time).full}</p>
+			<div class=linked>
+				${clockIcon} &nbsp
+				<div class=check><p>linked on ${formatDate(linkedAccount.time).full}</p></div>
+			</div>
 			<xio-button @press=${this.#handleUnlinkClick}>unlink</xio-button>
 		`
 	}

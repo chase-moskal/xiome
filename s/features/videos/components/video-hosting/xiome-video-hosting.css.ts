@@ -24,4 +24,12 @@ xio-button.linkBtn{
 	padding-top: 5px;
 }
 
+div.failed{
+	color: red;
+	display: flex;
+}
+
+div.linked{
+	display: flex;
+}
 `
