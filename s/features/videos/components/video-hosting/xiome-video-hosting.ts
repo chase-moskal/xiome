@@ -66,16 +66,17 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 
 	#renderWhenUnlinked = () => {
 		return html`
-		<div class=parent-container>
-		<div class=child-container>
 			<h2>link your dacast account</h2>
-			<div class=linkbox>
-				<xio-text-input
-					placeholder="api key"
-					.validator=${validateDacastApiKeyAllowingMock}
-					@enterpress=${this.#handleLinkClick}
-					@valuechange=${this.#handleInputChange}>
-				</xio-text-input>
+			<xio-text-input
+				placeholder="api key"
+				.validator=${validateDacastApiKeyAllowingMock}
+				@enterpress=${this.#handleLinkClick}
+				@valuechange=${this.#handleInputChange}>
+			</xio-text-input>
+			${this.#linkFailed
+				? html`<div class=failed>${warningIcon} &nbsp <p>dacast rejected the api link</p> </div>`
+				: null}
+			<div class=buttonbar>
 				<xio-button
 					class=helpBtn
 					@press=${this.#toggleHelp}>
@@ -90,14 +91,9 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 						link
 				</xio-button>
 			</div>
-			${this.#linkFailed
-				? html`<div class=failed>${warningIcon} &nbsp <p>dacast rejected the api link</p> </div>`
-				: null}
 			${this.#showHelp
 				? this.#renderHelp()
 				: null}
-		</div>
-		<div>
 		`
 	}
 

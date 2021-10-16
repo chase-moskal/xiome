@@ -4,46 +4,41 @@ export default css`
 
 :host {
 	display: block;
-}
-
-
-.linkbox{
-	width: max-content;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-
-xio-button.helpBtn{
-	padding: 5px 3px;
-}
-
-xio-button.linkBtn{
-	margin-right: 165px;
-	padding: 5px 3px;
-}
-
-div.failed{
-	color: red;
-	display: flex;
-}
-
-div.linked{
-	display: flex;
-}
-
-div.helpbox ul{
-	margin-left: 16px;
-}
-
-.parent-container{
-	max-width: max-content;
+	width: 24em;
+	max-width: 100%;
 	border: 1px solid;
 	border-radius: 5px;
 }
 
-.child-container{
-	margin : 10px 5px;
+.dacastbox {
+	padding: 1em;
 }
+
+xio-text-input::part(problems) {
+	width: 100%;
+}
+
+.buttonbar {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.buttonbar > * {
+	margin: 0.4em 0.2em;
+}
+
+.failed {
+	color: red;
+	display: flex;
+}
+
+.linked {
+	display: flex;
+}
+
+.helpbox ul {
+	padding-left: 1.5em;
+}
+
 `

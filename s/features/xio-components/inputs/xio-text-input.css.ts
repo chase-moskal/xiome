@@ -2,7 +2,7 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
-/* * { outline: 1px solid #f002; } */
+* { outline: 1px solid #f002; }
 
 :host {
 	display: block;
