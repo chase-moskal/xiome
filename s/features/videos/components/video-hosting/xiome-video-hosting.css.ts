@@ -8,6 +8,7 @@ export default css`
 	max-width: 100%;
 	border: 1px solid;
 	border-radius: 5px;
+	--xiome-video-hosting-warning-color: red;
 }
 
 .dacastbox {
@@ -29,8 +30,9 @@ xio-text-input::part(problems) {
 }
 
 .failed {
-	color: red;
+	color: var(--xiome-video-hosting-warning-color);
 	display: flex;
+	padding: 0.5em 0;
 }
 
 .linked {
