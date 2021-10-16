@@ -16,12 +16,12 @@ export default css`
 
 
 xio-button.helpBtn{
-	padding-top: 5px;
+	padding: 5px 3px;
 }
 
 xio-button.linkBtn{
-	padding-right: 128px;
-	padding-top: 5px;
+	margin-right: 165px;
+	padding: 5px 3px;
 }
 
 div.failed{
@@ -31,5 +31,19 @@ div.failed{
 
 div.linked{
 	display: flex;
+}
+
+div.helpbox ul{
+	margin-left: 16px;
+}
+
+.parent-container{
+	max-width: max-content;
+	border: 1px solid;
+	border-radius: 5px;
+}
+
+.child-container{
+	margin : 10px 5px;
 }
 `

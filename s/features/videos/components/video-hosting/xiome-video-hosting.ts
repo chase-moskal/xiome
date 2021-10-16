@@ -54,7 +54,7 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 	#renderHelp = () => {
 		return html`
 			<div class=helpbox>
-				<p>how to find your dacast api key</p>
+				<p>how to find your dacast api key:</p>
 				<ul>
 					<li>create a <a part=link target=_blank href="https://dacast.com/">dacast</a> account</li>
 					<li>if you have a trial account, you must email support and ask them to activate your account's "api access"</li>
@@ -66,6 +66,8 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 
 	#renderWhenUnlinked = () => {
 		return html`
+		<div class=parent-container>
+		<div class=child-container>
 			<h2>link your dacast account</h2>
 			<div class=linkbox>
 				<xio-text-input
@@ -94,6 +96,8 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 			${this.#showHelp
 				? this.#renderHelp()
 				: null}
+		</div>
+		<div>
 		`
 	}
 
