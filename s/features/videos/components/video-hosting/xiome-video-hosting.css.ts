@@ -41,4 +41,20 @@ xio-text-input::part(problems) {
 	padding-left: 1.5em;
 }
 
+.timeInfo{
+	display: inline-flex;
+	align-items: center;
+	padding: 0.5em 0;
+}
+
+
+.unlinkBtn{
+	display: flex;
+	justify-content: flex-end;
+}
+
+svg.feather.feather-clock{
+	width: 6em;
+	height: 3em;
+}
 `

@@ -100,11 +100,13 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 	#renderWhenLinked = (linkedAccount: DacastLinkDisplay) => {
 		return html`
 			<h2>your dacast account is linked</h2>
-			<div class=linked>
+			<div class=timeInfo>
 				${clockIcon} &nbsp
-				<div class=check><p>linked on ${formatDate(linkedAccount.time).full}</p></div>
+				<p>linked on ${formatDate(linkedAccount.time).full}</p>
 			</div>
-			<xio-button @press=${this.#handleUnlinkClick}>unlink</xio-button>
+			<div class=unlinkBtn>
+				<xio-button @press=${this.#handleUnlinkClick}>unlink</xio-button>
+			</div>
 		`
 	}
 
