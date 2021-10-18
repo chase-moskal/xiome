@@ -32,7 +32,12 @@ xio-text-input::part(problems) {
 .failed {
 	color: var(--xiome-video-hosting-warning-color);
 	display: flex;
+	align-items: center;
 	padding: 0.5em 0;
+}
+
+.failed svg {
+	margin-right: 0.5em;
 }
 
 .linked {
@@ -43,19 +48,19 @@ xio-text-input::part(problems) {
 	padding-left: 1.5em;
 }
 
-.timeInfo{
+.link-time-info {
 	display: inline-flex;
 	align-items: center;
 	padding: 0.5em 0;
 }
 
 
-.unlinkBtn{
+.unlink-button {
 	display: flex;
 	justify-content: flex-end;
 }
 
-svg.feather.feather-clock{
+.link-time-info svg {
 	width: 6em;
 	height: 3em;
 }

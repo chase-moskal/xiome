@@ -74,18 +74,18 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 				@valuechange=${this.#handleInputChange}>
 			</xio-text-input>
 			${this.#linkFailed
-				? html`<div class=failed>${warningIcon} &nbsp <p>dacast rejected the api link</p> </div>`
+				? html`<div class=failed>${warningIcon}<p>dacast rejected the api link</p> </div>`
 				: null}
 			<div class=buttonbar>
 				<xio-button
-					class=helpBtn
+					class=help-button
 					@press=${this.#toggleHelp}>
 						${this.#showHelp
 							? "hide help"
 							: "show help"}
 				</xio-button>
 				<xio-button
-					class=linkBtn
+					class=link-button
 					?disabled=${!this.#apiKeyDraft}
 					@press=${this.#handleLinkClick}>
 						link
@@ -100,11 +100,11 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 	#renderWhenLinked = (linkedAccount: DacastLinkDisplay) => {
 		return html`
 			<h2>your dacast account is linked</h2>
-			<div class=timeInfo>
-				${clockIcon} &nbsp
+			<div class=link-time-info>
+				${clockIcon}
 				<p>linked on ${formatDate(linkedAccount.time).full}</p>
 			</div>
-			<div class=unlinkBtn>
+			<div class=unlink-button>
 				<xio-button @press=${this.#handleUnlinkClick}>unlink</xio-button>
 			</div>
 		`
