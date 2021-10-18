@@ -74,7 +74,7 @@ export class XiomeVideoHosting extends ComponentWithShare<{
 				@valuechange=${this.#handleInputChange}>
 			</xio-text-input>
 			${this.#linkFailed
-				? html`<div class=failed>${warningIcon}<p>dacast rejected the api link</p> </div>`
+				? html`<div class=failed>${warningIcon} <p>dacast rejected the api link</p></div>`
 				: null}
 			<div class=buttonbar>
 				<xio-button
