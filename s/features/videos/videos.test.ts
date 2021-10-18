@@ -9,6 +9,48 @@ import {roles, videoSetup, viewPrivilege} from "./testing/video-setup.js"
 
 export default <Suite>{
 
+	"integrations": {
+
+		async "content returns no-show when dacast account unlinked"() {
+			const label = "default"
+			const setup = await videoSetup()
+			const perspectives = {
+				moderator: await setup.for(roles.moderator).then(s => s.models),
+				viewer: await setup.for(roles.viewer).then(s => s.models),
+			}
+			{
+				await perspectives.moderator.dacastModel.initialize()
+				await perspectives.moderator.dacastModel.linkAccount({apiKey: goodApiKey})
+				expect(perspectives.moderator.dacastModel.linkedAccount).ok()
+	
+				const {contentModel} = perspectives.moderator
+				await contentModel.initialize(label)
+				expect(contentModel.catalog.length).ok()
+				expect(contentModel.privileges.length).ok()
+				const [item] = contentModel.catalog
+				await contentModel.setView({
+					label,
+					reference: {
+						id: item.id,
+						type: item.type,
+						provider: item.provider,
+					},
+					privileges: [viewPrivilege],
+				})
+				expect(contentModel.getShow(label).details).ok()
+			}
+			{
+				const {contentModel} = perspectives.viewer
+				await contentModel.initialize(label)
+				const show = contentModel.getShow(label)
+				expect(show).ok()
+				expect(show.label).equals(label)
+				expect(show.details).ok()
+				expect(show.details.embed).ok()
+			}
+		},
+	},
+
 	"dacast model": {
 
 		async "dacast accounts can be linked, and unlinked"() {
@@ -119,21 +161,30 @@ export default <Suite>{
 					privileges: [viewPrivilege],
 					reference: contentModel.catalog[0],
 				})
-				expect(contentModel.getView(label)).ok()
-				expect(contentModel.getShow(label)).ok()
+				const view = contentModel.getView(label)
+				const show = contentModel.getShow(label)
+				expect(view).ok()
+				expect(show).ok()
+				expect(show.details).ok()
+				expect(show.details.embed).ok()
 			}
 			return {
 				async "viewer can access show"() {
 					const {contentModel} = await setup.for(roles.viewer)
 						.then(s => s.models)
 					await contentModel.initialize(label)
-					expect(contentModel.getShow(label)).ok()
+					const show = contentModel.getShow(label)
+					expect(show).ok()
+					expect(show.details).ok()
+					expect(show.details.embed).ok()
 				},
 				async "unworthy cannot access show"() {
 					const {contentModel} = await setup.for(roles.unworthy)
 						.then(s => s.models)
 					await contentModel.initialize(label)
-					expect(contentModel.getShow(label)?.details).not.ok()
+					const show = contentModel.getShow(label)
+					expect(show).ok()
+					expect(show.details).not.ok()
 				},
 			}
 		},

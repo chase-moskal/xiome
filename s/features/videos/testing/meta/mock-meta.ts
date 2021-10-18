@@ -23,14 +23,15 @@ async function mockUserMeta<xMeta extends AnonMeta>({
 	}
 }
 
-export async function mockVideoMeta({userId, origins, privileges}: {
+export async function mockVideoMeta({appId, userId, origins, privileges}: {
+		appId: string
 		userId: string
 		origins: string[]
 		privileges: string[]
 	}) {
 	return mockUserMeta<VideoMeta>({
 		access: {
-			appId: "",
+			appId,
 			origins,
 			permit: {privileges},
 			scope: {core: true},
