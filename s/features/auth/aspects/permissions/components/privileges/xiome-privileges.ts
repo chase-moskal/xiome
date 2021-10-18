@@ -25,16 +25,25 @@ export class XiomePrivileges extends ComponentWithShare<{
 		this.model.initialize()
 	}
 
+	#busy = false
+
 	#clearCreatorTextInput() {
 		const input = this.shadowRoot.querySelector<XioTextInput>(".creator xio-text-input")
 		input.text = ""
-		input.dispatchValueChange()
 	}
 
 	async #createPrivilege() {
+		if (this.#busy)
+			throw new Error("privilege creator is busy")
 		const label = this.#labelDraft
 		this.#clearCreatorTextInput()
-		await this.model.createPrivilege({label})
+		this.#busy = true
+		try {
+			await this.model.createPrivilege({label})
+		}
+		finally {
+			this.#busy = false
+		}
 	}
 
 	async #deletePrivilege({privilegeId, label}: PrivilegeDisplay) {
@@ -58,6 +67,7 @@ export class XiomePrivileges extends ComponentWithShare<{
 		return html`
 			<div class=creator>
 				<xio-text-input
+					?disabled=${this.#busy}
 					.validator=${validatePermissionsLabel}
 					@valuechange=${this.#handleCreatorLabelChange}
 					@enterpress=${this.#createPrivilege}>

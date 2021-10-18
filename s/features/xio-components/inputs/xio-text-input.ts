@@ -77,7 +77,8 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		const {input} = this
 		if (input) {
 			this.input.value = value
-			this.updateFromRawInput()
+			this.updateDraft()
+			this.dispatchValueChange()
 		}
 		else {
 			this.initial = value
@@ -94,41 +95,47 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	private draft: string = ""
 	private lastDraft: string = ""
 
-	dispatchValueChange = () => {
+	private dispatchValueChange = () => {
 		const {draft, lastDraft} = this
 		if (draft !== lastDraft)
 			this.dispatchEvent(new ValueChangeEvent(this.value))
 		this.lastDraft = draft
 	}
 
+	private dispatchValueChangeDebounced = debounce(250, this.dispatchValueChange)
+
 	private dispatchEnterPress = () => {
 		this.dispatchEvent(new EnterPressEvent())
 	}
 
-	private updateFromRawInput = () => {
+	private updateDraft = () => {
 		this.draft = this.input.value
 	}
 
-	private handleInputKeyUp = debounce(250, (event: KeyboardEvent) => {
-		this.updateFromRawInput()
+	private handleInputKeyUp = (event: KeyboardEvent) => {
+		this.updateDraft()
 		if (!this.textarea && event.key === "Enter") {
+			this.dispatchValueChange()
 			this.dispatchEnterPress()
 		}
 		else {
-			this.dispatchValueChange()
+			this.dispatchValueChangeDebounced()
 		}
-	})
+	}
 
 	private handleInputChange = () => {
-		this.updateFromRawInput()
+		this.updateDraft()
 		this.dispatchValueChange()
 	}
 
 	init() {
-		this.draft = this.initial
-		this.lastDraft = this.initial
+		const {initial} = this
+		this.draft = initial
+		this.lastDraft = initial
+		this.text = initial
 		this.addEventListener("valuechange", this.onvaluechange)
 		this.addEventListener("enterpress", this.onenterpress)
+		this.dispatchValueChange()
 	}
 
 	render() {
@@ -158,7 +165,6 @@ export class XioTextInput<xParsedValue = string> extends Component {
 							<textarea
 								id=textinput
 								part=textinput
-								.value="${draft}"
 								?disabled=${disabled}
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}
@@ -171,7 +177,6 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								id=textinput
 								type=text
 								part=textinput
-								.value="${draft}"
 								?disabled=${disabled}
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}

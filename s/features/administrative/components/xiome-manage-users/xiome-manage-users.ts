@@ -53,35 +53,34 @@ export class XiomeManageUsers extends ComponentWithShare<{
 		this.share.administrativeModel.initialize()
 	}
 
-	@property({type: String})
-	private searchText: string = ""
+	#search: string = ""
+	#lastSearch: string = ""
 
-	private debouncedSearchUsers = debounce(
-		1000,
-		async(term: string) =>
-			term
-				? await this.share.administrativeModel.searchUsers({term})
-				: []
-	)
-
-	async search() {
-		const {searchText} = this
-		this.userResults = ops.ready([])
-
-		if (searchText)
-			await ops.operation({
-				promise: this.debouncedSearchUsers(searchText),
-				setOp: op => this.userResults = op,
-			})
-		else
+	private commitSearch = async() => {
+		const isRedundantSearch = this.#search === this.#lastSearch
+		this.#lastSearch = this.#search
+		if (!isRedundantSearch) {
 			this.userResults = ops.ready([])
-
+			if (this.#search)
+				await ops.operation({
+					setOp: op => this.userResults = op,
+					promise: this.share.administrativeModel.searchUsers({
+						term: this.#search,
+					})
+				})
+		}
 		this.userStates.cleanupObsoleteStates()
 	}
 
-	private searchChange = async(event: ValueChangeEvent<string>) => {
-		this.searchText = event.detail.value ?? ""
-		return this.search()
+	private commitSearchSoon = debounce(1000, this.commitSearch)
+
+	private searchChange = (event: ValueChangeEvent<string>) => {
+		this.#search = event.detail.value ?? ""
+		this.commitSearchSoon()
+	}
+
+	private enterPress = () => {
+		this.commitSearch()
 	}
 
 	render() {
@@ -122,7 +121,7 @@ export class XiomeManageUsers extends ComponentWithShare<{
 									if (activeElement)
 										activeElement.blur()
 								},
-								search: () => this.search(),
+								search: () => this.commitSearch(),
 							})
 						)
 						: null}
@@ -135,10 +134,10 @@ export class XiomeManageUsers extends ComponentWithShare<{
 
 				${allowed ? html`
 					<xio-text-input
-						.text=${this.searchText}
 						placeholder="search for users"
 						.validator=${validateUserSearchTerm}
 						@valuechange=${this.searchChange}
+						@enterpress=${this.enterPress}
 					></xio-text-input>
 
 					<div class=results>
