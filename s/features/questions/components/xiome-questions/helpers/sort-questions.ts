@@ -14,23 +14,24 @@ export function sortQuestions(questions: Question[], myUserId?: string) {
 			otherQuestions.push(question)
 	}
 
-	const sort = (a: Question, b: Question) => {
-		const promote = {a: -1, b: 1}
+	function sortingFunction(a: Question, b: Question) {
+		const promoteA = -1
+		const promoteB = 1
 
-		if (a.likes > b.likes) return promote.a
-		if (a.likes < b.likes) return promote.b
+		if (a.likes > b.likes) return promoteA
+		if (a.likes < b.likes) return promoteB
 
-		if (a.reports < b.reports) return promote.a
-		if (a.reports > b.reports) return promote.b
+		if (a.reports < b.reports) return promoteA
+		if (a.reports > b.reports) return promoteB
 
-		if (a.timePosted > b.timePosted) return promote.a
-		if (a.timePosted < b.timePosted) return promote.b
+		if (a.timePosted > b.timePosted) return promoteA
+		if (a.timePosted < b.timePosted) return promoteB
 
 		return 0
 	}
 
 	return [
-		...myQuestions.sort(sort),
-		...otherQuestions.sort(sort),
+		...myQuestions.sort(sortingFunction),
+		...otherQuestions.sort(sortingFunction),
 	]
 }
