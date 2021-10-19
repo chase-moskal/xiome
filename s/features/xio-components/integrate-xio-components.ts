@@ -7,6 +7,7 @@ import {XioExample} from "./example/xio-example.js"
 import {XioCheckbox} from "./checkbox/xio-checkbox.js"
 import {XioTextInput} from "./inputs/xio-text-input.js"
 import {XioProfileCard} from "./profile-card/xio-profile-card.js"
+import {XioCode} from "./code/xio-code.js"
 
 export function integrateXioComponents() {
 	return {
@@ -18,5 +19,6 @@ export function integrateXioComponents() {
 		XioCheckbox,
 		XioTextInput,
 		XioProfileCard,
+		XioCode,
 	}
 }
