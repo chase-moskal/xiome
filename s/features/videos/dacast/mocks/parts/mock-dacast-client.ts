@@ -12,7 +12,7 @@ export function mockDacastClient({goodApiKey}: {
 		const id = count++
 		return {
 			online: true,
-			id: id.toString(),
+			id: `${type}-${id.toString()}`,
 			title: `content ${id}`,
 			creation_date: "1999-12-25",
 		}
@@ -20,9 +20,8 @@ export function mockDacastClient({goodApiKey}: {
 
 	function fakeEmbedCode(type: Dacast.EmbedType) {
 		return type === "iframe"
-			? "<iframe src=\"https://iframe.dacast.com/vod/0ffd60be-91b7-22b0-1353-7dba7af43261/db07d056-2170-3940-cc4a-4e1add8b504b\" width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>"
-			// ? "<iframe src=\"https://iframe.dacast.com/vod/0ffd60be-91b7-22b0-1353-7dba7af43261/db07d056-2170-3940-cc4a-4e1add8b504b\"  width=\"512\" height=\"288 frameborder=\"0\" scrolling=\"no\" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>"
-			: "<script id=\"0ffd60be-91b7-22b0-1353-7dba7af43261-vod-db07d056-2170-3940-cc4a-4e1add8b504b\" width=\"100%\" height=\"100%\" src=\"https://player.dacast.com/js/player.js?contentId=0ffd60be-91b7-22b0-1353-7dba7af43261-vod-db07d056-2170-3940-cc4a-4e1add8b504b\"  class=\"dacast-video\"></script>"
+			? `<iframe src="https://iframe.dacast.com/vod/0ffd60be-91b7-22b0-1353-7dba7af43261/e9cc39f7-83ea-19db-2c0e-672beeec1547" width="100%" height="100%" frameborder="0" scrolling="no" allow="autoplay" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>`
+			: `<script id="0ffd60be-91b7-22b0-1353-7dba7af43261-vod-e9cc39f7-83ea-19db-2c0e-672beeec1547" width="100%" height="100%" src="https://player.dacast.com/js/player.js?contentId=0ffd60be-91b7-22b0-1353-7dba7af43261-vod-e9cc39f7-83ea-19db-2c0e-672beeec1547"  class="dacast-video"></script>`
 	}
 
 	const data = {

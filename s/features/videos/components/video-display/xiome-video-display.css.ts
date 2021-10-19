@@ -12,4 +12,8 @@ iframe {
 	border: none;
 }
 
+.mock-embed img {
+	width: 100%;
+}
+
 `

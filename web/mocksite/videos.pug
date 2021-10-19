@@ -6,6 +6,9 @@ block head
 		::part(iframe) {
 			aspect-ratio: 16 / 9;
 		}
+		xiome-video-display {
+			max-width: 960px;
+		}
 
 block main
 
@@ -15,13 +18,12 @@ block main
 		br
 		hr
 		br
-		xiome-video-display
+		xiome-video-display(mock-embed)
+		xiome-video-display(label="abc" mock-embed)
+		//- xiome-video-display
+		//- xiome-video-display
 
 	section
 		h2 your account
 		xiome-login-panel(show-logout)
 			xiome-my-account
-
-	//- section
-	//- 	h2 manual embed
-	//- 	<script id="0ffd60be-91b7-22b0-1353-7dba7af43261-playlist-eb27138d-94d2-ae72-a6fc-8134badf22e9" width="100%" height="100%" src="https://player.dacast.com/js/player.js?contentId=0ffd60be-91b7-22b0-1353-7dba7af43261-playlist-eb27138d-94d2-ae72-a6fc-8134badf22e9"  class="dacast-video"></script>
