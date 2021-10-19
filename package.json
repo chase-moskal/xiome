@@ -42,7 +42,7 @@
 		"stats": "ls -lah x/xiome.bundle.js x/xiome.bundle.min.js"
 	},
 	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^13.0.5",
+		"@rollup/plugin-node-resolve": "^13.0.6",
 		"@types/node": "^16.11.1",
 		"@types/pug": "^2.0.5",
 		"chokidar-cli": "^3.0.0",
