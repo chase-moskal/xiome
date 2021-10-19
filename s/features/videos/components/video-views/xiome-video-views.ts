@@ -18,19 +18,25 @@ export class XiomeVideoViews extends ComponentWithShare<{
 				<slot>
 					<h3>all video views</h3>
 				</slot>
-				<div class=views>
-					${views.map(
-						view => renderView({
-							view,
-							onDeleteClick: () => model.deleteView(view.label),
-							getPrivilegeDisplay: id => model.getPrivilege(id),
-						})
-					)}
-				</div>
+				${views.length ? html`
+					<div class=views>
+						${views.map(
+							view => renderView({
+								view,
+								onDeleteClick: () => model.deleteView(view.label),
+								getPrivilegeDisplay: id => model.getPrivilege(id),
+							})
+						)}
+					</div>
+				` : html`
+					<slot name=no-views>
+						<p>no video views are registered</p>
+					</slot>
+				`}
 			`)
 			: html`
 				<slot name=unprivileged>
-					you don't have sufficient privileges to moderate video views
+					<p>you don't have sufficient privileges to moderate video views</p>
 				</slot>
 			`
 	}
