@@ -1,4 +1,5 @@
 
+import {XiomeVideoViews} from "./video-views/xiome-video-views.js"
 import {XiomeVideoHosting} from "./video-hosting/xiome-video-hosting.js"
 import {XiomeVideoDisplay} from "./video-display/xiome-video-display.js"
 import {mixinSnapstateSubscriptions, mixinShare} from "../../../framework/component.js"
@@ -19,6 +20,13 @@ export function integrateVideoComponents({models}: XiomeComponentOptions) {
 				mixinShare({
 					contentModel,
 				})(XiomeVideoDisplay)
+			)
+		),
+		XiomeVideoViews: (
+			mixinSnapstateSubscriptions(contentModel.subscribe)(
+				mixinShare({
+					contentModel,
+				})(XiomeVideoViews)
 			)
 		),
 	}
