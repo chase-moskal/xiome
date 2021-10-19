@@ -110,16 +110,6 @@ export function prepareApiShape({appId, storage}: {
 				reportAnswer: true,
 			},
 		},
-		livestream: {
-			livestreamViewingService: {
-				[_meta]: standardMeta,
-				getShows: true,
-			},
-			livestreamModerationService: {
-				[_meta]: standardMeta,
-				setShow: true,
-			},
-		},
 		videos: {
 			dacastService: {
 				[_meta]: standardMeta,

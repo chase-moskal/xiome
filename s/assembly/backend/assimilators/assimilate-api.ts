@@ -10,7 +10,6 @@ import {exampleApi} from "../../../features/example/api/example-api.js"
 import {Dacast} from "../../../features/videos/dacast/types/dacast-types.js"
 import {goodApiKey} from "../../../features/videos/dacast/mocks/parts/mock-dacast-constants.js"
 import {questionsApi} from "../../../features/questions/api/questions-api.js"
-import {livestreamApi} from "../../../features/livestream/api/livestream-api.js"
 import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-policies.js"
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
@@ -62,10 +61,6 @@ export async function assimilateApi({
 			config,
 			authPolicies,
 			exampleTables: database.example,
-		}),
-		livestream: livestreamApi({
-			authPolicies,
-			livestreamTables: database.livestream,
 		}),
 		videos: videosApi({
 			config,

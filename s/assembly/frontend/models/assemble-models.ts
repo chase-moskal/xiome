@@ -1,15 +1,13 @@
 
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
+import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
 import {makeQuestionsModel} from "../../../features/questions/model/questions-model.js"
 import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
-import {makeLivestreamModel} from "../../../features/livestream/models/livestream-model.js"
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
-import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
-import {makeVideoModels} from "../../../features/videos/models/video-models.js"
-import {ops} from "../../../framework/ops.js"
+import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 
 export async function assembleModels({
 		appId,
@@ -45,11 +43,6 @@ export async function assembleModels({
 		reauthorize,
 	})
 
-	const livestreamModel = makeLivestreamModel({
-		...remote.livestream,
-		getAccessOp,
-	})
-
 	const videoModels = makeVideoModels({
 		dacastService: remote.videos.dacastService,
 		contentService: remote.videos.contentService,
@@ -81,7 +74,6 @@ export async function assembleModels({
 		await Promise.all([
 			exampleModel.updateAccessOp(accessOp),
 			personalModel.updateAccessOp(accessOp),
-			livestreamModel.updateAccessOp(accessOp),
 			appsModel.updateAccessOp(accessOp),
 			permissionsModel.updateAccessOp(accessOp),
 			questionsModel.accessChange(access),
@@ -100,7 +92,6 @@ export async function assembleModels({
 		// storeModel,
 		personalModel,
 		questionsModel,
-		livestreamModel,
 		permissionsModel,
 		administrativeModel,
 	}

@@ -54,9 +54,6 @@ export async function assimilateDatabase({
 			answerPosts: true,
 			questionPosts: true,
 		},
-		livestream: {
-			shows: true,
-		},
 		store: {
 			billing: {
 				customers: true,
