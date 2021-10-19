@@ -14,7 +14,10 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	@property({type: String})
 	label: string = "default"
 
-	get model() {
+	@property({type: Boolean, reflect: true})
+	"mock-embed": boolean = false
+
+	get #model() {
 		return this.share.contentModel
 	}
 
@@ -22,7 +25,7 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 
 	#videoControls = (() => {
 		const controls = videoControls({
-			contentModel: this.model,
+			contentModel: this.#model,
 			requestUpdate: () => this.requestUpdate(),
 			queryAll: s => Array.from(this.shadowRoot.querySelectorAll(s)),
 		})
@@ -31,14 +34,16 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	})()
 
 	async init() {
-		await this.model.initialize(this.label)
+		await this.#model.initialize(this.label)
 	}
 
 	#renderShow() {
-		const show = this.model.getShow(this.label)
+		const show = this.#model.getShow(this.label)
 		return show?.details ? html`
 			<slot name=title>${show.details.title}</slot>
-			${this.#embeds.obtain(show.details) ?? "(embed missing)"}
+			${this.#embeds
+				.obtain(show.details, this["mock-embed"])
+					?? "(embed missing)"}
 			<slot></slot>
 		` : html`
 			<slot name=no-show></slot>
@@ -46,8 +51,8 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	}
 
 	render() {
-		return renderOp(this.model.state.accessOp, () => html`
-			${this.model.allowance.canModerateVideos
+		return renderOp(this.#model.state.accessOp, () => html`
+			${this.#model.allowance.canModerateVideos
 				? this.#videoControls.render(this.label)
 				: null}
 			${this.#renderShow()}

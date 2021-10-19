@@ -10,6 +10,7 @@ import {VideoTables} from "../types/video-tables.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 import {makeVideoModels} from "../models/video-models.js"
 import {videoPrivileges} from "../api/video-privileges.js"
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {mockDacastSdk} from "../dacast/mocks/mock-dacast-sdk.js"
 import {makeDacastService} from "../api/services/dacast-service.js"
 import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
@@ -37,17 +38,26 @@ const dacastSdk = mockDacastSdk({goodApiKey})
 
 export async function videoSetup() {
 	const rando = await getRando()
+	const appId = rando.randomId()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
 	})
 	const storage = memoryFlexStorage()
-	const authTables = await mockAuthTables(storage)
+	const unconstrainedAuthTables = new UnconstrainedTables(
+		await mockAuthTables(storage)
+	)
+	await unconstrainedAuthTables.namespaceForApp(appId).permissions.privilege.create({
+		hard: false,
+		label: "view videos",
+		privilegeId: DamnId.fromString(viewPrivilege),
+		time: Date.now(),
+	})
 	const authPolicies = prepareAuthPolicies({
 		config,
 		appTables: await mockAppTables(storage),
-		authTables: new UnconstrainedTables(authTables),
+		authTables: unconstrainedAuthTables,
 		verifyToken: mockVerifyToken()
 	})
 	const basePolicy = authPolicies.anonPolicy
@@ -78,6 +88,7 @@ export async function videoSetup() {
 				meta: await mockVideoMeta({
 					privileges,
 					origins: [appOrigin],
+					appId: appId.toString(),
 					userId: rando.randomId().toString(),
 				}),
 				request: mockHttpRequest({origin: appOrigin}),
