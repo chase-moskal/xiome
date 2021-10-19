@@ -27,9 +27,6 @@ export function videoControls({
 
 	function render(label: string) {
 		const currentView = model.getView(label)
-		const otherViews = model.views
-			.filter(view => view.label !== label)
-
 		return html`
 			<h2>
 				<span>video display controls</span>
@@ -75,20 +72,6 @@ export function videoControls({
 							})
 						}
 					})}
-				${otherViews.length
-					? html`
-						<h3>all other views</h3>
-						<div class="otherviews">
-							${otherViews.map(
-								view => renderView({
-									view,
-									onDeleteClick: () => model.deleteView(view.label),
-									getPrivilegeDisplay: id => model.getPrivilege(id),
-								})
-							)}
-						</div>
-					`
-					: null}
 			` : null}
 		`
 	}
