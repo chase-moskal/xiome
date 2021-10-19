@@ -3,11 +3,14 @@ extends ../_templates/_mocksite.pug
 
 block head
 	style.
-		::part(iframe) {
-			aspect-ratio: 16 / 9;
+		hr {
+			margin: 1em auto;
 		}
 		xiome-video-display {
-			max-width: 960px;
+			max-width: 480px;
+		}
+		xiome-video-display::part(iframe) {
+			aspect-ratio: 16 / 9;
 		}
 
 block main
@@ -15,13 +18,9 @@ block main
 	section
 		h2 videos
 		xiome-video-hosting
-		br
 		hr
-		br
 		xiome-video-display(mock-embed)
-		xiome-video-display(label="abc" mock-embed)
-		//- xiome-video-display
-		//- xiome-video-display
+		xiome-video-display(mock-embed label="abc")
 
 	section
 		h2 your account

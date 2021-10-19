@@ -20,6 +20,7 @@ export function makeContentModel({
 	})
 
 	const activeShowLabels = new Set<string>()
+	const currentlyLoadingShows = new Set<string>()
 
 	async function loadModerationData() {
 		const access = ops.value(state.readable.accessOp)
@@ -48,6 +49,9 @@ export function makeContentModel({
 	}
 
 	async function loadShow(label: string) {
+		if (currentlyLoadingShows.has(label))
+			return undefined
+		currentlyLoadingShows.add(label)
 		activeShowLabels.add(label)
 		const oldShows = ops.value(state.readable.showsOp) ?? []
 		let updatedShow: VideoShow
@@ -61,27 +65,37 @@ export function makeContentModel({
 					...(show ? [show] : [{label, details: undefined}]),
 				]),
 		})
+		currentlyLoadingShows.delete(label)
 		return updatedShow
 	}
 
 	async function refreshShows() {
 		const labels = Array.from(activeShowLabels)
-		if (labels.length)
+			.filter(label => !currentlyLoadingShows.has(label))
+		if (labels.length) {
+			for (const label of labels)
+				currentlyLoadingShows.add(label)
 			await ops.operation({
 				setOp: op => state.writable.showsOp = op,
 				promise: contentService.getShows({labels})
 					.then(shows => shows.filter(s => !!s))
 			})
+			for (const label of labels)
+				currentlyLoadingShows.delete(label)
+		}
 	}
 
 	let alreadyInitialized = false
 	async function initialize(label: string) {
-		if (!alreadyInitialized) {
-			alreadyInitialized = true
-			await Promise.all([
-				loadShow(label),
-				loadModerationData(),
-			])
+		if (ops.isReady(state.readable.accessOp)) {
+			await loadShow(label)
+			if (!alreadyInitialized) {
+				alreadyInitialized = true
+				await loadModerationData()
+			}
+		}
+		else {
+			activeShowLabels.add(label)
 		}
 	}
 

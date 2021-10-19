@@ -38,7 +38,7 @@ export function videoControls({
 				</xio-button>
 			</h2>
 			${readable.open ? html`
-				<p>this view <em>"${label}"</em></p>
+				<h3>this view <em>"${label}"</em></h3>
 				${currentView
 					? renderView({
 						view: currentView,
@@ -77,7 +77,7 @@ export function videoControls({
 					})}
 				${otherViews.length
 					? html`
-						<p>all other views</p>
+						<h3>all other views</h3>
 						<div class="otherviews">
 							${otherViews.map(
 								view => renderView({
