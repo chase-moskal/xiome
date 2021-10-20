@@ -136,11 +136,11 @@ export default <Suite>{
 			const output = sortQuestions([
 				fakeQuestion({
 					authorUserId: "a",
-					timePosted: daysAgo(2),
+					timePosted: daysAgo(1.1),
 				}),
 				fakeQuestion({
 					authorUserId: "b",
-					timePosted: daysAgo(1.1),
+					timePosted: daysAgo(2),
 					likes: 1,
 				}),
 			])
@@ -151,11 +151,11 @@ export default <Suite>{
 			const output = sortQuestions([
 				fakeQuestion({
 					authorUserId: "a",
-					timePosted: daysAgo(3),
+					timePosted: daysAgo(1.1),
 				}),
 				fakeQuestion({
 					authorUserId: "b",
-					timePosted: daysAgo(1.05),
+					timePosted: daysAgo(3),
 					likes: 2,
 				}),
 			])
