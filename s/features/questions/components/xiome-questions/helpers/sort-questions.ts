@@ -1,8 +1,10 @@
 
+import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {Question} from "../../../api/types/questions-and-answers.js"
 
-export function sortQuestions(questions: Question[], myUserId?: string) {
+const timeFactor = 1 * day
 
+export function sortQuestions(questions: Question[], myUserId?: string) {
 	const myQuestions: Question[] = []
 	const otherQuestions: Question[] = []
 
@@ -14,23 +16,41 @@ export function sortQuestions(questions: Question[], myUserId?: string) {
 			otherQuestions.push(question)
 	}
 
-	const sort = (a: Question, b: Question) => {
-		const promote = {a: -1, b: 1}
-
-		if (a.likes > b.likes) return promote.a
-		if (a.likes < b.likes) return promote.b
-
-		if (a.reports < b.reports) return promote.a
-		if (a.reports > b.reports) return promote.b
-
-		if (a.timePosted > b.timePosted) return promote.a
-		if (a.timePosted < b.timePosted) return promote.b
-
-		return 0
-	}
-
 	return [
-		...myQuestions.sort(sort),
-		...otherQuestions.sort(sort),
+		...myQuestions.sort(compareQuestions),
+		...otherQuestions.sort(compareQuestions),
 	]
+}
+
+function compareQuestions(a: Question, b: Question) {
+	const promoteA = -1
+	const promoteB = 1
+
+	const scoreA = score(a)
+	const scoreB = score(b)
+
+	if (scoreA > scoreB) return promoteA
+	if (scoreB < scoreA) return promoteB
+
+	return 0
+}
+
+function score({timePosted, likes, reports}: {
+		timePosted: number
+		likes: number
+		reports: number
+	}) {
+	return timePosted
+		+ voteValue({votes: likes, timeFactor})
+		- voteValue({votes: reports, timeFactor: 2 * timeFactor})
+}
+
+function voteValue({votes, timeFactor}: {
+		votes: number
+		timeFactor: number
+	}) {
+	const voteWeight = votes === 0
+		? 0
+		: 1 + Math.log10(votes)
+	return voteWeight * timeFactor
 }
