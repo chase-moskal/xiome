@@ -70,6 +70,10 @@ export async function assimilateDatabase({
 			viewDacast: true,
 			viewPrivileges: true,
 		},
+		notes: {
+			notes: true,
+			questionDetails: true,
+		},
 	}
 
 	async function mockWithStorage(mockStorage: FlexStorage) {
