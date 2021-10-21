@@ -41,14 +41,11 @@ function score({timePosted, likes, reports}: {
 		reports: number
 	}) {
 	return timePosted
-		+ voteValue({votes: likes, timeFactor})
-		- voteValue({votes: reports, timeFactor: 2 * timeFactor})
+		+ voteValue(likes, timeFactor)
+		- voteValue(reports, 2 * timeFactor)
 }
 
-function voteValue({votes, timeFactor}: {
-		votes: number
-		timeFactor: number
-	}) {
+function voteValue(votes: number, timeFactor: number) {
 	const voteWeight = votes === 0
 		? 0
 		: 1 + Math.log10(votes)
