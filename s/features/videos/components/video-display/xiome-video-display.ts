@@ -39,15 +39,17 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 
 	#renderShow() {
 		const show = this.#model.getShow(this.label)
-		return show?.details ? html`
-			<slot name=title>${show.details.title}</slot>
-			${this.#embeds
-				.obtain(show.details, this["mock-embed"])
-					?? "(embed missing)"}
-			<slot></slot>
-		` : html`
-			<slot name=no-show></slot>
-		`
+		return show
+			? show.details
+				? html`
+					<slot name=title>${show.details.title}</slot>
+					${this.#embeds
+						.obtain(show.details, this["mock-embed"])
+							?? "(embed missing)"}
+					<slot></slot>
+				`
+				: html`<slot name=missing-show>(content missing)</slot>`
+			: html`<slot name=no-show></slot>`
 	}
 
 	render() {

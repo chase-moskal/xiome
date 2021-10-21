@@ -134,13 +134,15 @@ export const makeContentService = ({
 					])
 					const show: VideoShow = {
 						label,
-						details: {
-							...ingestDacastContent({
-								type: view.type,
-								data,
-							}),
-							embed: embed.code,
-						},
+						details: data
+							? {
+								...ingestDacastContent({
+									type: view.type,
+									data,
+								}),
+								embed: embed.code,
+							}
+							: null,
 					}
 					return show
 				})
