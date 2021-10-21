@@ -1,6 +1,7 @@
 
 import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
+import {makeNotesModel} from "../../../features/notes/models/notes-model.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
@@ -57,6 +58,10 @@ export async function assembleModels({
 		}),
 	})
 
+	const notesModel = makeNotesModel({
+		notesService: remote.notes.notesService,
+	})
+
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
 	// 	appId,
@@ -100,6 +105,7 @@ export async function assembleModels({
 		chatModel,
 		accessModel,
 		videoModels,
+		notesModel,
 		// storeModel,
 		personalModel,
 		questionsModel,

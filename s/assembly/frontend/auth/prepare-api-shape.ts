@@ -125,6 +125,14 @@ export function prepareApiShape({appId, storage}: {
 				writeView: true,
 			},
 		},
+		notes: {
+			notesService: {
+				[_meta]: standardMeta,
+				getNotesStats: true,
+				getNewNotes: true,
+				getOldNotes: true,
+			},
+		},
 	})
 
 	function installAuthMediator({greenService}: {

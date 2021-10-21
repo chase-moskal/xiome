@@ -1,0 +1,72 @@
+
+import {mockRemote} from "renraku/x/remote/mock-remote.js"
+import {HttpRequest} from "renraku/x/types/http/http-request.js"
+import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+
+import {ops} from "../../../framework/ops.js"
+import {UserMeta} from "../../auth/types/auth-metas.js"
+import {makeNotesModel} from "../models/notes-model.js"
+import {mockMeta} from "../../auth/testing/mock-meta.js"
+import {prepareMockAuth} from "./basics/prepare-mock-auth.js"
+import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
+import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
+import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {NotesTables} from "../api/tables/notes-tables.js"
+import {makeNotesService} from "../api/services/notes-service.js"
+
+export async function notesTestingSetup() {
+	const {
+		rando, appId, config, authPolicies, storage, appOrigin,
+	} = await prepareMockAuth()
+
+	const notesTables = new UnconstrainedTables(
+		await mockStorageTables<NotesTables>(storage, {
+			notes: true,
+			questionDetails: true,
+		})
+	)
+
+	const basePolicy = authPolicies.userPolicy
+	const rawNotesService = makeNotesService({
+		config,
+		notesTables,
+		basePolicy,
+	})
+	const userId = rando.randomId().toString()
+	const meta = await mockMeta<UserMeta>({
+		access: {
+			appId: appId.toString(),
+			origins: [appOrigin],
+			permit: {privileges: [appPermissions.privileges["universal"]]},
+			scope: {core: true},
+			user: {
+				userId: userId.toString(),
+				profile: {
+					avatar: undefined,
+					nickname: "Steven Seagal",
+					tagline: "totally ripped and sweet",
+				},
+				roles: [],
+				stats: {joined: Date.now()},
+			},
+		},
+	})
+	const request = mockHttpRequest({origin: appOrigin}) as any as HttpRequest
+	const {access} = await basePolicy(meta, request)
+
+	const notesService = mockRemote(rawNotesService).withMeta({meta, request})
+	const notesDepositBox = makeNotesDepositBox({
+		rando,
+		notesTables: notesTables.namespaceForApp(appId),
+	})
+
+	const notesModel = makeNotesModel({notesService})
+	await notesModel.updateAccessOp(ops.ready(access))
+
+	return {
+		userId,
+		backend: {notesDepositBox},
+		frontend: {notesModel},
+	}
+}
