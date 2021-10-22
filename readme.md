@@ -33,19 +33,19 @@
 
 <br/>
 
-## getting started
+## 💡 getting started
 
-&nbsp;💡 **prerequisites**
+&nbsp; **prerequisites**
 - install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - if you're on windows, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux)
 
-&nbsp;🛠️ **initial setup**
+&nbsp; **initial setup**
 - fork the xiome project on github, and git clone your fork
 - open a terminal in your cloned directory, and run these commands
   - `npm install` to install the project's dependencies
   - `npm run build` to build the project
 
-&nbsp;⚙️ **during your development session**
+&nbsp; **during your development session**
 - run these background processes, each in their own terminal
   - `npm run watch` to continually rebuild source files on save
   - `npm start` to run a local http server at http://localhost:5000/  
@@ -59,7 +59,7 @@
   - when you save a typescript or pug file, the watch routine will automatically rebuild it, so you can press refresh in the browser to see the changes
   - you can press vscode hotkey `ctrl+shift+b` to run the typescript build, which allows vscode to nicely highlight typescript errors for you to address
 
-&nbsp;🧠 **things to understand**
+&nbsp; **things to understand**
 - mock mode
   - the watch routine builds xiome into a "mock" mode
   - in mock mode, you don't need to run the xiome server, or connect to any databases
@@ -67,7 +67,7 @@
 
 <br/>
 
-## xiome's codebase from a bird's eye view
+## 🦅 xiome's codebase from a bird's eye view
 
 everything about xiome is fully contained in this single git repository.  
 let's take a stroll through the codebase.
@@ -112,7 +112,7 @@ let's take a stroll through the codebase.
 
 <br/>
 
-## the anatomy of a feature
+## 🦵 the anatomy of a feature
 
 xiome's cool code is organized into conceptual features.  
 this is probably what you want to work on.  
@@ -147,44 +147,44 @@ here's what's in a feature directory:
 
 <br/>
 
-## how to survive within the xiome onion
+## ⚔️ how to survive within the xiome onion
 
 if you think about xiome like an onion, you'll notice some distinct layers.  
 each layer has its own little landscape of concepts and tools you'll need to learn to get anything done.  
 
 ### components — *what users interact with*
-- learn about modern web development.
-  - learn about web components.
-  - learn about the shadow dom.
-  - learn about css custom properties, and css parts.
+- learn about modern web development
+  - learn about web components
+  - learn about the shadow dom
+  - learn about css custom properties, and css parts
   - learn https://lit.dev/
-- learn about `ops`.
-  - the components commonly use a system called `ops` for loading spinners.
-  - anything that needs a loading spinner (many things) uses `ops`.
-  - they're everywhere.
-  - read how `ops` work further down the readme.
-- learn about xio vs xiome components.
-  - component with names starting with `xiome` are "wired up" with models and state management.
-  - components with names starting with `xio` are simpler standalone components without any wirings.
-- learn about xiome component wirings.
-  - xiome components have a property called `this.share`, which is a bag of goodies, like models and other facilities.
-  - xiome components are wired up with state management, so components will re-render whenever the relevant model state is changed.
+- learn about `ops`
+  - the components commonly use a system called `ops` for loading spinners
+  - anything that needs a loading spinner (many things) uses `ops`
+  - they're everywhere
+  - read how `ops` work further down the readme
+- learn about xio vs xiome components
+  - component with names starting with `xiome` are "wired up" with models and state management
+  - components with names starting with `xio` are simpler standalone components without any wirings
+- learn about xiome component wirings
+  - xiome components have a property called `this.share`, which is a bag of goodies, like models and other facilities
+  - xiome components are wired up with state management, so components will re-render whenever the relevant model state is changed
   - wirings happen in files with names like `integrate-blah-components.ts`
-- learn that the `theme.css.ts` exists.
-  - all components inherit common css in `s/framework/theme.css.ts`.
+- learn that the `theme.css.ts` exists
+  - all components inherit common css in `s/framework/theme.css.ts`
 
 ### models — *the brains on the frontend*
 - learn about services
-  - models are provided service objects, which contain async api functions.
-  - you just call the functions. those are api calls.
-- learn about `snapstate`.
-  - snapstate is the state management library for xiome.
-  - a model must return the relevant snapstate `subscribe` or `track` function.
-  - learn more about `snapstate` further below.
-- learn about `ops`.
-  - they're for loading spinners.
-  - they're everywhere because lots of things load.
-  - read more aboutn `ops` further below.
+  - models are provided service objects, which contain async api functions
+  - you just call the functions. those are api calls
+- learn about `snapstate`
+  - snapstate is the state management library for xiome
+  - a model must return the relevant snapstate `subscribe` or `track` function
+  - learn more about `snapstate` further below
+- learn about `ops`
+  - they're for loading spinners
+  - they're everywhere because lots of things load
+  - read more aboutn `ops` further below
 
 ### api services — *do servery things and talk with the database*
 - learn `renraku` and how xiome uses it
@@ -203,7 +203,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 <br/>
 
-## systems to learn
+## ⚙️ systems to learn
 
 ### **ops** — *loading spinners everywhere*
 
