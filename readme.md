@@ -304,3 +304,34 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 ### **darkvalley** — *minimalistic validation*
 
 - coming soon lol
+
+<br/>
+
+## 💰 bitcoin bounties
+
+- **how to get involved and win a bounty**
+  - find an open issue with the `bitcoin bounty` label
+  - comment on the issue, and say you want to do the work. this allows us to assign you, so others know you're working on it
+  - in the comment, post a public bitcoin wallet deposit address. this makes bounty transactions transparent and publicly verifiable
+  - do the work. then submit a pull request for code review. expect to be asked to make changes.
+- **if we merge the work, we pay the bounty**
+  - the idea is to reward good work done fast. you'll know it's good work if we merge it.
+  - if your work isn't good enough to merge, we might discard it and not pay the bounty. we might even choose somebody else's work over yours, and they'll win the bounty instead.
+  - chase moskal makes the final decision on whether to merge any work.
+- **bounties are rewards, not contracts**
+  - chase moskal makes the final decision on whether to pay a bounty or not. you are not entitled to anything. all of these rules might change at any time.
+- **bounties decay in value over time**
+  - each bounty will have its own decay schedule, detailed in each issue
+  - typically, starting on a certain date, a posted bounty will fall in value (decay) by a certain amount each day, until it reaches zero
+  - after good work is merged, we calculate the bounty value based on the work author's last commit timing.
+  - all date are expressed in pacific standard time
+- **assignments are not reservations**
+  - anybody could complete better work faster, and win the bounty — that's fair game
+  - somebody could go on a bounty-hunting rampage, and beat everybody on their own assignments. if it's good work, done fast, they might win all the bounties.
+  - in rare cases, chase moskal might deem it fair game for somebody to take over another's work, even building off their commits to continue where they left off. this might happen on high-priority work if the original author disappears partway through, or something like that. we might decide to split the bounty to reward both authors.
+- **teamwork is cool**
+  - it's cool if people mutually agree to work together on a single bounty. if people agree to split a bounty in some reasonable way, we'll honor that agreement.
+  - chase moskal will arbitrate any disputes.
+- **cheating and trickery is frowned upon**
+  - any behavior that chase moskal deems uncool, unfair, or deceptive, may disqualify you from winning any bounty or participating in the future
+  - obviously, goulish behavior like stealing work, or cheating by changing commit dates/times, anything like this will disqualify you from winning a bounty or participating in the future
