@@ -205,9 +205,93 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ## ⚙️ systems to learn
 
-### **ops** — *loading spinners everywhere*
+<br/>
 
-- coming soon lol
+### &nbsp; **ops** — *loading spinners everywhere*
+
+- "ops" is xiome's system for displaying loading spinners for asynchronous operations
+- it's designed to be highly compatbile with state management libraries — this is why ops are simple object literals, instead of fancy class instances with methods and stuff
+- ```ts
+  import {ops, Op} from "./s/framework/ops.js"
+  ```
+- an `op` is an object that can be in one of four states:
+  - `none` — the op is uninitialized
+  - `loading` — the op is loading
+  - `error` — an error has occurred
+  - `ready` — loading is done, the data is ready
+- `ops` is a toolkit with functions to create or interpret op objects
+- create ops
+  - `ops.none()` — create an op in `none` state
+  - `ops.loading()` — create an op in `loading` state
+  - `ops.error("thing failed lol")` — create an op in `error` state, provide a reason string
+  - `ops.ready(value)` — create an op in `ready` state, provide the data value
+  - `ops.replaceValue(op, newValue)` — create an op with the same state as another op
+- check the current state of an op (return a boolean)
+  - `ops.isNone(op)`
+  - `ops.isLoading(op)`
+  - `ops.isError(op)`
+  - `ops.isReady(op)`
+- extract the value out of an op (or return undefined)
+  - `ops.value(op)`
+- typescript types
+  ```ts
+  let textOp: Op<string> //<-- specify the typescript type of an op
+  textOp = ops.ready("hello")
+  ```
+- select (return different values based on the state of an op)
+  ```ts
+  const value = ops.select(op, {
+    none: () => 1,
+    loading: () => 2,
+    error: reason => 3,
+    ready: value => 4,
+  })
+  ```
+- running async operations  
+  (perform an async operation, while updating an op property)
+  ```ts
+  let textOp: Op
+  const text = await ops.operation({
+    setOp: op => textOp = op,
+    promise: fetchTextFromSomewhere(),
+    errorReason: "failed to fetch the text",
+  })
+  ```
+- consolidate many ops into one  
+  (only in terms of state, value is discarded)
+  ```ts
+  const op = ops.combine(op1, op2, op3)
+  ```
+- debugging tools
+  - `ops.mode(op)` — return an op's mode expressed as a string
+  - `console.log(ops.debug(op))` — log the op's details for console debugging
+- usage in components
+  - the xio-op component is for low-level control of op rendering  
+    (you can customize the loading spinner and more)
+    ```js
+    html`<xio-op .op=${op}></xio-op>`
+    ```
+    - renders a loading spinner when the op is loading
+    - has a slot for each op state
+  - use renderOp to render a proper `<xio-id>` component for an op
+    ```ts
+    import {renderOp} from "./s/framework/render-op.js"
+    render() {
+      return renderOp(op, value => html`
+        <p>${value}</p>
+      `)
+    }
+    ```
+  - render an op-wrapped value, but without any loading spinner  
+    (no `<xio-op>` component)
+    ```ts
+    import {whenOpReady} from "./s/framework/when-op-ready.js"
+    render() {
+      return whenOpReady(op, value => html`
+        <p>${value}</p>
+      `)
+    }
+    ```
 
 ### **snapstate** — *tiny state management*
 
