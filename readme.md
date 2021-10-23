@@ -301,9 +301,138 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 - coming soon lol
 
+<br/>
+
 ### **darkvalley** — *minimalistic validation*
 
-- coming soon lol
+- darkvalley is xiome's validation system for user inputs
+- it's used on the frontend and backend alike, for validating forms, and apis
+- a darkvalley validator is a function that returns a "problems" array of strings
+- the problem strings are meant to be user-readable
+- darkvalley provides many functions that *return* validator functions
+- let's make an example validator for a string
+  ```ts
+  import {validator, string, minLength, maxLength, notWhitespace}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateCoolString = validator<string>(
+     //                       ^
+     //           create a standard validator,
+     //           providing a typescript generic
+     //           for the type that it will accept
+
+    string(), // <--------- require input to be a string
+    minLength(1), // <----- require input length is at least 1
+    maxLength(10), // <---- require input length at most 10
+    notWhitespace(), // <-- require input isn't all whitespace
+  )
+
+  const problems1 = validateCoolString("hello!")
+   //= []
+
+  const problems2 = validateCoolString("")
+   //= ["too small"]
+  
+  const problems3 = validateCoolString("abcdefghijk")
+   //= ["too big"]
+
+  const problems4 = validateCoolString("   ")
+   //= ["can't be all whitespace"]
+  ```
+- if the resulting problems array is empty (problems.length === 0), then the input has passed validation
+- darkvalley has functions to prepare many kinds of validators
+- for example, let's validate an array of numbers between 0 and 100
+  ```ts
+  import {validator, array, each, number, min, max}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateNumberArray = validator<number[]>(
+    array(),
+    each(
+      number(),
+      min(0),
+      max(100),
+    ),
+  )
+
+  const problems1 = validate([1, 2, 99])
+   //= []
+
+  const problems2 = validate([1, 2, "99"])
+   //= ["(3) must be a number"]
+  
+  const problems3 = validate([1, 2, -99])
+   //= ["(3) too small"]
+
+  const problems4 = validate([101, 2, 99])
+   //= ["(1) too big"]
+  ```
+- okay, now let's validate a whole object, and all its contents
+  ```ts
+  import {schema, validator, string, number, minLength, maxLength}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateUserObject = schema<{
+        nickname: string
+        karma: number
+      }>(
+    nickname: validator(string(), minLength(1), maxLength(10)),
+    karma: validator(number()),
+  )
+
+  const problems1 = validateUserProblems({nickname: "chase", karma: 99})
+   //= []
+  ```
+- darkvalley has a bunch of handy validator preppers
+  ```ts
+  import {validator, string, regex, url, origin, email}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateLetters = validator<string>(
+    string(),
+    regex(/[a-zA-Z]+/i, "must be letters"),
+  )
+  const validateUrl    = validator<string>(string(), url())
+  const validateOrigin = validator<string>(string(), origin())
+  const validateEmail  = validator<string>(string(), email())
+  ```
+- `multi` allows multiple problems to be returned at once,  
+  whereas `validator` stops and returns the first problem encountered.
+  ```ts
+  import {validator, multi, string, minLength, notWhitespace}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateName = validator<string>(
+    string(),
+    multi( // <-- multi allows multiple problems to be returned at once
+      minLength(3),
+      notWhitespace(),
+    ),
+  )
+
+  const problems1 = validateName(" ")
+   //= ["too small", "can't be all whitespace"]
+  ```
+- `branch` is like an 'or' operator, ignoring problems in one branch if another passes
+  ```ts
+  import {validator, branch, string, url, https, localhost}
+    from "./s/toolbox/darkvalley.js"
+
+  const validateHttpsOrLocalhost = validator<string>(
+    string(),
+    url(),
+    branch(
+      https(),
+      localhost(),
+    ),
+  )
+
+  const problems1 = validateHttpsOrLocalhost("http://chasemoskal.com/")
+   //= [
+   //=   "must be secure, starting with 'https'",
+   //=   "or, must be a localhost address"
+   //= ]
+  ```
 
 <br/>
 
