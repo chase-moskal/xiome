@@ -37,7 +37,7 @@ export function renderViewCreator({
 		return html`
 			<div class=create-content>
 				${catalog.length ? html`
-					<p>select content for this view</p>
+					<p>Select content for this view</p>
 					<select @change=${onCatalogSelectChange}>
 						<option disabled selected>(select video content)</option>
 						${catalog.map(({provider, type, title}, index) => html`
@@ -69,17 +69,21 @@ export function renderViewCreator({
 
 	return renderOp(ops.combine(catalogOp, privilegesOp), () => html`
 		<div class=create-view>
-			<p>create view</p>
+			<p class="p-assign">Assign Video Content</p>
+			<div class="flex-box">
 			${renderContentSelector()}
 			${isContentSelected
 				? renderPrivilegeSelector()
-				: null}
+		: null}
+		</div>
+				<div class="xio-box">
 			<xio-button
 				class=create-button
 				?disabled=${isCreateButtonDisabled}
 				@press=${onCreateClick}>
-					create view
+					Assign To This Video
 			</xio-button>
+			</div>
 		</div>
 	`)
 }

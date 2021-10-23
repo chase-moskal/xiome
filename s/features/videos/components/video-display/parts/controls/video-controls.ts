@@ -4,6 +4,8 @@ import {renderViewCreator} from "./render-view-creator.js"
 import {html} from "../../../../../../framework/component.js"
 import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
+import triangle from "../../../../../../framework/icons/triangle.svg.js"
+
 
 export function videoControls({
 		queryAll,
@@ -29,13 +31,13 @@ export function videoControls({
 		const currentView = model.getView(label)
 		return html`
 			<h2>
-				<span>video display controls</span>
+				<span>Video display controls</span>
 				<xio-button @press=${toggleControls}>
-					${readable.open ? "close" : "open"}
+					${readable.open ? html`<div class="open">${triangle}</div>` : html`<div>${triangle}</div>`}
 				</xio-button>
 			</h2>
 			${readable.open ? html`
-				<h3>this view <em>"${label}"</em></h3>
+				<p>label = <em>"${label}"</em></p>
 				${currentView
 					? renderView({
 						view: currentView,
@@ -52,6 +54,7 @@ export function videoControls({
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
+
 						},
 						onPrivilegesSelect: privileges => {
 							writable.selectedPrivileges = privileges
