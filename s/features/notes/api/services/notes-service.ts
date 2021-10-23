@@ -59,20 +59,17 @@ export const makeNotesService = ({
 						limit: 10,
 						order: {time: "descend"}
 					})
-					// return newNotes
-			return [
-				{
-					type: "message",
-					noteId: undefined,
-					time: Date.now(),
-					old: false,
-					from: undefined,
-					to: undefined,
-					text: "text",
-					title: "title",
-					details: {},
-				}
-			]
+			return newNotes.map(note => ({
+				type: "message",
+				noteId: note.noteId.toString(),
+				time: note.time,
+				old: note.old,
+				from: undefined,
+				to: note.to.toString(),
+				text: note.text,
+				title: note.title,
+				details: {},
+			}))
 		},
 
 		async getOldNotes(
@@ -85,21 +82,19 @@ export const makeNotesService = ({
 						old: true}),
 						offset: 0,
 						limit: 10,
-						order: {time: "ascend"}
+						order: {time: "descend"}
 					})
-			return [
-				{
-					type: "message",
-					noteId: undefined,
-					time: Date.now(),
-					old: false,
-					from: undefined,
-					to: undefined,
-					text: "text",
-					title: "title",
-					details: {},
-				}
-			]
+					return oldNotes.map(note => ({
+						type: "message",
+						noteId: note.noteId.toString(),
+						time: note.time,
+						old: note.old,
+						from: undefined,
+						to: note.to.toString(),
+						text: note.text,
+						title: note.title,
+						details: {},
+					}))
 		},
 	},
 })
