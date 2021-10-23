@@ -10,6 +10,9 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 import {NotesTables} from "../tables/notes-tables.js"
 import {NotesAuth, NotesMeta} from "../types/notes-auth.js"
+import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {timeLog} from "console"
+import {timestamp} from "../../../../toolbox/logger/timestamp.js"
 
 export const makeNotesService = ({
 		config, basePolicy,
@@ -31,17 +34,32 @@ export const makeNotesService = ({
 
 	expose: {
 
-		async getNotesStats({notesTables}): Promise<NotesStats> {
-			return {
-				newCount: 123,
-				oldCount: 321,
-			}
+		async getNotesStats({notesTables, access}): Promise<NotesStats> {
+			const {userId} = access.user
+			const newCount = await notesTables.notes.count(find({
+				userId: DamnId.fromString(userId),
+				old: false
+		}))
+		const oldCount = await notesTables.notes.count(find({
+			userId: DamnId.fromString(userId),
+			old: true
+	}))
+			return {newCount, oldCount}
 		},
 
 		async getNewNotes(
-				{notesTables},
+				{notesTables, access},
 				{offset, limit}: Pagination
 			): Promise<Notes.Any[]> {
+					const {userId} = access.user
+					const newNotes = await notesTables.notes.read({
+						...find({userId: DamnId.fromString(userId),
+						old: false}),
+						offset: 0,
+						limit: 10,
+						order: {time: "descend"}
+					})
+					// return newNotes
 			return [
 				{
 					type: "message",
@@ -58,9 +76,17 @@ export const makeNotesService = ({
 		},
 
 		async getOldNotes(
-				{notesTables},
+				{notesTables, access},
 				{offset, limit}: Pagination
 			): Promise<Notes.Any[]> {
+					const {userId} = access.user
+					const oldNotes = await notesTables.notes.read({
+						...find({userId: DamnId.fromString(userId),
+						old: true}),
+						offset: 0,
+						limit: 10,
+						order: {time: "ascend"}
+					})
 			return [
 				{
 					type: "message",
