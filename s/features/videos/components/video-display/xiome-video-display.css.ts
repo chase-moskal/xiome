@@ -4,7 +4,8 @@ export default css`
 
 :host {
 	display: block;
-	--blackBg: inherit;
+	--black-bg: inherit;
+	max-width: 500px;
 }
 
 iframe {
@@ -13,84 +14,108 @@ iframe {
 	border: none;
 }
 
-
 .mock-embed img {
 	width: 100%;
 }
-	xio-button div {
-		display: flex;
-		padding: 5px;
-	}
 
 .open {
 	transform: rotate(180deg);
-	--_border: none;
 }
 
-xio-button div {display: flex}
-
 xio-button {
-	--_border: none;
-	--_padding: var(--xio-button-padding, 0.5em 0.5em);
-	--_disabled-border-style: var(--xio-button--disabled-border-style, solid);
-	margin: 20px;
-	font-size: clamp(16px, 4vw, 22px);
+	--xio-button-border: none;
+	--xio-button-padding: var(--xio-button-padding, 0.5em 0.5em);
+	--xio-button-disabled-border-style: var(--xio-button--disabled-border-style, solid);
 }
 
 .xio-box {text-align: right}
 
-h2 {margin-top: 20px}
-
-h2 span {
-	font-size: 40px;
-	margin-right: 40px;
+select {
+	background-color: var(--black-bg);
+	color: currentColor;
 }
-
-select {background-color: var(--blackBg)}
 
 select option {
 	background-color: #333;
 	padding: 15px;
 }
 
-.create-button:not([disabled]) {border: 4px solid #999}
-
-.create-view {
-	margin-top: 10px;
-	border: 1px solid #999;
+.h3-video-controls {
+	display: flex;
+	border: 1px solid currentColor;
+	padding: 0.5em;
+	justify-content: space-between;
+	margin-top: 0.5em;
+}
+.h3-video-controls div {
 	display: flex;
 	flex-direction: column;
-	row-gap: 2em;
 }
 
-.create-view .flex-box {
+.h3-video-controls span:nth-of-type(2) {
+	font-size: 0.8em;
+	font-weight: normal;
+}
+.create-button {
+	margin: 0.5em;
+}
+.create-button:not([disabled]) {
+	border: 1px solid currentColor;
+	margin: 0.5em;
+}
+
+.create-view {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	border-right: 1px solid currentColor;
+	border-left: 1px solid currentColor;
+	border-bottom: 1px solid currentColor;
+	margin-bottom: 0.5em;
+}
+
+.create-view .view-box {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	column-gap: 2em;
 }
-.p-assign {
-	font-size: 25px;
-	padding: 20px;
+.create-view h4 {
+	padding: 1em;
 }
 
-.create-content {
-	margin: 10px;
-}
-
-.create-content select {
-	padding: 15px;
-	width: 300px;
-	font-size: 20px;
+.create-content, .create-privileges {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
 }
 
 .create-privileges {
-	margin: 10px;
-	max-width: 400px;
+	visibility: hidden;
+}
+
+.create-privileges[data-visible] {
+	visibility: visible;
+}
+
+.create-content select {
+	display: flex;
+	justify-self: center;
+	align-self: center;
+	padding: 1em;
+	font-size: 1em;
+}
+
+.create-content, .create-privileges {
+	margin-bottom: 1em;
 }
 
 .create-privileges option {
-	font-size: 20px;
+	display: flex;
+	justify-self: center;
+	align-self: center;
+	font-size: 1em;
 }
 
 select:focus {outline:none}
@@ -105,13 +130,16 @@ select:focus {outline:none}
 	flex-direction: column;
 	flex: 100%;
 	justify-content: space-around;
-	margin-top: 10px;
-	border: 1px solid #999;
-	border-radius: 5px;
-	row-gap: 2em;
+	border-bottom: 1px solid currentColor;
+	border-right: 1px solid currentColor;
+	border-left: 1px solid currentColor;
 }
 
-.view .flex-box {
+.view-box {
+	align-items: flex-start;
+}
+
+.view .view-box {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
@@ -120,14 +148,13 @@ select:focus {outline:none}
 .view .box {
 	display: flex;
 	flex-direction: column;
-	padding: 20px;
+	padding: 1em;
 	align-items: center;
 }
 
-.view p:nth-of-type(1) {
-	font-size: 20px;
+.view h4:nth-of-type(1) {
 	text-align: left;
-	margin: 5px;
+	margin: 0.5em;
 }
 
 .view ul {
@@ -136,21 +163,27 @@ select:focus {outline:none}
 	text-align: center;
 	list-style-type: none;
 	flex-wrap: wrap;
+	margin-bottom: 1em;
 }
 
 .view ul li {
-	border: 1px solid #999;
+	border: 1px solid currentColor;
 	margin: 5px;
-	padding: 10px;
+	padding: 0.5em;
 	border-radius: 5px;
 }
 
 .view xio-button {
-	border: 4px solid #999;
+	border: 1px solid currentColor;
+	margin: 0.5em;
 }
 
 .view .box p:nth-of-type(2), xio-id {
-	font-size: 30px;
+	font-size: 2em;
+}
+
+.box xio-id {
+	font-size: 16px;
 }
 
 }
