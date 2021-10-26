@@ -33,30 +33,31 @@ export const makeNotesService = ({
 	},
 
 	expose: {
-
+		
 		async getNotesStats({notesTables, access}): Promise<NotesStats> {
 			const {userId} = access.user
 			const newCount = await notesTables.notes.count(find({
 				userId: DamnId.fromString(userId),
 				old: false
-		}))
-		const oldCount = await notesTables.notes.count(find({
-			userId: DamnId.fromString(userId),
-			old: true
-	}))
+			}))
+			const oldCount = await notesTables.notes.count(find({
+				userId: DamnId.fromString(userId),
+				old: true
+			}))
 			return {newCount, oldCount}
 		},
-
+		
 		async getNewNotes(
-				{notesTables, access},
-				{offset, limit}: Pagination
+			{notesTables, access},
+			{offset, limit}: Pagination
 			): Promise<Notes.Any[]> {
-					const {userId} = access.user
-					const newNotes = await notesTables.notes.read({
+				const maximumNotesPageSize = 10;
+				const {userId} = access.user
+				const newNotes = await notesTables.notes.read({
 						...find({userId: DamnId.fromString(userId),
 						old: false}),
 						offset: 0,
-						limit: 10,
+						limit: maximumNotesPageSize,
 						order: {time: "descend"}
 					})
 			return newNotes.map(note => ({
@@ -76,12 +77,13 @@ export const makeNotesService = ({
 				{notesTables, access},
 				{offset, limit}: Pagination
 			): Promise<Notes.Any[]> {
+					const maximumNotesPageSize = 10;
 					const {userId} = access.user
 					const oldNotes = await notesTables.notes.read({
 						...find({userId: DamnId.fromString(userId),
 						old: true}),
 						offset: 0,
-						limit: 10,
+						limit: maximumNotesPageSize,
 						order: {time: "descend"}
 					})
 					return oldNotes.map(note => ({
