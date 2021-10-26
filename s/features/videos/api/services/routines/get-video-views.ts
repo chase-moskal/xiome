@@ -36,6 +36,7 @@ export async function getVideoViews({
 		})
 		const isPermitted = hasExplicitPrivilege
 			|| checker.hasPrivilege("view all videos")
+			|| checker.hasPrivilege("moderate videos")
 		return isPermitted
 			? {
 				type,

@@ -140,7 +140,7 @@ export const makeContentService = ({
 									type: view.type,
 									data,
 								}),
-								embed: embed.code,
+								embed: embed?.code,
 							}
 							: null,
 					}
