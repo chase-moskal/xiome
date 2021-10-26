@@ -17,6 +17,9 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	@property({type: Boolean, reflect: true})
 	"mock-embed": boolean = false
 
+	@property({type: Boolean, reflect: true})
+	"show-title": boolean = false
+
 	get #model() {
 		return this.share.contentModel
 	}
@@ -42,14 +45,16 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 		return show
 			? show.details
 				? html`
-					<slot name=title>${show.details.title}</slot>
+					${this["show-title"]
+						? html`<h4 part=title>${show.details.title}</h4>`
+						: null}
 					${this.#embeds
 						.obtain(show.details, this["mock-embed"])
 							?? "(embed missing)"}
 					<slot></slot>
 				`
-				: html`<slot name=missing-show>(content missing)</slot>`
-			: html`<slot name=no-show></slot>`
+				: html`<slot name=unprivileged></slot>`
+			: html`<slot name=unavailable></slot>`
 	}
 
 	render() {

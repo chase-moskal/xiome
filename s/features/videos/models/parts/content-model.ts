@@ -125,7 +125,7 @@ export function makeContentModel({
 					: false
 			return {
 				canModerateVideos: can("moderate videos"),
-				canViewAllVideos: can("view all videos"),
+				canViewAllVideos: can("moderate videos") || can("view all videos"),
 			}
 		},
 

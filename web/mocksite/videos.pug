@@ -21,8 +21,12 @@ block main
 		hr
 		xiome-video-views
 		hr
-		xiome-video-display(mock-embed)
-		xiome-video-display(mock-embed label="abc")
+		xiome-video-display(initially-hidden mock-embed show-title)
+			p(slot="unprivileged") you are not privileged to view this video
+			p(slot="unavailable") this video is unavailable
+		xiome-video-display(initially-hidden mock-embed show-title label="abc")
+			p(slot="unprivileged") you are not privileged to view this video
+			p(slot="unavailable") this video is unavailable
 
 	hr
 	section
