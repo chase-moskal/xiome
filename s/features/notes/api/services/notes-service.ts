@@ -57,14 +57,15 @@ export const makeNotesService = ({
 			const {userId} = access.user
 
 			const newNotes = await notesTables.notes.read({
-					...find({
-						userId: DamnId.fromString(userId),
-						old: false
-					}),
-					offset,
-					limit,
-					order: {time: "descend"}
+				...find({
+					userId: DamnId.fromString(userId),
+					old: false
+				}),
+				offset,
+				limit,
+				order: {time: "descend"}
 			})
+
 			return newNotes.map(note => ({
 				type: "message",
 				noteId: note.noteId.toString(),
@@ -95,6 +96,7 @@ export const makeNotesService = ({
 				limit,
 				order: {time: "descend"}
 			})
+
 			return oldNotes.map(note => ({
 				type: "message",
 				noteId: note.noteId.toString(),
