@@ -37,7 +37,7 @@ export function renderViewCreator({
 		return html`
 			<div class=create-content>
 				${catalog.length ? html`
-					<p>select content for this view</p>
+					<h5>Select content for this view</h5>
 					<select @change=${onCatalogSelectChange}>
 						<option disabled selected>(select video content)</option>
 						${catalog.map(({provider, type, title}, index) => html`
@@ -56,8 +56,8 @@ export function renderViewCreator({
 	function renderPrivilegeSelector() {
 		const privileges = ops.value(privilegesOp)
 		return html`
-			<div class=create-privileges>
-				<p>select which privileges have access</p>
+		<div class="create-privileges" ?data-visible=${isContentSelected}>
+				<h5>Select which privileges have access</h5>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`
 						<option value="${privilege.privilegeId}">${privilege.label}</option>
@@ -69,17 +69,19 @@ export function renderViewCreator({
 
 	return renderOp(ops.combine(catalogOp, privilegesOp), () => html`
 		<div class=create-view>
-			<p>create view</p>
-			${renderContentSelector()}
-			${isContentSelected
-				? renderPrivilegeSelector()
-				: null}
-			<xio-button
-				class=create-button
-				?disabled=${isCreateButtonDisabled}
-				@press=${onCreateClick}>
-					create view
-			</xio-button>
+			<h4>Assign Video Content</h4>
+			<div class="view-box">
+				${renderContentSelector()}
+				${renderPrivilegeSelector()}
+			</div>
+			<div class="xio-box">
+				<xio-button
+					class=create-button
+					?disabled=${isCreateButtonDisabled}
+					@press=${onCreateClick}>
+						Assign To This Video
+				</xio-button>
+			</div>
 		</div>
 	`)
 }
