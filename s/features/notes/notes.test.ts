@@ -37,19 +37,13 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		{
-			await notesModel.loadNewNotes({offset: 0, limit: 10})
-			const notesOp = notesModel.getNewNotes({offset: 0, limit: 10})
-			const notes = ops.value(notesOp)
-			assert(ops.isReady(notesOp), "new notes op becomes ready")
-			assert(notes.length, "new notes length starts at zero")
+			const notes = await notesModel.loadNewNotes({offset: 0, limit: 10})
+			assert(notes?.length === 0, "new notes length starts at zero")
 		}
 		await notesDepositBox.sendNote(fakeNoteDraft(userId))
 		{
-			await notesModel.loadNewNotes({offset: 0, limit: 10})
-			const notesOp = notesModel.getNewNotes({offset: 0, limit: 10})
-			const notes = ops.value(notesOp)
-			assert(ops.isReady(notesOp), "new notes op becomes ready")
-			assert(notes.length === 1, "new notes length updates to 1")
+			const notes = await notesModel.loadNewNotes({offset: 0, limit: 10})
+			assert(notes?.length === 1, "new notes length updates to 1")
 			assert(notes[0].to === userId, "note is to the user id")
 			assert(notes[0].title.length > 0, "note title has content")
 		}
