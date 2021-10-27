@@ -31,8 +31,7 @@ export function makeNotesDepositBox({rando, notesTables}: {
 			}
 		})
 
-		// - save the note bases into the database
-		// - save note details into appropriate tables
+		await notesTables.notes.create(...notes.map(n => n.noteBase))
 
 		return notes.map(({noteBase: {noteId}}) => ({
 			noteId: noteId.toString()
