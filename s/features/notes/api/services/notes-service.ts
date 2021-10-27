@@ -109,5 +109,17 @@ export const makeNotesService = ({
 				details: {},
 			}))
 		},
+
+		async markNotesOld(auth, input: {noteIds: string[]}) {
+			// - sets {old: true} on the identified notes
+			// - ensure the user "owns" the notes being changed:
+			//   auth userid equals note `to` field
+		},
+
+		async markNotesNew(auth, input: {noteIds: string[]}) {
+			// - sets {old: false} on the identified notes
+			// - ensure the user "owns" the notes being changed:
+			//   auth userid equals note `to` field
+		},
 	},
 })
