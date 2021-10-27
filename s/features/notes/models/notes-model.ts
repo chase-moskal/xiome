@@ -14,9 +14,10 @@ export function makeNotesModel({notesService}: {
 	const state = snapstate({
 		accessOp: ops.none() as Op<AccessPayload>,
 		statsOp: ops.none() as Op<NotesStats>,
-		newNoteOps: [] as Op<Notes.Any>[],
-		oldNoteOps: [] as Op<Notes.Any>[],
 	})
+
+	// TODO use window.postMessage to synchronize browser tabs
+	// (when another tab sends a postMessage, publish the 'refresh' event)
 
 	async function loadStats() {
 		return ops.operation({
@@ -25,39 +26,27 @@ export function makeNotesModel({notesService}: {
 		})
 	}
 
-	async function loadNewNotes({}: Pagination) {
-		// - fetch page of new notes, in an operation
-		// - cache all notes by saving them in state.writable.notes
-		// - overwrite page of new note ids in state.writable.newPages
+	async function loadNewNotes({}: Pagination): Promise<Notes.Any[]> {
+		// load new notes from the service
+		return undefined
 	}
 
-	async function loadOldNotes({}: Pagination) {
-		// - fetch page of old notes, in an operation
-		// - cache all notes by saving them in state.writable.notes
-		// - overwrite page of old note ids state.writable.oldPages
+	async function loadOldNotes({}: Pagination): Promise<Notes.Any[]> {
+		// load old notes from the service
+		return undefined
 	}
 
 	// communicate to each component that it should refresh
 	// (re-fetch new count, and page of notes)
 	const refresh = subbies<undefined>()
 
-	function getNewNotes({}: Pagination): Op<Notes.Any[]> {
-		// return op array of notes,
-		// by referencing newPages against notes
-		return
-	}
-
-	function getOldNotes({}: Pagination): Op<Notes.Any[]> {
-		// return op array of notes,
-		// by referencing oldPages against notes
-		return
-	}
-
 	return {
 		state: state.readable,
 		stateSubscribe: state.subscribe,
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
+			if (ops.isReady(op))
+				await loadStats()
 			refresh.publish(undefined)
 		},
 		
@@ -68,9 +57,5 @@ export function makeNotesModel({notesService}: {
 
 		// allow components to subscribe to the refresh event
 		refreshSubscribe: refresh.subscribe,
-
-		// fast functions to obtain cached pages of notes
-		getNewNotes,
-		getOldNotes,
 	}
 }
