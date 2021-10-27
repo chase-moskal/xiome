@@ -1,4 +1,3 @@
-
 extends _templates/_page.pug
 
 block append variables
@@ -7,6 +6,12 @@ block append variables
 
 block maincontent
 	.page.content
+		.art 
+		span.icon
+ 			svg(width="24px", height="24px")
+    			use(xlink:href="./assests/components-illustration.svg#art")
+
+
 
 		.segment.twoside.introblock
 			.text
