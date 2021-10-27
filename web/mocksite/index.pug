@@ -1,6 +1,12 @@
 
 extends ../_templates/_mocksite.pug
 
+block append head
+	style.
+		xiome-video-display {
+			max-width: 480px;
+		}
+
 block main
 
 	xiome-login-panel(show-logout)

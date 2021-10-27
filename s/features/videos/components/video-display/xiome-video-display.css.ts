@@ -4,11 +4,16 @@ export default css`
 
 :host {
 	display: block;
-	--black-bg: inherit;
-	max-width: 500px;
+	--xiome-video-display-select-background: inherit;
 }
 
-iframe {
+.controls-title,
+.view,
+.create-view {
+	max-width: 42rem;
+}
+
+[part="iframe"] {
 	width: 100%;
 	height: 100%;
 	border: none;
@@ -31,7 +36,7 @@ xio-button {
 .xio-box {text-align: right}
 
 select {
-	background-color: var(--black-bg);
+	background-color: var(--xiome-video-display-select-background);
 	color: currentColor;
 }
 
@@ -40,19 +45,19 @@ select option {
 	padding: 15px;
 }
 
-.h3-video-controls {
+.controls-title {
 	display: flex;
 	border: 1px solid currentColor;
 	padding: 0.5em;
 	justify-content: space-between;
 	margin-top: 0.5em;
 }
-.h3-video-controls div {
+.controls-title div {
 	display: flex;
 	flex-direction: column;
 }
 
-.h3-video-controls span:nth-of-type(2) {
+.controls-title span:nth-of-type(2) {
 	font-size: 0.8em;
 	font-weight: normal;
 }

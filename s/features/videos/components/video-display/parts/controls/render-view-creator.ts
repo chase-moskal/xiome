@@ -56,7 +56,7 @@ export function renderViewCreator({
 	function renderPrivilegeSelector() {
 		const privileges = ops.value(privilegesOp)
 		return html`
-		<div class="create-privileges" ?data-visible=${isContentSelected}>
+			<div class="create-privileges" ?data-visible=${isContentSelected}>
 				<h5>Select which privileges have access</h5>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`

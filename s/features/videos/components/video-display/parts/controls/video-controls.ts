@@ -30,7 +30,7 @@ export function videoControls({
 	function render(label: string) {
 		const currentView = model.getView(label)
 		return html`
-			<h3 class=h3-video-controls>
+			<h3 class=controls-title>
 				<div>
 					<span>Video display controls</span>
 					<span>label = <em>"${label}"</em></span>
