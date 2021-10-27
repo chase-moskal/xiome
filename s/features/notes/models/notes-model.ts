@@ -36,6 +36,14 @@ export function makeNotesModel({notesService}: {
 		return undefined
 	}
 
+	async function markNotesNew(noteIds: string[]): Promise<void> {
+		// implement service call, and publish refresh
+	}
+
+	async function markNotesOld(noteIds: string[]): Promise<void> {
+		// implement service call, and publish refresh
+	}
+
 	// communicate to each component that it should refresh
 	// (re-fetch new count, and page of notes)
 	const refresh = subbies<undefined>()
@@ -54,6 +62,10 @@ export function makeNotesModel({notesService}: {
 		loadStats,
 		loadNewNotes,
 		loadOldNotes,
+
+		// actions that change data
+		markNotesOld,
+		markNotesNew,
 
 		// allow components to subscribe to the refresh event
 		refreshSubscribe: refresh.subscribe,
