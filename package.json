@@ -1,6 +1,6 @@
 {
 	"name": "xiome",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"description": "app infrastructure and web components",
 	"license": "ISC",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
