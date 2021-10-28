@@ -1,5 +1,5 @@
 
-import {length, validator, regex, string} from "../../../../../toolbox/darkvalley.js"
+import {length, validator, regex, string} from "../../toolbox/darkvalley.js"
 
 export const validateId = validator<string>(
 	string(),
