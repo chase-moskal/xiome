@@ -2,7 +2,7 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {validateId} from "./validation/validate-id.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
