@@ -16,7 +16,7 @@ import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"
 import {validateQuestionDraft} from "./validation/validate-question-draft.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {requireUserCanEditQuestion} from "./helpers/require-user-can-edit-question.js"
-import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 
 export const makeQuestionsPostingService = (

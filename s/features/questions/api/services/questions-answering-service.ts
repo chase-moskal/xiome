@@ -15,7 +15,7 @@ import {QuestionsUserAuth} from "../types/questions-metas-and-auths.js"
 import {validateAnswerDraft} from "./validation/validate-question-draft.js"
 import {requireUserCanEditAnswer} from "./helpers/require-user-can-edit-answer.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {validateId} from "../../../administrative/api/services/validation/validate-id.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
 import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 import {rateLimitAnswers} from "./helpers/rate-limiting.js"
 
