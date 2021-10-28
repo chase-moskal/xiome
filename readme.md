@@ -99,7 +99,6 @@ let's take a stroll through the codebase.
     these tools are candidates to become independent libraries one day.  
   - `s/types/`  
     these are where some common system-wide types go.  
-    honestly these should be moved into the toolbox.  
 - `scripts/`  
   just some handy shell scripts.  
   i use `randomid` a lot to generate new ids.  
@@ -175,16 +174,17 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ### models — *the brains on the frontend*
 - learn about services
-  - models are provided service objects, which contain async api functions
+  - we provide models with api service objects, which contain async api functions
   - you just call the functions. those are api calls
 - learn about `snapstate`
   - snapstate is the state management library for xiome
+  - a model should return `readable` state, but *not* the `writable` state
   - a model must return the relevant snapstate `subscribe` or `track` function
-  - learn more about `snapstate` further below
+  - learn more about `snapstate` further below in the readme
 - learn about `ops`
   - they're for loading spinners
   - they're everywhere because lots of things load
-  - read more aboutn `ops` further below
+  - read more aboutn `ops` further below in the readme
 
 ### api services — *do servery things and talk with the database*
 - learn `renraku` and how xiome uses it
@@ -207,7 +207,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 <br/>
 
-### &nbsp; **ops** — *loading spinners everywhere*
+### **ops** — *loading spinners everywhere*
 
 - "ops" is xiome's system for displaying loading spinners for asynchronous operations
 - it's designed to be highly compatbile with state management libraries — this is why ops are simple object literals, instead of fancy class instances with methods and stuff
@@ -297,7 +297,106 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ### **snapstate** — *tiny state management*
 
-- coming soon lol
+- snapstate is an experimental little state management library. it is the successor to `autowatcher` and `happystate` which were previous incarnations in snapstate's lineage.
+- the concept of snapstate, is that we create a `readable` and `writable` version of a state object.
+- this allow us to write functions that have write access to the state via `writable`, but then we only expose the `readable` to the outside
+- example
+  ```ts
+  function makeCounterModel() {
+
+    const state = snapstate({
+      count: 0,
+    })
+
+    function increment() {
+      state.writable.count += 1
+    }
+
+    return {
+      subscribe: state.subscribe,
+      state: state.readable,
+      increment,
+    }
+  }
+
+  const counterModel = makeCounterModel()
+  console.log(counterModel.state.count) // 0
+
+  counterModel.increment()
+  console.log(counterModel.state.count) // 1
+
+  counterModel.subscribe(() => console.log(counterModel.state.count))
+  counterModel.increment()
+  //> 2
+
+  counterModel.state.count = 4 // ERROR readonly
+  ```
+  - we return the readable state, which provides read-only access to the state object.
+  - we also return action functions that have exclusive access to the writable state.
+  - we also return a subscribe function, to subscribe to state changes
+- snapstate changes are debounced
+  ```ts
+  const counterModel = makeCounterModel()
+  counterModel.subscribe(() => console.log(counterModel.state.count))
+  counterModel.increment()
+  counterModel.increment()
+  counterModel.increment()
+  //> 3
+  ```
+  - this is very important to understand. this means changes don't instantly trigger the subscribed listeners
+  - instead, many changes to the state can be queued up in a single tick, then subscribe is called afterwards
+- snapstate returns a `wait` function
+  ```ts
+  async function example() {
+    const counterModel = makeCounterModel()
+    let sideEffect = false
+
+    counterModel.subscribe(() => {
+      sideEffect = true
+    })
+
+    counterModel.increment()
+
+    console.log(sideEffect) // false
+    await counterModel.wait()
+    console.log(sideEffect) // true
+  }
+  ```
+  - this allows you to wait for the debounced subscribed effects to fire
+- snapstate returns a `track` function
+  ```ts
+  const counterModel = makeCounterModel()
+  counterModel.track(() => console.log(counterModel.state.count))
+  //> 0
+  counterModel.increment()
+  //> 1
+  ```
+  - track is similar to subscribe, but works like mobx autorun
+    - track will immediately execute the listener function, and internally record which state properties are read
+    - then, whenever those specific state properties are written to, it will fire the affected listener function
+    - this can be efficient, because your track won't be triggered for unrelated changes to other state properties
+- both `subscribe` and `track` return stop functions to unsubscribe
+  ```ts
+  const counterModel = makeCounterModel()
+
+  const unsubscribe = counterModel.subscribe(
+    () => console.log(counterModel.state.count)
+  )
+
+  const untrack = counterModel.track(
+    () => console.log(counterModel.state.count)
+  )
+  //> 0
+
+  counterModel.increment()
+  //> 1
+  //> 1
+
+  unsubscribe()
+  untrack()
+  counterModel.increment()
+  //> (sweet silence)
+  ```
 
 <br/>
 
@@ -588,14 +687,11 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 - **how to get involved and win a bounty**
   - find an open issue with the `bitcoin bounty` label
   - comment on the issue, and say you want to do the work. this allows us to assign you, so others know you're working on it
-  - in the comment, post a public bitcoin wallet deposit address. this makes bounty transactions transparent and publicly verifiable
+  - on the github issue, post your public bitcoin wallet deposit address. this makes bounty transactions transparent and publicly verifiable
   - do the work. then submit a pull request for code review. expect to be asked to make changes.
 - **if we merge the work, we pay the bounty**
   - the idea is to reward good work done fast. you'll know it's good work if we merge it.
   - if your work isn't good enough to merge, we might discard it and not pay the bounty. we might even choose somebody else's work over yours, and they'll win the bounty instead.
-  - chase moskal makes the final decision on whether to merge any work.
-- **bounties are rewards, not contracts**
-  - chase moskal makes the final decision on whether to pay a bounty or not. you are not entitled to anything. all of these rules might change at any time.
 - **bounties decay in value over time**
   - each bounty will have its own decay schedule, detailed in each issue
   - typically, starting on a certain date, a posted bounty will fall in value (decay) by a certain amount each day, until it reaches zero
@@ -604,10 +700,11 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 - **assignments are not reservations**
   - anybody could complete better work faster, and win the bounty — that's fair game
   - somebody could go on a bounty-hunting rampage, and beat everybody on their own assignments. if it's good work, done fast, they might win all the bounties.
-  - in rare cases, chase moskal might deem it fair game for somebody to take over another's work, even building off their commits to continue where they left off. this might happen on high-priority work if the original author disappears partway through, or something like that. we might decide to split the bounty to reward both authors.
+  - in rare cases, we might deem it fair game for somebody to take over another's work, even building off their commits to continue where they left off. this might happen on high-priority work if the original author disappears partway through, or something like that. we might decide to split the bounty to reward both authors.
 - **teamwork is cool**
   - it's cool if people mutually agree to work together on a single bounty. if people agree to split a bounty in some reasonable way, we'll honor that agreement.
-  - chase moskal will arbitrate any disputes.
 - **cheating and trickery is frowned upon**
   - any behavior that chase moskal deems uncool, unfair, or deceptive, may disqualify you from winning any bounty or participating in the future
   - obviously, goulish behavior like stealing work, or cheating by changing commit dates/times, anything like this will disqualify you from winning a bounty or participating in the future
+- **bounties are rewards, not contracts**
+  - chase moskal will arbitrate any disputes, and make the final decision on whether to pay any bounty or not. you are not entitled to anything. all of these rules might change at any time.
