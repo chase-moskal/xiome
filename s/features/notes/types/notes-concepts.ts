@@ -61,3 +61,8 @@ export interface NotesStats {
 	newCount: number
 	oldCount: number
 }
+
+export interface Paging {
+	pageSize: number
+	pageNumber: number
+}

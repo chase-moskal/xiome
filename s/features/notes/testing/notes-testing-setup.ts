@@ -7,13 +7,13 @@ import {ops} from "../../../framework/ops.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
 import {mockMeta} from "../../auth/testing/mock-meta.js"
+import {NotesTables} from "../api/tables/notes-tables.js"
 import {prepareMockAuth} from "./basics/prepare-mock-auth.js"
 import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
+import {makeNotesService} from "../api/services/notes-service.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
-import {NotesTables} from "../api/tables/notes-tables.js"
-import {makeNotesService} from "../api/services/notes-service.js"
 
 export async function notesTestingSetup() {
 	const {
@@ -65,6 +65,7 @@ export async function notesTestingSetup() {
 	await notesModel.updateAccessOp(ops.ready(access))
 
 	return {
+		rando,
 		userId,
 		backend: {notesDepositBox},
 		frontend: {notesModel},
