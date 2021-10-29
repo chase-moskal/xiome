@@ -67,7 +67,7 @@ export default <Suite>{
 			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
 			pageTesting.assertNotesLength(1)
 			const {noteId} = pageTesting.notes[0]
-			await notesModel.markNotesOldOrNew(true, [noteId])
+			await notesModel.markNotesNewOrOld(true, [noteId])
 		}
 		{
 			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
@@ -77,7 +77,7 @@ export default <Suite>{
 			const pageTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
 			pageTesting.assertNotesLength(1)
 			const {noteId} = pageTesting.notes[0]
-			await notesModel.markNotesOldOrNew(false, [noteId])
+			await notesModel.markNotesNewOrOld(false, [noteId])
 		}
 		{
 			const newTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
@@ -103,7 +103,7 @@ export default <Suite>{
 			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
 			pageTesting.assertNotesLength(10)
 			const noteIds = pageTesting.notes.map(n => n.noteId)
-			await notesModel.markNotesOldOrNew(true, noteIds)
+			await notesModel.markNotesNewOrOld(true, noteIds)
 		}
 		{
 			await notesModel.loadStats()
@@ -139,7 +139,7 @@ export default <Suite>{
 		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 
-		await tab1.notesModel.markNotesOldOrNew(true, [noteId])
+		await tab1.notesModel.markNotesNewOrOld(true, [noteId])
 		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 	},
