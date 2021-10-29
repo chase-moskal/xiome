@@ -114,4 +114,33 @@ export default <Suite>{
 			oldTesting.assertNotesLength(10)
 		}
 	},
+
+	async "refreshes between browser tabs"() {
+		const {userId, backend, frontend, browserTab}
+			= await notesTestingSetup()
+		const {notesDepositBox} = backend
+		const tab1 = frontend
+		const tab2 = await browserTab()
+
+		const tab1asserts = prepareNoteStatsAssertions({
+			notesModel: tab1.notesModel
+		})
+
+		const tab2asserts = prepareNoteStatsAssertions({
+			notesModel: tab2.notesModel
+		})
+
+		const draft = fakeNoteDraft(userId)
+		const {noteId} = await notesDepositBox.sendNote(draft)
+
+		await tab1.notesModel.loadStats()
+		await tab2.notesModel.loadStats()
+
+		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
+		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
+
+		await tab1.notesModel.markNotesOldOrNew(true, [noteId])
+		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
+		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
+	},
 }
