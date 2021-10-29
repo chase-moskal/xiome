@@ -68,13 +68,13 @@ export function renderViewCreator({
 	}
 
 	return renderOp(ops.combine(catalogOp, privilegesOp), () => html`
-		<div class=create-view>
+		<div class=viewcreator>
 			<h4>Assign Video Content</h4>
-			<div class="view-box">
+			<div class=selectionarea>
 				${renderContentSelector()}
 				${renderPrivilegeSelector()}
 			</div>
-			<div class="xio-box">
+			<div class=buttonbar>
 				<xio-button
 					class=create-button
 					?disabled=${isCreateButtonDisabled}

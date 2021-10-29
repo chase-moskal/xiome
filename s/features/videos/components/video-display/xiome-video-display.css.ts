@@ -4,12 +4,12 @@ export default css`
 
 :host {
 	display: block;
-	--xiome-video-display-select-background: inherit;
+	--_select-bg: var(--xiome-video-display-select-background, #222);
 }
 
 .controls-title,
 .view,
-.create-view {
+.viewcreator {
 	max-width: 42rem;
 }
 
@@ -23,77 +23,89 @@ export default css`
 	width: 100%;
 }
 
-.open {
-	transform: rotate(180deg);
+.buttonbar {
+	text-align: right;
 }
 
-xio-button {
-	--xio-button-border: none;
-	--xio-button-padding: var(--xio-button-padding, 0.5em 0.5em);
-	--xio-button-disabled-border-style: var(--xio-button--disabled-border-style, solid);
+.controls-title,
+.viewcreator,
+.view {
+	border: 1px solid;
+	border-radius: 0.2em;
 }
 
-.xio-box {text-align: right}
-
-select {
-	background-color: var(--xiome-video-display-select-background);
-	color: currentColor;
+.controls-title {
+	padding: 0.1em 0.5em;
 }
-
-select option {
-	background-color: #333;
-	padding: 15px;
+.controls-title[data-open] {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.view, .viewcreator {
+	border-top: 0;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }
 
 .controls-title {
 	display: flex;
-	border: 1px solid currentColor;
-	padding: 0.5em;
-	justify-content: space-between;
-	margin-top: 0.5em;
+	align-items: center;
 }
-.controls-title div {
-	display: flex;
-	flex-direction: column;
+.controls-title div span {
+	display: block;
 }
-
 .controls-title span:nth-of-type(2) {
+	opacity: 0.8;
 	font-size: 0.8em;
 	font-weight: normal;
-}
-.create-button {
-	margin: 0.5em;
-}
-.create-button:not([disabled]) {
-	border: 1px solid currentColor;
-	margin: 0.5em;
+	padding-left: 0.2em;
 }
 
-.create-view {
+.togglebutton {
+	--xio-button-border: 0;
+	margin-left: auto;
+	transition: transform 300ms ease;
+	transform: rotate(0deg);
+}
+[data-open] .togglebutton {
+	transform: rotate(180deg);
+}
+
+.view, .viewcreator {
 	display: flex;
 	flex-direction: column;
-	gap: 1em;
-	border-right: 1px solid currentColor;
-	border-left: 1px solid currentColor;
-	border-bottom: 1px solid currentColor;
-	margin-bottom: 0.5em;
+	gap: 0.2em;
+	padding: 0.5em;
 }
 
-.create-view .view-box {
+.viewcreator .selectionarea {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
-	column-gap: 2em;
-}
-.create-view h4 {
-	padding: 1em;
+	justify-content: space-between;
+	width: 100%;
+	gap: 0.5em;
+	margin: 0.5em 0;
 }
 
-.create-content, .create-privileges {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-content: center;
+.viewcreator .selectionarea > * {
+	flex: 1 1 auto;
+}
+
+select {
+	color: inherit;
+	background: transparent;
+	border: 1px solid;
+	width: 100%;
+}
+
+select[multiple] {
+	min-height: 10em;
+}
+
+select option {
+	padding: 0.1em 0.2em;
+	color: inherit;
+	background: var(--_select-bg);
 }
 
 .create-privileges {
@@ -104,62 +116,24 @@ select option {
 	visibility: visible;
 }
 
-.create-content select {
-	display: flex;
-	justify-self: center;
-	align-self: center;
-	padding: 1em;
-	font-size: 1em;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: currentColor; }
 
-.create-content, .create-privileges {
-	margin-bottom: 1em;
-}
-
-.create-privileges option {
-	display: flex;
-	justify-self: center;
-	align-self: center;
-	font-size: 1em;
-}
-
-select:focus {outline:none}
-::-webkit-scrollbar {width: 10px}
-::-webkit-scrollbar-thumb {background: #888}
-::-webkit-scrollbar-thumb:hover {background: #555}
+::scrollbar { width: 8px; }
+::scrollbar-thumb { background: currentColor; }
 
 /* When video is displayed css */
 
-.view {
-	display: flex;
-	flex-direction: column;
-	flex: 100%;
-	justify-content: space-around;
-	border-bottom: 1px solid currentColor;
-	border-right: 1px solid currentColor;
-	border-left: 1px solid currentColor;
-}
-
-.view-box {
-	align-items: flex-start;
-}
-
-.view .view-box {
+.view-details {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
+	gap: 0.8em;
+	margin: 0.5em 0;
 }
 
-.view .box {
-	display: flex;
-	flex-direction: column;
-	padding: 1em;
-	align-items: center;
-}
-
-.view h4:nth-of-type(1) {
-	text-align: left;
-	margin: 0.5em;
+.view-details > * {
+	text-align: center;
 }
 
 .view ul {
@@ -168,27 +142,13 @@ select:focus {outline:none}
 	text-align: center;
 	list-style-type: none;
 	flex-wrap: wrap;
-	margin-bottom: 1em;
 }
 
 .view ul li {
-	border: 1px solid currentColor;
-	margin: 5px;
-	padding: 0.5em;
-	border-radius: 5px;
-}
-
-.view xio-button {
-	border: 1px solid currentColor;
-	margin: 0.5em;
-}
-
-.view .box p:nth-of-type(2), xio-id {
-	font-size: 2em;
-}
-
-.box xio-id {
-	font-size: 16px;
+	border: 1px solid;
+	margin: 0.2em;
+	padding: 0.1em 0.4em;
+	border-radius: 1em;
 }
 
 `
