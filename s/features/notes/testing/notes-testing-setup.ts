@@ -4,6 +4,7 @@ import {HttpRequest} from "renraku/x/types/http/http-request.js"
 import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
 
 import {ops} from "../../../framework/ops.js"
+import {subbies} from "../../../toolbox/subbies.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
 import {mockMeta} from "../../auth/testing/mock-meta.js"
@@ -55,19 +56,41 @@ export async function notesTestingSetup() {
 	const request = mockHttpRequest({origin: appOrigin}) as any as HttpRequest
 	const {access} = await basePolicy(meta, request)
 
-	const notesService = mockRemote(rawNotesService).withMeta({meta, request})
 	const notesDepositBox = makeNotesDepositBox({
 		rando,
 		notesTables: notesTables.namespaceForApp(appId),
 	})
 
-	const notesModel = makeNotesModel({notesService})
-	await notesModel.updateAccessOp(ops.ready(access))
+	// TODO simulating a broadcast event??
+	// does the test work?
+	const broadcastRefresh = subbies<ReturnType<typeof makeNotesModel>>()
+	const notesModelsSet = new Set<ReturnType<typeof makeNotesModel>>()
+
+	async function browserTab() {
+		const notesService = mockRemote(rawNotesService).withMeta({meta, request})
+		const notesModel = makeNotesModel({notesService})
+		notesModelsSet.add(notesModel)
+		await notesModel.updateAccessOp(ops.ready(access))
+
+		// TODO responding to other tabs refreshes, without circularity??
+		// does the test work?
+		notesModel.refresh.subscribe(() => broadcastRefresh.publish(notesModel))
+		broadcastRefresh.subscribe(originModel => {
+			const models = Array.from(notesModelsSet)
+				.filter(model => model !== notesModel)
+				.filter(model => model !== originModel)
+			for (const model of models)
+				model.refresh.publish(undefined)
+		})
+
+		return {notesModel}
+	}
 
 	return {
 		rando,
 		userId,
 		backend: {notesDepositBox},
-		frontend: {notesModel},
+		frontend: await browserTab(),
+		browserTab,
 	}
 }
