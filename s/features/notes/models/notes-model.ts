@@ -16,12 +16,7 @@ export function makeNotesModel({notesService}: {
 		statsOp: ops.none() as Op<NotesStats>,
 	})
 
-	// TODO use window.postMessage to synchronize browser tabs
-	// (when another tab sends a postMessage, publish the 'refresh' event)
-	const synchronize = () => {
-		const bc = new BroadcastChannel('publish refresh event')
-		bc.postMessage(refresh.publish)
-	}
+	const refresh = subbies<undefined>()
 
 	async function loadStats() {
 		return ops.operation({
@@ -30,29 +25,20 @@ export function makeNotesModel({notesService}: {
 		})
 	}
 
+	refresh.subscribe(loadStats)
+
 	async function loadNewNotes(pagination: Pagination): Promise<Notes.Any[]> {
-		// load new notes from the service
 		return notesService.getNewNotes(pagination)
 	}
 
 	async function loadOldNotes(pagination: Pagination): Promise<Notes.Any[]> {
-		// load old notes from the service
 		return notesService.getOldNotes(pagination)
 	}
 
-	async function markNotesOldOrNew(old:boolean,noteIds: string[]): Promise<void> {
-		// implement service call, and publish refresh
-		notesService.markNotesNewOrOld({old, noteIds})
-		refresh.publish
+	async function markNotesOldOrNew(old: boolean, noteIds: string[]): Promise<void> {
+		await notesService.markNotesNewOrOld({old, noteIds})
+		refresh.publish(undefined)
 	}
-
-	// async function markNotesOld(noteIds: string[]): Promise<void> {
-	// 	// implement service call, and publish refresh
-	// }
-
-	// communicate to each component that it should refresh
-	// (re-fetch new count, and page of notes)
-	const refresh = subbies<undefined>()
 
 	return {
 		state: state.readable,
@@ -72,7 +58,7 @@ export function makeNotesModel({notesService}: {
 		// actions that change data
 		markNotesOldOrNew,
 
-		// allow components to subscribe to the refresh event
-		refreshSubscribe: refresh.subscribe,
+		// exposing events
+		refresh,
 	}
 }
