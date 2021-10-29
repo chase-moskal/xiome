@@ -30,14 +30,16 @@ export function videoControls({
 	function render(label: string) {
 		const currentView = model.getView(label)
 		return html`
-			<h3 class=controls-title>
+			<h3 class=controls-title ?data-open=${readable.open}>
 				<div>
-					<span>Video display controls</span>
+					<span>video display controls</span>
 					<span>label = <em>"${label}"</em></span>
 				</div>
-				<xio-button @press=${toggleControls}>
-					${readable.open ? html`<xio-button class="open" ?data-open=${readable.open} title="close video controls">${triangle}</xio-button>`
-					: html`<xio-button ?data-open=${readable.open} title="open video controls">${triangle}</xio-button>`}
+				<xio-button
+					class=togglebutton
+					title="${readable.open ? "close" : "open"} video controls"
+					@press=${toggleControls}>
+						${triangle}
 				</xio-button>
 			</h3>
 			${readable.open ? html`

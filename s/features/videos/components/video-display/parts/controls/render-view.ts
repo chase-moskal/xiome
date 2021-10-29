@@ -10,30 +10,32 @@ export function renderView({view, onDeleteClick, getPrivilegeDisplay}: {
 	}) {
 	return html`
 		<div class="view">
-			<div class="view-box">
-				<div class="box"><h4>Hosting provider:</h4>
+			<div class="view-details">
+				<div>
+					<h4>hosting provider</h4>
 					<p>${view.provider}</p>
 				</div>
-				<div class="box">
-					<h4>Content type:</h4>
+				<div>
+					<h4>content type</h4>
 					<p>${view.type}</p>
 				</div>
-				<div class="box">
-					<h4>Content id:</h4>
+				<div>
+					<h4>content id</h4>
 					<xio-id id="${view.id}"></xio-id>
 				</div>
 			</div>
-			
-			<h4>Privileges with access:</h4>
+			<h4>privileges with access</h4>
 			<ul>
 				${view.privileges.map(getPrivilegeDisplay)
-					.map(privilege => privilege ? html`
-						<li>${privilege.label}</li>
-					` : null)
+					.map(privilege => privilege
+						? html`<li>${privilege.label}</li>`
+						: null)
 				}
 			</ul>
-			<div class="xio-box">
-			<xio-button @press=${onDeleteClick}>unassign from this display</xio-button>
+			<div class=buttonbar>
+			<xio-button @press=${onDeleteClick}>
+				unassign from this display
+			</xio-button>
 			</div>
 		</div>
 	`

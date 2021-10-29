@@ -3,8 +3,8 @@ import {css} from "../../../framework/component.js"
 export default css`
 
 button {
-	font-size: unset;
-	color: unset;
+	font: inherit;
+	color: inherit;
 	background: transparent;
 }
 
@@ -59,6 +59,7 @@ button {
 	max-width: var(--id-max-width, 6em);
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .copy svg {
