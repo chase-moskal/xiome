@@ -26,23 +26,25 @@ export function makeNotesModel({notesService}: {
 		})
 	}
 
-	async function loadNewNotes({}: Pagination): Promise<Notes.Any[]> {
+	async function loadNewNotes(pagination: Pagination): Promise<Notes.Any[]> {
 		// load new notes from the service
-		return undefined
+		return notesService.getNewNotes(pagination)
 	}
 
-	async function loadOldNotes({}: Pagination): Promise<Notes.Any[]> {
+	async function loadOldNotes(pagination: Pagination): Promise<Notes.Any[]> {
 		// load old notes from the service
-		return undefined
+		return notesService.getOldNotes(pagination)
 	}
 
-	async function markNotesNew(noteIds: string[]): Promise<void> {
+	async function markNotesOldOrNew(old:boolean,noteIds: string[]): Promise<void> {
 		// implement service call, and publish refresh
+		notesService.markNotesNewOrOld({old, noteIds})
+		refresh.publish
 	}
 
-	async function markNotesOld(noteIds: string[]): Promise<void> {
-		// implement service call, and publish refresh
-	}
+	// async function markNotesOld(noteIds: string[]): Promise<void> {
+	// 	// implement service call, and publish refresh
+	// }
 
 	// communicate to each component that it should refresh
 	// (re-fetch new count, and page of notes)
@@ -64,8 +66,7 @@ export function makeNotesModel({notesService}: {
 		loadOldNotes,
 
 		// actions that change data
-		markNotesOld,
-		markNotesNew,
+		markNotesOldOrNew,
 
 		// allow components to subscribe to the refresh event
 		refreshSubscribe: refresh.subscribe,
