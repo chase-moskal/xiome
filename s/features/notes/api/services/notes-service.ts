@@ -14,6 +14,8 @@ import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
+import {array, each, validator} from "../../../../toolbox/darkvalley.js"
 
 export const makeNotesService = ({
 		config, basePolicy,
@@ -110,16 +112,27 @@ export const makeNotesService = ({
 			}))
 		},
 
-		async markNotesOld(auth, input: {noteIds: string[]}) {
-			// - sets {old: true} on the identified notes
-			// - ensure the user "owns" the notes being changed:
-			//   auth userid equals note `to` field
-		},
+		// async markNotesOld(auth, input: {noteIds: string[]}) {
+		// 	// - sets {old: true} on the identified notes
+		// 	// - ensure the user "owns" the notes being changed:
+		// 	//   auth userid equals note `to` field
+		// },
 
-		async markNotesNew(auth, input: {noteIds: string[]}) {
-			// - sets {old: false} on the identified notes
-			// - ensure the user "owns" the notes being changed:
-			//   auth userid equals note `to` field
-		},
+		// async markNotesNew(auth, input: {noteIds: string[]}) {
+		// 	// - sets {old: false} on the identified notes
+		// 	// - ensure the user "owns" the notes being changed:
+		// 	//   auth userid equals note `to` field
+		// },
+
+
+		async markNoteNewOrOld({notesTables, access}, input: {noteIds: string[]}) {
+			const {userId} = access.user
+
+			const myVal = validator<string[]>(
+				array(),
+				each(validateId)
+			)
+			// const {noteIds} = runValidation(input, myVal)
+		}
 	},
 })
