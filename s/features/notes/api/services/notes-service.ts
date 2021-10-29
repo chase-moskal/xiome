@@ -14,8 +14,8 @@ import {and, find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
-import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {array, boolean, each, maxLength, schema, validator} from "../../../../toolbox/darkvalley.js"
 
 export const makeNotesService = ({
@@ -130,10 +130,6 @@ export const makeNotesService = ({
 				noteIds: string[]
 			}) {
 
-			// - ensure notes belong to the current user
-			// - throw an api error 400 if the notes don't belong to this user
-			// - update all the notes with the appropriate old value
-
 			const {userId} = access.user
 			const {old, noteIds: noteIdStrings} = runValidation(input, schema({
 				old: boolean(),
@@ -156,15 +152,9 @@ export const makeNotesService = ({
 					)
 			}
 
-			// TODO fix, update notes by their specific noteIds (use findAll)
-			// and set `old` to match the value provided in the
-			// input (not flipping/toggling)
 			await notesTables.notes.update({
-				...find({
-					userId: DamnId.fromString(userId),
-					old: old,
-				}),
-				write: {old: !old}
+				...findAll(noteIds, noteId => ({noteId})),
+				write: {old}
 			})
 		}
 	},
