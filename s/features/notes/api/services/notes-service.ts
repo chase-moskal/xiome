@@ -147,14 +147,14 @@ export const makeNotesService = ({
 				if (userId !== note.to.toString()){
 					throw new Error("403 forbidden")
 				}
-				await notesTables.notes.update({
-					...find({
-						userId: DamnId.fromString(userId),
-						old: old,
-					}),
-					write: {old: !old}
-				})
 			}
+			await notesTables.notes.update({
+				...find({
+					userId: DamnId.fromString(userId),
+					old: old,
+				}),
+				write: {old: !old}
+			})
 
 		}
 	},

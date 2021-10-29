@@ -18,6 +18,10 @@ export function makeNotesModel({notesService}: {
 
 	// TODO use window.postMessage to synchronize browser tabs
 	// (when another tab sends a postMessage, publish the 'refresh' event)
+	const synchronize = () => {
+		const bc = new BroadcastChannel('publish refresh event')
+		bc.postMessage(refresh.publish)
+	}
 
 	async function loadStats() {
 		return ops.operation({
