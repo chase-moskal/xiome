@@ -191,6 +191,4 @@ select:focus {outline:none}
 	font-size: 16px;
 }
 
-}
-
 `
