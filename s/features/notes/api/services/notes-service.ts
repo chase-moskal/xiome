@@ -1,4 +1,5 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 
@@ -116,8 +117,10 @@ export const makeNotesService = ({
 			// update every old=false note to old=true
 			const {userId} = access.user
 			await notesTables.notes.update({
-				...find({userId: DamnId.fromString(userId),
-				old: false}),
+				...find({
+					userId: DamnId.fromString(userId),
+					old: false,
+				}),
 				write: {old:true},
 			})
 		},
@@ -126,6 +129,11 @@ export const makeNotesService = ({
 				old: boolean
 				noteIds: string[]
 			}) {
+
+			// - ensure notes belong to the current user
+			// - throw an api error 400 if the notes don't belong to this user
+			// - update all the notes with the appropriate old value
+
 			const {userId} = access.user
 			const {old, noteIds: noteIdStrings} = runValidation(input, schema({
 				old: boolean(),
@@ -139,15 +147,18 @@ export const makeNotesService = ({
 			const notes = await notesTables.notes.read(
 				findAll(noteIds, noteId => ({noteId}))
 			)
-			// - ensure notes belong to the current user
-			// - throw an api error 400 if the notes don't belong to this user
-			// - update all the notes with the appropriate old value
 
 			for (const note of notes) {
-				if (userId !== note.to.toString()){
-					throw new Error("403 forbidden")
-				}
+				if (userId !== note.to.toString())
+					throw new ApiError(
+						403,
+						`user is not privileged for note ${note.to.toString()}`
+					)
 			}
+
+			// TODO fix, update notes by their specific noteIds (use findAll)
+			// and set `old` to match the value provided in the
+			// input (not flipping/toggling)
 			await notesTables.notes.update({
 				...find({
 					userId: DamnId.fromString(userId),
@@ -155,7 +166,6 @@ export const makeNotesService = ({
 				}),
 				write: {old: !old}
 			})
-
 		}
 	},
 })
