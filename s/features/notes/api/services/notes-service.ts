@@ -9,7 +9,7 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 
 import {NotesTables} from "../tables/notes-tables.js"
 import {NotesAuth, NotesMeta} from "../types/notes-auth.js"
-import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {and, find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
@@ -114,6 +114,12 @@ export const makeNotesService = ({
 
 		async markAllNotesOld({notesTables, access}) {
 			// update every old=false note to old=true
+			const {userId} = access.user
+			await notesTables.notes.update({
+				...find({userId: DamnId.fromString(userId),
+				old: false}),
+				write: {old:true},
+			})
 		},
 
 		async markNotesNewOrOld({notesTables, access}, input: {
@@ -136,6 +142,20 @@ export const makeNotesService = ({
 			// - ensure notes belong to the current user
 			// - throw an api error 400 if the notes don't belong to this user
 			// - update all the notes with the appropriate old value
+
+			for (const note of notes) {
+				if (userId !== note.to.toString()){
+					throw new Error("403 forbidden")
+				}
+				await notesTables.notes.update({
+					...find({
+						userId: DamnId.fromString(userId),
+						old: old,
+					}),
+					write: {old: !old}
+				})
+			}
+
 		}
 	},
 })
