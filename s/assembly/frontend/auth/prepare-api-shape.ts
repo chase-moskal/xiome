@@ -131,8 +131,8 @@ export function prepareApiShape({appId, storage}: {
 				getNotesStats: true,
 				getNewNotes: true,
 				getOldNotes: true,
-				markNotesNew: true,
-				markNotesOld: true,
+				markAllNotesOld: true,
+				markNotesNewOrOld: true,
 			},
 		},
 	})

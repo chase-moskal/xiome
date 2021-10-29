@@ -9,13 +9,13 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 
 import {NotesTables} from "../tables/notes-tables.js"
 import {NotesAuth, NotesMeta} from "../types/notes-auth.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
-import {array, each, validator} from "../../../../toolbox/darkvalley.js"
+import {array, boolean, each, maxLength, schema, validator} from "../../../../toolbox/darkvalley.js"
 
 export const makeNotesService = ({
 		config, basePolicy,
@@ -112,27 +112,30 @@ export const makeNotesService = ({
 			}))
 		},
 
-		// async markNotesOld(auth, input: {noteIds: string[]}) {
-		// 	// - sets {old: true} on the identified notes
-		// 	// - ensure the user "owns" the notes being changed:
-		// 	//   auth userid equals note `to` field
-		// },
+		async markAllNotesOld({notesTables, access}) {
+			// update every old=false note to old=true
+		},
 
-		// async markNotesNew(auth, input: {noteIds: string[]}) {
-		// 	// - sets {old: false} on the identified notes
-		// 	// - ensure the user "owns" the notes being changed:
-		// 	//   auth userid equals note `to` field
-		// },
-
-
-		async markNoteNewOrOld({notesTables, access}, input: {noteIds: string[]}) {
+		async markNotesNewOrOld({notesTables, access}, input: {
+				old: boolean
+				noteIds: string[]
+			}) {
 			const {userId} = access.user
-
-			const myVal = validator<string[]>(
-				array(),
-				each(validateId)
+			const {old, noteIds: noteIdStrings} = runValidation(input, schema({
+				old: boolean(),
+				noteIds: validator<string[]>(
+					array(),
+					maxLength(1000),
+					each(validateId),
+				),
+			}))
+			const noteIds = noteIdStrings.map(id => DamnId.fromString(id))
+			const notes = await notesTables.notes.read(
+				findAll(noteIds, noteId => ({noteId}))
 			)
-			// const {noteIds} = runValidation(input, myVal)
+			// - ensure notes belong to the current user
+			// - throw an api error 400 if the notes don't belong to this user
+			// - update all the notes with the appropriate old value
 		}
 	},
 })
