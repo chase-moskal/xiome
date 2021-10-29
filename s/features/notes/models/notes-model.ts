@@ -35,7 +35,7 @@ export function makeNotesModel({notesService}: {
 		return notesService.getOldNotes(pagination)
 	}
 
-	async function markNotesOldOrNew(old: boolean, noteIds: string[]): Promise<void> {
+	async function markNotesNewOrOld(old: boolean, noteIds: string[]): Promise<void> {
 		await notesService.markNotesNewOrOld({old, noteIds})
 		refresh.publish(undefined)
 	}
@@ -56,7 +56,7 @@ export function makeNotesModel({notesService}: {
 		loadOldNotes,
 
 		// actions that change data
-		markNotesOldOrNew,
+		markNotesNewOrOld,
 
 		// exposing events
 		refresh,
