@@ -8,6 +8,7 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
+import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 
 export async function assembleModels({
 		appId,
@@ -48,6 +49,8 @@ export async function assembleModels({
 		contentService: remote.videos.contentService,
 	})
 
+	const chatModel = makeChatModel({connectChatClient: undefined})
+
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
 	// 	appId,
@@ -80,6 +83,7 @@ export async function assembleModels({
 			administrativeModel.updateAccessOp(accessOp),
 			videoModels.dacastModel.updateAccessOp(accessOp),
 			videoModels.contentModel.updateAccessOp(accessOp),
+			chatModel.updateAccessOp(accessOp)
 			// storeModel.accessChange(access),
 		])
 	})
@@ -87,6 +91,7 @@ export async function assembleModels({
 	return {
 		exampleModel,
 		appsModel,
+		chatModel,
 		accessModel,
 		videoModels,
 		// storeModel,
