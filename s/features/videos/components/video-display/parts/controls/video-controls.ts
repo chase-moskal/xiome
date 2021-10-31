@@ -54,14 +54,17 @@ export function videoControls({
 						catalogOp: model.state.catalogOp,
 						privilegesOp: model.state.privilegesOp,
 						isContentSelected: readable.selectedContent !== undefined,
+						selectedContent: readable.selectedContent,
 						isCreateButtonDisabled:
 							readable.selectedContent === undefined
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
-
 						},
-						onPrivilegesSelect: privileges => {
+						isPrivilegeSelected: id => {
+							return readable.selectedPrivileges.some(e => e === id)
+						},
+						onPrivilegesSelect: (privileges) => {
 							writable.selectedPrivileges = privileges
 						},
 						onCreateClick: () => {
