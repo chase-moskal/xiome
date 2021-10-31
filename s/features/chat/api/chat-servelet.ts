@@ -1,37 +1,38 @@
 
-import {ChatAuth, ChatMeta, ChatState} from "../common/types/chat-concepts.js"
+import {clientsideShape} from "./handlers/clientside-shape.js"
 import {lingoHost, lingoRemote} from "../../../toolbox/lingo/lingo.js"
 import {prepareServersideHandlers} from "./handlers/prepare-serverside-handlers.js"
-import {clientsideShape, prepareClientsideHandlers} from "./handlers/prepare-clientside-handlers.js"
+import {ChatAuth, ChatMeta, ClientsideHandlers} from "../common/types/chat-concepts.js"
 
 export function makeChatServelet({policy}: {
 		policy: (meta: ChatMeta) => Promise<ChatAuth>
 	}) {
 
 	let clientCount = 0
-	let chatState: ChatState = ChatState.Online
 
-	async function acceptConnection({meta, close, sendDataToClient}: {
+	async function acceptConnection({meta, disconnect, sendDataToClient}: {
 				meta: ChatMeta
-				close(): void
+				disconnect(): void
 				sendDataToClient: (...args: any[]) => Promise<void>
 			}) {
-		const auth = await policy(meta)
+
+		let auth = await policy(meta)
 		clientCount += 1
-		const clientside = lingoRemote<ReturnType<typeof prepareClientsideHandlers>>({
+
+		const clientside = lingoRemote<ClientsideHandlers>({
 			shape: clientsideShape,
 			send: sendDataToClient,
 		})
-		await clientside.chatStateChange(chatState)
+	
 		return {
 			handleDataFromClient: lingoHost(prepareServersideHandlers({
-				auth,
 				clientside,
 				database: undefined,
+				getAuth: () => auth,
 			})),
 			handleDisconnect() {
 				clientCount -= 1
-				close()
+				disconnect()
 			},
 		}
 	}

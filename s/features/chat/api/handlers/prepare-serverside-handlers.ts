@@ -1,27 +1,32 @@
 
 import {AsHandlers, LingoShape} from "../../../../toolbox/lingo/lingo.js"
-import {prepareClientsideHandlers} from "./prepare-clientside-handlers.js"
-import {ChatAuth, ChatDatabase, ChatMessageDraft} from "../../common/types/chat-concepts.js"
+import {ChatAuth, ChatDatabase, ChatMessageDraft, ClientsideHandlers} from "../../common/types/chat-concepts.js"
 
 export function prepareServersideHandlers({
-			auth,
 			database,
 			clientside,
+			getAuth,
 		}: {
-			auth: ChatAuth
 			database: ChatDatabase
-			clientside: AsHandlers<ReturnType<typeof prepareClientsideHandlers>>
+			clientside: AsHandlers<ClientsideHandlers>
+			getAuth(): ChatAuth
 		}) {
 	return {
-		async postMessage(draft: ChatMessageDraft) {},
-		async deleteMessage(messageId: string) {},
-		async clearMessages() {},
+		async subscribeForChat(chat: string) {},
+		async unsubscribeForChat(chat: string) {},
+		async postMessage(chat: string, draft: ChatMessageDraft) {},
+		async deleteMessages(chat: string, messageIds: string[]) {},
+		async clearAllMessages(chat: string) {},
+		async muteUsers(userIds: string[]) {},
 	}
 }
 
 export const serversideShape:
 		LingoShape<ReturnType<typeof prepareServersideHandlers>> = {
+	subscribeForChat: true,
+	unsubscribeForChat: true,
 	postMessage: true,
-	deleteMessage: true,
-	clearMessages: true,
+	deleteMessages: true,
+	clearAllMessages: true,
+	muteUsers: true,
 }

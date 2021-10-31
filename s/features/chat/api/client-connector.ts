@@ -1,7 +1,6 @@
 
 import {lingoHost, lingoRemote} from "../../../toolbox/lingo/lingo.js"
 import {ChatMeta, ConnectChatClient} from "../common/types/chat-concepts.js"
-import {prepareClientsideHandlers} from "./handlers/prepare-clientside-handlers.js"
 import {prepareServersideHandlers, serversideShape} from "./handlers/prepare-serverside-handlers.js"
 
 export function prepareClientConnector({connectToServer, getAccessToken}: {
@@ -15,17 +14,12 @@ export function prepareClientConnector({connectToServer, getAccessToken}: {
 			}>
 		}): ConnectChatClient {
 
-	return async({chat, cache}) => {
-		const handleDataFromServer = lingoHost(prepareClientsideHandlers({
-			cache,
-		}))
+	return async({handlers}) => {
+		const handleDataFromServer = lingoHost(handlers)
 
 		const connection = await connectToServer({
 			handleDataFromServer,
-			meta: {
-				chat,
-				accessToken: await getAccessToken()
-			},
+			meta: {accessToken: await getAccessToken()},
 		})
 
 		return ({
