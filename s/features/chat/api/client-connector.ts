@@ -6,7 +6,6 @@ import {prepareServersideHandlers, serversideShape} from "./handlers/prepare-ser
 export function prepareClientConnector({connectToServer, getAccessToken}: {
 			getAccessToken(): Promise<string>
 			connectToServer: ({}: {
-					meta: ChatMeta,
 					handleDataFromServer: (...args: any[]) => Promise<void>
 				}) => Promise<{
 				disconnect: () => Promise<void>
@@ -19,14 +18,18 @@ export function prepareClientConnector({connectToServer, getAccessToken}: {
 
 		const connection = await connectToServer({
 			handleDataFromServer,
-			meta: {accessToken: await getAccessToken()},
 		})
 
+		const serverRemote = lingoRemote<ReturnType<typeof prepareServersideHandlers>>({
+			shape: serversideShape,
+			send: connection.sendDataToServer,
+		})
+
+		const meta = {accessToken: await getAccessToken()}
+		await serverRemote.updateUserMeta(meta)
+
 		return ({
-			...lingoRemote<ReturnType<typeof prepareServersideHandlers>>({
-				shape: serversideShape,
-				send: connection.sendDataToServer,
-			}),
+			...serverRemote,
 			async disconnect() {
 				await connection.disconnect()
 			},

@@ -2,21 +2,19 @@
 import {clientsideShape} from "./handlers/clientside-shape.js"
 import {lingoHost, lingoRemote} from "../../../toolbox/lingo/lingo.js"
 import {prepareServersideHandlers} from "./handlers/prepare-serverside-handlers.js"
-import {ChatAuth, ChatMeta, ClientsideHandlers} from "../common/types/chat-concepts.js"
+import {ChatMeta, ChatPolicy, ClientsideHandlers} from "../common/types/chat-concepts.js"
 
 export function makeChatServelet({policy}: {
-		policy: (meta: ChatMeta) => Promise<ChatAuth>
+		policy: ChatPolicy
 	}) {
 
 	let clientCount = 0
 
-	async function acceptConnection({meta, disconnect, sendDataToClient}: {
-				meta: ChatMeta
-				disconnect(): void
-				sendDataToClient: (...args: any[]) => Promise<void>
-			}) {
+	async function acceptConnection({disconnect, sendDataToClient}: {
+			disconnect(): void
+			sendDataToClient: (...args: any[]) => Promise<void>
+		}) {
 
-		let auth = await policy(meta)
 		clientCount += 1
 
 		const clientside = lingoRemote<ClientsideHandlers>({
@@ -28,7 +26,7 @@ export function makeChatServelet({policy}: {
 			handleDataFromClient: lingoHost(prepareServersideHandlers({
 				clientside,
 				database: undefined,
-				getAuth: () => auth,
+				policy,
 			})),
 			handleDisconnect() {
 				clientCount -= 1

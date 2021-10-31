@@ -9,6 +9,7 @@ import {makePersonalModel} from "../../../features/auth/aspects/users/models/per
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makeChatModel} from "../../../features/chat/models/chat-model.js"
+import {mockChatMeta} from "../../../features/chat/testing/mocks/mock-meta-and-policy.js"
 
 export async function assembleModels({
 		appId,
@@ -49,7 +50,10 @@ export async function assembleModels({
 		contentService: remote.videos.contentService,
 	})
 
-	const chatModel = makeChatModel({connectChatClient: undefined})
+	const chatModel = makeChatModel({
+		connectChatClient: undefined,
+		getChatMeta: async() => mockChatMeta({access: await getValidAccess()}),
+	})
 
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({

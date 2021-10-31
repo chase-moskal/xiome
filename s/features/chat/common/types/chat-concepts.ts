@@ -10,6 +10,8 @@ export interface ChatAuth {
 	access: AccessPayload
 }
 
+export type ChatPolicy = (meta: ChatMeta) => Promise<ChatAuth>
+
 export type ChatMessageDraft = {
 	nickname: string
 	content: string
