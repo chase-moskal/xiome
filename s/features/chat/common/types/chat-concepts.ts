@@ -15,15 +15,13 @@ export interface ChatAuth {
 export type ChatMessageDraft = {
 	nickname: string
 	content: string
-	time: number
 }
 
 export type ChatMessage = {
+	messageId: string
 	userId: string
-	nickname: string
-	content: string
-	time: number
-}
+	time: string
+} & ChatMessageDraft
 
 export interface ChatDatabase {
 }
@@ -33,11 +31,12 @@ export interface ChatClient extends ReturnType<typeof prepareServersideHandlers>
 	handleDataFromServer(...args: any): Promise<void>
 }
 
-export type ConnectChatClient = ({chat}: {
-	chat: string
-}) => Promise<ChatClient>
-
 export interface LocalChatCache {}
+
+export type ConnectChatClient = ({chat, cache}: {
+	chat: string
+	cache: LocalChatCache
+}) => Promise<ChatClient>
 
 export enum ChatState {
 	Offline,
