@@ -114,7 +114,6 @@ export const makeNotesService = ({
 		},
 
 		async markAllNotesOld({notesTables, access}) {
-			// update every old=false note to old=true
 			const {userId} = access.user
 			await notesTables.notes.update({
 				...find({

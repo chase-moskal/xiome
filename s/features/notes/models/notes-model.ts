@@ -25,7 +25,7 @@ export function makeNotesModel({notesService}: {
 		})
 	}
 
-	refresh.subscribe(loadStats)
+	// refresh.subscribe(loadStats)
 
 	async function loadNewNotes(pagination: Pagination): Promise<Notes.Any[]> {
 		return notesService.getNewNotes(pagination)
