@@ -36,7 +36,7 @@ export function prepareNoteInboxAssertions({notesModel}: {
 			return preparePageAssertions(newNotes, "new")
 		},
 		async loadOldPage(paging: Paging) {
-			const oldNotes = await notesModel.loadNewNotes(paginate(paging))
+			const oldNotes = await notesModel.loadOldNotes(paginate(paging))
 			return preparePageAssertions(oldNotes, "old")
 		},
 	}
