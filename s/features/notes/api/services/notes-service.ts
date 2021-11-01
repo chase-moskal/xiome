@@ -41,11 +41,11 @@ export const makeNotesService = ({
 		async getNotesStats({notesTables, access}): Promise<NotesStats> {
 			const {userId} = access.user
 			const newCount = await notesTables.notes.count(find({
-				userId: DamnId.fromString(userId),
+				to: DamnId.fromString(userId),
 				old: false
 			}))
 			const oldCount = await notesTables.notes.count(find({
-				userId: DamnId.fromString(userId),
+				to: DamnId.fromString(userId),
 				old: true
 			}))
 			return {newCount, oldCount}
@@ -61,7 +61,7 @@ export const makeNotesService = ({
 
 			const newNotes = await notesTables.notes.read({
 				...find({
-					userId: DamnId.fromString(userId),
+					to: DamnId.fromString(userId),
 					old: false
 				}),
 				offset,
@@ -92,7 +92,7 @@ export const makeNotesService = ({
 
 			const oldNotes = await notesTables.notes.read({
 				...find({
-					userId: DamnId.fromString(userId),
+					to: DamnId.fromString(userId),
 					old: true
 				}),
 				offset,
@@ -117,7 +117,7 @@ export const makeNotesService = ({
 			const {userId} = access.user
 			await notesTables.notes.update({
 				...find({
-					userId: DamnId.fromString(userId),
+					to: DamnId.fromString(userId),
 					old: false,
 				}),
 				write: {old:true},
