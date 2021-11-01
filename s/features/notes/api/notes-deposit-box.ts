@@ -23,7 +23,9 @@ export function makeNotesDepositBox({rando, notesTables}: {
 					...draft,
 					noteId,
 					to: DamnId.fromString(draft.to),
-					from: DamnId.fromString(draft.from),
+					from: draft.from === undefined
+						? undefined
+						: DamnId.fromString(draft.from),
 					old: false,
 					time: Date.now(),
 				},
