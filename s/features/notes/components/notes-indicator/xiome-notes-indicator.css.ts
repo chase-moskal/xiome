@@ -16,22 +16,21 @@ export default css`
 	display: none;
 }
 
-xiome-notes-indicator {
-	width: var(--xiome-notes-indicator-size);
-}
-
 .count {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	vertical-align: top;
 	position: absolute;
-	height: var(--xiome-notes-indicator-size);
-	width: var(--xiome-notes-indicator-size);
+	height: 1em;
+	width: 1em;
 	background-color: var(--xiome-notes-indicator-color);
 	border-radius: 50%;
-	display: inline-block;
 	text-align: center;
-	right: var(--xiome-notes-indicator-bleedout: 0em);
-	top: var(--xiome-notes-indicator-bleedout: 0em);
+	right: var(--xiome-notes-indicator-bleedout);
+	top: var(--xiome-notes-indicator-bleedout);
 	font-weight: bold;
 	color: white;
+	font-size: var(--xiome-notes-indicator-size);
 }
 `

@@ -11,22 +11,23 @@ import styles from "./xiome-notes-indicator.css.js"
 export class XiomeNotesIndicator extends ComponentWithShare<{
 		notesModel: ReturnType<typeof makeNotesModel>
 	}> {
-	@property({attribute: 'no-icon' })
-	noIcon: boolean = true;
+	@property({attribute: "no-icon"})
+	noIcon: boolean = false
  
 	render() {
-		
+
+		const bellSpan = html`<span class="bell">${bell}</span>`;
 		const {state} = this.share.notesModel
 		const stats = ops.value(state.statsOp) ?? {
-			newCount: 0,
+			newCount: 2,
 			oldCount: 0,
 		}
-		
+
 		return html`
-				${stats.newCount === 0 ? html`<span class="bell">${bell}</span>`
+				${stats.newCount === 0 ? html`${bellSpan}`
 				: html`
 					<span class="count">${stats.newCount}</span>
-					<span class="bell">${bell}</span>
+					${bellSpan}
 				`}
 			`
 	}
