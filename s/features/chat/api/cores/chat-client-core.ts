@@ -1,9 +1,9 @@
 
-import {lingoHost, lingoRemote} from "../../../toolbox/lingo/lingo.js"
-import {ChatMeta, ConnectChatClient} from "../common/types/chat-concepts.js"
-import {prepareServersideHandlers, serversideShape} from "./handlers/prepare-serverside-handlers.js"
+import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
+import {ChatMeta, ConnectChatClient} from "../../common/types/chat-concepts.js"
+import {prepareChatServersideLogic, chatServersideShape} from "../handlers/chat-serverside-logic.js"
 
-export function prepareClientConnector({connectToServer, getAccessToken}: {
+export function prepareChatClientCore({connectToServer, getAccessToken}: {
 			getAccessToken(): Promise<string>
 			connectToServer: ({}: {
 					handleDataFromServer: (...args: any[]) => Promise<void>
@@ -20,8 +20,8 @@ export function prepareClientConnector({connectToServer, getAccessToken}: {
 			handleDataFromServer,
 		})
 
-		const serverRemote = lingoRemote<ReturnType<typeof prepareServersideHandlers>>({
-			shape: serversideShape,
+		const serverRemote = lingoRemote<ReturnType<typeof prepareChatServersideLogic>>({
+			shape: chatServersideShape,
 			send: connection.sendDataToServer,
 		})
 

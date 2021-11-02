@@ -2,7 +2,7 @@
 import {AsHandlers, LingoShape} from "../../../../toolbox/lingo/lingo.js"
 import {ChatAuth, ChatDatabase, ChatMessageDraft, ChatMeta, ChatPolicy, ClientsideHandlers} from "../../common/types/chat-concepts.js"
 
-export function prepareServersideHandlers({
+export function prepareChatServersideLogic({
 			database,
 			clientside,
 			policy,
@@ -25,8 +25,8 @@ export function prepareServersideHandlers({
 	}
 }
 
-export const serversideShape:
-		LingoShape<ReturnType<typeof prepareServersideHandlers>> = {
+export const chatServersideShape:
+		LingoShape<ReturnType<typeof prepareChatServersideLogic>> = {
 	updateUserMeta: true,
 	subscribeForChat: true,
 	unsubscribeForChat: true,

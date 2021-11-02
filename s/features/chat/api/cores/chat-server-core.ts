@@ -1,10 +1,10 @@
 
-import {clientsideShape} from "./handlers/clientside-shape.js"
-import {lingoHost, lingoRemote} from "../../../toolbox/lingo/lingo.js"
-import {prepareServersideHandlers} from "./handlers/prepare-serverside-handlers.js"
-import {ChatMeta, ChatPolicy, ClientsideHandlers} from "../common/types/chat-concepts.js"
+import {chatClientsideShape} from "../handlers/chat-clientside-shape.js"
+import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
+import {ChatPolicy, ClientsideHandlers} from "../../common/types/chat-concepts.js"
+import {prepareChatServersideLogic} from "../handlers/chat-serverside-logic.js"
 
-export function makeChatServelet({policy}: {
+export function makeChatServerCore({policy}: {
 		policy: ChatPolicy
 	}) {
 
@@ -18,12 +18,12 @@ export function makeChatServelet({policy}: {
 		clientCount += 1
 
 		const clientside = lingoRemote<ClientsideHandlers>({
-			shape: clientsideShape,
+			shape: chatClientsideShape,
 			send: sendDataToClient,
 		})
 	
 		return {
-			handleDataFromClient: lingoHost(prepareServersideHandlers({
+			handleDataFromClient: lingoHost(prepareChatServersideLogic({
 				clientside,
 				database: undefined,
 				policy,

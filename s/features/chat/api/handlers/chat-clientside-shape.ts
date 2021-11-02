@@ -2,7 +2,7 @@
 import {LingoShape} from "../../../../toolbox/lingo/lingo.js"
 import {ClientsideHandlers} from "../../common/types/chat-concepts.js"
 
-export const clientsideShape:
+export const chatClientsideShape:
 		LingoShape<ClientsideHandlers> = {
 	chatStatusChange: true,
 	populateNewMessages: true,

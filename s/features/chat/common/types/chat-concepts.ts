@@ -1,6 +1,6 @@
 
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {prepareServersideHandlers} from "../../api/handlers/prepare-serverside-handlers.js"
+import {prepareChatServersideLogic} from "../../api/handlers/chat-serverside-logic.js"
 
 export interface ChatMeta {
 	accessToken: string
@@ -33,7 +33,7 @@ export type ClientsideHandlers = {
 	muteUsers(userIds: string[]): Promise<void>
 }
 
-export interface ChatClient extends ReturnType<typeof prepareServersideHandlers> {
+export interface ChatClient extends ReturnType<typeof prepareChatServersideLogic> {
 	disconnect(): Promise<void>
 	handleDataFromServer(...args: any): Promise<void>
 }
