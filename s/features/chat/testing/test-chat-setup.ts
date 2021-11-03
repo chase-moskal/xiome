@@ -2,9 +2,10 @@
 import {ops} from "../../../framework/ops.js"
 import {makeChatModel} from "../models/chat-model.js"
 import {getRando} from "../../../toolbox/get-rando.js"
+import {chatPrivileges} from "../common/chat-privileges.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
-import {mockChatMeta, mockChatPolicy} from "./mocks/mock-meta-and-policy.js"
 import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
+import {mockChatMeta, mockChatPolicy} from "./mocks/mock-meta-and-policy.js"
 
 export async function testChatSetup() {
 	const rando = await getRando()
@@ -14,9 +15,8 @@ export async function testChatSetup() {
 			policy: mockChatPolicy,
 		})
 
-		async function makeClient() {
-			const connectChatClient = prepareChatClientCore({
-				getAccessToken: async() => "a123",
+		async function makeClient(privileges: string[]) {
+			const {connectChatClient} = prepareChatClientCore({
 				connectToServer: async({handleDataFromServer}) => {
 					const serverConnection = await servelet.acceptConnection({
 						disconnect: () => {},
@@ -32,7 +32,7 @@ export async function testChatSetup() {
 			const access = {
 				appId: undefined,
 				origins: [],
-				permit: {privileges: []},
+				permit: {privileges},
 				scope: {core: false},
 				user: {
 					userId,
@@ -53,7 +53,14 @@ export async function testChatSetup() {
 			return {chatModel}
 		}
 
-		return {makeClient}
+		return {
+			makeClientFor: {
+				forbidden: () => makeClient([]),
+				viewer: () => makeClient([chatPrivileges["view all chats"]]),
+				participant: () => makeClient([chatPrivileges["participate in all chats"]]),
+				moderator: () => makeClient([chatPrivileges["moderate all chats"]]),
+			},
+		}
 	}
 
 	return {makeServer}

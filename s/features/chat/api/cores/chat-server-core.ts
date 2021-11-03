@@ -21,7 +21,7 @@ export function makeChatServerCore({policy}: {
 			shape: chatClientsideShape,
 			send: sendDataToClient,
 		})
-	
+
 		return {
 			handleDataFromClient: lingoHost(prepareChatServersideLogic({
 				clientside,
