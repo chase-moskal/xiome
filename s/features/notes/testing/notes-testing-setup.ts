@@ -61,28 +61,23 @@ export async function notesTestingSetup() {
 		notesTables: notesTables.namespaceForApp(appId),
 	})
 
-	// TODO simulating a broadcast event??
-	// does the test work?
-	const broadcastRefresh = subbies<ReturnType<typeof makeNotesModel>>()
-	const notesModelsSet = new Set<ReturnType<typeof makeNotesModel>>()
+	const broadcast = subbies<ReturnType<typeof makeNotesModel>>()
+
+	function orchestrateBroadcast(notesModel: ReturnType<typeof makeNotesModel>) {
+		notesModel.propagateChangeToOtherTabs.subscribe(() => {
+			broadcast.publish(notesModel)
+		})
+		broadcast.subscribe(originModel => {
+			if (notesModel !== originModel)
+				notesModel.overwriteStatsOp(originModel.state.statsOp)
+		})
+	}
 
 	async function browserTab() {
 		const notesService = mockRemote(rawNotesService).withMeta({meta, request})
 		const notesModel = makeNotesModel({notesService})
-		notesModelsSet.add(notesModel)
 		await notesModel.updateAccessOp(ops.ready(access))
-
-		// TODO responding to other tabs refreshes, without circularity??
-		// does the test work?
-		notesModel.refresh.subscribe(() => broadcastRefresh.publish(notesModel))
-		broadcastRefresh.subscribe(originModel => {
-			const models = Array.from(notesModelsSet)
-				.filter(model => model !== notesModel)
-				.filter(model => model !== originModel)
-			for (const model of models)
-				model.refresh.publish(undefined)
-		})
-
+		orchestrateBroadcast(notesModel)
 		return {notesModel}
 	}
 

@@ -87,60 +87,60 @@ export default <Suite>{
 		}
 	},
 
-	// async "users can manage notes in bulk"() {
-	// 	const {userId, backend, frontend} = await notesTestingSetup()
-	// 	const {notesModel} = frontend
-	// 	const {notesDepositBox} = backend
-	// 	const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
-	// 	const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
+	async "users can manage notes in bulk"() {
+		const {userId, backend, frontend} = await notesTestingSetup()
+		const {notesModel} = frontend
+		const {notesDepositBox} = backend
+		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
+		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
 
-	// 	const drafts = fakeManyNoteDrafts(userId, 100)
-	// 	await notesDepositBox.sendNotes(drafts)
+		const drafts = fakeManyNoteDrafts(userId, 100)
+		await notesDepositBox.sendNotes(drafts)
 
-	// 	{
-	// 		await notesModel.loadStats()
-	// 		assertNoteCounts({newCount: 100, oldCount: 0})
-	// 		const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
-	// 		pageTesting.assertNotesLength(10)
-	// 		const noteIds = pageTesting.notes.map(n => n.noteId)
-	// 		await notesModel.markNotesNewOrOld(true, noteIds)
-	// 	}
-	// 	{
-	// 		await notesModel.loadStats()
-	// 		assertNoteCounts({newCount: 90, oldCount: 10})
-	// 		const newTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
-	// 		const oldTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
-	// 		newTesting.assertNotesLength(10)
-	// 		oldTesting.assertNotesLength(10)
-	// 	}
-	// },
+		{
+			await notesModel.loadStats()
+			assertNoteCounts({newCount: 100, oldCount: 0})
+			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+			pageTesting.assertNotesLength(10)
+			const noteIds = pageTesting.notes.map(n => n.noteId)
+			await notesModel.markNotesNewOrOld(true, noteIds)
+		}
+		{
+			await notesModel.loadStats()
+			assertNoteCounts({newCount: 90, oldCount: 10})
+			const newTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+			const oldTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
+			newTesting.assertNotesLength(10)
+			oldTesting.assertNotesLength(10)
+		}
+	},
 
-	// async "refreshes between browser tabs"() {
-	// 	const {userId, backend, frontend, browserTab}
-	// 		= await notesTestingSetup()
-	// 	const {notesDepositBox} = backend
-	// 	const tab1 = frontend
-	// 	const tab2 = await browserTab()
+	async "refreshes between browser tabs"() {
+		const {userId, backend, frontend, browserTab}
+			= await notesTestingSetup()
+		const {notesDepositBox} = backend
+		const tab1 = frontend
+		const tab2 = await browserTab()
 
-	// 	const tab1asserts = prepareNoteStatsAssertions({
-	// 		notesModel: tab1.notesModel
-	// 	})
+		const tab1asserts = prepareNoteStatsAssertions({
+			notesModel: tab1.notesModel
+		})
 
-	// 	const tab2asserts = prepareNoteStatsAssertions({
-	// 		notesModel: tab2.notesModel
-	// 	})
+		const tab2asserts = prepareNoteStatsAssertions({
+			notesModel: tab2.notesModel
+		})
 
-	// 	const draft = fakeNoteDraft(userId)
-	// 	const {noteId} = await notesDepositBox.sendNote(draft)
+		const draft = fakeNoteDraft(userId)
+		const {noteId} = await notesDepositBox.sendNote(draft)
 
-	// 	await tab1.notesModel.loadStats()
-	// 	await tab2.notesModel.loadStats()
+		await tab1.notesModel.loadStats()
+		await tab2.notesModel.loadStats()
 
-	// 	tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
-	// 	tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
+		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
+		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 
-	// 	await tab1.notesModel.markNotesNewOrOld(true, [noteId])
-	// 	tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
-	// 	tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
-	// },
+		await tab1.notesModel.markNotesNewOrOld(true, [noteId])
+		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
+		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
+	},
 }
