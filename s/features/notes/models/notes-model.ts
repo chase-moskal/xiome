@@ -65,5 +65,24 @@ export function makeNotesModel({notesService}: {
 		overwriteStatsOp(op: Op<NotesStats>) {
 			state.writable.statsOp = op
 		},
+
+		// each notes component will have its own local cache
+		// of which notes have been loaded to display
+		// (so that different notes components can display different pages)
+		createNotesCache() {
+			const cacheState = snapstate({
+				old: false,
+				pageNumber: 0,
+				pageSize: 10,
+				newPageOp: ops.none() as Op<Notes.Any[]>,
+				oldPageOp: ops.none() as Op<Notes.Any[]>,
+			})
+			return {
+				subscribe: cacheState.subscribe,
+				cacheState: cacheState.readable,
+				loadNewPage() {},
+				loadOldPage() {},
+			}
+		},
 	}
 }
