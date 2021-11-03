@@ -4,11 +4,11 @@ export default css`
 
 :host {
 	display: inline-block;
-	--xiome-notes-indicator-size: 1em;
+	--xiome-notes-indicator-count-size: 1em;
 	--xiome-notes-indicator-color: red;
 	--xiome-notes-indicator-bleedout: 0em;
-	width: 3em;
-	height: 3em;
+	font-size: var(--xiome-notes-indicator-size, 1em);
+	width: var(--xiome-notes-indicator-icon-size, 3em);
 	position: relative;
 }
 
@@ -31,6 +31,6 @@ export default css`
 	top: var(--xiome-notes-indicator-bleedout);
 	font-weight: bold;
 	color: white;
-	font-size: var(--xiome-notes-indicator-size);
+	font-size: var(--xiome-notes-indicator-count-size);
 }
 `
