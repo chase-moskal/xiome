@@ -51,20 +51,18 @@ export function makeNotesModel({notesService}: {
 			refresh.publish(undefined)
 		},
 
-		// load data from the backend
 		loadStats,
-		loadNewNotes,
-		loadOldNotes,
-
-		// actions that change data
-		markNotesNewOrOld,
-
-		// exposing events
 		refresh,
 		propagateChangeToOtherTabs,
 		overwriteStatsOp(op: Op<NotesStats>) {
 			state.writable.statsOp = op
 		},
+		
+		// TODO these should note be exposed,
+		// we must refactor the tests to use caches
+		loadNewNotes,
+		loadOldNotes,
+		markNotesNewOrOld,
 
 		// each notes component will have its own local cache
 		// of which notes have been loaded to display
@@ -74,14 +72,15 @@ export function makeNotesModel({notesService}: {
 				old: false,
 				pageNumber: 0,
 				pageSize: 10,
-				newPageOp: ops.none() as Op<Notes.Any[]>,
-				oldPageOp: ops.none() as Op<Notes.Any[]>,
+				newNotesOp: ops.none() as Op<Notes.Any[]>,
+				oldNotesOp: ops.none() as Op<Notes.Any[]>,
 			})
 			return {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
-				loadNewPage() {},
-				loadOldPage() {},
+				async loadNewNotes() {},
+				async loadOldNotes() {},
+				async markNotesNewOrOld() {},
 			}
 		},
 	}
