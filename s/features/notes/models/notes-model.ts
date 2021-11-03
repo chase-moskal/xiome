@@ -17,6 +17,7 @@ export function makeNotesModel({notesService}: {
 	})
 
 	const refresh = subbies<undefined>()
+	const propagateChangeToOtherTabs = subbies<undefined>()
 
 	async function loadStats() {
 		return ops.operation({
@@ -24,8 +25,6 @@ export function makeNotesModel({notesService}: {
 			setOp: op => state.writable.statsOp = op,
 		})
 	}
-
-	// refresh.subscribe(loadStats)
 
 	async function loadNewNotes(pagination: Pagination): Promise<Notes.Any[]> {
 		return notesService.getNewNotes(pagination)
@@ -37,7 +36,9 @@ export function makeNotesModel({notesService}: {
 
 	async function markNotesNewOrOld(old: boolean, noteIds: string[]): Promise<void> {
 		await notesService.markNotesNewOrOld({old, noteIds})
+		await loadStats()
 		refresh.publish(undefined)
+		propagateChangeToOtherTabs.publish(undefined)
 	}
 
 	return {
@@ -49,7 +50,7 @@ export function makeNotesModel({notesService}: {
 				await loadStats()
 			refresh.publish(undefined)
 		},
-		
+
 		// load data from the backend
 		loadStats,
 		loadNewNotes,
@@ -60,5 +61,9 @@ export function makeNotesModel({notesService}: {
 
 		// exposing events
 		refresh,
+		propagateChangeToOtherTabs,
+		overwriteStatsOp(op: Op<NotesStats>) {
+			state.writable.statsOp = op
+		},
 	}
 }
