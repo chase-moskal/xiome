@@ -57,7 +57,7 @@ export function makeNotesModel({notesService}: {
 		overwriteStatsOp(op: Op<NotesStats>) {
 			state.writable.statsOp = op
 		},
-		
+
 		// TODO these should note be exposed,
 		// we must refactor the tests to use caches
 		loadNewNotes,
@@ -78,6 +78,7 @@ export function makeNotesModel({notesService}: {
 			return {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
+
 				async loadNewNotes() {},
 				async loadOldNotes() {},
 				async markNotesNewOrOld() {},
