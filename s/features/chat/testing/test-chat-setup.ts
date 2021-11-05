@@ -16,7 +16,7 @@ export async function testChatSetup() {
 		})
 
 		async function makeClient(privileges: string[]) {
-			const {connectChatClient} = prepareChatClientCore({
+			const {connect} = prepareChatClientCore({
 				connectToServer: async({handleDataFromServer}) => {
 					const serverConnection = await servelet.acceptConnection({
 						disconnect: () => {},
@@ -46,7 +46,7 @@ export async function testChatSetup() {
 				},
 			}
 			const chatModel = makeChatModel({
-				connectChatClient,
+				connect,
 				getChatMeta: async() => mockChatMeta({access}),
 			})
 			await chatModel.updateAccessOp(ops.ready(access))

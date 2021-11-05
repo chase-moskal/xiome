@@ -51,7 +51,7 @@ export async function assembleModels({
 	})
 
 	const chatModel = makeChatModel({
-		connectChatClient: undefined,
+		connect: undefined,
 		getChatMeta: async() => mockChatMeta({access: await getValidAccess()}),
 	})
 

@@ -1,7 +1,8 @@
 
-import {ConnectChatClient} from "../../common/types/chat-concepts.js"
+import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic, chatServersideShape} from "../handlers/chat-serverside-logic.js"
+import {waiter} from "./machinery/waiter.js"
 
 export function prepareChatClientCore({connectToServer}: {
 			connectToServer: ({}: {
@@ -11,11 +12,11 @@ export function prepareChatClientCore({connectToServer}: {
 				sendDataToServer: (...args: any[]) => Promise<void>
 			}>
 		}): {
-			connectChatClient: ConnectChatClient
+			connect: ChatConnect
 		} {
 
 	return {
-		async connectChatClient({handlers}) {
+		async connect({handlers}) {
 			const handleDataFromServer = lingoHost(handlers)
 
 			const connection = await connectToServer({
@@ -27,9 +28,15 @@ export function prepareChatClientCore({connectToServer}: {
 				send: connection.sendDataToServer,
 			})
 
+			const {resolveWaiters, waitForMessageFromServer} = waiter()
+
 			return ({
-				...serverRemote,
-				handleDataFromServer,
+				serverRemote,
+				waitForMessageFromServer,
+				handleDataFromServer: async(key, ...args) => {
+					resolveWaiters(key, ...args)
+					return handleDataFromServer(key, ...args)
+				},
 				async disconnect() {
 					await connection.disconnect()
 				},

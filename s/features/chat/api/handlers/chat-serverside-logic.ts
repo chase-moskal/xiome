@@ -1,6 +1,6 @@
 
 import {AsHandlers, LingoShape} from "../../../../toolbox/lingo/lingo.js"
-import {ChatAuth, ChatDatabase, ChatMessageDraft, ChatMeta, ChatPolicy, ClientsideHandlers} from "../../common/types/chat-concepts.js"
+import {ChatAuth, ChatDatabase, ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ChatClientHandlers} from "../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
 			database,
@@ -8,7 +8,7 @@ export function prepareChatServersideLogic({
 			policy,
 		}: {
 			database: ChatDatabase
-			clientside: AsHandlers<ClientsideHandlers>
+			clientside: AsHandlers<ChatClientHandlers>
 			policy: ChatPolicy
 		}) {
 	let auth: ChatAuth
@@ -16,22 +16,26 @@ export function prepareChatServersideLogic({
 		async updateUserMeta(meta: ChatMeta) {
 			auth = await policy(meta)
 		},
-		async subscribeForChat(chat: string) {},
-		async unsubscribeForChat(chat: string) {},
-		async postMessage(chat: string, draft: ChatMessageDraft) {},
-		async deleteMessages(chat: string, messageIds: string[]) {},
-		async clearAllMessages(chat: string) {},
-		async muteUsers(userIds: string[]) {},
+		async roomSubscribe(room: string) {
+			clientside.roomStatus(room, ChatStatus.Offline)
+		},
+		async roomUnsubscribe(room: string) {},
+		async post(room: string, draft: ChatDraft) {},
+		async remove(room: string, messageIds: string[]) {},
+		async clear(room: string) {},
+		async mute(userIds: string[]) {},
+		async setRoomStatus(room: string, status: ChatStatus) {},
 	}
 }
 
 export const chatServersideShape:
 		LingoShape<ReturnType<typeof prepareChatServersideLogic>> = {
 	updateUserMeta: true,
-	subscribeForChat: true,
-	unsubscribeForChat: true,
-	postMessage: true,
-	deleteMessages: true,
-	clearAllMessages: true,
-	muteUsers: true,
+	roomSubscribe: true,
+	roomUnsubscribe: true,
+	post: true,
+	remove: true,
+	clear: true,
+	mute: true,
+	setRoomStatus: true,
 }

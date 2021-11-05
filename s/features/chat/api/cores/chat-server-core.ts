@@ -1,7 +1,7 @@
 
 import {chatClientsideShape} from "../handlers/chat-clientside-shape.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
-import {ChatPolicy, ClientsideHandlers} from "../../common/types/chat-concepts.js"
+import {ChatPolicy, ChatClientHandlers} from "../../common/types/chat-concepts.js"
 import {prepareChatServersideLogic} from "../handlers/chat-serverside-logic.js"
 
 export function makeChatServerCore({policy}: {
@@ -17,7 +17,7 @@ export function makeChatServerCore({policy}: {
 
 		clientCount += 1
 
-		const clientside = lingoRemote<ClientsideHandlers>({
+		const clientside = lingoRemote<ChatClientHandlers>({
 			shape: chatClientsideShape,
 			send: sendDataToClient,
 		})
