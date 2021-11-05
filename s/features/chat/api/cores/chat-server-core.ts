@@ -1,6 +1,6 @@
 
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
-import {prepareChatServersideLogic} from "../handlers/chat-serverside-logic.js"
+import {prepareChatServersideLogic} from "../logic/chat-serverside-logic.js"
 import {ChatPolicy, ChatClientHandlers} from "../../common/types/chat-concepts.js"
 
 export function makeChatServerCore({policy}: {

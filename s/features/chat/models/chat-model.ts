@@ -1,47 +1,18 @@
 
 import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
+import {makeChatState} from "./state/chat-state.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
-import {ChatConnection, ChatPost, ChatMeta, ChatStatus, ChatConnect, ChatClientHandlers} from "../common/types/chat-concepts.js"
-
-const roomPostCacheLimit = 100
+import {prepareChatClientsideLogic} from "../api/logic/chat-clientside-logic.js"
+import {ChatMeta, ChatStatus, ChatConnect} from "../common/types/chat-concepts.js"
 
 export function makeChatModel({connect, getChatMeta}: {
 		connect: ChatConnect
 		getChatMeta: () => Promise<ChatMeta>
 	}) {
 
-	const state = snapstate({
-		accessOp: ops.none() as Op<AccessPayload>,
-		connectionOp: ops.none() as Op<ChatConnection>,
-		cache: {
-			mutedUserIds: [] as string[],
-			rooms: {} as {[key: string]: {
-				status: ChatStatus
-				messages: ChatPost[]
-			}},
-		},
-	})
-
-	const handlers: ChatClientHandlers = {
-		async roomStatus(room, status) {
-			state.writable.cache = {
-				...state.writable.cache,
-				rooms: {
-					...state.writable.cache.rooms,
-					[room]: {
-						...state.writable.cache.rooms[room],
-						status,
-					},
-				},
-			}
-		},
-		async posted(room, messages) {},
-		async deleted(room, messageIds) {},
-		async cleared(room) {},
-		async muted(userIds) {},
-	}
+	const state = makeChatState()
+	const handlers = prepareChatClientsideLogic({state})
 
 	const reconnect = onesie(async function() {
 		if (ops.isReady(state.readable.connectionOp)) {

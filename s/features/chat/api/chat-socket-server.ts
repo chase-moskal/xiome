@@ -1,7 +1,7 @@
 
 import {WebSocketServer} from "ws"
-import {mockChatPolicy} from "../testing/mocks/mock-meta-and-policy.js"
 import {makeChatServerCore} from "./cores/chat-server-core.js"
+import {mockChatPolicy} from "../testing/mocks/mock-meta-and-policy.js"
 
 export function makeChatSocketServer() {
 	const servelet = makeChatServerCore({policy: mockChatPolicy})

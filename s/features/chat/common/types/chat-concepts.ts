@@ -1,7 +1,7 @@
 
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {DataParams, Sniffer} from "../../api/cores/machinery/waiter.js"
-import {prepareChatServersideLogic} from "../../api/handlers/chat-serverside-logic.js"
+import {prepareChatServersideLogic} from "../../api/logic/chat-serverside-logic.js"
 
 export interface ChatMeta {
 	accessToken: string
@@ -51,4 +51,12 @@ export type ChatConnect = ({handlers}: {
 export enum ChatStatus {
 	Offline,
 	Online,
+}
+
+export interface ChatCache {
+	mutedUserIds: string[]
+	rooms: {[key: string]: {
+		status: ChatStatus
+		messages: ChatPost[]
+	}}
 }
