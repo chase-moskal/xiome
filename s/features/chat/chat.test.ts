@@ -21,7 +21,6 @@ export default<Suite>{
 		const room = await chatModel.room("default")
 		assert(room.status === ChatStatus.Offline, "room should start offline")
 		room.setRoomStatus(ChatStatus.Online)
-		await nap()
 		assert(room.status === ChatStatus.Online, "room should be online")
 	},
 

@@ -41,6 +41,7 @@ export function makeChatModel({connect, getChatMeta}: {
 			state.writable.accessOp = op
 			await reconnect()
 		},
+
 		async room(label: string) {
 			const connection = await assertConnection()
 			await connection.serverRemote.roomSubscribe(label)
@@ -54,11 +55,12 @@ export function makeChatModel({connect, getChatMeta}: {
 				},
 			}
 		},
-		get waitForMessageFromServer() {
-			const connection = ops.value(state.readable.connectionOp)
-			if (!connection)
-				throw new Error("no connection, cannot wait for message from server")
-			return connection.waitForMessageFromServer
-		}
+
+		// get waitForMessageFromServer() {
+		// 	const connection = ops.value(state.readable.connectionOp)
+		// 	if (!connection)
+		// 		throw new Error("no connection, cannot wait for message from server")
+		// 	return connection.waitForMessageFromServer
+		// }
 	}
 }

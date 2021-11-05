@@ -34,9 +34,9 @@ export interface ChatConnection {
 	serverRemote: ReturnType<typeof prepareChatServersideLogic>
 	disconnect(): Promise<void>
 	handleDataFromServer(...args: any): Promise<void>
-	waitForMessageFromServer(
-		sniffer: Sniffer
-	): Promise<DataParams>
+	// waitForMessageFromServer(
+	// 	sniffer: Sniffer
+	// ): Promise<DataParams>
 }
 
 export type ChatConnect = ({handlers}: {
@@ -46,12 +46,4 @@ export type ChatConnect = ({handlers}: {
 export enum ChatStatus {
 	Offline,
 	Online,
-}
-
-export interface ChatCache {
-	mutedUserIds: string[]
-	rooms: {[key: string]: {
-		status: ChatStatus
-		messages: ChatPost[]
-	}}
 }
