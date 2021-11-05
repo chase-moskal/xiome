@@ -6,6 +6,7 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeNotesService} from "../api/services/notes-service.js"
 import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {Notes, NotesStats, Pagination} from "../types/notes-concepts.js"
+import {boolean} from "../../../toolbox/darkvalley.js"
 
 export function makeNotesModel({notesService}: {
 		notesService: Service<typeof makeNotesService>
@@ -70,19 +71,42 @@ export function makeNotesModel({notesService}: {
 		createNotesCache() {
 			const cacheState = snapstate({
 				old: false,
-				pageNumber: 0,
+				pageNumber: 1,
 				pageSize: 10,
-				newNotesOp: ops.none() as Op<Notes.Any[]>,
-				oldNotesOp: ops.none() as Op<Notes.Any[]>,
+				NotesOp: ops.none() as Op<Notes.Any[]>,
 			})
 			return {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
 
-				async loadNewNotes() {},
-				async loadOldNotes() {},
-				async markNotesNewOrOld() {},
+				async nextPage() {
+					cacheState.readable.old 
+						? cacheState.writable.NotesOp
+						: cacheState.writable.NotesOp
+				},
+				async previousPage() {
+					cacheState.readable.old ? loadOldNotes : loadNewNotes
+				},
+				async markNotesNewOrOld() {
+					cacheState.readable.old ? loadOldNotes : loadNewNotes
+				},
+
+				async totalNoOfPages() {
+					//get total number of notes from statsOp and divide by pageSize(fixed?)
+				}
 			}
 		},
 	}
 }
+
+
+
+// notes should be rendered even before the next and previous buttons are clicked...
+// 	- we should populate the notesOp array upon creation of a cache?
+// 		(maybe with new notes -the notes components should be on new by default)
+
+// so we probably still need new loadNewNotes and loadOldNotes functions in the cache, OR 
+// could we call those functions(`loadNewNotes`,`loadOldNotes`,`markNotesNewOrOld`) 
+// in the submodel and pass in arguments from what is in the cache's state?
+
+// totalNo of pages = totalnumber of notes/page size

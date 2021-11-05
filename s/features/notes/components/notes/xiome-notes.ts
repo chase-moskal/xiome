@@ -20,16 +20,70 @@ export class XiomeNotes extends ComponentWithShare<{
 		return () => unsubs.forEach(unsub => unsub())
 	}
 
-	#renderNotes(notes: Notes.Any[]) {
+	#renderNewNotes(notes: Notes.Any[]) {
+		const{previousPage, nextPage, markNotesNewOrOld} = this.#cache
 		return html`
-			<ol>
-				${notes.map(note => html`
-					<li>
-						<p>noteId: ${note.noteId}</p>
-						<p>noteTitle: ${note.title}</p>
-					</li>
-				`)}
-			</ol>
+			<div>
+				<xio-button
+					@press=>
+						X
+				</xio-button>
+				<ol>
+					${notes.map(note => html`
+						<li>
+							<p>noteId: ${note.noteId}</p>
+							<p>noteTitle: ${note.title}</p>
+						</li>
+					`)}
+				</ol>
+				<div>
+					<xio-button
+						@press=${previousPage}>
+							p
+					</xio-button>
+					<p>1/10</p>
+					<xio-button
+						@press=${nextPage}>
+							n
+					</xio-button>
+				</div>
+				<xio-button
+						@press=${markNotesNewOrOld}>
+							Mark all Old
+				</xio-button>
+			</div>
+		`
+	}
+
+
+	#renderOldNotes(notes: Notes.Any[]) {
+		const{previousPage, nextPage} = this.#cache
+		return html`
+			<div>
+				<xio-button
+					@press=>
+						X
+				</xio-button>
+				<ol>
+					${notes.map(note => html`
+						<li>
+							<p>noteId: ${note.noteId}</p>
+							<p>noteTitle: ${note.title}</p>
+						</li>
+					`)}
+				</ol>
+				<div>
+					<xio-button
+						@press=${previousPage}>
+							p
+					</xio-button>
+					<p>1/10</p>
+					<xio-button
+						@press=${nextPage}>
+							n
+					</xio-button>
+				</div>
+			</div>
 		`
 	}
 
@@ -37,10 +91,14 @@ export class XiomeNotes extends ComponentWithShare<{
 		const {cacheState} = this.#cache
 		return html`
 			<h3>xiome-notes</h3>
-			<p>new notes:</p>
-			${renderOp(cacheState.newNotesOp, notes => this.#renderNotes(notes))}
-			<p>old notes:</p>
-			${renderOp(cacheState.oldNotesOp, notes => this.#renderNotes(notes))}
+			<xio-button
+					@press=${renderOp(cacheState.NotesOp, notes => this.#renderNewNotes(notes))}>
+						NEW
+			</xio-button>
+			<xio-button
+					@press=${renderOp(cacheState.NotesOp, notes => this.#renderOldNotes(notes))}>
+						OLD
+			</xio-button>
 		`
 	}
 }
