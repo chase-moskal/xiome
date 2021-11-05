@@ -23,7 +23,7 @@ export async function testChatSetup() {
 						sendDataToClient: handleDataFromServer,
 					})
 					return {
-						sendDataToServer: handleDataFromServer,
+						sendDataToServer: serverConnection.handleDataFromClient,
 						disconnect: async() => serverConnection.handleDisconnect(),
 					}
 				},

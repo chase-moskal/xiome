@@ -1,6 +1,6 @@
 
-import {Op, ops} from "../../../framework/ops.js"
 import {onesie} from "../../../toolbox/onesie.js"
+import {Op, ops} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {ChatConnection, ChatPost, ChatMeta, ChatStatus, ChatConnect, ChatClientHandlers} from "../common/types/chat-concepts.js"
@@ -58,8 +58,9 @@ export function makeChatModel({connect, getChatMeta}: {
 	})
 
 	async function assertConnection() {
-		if (!ops.isReady(state.readable.connectionOp))
-			return reconnect()
+		return ops.isReady(state.readable.connectionOp)
+			? ops.value(state.readable.connectionOp)
+			: reconnect()
 	}
 
 	return {
