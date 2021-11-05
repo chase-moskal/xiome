@@ -1,40 +1,48 @@
 
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
+import {makeChatServerGlobalist} from "./globalist/chat-server-globalist.js"
+import {ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 import {prepareChatServersideLogic} from "../logic/chat-serverside-logic.js"
-import {ChatPolicy, ChatClientHandlers} from "../../common/types/chat-concepts.js"
+import {prepareChatClientsideLogic} from "../logic/chat-clientside-logic.js"
 
 export function makeChatServerCore({policy}: {
 		policy: ChatPolicy
 	}) {
 
-	let clientCount = 0
+	const clientRecords = new Set<ClientRecord>()
+	const globalist = makeChatServerGlobalist(clientRecords)
 
 	async function acceptConnection({disconnect, sendDataToClient}: {
 			disconnect(): void
 			sendDataToClient: (...args: any[]) => Promise<void>
 		}) {
 
-		clientCount += 1
+		const clientRecord: ClientRecord = {
+			auth: undefined,
+			clientRemote: lingoRemote<
+						ReturnType<typeof prepareChatClientsideLogic>
+					>({
+				send: sendDataToClient
+			}),
+		}
 
-		const clientside = lingoRemote<ChatClientHandlers>({
-			send: sendDataToClient,
-		})
+		clientRecords.add(clientRecord)
 
 		return {
 			handleDataFromClient: lingoHost(prepareChatServersideLogic({
-				clientside,
-				database: undefined,
+				globalist,
+				clientRecord,
 				policy,
 			})),
 			handleDisconnect() {
-				clientCount -= 1
 				disconnect()
+				clientRecords.delete(clientRecord)
 			},
 		}
 	}
 
 	return {
 		acceptConnection,
-		getClientCount: () => clientCount,
+		get clientCount() { return clientRecords.size },
 	}
 }

@@ -1,29 +1,34 @@
 
-import {AsHandlers} from "../../../../toolbox/lingo/lingo.js"
-import {ChatAuth, ChatDatabase, ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ChatClientHandlers} from "../../common/types/chat-concepts.js"
+import {makeChatServerGlobalist} from "../cores/globalist/chat-server-globalist.js"
+import {ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
-			database,
-			clientside,
+			clientRecord,
+			globalist,
 			policy,
 		}: {
-			database: ChatDatabase
-			clientside: AsHandlers<ChatClientHandlers>
+			clientRecord: ClientRecord
+			globalist: ReturnType<typeof makeChatServerGlobalist>
 			policy: ChatPolicy
 		}) {
-	let auth: ChatAuth
+
+	const {clientRemote} = clientRecord
+
 	return {
 		async updateUserMeta(meta: ChatMeta) {
-			auth = await policy(meta)
+			clientRecord.auth = await policy(meta)
 		},
 		async roomSubscribe(room: string) {
-			clientside.roomStatus(room, ChatStatus.Offline)
+			clientRemote.roomStatus(room, ChatStatus.Offline)
 		},
 		async roomUnsubscribe(room: string) {},
 		async post(room: string, draft: ChatDraft) {},
 		async remove(room: string, messageIds: string[]) {},
 		async clear(room: string) {},
 		async mute(userIds: string[]) {},
-		async setRoomStatus(room: string, status: ChatStatus) {},
+		async setRoomStatus(room: string, status: ChatStatus) {
+			await globalist.broadcast(record =>
+				record.clientRemote.roomStatus(room, status))
+		},
 	}
 }

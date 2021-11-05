@@ -1,6 +1,7 @@
 
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {DataParams, Sniffer} from "../../api/cores/machinery/waiter.js"
+import {prepareChatClientsideLogic} from "../../api/logic/chat-clientside-logic.js"
 import {prepareChatServersideLogic} from "../../api/logic/chat-serverside-logic.js"
 
 export interface ChatMeta {
@@ -24,15 +25,9 @@ export type ChatPost = {
 	time: string
 } & ChatDraft
 
-export interface ChatDatabase {
-}
-
-export type ChatClientHandlers = {
-	roomStatus(room: string, status: ChatStatus): Promise<void>
-	posted(room: string, messages: ChatPost[]): Promise<void>
-	deleted(room: string, messageIds: string[]): Promise<void>
-	cleared(room: string): Promise<void>
-	muted(userIds: string[]): Promise<void>
+export interface ClientRecord {
+	auth: undefined | ChatAuth
+	clientRemote: ReturnType<typeof prepareChatClientsideLogic>
 }
 
 export interface ChatConnection {
@@ -45,7 +40,7 @@ export interface ChatConnection {
 }
 
 export type ChatConnect = ({handlers}: {
-	handlers: ChatClientHandlers
+	handlers: ReturnType<typeof prepareChatClientsideLogic>
 }) => Promise<ChatConnection>
 
 export enum ChatStatus {
