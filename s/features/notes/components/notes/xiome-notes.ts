@@ -12,6 +12,10 @@ export class XiomeNotes extends ComponentWithShare<{
 
 	#cache = this.share.notesModel.createNotesCache()
 
+	async init() {
+		await this.#cache.refresh()
+	}
+
 	subscribe() {
 		const unsubs = [
 			super.subscribe(),
@@ -20,85 +24,90 @@ export class XiomeNotes extends ComponentWithShare<{
 		return () => unsubs.forEach(unsub => unsub())
 	}
 
-	#renderNewNotes(notes: Notes.Any[]) {
-		const{previousPage, nextPage, markNotesNewOrOld} = this.#cache
+	#renderTabs() {
+		const {switchTabNew, switchTabOld} = this.#cache
 		return html`
-			<div>
-				<xio-button
-					@press=>
-						X
+			<div class=tabs>
+				<xio-button @press=${switchTabNew}>
+					new
 				</xio-button>
-				<ol>
-					${notes.map(note => html`
-						<li>
-							<p>noteId: ${note.noteId}</p>
-							<p>noteTitle: ${note.title}</p>
-						</li>
-					`)}
-				</ol>
-				<div>
-					<xio-button
-						@press=${previousPage}>
-							p
-					</xio-button>
-					<p>1/10</p>
-					<xio-button
-						@press=${nextPage}>
-							n
-					</xio-button>
-				</div>
-				<xio-button
-						@press=${markNotesNewOrOld}>
-							Mark all Old
+				<xio-button @press=${switchTabOld}>
+					old
 				</xio-button>
 			</div>
 		`
 	}
 
+	#renderNotes() {
+		const {old} = this.#cache.cacheState
+		const {markSpecificNoteNew} = this.#cache
+		const {markSpecificNoteOld} = this.#cache
+		return renderOp(this.#cache.cacheState.notesOp, notes => html`
+			<ol>
+				${notes.map(note => html`
+					<li>
+						<p>noteId: ${note.noteId}</p>
+						<p>noteTitle: ${note.title}</p>
+						${old ? html`
+							<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
+								+
+							</xio-button>
+						` : html`
+							<xio-button @press=${() => markSpecificNoteOld(note.noteId)}>
+								x
+							</xio-button>
+						`}
+					</li>
+				`)}
+			</ol>
+		`)
+	}
 
-	#renderOldNotes(notes: Notes.Any[]) {
-		const{previousPage, nextPage} = this.#cache
+	#renderPagination() {
+		const {statsOp} = this.share.notesModel.state
+		const {old, pageNumber, pageSize} = this.#cache.cacheState
+		const {nextPage, previousPage} = this.#cache
+		const ophtml = renderOp(statsOp, stats => {
+			const totalNotesOnPage = old
+				? stats.oldCount
+				: stats.newCount
+			const totalNumberOfPages = Math.ceil(totalNotesOnPage / pageSize)
+			return html`
+				<xio-button @press=${previousPage}>previous</xio-button>
+				<span>${pageNumber} / ${totalNumberOfPages}</span>
+				<xio-button @press=${nextPage}>next</xio-button>
+			`
+		})
 		return html`
-			<div>
-				<xio-button
-					@press=>
-						X
-				</xio-button>
-				<ol>
-					${notes.map(note => html`
-						<li>
-							<p>noteId: ${note.noteId}</p>
-							<p>noteTitle: ${note.title}</p>
-						</li>
-					`)}
-				</ol>
-				<div>
-					<xio-button
-						@press=${previousPage}>
-							p
-					</xio-button>
-					<p>1/10</p>
-					<xio-button
-						@press=${nextPage}>
-							n
-					</xio-button>
-				</div>
+			<div class=pagination>
+				${ophtml}
+			</div>
+		`
+	}
+
+	#renderButtonbar() {
+		const {old} = this.#cache.cacheState
+		const {markAllNotesOld} = this.#cache
+		return html`
+			<div class=buttonbar>
+				${old
+					? null
+					: html`
+						<xio-button @press=${markAllNotesOld}>
+							mark all old
+						</xio-button>
+					`}
 			</div>
 		`
 	}
 
 	render() {
-		const {cacheState} = this.#cache
 		return html`
 			<h3>xiome-notes</h3>
-			<xio-button
-					@press=${renderOp(cacheState.NotesOp, notes => this.#renderNewNotes(notes))}>
-						NEW
-			</xio-button>
-			<xio-button
-					@press=${renderOp(cacheState.NotesOp, notes => this.#renderOldNotes(notes))}>
-						OLD
-			</xio-button>
+			${this.#renderTabs()}
+			${this.#renderNotes()}
+			${this.#renderPagination()}
+			${this.#renderButtonbar()}
 		`
 	}
 }

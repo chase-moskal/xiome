@@ -73,23 +73,59 @@ export function makeNotesModel({notesService}: {
 				old: false,
 				pageNumber: 1,
 				pageSize: 10,
-				NotesOp: ops.none() as Op<Notes.Any[]>,
+				notesOp: ops.none() as Op<Notes.Any[]>,
 			})
+
+			function resetPagination() {
+				cacheState.writable.pageNumber = 1
+				cacheState.writable.pageSize = 10
+			}
+
+			async function fetchAppropriateNotes() {
+				const {old, pageNumber, pageSize} = cacheState.readable
+
+				const pagination: Pagination = {
+					offset: ((pageNumber - 1) * pageSize),
+					limit: pageSize,
+				}
+
+				await ops.operation({
+					setOp: op => cacheState.writable.notesOp = op,
+					promise: old
+						? loadOldNotes(pagination)
+						: loadNewNotes(pagination),
+				})
+			}
+
 			return {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
 
+				refresh: fetchAppropriateNotes,
+
+				async switchTabNew() {
+					cacheState.writable.old = false
+					resetPagination()
+					await fetchAppropriateNotes()
+				},
+
+				async switchTabOld() {
+					cacheState.writable.old = true
+					resetPagination()
+					await fetchAppropriateNotes()
+				},
+
 				async nextPage() {
 					cacheState.readable.old 
-						? cacheState.writable.NotesOp
-						: cacheState.writable.NotesOp
+						? cacheState.writable.notesOp
+						: cacheState.writable.notesOp
 				},
 				async previousPage() {
 					cacheState.readable.old ? loadOldNotes : loadNewNotes
 				},
-				async markNotesNewOrOld() {
-					cacheState.readable.old ? loadOldNotes : loadNewNotes
-				},
+				async markAllNotesOld() {},
+				async markSpecificNoteOld(noteId: string) {},
+				async markSpecificNoteNew(noteId: string) {},
 
 				async totalNoOfPages() {
 					//get total number of notes from statsOp and divide by pageSize(fixed?)
