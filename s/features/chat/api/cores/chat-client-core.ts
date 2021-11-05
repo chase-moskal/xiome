@@ -1,7 +1,7 @@
 
 import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
-import {prepareChatServersideLogic, chatServersideShape} from "../handlers/chat-serverside-logic.js"
+import {prepareChatServersideLogic} from "../handlers/chat-serverside-logic.js"
 import {waiter} from "./machinery/waiter.js"
 
 export function prepareChatClientCore({connectToServer}: {
@@ -24,7 +24,6 @@ export function prepareChatClientCore({connectToServer}: {
 			})
 
 			const serverRemote = lingoRemote<ReturnType<typeof prepareChatServersideLogic>>({
-				shape: chatServersideShape,
 				send: connection.sendDataToServer,
 			})
 

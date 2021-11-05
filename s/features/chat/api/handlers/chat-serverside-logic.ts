@@ -1,5 +1,5 @@
 
-import {AsHandlers, LingoShape} from "../../../../toolbox/lingo/lingo.js"
+import {AsHandlers} from "../../../../toolbox/lingo/lingo.js"
 import {ChatAuth, ChatDatabase, ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ChatClientHandlers} from "../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
@@ -26,16 +26,4 @@ export function prepareChatServersideLogic({
 		async mute(userIds: string[]) {},
 		async setRoomStatus(room: string, status: ChatStatus) {},
 	}
-}
-
-export const chatServersideShape:
-		LingoShape<ReturnType<typeof prepareChatServersideLogic>> = {
-	updateUserMeta: true,
-	roomSubscribe: true,
-	roomUnsubscribe: true,
-	post: true,
-	remove: true,
-	clear: true,
-	mute: true,
-	setRoomStatus: true,
 }

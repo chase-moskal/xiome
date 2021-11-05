@@ -1,11 +1,6 @@
 
-import {objectMap} from "../object-map.js"
-
 export type LingoHandler = (...args: any) => Promise<void>
 export type LingoHandlers = {[key: string]: LingoHandler}
-export type LingoShape<xHandlers extends LingoHandlers> = {
-	[P in keyof xHandlers]: true
-}
 export type LingoExecutor = (key: string, ...args: any[]) => Promise<void>
 export type AsHandlers<xHandlers extends LingoHandlers> = xHandlers
 
@@ -21,12 +16,15 @@ export function lingoHost<xHandlers extends LingoHandlers>(
 	}
 }
 
-export function lingoRemote<xHandlers extends LingoHandlers>({shape, send}: {
-			shape: LingoShape<xHandlers>
+export function lingoRemote<xHandlers extends LingoHandlers>({send}: {
 			send: (key: string, ...args: any[]) => Promise<void>
 		}) {
-	return <xHandlers>objectMap(
-		shape,
-		(value, key) => (...args: any) => send(key, ...args),
-	)
+	return <xHandlers>new Proxy({}, {
+		set: () => {throw new Error("cannot write to lingo remote")},
+		get: (target, property: string, receiver) => (...args: any[]) => {
+			if (typeof property !== "string")
+				throw new Error("lingo key must be string")
+			return send(property, ...args)
+		}
+	})
 }
