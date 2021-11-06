@@ -6,7 +6,7 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeNotesService} from "../api/services/notes-service.js"
 import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {Notes, NotesStats, Pagination} from "../types/notes-concepts.js"
-import {boolean} from "../../../toolbox/darkvalley.js"
+import {renderOp} from "../../../framework/op-rendering/render-op.js"
 
 export function makeNotesModel({notesService}: {
 		notesService: Service<typeof makeNotesService>
@@ -116,33 +116,43 @@ export function makeNotesModel({notesService}: {
 				},
 
 				async nextPage() {
-					cacheState.readable.old 
-						? cacheState.writable.notesOp
-						: cacheState.writable.notesOp
+					cacheState.writable.pageNumber += 1
+					await fetchAppropriateNotes()
 				},
 				async previousPage() {
-					cacheState.readable.old ? loadOldNotes : loadNewNotes
+					cacheState.writable.pageNumber -= 1
+					await fetchAppropriateNotes()
 				},
-				async markAllNotesOld() {},
-				async markSpecificNoteOld(noteId: string) {},
-				async markSpecificNoteNew(noteId: string) {},
+				async markAllNotesOld() {
+					cacheState.writable.old = false
+					const {old, notesOp} = cacheState.readable
+					// const notesIds = renderOp(notesOp, note => {note.noteId})
+					// await markNotesNewOrOld(old, notesIds)
+				},
+				async markSpecificNoteOld(noteId: string) {
+					cacheState.writable.old = false
+					const {old} = cacheState.readable
+					// await markNotesNewOrOld(old, noteId)
+				},
+				async markSpecificNoteNew(noteId: string) {
+					cacheState.writable.old = true
+					const {old} = cacheState.readable
+					// await markNotesNewOrOld(old, noteId)
+				},
 
-				async totalNoOfPages() {
-					//get total number of notes from statsOp and divide by pageSize(fixed?)
+				totalNumberOfPages() {
+					const {statsOp} = state.readable
+					const {old, pageSize} = cacheState.readable
+					renderOp(statsOp, stats => {
+						const totalNotesOnPage = old
+							? stats.oldCount
+							: stats.newCount
+						const totalNumberOfPages = Math.ceil(totalNotesOnPage / pageSize)
+
+					return totalNumberOfPages
+					})
 				}
 			}
 		},
 	}
 }
-
-
-
-// notes should be rendered even before the next and previous buttons are clicked...
-// 	- we should populate the notesOp array upon creation of a cache?
-// 		(maybe with new notes -the notes components should be on new by default)
-
-// so we probably still need new loadNewNotes and loadOldNotes functions in the cache, OR 
-// could we call those functions(`loadNewNotes`,`loadOldNotes`,`markNotesNewOrOld`) 
-// in the submodel and pass in arguments from what is in the cache's state?
-
-// totalNo of pages = totalnumber of notes/page size

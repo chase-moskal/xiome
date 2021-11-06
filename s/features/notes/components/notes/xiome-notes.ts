@@ -40,8 +40,7 @@ export class XiomeNotes extends ComponentWithShare<{
 
 	#renderNotes() {
 		const {old} = this.#cache.cacheState
-		const {markSpecificNoteNew} = this.#cache
-		const {markSpecificNoteOld} = this.#cache
+		const {markSpecificNoteNew, markSpecificNoteOld} = this.#cache
 		return renderOp(this.#cache.cacheState.notesOp, notes => html`
 			<ol>
 				${notes.map(note => html`
@@ -64,24 +63,12 @@ export class XiomeNotes extends ComponentWithShare<{
 	}
 
 	#renderPagination() {
-		const {statsOp} = this.share.notesModel.state
-		const {old, pageNumber, pageSize} = this.#cache.cacheState
-		const {nextPage, previousPage} = this.#cache
-		const ophtml = renderOp(statsOp, stats => {
-			const totalNotesOnPage = old
-				? stats.oldCount
-				: stats.newCount
-			const totalNumberOfPages = Math.ceil(totalNotesOnPage / pageSize)
-			return html`
-				<xio-button @press=${previousPage}>previous</xio-button>
-				<span>${pageNumber} / ${totalNumberOfPages}</span>
-				<xio-button @press=${nextPage}>next</xio-button>
-			`
-		})
+		const {pageNumber} = this.#cache.cacheState
+		const {nextPage, previousPage, totalNumberOfPages} = this.#cache
 		return html`
-			<div class=pagination>
-				${ophtml}
-			</div>
+			<xio-button @press=${previousPage}>previous</xio-button>
+			<span>${pageNumber} / ${totalNumberOfPages}</span>
+			<xio-button @press=${nextPage}>next</xio-button>
 		`
 	}
 
