@@ -1,6 +1,6 @@
 
-import {makeChatServerGlobalist} from "../cores/globalist/chat-server-globalist.js"
-import {ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ClientRecord} from "../../common/types/chat-concepts.js"
+import {makeChatServerGlobalist} from "../globalist/chat-server-globalist.js"
+import {ChatDraft, ChatMeta, ChatPolicy, ChatStatus, ClientRecord} from "../../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
 			clientRecord,

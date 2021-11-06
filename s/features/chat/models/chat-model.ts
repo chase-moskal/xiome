@@ -3,8 +3,8 @@ import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {prepareChatClientsideLogic} from "../api/logic/chat-clientside-logic.js"
-import {ChatMeta, ChatStatus, ChatConnect} from "../common/types/chat-concepts.js"
+import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
+import {ChatMeta, ChatStatus, ChatConnect, ChatRoom} from "../common/types/chat-concepts.js"
 
 export function makeChatModel({connect, getChatMeta}: {
 		connect: ChatConnect
@@ -34,6 +34,8 @@ export function makeChatModel({connect, getChatMeta}: {
 			: reconnect()
 	}
 
+	const rooms = new Map<string, Promise<ChatRoom>>()
+
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
@@ -43,17 +45,27 @@ export function makeChatModel({connect, getChatMeta}: {
 		},
 
 		async room(label: string) {
-			const connection = await assertConnection()
-			await connection.serverRemote.roomSubscribe(label)
-			const getRoom = () => state.readable.cache.rooms[label]
-			return {
-				get status() {
-					return getRoom().status
-				},
-				setRoomStatus(status: ChatStatus) {
-					connection.serverRemote.setRoomStatus(label, status)
-				},
+			let chatRoom = rooms.get(label)
+			if (!chatRoom) {
+				chatRoom = assertConnection()
+					.then(connection => 
+						connection.serverRemote.roomSubscribe(label)
+							.then(() => connection)
+					)
+					.then(connection => {
+						const getRoom = () => state.readable.cache.rooms[label]
+						return {
+							get status() {
+								return getRoom().status
+							},
+							setRoomStatus(status: ChatStatus) {
+								connection.serverRemote.setRoomStatus(label, status)
+							},
+						}
+					})
+				rooms.set(label, chatRoom)
 			}
+			return chatRoom
 		},
 
 		// get waitForMessageFromServer() {

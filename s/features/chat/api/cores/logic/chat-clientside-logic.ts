@@ -1,6 +1,6 @@
 
-import {makeChatState} from "../../models/state/chat-state.js"
-import {ChatPost, ChatStatus} from "../../common/types/chat-concepts.js"
+import {makeChatState} from "../../../models/state/chat-state.js"
+import {ChatPost, ChatStatus} from "../../../common/types/chat-concepts.js"
 
 export function prepareChatClientsideLogic({state}: {
 		state: ReturnType<typeof makeChatState>

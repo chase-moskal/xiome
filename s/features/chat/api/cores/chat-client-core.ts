@@ -2,7 +2,7 @@
 import {waiter} from "./machinery/waiter.js"
 import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
-import {prepareChatServersideLogic} from "../logic/chat-serverside-logic.js"
+import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 
 export function prepareChatClientCore({connectToServer}: {
 			connectToServer: ({}: {
