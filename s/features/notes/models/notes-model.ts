@@ -126,22 +126,17 @@ export function makeNotesModel({notesService}: {
 				},
 
 				async markAllNotesOld() {
-					cacheState.writable.old = false
-					const {old, notesOp} = cacheState.readable
+					const {notesOp} = cacheState.readable
 					const notesIds = ops.value(notesOp).map(notes => notes.noteId)
-					await markNotesNewOrOld(old, notesIds)
+					await markNotesNewOrOld(true, notesIds)
 				},
 
 				async markSpecificNoteOld(noteId: string) {
-					cacheState.writable.old = false
-					const {old} = cacheState.readable
-					await markNotesNewOrOld(old, [noteId])
+					await markNotesNewOrOld(true, [noteId])
 				},
 
 				async markSpecificNoteNew(noteId: string) {
-					cacheState.writable.old = true
-					const {old} = cacheState.readable
-					await markNotesNewOrOld(old, [noteId])
+					await markNotesNewOrOld(false, [noteId])
 				},
 
 				totalNumberOfPages() {
