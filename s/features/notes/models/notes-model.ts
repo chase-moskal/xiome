@@ -97,6 +97,14 @@ export function makeNotesModel({notesService}: {
 				})
 			}
 
+			function totalNumberOfPages() {
+				const {statsOp} = state.readable
+				const {old, pageSize} = cacheState.readable
+				const {oldCount, newCount} = ops.value(statsOp)
+				const totalNotesOnPage = old ? oldCount : newCount
+				return Math.ceil(totalNotesOnPage/pageSize)
+			}
+
 			return {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
@@ -116,13 +124,17 @@ export function makeNotesModel({notesService}: {
 				},
 
 				async nextPage() {
-					cacheState.writable.pageNumber += 1
-					await fetchAppropriateNotes()
+					if (cacheState.writable.pageNumber < totalNumberOfPages()) {
+						cacheState.writable.pageNumber += 1
+						await fetchAppropriateNotes()
+					}
 				},
 
 				async previousPage() {
-					cacheState.writable.pageNumber -= 1
-					await fetchAppropriateNotes()
+					if (cacheState.writable.pageNumber > 0) {
+						cacheState.writable.pageNumber -= 1
+						await fetchAppropriateNotes()
+					}
 				},
 
 				async markAllNotesOld() {
@@ -139,13 +151,7 @@ export function makeNotesModel({notesService}: {
 					await markNotesNewOrOld(false, [noteId])
 				},
 
-				totalNumberOfPages() {
-					const {statsOp} = state.readable
-					const {old, pageSize} = cacheState.readable
-					const {oldCount, newCount} = ops.value(statsOp)
-					const totalNotesOnPage = old ? oldCount : newCount
-					return Math.ceil(totalNotesOnPage/pageSize)
-				}
+				totalNumberOfPages,
 			}
 		},
 	}
