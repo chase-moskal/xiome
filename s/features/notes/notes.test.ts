@@ -93,7 +93,7 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
-		const {loadNewPage} = prepareNoteInboxAssertions({notesModel})
+		const {cache, loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
 
 		const drafts = fakeManyNoteDrafts(userId, 100)
 		await notesDepositBox.sendNotes(drafts)
@@ -101,11 +101,18 @@ export default <Suite>{
 		{
 			await notesModel.loadStats()
 			assertNoteCounts({newCount: 100, oldCount: 0})
-			const pageTesting = await loadNewPage()
+
+			let pageTesting = await loadNewPage()
 			pageTesting.assertNotesLength(10)
-			const cache = await frontend.prepareCache()
+
 			await cache.markAllNotesOld()
 			assertNoteCounts({newCount: 0, oldCount: 100})
+
+			pageTesting = await loadNewPage()
+			pageTesting.assertNotesLength(0)
+
+			pageTesting = await loadOldPage()
+			pageTesting.assertNotesLength(10)
 		}
 	},
 
