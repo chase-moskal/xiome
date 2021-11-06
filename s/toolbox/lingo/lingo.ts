@@ -1,8 +1,6 @@
 
-export type LingoHandler = (...args: any) => Promise<void>
+export type LingoHandler = (...args: any) => void | Promise<void>
 export type LingoHandlers = {[key: string]: LingoHandler}
-export type LingoExecutor = (key: string, ...args: any[]) => Promise<void>
-export type AsHandlers<xHandlers extends LingoHandlers> = xHandlers
 
 export function lingoHost<xHandlers extends LingoHandlers>(
 			expose: xHandlers
@@ -17,7 +15,7 @@ export function lingoHost<xHandlers extends LingoHandlers>(
 }
 
 export function lingoRemote<xHandlers extends LingoHandlers>({send}: {
-			send: (key: string, ...args: any[]) => Promise<void>
+			send: (key: string, ...args: any[]) => void | Promise<void>
 		}) {
 	return <xHandlers>new Proxy({}, {
 		set: () => {throw new Error("cannot write to lingo remote")},
