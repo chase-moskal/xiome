@@ -1,7 +1,7 @@
 
 import {assert, expect} from "cynic"
 import {makeNotesModel} from "../../models/notes-model.js"
-import {Notes, Pagination, Paging} from "../../types/notes-concepts.js"
+import {Notes, Paging} from "../../types/notes-concepts.js"
 
 function preparePageAssertions(notes: Notes.Any[], type: "new" | "old") {
 	return {
@@ -19,25 +19,23 @@ function preparePageAssertions(notes: Notes.Any[], type: "new" | "old") {
 	}
 }
 
-function paginate({pageSize, pageNumber}: Paging): Pagination {
-	return {
-		limit: pageSize,
-		offset: pageSize * pageNumber,
-	}
-}
-
 export function prepareNoteInboxAssertions({notesModel}: {
 		notesModel: ReturnType<typeof makeNotesModel>
 	}) {
 
+	const cache = notesModel.createNotesCache()
+
 	return {
-		async loadNewPage(paging: Paging) {
-			const newNotes = await notesModel.loadNewNotes(paginate(paging))
-			return preparePageAssertions(newNotes, "new")
+		cache,
+		async loadNewPage() {
+			cache.switchTabNew()
+			await cache.fetchAppropriateNotes()
+			return preparePageAssertions(cache.notes, "new")
 		},
-		async loadOldPage(paging: Paging) {
-			const oldNotes = await notesModel.loadOldNotes(paginate(paging))
-			return preparePageAssertions(oldNotes, "old")
+		async loadOldPage() {
+			cache.switchTabOld()
+			await cache.fetchAppropriateNotes()
+			return preparePageAssertions(cache.notes, "old")
 		},
 	}
 }

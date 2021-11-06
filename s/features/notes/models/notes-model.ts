@@ -59,12 +59,6 @@ export function makeNotesModel({notesService}: {
 			state.writable.statsOp = op
 		},
 
-		// TODO these should note be exposed,
-		// we must refactor the tests to use caches
-		loadNewNotes,
-		loadOldNotes,
-		markNotesNewOrOld,
-
 		// each notes component will have its own local cache
 		// of which notes have been loaded to display
 		// (so that different notes components can display different pages)
@@ -109,7 +103,11 @@ export function makeNotesModel({notesService}: {
 				subscribe: cacheState.subscribe,
 				cacheState: cacheState.readable,
 
-				refresh: fetchAppropriateNotes,
+				get notes() {
+					return ops.value(cacheState.readable.notesOp)
+				},
+
+				fetchAppropriateNotes,
 
 				async switchTabNew() {
 					cacheState.writable.old = false

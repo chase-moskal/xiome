@@ -6,6 +6,7 @@ import {notesTestingSetup} from "./testing/notes-testing-setup.js"
 import {fakeManyNoteDrafts} from "./testing/fakes/fake-many-note-drafts.js"
 import {prepareNoteStatsAssertions} from "./testing/assertions/note-stats-assertions.js"
 import {prepareNoteInboxAssertions} from "./testing/assertions/notes-page-assertions.js"
+import {ops} from "../../framework/ops.js"
 
 export default <Suite>{
 
@@ -36,7 +37,7 @@ export default <Suite>{
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
 
-		const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+		const pageTesting = await loadNewPage()
 		pageTesting.assertNotesLength(1)
 		pageTesting.assertNoteTitle(0, draft.title)
 	},
@@ -50,7 +51,7 @@ export default <Suite>{
 		const draft = fakeNoteDraft(rando.randomId().toString())
 		await notesDepositBox.sendNote(draft)
 
-		const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+		const pageTesting = await loadNewPage()
 		pageTesting.assertNotesLength(0)
 	},
 
@@ -58,41 +59,41 @@ export default <Suite>{
 		const {userId, backend, frontend} = await notesTestingSetup()
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
-		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
+		const {cache, loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
 
 		{
-			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+			const pageTesting = await loadNewPage()
 			pageTesting.assertNotesLength(1)
 			const {noteId} = pageTesting.notes[0]
-			await notesModel.markNotesNewOrOld(true, [noteId])
+			await cache.markSpecificNoteOld(noteId)
 		}
 		{
-			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+			const pageTesting = await loadNewPage()
 			pageTesting.assertNotesLength(0)
 		}
 		{
-			const pageTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
+			const pageTesting = await loadOldPage()
 			pageTesting.assertNotesLength(1)
 			const {noteId} = pageTesting.notes[0]
-			await notesModel.markNotesNewOrOld(false, [noteId])
+			await cache.markSpecificNoteNew(noteId)
 		}
 		{
-			const newTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
-			const oldTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
+			const newTesting = await loadNewPage()
+			const oldTesting = await loadOldPage()
 			oldTesting.assertNotesLength(0)
 			newTesting.assertNotesLength(1)
 		}
 	},
 
-	async "users can manage notes in bulk"() {
+	async "user can clear all new notes (making them all old)"() {
 		const {userId, backend, frontend} = await notesTestingSetup()
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
-		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
+		const {loadNewPage} = prepareNoteInboxAssertions({notesModel})
 
 		const drafts = fakeManyNoteDrafts(userId, 100)
 		await notesDepositBox.sendNotes(drafts)
@@ -100,18 +101,11 @@ export default <Suite>{
 		{
 			await notesModel.loadStats()
 			assertNoteCounts({newCount: 100, oldCount: 0})
-			const pageTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
+			const pageTesting = await loadNewPage()
 			pageTesting.assertNotesLength(10)
-			const noteIds = pageTesting.notes.map(n => n.noteId)
-			await notesModel.markNotesNewOrOld(true, noteIds)
-		}
-		{
-			await notesModel.loadStats()
-			assertNoteCounts({newCount: 90, oldCount: 10})
-			const newTesting = await loadNewPage({pageSize: 10, pageNumber: 0})
-			const oldTesting = await loadOldPage({pageSize: 10, pageNumber: 0})
-			newTesting.assertNotesLength(10)
-			oldTesting.assertNotesLength(10)
+			const cache = await frontend.prepareCache()
+			await cache.markAllNotesOld()
+			assertNoteCounts({newCount: 0, oldCount: 100})
 		}
 	},
 
@@ -139,7 +133,8 @@ export default <Suite>{
 		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 
-		await tab1.notesModel.markNotesNewOrOld(true, [noteId])
+		const cache = await tab1.prepareCache()
+		await cache.markSpecificNoteOld(noteId)
 		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 	},
