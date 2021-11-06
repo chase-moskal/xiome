@@ -78,7 +78,14 @@ export async function notesTestingSetup() {
 		const notesModel = makeNotesModel({notesService})
 		await notesModel.updateAccessOp(ops.ready(access))
 		orchestrateBroadcast(notesModel)
-		return {notesModel}
+		return {
+			notesModel,
+			async prepareCache() {
+				const cache = notesModel.createNotesCache()
+				await cache.fetchAppropriateNotes()
+				return cache
+			}
+		}
 	}
 
 	return {

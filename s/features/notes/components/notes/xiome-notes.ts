@@ -13,7 +13,7 @@ export class XiomeNotes extends ComponentWithShare<{
 	#cache = this.share.notesModel.createNotesCache()
 
 	async init() {
-		await this.#cache.refresh()
+		await this.#cache.fetchAppropriateNotes()
 	}
 
 	subscribe() {
