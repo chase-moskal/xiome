@@ -1,7 +1,7 @@
 
 import {assert, expect} from "cynic"
+import {Notes} from "../../types/notes-concepts.js"
 import {makeNotesModel} from "../../models/notes-model.js"
-import {Notes, Paging} from "../../types/notes-concepts.js"
 
 function preparePageAssertions(notes: Notes.Any[], type: "new" | "old") {
 	return {

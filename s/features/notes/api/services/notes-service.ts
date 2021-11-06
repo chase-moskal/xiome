@@ -10,7 +10,7 @@ import {UnconstrainedTables} from "../../../../framework/api/types/table-namespa
 
 import {NotesTables} from "../tables/notes-tables.js"
 import {NotesAuth, NotesMeta} from "../types/notes-auth.js"
-import {and, find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
