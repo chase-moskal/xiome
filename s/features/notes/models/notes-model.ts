@@ -138,9 +138,10 @@ export function makeNotesModel({notesService}: {
 				},
 
 				async markAllNotesOld() {
-					const {notesOp} = cacheState.readable
-					const notesIds = ops.value(notesOp).map(notes => notes.noteId)
-					await markNotesNewOrOld(true, notesIds)
+					await notesService.markAllNotesOld()
+					await loadStats()
+					refresh.publish(undefined)
+					propagateChangeToOtherTabs.publish(undefined)
 				},
 
 				async markSpecificNoteOld(noteId: string) {
