@@ -60,9 +60,10 @@ export function videoControls({
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
+							writable.selectedPrivileges = [];
 						},
 						isPrivilegeSelected: id => {
-							return readable.selectedPrivileges.some(e => e === id)
+							return readable.selectedPrivileges.some(e => e === id);
 						},
 						onPrivilegesSelect: (privileges) => {
 							writable.selectedPrivileges = privileges
