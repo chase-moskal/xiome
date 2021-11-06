@@ -3,10 +3,9 @@ import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {makeNotesService} from "../api/services/notes-service.js"
 import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
+import {makeNotesService} from "../api/services/notes-service.js"
 import {Notes, NotesStats, Pagination} from "../types/notes-concepts.js"
-import {renderOp} from "../../../framework/op-rendering/render-op.js"
 
 export function makeNotesModel({notesService}: {
 		notesService: Service<typeof makeNotesService>

@@ -1,9 +1,8 @@
 
 import styles from "./xiome-notes.css.js"
 import {makeNotesModel} from "../../models/notes-model.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {Notes} from "../../types/notes-concepts.js"
+import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XiomeNotes extends ComponentWithShare<{
