@@ -128,7 +128,7 @@ export function makeNotesModel({notesService}: {
 				},
 
 				async previousPage() {
-					if (cacheState.writable.pageNumber > 0) {
+					if (cacheState.writable.pageNumber > 1) {
 						cacheState.writable.pageNumber -= 1
 						await fetchAppropriateNotes()
 					}
