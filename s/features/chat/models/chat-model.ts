@@ -4,7 +4,7 @@ import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
-import {ChatMeta, ChatStatus, ChatConnect, ChatRoom} from "../common/types/chat-concepts.js"
+import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic} from "../common/types/chat-concepts.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
@@ -34,38 +34,55 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			: reconnect()
 	}
 
-	const rooms = new Map<string, Promise<ChatRoom>>()
+	function makeChatRoom({label, serverRemote}: {
+			label: string
+			serverRemote: ChatServersideLogic
+		}) {
+		const getCacheRoom = () => state.readable.cache.rooms[label]
+		return {
+			get status() {
+				return getCacheRoom().status
+			},
+			setRoomStatus(status: ChatStatus) {
+				serverRemote.setRoomStatus(label, status)
+			},
+		}
+	}
+
+	const roomManager = (() => {
+		const rooms = new Map<string, Promise<ChatRoom>>()
+		return {
+			assertRoom(label: string) {
+				let room = rooms.get(label)
+				if (!room) {
+					room = assertConnection()
+						.then(connection =>
+							connection.serverRemote.roomSubscribe(label)
+								.then(() => connection)
+						)
+						.then(connection =>
+							makeChatRoom({
+								label,
+								serverRemote: connection.serverRemote,
+							})
+						)
+				}
+				return room
+			}
+		}
+	})()
 
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
+
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
 			await reconnect()
 		},
 
 		async room(label: string) {
-			let chatRoom = rooms.get(label)
-			if (!chatRoom) {
-				chatRoom = assertConnection()
-					.then(connection => 
-						connection.serverRemote.roomSubscribe(label)
-							.then(() => connection)
-					)
-					.then(connection => {
-						const getRoom = () => state.readable.cache.rooms[label]
-						return {
-							get status() {
-								return getRoom().status
-							},
-							setRoomStatus(status: ChatStatus) {
-								connection.serverRemote.setRoomStatus(label, status)
-							},
-						}
-					})
-				rooms.set(label, chatRoom)
-			}
-			return chatRoom
+			return roomManager.assertRoom(label)
 		},
 	}
 }

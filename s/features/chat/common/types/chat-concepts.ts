@@ -52,9 +52,10 @@ export interface ClientRecord {
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
+export type ChatServersideLogic = ReturnType<typeof prepareChatServersideLogic>
 
 export interface ChatConnection {
-	serverRemote: ReturnType<typeof prepareChatServersideLogic>
+	serverRemote: ChatServersideLogic
 	disconnect(): Promise<void>
 	handleDataFromServer(...args: any): Promise<void>
 }
