@@ -1,5 +1,4 @@
 
-import {waiter} from "./machinery/waiter.js"
 import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
@@ -27,16 +26,9 @@ export function prepareChatClientCore({connectToServer}: {
 				send: connection.sendDataToServer,
 			})
 
-			// const {resolveWaiters, waitForMessageFromServer} = waiter()
-
 			return ({
 				serverRemote,
 				handleDataFromServer,
-				// waitForMessageFromServer,
-				// handleDataFromServer: async(key, ...args) => {
-				// 	resolveWaiters(key, ...args)
-				// 	return handleDataFromServer(key, ...args)
-				// },
 				async disconnect() {
 					await connection.disconnect()
 				},

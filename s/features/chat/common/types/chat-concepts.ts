@@ -1,6 +1,5 @@
 
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {DataParams, Sniffer} from "../../api/cores/machinery/waiter.js"
 import {prepareChatClientsideLogic} from "../../api/cores/logic/chat-clientside-logic.js"
 import {prepareChatServersideLogic} from "../../api/cores/logic/chat-serverside-logic.js"
 
@@ -34,9 +33,6 @@ export interface ChatConnection {
 	serverRemote: ReturnType<typeof prepareChatServersideLogic>
 	disconnect(): Promise<void>
 	handleDataFromServer(...args: any): Promise<void>
-	// waitForMessageFromServer(
-	// 	sniffer: Sniffer
-	// ): Promise<DataParams>
 }
 
 export type ChatConnect = ({handlers}: {
