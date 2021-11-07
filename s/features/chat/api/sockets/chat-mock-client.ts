@@ -2,10 +2,9 @@
 import {getRando, Rando} from "../../../../toolbox/get-rando.js"
 import {makeChatServerCore} from "../cores/chat-server-core.js"
 import {prepareChatClientCore} from "../cores/chat-client-core.js"
-import {VerifyAccessToken} from "../../../auth/types/auth-tokens.js"
+import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../cores/persistence/mock-chat-persistence.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
-import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"
 
 export async function chatMockClient({storage}: {
 		storage: FlexStorage
@@ -20,7 +19,7 @@ export async function chatMockClient({storage}: {
 		policy: mockChatPolicy,
 	})
 
-	const {connect} = prepareChatClientCore({
+	const {chatConnect} = prepareChatClientCore({
 		connectToServer: async({handleDataFromServer}) => {
 			const serverConnection = await servelet.acceptConnection({
 				disconnect: () => {},
@@ -33,5 +32,5 @@ export async function chatMockClient({storage}: {
 		}
 	})
 
-	return connect
+	return chatConnect
 }

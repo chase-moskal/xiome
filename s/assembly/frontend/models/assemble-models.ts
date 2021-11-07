@@ -51,7 +51,7 @@ export async function assembleModels({
 	})
 
 	const chatModel = makeChatModel({
-		connect: chatConnect,
+		chatConnect,
 		getChatMeta: async() => ({
 			accessToken: await authMediator.getValidAccessToken(),
 		}),

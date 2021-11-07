@@ -11,11 +11,11 @@ export function prepareChatClientCore({connectToServer}: {
 				sendDataToServer: (key: string, ...args: any[]) => Promise<void>
 			}>
 		}): {
-			connect: ChatConnect
+			chatConnect: ChatConnect
 		} {
 
 	return {
-		async connect({handlers}) {
+		async chatConnect({handlers}) {
 			const handleDataFromServer = lingoHost(handlers)
 
 			const connection = await connectToServer({

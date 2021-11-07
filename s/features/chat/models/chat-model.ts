@@ -6,8 +6,8 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
 import {ChatMeta, ChatStatus, ChatConnect, ChatRoom} from "../common/types/chat-concepts.js"
 
-export function makeChatModel({connect, getChatMeta}: {
-		connect: ChatConnect
+export function makeChatModel({chatConnect, getChatMeta}: {
+		chatConnect: ChatConnect
 		getChatMeta: () => Promise<ChatMeta>
 	}) {
 
@@ -21,7 +21,7 @@ export function makeChatModel({connect, getChatMeta}: {
 		}
 		const connection = await ops.operation({
 			setOp: op => state.writable.connectionOp = op,
-			promise: connect({handlers}),
+			promise: chatConnect({handlers}),
 		})
 		const meta = await getChatMeta()
 		await connection.serverRemote.updateUserMeta(meta)
