@@ -3,7 +3,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 import {prepareChatClientsideLogic} from "./logic/chat-clientside-logic.js"
-import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
+import {ChatClientsideLogic, ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export function makeChatServerCore({rando, persistence, policy}: {
 		rando: Rando
@@ -44,10 +44,8 @@ export function makeChatServerCore({rando, persistence, policy}: {
 		const clientRecord: ClientRecord = {
 			auth: undefined,
 			rooms: new Set(),
-			clientRemote: lingoRemote<
-						ReturnType<typeof prepareChatClientsideLogic>
-					>({
-				send: sendDataToClient
+			clientRemote: lingoRemote<ChatClientsideLogic>({
+				send: sendDataToClient,
 			}),
 		}
 

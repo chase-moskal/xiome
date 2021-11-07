@@ -53,6 +53,7 @@ export interface ClientRecord {
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
 export type ChatServersideLogic = ReturnType<typeof prepareChatServersideLogic>
+export type ChatClientsideLogic = ReturnType<typeof prepareChatClientsideLogic>
 
 export interface ChatConnection {
 	serverRemote: ChatServersideLogic
@@ -61,7 +62,7 @@ export interface ChatConnection {
 }
 
 export type ChatConnect = ({handlers}: {
-	handlers: ReturnType<typeof prepareChatClientsideLogic>
+	handlers: ChatClientsideLogic
 }) => Promise<ChatConnection>
 
 export enum ChatStatus {
