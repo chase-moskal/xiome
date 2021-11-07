@@ -6,12 +6,15 @@ import {chatPrivileges} from "../common/chat-privileges.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-meta-and-policy.js"
+import {mockChatPersistence} from "../api/persistance/mock-chat-persistence.js"
 
 export async function testChatSetup() {
 	const rando = await getRando()
+	const persistence = mockChatPersistence()
 
 	async function makeServer() {
 		const servelet = makeChatServerCore({
+			persistence,
 			policy: mockChatPolicy,
 		})
 

@@ -1,5 +1,6 @@
 
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
+import {mockChatPersistence} from "../../api/persistance/mock-chat-persistence.js"
 import {prepareChatClientsideLogic} from "../../api/cores/logic/chat-clientside-logic.js"
 import {prepareChatServersideLogic} from "../../api/cores/logic/chat-serverside-logic.js"
 
@@ -28,6 +29,8 @@ export interface ClientRecord {
 	auth: undefined | ChatAuth
 	clientRemote: ReturnType<typeof prepareChatClientsideLogic>
 }
+
+export type ChatPersistence = ReturnType<typeof mockChatPersistence>
 
 export interface ChatConnection {
 	serverRemote: ReturnType<typeof prepareChatServersideLogic>

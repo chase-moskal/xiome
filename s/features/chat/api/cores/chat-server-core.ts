@@ -3,14 +3,15 @@ import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 import {prepareChatClientsideLogic} from "./logic/chat-clientside-logic.js"
 import {makeChatServerGlobalist} from "./globalist/chat-server-globalist.js"
-import {ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
+import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
-export function makeChatServerCore({policy}: {
+export function makeChatServerCore({policy, persistence}: {
 		policy: ChatPolicy
+		persistence: ChatPersistence
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()
-	const globalist = makeChatServerGlobalist(clientRecords)
+	const globalist = makeChatServerGlobalist({clientRecords, persistence})
 
 	async function acceptConnection({disconnect, sendDataToClient}: {
 			disconnect(): void
@@ -32,6 +33,7 @@ export function makeChatServerCore({policy}: {
 			handleDataFromClient: lingoHost(prepareChatServersideLogic({
 				globalist,
 				clientRecord,
+				persistence,
 				policy,
 			})),
 			handleDisconnect() {
