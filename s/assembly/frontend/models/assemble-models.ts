@@ -1,4 +1,5 @@
 
+import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
@@ -6,10 +7,8 @@ import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-mod
 import {makeQuestionsModel} from "../../../features/questions/model/questions-model.js"
 import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
-import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
-import {makeChatModel} from "../../../features/chat/models/chat-model.js"
-import {mockChatMeta} from "../../../features/chat/testing/mocks/mock-meta-and-policy.js"
+import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 
 export async function assembleModels({
 		appId,
@@ -17,6 +16,7 @@ export async function assembleModels({
 		popups,
 		storage,
 		authMediator,
+		chatConnect,
 	}: AssembleModelsOptions) {
 
 	const accessModel = makeAccessModel({
@@ -51,8 +51,10 @@ export async function assembleModels({
 	})
 
 	const chatModel = makeChatModel({
-		connect: undefined,
-		getChatMeta: async() => mockChatMeta({access: await getValidAccess()}),
+		connect: chatConnect,
+		getChatMeta: async() => ({
+			accessToken: await authMediator.getValidAccessToken(),
+		}),
 	})
 
 	// // TODO reactivate store
