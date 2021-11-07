@@ -22,6 +22,7 @@ export function makeChatServerCore({rando, persistence, policy}: {
 
 		const clientRecord: ClientRecord = {
 			auth: undefined,
+			rooms: new Set(),
 			clientRemote: lingoRemote<
 						ReturnType<typeof prepareChatClientsideLogic>
 					>({
@@ -34,9 +35,8 @@ export function makeChatServerCore({rando, persistence, policy}: {
 		return {
 			handleDataFromClient: lingoHost(prepareChatServersideLogic({
 				rando,
-				globalist,
-				clientRecord,
 				persistence,
+				clientRecord,
 				policy,
 			})),
 			handleDisconnect() {
@@ -47,6 +47,7 @@ export function makeChatServerCore({rando, persistence, policy}: {
 	}
 
 	return {
+		globalist,
 		acceptConnection,
 		get clientCount() { return clientRecords.size },
 	}

@@ -1,19 +1,16 @@
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
-import {makeChatServerGlobalist} from "../globalist/chat-server-globalist.js"
 import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
 			rando,
 			clientRecord,
 			persistence,
-			globalist,
 			policy,
 		}: {
 			rando: Rando
 			clientRecord: ClientRecord
 			persistence: ChatPersistence
-			globalist: ReturnType<typeof makeChatServerGlobalist>
 			policy: ChatPolicy
 		}) {
 
@@ -24,9 +21,12 @@ export function prepareChatServersideLogic({
 			clientRecord.auth = await policy(meta)
 		},
 		async roomSubscribe(room: string) {
-			clientRemote.roomStatus(room, ChatStatus.Offline)
+			clientRecord.rooms.add(room)
+			clientRemote.roomStatus(room, await persistence.getRoomStatus(room))
 		},
-		async roomUnsubscribe(room: string) {},
+		async roomUnsubscribe(room: string) {
+			clientRecord.rooms.delete(room)
+		},
 		async post(room: string, draft: ChatDraft) {
 			// TODO validate draft
 			const chatPost: ChatPost = {

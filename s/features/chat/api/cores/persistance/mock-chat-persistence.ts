@@ -40,5 +40,11 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			})
 			events.status.publish({room, status})
 		},
+		async getRoomStatus(room: string) {
+			const row = await chatTables.chatRoomStatus.one(find({room}))
+			return row
+				? row.status
+				: ChatStatus.Offline
+		},
 	}
 }

@@ -46,6 +46,7 @@ export type ChatTables = {
 }
 
 export interface ClientRecord {
+	rooms: Set<string>
 	auth: undefined | ChatAuth
 	clientRemote: ReturnType<typeof prepareChatClientsideLogic>
 }
