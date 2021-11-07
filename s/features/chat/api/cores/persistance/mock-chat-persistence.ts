@@ -19,12 +19,15 @@ export async function mockChatPersistence(storage: FlexStorage) {
 	}
 
 	return {
+
 		onChatPost(handler: ({}: {post: ChatPost}) => void) {
 			return events.post.subscribe(handler)
 		},
+
 		onChatRoomStatus(handler: ({}: {room: string, status: ChatStatus}) => void) {
 			return events.status.subscribe(handler)
 		},
+
 		async insertChatPost(post: ChatPost) {
 			await chatTables.chatPosts.create({
 				...post,
@@ -33,6 +36,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			})
 			events.post.publish({post})
 		},
+
 		async setRoomStatus(room: string, status: ChatStatus) {
 			await chatTables.chatRoomStatus.update({
 				...find({room}),
@@ -40,6 +44,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			})
 			events.status.publish({room, status})
 		},
+
 		async getRoomStatus(room: string) {
 			const row = await chatTables.chatRoomStatus.one(find({room}))
 			return row

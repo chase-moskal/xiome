@@ -3,7 +3,6 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 import {prepareChatClientsideLogic} from "./logic/chat-clientside-logic.js"
-import {makeChatServerGlobalist} from "./globalist/chat-server-globalist.js"
 import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export function makeChatServerCore({rando, persistence, policy}: {
@@ -13,7 +12,29 @@ export function makeChatServerCore({rando, persistence, policy}: {
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()
-	const globalist = makeChatServerGlobalist({clientRecords, persistence})
+
+	async function broadcastToRoom(
+			room: string,
+			action: (record: ClientRecord) => void,
+		) {
+		for (const record of clientRecords.values())
+			if (record.auth && record.rooms.has(room))
+				action(record)
+	}
+
+	persistence.onChatPost(({post}) => {
+		broadcastToRoom(
+			post.room,
+			record => record.clientRemote.posted([post]),
+		)
+	})
+
+	persistence.onChatRoomStatus(({room, status}) => {
+		broadcastToRoom(
+			room,
+			record => record.clientRemote.roomStatus(room, status),
+		)
+	})
 
 	async function acceptConnection({disconnect, sendDataToClient}: {
 			disconnect(): void
@@ -47,7 +68,6 @@ export function makeChatServerCore({rando, persistence, policy}: {
 	}
 
 	return {
-		globalist,
 		acceptConnection,
 		get clientCount() { return clientRecords.size },
 	}
