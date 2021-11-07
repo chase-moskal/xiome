@@ -2,7 +2,6 @@
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
-import {prepareChatClientsideLogic} from "./logic/chat-clientside-logic.js"
 import {ChatClientsideLogic, ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export function makeChatServerCore({rando, persistence, policy}: {

@@ -61,8 +61,8 @@ export interface ChatConnection {
 	handleDataFromServer(...args: any): Promise<void>
 }
 
-export type ChatConnect = ({handlers}: {
-	handlers: ChatClientsideLogic
+export type ChatConnect = ({clientsideLogic}: {
+	clientsideLogic: ChatClientsideLogic
 }) => Promise<ChatConnection>
 
 export enum ChatStatus {

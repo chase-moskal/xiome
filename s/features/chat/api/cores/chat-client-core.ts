@@ -14,8 +14,8 @@ export function prepareChatClientCore({connectToServer}: {
 		} {
 
 	return {
-		async chatConnect({handlers}) {
-			const handleDataFromServer = lingoHost(handlers)
+		async chatConnect({clientsideLogic}) {
+			const handleDataFromServer = lingoHost(clientsideLogic)
 
 			const connection = await connectToServer({
 				handleDataFromServer,
