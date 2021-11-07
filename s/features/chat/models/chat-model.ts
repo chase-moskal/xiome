@@ -67,12 +67,5 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			}
 			return chatRoom
 		},
-
-		// get waitForMessageFromServer() {
-		// 	const connection = ops.value(state.readable.connectionOp)
-		// 	if (!connection)
-		// 		throw new Error("no connection, cannot wait for message from server")
-		// 	return connection.waitForMessageFromServer
-		// }
 	}
 }
