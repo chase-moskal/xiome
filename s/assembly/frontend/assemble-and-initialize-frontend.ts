@@ -18,9 +18,9 @@ export async function assembleAndInitializeFrontend({
 		appId: string
 		popups: SystemPopups
 		storage: FlexStorage
-		chatConnect: ChatConnect
 		remote: Remote<SystemApi>
 		authMediator: AuthMediator
+		chatConnect: ChatConnect
 	}) {
 
 	const {modals, modalsElement} = setupModalSystem()

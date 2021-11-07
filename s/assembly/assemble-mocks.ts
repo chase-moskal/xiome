@@ -5,6 +5,7 @@ import {applyMockHacks} from "./frontend/mocks/apply-mock-hacks.js"
 import {XiomeMockConfig} from "./frontend/types/xiome-config-mock.js"
 import {logAllCalls} from "./frontend/mocks/effects/log-all-calls.js"
 import {addMockLatency} from "./frontend/mocks/effects/add-mock-latency.js"
+import {chatMockClient} from "../features/chat/api/sockets/chat-mock-client.js"
 import {assembleAndInitializeFrontend} from "./frontend/assemble-and-initialize-frontend.js"
 
 export async function assembleXiomeMock(mockConfig: XiomeMockConfig) {
@@ -17,7 +18,10 @@ export async function assembleXiomeMock(mockConfig: XiomeMockConfig) {
 			latency: {min: 200, max: 800},
 		}),
 	})
-	const frontend = await assembleAndInitializeFrontend(connection)
+	const frontend = await assembleAndInitializeFrontend({
+		...connection,
+		chatConnect: await chatMockClient({storage: connection.storage}),
+	})
 	applyMockHacks({
 		frontend,
 		connection: <Await<ReturnType<typeof mockConnect>>>connection,

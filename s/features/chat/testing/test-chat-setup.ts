@@ -5,7 +5,7 @@ import {getRando} from "../../../toolbox/get-rando.js"
 import {chatPrivileges} from "../common/chat-privileges.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
-import {mockChatMeta, mockChatPolicy} from "./mocks/mock-meta-and-policy.js"
+import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 
