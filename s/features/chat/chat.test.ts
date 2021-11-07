@@ -1,5 +1,6 @@
 
 import {assert, expect, Suite} from "cynic"
+import {nap} from "../../toolbox/nap.js"
 import {ChatStatus} from "./common/types/chat-concepts.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 
@@ -20,6 +21,7 @@ export default<Suite>{
 			const room = await chatModel.room("default")
 			assert(room.status === ChatStatus.Offline, "room should start offline")
 			room.setRoomStatus(ChatStatus.Online)
+			await nap()
 			assert(room.status === ChatStatus.Online, "room should be online")
 		},
 	
@@ -37,6 +39,7 @@ export default<Suite>{
 			const moderatorRoom = await moderator.chatModel.room("default")
 			expect(moderatorRoom.status).equals(ChatStatus.Offline)
 			moderatorRoom.setRoomStatus(ChatStatus.Online)
+			await nap()
 			expect(moderatorRoom.status).equals(ChatStatus.Online)
 	
 			// participant sees it

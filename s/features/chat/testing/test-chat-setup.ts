@@ -6,11 +6,13 @@ import {chatPrivileges} from "../common/chat-privileges.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-meta-and-policy.js"
-import {mockChatPersistence} from "../api/persistance/mock-chat-persistence.js"
+import {mockChatPersistence} from "../api/cores/persistance/mock-chat-persistence.js"
+import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 
 export async function testChatSetup() {
 	const rando = await getRando()
-	const persistence = mockChatPersistence()
+	const storage = memoryFlexStorage()
+	const persistence = await mockChatPersistence(storage)
 
 	async function makeServer() {
 		const servelet = makeChatServerCore({

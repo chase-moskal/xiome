@@ -29,8 +29,7 @@ export function prepareChatServersideLogic({
 		async clear(room: string) {},
 		async mute(userIds: string[]) {},
 		async setRoomStatus(room: string, status: ChatStatus) {
-			await globalist.broadcast(record =>
-				record.clientRemote.roomStatus(room, status))
+			await persistence.setRoomStatus(room, status)
 		},
 	}
 }

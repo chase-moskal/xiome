@@ -18,7 +18,23 @@ export function prepareChatClientsideLogic({state}: {
 				},
 			}
 		},
-		async posted(room: string, posts: ChatPost[]) {},
+		async posted(posts: ChatPost[]) {
+			for (const post of posts) {
+				state.writable.cache = {
+					...state.writable.cache,
+					rooms: {
+						...state.writable.cache.rooms,
+						[post.room]: {
+							...state.writable.cache.rooms[post.room],
+							posts: [
+								...state.writable.cache.rooms[post.room].posts,
+								post,
+							]
+						},
+					},
+				}
+			}
+		},
 		async deleted(room: string, postIds: string[]) {},
 		async cleared(room: string) {},
 		async muted(userIds: string[]) {},

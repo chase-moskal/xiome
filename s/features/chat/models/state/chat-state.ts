@@ -12,7 +12,7 @@ export function makeChatState() {
 			mutedUserIds: [] as string[],
 			rooms: {} as {[key: string]: {
 				status: ChatStatus
-				messages: ChatPost[]
+				posts: ChatPost[]
 			}},
 		},
 	})
