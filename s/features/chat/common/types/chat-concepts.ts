@@ -1,7 +1,7 @@
 
 import {Await} from "../../../../types/await.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {mockChatPersistence} from "../../api/cores/persistance/mock-chat-persistence.js"
+import {mockChatPersistence} from "../../api/cores/persistence/mock-chat-persistence.js"
 import {prepareChatClientsideLogic} from "../../api/cores/logic/chat-clientside-logic.js"
 import {prepareChatServersideLogic} from "../../api/cores/logic/chat-serverside-logic.js"
 import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"

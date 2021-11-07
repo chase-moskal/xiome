@@ -2,7 +2,7 @@
 import {WebSocketServer} from "ws"
 import {makeChatServerCore} from "./cores/chat-server-core.js"
 import {mockChatPolicy} from "../testing/mocks/mock-meta-and-policy.js"
-import {mockChatPersistence} from "./cores/persistance/mock-chat-persistence.js"
+import {mockChatPersistence} from "./cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 
