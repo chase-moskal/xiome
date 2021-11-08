@@ -16,14 +16,11 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 	const clientsideLogic = prepareChatClientsideLogic({state})
 
 	const reconnect = onesie(async function() {
-		if (ops.isReady(state.readable.connectionOp)) {
-			const connection = ops.value(state.readable.connectionOp)
-			await connection.disconnect()
-		}
-		const connection = await ops.operation({
-			setOp: op => state.writable.connectionOp = op,
-			promise: chatConnect({clientsideLogic}),
-		})
+		const connection = ops.value(state.readable.connectionOp)
+			?? await ops.operation({
+				setOp: op => state.writable.connectionOp = op,
+				promise: chatConnect({clientsideLogic}),
+			})
 		const meta = await getChatMeta()
 		await connection.serverRemote.updateUserMeta(meta)
 		return connection
