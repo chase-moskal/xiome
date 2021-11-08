@@ -1,5 +1,6 @@
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
+import {chatAllowance} from "../../../common/chat-allowance.js"
 import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
@@ -15,6 +16,9 @@ export function prepareChatServersideLogic({
 		}) {
 
 	const {clientRemote} = clientRecord
+	const getAllowance = () => chatAllowance(
+		clientRecord.auth?.access.permit.privileges ?? []
+	)
 
 	return {
 		async updateUserMeta(meta: ChatMeta) {
@@ -29,13 +33,15 @@ export function prepareChatServersideLogic({
 		},
 		async post(room: string, draft: ChatDraft) {
 			// TODO validate draft
-			const chatPost: ChatPost = {
-				...draft,
-				time: Date.now(),
-				messageId: rando.randomId().toString(),
-				userId: rando.randomId().toString(),
+			if (getAllowance().participateInAllChats) {
+				const chatPost: ChatPost = {
+					...draft,
+					time: Date.now(),
+					messageId: rando.randomId().toString(),
+					userId: rando.randomId().toString(),
+				}
+				await persistence.insertChatPost(chatPost)
 			}
-			await persistence.insertChatPost(chatPost)
 		},
 		async remove(room: string, messageIds: string[]) {},
 		async clear(room: string) {},

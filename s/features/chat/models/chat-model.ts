@@ -6,6 +6,7 @@ import {chatPrivileges} from "../common/chat-privileges.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
 import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic} from "../common/types/chat-concepts.js"
+import {chatAllowance} from "../common/chat-allowance.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
@@ -77,17 +78,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		get allowance() {
 			const access = ops.value(state.readable.accessOp)
 			const privileges = access?.permit.privileges ?? []
-			return {
-				moderateAllChats:
-					privileges.includes(chatPrivileges["moderate all chats"]),
-				participateInAllChats:
-					privileges.includes(chatPrivileges["moderate all chats"]) ||
-					privileges.includes(chatPrivileges["participate in all chats"]),
-				viewAllChats:
-					privileges.includes(chatPrivileges["moderate all chats"]) ||
-					privileges.includes(chatPrivileges["participate in all chats"]) ||
-					privileges.includes(chatPrivileges["view all chats"]),
-			}
+			return chatAllowance(privileges)
 		},
 
 		async updateAccessOp(op: Op<AccessPayload>) {

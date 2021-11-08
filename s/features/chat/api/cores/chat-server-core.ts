@@ -3,6 +3,7 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 import {ChatClientsideLogic, ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
+import {chatAllowance} from "../../common/chat-allowance.js"
 
 export function makeChatServerCore({rando, persistence, policy}: {
 		rando: Rando
@@ -14,17 +15,23 @@ export function makeChatServerCore({rando, persistence, policy}: {
 
 	async function broadcastToRoom(
 			room: string,
-			action: (record: ClientRecord) => void,
+			action: (
+				record: ClientRecord,
+				allowance: ReturnType<typeof chatAllowance>
+			) => void,
 		) {
 		for (const record of clientRecords.values())
 			if (record.auth && record.rooms.has(room))
-				action(record)
+				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
 	persistence.onChatPost(({post}) => {
 		broadcastToRoom(
 			post.room,
-			record => record.clientRemote.posted([post]),
+			(record, allowance) => {
+				if (allowance.viewAllChats)
+					record.clientRemote.posted([post])
+			},
 		)
 	})
 
