@@ -6,6 +6,7 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component.js"
 
 import styles from "./xiome-chat.css.js"
+import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 
 @mixinStyles(styles)
 export class XiomeChat extends ComponentWithShare<{
@@ -14,7 +15,7 @@ export class XiomeChat extends ComponentWithShare<{
 	}> {
 
 	@property({type: String})
-	room: string
+	room: string = "default"
 
 	get #model() {
 		return this.share.chatModel
@@ -27,12 +28,57 @@ export class XiomeChat extends ComponentWithShare<{
 		console.log("ROOM", this.#room)
 	}
 
+	#renderModerationHeader() {
+		return this.#model.allowance.moderateAllChats
+			? html`
+				<header>
+					<p>room="${this.room}"</p>
+					<p>
+						<xio-button>toggle chat status</xio-button>
+					</p>
+				</header>
+			`
+			: null
+	}
+
+	#renderHistory() {
+		return this.#model.allowance.viewAllChats
+			? html`
+				<div>*chat goes here*</div>
+			`
+			: html`
+				<div>you are not privileged to view the chat</div>
+			`
+	}
+
+	#renderParticipation() {
+		return html`
+			<xiome-login-panel>
+				${whenOpReady(this.#model.state.accessOp, () => (
+					this.#model.allowance.participateInAllChats
+						? html`
+							<div>
+								<p>authorship area</p>
+							</div>
+						`
+						: html`
+							<div>
+								<p>you do not have privilege to participate in the chat</p>
+							</div>
+						`
+					)
+				)}
+			</xiome-login-panel>
+		`
+	}
+
 	render() {
-		return renderOp(this.#model.state.accessOp, access => html`
-			<p>Example Component</p>
-			${access?.user
-				? html`<p>Welcome, ${access.user.profile.nickname}</p>`
-				: html`<p>User is not logged in.</p>`}
-		`)
+		return html`
+			<div class=chatbox>
+				${this.#renderModerationHeader()}
+				${this.#renderHistory()}
+				${this.#renderParticipation()}
+			</div>
+		`
 	}
 }

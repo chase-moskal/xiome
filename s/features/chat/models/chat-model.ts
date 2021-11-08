@@ -2,6 +2,7 @@
 import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
+import {chatPrivileges} from "../common/chat-privileges.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
 import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic} from "../common/types/chat-concepts.js"
@@ -75,6 +76,22 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
+
+		get allowance() {
+			const access = ops.value(state.readable.accessOp)
+			const privileges = access?.permit.privileges ?? []
+			return {
+				moderateAllChats:
+					privileges.includes(chatPrivileges["moderate all chats"]),
+				participateInAllChats:
+					privileges.includes(chatPrivileges["moderate all chats"]) ||
+					privileges.includes(chatPrivileges["participate in all chats"]),
+				viewAllChats:
+					privileges.includes(chatPrivileges["moderate all chats"]) ||
+					privileges.includes(chatPrivileges["participate in all chats"]) ||
+					privileges.includes(chatPrivileges["view all chats"]),
+			}
+		},
 
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
