@@ -1,13 +1,13 @@
 
 import {Await} from "../../../../types/await.js"
 import {makeChatModel} from "../../models/chat-model.js"
+import {ChatStatus} from "../../common/types/chat-concepts.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component.js"
 
 import styles from "./xiome-chat.css.js"
-import {ChatStatus} from "../../common/types/chat-concepts.js"
-import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 
 @mixinStyles(styles)
 export class XiomeChat extends ComponentWithShare<{

@@ -2,11 +2,10 @@
 import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
-import {chatPrivileges} from "../common/chat-privileges.js"
+import {chatAllowance} from "../common/chat-allowance.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
 import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic} from "../common/types/chat-concepts.js"
-import {chatAllowance} from "../common/chat-allowance.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
