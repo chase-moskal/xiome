@@ -116,6 +116,14 @@ select option {
 	visibility: visible;
 }
 
+.create-privileges option:checked {
+	color: none;
+}
+
+.create-privileges option[selected] {
+	color: black;
+}
+
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-thumb { background: currentColor; }
 
