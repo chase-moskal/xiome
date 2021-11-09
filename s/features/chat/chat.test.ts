@@ -118,6 +118,7 @@ export default<Suite>{
 	},
 
 	"rate limiting": {
-		async "user cannot flood 10 messages in quick succession"() {},
+		async "user cannot flood 5 messages in quick succession"() {},
+		async "user who floods chat recieves an error notice to slow down"() {},
 	},
 }
