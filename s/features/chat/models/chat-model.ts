@@ -5,7 +5,7 @@ import {makeChatState} from "./state/chat-state.js"
 import {chatAllowance} from "../common/chat-allowance.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
-import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic} from "../common/types/chat-concepts.js"
+import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic, ChatDraft} from "../common/types/chat-concepts.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
@@ -35,14 +35,20 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 	function makeChatRoom({label, serverRemote}: {
 			label: string
 			serverRemote: ChatServersideLogic
-		}) {
-		const getCacheRoom = () => state.readable.cache.rooms[label]
+		}): ChatRoom {
+		const getRoomCache = () => state.readable.cache.rooms[label]
 		return {
+			get posts() {
+				return getRoomCache()?.posts ?? []
+			},
 			get status() {
-				return getCacheRoom().status
+				return getRoomCache()?.status ?? ChatStatus.Offline
 			},
 			setRoomStatus(status: ChatStatus) {
 				serverRemote.setRoomStatus(label, status)
+			},
+			post(draft: ChatDraft) {
+				serverRemote.post(label, draft)
 			},
 		}
 	}

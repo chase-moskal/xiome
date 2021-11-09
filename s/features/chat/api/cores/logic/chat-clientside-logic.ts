@@ -27,7 +27,7 @@ export function prepareChatClientsideLogic({state}: {
 						[post.room]: {
 							...state.writable.cache.rooms[post.room],
 							posts: [
-								...state.writable.cache.rooms[post.room].posts,
+								...state.writable.cache.rooms[post.room]?.posts ?? [],
 								post,
 							]
 						},

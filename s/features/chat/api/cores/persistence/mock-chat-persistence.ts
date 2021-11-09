@@ -31,6 +31,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		async insertChatPost(post: ChatPost) {
 			await chatTables.chatPosts.create({
 				...post,
+				room: post.room,
 				userId: DamnId.fromString(post.userId),
 				messageId: DamnId.fromString(post.messageId),
 			})

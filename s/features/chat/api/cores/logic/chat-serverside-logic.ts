@@ -36,9 +36,11 @@ export function prepareChatServersideLogic({
 			if (getAllowance().participateInAllChats) {
 				const chatPost: ChatPost = {
 					...draft,
+					room,
 					time: Date.now(),
 					messageId: rando.randomId().toString(),
 					userId: rando.randomId().toString(),
+					nickname: clientRecord.auth.access.user.profile.nickname,
 				}
 				await persistence.insertChatPost(chatPost)
 			}

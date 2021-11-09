@@ -6,6 +6,7 @@ import {ChatStatus} from "./common/types/chat-concepts.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 
 export default<Suite>{
+
 	"room online/offline behavior": {
 		async "viewer can find that a room starts offline"() {
 			const setup = await testChatSetup()
@@ -48,5 +49,70 @@ export default<Suite>{
 			expect((await participant.chatModel.room("default")).status)
 				.equals(ChatStatus.Online)
 		},
+	},
+
+	"messaging": {
+		async "two participants can exchange messages"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+
+			const p2 = await server.makeClientFor.participant()
+			const p2room = await p2.chatModel.room(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+			expect(p1room.posts.find(post => post.content === "lol")).ok()
+			expect(p2room.posts.find(post => post.content === "lol")).ok()
+
+			p2room.post({content: "lmao"})
+			await nap()
+			expect(p1room.posts.find(post => post.content === "lmao")).ok()
+			expect(p2room.posts.find(post => post.content === "lmao")).ok()
+
+			expect(p1room.posts.length).equals(2)
+			expect(p2room.posts.length).equals(2)
+		},
+
+		async "two participants in separate chats cannot exchange messages"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			const altRoomLabel = roomLabel + "2"
+
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+
+			const p2 = await server.makeClientFor.participant()
+			const p2room = await p2.chatModel.room(altRoomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+			expect(p1room.posts.find(post => post.content === "lol")).ok()
+			expect(p2room.posts.find(post => post.content === "lol")).not.ok()
+
+			p2room.post({content: "lmao"})
+			await nap()
+			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p2room.posts.find(post => post.content === "lmao")).ok()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p2room.posts.length).equals(1)
+		},
+
+		async "moderator can delete a message"() {},
+		async "moderator can clear all messages in a room"() {},
+	},
+
+	"muting": {
+		async "moderator can mute a participant, and unmute"() {},
+	},
+
+	"auth and timings": {
+		async "user is unsubscribed from a room when the 'component' leaves"() {},
+		async "user who logs out mid-chat is disconnected"() {},
+		async "user who gains participation privilege mid-chat can send a message"() {},
+		async "user who gains moderator privilege mid-chat can set chat status offline"() {},
 	},
 }

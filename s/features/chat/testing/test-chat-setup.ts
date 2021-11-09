@@ -1,7 +1,9 @@
 
+import {nap} from "../../../toolbox/nap.js"
 import {ops} from "../../../framework/ops.js"
 import {makeChatModel} from "../models/chat-model.js"
 import {getRando} from "../../../toolbox/get-rando.js"
+import {ChatStatus} from "../common/types/chat-concepts.js"
 import {chatPrivileges} from "../common/chat-privileges.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
@@ -69,5 +71,16 @@ export async function testChatSetup() {
 		}
 	}
 
-	return {makeServer}
+	return {
+		makeServer,
+		async startOnline() {
+			const server = await makeServer()
+			const moderator = await server.makeClientFor.moderator()
+			const roomLabel = "default"
+			const room = await moderator.chatModel.room(roomLabel)
+			room.setRoomStatus(ChatStatus.Online)
+			await nap()
+			return {server, moderator, roomLabel}
+		},
+	}
 }

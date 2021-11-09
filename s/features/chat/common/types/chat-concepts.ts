@@ -18,18 +18,19 @@ export interface ChatAuth {
 export type ChatPolicy = (meta: ChatMeta) => Promise<ChatAuth>
 
 export type ChatDraft = {
-	room: string
-	nickname: string
 	content: string
 }
 
 export type ChatPost = {
+	room: string
+	nickname: string
 	messageId: string
 	userId: string
 	time: number
 } & ChatDraft
 
 export type ChatPostRow = {
+	room: string
 	messageId: DamnId
 	userId: DamnId
 	time: number
@@ -71,6 +72,8 @@ export enum ChatStatus {
 }
 
 export interface ChatRoom {
+	readonly posts: ChatPost[]
 	readonly status: ChatStatus
 	setRoomStatus(status: ChatStatus): void
+	post(draft: ChatDraft): void
 }
