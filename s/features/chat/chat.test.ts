@@ -115,4 +115,8 @@ export default<Suite>{
 		async "user who gains participation privilege mid-chat can send a message"() {},
 		async "user who gains moderator privilege mid-chat can set chat status offline"() {},
 	},
+
+	"rate limiting": {
+		async "user cannot flood 10 messages in quick succession"() {},
+	},
 }
