@@ -41,8 +41,8 @@ export function renderViewCreator({
 				${catalog.length ? html`
 					<h5>Select content for this view</h5>
 					<select @change=${onCatalogSelectChange}>
-						${filter !== undefined && isContentSelected ? filter.map(({provider, type, title}, index) => html`	<option value=${index}>
-								${`${provider} ${type} ${title}`}
+							${isContentSelected === true ? filter.map(i => html`<option hidden>
+								${`${i.provider} ${i.type} ${i.title}`}
 							</option>`) : html`<option disabled selected>(select video content)</option>`}
 						${catalog.map(({provider, type, title}, index) => html`
 							<option value=${index}>
