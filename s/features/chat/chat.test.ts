@@ -105,8 +105,9 @@ export default<Suite>{
 		async "moderator can clear all messages in a room"() {},
 	},
 
-	"muting": {
+	"mutes and bans": {
 		async "moderator can mute a participant, and unmute"() {},
+		async "banned user cannot post messages"() {},
 	},
 
 	"auth and timings": {
