@@ -6,11 +6,12 @@ import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export function renderViewCreator({
-		isContentSelected, isCreateButtonDisabled, privilegesOp, catalogOp,
-		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick, isPrivilegeSelected, selectedContent
+		isContentSelected, isCreateButtonDisabled, privilegesOp,catalogOp,
+		selectedContent,
+		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick,
+		isPrivilegeSelected,
 }: {
 		selectedContent: number
-		isPrivilegeSelected(id:string)
 		isContentSelected: boolean
 		isCreateButtonDisabled: boolean
 		privilegesOp: Op<PrivilegeDisplay[]>
@@ -18,6 +19,7 @@ export function renderViewCreator({
 		queryAll: <E extends HTMLElement>(selector: string) => E[]
 		onCreateClick: () => void
 		onCatalogSelect: (index: number) => void
+		isPrivilegeSelected: (id: string) => boolean
 		onPrivilegesSelect: (privileges: string[]) => void
 	}) {
 
@@ -35,17 +37,20 @@ export function renderViewCreator({
 
 	function renderContentSelector() {
 		const catalog = ops.value(catalogOp)
-		const filter = catalog.filter(({provider, type, title}, index) => index === selectedContent)
 		return html`
 			<div class=create-content>
 				${catalog.length ? html`
 					<h5>Select content for this view</h5>
 					<select @change=${onCatalogSelectChange}>
-							${isContentSelected === true ? filter.map(i => html`<option hidden>
-								${`${i.provider} ${i.type} ${i.title}`}
-							</option>`) : html`<option disabled selected>(select video content)</option>`}
+						${isContentSelected
+							? null
+							: html`
+								<option disabled selected>
+									(select video content)
+								</option>
+							`}
 						${catalog.map(({provider, type, title}, index) => html`
-							<option value=${index}>
+							<option value=${index} ?selected=${index === selectedContent}>
 								${`${provider} ${type} ${title}`}
 							</option>
 						`)}
@@ -64,7 +69,11 @@ export function renderViewCreator({
 				<h5>Select which privileges have access</h5>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`
-						<option ?selected=${isPrivilegeSelected(privilege.privilegeId)} value="${privilege.privilegeId}">${privilege.label}</option>
+						<option
+							?selected=${isPrivilegeSelected(privilege.privilegeId)}
+							value="${privilege.privilegeId}">
+								${privilege.label}
+						</option>
 					`)}
 				</select>
 			</div>

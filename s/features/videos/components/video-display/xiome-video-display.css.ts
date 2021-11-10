@@ -117,10 +117,6 @@ select option {
 	visibility: visible;
 }
 
-.create-privileges option:checked {
-	color: none;
-}
-
 .create-privileges option[selected] {
 	color: var(--xiome-video-display-selected-option-color);
 }

@@ -4,8 +4,8 @@ import {renderViewCreator} from "./render-view-creator.js"
 import {html} from "../../../../../../framework/component.js"
 import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
-import triangle from "../../../../../../framework/icons/triangle.svg.js"
 
+import triangle from "../../../../../../framework/icons/triangle.svg.js"
 
 export function videoControls({
 		queryAll,
@@ -60,12 +60,12 @@ export function videoControls({
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
-							writable.selectedPrivileges = [];
+							writable.selectedPrivileges = []
 						},
 						isPrivilegeSelected: id => {
-							return readable.selectedPrivileges.some(e => e === id);
+							return readable.selectedPrivileges.some(e => e === id)
 						},
-						onPrivilegesSelect: (privileges) => {
+						onPrivilegesSelect: privileges => {
 							writable.selectedPrivileges = privileges
 						},
 						onCreateClick: () => {
