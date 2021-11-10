@@ -52,5 +52,5 @@ export async function assembleAndInitializeFrontend({
 		},
 	})
 
-	return {components, models, modals, modalsElement}
+	return {appId, components, models, modals, modalsElement}
 }
