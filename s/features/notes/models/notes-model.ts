@@ -19,6 +19,13 @@ export function makeNotesModel({notesService}: {
 	const refresh = subbies<undefined>()
 	const propagateChangeToOtherTabs = subbies<undefined>()
 
+	function getStats() {
+		return ops.value(state.readable.statsOp) ?? {
+			newCount: 0,
+			oldCount: 0,
+		}
+	}
+
 	async function loadStats() {
 		return ops.operation({
 			promise: notesService.getNotesStats(),
@@ -49,6 +56,10 @@ export function makeNotesModel({notesService}: {
 			if (ops.isReady(op))
 				await loadStats()
 			refresh.publish(undefined)
+		},
+
+		get stats() {
+			return getStats()
 		},
 
 		loadStats,
@@ -88,9 +99,8 @@ export function makeNotesModel({notesService}: {
 			}
 
 			function totalNumberOfPages() {
-				const {statsOp} = state.readable
 				const {old, pageSize} = cacheState.readable
-				const {oldCount, newCount} = ops.value(statsOp)
+				const {oldCount, newCount} = getStats()
 				const count = old
 					? oldCount
 					: newCount
