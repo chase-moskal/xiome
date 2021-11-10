@@ -7,8 +7,10 @@ import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permi
 
 export function renderViewCreator({
 		isContentSelected, isCreateButtonDisabled, privilegesOp, catalogOp,
-		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick,
-	}: {
+		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick, isPrivilegeSelected, selectedContent
+}: {
+		selectedContent: number
+		isPrivilegeSelected(id:string)
 		isContentSelected: boolean
 		isCreateButtonDisabled: boolean
 		privilegesOp: Op<PrivilegeDisplay[]>
@@ -27,19 +29,21 @@ export function renderViewCreator({
 	const onPrivilegesSelectChange = () => {
 		onPrivilegesSelect(
 			queryAll<HTMLOptionElement>(".create-privileges select option") 
-				.filter(option => option.selected)
-				.map(option => option.value)
+				.filter(option => option.selected).map(option => option.value)
 		)
 	}
 
 	function renderContentSelector() {
 		const catalog = ops.value(catalogOp)
+		const filter = catalog.filter(({provider, type, title}, index) => index === selectedContent)
 		return html`
 			<div class=create-content>
 				${catalog.length ? html`
 					<h5>Select content for this view</h5>
 					<select @change=${onCatalogSelectChange}>
-						<option disabled selected>(select video content)</option>
+							${isContentSelected === true ? filter.map(i => html`<option hidden>
+								${`${i.provider} ${i.type} ${i.title}`}
+							</option>`) : html`<option disabled selected>(select video content)</option>`}
 						${catalog.map(({provider, type, title}, index) => html`
 							<option value=${index}>
 								${`${provider} ${type} ${title}`}
@@ -60,7 +64,7 @@ export function renderViewCreator({
 				<h5>Select which privileges have access</h5>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`
-						<option value="${privilege.privilegeId}">${privilege.label}</option>
+						<option ?selected=${isPrivilegeSelected(privilege.privilegeId)} value="${privilege.privilegeId}">${privilege.label}</option>
 					`)}
 				</select>
 			</div>
