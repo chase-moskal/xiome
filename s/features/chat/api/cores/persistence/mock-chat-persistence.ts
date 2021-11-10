@@ -1,7 +1,7 @@
 
 import {subbies} from "../../../../../toolbox/subbies.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
 import {ChatPost, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
 import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
@@ -14,28 +14,47 @@ export async function mockChatPersistence(storage: FlexStorage) {
 	})
 
 	const events = {
-		post: subbies<{post: ChatPost}>(),
-		status: subbies<{room: string, status: ChatStatus}>(),
+		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
+		postsRemoved: subbies<{room: string, postIds: string[]}>(),
+		roomStatusesChanged: subbies<{room: string, status: ChatStatus}>(),
 	}
 
 	return {
 
-		onChatPost(handler: ({}: {post: ChatPost}) => void) {
-			return events.post.subscribe(handler)
+		onPostsAdded(handler: ({}: {room: string, posts: ChatPost[]}) => void) {
+			return events.postsAdded.subscribe(handler)
 		},
 
-		onChatRoomStatus(handler: ({}: {room: string, status: ChatStatus}) => void) {
-			return events.status.subscribe(handler)
+		onPostsRemoved(handler: ({}: {room: string, postIds: string[]}) => void) {
+			return events.postsRemoved.subscribe(handler)
 		},
 
-		async insertChatPost(post: ChatPost) {
-			await chatTables.chatPosts.create({
+		onRoomStatusChanged(handler: ({}: {room: string, status: ChatStatus}) => void) {
+			return events.roomStatusesChanged.subscribe(handler)
+		},
+
+		async addPosts(room: string, posts: ChatPost[]) {
+			await chatTables.chatPosts.create(...posts.map(post => ({
 				...post,
-				room: post.room,
+				room,
 				userId: DamnId.fromString(post.userId),
 				messageId: DamnId.fromString(post.messageId),
-			})
-			events.post.publish({post})
+			})))
+			events.postsAdded.publish({room, posts})
+		},
+
+		async removePosts(room: string, postIds: string[]) {
+			if (postIds.length) {
+				await chatTables.chatPosts.delete(findAll(postIds, postId => ({
+					room,
+					messageId: DamnId.fromString(postId)
+				})))
+				events.postsRemoved.publish({room, postIds})
+			}
+		},
+
+		async clearAllPostsInRoom(room: string) {
+			await chatTables.chatPosts.delete(find({room}))
 		},
 
 		async setRoomStatus(room: string, status: ChatStatus) {
@@ -43,7 +62,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				...find({room}),
 				upsert: {room, status},
 			})
-			events.status.publish({room, status})
+			events.roomStatusesChanged.publish({room, status})
 		},
 
 		async getRoomStatus(room: string) {

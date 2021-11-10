@@ -50,6 +50,9 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			post(draft: ChatDraft) {
 				serverRemote.post(label, draft)
 			},
+			remove(messageIds: string[]) {
+				serverRemote.remove(label, messageIds)
+			},
 		}
 	}
 

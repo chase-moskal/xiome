@@ -76,4 +76,5 @@ export interface ChatRoom {
 	readonly status: ChatStatus
 	setRoomStatus(status: ChatStatus): void
 	post(draft: ChatDraft): void
+	remove(messageIds: string[]): void
 }
