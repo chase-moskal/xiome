@@ -105,10 +105,20 @@ export class XiomeNotes extends ComponentWithShare<{
 	render() {
 		return html`
 			<h3>xiome-notes</h3>
-			${this.#renderTabs()}
-			${this.#renderNotes()}
-			${this.#renderPagination()}
-			${this.#renderButtonbar()}
+			${renderOp(this.#model.state.accessOp, access =>
+				access?.user
+					? html`
+						${this.#renderTabs()}
+						${this.#renderNotes()}
+						${this.#renderPagination()}
+						${this.#renderButtonbar()}
+					`
+					: html`
+						<slot name="logged-out">
+							you must be logged in to see your notifications
+						</slot>
+					`
+			)}
 		`
 	}
 }
