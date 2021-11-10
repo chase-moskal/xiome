@@ -17,11 +17,7 @@ export class XiomeNotesIndicator extends ComponentWithShare<{
 	render() {
 
 		const bellSpan = html`<span class="bell">${bell}</span>`;
-		const {state} = this.share.notesModel
-		const stats = ops.value(state.statsOp) ?? {
-			newCount: 0,
-			oldCount: 0,
-		}
+		const {stats} = this.share.notesModel
 
 		return html`
 				${stats.newCount === 0 ? html`${bellSpan}`
