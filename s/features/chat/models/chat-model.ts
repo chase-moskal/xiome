@@ -2,10 +2,11 @@
 import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
+import {makeChatRoom} from "./room/make-chat-room.js"
 import {chatAllowance} from "../common/chat-allowance.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {ChatMeta, ChatConnect} from "../common/types/chat-concepts.js"
 import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
-import {ChatMeta, ChatStatus, ChatConnect, ChatRoom, ChatServersideLogic, ChatDraft} from "../common/types/chat-concepts.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
@@ -32,32 +33,8 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			: reconnect()
 	}
 
-	function makeChatRoom({label, serverRemote}: {
-			label: string
-			serverRemote: ChatServersideLogic
-		}): ChatRoom {
-		const getRoomCache = () => state.readable.cache.rooms[label]
-		return {
-			get posts() {
-				return getRoomCache()?.posts ?? []
-			},
-			get status() {
-				return getRoomCache()?.status ?? ChatStatus.Offline
-			},
-			setRoomStatus(status: ChatStatus) {
-				serverRemote.setRoomStatus(label, status)
-			},
-			post(draft: ChatDraft) {
-				serverRemote.post(label, draft)
-			},
-			remove(postIds: string[]) {
-				serverRemote.remove(label, postIds)
-			},
-		}
-	}
-
 	const roomManager = (() => {
-		const rooms = new Map<string, Promise<ChatRoom>>()
+		const rooms = new Map<string, Promise<ReturnType<typeof makeChatRoom>>>()
 		return {
 			assertRoom(label: string) {
 				let room = rooms.get(label)
@@ -70,6 +47,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 						.then(connection =>
 							makeChatRoom({
 								label,
+								state,
 								serverRemote: connection.serverRemote,
 							})
 						)

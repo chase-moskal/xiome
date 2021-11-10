@@ -14,12 +14,17 @@ export async function mockChatPersistence(storage: FlexStorage) {
 	})
 
 	const events = {
+		roomStatusChanged: subbies<{room: string, status: ChatStatus}>(),
 		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
 		postsRemoved: subbies<{room: string, postIds: string[]}>(),
-		roomStatusesChanged: subbies<{room: string, status: ChatStatus}>(),
+		roomCleared: subbies<{room: string}>(),
 	}
 
 	return {
+
+		onRoomStatusChanged(handler: ({}: {room: string, status: ChatStatus}) => void) {
+			return events.roomStatusChanged.subscribe(handler)
+		},
 
 		onPostsAdded(handler: ({}: {room: string, posts: ChatPost[]}) => void) {
 			return events.postsAdded.subscribe(handler)
@@ -29,8 +34,8 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			return events.postsRemoved.subscribe(handler)
 		},
 
-		onRoomStatusChanged(handler: ({}: {room: string, status: ChatStatus}) => void) {
-			return events.roomStatusesChanged.subscribe(handler)
+		onRoomCleared(handler: ({}: {room: string}) => void) {
+			return events.roomCleared.subscribe(handler)
 		},
 
 		async addPosts(room: string, posts: ChatPost[]) {
@@ -53,8 +58,9 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			}
 		},
 
-		async clearAllPostsInRoom(room: string) {
+		async clearRoom(room: string) {
 			await chatTables.chatPosts.delete(find({room}))
+			events.roomCleared.publish({room})
 		},
 
 		async setRoomStatus(room: string, status: ChatStatus) {
@@ -62,7 +68,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				...find({room}),
 				upsert: {room, status},
 			})
-			events.roomStatusesChanged.publish({room, status})
+			events.roomStatusChanged.publish({room, status})
 		},
 
 		async getRoomStatus(room: string) {

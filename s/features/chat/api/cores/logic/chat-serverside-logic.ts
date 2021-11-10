@@ -57,7 +57,10 @@ export function prepareChatServersideLogic({
 			requireAllowance().moderateAllChats()
 			await persistence.removePosts(room, postIds)
 		},
-		async clear(room: string) {},
+		async clear(room: string) {
+			requireAllowance().moderateAllChats()
+			await persistence.clearRoom(room)
+		},
 		async mute(userIds: string[]) {},
 		async setRoomStatus(room: string, status: ChatStatus) {
 			await persistence.setRoomStatus(room, status)

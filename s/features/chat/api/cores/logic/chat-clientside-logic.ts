@@ -46,7 +46,19 @@ export function prepareChatClientsideLogic({state}: {
 				},
 			}
 		},
-		async cleared(room: string) {},
-		async muted(userIds: string[]) {},
+		async roomCleared(room: string) {
+			state.writable.cache = {
+				...state.writable.cache,
+				rooms: {
+					...state.writable.cache.rooms,
+					[room]: {
+						...state.writable.cache.rooms[room],
+						posts: [],
+					},
+				},
+			}
+		},
+		async usersMuted(userIds: string[]) {},
+		async usersUnmuted(userIds: string[]) {},
 	}
 }

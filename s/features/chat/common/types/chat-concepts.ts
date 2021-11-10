@@ -70,11 +70,3 @@ export enum ChatStatus {
 	Offline,
 	Online,
 }
-
-export interface ChatRoom {
-	readonly posts: ChatPost[]
-	readonly status: ChatStatus
-	setRoomStatus(status: ChatStatus): void
-	post(draft: ChatDraft): void
-	remove(postIds: string[]): void
-}

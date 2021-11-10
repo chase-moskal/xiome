@@ -140,7 +140,35 @@ export default<Suite>{
 			expect(moderatorRoom.posts.length).equals(0)
 		},
 
-		async "moderator can clear all messages in a room"() {},
+		async "moderator can clear all messages in a room"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+
+			const moderatorRoom = await moderator.chatModel.room(roomLabel)
+			
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+
+			const p2 = await server.makeClientFor.participant()
+			const p2room = await p2.chatModel.room(roomLabel)
+
+			p1room.post({content: "lol"})
+			p2room.post({content: "lmao"})
+			p1room.post({content: "rofl"})
+			moderatorRoom.post({content: "silence!"})
+			await nap()
+
+			expect(p1room.posts.length).equals(4)
+			expect(p2room.posts.length).equals(4)
+			expect(moderatorRoom.posts.length).equals(4)
+
+			moderatorRoom.clear()
+			await nap()
+
+			expect(p1room.posts.length).equals(0)
+			expect(p2room.posts.length).equals(0)
+			expect(moderatorRoom.posts.length).equals(0)
+		},
 	},
 
 	"mutes and bans": {

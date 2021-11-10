@@ -25,6 +25,13 @@ export function makeChatServerCore({rando, persistence, policy}: {
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
+	persistence.onRoomStatusChanged(({room, status}) => {
+		broadcastToRoom(
+			room,
+			record => record.clientRemote.roomStatusChanged(room, status),
+		)
+	})
+
 	persistence.onPostsAdded(({room, posts}) => {
 		broadcastToRoom(
 			room,
@@ -45,10 +52,13 @@ export function makeChatServerCore({rando, persistence, policy}: {
 		)
 	})
 
-	persistence.onRoomStatusChanged(({room, status}) => {
+	persistence.onRoomCleared(({room}) => {
 		broadcastToRoom(
 			room,
-			record => record.clientRemote.roomStatusChanged(room, status),
+			(record, allowance) => {
+				if (allowance.viewAllChats)
+					record.clientRemote.roomCleared(room)
+			},
 		)
 	})
 
