@@ -80,11 +80,17 @@ export async function notesTestingSetup() {
 		orchestrateBroadcast(notesModel)
 		return {
 			notesModel,
+			makeCacheAlreadySetup() {
+				const {cache, setup} = notesModel.createNotesCacheDetails()
+				setup()
+				return cache
+			},
 		}
 	}
 
 	return {
 		rando,
+		access,
 		userId,
 		backend: {notesDepositBox},
 		frontend: await browserTab(),

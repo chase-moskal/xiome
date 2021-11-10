@@ -17,8 +17,12 @@ export function makeNotesModel({notesService}: {
 		statsOp: ops.none() as Op<NotesStats>,
 	})
 
-	const refresh = subbies<undefined>()
+	const accessUpdate = subbies<AccessPayload>()
 	const propagateChangeToOtherTabs = subbies<undefined>()
+
+	function getIsLoggedIn() {
+		return !!ops.value(state.readable.accessOp)?.user
+	}
 
 	function getStats() {
 		return ops.value(state.readable.statsOp) ?? {
@@ -39,28 +43,42 @@ export function makeNotesModel({notesService}: {
 		stateSubscribe: state.subscribe,
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
-			if (ops.isReady(op))
+			if (getIsLoggedIn())
 				await loadStats()
-			refresh.publish(undefined)
+			accessUpdate.publish(ops.value(op))
+		},
+
+		get isLoggedIn() {
+			return getIsLoggedIn()
 		},
 
 		get stats() {
 			return getStats()
 		},
 
-		refresh,
 		propagateChangeToOtherTabs,
 		loadStats,
 		overwriteStatsOp(op: Op<NotesStats>) {
 			state.writable.statsOp = op
 		},
 
-		createNotesCache: prepareNotesCacheCreator({
-			refresh,
-			notesService,
-			propagateChangeToOtherTabs,
-			getStats,
-			loadStats,
-		}),
+		createNotesCacheDetails: (() => {
+			const create = prepareNotesCacheCreator({
+				notesService,
+				propagateChangeToOtherTabs,
+				getStats,
+				loadStats,
+				getIsLoggedIn,
+			})
+			return () => {
+				const cache = create()
+				return {
+					cache,
+					setup: () => accessUpdate.subscribe(
+						() => cache.loginStatusChanged()
+					),
+				}
+			}
+		})(),
 	}
 }

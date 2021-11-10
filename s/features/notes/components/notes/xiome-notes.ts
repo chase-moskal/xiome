@@ -9,17 +9,19 @@ export class XiomeNotes extends ComponentWithShare<{
 		notesModel: ReturnType<typeof makeNotesModel>
 	}> {
 
-	#cache = this.share.notesModel.createNotesCache()
-
-	async init() {
-		await this.#cache.fetchAppropriateNotes()
-	}
+	#model = this.share.notesModel
+	#cacheDetails = this.share.notesModel.createNotesCacheDetails()
+	#cache = this.#cacheDetails.cache
 
 	subscribe() {
 		const unsubs = [
 			super.subscribe(),
+			this.#cacheDetails.setup(),
 			this.#cache.subscribe(() => this.requestUpdate()),
 		]
+		if (this.#model.isLoggedIn) {
+			this.#cache.fetchAppropriateNotes()
+		}
 		return () => unsubs.forEach(unsub => unsub())
 	}
 
