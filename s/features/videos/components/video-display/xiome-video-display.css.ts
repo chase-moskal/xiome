@@ -5,6 +5,7 @@ export default css`
 :host {
 	display: block;
 	--_select-bg: var(--xiome-video-display-select-background, #222);
+	--xiome-video-display-selected-option-color: cyan;
 }
 
 .controls-title,
@@ -121,7 +122,7 @@ select option {
 }
 
 .create-privileges option[selected] {
-	color: black;
+	color: var(--xiome-video-display-selected-option-color);
 }
 
 ::-webkit-scrollbar { width: 5px; }
