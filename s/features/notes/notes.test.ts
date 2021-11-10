@@ -6,7 +6,6 @@ import {notesTestingSetup} from "./testing/notes-testing-setup.js"
 import {fakeManyNoteDrafts} from "./testing/fakes/fake-many-note-drafts.js"
 import {prepareNoteStatsAssertions} from "./testing/assertions/note-stats-assertions.js"
 import {prepareNoteInboxAssertions} from "./testing/assertions/notes-page-assertions.js"
-import {ops} from "../../framework/ops.js"
 
 export default <Suite>{
 
@@ -32,7 +31,8 @@ export default <Suite>{
 		const {userId, backend, frontend} = await notesTestingSetup()
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
-		const {loadNewPage} = prepareNoteInboxAssertions({notesModel})
+		const cache = notesModel.createNotesCache()
+		const {loadNewPage} = prepareNoteInboxAssertions({cache})
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
@@ -46,7 +46,8 @@ export default <Suite>{
 		const {rando, backend, frontend} = await notesTestingSetup()
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
-		const {loadNewPage} = prepareNoteInboxAssertions({notesModel})
+		const cache = notesModel.createNotesCache()
+		const {loadNewPage} = prepareNoteInboxAssertions({cache})
 
 		const draft = fakeNoteDraft(rando.randomId().toString())
 		await notesDepositBox.sendNote(draft)
@@ -59,7 +60,8 @@ export default <Suite>{
 		const {userId, backend, frontend} = await notesTestingSetup()
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
-		const {cache, loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
+		const cache = notesModel.createNotesCache()
+		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({cache})
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
@@ -93,7 +95,8 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
-		const {cache, loadNewPage, loadOldPage} = prepareNoteInboxAssertions({notesModel})
+		const cache = notesModel.createNotesCache()
+		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({cache})
 
 		const drafts = fakeManyNoteDrafts(userId, 100)
 		await notesDepositBox.sendNotes(drafts)
