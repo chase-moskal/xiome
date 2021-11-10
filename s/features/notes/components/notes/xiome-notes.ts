@@ -3,6 +3,7 @@ import styles from "./xiome-notes.css.js"
 import {makeNotesModel} from "../../models/notes-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
+import {ops} from "../../../../framework/ops.js"
 
 @mixinStyles(styles)
 export class XiomeNotes extends ComponentWithShare<{
@@ -40,9 +41,9 @@ export class XiomeNotes extends ComponentWithShare<{
 	}
 
 	#renderNotes() {
-		const {old} = this.#cache.cacheState
+		const {old, notesOp} = this.#cache.cacheState
 		const {markSpecificNoteNew, markSpecificNoteOld} = this.#cache
-		return renderOp(this.#cache.cacheState.notesOp, notes => html`
+		return renderOp(notesOp, notes => html`
 			<ol>
 				${notes.map(note => html`
 					<li>
@@ -62,6 +63,7 @@ export class XiomeNotes extends ComponentWithShare<{
 			</ol>
 		`)
 	}
+
 
 	#renderPagination() {
 		const {pageNumber} = this.#cache.cacheState
@@ -102,14 +104,30 @@ export class XiomeNotes extends ComponentWithShare<{
 		`
 	}
 
-	render() {
-		return renderOp(this.#model.state.accessOp, access =>
-			access?.user
+	#renderBasedOnStateOfNotesArray (){
+		const {old, notesOp} = this.#cache.cacheState
+		return html`
+			${ops.value(notesOp).length == 0
 				? html`
+					${this.#renderTabs()}
+					<slot name="empty notes">
+						you have no ${old ? 'old' : 'new'} notifications
+					</slot>
+				`
+				: html`
 					${this.#renderTabs()}
 					${this.#renderNotes()}
 					${this.#renderPagination()}
 					${this.#renderButtonbar()}
+				`}
+		`
+	}
+
+	render() {
+		return renderOp(this.#model.state.accessOp, access =>
+			access?.user
+				? html`
+					${this.#renderBasedOnStateOfNotesArray()}
 				`
 				: html`
 					<slot name="logged-out">
