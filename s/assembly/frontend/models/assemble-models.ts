@@ -85,6 +85,7 @@ export async function assembleModels({
 			administrativeModel.updateAccessOp(accessOp),
 			videoModels.dacastModel.updateAccessOp(accessOp),
 			videoModels.contentModel.updateAccessOp(accessOp),
+			notesModel.updateAccessOp(accessOp),
 			// storeModel.accessChange(access),
 		])
 	})

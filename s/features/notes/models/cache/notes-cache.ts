@@ -7,16 +7,16 @@ import {makeNotesService} from "../../api/services/notes-service.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 export function prepareNotesCacheCreator({
-		refresh,
 		propagateChangeToOtherTabs,
 		notesService,
-		loadStats,
 		getStats,
+		loadStats,
+		getIsLoggedIn,
 	}: {
-		refresh: Subbie
 		propagateChangeToOtherTabs: Subbie
 		notesService: Service<typeof makeNotesService>
 		getStats: () => NotesStats
+		getIsLoggedIn: () => boolean
 		loadStats: () => Promise<NotesStats>
 	}) {
 
@@ -31,7 +31,6 @@ export function prepareNotesCacheCreator({
 	async function markNotesNewOrOld(old: boolean, noteIds: string[]): Promise<void> {
 		await notesService.markNotesNewOrOld({old, noteIds})
 		await loadStats()
-		refresh.publish(undefined)
 		propagateChangeToOtherTabs.publish(undefined)
 	}
 
@@ -48,7 +47,12 @@ export function prepareNotesCacheCreator({
 			cacheState.writable.pageSize = 10
 		}
 
-		async function fetchAppropriateNotes() {
+		async function fetchAppropriateNotes(): Promise<Notes.Any[]> {
+			if (!getIsLoggedIn()) {
+				cacheState.writable.notesOp = ops.ready([])
+				return []
+			}
+
 			const {old, pageNumber, pageSize} = cacheState.readable
 
 			const pagination: Pagination = {
@@ -81,6 +85,11 @@ export function prepareNotesCacheCreator({
 		return {
 			subscribe: cacheState.subscribe,
 			cacheState: cacheState.readable,
+
+			async loginStatusChanged() {
+				resetPagination()
+				await fetchAppropriateNotes()
+			},
 
 			get notes() {
 				return ops.value(cacheState.readable.notesOp)
@@ -127,7 +136,6 @@ export function prepareNotesCacheCreator({
 			async markAllNotesOld() {
 				await notesService.markAllNotesOld()
 				await loadStats()
-				refresh.publish(undefined)
 				propagateChangeToOtherTabs.publish(undefined)
 				await fetchAppropriateNotes()
 			},

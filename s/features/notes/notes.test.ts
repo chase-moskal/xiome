@@ -1,6 +1,7 @@
 
 import {expect, Suite} from "cynic"
 
+import {ops} from "../../framework/ops.js"
 import {fakeNoteDraft} from "./testing/fakes/fake-note-draft.js"
 import {notesTestingSetup} from "./testing/notes-testing-setup.js"
 import {fakeManyNoteDrafts} from "./testing/fakes/fake-many-note-drafts.js"
@@ -28,9 +29,9 @@ export default <Suite>{
 
 	async "a message for user is readable by user"() {
 		const {userId, backend, frontend} = await notesTestingSetup()
-		const {notesModel} = frontend
+		const {notesModel, makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
-		const cache = notesModel.createNotesCache()
+		const cache = makeCacheAlreadySetup()
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
@@ -42,9 +43,9 @@ export default <Suite>{
 
 	async "a message cannot be read by the wrong user"() {
 		const {rando, backend, frontend} = await notesTestingSetup()
-		const {notesModel} = frontend
+		const {notesModel, makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
-		const cache = notesModel.createNotesCache()
+		const cache = makeCacheAlreadySetup()
 
 		const draft = fakeNoteDraft(rando.randomId().toString())
 		await notesDepositBox.sendNote(draft)
@@ -55,9 +56,9 @@ export default <Suite>{
 
 	async "user can mark a message old and then new again"() {
 		const {userId, backend, frontend} = await notesTestingSetup()
-		const {notesModel} = frontend
+		const {notesModel, makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
-		const cache = notesModel.createNotesCache()
+		const cache = makeCacheAlreadySetup()
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
 
 		const draft = fakeNoteDraft(userId)
@@ -87,10 +88,10 @@ export default <Suite>{
 
 	async "user can clear all new notes (making them all old)"() {
 		const {userId, backend, frontend} = await notesTestingSetup()
-		const {notesModel} = frontend
+		const {notesModel, makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
-		const cache = notesModel.createNotesCache()
+		const cache = makeCacheAlreadySetup()
 
 		const drafts = fakeManyNoteDrafts(userId, 100)
 		await notesDepositBox.sendNotes(drafts)
@@ -133,7 +134,7 @@ export default <Suite>{
 		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 
-		const cache = tab1.notesModel.createNotesCache()
+		const cache = tab1.notesModel.createNotesCacheDetails().cache
 		await cache.markSpecificNoteOld(noteId)
 		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
@@ -142,9 +143,9 @@ export default <Suite>{
 	"pagination": {
 		async "user can flip through pages of new notes"() {
 			const {userId, backend, frontend} = await notesTestingSetup()
-			const {notesModel} = frontend
+			const {notesModel, makeCacheAlreadySetup} = frontend
 			const {notesDepositBox} = backend
-			const cache = notesModel.createNotesCache()
+			const cache = makeCacheAlreadySetup()
 
 			const drafts = fakeManyNoteDrafts(userId, 15)
 			await notesDepositBox.sendNotes(drafts)
@@ -165,9 +166,9 @@ export default <Suite>{
 		},
 		async "user can switch to 'old' tab"() {
 			const {userId, backend, frontend} = await notesTestingSetup()
-			const {notesModel} = frontend
+			const {notesModel, makeCacheAlreadySetup} = frontend
 			const {notesDepositBox} = backend
-			const cache = notesModel.createNotesCache()
+			const cache = makeCacheAlreadySetup()
 
 			const drafts = fakeManyNoteDrafts(userId, 21)
 			await notesDepositBox.sendNotes(drafts)
@@ -193,9 +194,9 @@ export default <Suite>{
 		},
 		async "invalid page flips throws errors"() {
 			const {userId, backend, frontend} = await notesTestingSetup()
-			const {notesModel} = frontend
+			const {notesModel, makeCacheAlreadySetup} = frontend
 			const {notesDepositBox} = backend
-			const cache = notesModel.createNotesCache()
+			const cache = makeCacheAlreadySetup()
 
 			const drafts = fakeManyNoteDrafts(userId, 5)
 			await notesDepositBox.sendNotes(drafts)
@@ -208,6 +209,30 @@ export default <Suite>{
 
 			await expect(cache.nextPage).throws()
 			await expect(cache.previousPage).throws()
+		},
+	},
+
+	"login changes": {
+		async "logging out empties the notes array"() {
+			const {userId, backend, frontend, access} = await notesTestingSetup()
+			const {notesModel, makeCacheAlreadySetup} = frontend
+			const {notesDepositBox} = backend
+			const cache = makeCacheAlreadySetup()
+
+			const draft = fakeNoteDraft(userId)
+			await notesDepositBox.sendNote(draft)
+
+			await cache.fetchAppropriateNotes()
+			expect(cache.notes.length).equals(1)
+			expect(cache.notes[0].title).equals(draft.title)
+
+			await notesModel.updateAccessOp(ops.ready({
+				...access,
+				user: undefined,
+			}))
+
+			expect(notesModel.isLoggedIn).equals(false)
+			expect(cache.notes.length).equals(0)
 		},
 	},
 }
