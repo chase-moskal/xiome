@@ -80,11 +80,6 @@ export async function notesTestingSetup() {
 		orchestrateBroadcast(notesModel)
 		return {
 			notesModel,
-			async prepareCache() {
-				const cache = notesModel.createNotesCache()
-				await cache.fetchAppropriateNotes()
-				return cache
-			}
 		}
 	}
 

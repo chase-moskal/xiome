@@ -63,11 +63,24 @@ export class XiomeNotes extends ComponentWithShare<{
 
 	#renderPagination() {
 		const {pageNumber} = this.#cache.cacheState
-		const {nextPage, previousPage, totalNumberOfPages} = this.#cache
+		const {
+			nextPage, previousPage,
+			totalPages, isNextPageAvailable, isPreviousPageAvailable,
+		} = this.#cache
 		return html`
-			<xio-button @press=${previousPage}>previous</xio-button>
-			<span>${pageNumber} / ${totalNumberOfPages}</span>
-			<xio-button @press=${nextPage}>next</xio-button>
+			<xio-button
+				?disabled=${!isPreviousPageAvailable}
+				@press=${previousPage}>
+					previous
+			</xio-button>
+			<span>
+				${pageNumber} / ${totalPages}
+			</span>
+			<xio-button
+				?disabled=${!isNextPageAvailable}
+				@press=${nextPage}>
+					next
+			</xio-button>
 		`
 	}
 
