@@ -172,11 +172,81 @@ export default<Suite>{
 	},
 
 	"mutes and bans": {
-		async "moderator can mute a participant, and unmute"() {},
-		async "muted user cannot post messages"() {},
-		async "muted user knows they are muted"() {},
-		async "banned user cannot post messages"() {},
-		async "muted user knows they are banned"() {},
+		async "moderator can mute a participant, and unmute"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+			p1room.post({content: "lol"})
+			await nap()
+
+			const moderatorRoom = await moderator.chatModel.room(roomLabel)
+			const {userId} = moderatorRoom.posts[0]
+			expect(moderatorRoom.posts.length).equals(1)
+			moderatorRoom.mute(userId)
+			await nap()
+
+			expect(p1room.muted.length).equals(1)
+			expect(moderatorRoom.muted.length).equals(1)
+			expect(moderatorRoom.muted[0]).equals(userId)
+			expect(p1room.weAreMuted).equals(true)
+
+			moderatorRoom.unmute(userId)
+			await nap()
+
+			expect(p1room.muted.length).equals(0)
+			expect(moderatorRoom.muted.length).equals(0)
+			expect(p1room.weAreMuted).equals(false)
+		},
+
+		async "muted user cannot post messages"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+			p1room.post({content: "lol"})
+			await nap()
+
+			const moderatorRoom = await moderator.chatModel.room(roomLabel)
+			const {userId} = moderatorRoom.posts[0]
+			expect(moderatorRoom.posts.length).equals(1)
+			moderatorRoom.mute(userId)
+			await nap()
+
+			expect(p1room.muted.length).equals(1)
+			expect(moderatorRoom.muted.length).equals(1)
+			expect(moderatorRoom.muted[0]).equals(userId)
+			expect(p1room.weAreMuted).equals(true)
+
+			p1room.post({content: "lmao"})
+			await nap()
+			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+		},
+
+		async "banned user knows they are banned"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.bannedParticipant()
+			const p1room = await p1.chatModel.room(roomLabel)
+			expect(p1room.weAreBanned).equals(true)
+		},
+
+		async "banned user cannot post messages"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.bannedParticipant()
+			const p1room = await p1.chatModel.room(roomLabel)
+			expect(p1room.weAreBanned).equals(true)
+
+			p1room.post({content: "rofl"})
+			await nap()
+
+			expect(p1room.posts.find(post => post.content === "rofl")).not.ok()
+		},
 	},
 
 	"auth and timings": {

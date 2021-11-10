@@ -10,6 +10,7 @@ import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export async function testChatSetup() {
 	const rando = await getRando()
@@ -67,6 +68,7 @@ export async function testChatSetup() {
 				viewer: () => makeClient([chatPrivileges["view all chats"]]),
 				participant: () => makeClient([chatPrivileges["participate in all chats"]]),
 				moderator: () => makeClient([chatPrivileges["moderate all chats"]]),
+				bannedParticipant: () => makeClient([appPermissions.privileges["banned"]]),
 			},
 		}
 	}
