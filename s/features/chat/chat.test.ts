@@ -131,8 +131,8 @@ export default<Suite>{
 			expect(p2room.posts.length).equals(1)
 			expect(moderatorRoom.posts.length).equals(1)
 
-			const {messageId} = moderatorRoom.posts[0]
-			moderatorRoom.remove([messageId])
+			const {postId} = moderatorRoom.posts[0]
+			moderatorRoom.remove([postId])
 			await nap()
 
 			expect(p1room.posts.length).equals(0)

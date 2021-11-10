@@ -38,7 +38,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				...post,
 				room,
 				userId: DamnId.fromString(post.userId),
-				messageId: DamnId.fromString(post.messageId),
+				postId: DamnId.fromString(post.postId),
 			})))
 			events.postsAdded.publish({room, posts})
 		},
@@ -47,7 +47,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			if (postIds.length) {
 				await chatTables.chatPosts.delete(findAll(postIds, postId => ({
 					room,
-					messageId: DamnId.fromString(postId)
+					postId: DamnId.fromString(postId)
 				})))
 				events.postsRemoved.publish({room, postIds})
 			}

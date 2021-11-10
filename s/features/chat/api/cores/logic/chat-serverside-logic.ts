@@ -46,16 +46,16 @@ export function prepareChatServersideLogic({
 				...draft,
 				room,
 				time: Date.now(),
-				messageId: rando.randomId().toString(),
+				postId: rando.randomId().toString(),
 				userId: rando.randomId().toString(),
 				nickname: clientRecord.auth.access.user.profile.nickname,
 			}
 			await persistence.addPosts(room, [post])
 		},
-		async remove(room: string, messageIds: string[]) {
+		async remove(room: string, postIds: string[]) {
 			// TODO validate these inputs
 			requireAllowance().moderateAllChats()
-			await persistence.removePosts(room, messageIds)
+			await persistence.removePosts(room, postIds)
 		},
 		async clear(room: string) {},
 		async mute(userIds: string[]) {},

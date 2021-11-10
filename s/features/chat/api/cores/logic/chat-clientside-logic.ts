@@ -41,7 +41,7 @@ export function prepareChatClientsideLogic({state}: {
 					[room]: {
 						...state.writable.cache.rooms[room],
 						posts: (state.writable.cache.rooms[room]?.posts ?? [])
-							.filter(post => !postIds.includes(post.messageId))
+							.filter(post => !postIds.includes(post.postId))
 					},
 				},
 			}

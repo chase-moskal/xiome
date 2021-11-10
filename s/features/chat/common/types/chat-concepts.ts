@@ -24,14 +24,14 @@ export type ChatDraft = {
 export type ChatPost = {
 	room: string
 	nickname: string
-	messageId: string
+	postId: string
 	userId: string
 	time: number
 } & ChatDraft
 
 export type ChatPostRow = {
 	room: string
-	messageId: DamnId
+	postId: DamnId
 	userId: DamnId
 	time: number
 } & ChatDraft
@@ -76,5 +76,5 @@ export interface ChatRoom {
 	readonly status: ChatStatus
 	setRoomStatus(status: ChatStatus): void
 	post(draft: ChatDraft): void
-	remove(messageIds: string[]): void
+	remove(postIds: string[]): void
 }
