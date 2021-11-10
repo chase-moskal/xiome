@@ -58,9 +58,6 @@ export function makeNotesModel({notesService}: {
 			state.writable.statsOp = op
 		},
 
-		// each notes component will have its own local cache
-		// of which notes have been loaded to display
-		// (so that different notes components can display different pages)
 		createNotesCache() {
 			const cacheState = snapstate({
 				old: false,
@@ -94,8 +91,15 @@ export function makeNotesModel({notesService}: {
 				const {statsOp} = state.readable
 				const {old, pageSize} = cacheState.readable
 				const {oldCount, newCount} = ops.value(statsOp)
-				const totalNotesOnPage = old ? oldCount : newCount
-				return Math.ceil(totalNotesOnPage/pageSize)
+				const count = old
+					? oldCount
+					: newCount
+				return Math.ceil(count / pageSize)
+			}
+
+			const isPageAvailable = {
+				next: () => cacheState.writable.pageNumber < totalNumberOfPages(),
+				previous: () => cacheState.writable.pageNumber > 1,
 			}
 
 			return {
@@ -120,18 +124,28 @@ export function makeNotesModel({notesService}: {
 					await fetchAppropriateNotes()
 				},
 
+				get isNextPageAvailable() {
+					return isPageAvailable.next()
+				},
+
+				get isPreviousPageAvailable() {
+					return isPageAvailable.previous()
+				},
+
 				async nextPage() {
-					if (cacheState.writable.pageNumber < totalNumberOfPages()) {
+					if (isPageAvailable.next()) {
 						cacheState.writable.pageNumber += 1
 						await fetchAppropriateNotes()
 					}
+					else throw new Error("no next page")
 				},
 
 				async previousPage() {
-					if (cacheState.writable.pageNumber > 1) {
+					if (isPageAvailable.previous()) {
 						cacheState.writable.pageNumber -= 1
 						await fetchAppropriateNotes()
 					}
+					else throw new Error("no previous page")
 				},
 
 				async markAllNotesOld() {
@@ -139,17 +153,22 @@ export function makeNotesModel({notesService}: {
 					await loadStats()
 					refresh.publish(undefined)
 					propagateChangeToOtherTabs.publish(undefined)
+					await fetchAppropriateNotes()
 				},
 
 				async markSpecificNoteOld(noteId: string) {
 					await markNotesNewOrOld(true, [noteId])
+					await fetchAppropriateNotes()
 				},
 
 				async markSpecificNoteNew(noteId: string) {
 					await markNotesNewOrOld(false, [noteId])
+					await fetchAppropriateNotes()
 				},
 
-				totalNumberOfPages,
+				get totalPages() {
+					return totalNumberOfPages()
+				},
 			}
 		},
 	}

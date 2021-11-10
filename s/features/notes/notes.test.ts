@@ -1,11 +1,10 @@
 
-import {Suite} from "cynic"
+import {expect, Suite} from "cynic"
 
 import {fakeNoteDraft} from "./testing/fakes/fake-note-draft.js"
 import {notesTestingSetup} from "./testing/notes-testing-setup.js"
 import {fakeManyNoteDrafts} from "./testing/fakes/fake-many-note-drafts.js"
 import {prepareNoteStatsAssertions} from "./testing/assertions/note-stats-assertions.js"
-import {prepareNoteInboxAssertions} from "./testing/assertions/notes-page-assertions.js"
 
 export default <Suite>{
 
@@ -32,14 +31,13 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const cache = notesModel.createNotesCache()
-		const {loadNewPage} = prepareNoteInboxAssertions({cache})
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
 
-		const pageTesting = await loadNewPage()
-		pageTesting.assertNotesLength(1)
-		pageTesting.assertNoteTitle(0, draft.title)
+		await cache.fetchAppropriateNotes()
+		expect(cache.notes.length).equals(1)
+		expect(cache.notes[0].title).equals(draft.title)
 	},
 
 	async "a message cannot be read by the wrong user"() {
@@ -47,13 +45,12 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const cache = notesModel.createNotesCache()
-		const {loadNewPage} = prepareNoteInboxAssertions({cache})
 
 		const draft = fakeNoteDraft(rando.randomId().toString())
 		await notesDepositBox.sendNote(draft)
 
-		const pageTesting = await loadNewPage()
-		pageTesting.assertNotesLength(0)
+		await cache.fetchAppropriateNotes()
+		expect(cache.notes.length).equals(0)
 	},
 
 	async "user can mark a message old and then new again"() {
@@ -61,32 +58,30 @@ export default <Suite>{
 		const {notesModel} = frontend
 		const {notesDepositBox} = backend
 		const cache = notesModel.createNotesCache()
-		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({cache})
+		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
 
 		const draft = fakeNoteDraft(userId)
 		await notesDepositBox.sendNote(draft)
+		await notesModel.loadStats()
+		await cache.fetchAppropriateNotes()
 
 		{
-			const pageTesting = await loadNewPage()
-			pageTesting.assertNotesLength(1)
-			const {noteId} = pageTesting.notes[0]
+			expect(cache.notes.length).equals(1)
+			assertNoteCounts({newCount: 1, oldCount: 0})
+			const {noteId} = cache.notes[0]
 			await cache.markSpecificNoteOld(noteId)
+			expect(cache.notes.length).equals(0)
 		}
 		{
-			const pageTesting = await loadNewPage()
-			pageTesting.assertNotesLength(0)
-		}
-		{
-			const pageTesting = await loadOldPage()
-			pageTesting.assertNotesLength(1)
-			const {noteId} = pageTesting.notes[0]
+			await cache.switchTabOld()
+			expect(cache.notes.length).equals(1)
+			const {noteId} = cache.notes[0]
 			await cache.markSpecificNoteNew(noteId)
+			expect(cache.notes.length).equals(0)
 		}
 		{
-			const newTesting = await loadNewPage()
-			const oldTesting = await loadOldPage()
-			oldTesting.assertNotesLength(0)
-			newTesting.assertNotesLength(1)
+			await cache.switchTabNew()
+			expect(cache.notes.length).equals(1)
 		}
 	},
 
@@ -96,27 +91,22 @@ export default <Suite>{
 		const {notesDepositBox} = backend
 		const {assertNoteCounts} = prepareNoteStatsAssertions({notesModel})
 		const cache = notesModel.createNotesCache()
-		const {loadNewPage, loadOldPage} = prepareNoteInboxAssertions({cache})
 
 		const drafts = fakeManyNoteDrafts(userId, 100)
 		await notesDepositBox.sendNotes(drafts)
 
-		{
-			await notesModel.loadStats()
-			assertNoteCounts({newCount: 100, oldCount: 0})
+		await notesModel.loadStats()
+		await cache.fetchAppropriateNotes()
 
-			let pageTesting = await loadNewPage()
-			pageTesting.assertNotesLength(10)
+		assertNoteCounts({newCount: 100, oldCount: 0})
+		expect(cache.notes.length).equals(10)
 
-			await cache.markAllNotesOld()
-			assertNoteCounts({newCount: 0, oldCount: 100})
+		await cache.markAllNotesOld()
+		assertNoteCounts({newCount: 0, oldCount: 100})
+		expect(cache.notes.length).equals(0)
 
-			pageTesting = await loadNewPage()
-			pageTesting.assertNotesLength(0)
-
-			pageTesting = await loadOldPage()
-			pageTesting.assertNotesLength(10)
-		}
+		await cache.switchTabOld()
+		expect(cache.notes.length).equals(10)
 	},
 
 	async "refreshes between browser tabs"() {
@@ -143,9 +133,81 @@ export default <Suite>{
 		tab1asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 		tab2asserts.assertNoteCounts({newCount: 1, oldCount: 0})
 
-		const cache = await tab1.prepareCache()
+		const cache = tab1.notesModel.createNotesCache()
 		await cache.markSpecificNoteOld(noteId)
 		tab1asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
+	},
+
+	"pagination": {
+		async "user can flip through pages of new notes"() {
+			const {userId, backend, frontend} = await notesTestingSetup()
+			const {notesModel} = frontend
+			const {notesDepositBox} = backend
+			const cache = notesModel.createNotesCache()
+
+			const drafts = fakeManyNoteDrafts(userId, 15)
+			await notesDepositBox.sendNotes(drafts)
+
+			await notesModel.loadStats()
+			await cache.fetchAppropriateNotes()
+			expect(cache.totalPages).equals(2)
+			expect(cache.isNextPageAvailable).equals(true)
+			expect(cache.isPreviousPageAvailable).equals(false)
+			expect(cache.cacheState.pageNumber).equals(1)
+			expect(cache.notes.length).equals(10)
+
+			await cache.nextPage()
+			expect(cache.isNextPageAvailable).equals(false)
+			expect(cache.isPreviousPageAvailable).equals(true)
+			expect(cache.cacheState.pageNumber).equals(2)
+			expect(cache.notes.length).equals(5)
+		},
+		async "user can switch to 'old' tab"() {
+			const {userId, backend, frontend} = await notesTestingSetup()
+			const {notesModel} = frontend
+			const {notesDepositBox} = backend
+			const cache = notesModel.createNotesCache()
+
+			const drafts = fakeManyNoteDrafts(userId, 21)
+			await notesDepositBox.sendNotes(drafts)
+
+			await notesModel.loadStats()
+			await cache.fetchAppropriateNotes()
+			expect(cache.totalPages).equals(3)
+			expect(cache.isNextPageAvailable).equals(true)
+			expect(cache.isPreviousPageAvailable).equals(false)
+			expect(cache.cacheState.pageNumber).equals(1)
+			expect(cache.notes.length).equals(10)
+
+			const [{noteId}] = cache.notes
+
+			await cache.switchTabOld()
+			expect(cache.totalPages).equals(0)
+			await cache.markSpecificNoteOld(noteId)
+			expect(cache.totalPages).equals(1)
+			expect(cache.notes.length).equals(1)
+
+			await cache.switchTabNew()
+			expect(cache.totalPages).equals(2)
+		},
+		async "invalid page flips throws errors"() {
+			const {userId, backend, frontend} = await notesTestingSetup()
+			const {notesModel} = frontend
+			const {notesDepositBox} = backend
+			const cache = notesModel.createNotesCache()
+
+			const drafts = fakeManyNoteDrafts(userId, 5)
+			await notesDepositBox.sendNotes(drafts)
+
+			await notesModel.loadStats()
+			await cache.fetchAppropriateNotes()
+			expect(cache.totalPages).equals(1)
+			expect(cache.isNextPageAvailable).equals(false)
+			expect(cache.isPreviousPageAvailable).equals(false)
+
+			await expect(cache.nextPage).throws()
+			await expect(cache.previousPage).throws()
+		},
 	},
 }
