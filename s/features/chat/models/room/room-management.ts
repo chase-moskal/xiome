@@ -4,9 +4,10 @@ import {makeChatRoom} from "./make-chat-room.js"
 import {makeChatState} from "../state/chat-state.js"
 import {ChatConnection} from "../../common/types/chat-concepts.js"
 
-export function setupRoomManagement({state, reconnect}: {
+export function setupRoomManagement({state, reconnect, disconnect}: {
 		state: ReturnType<typeof makeChatState>
 		reconnect: () => Promise<ChatConnection>
+		disconnect: () => Promise<void>
 	}) {
 
 	async function assertConnection() {
@@ -27,7 +28,7 @@ export function setupRoomManagement({state, reconnect}: {
 		return following
 	}
 
-	function assertRoom(label: string, dispose: () => void) {
+	function assertRoom(label: string) {
 		let room = rooms.get(label)
 		if (!room) {
 			room = assertConnection()
@@ -39,7 +40,6 @@ export function setupRoomManagement({state, reconnect}: {
 					makeChatRoom({
 						label,
 						state,
-						dispose,
 						serverRemote: connection.serverRemote,
 					})
 				)
@@ -51,32 +51,35 @@ export function setupRoomManagement({state, reconnect}: {
 	function removeRoom(label: string) {
 		const room = rooms.get(label)
 		assertConnection()
-			.then(connection => 
+			.then(connection =>
 				room.then(r => {
 					connection.serverRemote.roomUnsubscribe(label)
-					return connection
 				})
 			)
-			.then(connection => {
+			.then(() => {
 				rooms.delete(label)
 				if (rooms.size === 0) {
-					connection.disconnect()
+					return disconnect()
 				}
 			})
 	}
 
-	async function getRoom(label: string) {
+	async function getRoomSession(label: string) {
 		const following = assertFollowing(label)
 		const follower = Symbol()
 		following.add(follower)
+
 		function dispose() {
 			following.delete(follower)
-			if (following.size === 0) {
+			if (following.size === 0)
 				removeRoom(label)
-			}
 		}
-		return assertRoom(label, dispose)
+
+		return {
+			dispose,
+			room: await assertRoom(label),
+		}
 	}
 
-	return {getRoom}
+	return {getRoomSession}
 }

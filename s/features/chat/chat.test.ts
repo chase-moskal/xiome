@@ -1,5 +1,6 @@
 
 import {assert, expect, Suite} from "cynic"
+import {ops} from "../../framework/ops.js"
 
 import {nap} from "../../toolbox/nap.js"
 import {ChatStatus} from "./common/types/chat-concepts.js"
@@ -12,7 +13,7 @@ export default<Suite>{
 			const setup = await testChatSetup()
 			const server = await setup.makeServer()
 			const {chatModel} = await server.makeClientFor.viewer()
-			const room = await chatModel.room("default")
+			const {room} = await chatModel.session("default")
 
 			assert(room.status === ChatStatus.Offline, "room should start offline")
 		},
@@ -21,7 +22,7 @@ export default<Suite>{
 			const setup = await testChatSetup()
 			const server = await setup.makeServer()
 			const {chatModel} = await server.makeClientFor.moderator()
-			const room = await chatModel.room("default")
+			const {room} = await chatModel.session("default")
 			assert(room.status === ChatStatus.Offline, "room should start offline")
 
 			room.setRoomStatus(ChatStatus.Online)
@@ -37,13 +38,13 @@ export default<Suite>{
 			// participant sees room offline
 
 			const participant = await server.makeClientFor.participant()
-			const participantRoom = await participant.chatModel.room("default")
+			const {room: participantRoom} = await participant.chatModel.session("default")
 			expect(participantRoom.status).equals(ChatStatus.Offline)
 	
 			// moderator sets room online
 
 			const moderator = await server.makeClientFor.moderator()
-			const moderatorRoom = await moderator.chatModel.room("default")
+			const {room: moderatorRoom} = await moderator.chatModel.session("default")
 			expect(moderatorRoom.status).equals(ChatStatus.Offline)
 
 			moderatorRoom.setRoomStatus(ChatStatus.Online)
@@ -54,7 +55,7 @@ export default<Suite>{
 			// participant sees it
 
 			expect(participantRoom.status).equals(ChatStatus.Online)
-			expect((await participant.chatModel.room("default")).status)
+			expect((await participant.chatModel.session("default")).room.status)
 				.equals(ChatStatus.Online)
 		},
 	},
@@ -65,10 +66,10 @@ export default<Suite>{
 			const {server, roomLabel} = await setup.startOnline()
 			
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 
 			const p2 = await server.makeClientFor.participant()
-			const p2room = await p2.chatModel.room(roomLabel)
+			const {room: p2room} = await p2.chatModel.session(roomLabel)
 
 			p1room.post({content: "lol"})
 			await nap()
@@ -93,10 +94,10 @@ export default<Suite>{
 			const altRoomLabel = roomLabel + "2"
 
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 
 			const p2 = await server.makeClientFor.participant()
-			const p2room = await p2.chatModel.room(altRoomLabel)
+			const {room: p2room} = await p2.chatModel.session(altRoomLabel)
 
 			p1room.post({content: "lol"})
 			await nap()
@@ -116,13 +117,13 @@ export default<Suite>{
 			const setup = await testChatSetup()
 			const {server, roomLabel, moderator} = await setup.startOnline()
 
-			const moderatorRoom = await moderator.chatModel.room(roomLabel)
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
 			
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 
 			const p2 = await server.makeClientFor.participant()
-			const p2room = await p2.chatModel.room(roomLabel)
+			const {room: p2room} = await p2.chatModel.session(roomLabel)
 
 			p1room.post({content: "lol"})
 			await nap()
@@ -144,13 +145,13 @@ export default<Suite>{
 			const setup = await testChatSetup()
 			const {server, roomLabel, moderator} = await setup.startOnline()
 
-			const moderatorRoom = await moderator.chatModel.room(roomLabel)
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
 			
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 
 			const p2 = await server.makeClientFor.participant()
-			const p2room = await p2.chatModel.room(roomLabel)
+			const {room: p2room} = await p2.chatModel.session(roomLabel)
 
 			p1room.post({content: "lol"})
 			p2room.post({content: "lmao"})
@@ -175,13 +176,13 @@ export default<Suite>{
 		async "moderator can mute a participant, and unmute"() {
 			const setup = await testChatSetup()
 			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
 
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 			p1room.post({content: "lol"})
 			await nap()
 
-			const moderatorRoom = await moderator.chatModel.room(roomLabel)
 			const {userId} = moderatorRoom.posts[0]
 			expect(moderatorRoom.posts.length).equals(1)
 			moderatorRoom.mute(userId)
@@ -203,13 +204,14 @@ export default<Suite>{
 		async "muted user cannot post messages"() {
 			const setup = await testChatSetup()
 			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
 
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
 			p1room.post({content: "lol"})
 			await nap()
 
-			const moderatorRoom = await moderator.chatModel.room(roomLabel)
 			const {userId} = moderatorRoom.posts[0]
 			expect(moderatorRoom.posts.length).equals(1)
 			moderatorRoom.mute(userId)
@@ -230,7 +232,7 @@ export default<Suite>{
 			const {server, roomLabel} = await setup.startOnline()
 
 			const p1 = await server.makeClientFor.bannedParticipant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 			expect(p1room.weAreBanned).equals(true)
 		},
 
@@ -239,7 +241,7 @@ export default<Suite>{
 			const {server, roomLabel} = await setup.startOnline()
 
 			const p1 = await server.makeClientFor.bannedParticipant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
 			expect(p1room.weAreBanned).equals(true)
 
 			p1room.post({content: "rofl"})
@@ -253,28 +255,79 @@ export default<Suite>{
 		async "user is unsubscribed from a room when the 'component' leaves"() {
 			const setup = await testChatSetup()
 			const {server, roomLabel} = await setup.startOnline()
-			
+
 			const p1 = await server.makeClientFor.participant()
-			const p1room = await p1.chatModel.room(roomLabel)
+			const p1session = await p1.chatModel.session(roomLabel)
 
 			const p2 = await server.makeClientFor.participant()
-			const p2room = await p2.chatModel.room(roomLabel)
+			const p2session = await p2.chatModel.session(roomLabel)
 
-			p1room.post({content: "lol"})
+			p1session.room.post({content: "lol"})
 			await nap()
 
-			expect(p1room.posts.length).equals(1)
-			expect(p1room.posts.find(post => post.content === "lol")).ok()
-			expect(p2room.posts.find(post => post.content === "lol")).ok()
+			expect(p1session.room.posts.length).equals(1)
+			expect(p1session.room.posts.find(post => post.content === "lol")).ok()
+			expect(p2session.room.posts.find(post => post.content === "lol")).ok()
 
-			p1room.dispose()
+			p1session.dispose()
 
-			p2room.post({content: "lmao"})
+			p2session.room.post({content: "lmao"})
 			await nap()
 
-			expect(p2room.posts.length).equals(2)
-			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
-			expect(p1room.posts.length).equals(1)
+			expect(p2session.room.posts.length).equals(2)
+			expect(p1session.room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p1session.room.posts.length).equals(1)
+		},
+		async "rooms without sessions are unsubscribed"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {chatModel} = await server.makeClientFor.participant()
+
+			const sessionOutside = await moderator.chatModel.session(roomLabel)
+			const session1 = await chatModel.session(roomLabel)
+			const session2 = await chatModel.session(roomLabel)
+
+			sessionOutside.room.post({content: "lol1"})
+			await nap()
+			expect(session1.room.posts.length).equals(1)
+
+			session2.dispose()
+			await nap()
+			sessionOutside.room.post({content: "lol2"})
+			await nap()
+			expect(session1.room.posts.length).equals(2)
+
+			session1.dispose()
+			await nap()
+			sessionOutside.room.post({content: "lol3"})
+			await nap()
+			expect(session1.room.posts.length).equals(2)
+		},
+		async "connections die without sessions, re-established with new sessions"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {chatModel} = await server.makeClientFor.participant()
+
+			const session1 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+			
+			const session2 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session1.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session2.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).not.ok()
+
+			const session3 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session3.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).not.ok()
 		},
 	},
 

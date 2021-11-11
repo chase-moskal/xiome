@@ -27,9 +27,16 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		return connection
 	})
 
+	async function disconnect() {
+		const connection = ops.value(state.readable.connectionOp)
+		state.writable.connectionOp = ops.none()
+		await connection.disconnect()
+	}
+
 	const roomManagement = setupRoomManagement({
 		state,
 		reconnect,
+		disconnect,
 	})
 
 	return {
@@ -47,6 +54,6 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			await reconnect()
 		},
 
-		room: roomManagement.getRoom,
+		session: roomManagement.getRoomSession,
 	}
 }

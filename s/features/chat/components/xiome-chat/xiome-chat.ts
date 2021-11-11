@@ -1,7 +1,7 @@
 
-import {Await} from "../../../../types/await.js"
 import {makeChatModel} from "../../models/chat-model.js"
 import {ChatStatus} from "../../common/types/chat-concepts.js"
+import {makeChatRoom} from "../../models/room/make-chat-room.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
@@ -22,11 +22,24 @@ export class XiomeChat extends ComponentWithShare<{
 		return this.share.chatModel
 	}
 
-	#room: Await<ReturnType<ReturnType<typeof makeChatModel>["room"]>>
+	#room: ReturnType<typeof makeChatRoom>
+	#dispose = () => {}
 
-	async init() {
-		this.#room = await this.#model.room(this.room)
-		this.requestUpdate()
+	subscribe() {
+		this.#model.session(this.room)
+			.then(({room, dispose}) => {
+				this.#room = room
+				this.#dispose = dispose
+			})
+			.then(() => this.requestUpdate())
+		const unsubs = [
+			super.subscribe(),
+			() => this.#dispose(),
+		]
+		return () => {
+			for (const unsub of unsubs)
+				unsub()
+		}
 	}
 
 	#renderModerationHeader() {

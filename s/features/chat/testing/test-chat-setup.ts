@@ -82,10 +82,12 @@ export async function testChatSetup() {
 			const server = await makeServer()
 			const moderator = await server.makeClientFor.moderator()
 			const roomLabel = "default"
-			const room = await moderator.chatModel.room(roomLabel)
+			const {room, dispose} = await moderator.chatModel.session(roomLabel)
 			room.setRoomStatus(ChatStatus.Online)
 			await nap()
-			return {server, moderator, roomLabel}
+			dispose()
+			await nap()
+			return {server, moderator, roomLabel, room}
 		},
 	}
 }
