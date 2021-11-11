@@ -49,6 +49,12 @@ export class XiomeNotes extends ComponentWithShare<{
 					<li>
 						<p>noteId: ${note.noteId}</p>
 						<p>noteTitle: ${note.title}</p>
+						<p>noteText: ${note.text}</p>
+						<p>noteTime: ${note.time}</p>
+						<p>noteFrom: ${note.from}</p>
+						<p>noteToe: ${note.to}</p>
+						<p>noteDetails: ${note.details}</p>
+						<p>noteType: ${note.type}</p>
 						${old ? html`
 							<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
 								+
@@ -107,7 +113,7 @@ export class XiomeNotes extends ComponentWithShare<{
 	#renderBasedOnStateOfNotesArray (){
 		const {old, notesOp} = this.#cache.cacheState
 		return html`
-			${ops.value(notesOp).length == 0
+			${ops.value(notesOp).length === 0
 				? html`
 					${this.#renderTabs()}
 					<slot name="empty notes">
