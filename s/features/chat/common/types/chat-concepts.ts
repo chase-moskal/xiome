@@ -42,8 +42,9 @@ export type ChatRoomStatusRow = {
 }
 
 export type ChatTables = {
-	chatPosts: DbbyTable<ChatPostRow>
-	chatRoomStatus: DbbyTable<ChatRoomStatusRow>
+	posts: DbbyTable<ChatPostRow>
+	mutes: DbbyTable<{userId: string}>
+	roomStatuses: DbbyTable<ChatRoomStatusRow>
 }
 
 export interface ClientRecord {

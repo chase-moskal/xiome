@@ -1,8 +1,8 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {makeChatState} from "../state/chat-state.js"
-import {ChatDraft, ChatServersideLogic, ChatStatus} from "../../common/types/chat-concepts.js"
 import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
+import {ChatDraft, ChatServersideLogic, ChatStatus} from "../../common/types/chat-concepts.js"
 
 export function makeChatRoom({label, serverRemote, state}: {
 		label: string
@@ -25,8 +25,7 @@ export function makeChatRoom({label, serverRemote, state}: {
 		},
 		get weAreMuted() {
 			const {user: {userId}} = getAccess()
-			return state.readable.cache.mutedUserIds
-				.find(mutedUserId => mutedUserId === userId)
+			return state.readable.cache.mutedUserIds.includes(userId)
 		},
 		get weAreBanned() {
 			const {permit: {privileges}} = getAccess()
@@ -44,7 +43,11 @@ export function makeChatRoom({label, serverRemote, state}: {
 		clear() {
 			serverRemote.clear(label)
 		},
-		mute(userId: string) {},
-		unmute(userId: string) {},
+		mute(userId: string) {
+			serverRemote.mute([userId])
+		},
+		unmute(userId: string) {
+			serverRemote.unmute([userId])
+		},
 	}
 }

@@ -6,8 +6,8 @@ import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, 
 
 export function prepareChatServersideLogic({
 			rando,
-			clientRecord,
 			persistence,
+			clientRecord,
 			policy,
 		}: {
 			rando: Rando
@@ -27,6 +27,10 @@ export function prepareChatServersideLogic({
 				throw new Error(`action forbidden, lacking privilege "${key}"`)
 		})
 	}
+	const isNotMuted = () => !persistence.isMuted(
+		clientRecord.auth.access.user.userId,
+	)
+	const isNotBanned = () => !getAllowance().banned
 
 	return {
 		async updateUserMeta(meta: ChatMeta) {
@@ -40,20 +44,20 @@ export function prepareChatServersideLogic({
 			clientRecord.rooms.delete(room)
 		},
 		async post(room: string, draft: ChatDraft) {
-			// TODO validate these inputs
 			requireAllowance().participateInAllChats()
-			const post: ChatPost = {
-				...draft,
-				room,
-				time: Date.now(),
-				postId: rando.randomId().toString(),
-				userId: rando.randomId().toString(),
-				nickname: clientRecord.auth.access.user.profile.nickname,
+			if (isNotMuted() && isNotBanned()) {
+				const post: ChatPost = {
+					...draft,
+					room,
+					time: Date.now(),
+					postId: rando.randomId().toString(),
+					userId: clientRecord.auth.access.user.userId,
+					nickname: clientRecord.auth.access.user.profile.nickname,
+				}
+				await persistence.addPosts(room, [post])
 			}
-			await persistence.addPosts(room, [post])
 		},
 		async remove(room: string, postIds: string[]) {
-			// TODO validate these inputs
 			requireAllowance().moderateAllChats()
 			await persistence.removePosts(room, postIds)
 		},
@@ -61,7 +65,12 @@ export function prepareChatServersideLogic({
 			requireAllowance().moderateAllChats()
 			await persistence.clearRoom(room)
 		},
-		async mute(userIds: string[]) {},
+		async mute(userIds: string[]) {
+			await persistence.addMute(userIds)
+		},
+		async unmute(userIds: string[]) {
+			await persistence.removeMute(userIds)
+		},
 		async setRoomStatus(room: string, status: ChatStatus) {
 			await persistence.setRoomStatus(room, status)
 		},

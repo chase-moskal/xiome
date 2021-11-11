@@ -13,6 +13,17 @@ export function makeChatServerCore({rando, persistence, policy}: {
 
 	const clientRecords = new Set<ClientRecord>()
 
+	async function broadcastToAll(
+			action: (
+				record: ClientRecord,
+				allowance: ReturnType<typeof chatAllowance>
+			) => void,
+		) {
+		for (const record of clientRecords.values())
+			if (record.auth)
+				action(record, chatAllowance(record.auth.access.permit.privileges))
+	}
+
 	async function broadcastToRoom(
 			room: string,
 			action: (
@@ -50,6 +61,21 @@ export function makeChatServerCore({rando, persistence, policy}: {
 					record.clientRemote.postsRemoved(room, postIds)
 			}
 		)
+	})
+
+	persistence.onMutes(({userIds}) => {
+		broadcastToAll((record, allowance) => {
+			if (allowance.viewAllChats)
+				record.clientRemote.usersMuted(userIds)
+		})
+	})
+
+	persistence.onUnmutes(({userIds}) => {
+		console.log("ON UNMUTE")
+		broadcastToAll((record, allowance) => {
+			if (allowance.viewAllChats)
+				record.clientRemote.usersUnmuted(userIds)
+		})
 	})
 
 	persistence.onRoomCleared(({room}) => {

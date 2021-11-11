@@ -68,7 +68,10 @@ export async function testChatSetup() {
 				viewer: () => makeClient([chatPrivileges["view all chats"]]),
 				participant: () => makeClient([chatPrivileges["participate in all chats"]]),
 				moderator: () => makeClient([chatPrivileges["moderate all chats"]]),
-				bannedParticipant: () => makeClient([appPermissions.privileges["banned"]]),
+				bannedParticipant: () => makeClient([
+					chatPrivileges["participate in all chats"],
+					appPermissions.privileges["banned"],
+				]),
 			},
 		}
 	}

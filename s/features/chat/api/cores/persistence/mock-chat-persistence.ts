@@ -8,9 +8,12 @@ import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-stor
 
 export async function mockChatPersistence(storage: FlexStorage) {
 
+	const cachedMutedUserIds = new Set<string>()
+
 	const chatTables = await mockStorageTables<ChatTables>(storage, {
-		chatPosts: true,
-		chatRoomStatus: true,
+		posts: true,
+		mutes: true,
+		roomStatuses: true,
 	})
 
 	const events = {
@@ -18,6 +21,8 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
 		postsRemoved: subbies<{room: string, postIds: string[]}>(),
 		roomCleared: subbies<{room: string}>(),
+		mutes: subbies<{userIds: string[]}>(),
+		unmutes: subbies<{userIds: string[]}>(),
 	}
 
 	return {
@@ -38,8 +43,28 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			return events.roomCleared.subscribe(handler)
 		},
 
+		onMutes(handler: ({}: {userIds: string[]}) => void) {
+			return events.mutes.subscribe(({userIds}) => {
+				for (const userId of userIds)
+					cachedMutedUserIds.add(userId)
+				handler({userIds})
+			})
+		},
+
+		onUnmutes(handler: ({}: {userIds: string[]}) => void) {
+			return events.unmutes.subscribe(({userIds}) => {
+				for (const userId of userIds)
+					cachedMutedUserIds.delete(userId)
+				handler({userIds})
+			})
+		},
+
+		isMuted(userId: string) {
+			return cachedMutedUserIds.has(userId)
+		},
+
 		async addPosts(room: string, posts: ChatPost[]) {
-			await chatTables.chatPosts.create(...posts.map(post => ({
+			await chatTables.posts.create(...posts.map(post => ({
 				...post,
 				room,
 				userId: DamnId.fromString(post.userId),
@@ -50,7 +75,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 
 		async removePosts(room: string, postIds: string[]) {
 			if (postIds.length) {
-				await chatTables.chatPosts.delete(findAll(postIds, postId => ({
+				await chatTables.posts.delete(findAll(postIds, postId => ({
 					room,
 					postId: DamnId.fromString(postId)
 				})))
@@ -59,12 +84,30 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		},
 
 		async clearRoom(room: string) {
-			await chatTables.chatPosts.delete(find({room}))
+			await chatTables.posts.delete(find({room}))
 			events.roomCleared.publish({room})
 		},
 
+		async addMute(userIds: string[]) {
+			if (userIds.length) {
+				await chatTables.mutes.create(
+					...userIds.map(userId => ({userId}))
+				)
+				events.mutes.publish({userIds})
+			}
+		},
+
+		async removeMute(userIds: string[]) {
+			if (userIds.length) {
+				await chatTables.mutes.delete(
+					findAll(userIds, userId => ({userId}))
+				)
+				events.unmutes.publish({userIds})
+			}
+		},
+
 		async setRoomStatus(room: string, status: ChatStatus) {
-			await chatTables.chatRoomStatus.update({
+			await chatTables.roomStatuses.update({
 				...find({room}),
 				upsert: {room, status},
 			})
@@ -72,7 +115,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		},
 
 		async getRoomStatus(room: string) {
-			const row = await chatTables.chatRoomStatus.one(find({room}))
+			const row = await chatTables.roomStatuses.one(find({room}))
 			return row
 				? row.status
 				: ChatStatus.Offline

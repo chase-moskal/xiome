@@ -58,7 +58,21 @@ export function prepareChatClientsideLogic({state}: {
 				},
 			}
 		},
-		async usersMuted(userIds: string[]) {},
-		async usersUnmuted(userIds: string[]) {},
+		async usersMuted(userIds: string[]) {
+			state.writable.cache = {
+				...state.writable.cache,
+				mutedUserIds: [
+					...state.writable.cache.mutedUserIds,
+					...userIds,
+				],
+			}
+		},
+		async usersUnmuted(userIds: string[]) {
+			state.writable.cache = {
+				...state.writable.cache,
+				mutedUserIds: state.writable.cache.mutedUserIds
+					.filter(userId => !userIds.includes(userId)),
+			}
+		},
 	}
 }
