@@ -4,10 +4,11 @@ import {makeChatState} from "../state/chat-state.js"
 import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 import {ChatDraft, ChatServersideLogic, ChatStatus} from "../../common/types/chat-concepts.js"
 
-export function makeChatRoom({label, serverRemote, state}: {
+export function makeChatRoom({label, serverRemote, state, dispose}: {
 		label: string
 		serverRemote: ChatServersideLogic
 		state: ReturnType<typeof makeChatState>
+		dispose: () => void
 	}) {
 
 	const getRoomCache = () => state.readable.cache.rooms[label]
@@ -31,6 +32,7 @@ export function makeChatRoom({label, serverRemote, state}: {
 			const {permit: {privileges}} = getAccess()
 			return privileges.includes(appPermissions.privileges["banned"])
 		},
+
 		setRoomStatus(status: ChatStatus) {
 			serverRemote.setRoomStatus(label, status)
 		},
@@ -49,5 +51,7 @@ export function makeChatRoom({label, serverRemote, state}: {
 		unmute(userId: string) {
 			serverRemote.unmute([userId])
 		},
+
+		dispose,
 	}
 }
