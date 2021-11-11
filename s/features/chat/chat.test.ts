@@ -251,6 +251,38 @@ export default<Suite>{
 		},
 	},
 
+	"connection": {
+		async "connection is only created when a room session is present"() {
+
+		},
+		async "connections die without sessions, re-established with new sessions"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			const {chatModel} = await server.makeClientFor.participant()
+
+			const session1 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+			
+			const session2 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session1.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session2.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).not.ok()
+
+			const session3 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
+
+			session3.dispose()
+			await nap()
+			expect(ops.value(chatModel.state.connectionOp)).not.ok()
+		},
+	},
+
 	"room subscription": {
 		async "user is unsubscribed from a room when the 'component' leaves"() {
 			const setup = await testChatSetup()
@@ -302,32 +334,6 @@ export default<Suite>{
 			sessionOutside.room.post({content: "lol3"})
 			await nap()
 			expect(session1.room.posts.length).equals(2)
-		},
-		async "connections die without sessions, re-established with new sessions"() {
-			const setup = await testChatSetup()
-			const {server, roomLabel, moderator} = await setup.startOnline()
-			const {chatModel} = await server.makeClientFor.participant()
-
-			const session1 = await chatModel.session(roomLabel)
-			expect(ops.value(chatModel.state.connectionOp)).ok()
-			
-			const session2 = await chatModel.session(roomLabel)
-			expect(ops.value(chatModel.state.connectionOp)).ok()
-
-			session1.dispose()
-			await nap()
-			expect(ops.value(chatModel.state.connectionOp)).ok()
-
-			session2.dispose()
-			await nap()
-			expect(ops.value(chatModel.state.connectionOp)).not.ok()
-
-			const session3 = await chatModel.session(roomLabel)
-			expect(ops.value(chatModel.state.connectionOp)).ok()
-
-			session3.dispose()
-			await nap()
-			expect(ops.value(chatModel.state.connectionOp)).not.ok()
 		},
 	},
 
