@@ -1,8 +1,8 @@
 
 import {assert, expect, Suite} from "cynic"
-import {ops} from "../../framework/ops.js"
 
 import {nap} from "../../toolbox/nap.js"
+import {ops} from "../../framework/ops.js"
 import {ChatStatus} from "./common/types/chat-concepts.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 
