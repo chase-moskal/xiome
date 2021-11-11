@@ -250,7 +250,32 @@ export default<Suite>{
 	},
 
 	"auth and timings": {
-		async "user is unsubscribed from a room when the 'component' leaves"() {},
+		async "user is unsubscribed from a room when the 'component' leaves"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			
+			const p1 = await server.makeClientFor.participant()
+			const p1room = await p1.chatModel.room(roomLabel)
+
+			const p2 = await server.makeClientFor.participant()
+			const p2room = await p2.chatModel.room(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p1room.posts.find(post => post.content === "lol")).ok()
+			expect(p2room.posts.find(post => post.content === "lol")).ok()
+
+			p1room.dispose()
+
+			p2room.post({content: "lmao"})
+			await nap()
+
+			expect(p2room.posts.length).equals(2)
+			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p1room.posts.length).equals(1)
+		},
 		async "user who logs out mid-chat is disconnected"() {},
 		async "user who gains participation privilege mid-chat can send a message"() {},
 		async "user who gains moderator privilege mid-chat can set chat status offline"() {},
