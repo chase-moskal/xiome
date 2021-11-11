@@ -71,7 +71,6 @@ export function makeChatServerCore({rando, persistence, policy}: {
 	})
 
 	persistence.onUnmutes(({userIds}) => {
-		console.log("ON UNMUTE")
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientRemote.usersUnmuted(userIds)
