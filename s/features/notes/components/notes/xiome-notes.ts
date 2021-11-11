@@ -27,13 +27,20 @@ export class XiomeNotes extends ComponentWithShare<{
 	}
 
 	#renderTabs() {
+		const {old} = this.#cache.cacheState
 		const {switchTabNew, switchTabOld} = this.#cache
 		return html`
 			<div class=tabs>
-				<xio-button @press=${switchTabNew}>
+				<xio-button 
+					@press=${switchTabNew}
+					data-tab='new' ? data-active=${!old}
+					>
 					new
 				</xio-button>
-				<xio-button @press=${switchTabOld}>
+				<xio-button 
+				@press=${switchTabOld}
+				data-tab='old' ? data-active=${old}
+				>
 					old
 				</xio-button>
 			</div>
@@ -52,7 +59,7 @@ export class XiomeNotes extends ComponentWithShare<{
 						<p>noteText: ${note.text}</p>
 						<p>noteTime: ${note.time}</p>
 						<p>noteFrom: ${note.from}</p>
-						<p>noteToe: ${note.to}</p>
+						<p>noteTo: ${note.to}</p>
 						<p>noteDetails: ${note.details}</p>
 						<p>noteType: ${note.type}</p>
 						${old ? html`
@@ -113,7 +120,7 @@ export class XiomeNotes extends ComponentWithShare<{
 	#renderBasedOnStateOfNotesArray (){
 		const {old, notesOp} = this.#cache.cacheState
 		return html`
-			${ops.value(notesOp).length === 0
+			${ops.value(notesOp)?.length === 0
 				? html`
 					${this.#renderTabs()}
 					<slot name="empty notes">
