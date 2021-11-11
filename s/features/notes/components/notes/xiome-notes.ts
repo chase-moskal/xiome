@@ -33,13 +33,13 @@ export class XiomeNotes extends ComponentWithShare<{
 			<div class=tabs>
 				<xio-button 
 					@press=${switchTabNew}
-					data-tab='new' ? data-active=${!old}
+					data-tab="new" ? data-active=${!old}
 					>
 					new
 				</xio-button>
 				<xio-button 
 				@press=${switchTabOld}
-				data-tab='old' ? data-active=${old}
+				data-tab="old" ? data-active=${old}
 				>
 					old
 				</xio-button>
@@ -84,7 +84,7 @@ export class XiomeNotes extends ComponentWithShare<{
 			totalPages, isNextPageAvailable, isPreviousPageAvailable,
 		} = this.#cache
 		return html`
-			${(isNextPageAvailable && isPreviousPageAvailable)
+			${(isNextPageAvailable || isPreviousPageAvailable)
 				? html`
 				<xio-button
 					?disabled=${!isPreviousPageAvailable}
