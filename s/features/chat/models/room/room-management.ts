@@ -81,5 +81,16 @@ export function setupRoomManagement({state, reconnect, disconnect}: {
 		}
 	}
 
-	return {getRoomSession}
+	async function updateAuthSituation(authenticated: boolean) {
+		if (authenticated) {
+			if (rooms.size > 0)
+				return assertConnection()
+		}
+		else {
+			if (rooms.size === 0)
+				return disconnect()
+		}
+	}
+
+	return {getRoomSession, updateAuthSituation}
 }

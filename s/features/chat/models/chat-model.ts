@@ -51,7 +51,8 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
-			await reconnect()
+			const access = !!ops.value(op)
+			await roomManagement.updateAuthSituation(access)
 		},
 
 		session: roomManagement.getRoomSession,

@@ -253,7 +253,12 @@ export default<Suite>{
 
 	"connection": {
 		async "connection is only created when a room session is present"() {
-
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			const {chatModel} = await server.makeClientFor.participant()
+			expect(ops.value(chatModel.state.connectionOp)).not.ok()
+			const session1 = await chatModel.session(roomLabel)
+			expect(ops.value(chatModel.state.connectionOp)).ok()
 		},
 		async "connections die without sessions, re-established with new sessions"() {
 			const setup = await testChatSetup()
