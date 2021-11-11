@@ -249,7 +249,7 @@ export default<Suite>{
 		},
 	},
 
-	"auth and timings": {
+	"room subscription": {
 		async "user is unsubscribed from a room when the 'component' leaves"() {
 			const setup = await testChatSetup()
 			const {server, roomLabel} = await setup.startOnline()
@@ -276,6 +276,9 @@ export default<Suite>{
 			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
 			expect(p1room.posts.length).equals(1)
 		},
+	},
+
+	"auth changes": {
 		async "user who logs out mid-chat is disconnected"() {},
 		async "user who gains participation privilege mid-chat can send a message"() {},
 		async "user who gains moderator privilege mid-chat can set chat status offline"() {},
