@@ -77,7 +77,6 @@ export class XiomeNotes extends ComponentWithShare<{
 		`)
 	}
 
-
 	#renderPagination() {
 		const {pageNumber} = this.#cache.cacheState
 		const {
@@ -85,19 +84,24 @@ export class XiomeNotes extends ComponentWithShare<{
 			totalPages, isNextPageAvailable, isPreviousPageAvailable,
 		} = this.#cache
 		return html`
-			<xio-button
-				?disabled=${!isPreviousPageAvailable}
-				@press=${previousPage}>
-					previous
-			</xio-button>
-			<span>
-				${pageNumber} / ${totalPages}
-			</span>
-			<xio-button
-				?disabled=${!isNextPageAvailable}
-				@press=${nextPage}>
-					next
-			</xio-button>
+			${(isNextPageAvailable && isPreviousPageAvailable)
+				? html`
+				<xio-button
+					?disabled=${!isPreviousPageAvailable}
+					@press=${previousPage}>
+						previous
+				</xio-button>
+				<span>
+					${pageNumber} / ${totalPages}
+				</span>
+				<xio-button
+					?disabled=${!isNextPageAvailable}
+					@press=${nextPage}>
+						next
+				</xio-button>
+				`
+				: null
+			}
 		`
 	}
 
@@ -123,7 +127,7 @@ export class XiomeNotes extends ComponentWithShare<{
 			${ops.value(notesOp)?.length === 0
 				? html`
 					${this.#renderTabs()}
-					<slot name="empty notes">
+					<slot name="empty">
 						you have no ${old ? 'old' : 'new'} notifications
 					</slot>
 				`
