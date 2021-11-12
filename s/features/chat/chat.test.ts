@@ -379,6 +379,26 @@ export default<Suite>{
 		},
 	},
 
+	"orchestration with persistence layer": {
+		async "two chat servers are appraised of new chat posts"() {
+			const setup = await testChatSetup()
+
+			const {server: server1, roomLabel} = await setup.startOnline()
+			const client1 = await server1.makeClientFor.participant()
+			const {room: room1} = await client1.chatModel.session(roomLabel)
+
+			const server2 = await setup.makeServer()
+			const client2 = await server2.makeClientFor.participant()
+			const {room: room2} = await client2.chatModel.session(roomLabel)
+
+			room1.post({content: "hello"})
+			await nap()
+
+			expect(room1.posts.length).equals(1)
+			expect(room2.posts.length).equals(1)
+		},
+	},
+
 	"rate limiting": {
 		async "user who floods chat receives an error notice to slow down"() {},
 	},
