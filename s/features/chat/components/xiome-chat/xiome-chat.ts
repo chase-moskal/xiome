@@ -141,6 +141,18 @@ export class XiomeChat extends ComponentWithShare<{
 	}
 
 	#renderParticipation() {
+		const authorshipArea = () => {
+			return this.#room.weAreBanned
+				? html`<slot name=banned>you are banned</slot>`
+				: this.#room.weAreMuted
+					? html`<slot name=muted>you are muted</slot>`
+					: renderChatAuthorship({
+						sendable: !!this.draftValid && !this.tooSoon,
+						onSendClick: this.#postToChat,
+						onEnterPress: this.#postToChat,
+						onValidityChange: valid => this.draftValid = valid,
+					})
+		}
 		return html`
 			<xiome-login-panel>
 				${whenOpReady(this.#model.state.accessOp, () => html`
@@ -151,12 +163,7 @@ export class XiomeChat extends ComponentWithShare<{
 					</div>
 					<div class=participation>
 						${this.#model.allowance.participateInAllChats
-							? renderChatAuthorship({
-								sendable: !!this.draftValid && !this.tooSoon,
-								onSendClick: this.#postToChat,
-								onEnterPress: this.#postToChat,
-								onValidityChange: valid => this.draftValid = valid,
-							})
+							? authorshipArea()
 							: html`
 								<slot name=cannot-participate>
 									you do not have privilege to participate in the chat
