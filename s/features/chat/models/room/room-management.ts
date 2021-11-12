@@ -3,6 +3,7 @@ import {ops} from "../../../../framework/ops.js"
 import {makeChatRoom} from "./make-chat-room.js"
 import {makeChatState} from "../state/chat-state.js"
 import {ChatConnection} from "../../common/types/chat-concepts.js"
+import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 
 export function setupRoomManagement({state, reconnect, disconnect}: {
 		state: ReturnType<typeof makeChatState>
@@ -81,15 +82,14 @@ export function setupRoomManagement({state, reconnect, disconnect}: {
 		}
 	}
 
-	async function updateAuthSituation(authenticated: boolean) {
-		if (authenticated) {
+	async function updateAuthSituation(auth: boolean) {
+		if (auth) {
 			if (rooms.size > 0)
-				return assertConnection()
+				await assertConnection()
 		}
-		else {
+		else
 			if (rooms.size === 0)
-				return disconnect()
-		}
+				await disconnect()
 	}
 
 	return {getRoomSession, updateAuthSituation}

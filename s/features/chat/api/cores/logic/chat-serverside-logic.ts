@@ -20,13 +20,6 @@ export function prepareChatServersideLogic({
 	const getAllowance = () => chatAllowance(
 		clientRecord.auth?.access.permit.privileges ?? []
 	)
-	const requireAllowance = () => {
-		const allowance = getAllowance()
-		return objectMap(allowance, (allowed, key) => () => {
-			if (!allowed)
-				throw new Error(`action forbidden, lacking privilege "${key}"`)
-		})
-	}
 	const isNotMuted = () => !persistence.isMuted(
 		clientRecord.auth.access.user.userId,
 	)
@@ -37,14 +30,19 @@ export function prepareChatServersideLogic({
 			clientRecord.auth = await policy(meta)
 		},
 		async roomSubscribe(room: string) {
+			if (!getAllowance().viewAllChats)
+				return undefined
 			clientRecord.rooms.add(room)
 			clientRemote.roomStatusChanged(room, await persistence.getRoomStatus(room))
 		},
 		async roomUnsubscribe(room: string) {
+			if (!getAllowance().viewAllChats)
+				return undefined
 			clientRecord.rooms.delete(room)
 		},
 		async post(room: string, draft: ChatDraft) {
-			requireAllowance().participateInAllChats()
+			if (!getAllowance().participateInAllChats)
+				return undefined
 			if (isNotMuted() && isNotBanned()) {
 				const post: ChatPost = {
 					...draft,
@@ -58,20 +56,28 @@ export function prepareChatServersideLogic({
 			}
 		},
 		async remove(room: string, postIds: string[]) {
-			requireAllowance().moderateAllChats()
+			if (!getAllowance().moderateAllChats)
+				return undefined
 			await persistence.removePosts(room, postIds)
 		},
 		async clear(room: string) {
-			requireAllowance().moderateAllChats()
+			if (!getAllowance().moderateAllChats)
+				return undefined
 			await persistence.clearRoom(room)
 		},
 		async mute(userIds: string[]) {
+			if (!getAllowance().moderateAllChats)
+				return undefined
 			await persistence.addMute(userIds)
 		},
 		async unmute(userIds: string[]) {
+			if (!getAllowance().moderateAllChats)
+				return undefined
 			await persistence.removeMute(userIds)
 		},
 		async setRoomStatus(room: string, status: ChatStatus) {
+			if (!getAllowance().moderateAllChats)
+				return undefined
 			await persistence.setRoomStatus(room, status)
 		},
 	}

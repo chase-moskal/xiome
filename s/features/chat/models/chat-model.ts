@@ -29,8 +29,10 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 
 	async function disconnect() {
 		const connection = ops.value(state.readable.connectionOp)
-		state.writable.connectionOp = ops.none()
-		await connection.disconnect()
+		if (connection) {
+			state.writable.connectionOp = ops.none()
+			await connection.disconnect()
+		}
 	}
 
 	const roomManagement = setupRoomManagement({
@@ -51,8 +53,13 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
-			const access = !!ops.value(op)
-			await roomManagement.updateAuthSituation(access)
+			const access = ops.value(op)
+			await roomManagement.updateAuthSituation(!!access)
+			const connection = ops.value(state.readable.connectionOp)
+			if (connection) {
+				const meta = await getChatMeta()
+				await connection.serverRemote.updateUserMeta(meta)
+			}
 		},
 
 		session: roomManagement.getRoomSession,

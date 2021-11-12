@@ -343,13 +343,43 @@ export default<Suite>{
 	},
 
 	"auth changes": {
-		async "user who logs out mid-chat is disconnected"() {},
-		async "user who gains participation privilege mid-chat can send a message"() {},
-		async "user who gains moderator privilege mid-chat can set chat status offline"() {},
+		async "user who gains participation privilege mid-chat can send a message"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const client = await server.makeClientFor.forbidden()
+
+			const modSession = await moderator.chatModel.session(roomLabel)
+			const session = await client.chatModel.session(roomLabel)
+
+			session.room.post({content: "hello"})
+			await nap()
+			expect(modSession.room.posts.length).equals(0)
+
+			await client.addPrivilege("participate in all chats")
+			session.room.post({content: "hello"})
+			await nap()
+			expect(modSession.room.posts.length).equals(1)
+		},
+		async "user who gains moderator privilege mid-chat can set chat status offline"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const client = await server.makeClientFor.forbidden()
+
+			const observerSession = await moderator.chatModel.session(roomLabel)
+			const clientSession = await client.chatModel.session(roomLabel)
+
+			clientSession.room.setRoomStatus(ChatStatus.Offline)
+			await nap()
+			expect(observerSession.room.status).equals(ChatStatus.Online)
+
+			await client.addPrivilege("moderate all chats")
+			clientSession.room.setRoomStatus(ChatStatus.Offline)
+			await nap()
+			expect(observerSession.room.status).equals(ChatStatus.Offline)
+		},
 	},
 
 	"rate limiting": {
-		async "user cannot flood 5 messages in quick succession"() {},
-		async "user who floods chat recieves an error notice to slow down"() {},
+		async "user who floods chat receives an error notice to slow down"() {},
 	},
 }

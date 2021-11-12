@@ -38,7 +38,7 @@ export async function testChatSetup() {
 				},
 			})
 			const userId = rando.randomId().toString()
-			const access = {
+			let access = {
 				appId: undefined,
 				origins: [],
 				permit: {privileges},
@@ -59,7 +59,22 @@ export async function testChatSetup() {
 				getChatMeta: async() => mockChatMeta({access}),
 			})
 			await chatModel.updateAccessOp(ops.ready(access))
-			return {chatModel}
+			return {
+				chatModel,
+				async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
+					access = {
+						...access,
+						permit: {
+							...access.permit,
+							privileges: [
+								...access.permit.privileges,
+								...privilegeKeys.map(key => chatPrivileges[key]),
+							],
+						},
+					}
+					await chatModel.updateAccessOp(ops.ready(access))
+				},
+			}
 		}
 
 		return {
