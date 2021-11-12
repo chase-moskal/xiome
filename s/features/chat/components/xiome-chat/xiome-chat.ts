@@ -1,11 +1,15 @@
 
 import {makeChatModel} from "../../models/chat-model.js"
-import {ChatStatus} from "../../common/types/chat-concepts.js"
+import {renderChatPost} from "./renderers/render-chat-post.js"
+import {chatPostCoolOff} from "../../common/chat-constants.js"
 import {makeChatRoom} from "../../models/room/make-chat-room.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {ChatDraft, ChatStatus} from "../../common/types/chat-concepts.js"
+import {renderChatAuthorship} from "./renderers/render-chat-authorship.js"
+import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles, property} from "../../../../framework/component.js"
+import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 import styles from "./xiome-chat.css.js"
 
@@ -26,16 +30,20 @@ export class XiomeChat extends ComponentWithShare<{
 	#dispose = () => {}
 
 	subscribe() {
+
 		this.#model.session(this.room)
 			.then(({room, dispose}) => {
 				this.#room = room
 				this.#dispose = dispose
 			})
 			.then(() => this.requestUpdate())
+
 		const unsubs = [
 			super.subscribe(),
 			() => this.#dispose(),
+			this.#subscribeTooSoon(),
 		]
+
 		return () => {
 			for (const unsub of unsubs)
 				unsub()
@@ -71,15 +79,53 @@ export class XiomeChat extends ComponentWithShare<{
 			<div class=history>
 				${this.#model.allowance.viewAllChats
 					? html`
-						<ol>
-							<li>lol chat messages go here</li>
-						</ol>
+						${this.#room.posts.length
+							? html`
+								<ol>
+									${this.#room.posts.map(post => renderChatPost(post))}
+								</ol>
+							`
+							: html`
+								<slot name=no-messages>
+									no messages
+								</slot>
+							`}
 					`
 					: html`
-						<p class=unprivileged>you are not privileged to view the chat</p>
+						<slot name=cannot-view>
+							you are not privileged to view the chat
+						</slot>
 					`}
 			</div>
 		`
+	}
+
+	@property()
+	private draftValid = false
+
+	@query(".authorship xio-text-input")
+	private authorshipInput: XioTextInput
+
+	@property()
+	private tooSoon: boolean = false
+	private lastSend: number = Date.now()
+	#subscribeTooSoon() {
+		const interval = setInterval(
+			() => {
+				const since = Date.now() - this.lastSend
+				this.tooSoon = since < chatPostCoolOff
+			},
+			1000,
+		)
+		return () => clearInterval(interval)
+	}
+
+	#postToChat = () => {
+		const {value} = this.authorshipInput
+		const draft: ChatDraft = {content: value}
+		this.lastSend = Date.now()
+		this.authorshipInput.text = ""
+		this.#room.post(draft)
 	}
 
 	#renderParticipation() {
@@ -87,15 +133,22 @@ export class XiomeChat extends ComponentWithShare<{
 			<xiome-login-panel>
 				${whenOpReady(this.#model.state.accessOp, () => html`
 					<div slot=logged-out>
-						<p>login to participate in the chat</p>
+						<slot name=logged-out>
+							login to participate in the chat
+						</slot>
 					</div>
 					<div class=participation>
 						${this.#model.allowance.participateInAllChats
-							? html`
-								<p>authorship area</p>
-							`
+							? renderChatAuthorship({
+								sendable: !!this.draftValid && !this.tooSoon,
+								onSendClick: this.#postToChat,
+								onEnterPress: this.#postToChat,
+								onValidityChange: valid => this.draftValid = valid,
+							})
 							: html`
-								<p class=unprivileged>you do not have privilege to participate in the chat</p>
+								<slot name=cannot-participate>
+									you do not have privilege to participate in the chat
+								</slot>
 							`}
 					</div>
 				`)}
@@ -107,8 +160,16 @@ export class XiomeChat extends ComponentWithShare<{
 		return renderOp(this.#model.state.connectionOp, () => html`
 			<div class=chatbox>
 				${this.#renderModerationHeader()}
-				${this.#renderHistory()}
-				${this.#renderParticipation()}
+				${this.#room?.status === ChatStatus.Online
+					? [
+						this.#renderHistory(),
+						this.#renderParticipation(),
+					]
+					: html`
+						<slot name=offline>
+							chat is offline
+						</slot>
+					`}
 			</div>
 		`)
 	}
