@@ -29,7 +29,7 @@ export default <Suite>{
 
 	async "a message for user is readable by user"() {
 		const {userId, backend, frontend} = await notesTestingSetup()
-		const {notesModel, makeCacheAlreadySetup} = frontend
+		const {makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
 		const cache = makeCacheAlreadySetup()
 
@@ -43,7 +43,7 @@ export default <Suite>{
 
 	async "a message cannot be read by the wrong user"() {
 		const {rando, backend, frontend} = await notesTestingSetup()
-		const {notesModel, makeCacheAlreadySetup} = frontend
+		const {makeCacheAlreadySetup} = frontend
 		const {notesDepositBox} = backend
 		const cache = makeCacheAlreadySetup()
 
