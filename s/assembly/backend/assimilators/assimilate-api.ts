@@ -15,6 +15,7 @@ import {makeAdministrativeApi} from "../../../features/administrative/api/admini
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {mockVerifyDacastApiKey} from "../../../features/videos/dacast/mocks/parts/mock-verify-dacast-api-key.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
+import {notesApi} from "../../../features/notes/api/notes-api.js"
 
 export async function assimilateApi({
 		config, rando, database, dacastSdk,
@@ -68,5 +69,10 @@ export async function assimilateApi({
 			authPolicies,
 			videoTables: database.videos,
 		}),
+		notes: notesApi({
+			config,
+			authPolicies,
+			notesTables: database.notes,
+		})
 	})
 }

@@ -1,0 +1,23 @@
+
+extends ../_templates/_mocksite.pug
+
+block main
+
+	section
+		h2 notes
+		xiome-notes-indicator
+		xiome-notes
+
+	section
+		h2 your account
+		xiome-login-panel(show-logout)
+			xiome-my-account
+
+	//- style.
+	//- 	xiome-notes-indicator {
+	//- 		--xiome-notes-indicator-count-size: 1.5em;
+	//- 		--xiome-notes-indicator-color: orange;
+	//- 		--xiome-notes-indicator-bleedout: 0em;
+	//- 		--xiome-notes-indicator-icon-size: 3em;
+	//- 		--xiome-notes-indicator-size: 1em;
+	//- 	}
