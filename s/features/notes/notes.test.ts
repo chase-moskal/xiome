@@ -210,6 +210,28 @@ export default <Suite>{
 			await expect(cache.nextPage).throws()
 			await expect(cache.previousPage).throws()
 		},
+		async "marking last note takes you to previous page"() {
+			const {userId, backend, frontend} = await notesTestingSetup()
+			const {notesModel, makeCacheAlreadySetup} = frontend
+			const {notesDepositBox} = backend
+			const cache = makeCacheAlreadySetup()
+
+			const drafts = fakeManyNoteDrafts(userId, 11)
+			await notesDepositBox.sendNotes(drafts)
+
+			await notesModel.loadStats()
+			await cache.fetchAppropriateNotes()
+			expect(cache.notes.length).equals(10)
+			expect(cache.totalPages).equals(2)
+			expect(cache.cacheState.pageNumber).equals(1)
+			
+			await cache.nextPage()
+			expect(cache.cacheState.pageNumber).equals(2)
+			expect(cache.notes.length).equals(1)
+
+			await cache.markSpecificNoteOld(cache.notes[0].noteId)
+			expect(cache.cacheState.pageNumber).equals(1)
+		},
 	},
 
 	"login changes": {
