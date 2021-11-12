@@ -82,7 +82,12 @@ export class XiomeChat extends ComponentWithShare<{
 						${this.#room.posts.length
 							? html`
 								<ol>
-									${this.#room.posts.map(post => renderChatPost(post))}
+									${this.#room.posts.map(post => renderChatPost({
+										post,
+										isModerator: this.#model.allowance.moderateAllChats,
+										mute: () => this.#room.mute(post.userId),
+										remove: () => this.#room.remove([post.postId]),
+									}))}
 								</ol>
 							`
 							: html`
