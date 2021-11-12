@@ -102,7 +102,7 @@ export async function testChatSetup() {
 			await nap()
 			dispose()
 			await nap()
-			return {server, moderator, roomLabel, room}
+			return {server, moderator, roomLabel}
 		},
 	}
 }
