@@ -6,15 +6,12 @@ import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 export function assimilateCrypto({
 		config,
 		configureTokenFunctions,
-	}: AssimilatorOptions) {
+	}: Pick<AssimilatorOptions, "config" | "configureTokenFunctions">) {
 
-	if (config.crypto.keys === "mock-mode") {
-		return {
+	return config.crypto.keys === "mock-mode"
+		? {
 			signToken: mockSignToken(),
 			verifyToken: mockVerifyToken(),
 		}
-	}
-	else {
-		return configureTokenFunctions(config.crypto.keys)
-	}
+		: configureTokenFunctions(config.crypto.keys)
 }

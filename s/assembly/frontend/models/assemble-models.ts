@@ -1,4 +1,5 @@
 
+import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
@@ -6,8 +7,8 @@ import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-mod
 import {makeQuestionsModel} from "../../../features/questions/model/questions-model.js"
 import {makeAccessModel} from "../../../features/auth/aspects/users/models/access-model.js"
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
-import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
+import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
 
 export async function assembleModels({
 		appId,
@@ -15,6 +16,7 @@ export async function assembleModels({
 		popups,
 		storage,
 		authMediator,
+		chatConnect,
 	}: AssembleModelsOptions) {
 
 	const accessModel = makeAccessModel({
@@ -46,6 +48,13 @@ export async function assembleModels({
 	const videoModels = makeVideoModels({
 		dacastService: remote.videos.dacastService,
 		contentService: remote.videos.contentService,
+	})
+
+	const chatModel = makeChatModel({
+		chatConnect,
+		getChatMeta: async() => ({
+			accessToken: await authMediator.getValidAccessToken(),
+		}),
 	})
 
 	// // TODO reactivate store
@@ -80,6 +89,7 @@ export async function assembleModels({
 			administrativeModel.updateAccessOp(accessOp),
 			videoModels.dacastModel.updateAccessOp(accessOp),
 			videoModels.contentModel.updateAccessOp(accessOp),
+			chatModel.updateAccessOp(accessOp)
 			// storeModel.accessChange(access),
 		])
 	})
@@ -87,6 +97,7 @@ export async function assembleModels({
 	return {
 		exampleModel,
 		appsModel,
+		chatModel,
 		accessModel,
 		videoModels,
 		// storeModel,

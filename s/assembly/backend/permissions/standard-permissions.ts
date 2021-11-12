@@ -1,6 +1,7 @@
 
-import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
+import {chatPowerPrivileges, chatRegularPrivileges} from "../../../features/chat/common/chat-privileges.js"
+import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
 
 export const universalPrivilege = "c1cb5ac1000af6081ff47e80804de7542b57a1425c3faac8153e708aaf79271a"
 
@@ -9,6 +10,7 @@ const commonPrivileges = {
 	"post questions": "aeaae6139d05f77193ca7c272a65977c70cb188f3070359866237a5ade84ba15",
 	"like questions": "5490898c541d733956b28664e7536673842e73b289fc45ab9caf143138c14a3e",
 	"report questions": "f2f89d433f398b267e320e0e3b9929eb3934af5c02f7e3fb2e032fd19399ad21",
+	...chatRegularPrivileges,
 }
 
 const commonPowerPrivileges = {
@@ -19,6 +21,7 @@ const commonPowerPrivileges = {
 	"view stats": "092866ae6378833e43ec7001188aa1829d4cf2858e42da0ad3f44a2fedbcb07b",
 	"administrate user roles": "a072e9dd003a762e7d693658d8ac724be352b18da240843f691595c89020e350",
 	...videoPowerPrivileges,
+	...chatPowerPrivileges,
 }
 
 const platformPowerPrivileges = {
@@ -52,6 +55,7 @@ export const universalPermissions = asPermissions({
 				"universal": {active: true, immutable: true},
 				"banned": {active: false, immutable: true},
 				"read questions": {active: true, immutable: false},
+				"view all chats": {active: true, immutable: false},
 			},
 		},
 		"authenticated": {

@@ -7,18 +7,20 @@ import {getComponents} from "./components/get-components.js"
 import {setupModalSystem} from "./modal/setup-modal-system.js"
 import {SystemPopups} from "./connect/system-popups/types/system-popups.js"
 import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {ChatConnect} from "../../features/chat/common/types/chat-concepts.js"
 import {AuthMediator} from "../../features/auth/mediator/types/auth-mediator.js"
 import {AccessLoginExpiredError} from "../../features/auth/aspects/users/models/errors/access-errors.js"
 import {loginWithLinkTokenOrUseExistingLogin} from "./auth/login-with-link-token-or-use-existing-login.js"
 
 export async function assembleAndInitializeFrontend({
-		appId, popups, storage, authMediator, remote,
+		appId, popups, storage, authMediator, remote, chatConnect,
 	}: {
 		appId: string
 		popups: SystemPopups
 		storage: FlexStorage
-		authMediator: AuthMediator
 		remote: Remote<SystemApi>
+		authMediator: AuthMediator
+		chatConnect: ChatConnect
 	}) {
 
 	const {modals, modalsElement} = setupModalSystem()
@@ -28,6 +30,7 @@ export async function assembleAndInitializeFrontend({
 		popups,
 		storage,
 		authMediator,
+		chatConnect,
 	})
 
 	const components = getComponents({models, modals})

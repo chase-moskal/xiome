@@ -9,6 +9,7 @@ import {integrateVideoComponents} from "../../../features/videos/components/inte
 import {integrateExampleComponents} from "../../../features/example/components/integrate-example-components.js"
 import {integrateQuestionsComponents} from "../../../features/questions/components/integrate-questions-components.js"
 import {integrateAdministrativeComponents} from "../../../features/administrative/components/integrate-administrative-components.js"
+import {integrateChatComponents} from "../../../features/chat/components/integrate-chat-components.js"
 
 
 export function getComponents(options: XiomeComponentOptions) {
@@ -19,6 +20,7 @@ export function getComponents(options: XiomeComponentOptions) {
 		...integrateQuestionsComponents(options),
 		...integrateAdministrativeComponents(options),
 		...integrateVideoComponents(options),
+		...integrateChatComponents(options),
 
 		// // TODO reactivate store
 		// ...xiomeStoreComponents(options),
