@@ -142,11 +142,17 @@ export function prepareNotesCacheCreator({
 
 			async markSpecificNoteOld(noteId: string) {
 				await markNotesNewOrOld(true, [noteId])
+				cacheState.readable.pageNumber > totalNumberOfPages() && cacheState.readable.pageNumber > 1
+					? cacheState.writable.pageNumber -= 1
+					: null
 				await fetchAppropriateNotes()
 			},
 
 			async markSpecificNoteNew(noteId: string) {
 				await markNotesNewOrOld(false, [noteId])
+				cacheState.readable.pageNumber > totalNumberOfPages() && cacheState.readable.pageNumber > 1
+					? cacheState.writable.pageNumber -= 1
+					: null
 				await fetchAppropriateNotes()
 			},
 
