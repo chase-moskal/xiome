@@ -23,6 +23,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		roomCleared: subbies<{room: string}>(),
 		mutes: subbies<{userIds: string[]}>(),
 		unmutes: subbies<{userIds: string[]}>(),
+		unmuteAll: subbies<undefined>(),
 	}
 
 	return {
@@ -56,6 +57,13 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				for (const userId of userIds)
 					cachedMutedUserIds.delete(userId)
 				handler({userIds})
+			})
+		},
+
+		onUnmuteAll(handler: () => void) {
+			return events.unmuteAll.subscribe(() => {
+				cachedMutedUserIds.clear()
+				handler()
 			})
 		},
 
@@ -104,6 +112,11 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				)
 				events.unmutes.publish({userIds})
 			}
+		},
+
+		async unmuteAll() {
+			await chatTables.mutes.delete({conditions: false})
+			events.unmuteAll.publish(undefined)
 		},
 
 		async setRoomStatus(room: string, status: ChatStatus) {

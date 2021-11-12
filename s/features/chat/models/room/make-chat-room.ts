@@ -50,5 +50,8 @@ export function makeChatRoom({label, serverRemote, state}: {
 		unmute(userId: string) {
 			serverRemote.unmute([userId])
 		},
+		unmuteAll() {
+			serverRemote.unmuteAll()
+		},
 	}
 }

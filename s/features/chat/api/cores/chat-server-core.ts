@@ -77,6 +77,13 @@ export function makeChatServerCore({rando, persistence, policy}: {
 		})
 	})
 
+	persistence.onUnmuteAll(() => {
+		broadcastToAll((record, allowance) => {
+			if (allowance.viewAllChats)
+				record.clientRemote.unmuteAll()
+		})
+	})
+
 	persistence.onRoomCleared(({room}) => {
 		broadcastToRoom(
 			room,

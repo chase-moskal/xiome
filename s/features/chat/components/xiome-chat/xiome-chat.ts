@@ -68,6 +68,9 @@ export class XiomeChat extends ComponentWithShare<{
 							set status
 							${status === ChatStatus.Offline ? "online" : "offline"}
 						</xio-button>
+						<xio-button @press=${() => this.#room.unmuteAll()}>
+							unmute all (${this.#room.muted.length})
+						</xio-button>
 					</p>
 				</header>
 			`

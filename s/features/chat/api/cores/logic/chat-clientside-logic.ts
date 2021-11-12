@@ -74,5 +74,11 @@ export function prepareChatClientsideLogic({state}: {
 					.filter(userId => !userIds.includes(userId)),
 			}
 		},
+		async unmuteAll() {
+			state.writable.cache = {
+				...state.writable.cache,
+				mutedUserIds: [],
+			}
+		},
 	}
 }

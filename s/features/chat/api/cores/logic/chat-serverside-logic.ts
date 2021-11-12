@@ -75,6 +75,11 @@ export function prepareChatServersideLogic({
 				return undefined
 			await persistence.removeMute(userIds)
 		},
+		async unmuteAll() {
+			if (!getAllowance().moderateAllChats)
+				return undefined
+			await persistence.unmuteAll()
+		},
 		async setRoomStatus(room: string, status: ChatStatus) {
 			if (!getAllowance().moderateAllChats)
 				return undefined
