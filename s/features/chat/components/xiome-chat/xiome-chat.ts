@@ -59,19 +59,23 @@ export class XiomeChat extends ComponentWithShare<{
 					: ChatStatus.Offline
 			)
 		}
+		const muteCount = this.#room.muted.length
 		return this.#model.allowance.moderateAllChats
 			? html`
 				<header>
-					<p>room="${this.room}"</p>
-					<p>
-						<xio-button @press=${toggleStatus}>
-							set status
-							${status === ChatStatus.Offline ? "online" : "offline"}
+					<span>room="${this.room}"</span>
+					<span>
+						<xio-button
+							@press=${toggleStatus}>
+								set status
+								${status === ChatStatus.Offline ? "online" : "offline"}
 						</xio-button>
-						<xio-button @press=${() => this.#room.unmuteAll()}>
-							unmute all (${this.#room.muted.length})
+						<xio-button
+							?disabled=${muteCount === 0}
+							@press=${() => this.#room.unmuteAll()}>
+								unmute all (${muteCount})
 						</xio-button>
-					</p>
+					</span>
 				</header>
 			`
 			: null
