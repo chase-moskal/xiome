@@ -1,5 +1,5 @@
 
-import {css} from "../../../framework/component/component.js"
+import {css} from "../../../framework/component.js"
 export default css`
 
 button {
@@ -8,7 +8,7 @@ button {
 	background: transparent;
 }
 
-:root{
+:root {
 	--bg-color1: yellow;
 	--bg-color2: red;
 	--bg-color3: blue;
