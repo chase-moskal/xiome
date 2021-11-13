@@ -1,7 +1,10 @@
 
 import styles from "./xio-id.css.js"
-import clipboardIcon from "../../../framework/icons/clipboard.svg.js"
+import {blurActiveElement} from "../../../toolbox/blur.js"
+import {makeClipboardCopier} from "../../../toolbox/clipboard-copier.js"
 import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
+
+import clipboardIcon from "../../../framework/icons/clipboard.svg.js"
 
 @mixinFocusable
 @mixinStyles(styles)
@@ -13,32 +16,18 @@ export class XioId extends AutowatcherComponent {
 	@property({type: Boolean, reflect: true})
 	copied: boolean = false
 
-	private copyTimeout: any
+	#copier = makeClipboardCopier({
+		setCopied: copied => this.copied = copied,
+	})
 
-	private async copy() {
-		try {
-			await navigator.clipboard.writeText(this.id)
-			const activeElement = <HTMLElement>document.activeElement
-			if (activeElement) activeElement.blur()
-
-			if (this.copyTimeout) {
-				clearTimeout(this.copyTimeout)
-			}
-
-			this.copied = true
-			this.copyTimeout = setTimeout(() => {
-				this.copied = false
-				this.copyTimeout = undefined
-			}, 1000)
-		}
-		catch (error) {
-			console.error("failed to copy")
-		}
+	async #copy() {
+		blurActiveElement()
+		await this.#copier.copy(this.id)
 	}
 
 	render() {
 		return html`
-			<button class=container @click=${this.copy}>
+			<button class=container @click=${this.#copy}>
 				<div class=id>${this.id}</div>
 				<div class=copy>
 					${clipboardIcon}
