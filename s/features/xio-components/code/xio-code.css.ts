@@ -2,30 +2,12 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
-button {
-	font-size: unset;
-	color: unset;
-	background: transparent;
-}
-
-:root {
-	--bg-color1: yellow;
-	--bg-color2: red;
-	--bg-color3: blue;
-}
-
-.container {
-	position: relative;
-	display: flex;
-	flex-direction: row;
-	user-select: none;
-	cursor: pointer;
-	border: none;
-}
-
 :host {
 	display: inline-block;
 	position: relative;
+	--bg-color1: yellow;
+	--bg-color2: red;
+	--bg-color3: blue;
 }
 
 :host::before {
@@ -50,39 +32,40 @@ button {
 	opacity: 1;
 }
 
+button {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	user-select: none;
+	cursor: pointer;
+	border: none;
+
+	font-size: unset;
+	color: unset;
+	background: transparent;
+}
+
+button:hover .copy-icon {
+	opacity: 0.9;
+}
+
+button:active .copy-icon {
+	opacity: 1;
+}
+
 .content {
 	display: flex;
 	justify-content: row;
 }
 
-.label::after {
-	content: ":";
-	margin-right: 0.2em;
-}
-
-.xio-code {
-	opacity: 0.75;
-	max-width: var(--code-max-width, 6em);
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.copy svg {
+.copy-icon svg {
 	width: 1em;
 	height: 1em;
 }
 
-.copy {
+.copy-icon {
 	opacity: 0.4;
 	transition: opacity 100ms linear;
-}
-
-.container:hover .copy {
-	opacity: 0.9;
-}
-
-.container:active .copy {
-	opacity: 1;
 }
 
 `
