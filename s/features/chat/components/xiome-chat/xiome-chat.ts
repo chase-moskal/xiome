@@ -11,9 +11,9 @@ import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
-import styles from "./xiome-chat.css.js"
+import xiomeChatCss from "./xiome-chat.css.js"
 
-@mixinStyles(styles)
+@mixinStyles(xiomeChatCss)
 export class XiomeChat extends ComponentWithShare<{
 		modals: ModalSystem
 		chatModel: ReturnType<typeof makeChatModel>
