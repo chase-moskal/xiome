@@ -8,7 +8,7 @@
 - 🔌 xiome components are universal plugins for websites
 - 🛡️ let your users enjoy a passwordless login experience
 - 🙌 engage your users with cool features, like a questions board
-- 💰 monetize your audience with subscriptions and paywalls
+- 💰 monetize your community with subscriptions and paywalls
 - ☁️ let xiome cloud do the heavy lifting running the servers
 - ⚡ jumpstart your app by using xiome's auth system
 
@@ -17,8 +17,8 @@
 ## xiome installation
 
 1. create your community at https://xiome.io/setup
-2. copy-paste your community's install snippet into your web page's html `<head>`
-3. copy-paste any components you want from https://xiome.io/components into your website's `<body>`
+2. copy-paste your community's html install snippet into your web page's html `<head>`
+3. copy-paste any components you like from https://xiome.io/components into your website's `<body>`
 
 <br/>
 
@@ -35,17 +35,33 @@
 
 ## 💡 getting started
 
-&nbsp; **prerequisites**
+&nbsp; **fundamental skills that you noobs should brush up on**
+- learn how to use git and github so you can collaborate
+  - making and managing branches
+  - add/reset staged changes, making and amending commits
+  - managing git remotes, and pushing/pulling branches
+  - interactive rebase to rewrite and cleanup branches
+  - keeping your branches up to date by rebasing onto master
+  - resolving merge conflicts
+  - how to make a pull request and respond to code reviews
+- learn the basics of typescript
+- learn npm, like how to install dependencies and run npm package scripts
+- learn how to write code with style and formatting that matches the rest of the codebase.  
+  your code should "blend in", so we cannot so easily tell which crappy code you wrote.
+
+&nbsp; **technical prerequisites**
 - install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
-- if you're on windows, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux)
+- if you're on windows, probably setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux),  
+  or, install a linux virtual dev machine (we recommend debian with kde on vmware)
 
 &nbsp; **initial setup**
 - fork the xiome project on github, and git clone your fork
 - open a terminal in your cloned directory, and run these commands
   - `npm install` to install the project's dependencies
-  - `npm run build` to build the project
+  - `npm run build` to run a full build of the project
 
-&nbsp; **during your development session**
+&nbsp; **during your development sessions**
+- run `npm install` if you've recently pulled any changes to the package json
 - run these background processes, each in their own terminal
   - `npm run watch` to continually rebuild source files on save
   - `npm start` to run a local http server at http://localhost:5000/  
@@ -53,17 +69,24 @@
   - *note:* [tmux](https://en.wikipedia.org/wiki/Tmux) is a great way to split terminal windows
   - *note:* of course, when you're done, end each process by pressing `ctrl+c`
 - open vscode by running `code .`
-  - you should be able to see the xiome platform website at http://localhost:5000/x/
-  - and the app development mocksite at http://localhost:5000/x/mocksite/
-  - now you are ready to code
-  - when you save a typescript or pug file, the watch routine will automatically rebuild it, so you can press refresh in the browser to see the changes
+- open your web browser
+  - see the xiome website at http://localhost:5000/x/
+  - see the mocksite at http://localhost:5000/x/mocksite/
+  - disable your browser's caching
+    - open chrome's developer tools
+    - in the network tab, enable "disable cache" mode
+    - or find the equivalent in your plebeian browser
+- now you are ready to code
+  - whenever you save a typescript or pug file, the watch routine will automatically rebuild it, then you can refresh the browser to see your changes
   - you can press vscode hotkey `ctrl+shift+b` to run the typescript build, which allows vscode to nicely highlight typescript errors for you to address
 
-&nbsp; **things to understand**
-- mock mode
-  - the watch routine builds xiome into a "mock" mode
-  - in mock mode, you don't need to run the xiome server, or connect to any databases
-  - all of xiome, including the backend business logic, is running in the browser (and is easily debuggable there)
+&nbsp; **the more you know**
+- xiome's mock mode
+  - the watch routine builds xiome into a super-cool "mock" mode
+  - in mock mode, you don't need to run any backend servers, or connect to any databases
+  - all of xiome, including the backend business logic, is running in the browser (this provides a magical unified debugging experience wholly within the browser)
+- this is an open source project, all contributions will be under the isc license
+- when i'm subtly insulting you in this document, i'm trying to be facetious and not just mean
 
 <br/>
 
@@ -76,46 +99,49 @@ let's take a stroll through the codebase.
   they do continuous integration and deployments.  
 - `.vscode/`  
   this is where the settings for the vscode editor live.  
-  it makes sure you'll indent with tabs as jesus intended.  
+  it makes sure you'll indent with tabs, as jesus intended.  
 - `helm/`  
   this is where the scary kubernetes code lives.  
   it orchestrates the node servers in the cloud.  
 - `s/`  
   this is where all the typescript source code lives.  
-  there is where most development happens.  
+  there is where the fun development happens.  
   - `s/assembly/`  
     this is where all the pieces of xiome are assembled, much like legos, into a working backend and frontend.  
-    this place is frightening.  
+    this place is honestly frightening.  
+  - `s/common/`  
+    this is where we should put xiome code that many features can share.  
   - `s/features/`  
     this is where the feature development happens.  
     each feature contains all its backend and frontend code.  
     you should feel cozy here.  
   - `s/framework/`  
-    this is where xiome defines its own lingo.  
+    this is where xiome defines fundamental standards for the whole system.  
     important base classes, like component, which is based on lit-element.  
   - `s/toolbox/`  
     this is a big collection of assorted utilities.  
-    these might be useful outside of xiome for something totally unrelated.  
-    these tools are candidates to become independent libraries one day.  
+    code here may be useful outside of xiome.  
+    some of these tools are candidates to become independent libraries one day.  
+    some of these are experimental.  
   - `s/types/`  
-    these are where some common system-wide types go.  
+    these are where some common system-wide types should go.  
 - `scripts/`  
   just some handy shell scripts.  
-  i use `randomid` a lot to generate new ids.  
+  sometimes i use `scripts/randomid` generate new ids.  
 - `web/`  
   this is where the https://xiome.io/ website lives.  
-  and also the mocksite during development.  
+  and also the mocksite we use during development.  
 - `x/`  
-  these are build artifacts.  
-  don't write code here. it gets deleted during each build.  
+  these are just build artifacts.  
+  never write code here — it's deleted and regenerated every build.  
 
 <br/>
 
 ## 🦵 the anatomy of a feature
 
-xiome's cool code is organized into conceptual features.  
-this is probably what you want to work on.  
-here's what's in a feature directory:
+xiome's fun code is organized conceptually into features.  
+these features are probably what you want to work on.  
+so here's what's in a feature directory:
 
 ### frontend
 - `feature/components/`  
@@ -128,36 +154,41 @@ here's what's in a feature directory:
   models are the brains behind components.  
   models coordinate state for components to render.  
   models act as a liaison between components and the backend.  
+  models are objects that have properties and functions for the components to use.  
   often, models are locally caching information loaded from the backend.  
-  there's only one instance of each model on the page.  
-  models coordinate for components on a page-wide level.  
-  generally, we want components to be dumb, leaving the smart logic to the models.  
+  there's only one instance of each model on the whole page.  
+  models coordinate everything for components on a page-wide level.  
+  generally, we want components to be dumb renderers, leaving the smart logic up to the models.  
 
 ### backend
 - `feature/api/`  
   here's where you'll find the api services.  
-  a service is a segment of the api, that has its own auth policy.  
-  an auth policy a bouncer, that only lets certain users use the service.  
-  here in the api directory, you'll also find definitions for the database tables.  
+  a service is part of the api. it exposes a bunch of functions.  
+  each service has its own auth policy.  
+  an auth policy is like a bouncer at a nightclub — it decides which users get access to the service's exposed functions.  
+  here in the api directory, you'll find other backendy-things, like database table definitions and whatnot.  
 
 ### testing
+- `feature/coolfeature.test.ts`  
+  this is where we practice test driven development.  
+  we're seriously trying to get better at this.  
 - `feature/testing/`  
-  this is where testing setup, utilities, and mocks belong.  
+  this is where we keep utilities and mocks and stuff for the tests to use.  
 
 <br/>
 
 ## ⚔️ how to survive within the xiome onion
 
 if you think about xiome like an onion, you'll notice some distinct layers.  
-each layer has its own little landscape of concepts and tools you'll need to learn to get anything done.  
+each layer has its own little landscape of concepts and tools you'll need to learn, if you want to get anything done.  
 
-### components — *what users interact with*
+### components — *html/css/js that users interact with*
 - learn about modern web development
   - learn about web components
   - learn about the shadow dom
   - learn about css custom properties, and css parts
   - learn https://lit.dev/
-- learn about `ops`
+- learn about xiome's `ops`
   - the components commonly use a system called `ops` for loading spinners
   - anything that needs a loading spinner (many things) uses `ops`
   - they're everywhere
@@ -172,7 +203,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 - learn that the `theme.css.ts` exists
   - all components inherit common css in `s/framework/theme.css.ts`
 
-### models — *the brains on the frontend*
+### models — *frontend brains behind the components*
 - learn about services
   - we provide models with api service objects, which contain async api functions
   - you just call the functions. those are api calls
@@ -186,7 +217,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
   - they're everywhere because lots of things load
   - read more aboutn `ops` further below in the readme
 
-### api services — *do servery things and talk with the database*
+### api services — *backend that talks with the database*
 - learn `renraku` and how xiome uses it
   - xiome's api is built with https://github.com/chase-moskal/renraku
   - every async function in `expose` takes a first argument called `auth`
@@ -210,7 +241,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 ### **ops** — *loading spinners everywhere*
 
 - "ops" is xiome's system for displaying loading spinners for asynchronous operations
-- it's designed to be highly compatbile with state management libraries — this is why ops are simple object literals, instead of fancy class instances with methods and stuff
+- it's designed to be compatbile with state management libraries — this is why ops are simple object literals, instead of fancy class instances with methods and stuff
 - ```ts
   import {ops, Op} from "./s/framework/ops.js"
   ```
@@ -297,7 +328,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ### **snapstate** — *tiny state management*
 
-- snapstate is an experimental little state management library. it is the successor to `autowatcher` and `happystate` which were previous incarnations in snapstate's lineage.
+- snapstate is an experimental little state management library. it's the minimalistic successor to `autowatcher` and `happystate` which were previous incarnations in its lineage.
 - the concept of snapstate, is that we create a `readable` and `writable` version of a state object.
 - this allow us to write functions that have write access to the state via `writable`, but then we only expose the `readable` to the outside
 - example
@@ -684,27 +715,14 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ## 💰 bitcoin bounties
 
-- **how to get involved and win a bounty**
-  - find an open issue with the `bitcoin bounty` label
-  - comment on the issue, and say you want to do the work. this allows us to assign you, so others know you're working on it
-  - on the github issue, post your public bitcoin wallet deposit address. this makes bounty transactions transparent and publicly verifiable
-  - do the work. then submit a pull request for code review. expect to be asked to make changes.
-- **if we merge the work, we pay the bounty**
-  - the idea is to reward good work done fast. you'll know it's good work if we merge it.
-  - if your work isn't good enough to merge, we might discard it and not pay the bounty. we might even choose somebody else's work over yours, and they'll win the bounty instead.
-- **bounties decay in value over time**
-  - each bounty will have its own decay schedule, detailed in each issue
-  - typically, starting on a certain date, a posted bounty will fall in value (decay) by a certain amount each day, until it reaches zero
-  - after good work is merged, we calculate the bounty value based on the work author's last commit timing.
-  - all date are expressed in pacific standard time
-- **assignments are not reservations**
-  - anybody could complete better work faster, and win the bounty — that's fair game
-  - somebody could go on a bounty-hunting rampage, and beat everybody on their own assignments. if it's good work, done fast, they might win all the bounties.
-  - in rare cases, we might deem it fair game for somebody to take over another's work, even building off their commits to continue where they left off. this might happen on high-priority work if the original author disappears partway through, or something like that. we might decide to split the bounty to reward both authors.
-- **teamwork is cool**
-  - it's cool if people mutually agree to work together on a single bounty. if people agree to split a bounty in some reasonable way, we'll honor that agreement.
-- **cheating and trickery is frowned upon**
-  - any behavior that chase moskal deems uncool, unfair, or deceptive, may disqualify you from winning any bounty or participating in the future
-  - obviously, goulish behavior like stealing work, or cheating by changing commit dates/times, anything like this will disqualify you from winning a bounty or participating in the future
-- **bounties are rewards, not contracts**
-  - chase moskal will arbitrate any disputes, and make the final decision on whether to pay any bounty or not. you are not entitled to anything. all of these rules might change at any time.
+we offer little bitcoin bounties to show appreciation for good contributions.
+
+how to participate:
+- find a task on the issues page with a bounty
+- post a comment and ask to be assigned
+- do the work, make a good pull request
+- post your public bitcoin deposit address into the issue
+
+if we like the work and merge it to master, you may be elible to receive a reward.
+
+but remember, there are no guarantees. bounties are fun rewards, not contracts. the rules became too complicated, so now all bounties and rewards are arbitrated by chase moskal based on subjective factors.
