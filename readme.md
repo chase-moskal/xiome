@@ -715,7 +715,7 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 ## 💰 bitcoin bounties
 
-we offer little bitcoin bounties to show appreciation for good contributions.
+we like to give little bitcoin rewards to show appreciation for good contributions.
 
 how to participate:
 - find a task on the issues page with a bounty
@@ -723,6 +723,6 @@ how to participate:
 - do the work, make a good pull request
 - post your public bitcoin deposit address into the issue
 
-if we like the work and merge it to master, you may be elible to receive a reward.
+if we merge the work to master, you may be eligible to receive a reward.
 
-but remember, there are no guarantees. bounties are fun rewards, not contracts. the rules became too complicated, so now all bounties and rewards are arbitrated by chase moskal based on subjective factors.
+but remember, there are no guarantees: bounties are fun rewards, not contracts. the rules became too complicated, so now all bounties and rewards are arbitrated by chase moskal based on subjective factors and personal honor code.
