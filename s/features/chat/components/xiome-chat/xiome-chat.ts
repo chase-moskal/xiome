@@ -123,13 +123,14 @@ export class XiomeChat extends ComponentWithShare<{
 
 	@property()
 	private tooSoon: boolean = false
-	private lastSend: number = Date.now()
+	#lastSend: number = Date.now()
+	#updateTooSoon = () => {
+		const since = Date.now() - this.#lastSend
+		this.tooSoon = since < chatPostCoolOff
+	}
 	#subscribeTooSoon() {
 		const interval = setInterval(
-			() => {
-				const since = Date.now() - this.lastSend
-				this.tooSoon = since < chatPostCoolOff
-			},
+			this.#updateTooSoon,
 			1000,
 		)
 		return () => clearInterval(interval)
@@ -138,8 +139,9 @@ export class XiomeChat extends ComponentWithShare<{
 	#postToChat = () => {
 		const {value} = this.authorshipInput
 		const draft: ChatDraft = {content: value}
-		this.lastSend = Date.now()
+		this.#lastSend = Date.now()
 		this.authorshipInput.text = ""
+		this.#updateTooSoon()
 		this.#room.post(draft)
 	}
 
