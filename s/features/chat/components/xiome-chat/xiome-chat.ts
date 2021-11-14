@@ -30,7 +30,6 @@ export class XiomeChat extends ComponentWithShare<{
 	#dispose = () => {}
 
 	subscribe() {
-
 		this.#model.session(this.room)
 			.then(({room, dispose}) => {
 				this.#room = room
