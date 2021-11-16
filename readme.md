@@ -80,13 +80,23 @@
   - whenever you save a typescript or pug file, the watch routine will automatically rebuild it, then you can refresh the browser to see your changes
   - you can press vscode hotkey `ctrl+shift+b` to run the typescript build, which allows vscode to nicely highlight typescript errors for you to address
 
+&nbsp; **xiome's mock mode and the mocksite**
+- xiome super-cool mock mode
+  - the watch routine builds xiome into "mock" mode
+  - in mock mode, no connections are made to any real apis, database, etc
+  - 100% of the code, even the backend code, is running locally within the browser
+  - this allows you to test xiome's features without the muss or fuss of externalities like running servers or databases
+  - this mock mode also provides a unified debugging experience within the browser (even for backend business logic)
+  - the "database" state is actually saved in `localStorage`
+  - in the browser dev console, you can wipe clean all the state by calling `localStorage.clear()` then refreshing the page
+- you can work on the xiome.io website itself at http://localhost:5000/x/
+- you can develop new feature in the "mocksite" at http://localhost:5000/x/mocksite/
+  - the mocksite is a crappy-looking site that mimics a website that had installed xiome
+  - it's a "proving grounds" for developing new features
+  - you can login with a special email address `creative@xiome.io`, which is a special fake account on the mocksite that has administrator privileges
+
 &nbsp; **the more you know**
-- xiome's mock mode
-  - the watch routine builds xiome into a super-cool "mock" mode
-  - in mock mode, you don't need to run any backend servers, or connect to any databases
-  - all of xiome, including the backend business logic, is running in the browser (this provides a magical unified debugging experience wholly within the browser)
-- this is an open source project, all contributions will be under the isc license
-- when i'm subtly insulting you in this document, i'm trying to be facetious and not just mean
+- this is an open source project, all contributions are under the isc license
 
 <br/>
 
