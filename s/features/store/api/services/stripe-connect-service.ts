@@ -10,7 +10,9 @@ import {MerchantAuth, MerchantMeta} from "../policies/types/store-metas-and-auth
 export const makeStripeConnectService = (
 		options: StoreServiceOptions
 	) => apiContext<MerchantMeta, MerchantAuth>()({
+
 	policy: options.storePolicies.merchantPolicy,
+
 	expose: {
 
 		async getConnectDetails(

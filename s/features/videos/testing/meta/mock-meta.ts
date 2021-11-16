@@ -1,6 +1,6 @@
 
 import {VideoMeta} from "../../types/video-auth.js"
-import {mockMeta} from "../../../auth/testing/mock-meta.js"
+import {mockMeta} from "../../../../common/testing/mock-meta.js"
 
 export async function mockVideoMeta({appId, userId, origins, privileges}: {
 		appId: string

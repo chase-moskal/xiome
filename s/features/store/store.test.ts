@@ -1,10 +1,13 @@
 
 import {Suite} from "cynic"
+import {storeTestSetup} from "./testing/store-test-setup.js"
 
 export default <Suite>{
 	async "shopkeeping"() {
 		return {
-			async "merchant can link a bank account"() {},
+			async "merchant can link a bank account"() {
+				const {} = storeTestSetup()
+			},
 			async "merchant can flip store status online/offline"() {},
 		}
 	},

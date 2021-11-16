@@ -1,4 +1,6 @@
 
+import {asApi} from "renraku/x/identities/as-api.js"
+
 import {StoreApiOptions} from "./types/store-options.js"
 import {StoreServiceOptions} from "./types/store-options.js"
 import {prepareStorePolicies} from "./policies/store-policies.js"
@@ -32,13 +34,11 @@ export const storeApi = ({
 		generateId,
 	}
 
-	return {
+	return asApi({
 		stripeConnectService: makeStripeConnectService(serviceOptions),
+		statusTogglerService: makeStatusTogglerService(serviceOptions),
+		statusCheckerService: makeStatusCheckerService(serviceOptions),
 		shopkeepingService: makeShopkeepingService(serviceOptions),
 		shoppingService: makeShoppingService(serviceOptions),
-		ecommerce: {
-			statusTogglerService: makeStatusTogglerService(serviceOptions),
-			statusCheckerService: makeStatusCheckerService(serviceOptions),
-		}
-	}
+	})
 }

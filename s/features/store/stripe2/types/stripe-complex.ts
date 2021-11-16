@@ -1,4 +1,4 @@
 
-import {stripeComplex} from "../stripe-complex.js"
+import {makeStripeComplex} from "../stripe-complex.js"
 
-export type StripeComplex = ReturnType<typeof stripeComplex>
+export type StripeComplex = ReturnType<typeof makeStripeComplex>
