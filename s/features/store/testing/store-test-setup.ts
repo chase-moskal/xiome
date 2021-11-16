@@ -1,24 +1,23 @@
 
+import {mockRemote} from "renraku/x/remote/mock-remote.js"
+import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+
 import {storeApi} from "../api/store-api.js"
 import {makeStoreModel} from "../model/store-model.js"
+import {mockMeta} from "../../../common/testing/mock-meta.js"
+import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStoreTables} from "../api/tables/mock-store-tables.js"
 import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
 import {mockStripeCircuit} from "../stripe2/mocks/mock-stripe-circuit.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
-import {mockRemote} from "renraku/x/remote/mock-remote"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {mockAccess} from "../../../common/testing/mock-access.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {mockMeta} from "../../../common/testing/mock-meta.js"
-import {mockHttpRequest} from "renraku/x/remote/mock-http-request"
+import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function storeTestSetup() {
 	const {appId, rando, config, storage, appOrigin, authPolicies}
 		= await prepareMockAuth()
 
 	const stripeAccountId = rando.randomId().toString()
-
 	const authTables = new UnconstrainedTables(await mockAuthTables(storage))
 	const storeTables = new UnconstrainedTables(await mockStoreTables(storage))
 
