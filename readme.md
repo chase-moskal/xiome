@@ -39,7 +39,7 @@
 - learn how to use git and github so you can collaborate
   - making and managing branches
   - add/reset staged changes, making and amending commits
-  - managing git remotes, and pushing/pulling branches
+  - managing git remotes, and fetching/pushing/pulling branches
   - interactive rebase to rewrite and cleanup branches
   - keeping your branches up to date by rebasing onto master
   - resolving merge conflicts
