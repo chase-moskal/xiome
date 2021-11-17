@@ -41,7 +41,7 @@ export function makeStoreModel2({
 			<Op<StoreStatus>>
 				ops.none(),
 
-		storeStripeAccountDetailsOp:
+		stripeAccountDetailsOp:
 			<Op<StripeAccountDetails>>
 				ops.none(),
 
@@ -55,7 +55,19 @@ export function makeStoreModel2({
 	})
 
 	const bank = (() => {
-		return {}
+		return {
+			async loadLinkedStripeAccountDetails() {
+				return ops.operation({
+					promise: stripeAccountsService.getConnectDetails(),
+					setOp: op => state.writable.stripeAccountDetailsOp = op,
+				})
+			},
+			async linkStripeAccount() {
+				await triggerBankPopup(
+					await stripeAccountsService.generateConnectSetupLink()
+				)
+			},
+		}
 	})()
 
 	const planning = (() => {

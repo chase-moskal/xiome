@@ -41,17 +41,17 @@ export const makeShopkeepingService = (
 		},
 	
 		async createSubscriptionPlan(
-				{stripeLiaisonForApp, storeTables, authTables},
+				{stripeLiaisonAccount, storeTables, authTables},
 				{draft}: {draft: SubscriptionPlanDraft}
 			) {
 
 			apiProblems(validateSubscriptionPlanDraft(draft))
 
-			const stripeProduct = await stripeLiaisonForApp.products.create({
+			const stripeProduct = await stripeLiaisonAccount.products.create({
 				name: draft.label,
 			})
 
-			const stripePrice = await stripeLiaisonForApp.prices.create({
+			const stripePrice = await stripeLiaisonAccount.prices.create({
 				unit_amount: draft.price,
 				currency: hardcodedCurrency,
 				recurring: {interval: hardcodedInterval},
@@ -84,7 +84,7 @@ export const makeShopkeepingService = (
 		},
 
 		async updateSubscriptionPlan(
-			{stripeLiaisonForApp, storeTables, authTables},
+			{stripeLiaisonAccount, storeTables, authTables},
 			{subscriptionPlanId: planIdString, draft}: {
 				subscriptionPlanId: string
 				draft: SubscriptionPlanDraft
@@ -93,7 +93,7 @@ export const makeShopkeepingService = (
 			apiProblems(validateSubscriptionPlanDraft(draft))
 			const subscriptionPlanId = DamnId.fromString(planIdString)
 	
-			const stripeNewPrice = await stripeLiaisonForApp.prices.create({
+			const stripeNewPrice = await stripeLiaisonAccount.prices.create({
 				unit_amount: draft.price,
 				currency: hardcodedCurrency,
 				recurring: {interval: hardcodedInterval},
@@ -122,7 +122,7 @@ export const makeShopkeepingService = (
 		},
 
 		async deactivateSubscriptionPlan(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionPlanId: planIdString}: {subscriptionPlanId: string},
 			) {
 
@@ -130,7 +130,7 @@ export const makeShopkeepingService = (
 			const {stripePriceId} = await storeTables.billing.subscriptionPlans
 				.one(find({subscriptionPlanId}))
 	
-			await stripeLiaisonForApp.prices
+			await stripeLiaisonAccount.prices
 				.update(stripePriceId, {active: false})
 	
 			// TODO cancel all stripe subscriptions

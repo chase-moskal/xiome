@@ -21,7 +21,7 @@ export async function storeTestSetup() {
 	const authTables = new UnconstrainedTables(await mockAuthTables(storage))
 	const storeTables = new UnconstrainedTables(await mockStoreTables(storage))
 
-	const {stripeComplex, mockStripeOperations} = await mockStripeCircuit({
+	const {stripeLiaison, mockStripeOperations} = await mockStripeCircuit({
 		rando,
 		authTables,
 		storeTables,
@@ -32,7 +32,7 @@ export async function storeTestSetup() {
 		config,
 		storeTables,
 		authPolicies,
-		stripeComplex,
+		stripeLiaison,
 		accountReturningLinks: {
 			refresh: "https://api.xiome.io/store/stripe?x=refresh",
 			return: "https://api.xiome.io/store/stripe?x=return",
@@ -46,7 +46,7 @@ export async function storeTestSetup() {
 
 	return {
 		api,
-		stripeComplex,
+		stripeLiaison,
 		mockStripeOperations,
 		async makeClient(withPrivileges: string[] = []) {
 			const access = mockAccess({

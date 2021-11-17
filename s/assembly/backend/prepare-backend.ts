@@ -24,7 +24,7 @@ export function prepareBackend(configurators: Configurators) {
 
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
-		const {stripeComplex, mockStripeOperations} = await assimilateStripe({
+		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
 			...options,
 			database,
 			mockStorage,
@@ -47,7 +47,7 @@ export function prepareBackend(configurators: Configurators) {
 			config,
 			emails,
 			database,
-			stripeComplex,
+			stripeLiaison,
 			mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
 			prepareNotesDepositBox: (appId: DamnId) => makeNotesDepositBox({

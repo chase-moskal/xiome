@@ -1,30 +1,32 @@
 
 import {Policy} from "renraku/x/types/primitives/policy.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {StorePolicyOptions} from "./types/store-policy-options.js"
 import {ClerkAuth, ClerkMeta, CustomerAuth, CustomerMeta, MerchantAuth, MerchantMeta, ProspectAuth, ProspectMeta} from "./types/store-metas-and-auths.js"
+import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {StoreTables} from "../tables/types/store-tables.js"
+import {makeStripeLiaison} from "../../stripe2/liaison/stripe-liaison.js"
+import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 
 export function prepareStorePolicies({
 		authPolicies,
-		stripeComplex,
+		stripeLiaison,
 		storeTables: unconstrainedStoreTables,
-	}: StorePolicyOptions) {
+	}: {
+		storeTables: UnconstrainedTables<StoreTables>
+		stripeLiaison: ReturnType<typeof makeStripeLiaison>
+		authPolicies: ReturnType<typeof prepareAuthPolicies>
+	}) {
 
 	/** a merchant owns apps, and links stripe accounts */
 	const merchantPolicy: Policy<MerchantMeta, MerchantAuth> = async(meta, request) => {
-		const auth = await authPolicies.appOwnerPolicy(meta, request)
-		const {stripeLiaisonForPlatform} = stripeComplex
-		async function authorizeMerchantForApp(appId: DamnId) {
-			const {authTables} = await auth.authorizeAppOwner(appId)
-			return {
-				authTables,
-				storeTables: unconstrainedStoreTables.namespaceForApp(appId),
-			}
-		}
+		const auth = await authPolicies.userPolicy(meta, request)
+		const {appId} = auth.access
 		return {
 			...auth,
-			authorizeMerchantForApp,
-			stripeLiaisonForPlatform,
+			stripeLiaison,
+			storeTables: unconstrainedStoreTables.namespaceForApp(
+				DamnId.fromString(appId)
+			),
 		}
 	}
 
@@ -32,9 +34,8 @@ export function prepareStorePolicies({
 	const prospectPolicy: Policy<ProspectMeta, ProspectAuth> = async(meta, request) => {
 		const auth = await authPolicies.anonPolicy(meta, request)
 		const appId = DamnId.fromString(auth.access.appId)
-		const {stripeLiaisonForPlatform} = stripeComplex
 		async function getStripeAccount(id: string) {
-			return stripeLiaisonForPlatform.accounts.retrieve(id)
+			return stripeLiaison.accounts.retrieve(id)
 		}
 		return {
 			...auth,
@@ -52,13 +53,12 @@ export function prepareStorePolicies({
 		const {stripeAccountId} = await storeTables.merchant.stripeAccounts
 			.one({conditions: false})
 
-		const stripeLiaisonForApp = stripeComplex
-			.connectStripeLiaisonForApp(stripeAccountId)
+		const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 
 		return {
 			...auth,
 			storeTables,
-			stripeLiaisonForApp,
+			stripeLiaisonAccount,
 		}
 	}
 

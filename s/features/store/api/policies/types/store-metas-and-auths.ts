@@ -2,19 +2,15 @@
 import {Stripe} from "stripe"
 
 import {StoreTables} from "../../tables/types/store-tables.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {AuthTables} from "../../../../auth/types/auth-tables.js"
-import {StripeLiaisonForApp} from "../../../stripe2/types/stripe-liaison-app.js"
-import {StripeLiaisonForPlatform} from "../../../stripe2/types/stripe-liaison-for-platform.js"
-import {AnonAuth, AnonMeta, AppOwnerAuth, AppOwnerMeta, UserAuth, UserMeta} from "../../../../auth/types/auth-metas.js"
+import {makeStripeLiaison} from "../../../stripe2/liaison/stripe-liaison.js"
+import {AnonAuth, AnonMeta, UserAuth, UserMeta} from "../../../../auth/types/auth-metas.js"
 
-export interface MerchantMeta extends AppOwnerMeta {}
-export interface MerchantAuth extends AppOwnerAuth {
-	stripeLiaisonForPlatform: StripeLiaisonForPlatform
-	authorizeMerchantForApp(appId: DamnId): Promise<{
-		authTables: AuthTables
-		storeTables: StoreTables
-	}>
+export interface MerchantMeta extends UserMeta {}
+export interface MerchantAuth extends UserAuth {
+	authTables: AuthTables
+	storeTables: StoreTables
+	stripeLiaison: ReturnType<typeof makeStripeLiaison>
 }
 
 export interface ProspectMeta extends AnonMeta {}
@@ -27,7 +23,7 @@ export interface ProspectAuth extends AnonAuth {
 export interface CustomerMeta extends UserMeta {}
 export interface CustomerAuth extends UserAuth {
 	storeTables: StoreTables
-	stripeLiaisonForApp: StripeLiaisonForApp
+	stripeLiaisonAccount: ReturnType<ReturnType<typeof makeStripeLiaison>["account"]>
 }
 
 export interface ClerkMeta extends CustomerMeta {}

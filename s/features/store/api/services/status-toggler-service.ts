@@ -6,7 +6,9 @@ import {ClerkAuth, ClerkMeta} from "../policies/types/store-metas-and-auths.js"
 export const makeStatusTogglerService = (
 		options: StoreServiceOptions
 	) => apiContext<ClerkMeta, ClerkAuth>()({
+
 	policy: options.storePolicies.clerkPolicy,
+
 	expose: {
 
 		async enableEcommerce({storeTables}) {

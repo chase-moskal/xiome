@@ -15,7 +15,7 @@ export class XiomeBankConnect extends AutowatcherComponentWithShare<{
 	}> {
 
 	@property({type: String, reflect: true})
-	appId: string
+	private appId: string
 
 	@property({type: Object})
 	private stripeAccountDetails: Op<StripeAccountDetails> = ops.loading()
@@ -24,7 +24,7 @@ export class XiomeBankConnect extends AutowatcherComponentWithShare<{
 		if (this.appId) {
 			ops.operation({
 				setOp: op => this.stripeAccountDetails = op,
-				promise: this.share.bank.getStripeAccountDetails(this.appId)
+				promise: this.share.bank.getStripeAccountDetails()
 					.then(details => {
 						this.requestUpdate()
 						return details
@@ -44,7 +44,7 @@ export class XiomeBankConnect extends AutowatcherComponentWithShare<{
 
 	// TODO implement
 	private async clickSetupPayouts() {
-		await this.share.bank.setupStripeAccount(this.appId)
+		await this.share.bank.setupStripeAccount()
 		await this.refreshStripeAccountDetails()
 	}
 

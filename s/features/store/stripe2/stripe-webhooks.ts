@@ -1,16 +1,17 @@
 
 import {Stripe} from "stripe"
-import {StripeComplex} from "./types/stripe-complex.js"
+
 import {AuthTables} from "../../auth/types/auth-tables.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
+import {makeStripeLiaison} from "./liaison/stripe-liaison.js"
 import {StoreTables} from "../api/tables/types/store-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export function stripeWebhooks({logger}: {
 		logger: Logger
-		stripeComplex: StripeComplex
 		authTables: UnconstrainedTables<AuthTables>
 		storeTables: UnconstrainedTables<StoreTables>
+		stripeLiaison: ReturnType<typeof makeStripeLiaison>
 	}) {
 	return {
 		async "checkout.session.completed"(event: Stripe.Event) {

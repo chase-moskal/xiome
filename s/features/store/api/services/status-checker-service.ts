@@ -8,7 +8,9 @@ import {determineStoreStatus} from "./utils/determine-store-status.js"
 export const makeStatusCheckerService = (
 		options: StoreServiceOptions
 	) => apiContext<ProspectMeta, ProspectAuth>()({
+
 	policy: options.storePolicies.prospectPolicy,
+
 	expose: {
 
 		async getStoreStatus({access, storeTables, getStripeAccount}) {

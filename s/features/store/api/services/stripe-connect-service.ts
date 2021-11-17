@@ -16,21 +16,17 @@ export const makeStripeConnectService = (
 	expose: {
 
 		async getConnectDetails(
-				{access, stripeLiaisonForPlatform, authorizeMerchantForApp},
-				{appId: appIdString}: {appId: string},
+				{access, stripeLiaison, storeTables},
 			): Promise<undefined | StripeAccountDetails> {
 
-			const appId = DamnId.fromString(appIdString)
-
 			const {userId} = access.user
-			const {storeTables} = await authorizeMerchantForApp(appId)
 
 			const existingAssociatedStripeAccount = await storeTables
 				.merchant.stripeAccounts.one(find({userId}))
 
 			if (existingAssociatedStripeAccount) {
 				const id = existingAssociatedStripeAccount.stripeAccountId
-				const account = await stripeLiaisonForPlatform.accounts.retrieve(id)
+				const account = await stripeLiaison.accounts.retrieve(id)
 				return {
 					email: account.email,
 					stripeAccountId: account.id,
@@ -44,27 +40,23 @@ export const makeStripeConnectService = (
 		},
 
 		async generateConnectSetupLink(
-				{access, stripeLiaisonForPlatform, authorizeMerchantForApp},
-				{appId: appIdString}: {appId: string},
+				{access, stripeLiaison, storeTables},
 			) {
 
-			const appId = DamnId.fromString(appIdString)
-
 			const {userId} = access.user
-			const {storeTables} = await authorizeMerchantForApp(appId)
 
 			const {stripeAccountId} = (
 				await storeTables.merchant.stripeAccounts.assert({
 					...find({userId}),
 					make: async() => {
-						const {id: stripeAccountId} = await stripeLiaisonForPlatform
+						const {id: stripeAccountId} = await stripeLiaison
 							.accounts.create({type: "standard"})
 						return {userId, stripeAccountId}
 					},
 				})
 			)
 
-			const {url: stripeAccountSetupLink} = await stripeLiaisonForPlatform
+			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
 					account: stripeAccountId,
 					collect: "eventually_due",

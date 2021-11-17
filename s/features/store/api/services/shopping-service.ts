@@ -10,7 +10,7 @@ export const makeShoppingService = (
 	expose: {
 
 		async buySubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionPlanId}: {
 					subscriptionPlanId: string
 				}) {
@@ -18,7 +18,7 @@ export const makeShoppingService = (
 		},
 
 		async updateSubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionId}: {
 					subscriptionId: string
 				}) {
@@ -26,7 +26,7 @@ export const makeShoppingService = (
 		},
 
 		async endSubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionId}: {
 					subscriptionId: string
 				}) {
