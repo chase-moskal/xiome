@@ -12,13 +12,13 @@ import autowatcher from "./toolbox/autowatcher/autowatcher.test.js"
 import sortQuestions from "./features/questions/components/xiome-questions/helpers/sort-questions.test.js"
 
 export default <Suite>{
-	// "toolbox": {
-	// 	snapstate,
-	// 	dbby,
-	// 	damnId,
-	// 	debounce,
-	// 	autowatcher,
-	// },
+	"toolbox": {
+		snapstate,
+		dbby,
+		damnId,
+		debounce,
+		autowatcher,
+	},
 	"features": {
 		// auth,
 		videos,
@@ -27,7 +27,5 @@ export default <Suite>{
 		},
 		chat,
 		notes,
-		// videos,
-		// questions: {sortQuestions},
 	},
 }
