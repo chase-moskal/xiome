@@ -55,17 +55,21 @@ export function makeStoreModel2({
 	})
 
 	const bank = (() => {
+
+		async function loadLinkedStripeAccountDetails() {
+			return ops.operation({
+				promise: stripeAccountsService.getConnectDetails(),
+				setOp: op => state.writable.stripeAccountDetailsOp = op,
+			})
+		}
+
 		return {
-			async loadLinkedStripeAccountDetails() {
-				return ops.operation({
-					promise: stripeAccountsService.getConnectDetails(),
-					setOp: op => state.writable.stripeAccountDetailsOp = op,
-				})
-			},
+			loadLinkedStripeAccountDetails,
 			async linkStripeAccount() {
 				await triggerBankPopup(
 					await stripeAccountsService.generateConnectSetupLink()
 				)
+				await loadLinkedStripeAccountDetails()
 			},
 		}
 	})()

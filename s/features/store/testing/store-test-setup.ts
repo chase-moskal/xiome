@@ -3,7 +3,7 @@ import {mockRemote} from "renraku/x/remote/mock-remote.js"
 import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
 
 import {storeApi} from "../api/store-api.js"
-import {makeStoreModel} from "../model/store-model.js"
+import {makeStoreModel2} from "../model/store-model2.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStoreTables} from "../api/tables/mock-store-tables.js"
@@ -17,7 +17,6 @@ export async function storeTestSetup() {
 	const {appId, rando, config, storage, appOrigin, authPolicies}
 		= await prepareMockAuth()
 
-	const stripeAccountId = rando.randomId().toString()
 	const authTables = new UnconstrainedTables(await mockAuthTables(storage))
 	const storeTables = new UnconstrainedTables(await mockStoreTables(storage))
 
@@ -69,17 +68,17 @@ export async function storeTestSetup() {
 				stripeConnectService: mockRemote(api.stripeConnectService).withMeta(meta),
 			}
 
-			const storeModel = makeStoreModel({
+			const storeModel = makeStoreModel2({
 				storage,
 				appId: appId.toString(),
 				shopkeepingService: remotes.shopkeepingService,
 				statusCheckerService: remotes.statusCheckerService,
 				statusTogglerService: remotes.statusTogglerService,
 				stripeAccountsService: remotes.stripeConnectService,
-				triggerBankPopup: async() => {
-					await mockStripeOperations
-						.linkBankWithExistingStripeAccount(stripeAccountId)
-				},
+				triggerBankPopup:
+					async({stripeAccountId}) =>
+						mockStripeOperations
+							.linkBankWithExistingStripeAccount(stripeAccountId),
 			})
 
 			return {storeModel}

@@ -1,12 +1,17 @@
 
-import {Suite} from "cynic"
+import {Suite, expect} from "cynic"
+import {ops} from "../../framework/ops.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 
 export default <Suite>{
 	async "shopkeeping"() {
 		return {
 			async "merchant can link a bank account"() {
-				const {} = storeTestSetup()
+				const {makeClient} = await storeTestSetup()
+				const {storeModel} = await makeClient()
+				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
+				await storeModel.bank.linkStripeAccount()
+				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).ok()
 			},
 			async "merchant can flip store status online/offline"() {},
 		}
