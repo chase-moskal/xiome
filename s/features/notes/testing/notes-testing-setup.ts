@@ -74,7 +74,10 @@ export async function notesTestingSetup() {
 	}
 
 	async function browserTab() {
-		const notesService = mockRemote(rawNotesService).withMeta({meta, request})
+		const notesService = mockRemote(rawNotesService).useMeta({
+			getMeta: async() => meta,
+			getRequest: async() => request,
+		})
 		const notesModel = makeNotesModel({notesService})
 		await notesModel.updateAccessOp(ops.ready(access))
 		orchestrateBroadcast(notesModel)

@@ -92,6 +92,7 @@ export function makeStoreModel2({
 
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
+			state.writable.stripeAccountDetailsOp = ops.ready(undefined)
 		},
 	}
 }

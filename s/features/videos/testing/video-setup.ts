@@ -85,23 +85,23 @@ export async function videoSetup() {
 
 		async for(privileges: string[]) {
 			const options = {
-				meta: await mockVideoMeta({
+				getMeta: async() => mockVideoMeta({
 					privileges,
 					origins: [appOrigin],
 					appId: appId.toString(),
 					userId: rando.randomId().toString(),
 				}),
-				request: mockHttpRequest({origin: appOrigin}),
+				getRequest: async() => mockHttpRequest({origin: appOrigin}),
 			}
-			const dacastService = mockRemote(rawDacastService).withMeta(options)
-			const contentService = mockRemote(rawContentService).withMeta(options)
+			const dacastService = mockRemote(rawDacastService).useMeta(options)
+			const contentService = mockRemote(rawContentService).useMeta(options)
 			const models = makeVideoModels({
 				dacastService,
 				contentService,
 			})
 			const {access} = await basePolicy(
-				options.meta,
-				<HttpRequest>options.request,
+				await options.getMeta(),
+				<HttpRequest>await options.getRequest(),
 			)
 
 			await Promise.all([

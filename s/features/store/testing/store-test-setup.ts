@@ -12,6 +12,8 @@ import {mockStripeCircuit} from "../stripe2/mocks/mock-stripe-circuit.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {ops} from "../../../framework/ops.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
 
 export async function storeTestSetup() {
 	const {appId, rando, config, storage, appOrigin, authPolicies}
@@ -47,25 +49,20 @@ export async function storeTestSetup() {
 		api,
 		stripeLiaison,
 		mockStripeOperations,
-		async makeClient(withPrivileges: string[] = []) {
-			const access = mockAccess({
-				rando,
-				appId,
-				appOrigin,
-				privileges: [
-					appPermissions.privileges["universal"],
-					...withPrivileges,
-				]
-			})
-			const meta = {
-				meta: await mockMeta({access}),
-				request: mockHttpRequest({origin: appOrigin}),
+		async makeClient(initialPrivileges: string[] = []) {
+			let currentAccess: AccessPayload
+
+			const request = mockHttpRequest({origin: appOrigin})
+			const getters = {
+				getMeta: async() => mockMeta({access: currentAccess}),
+				getRequest: async() => request,
 			}
+
 			const remotes = {
-				shopkeepingService: mockRemote(api.shopkeepingService).withMeta(meta),
-				statusCheckerService: mockRemote(api.statusCheckerService).withMeta(meta),
-				statusTogglerService: mockRemote(api.statusTogglerService).withMeta(meta),
-				stripeConnectService: mockRemote(api.stripeConnectService).withMeta(meta),
+				shopkeepingService: mockRemote(api.shopkeepingService).useMeta(getters),
+				statusCheckerService: mockRemote(api.statusCheckerService).useMeta(getters),
+				statusTogglerService: mockRemote(api.statusTogglerService).useMeta(getters),
+				stripeConnectService: mockRemote(api.stripeConnectService).useMeta(getters),
 			}
 
 			const storeModel = makeStoreModel2({
@@ -81,7 +78,45 @@ export async function storeTestSetup() {
 							.linkBankWithExistingStripeAccount(stripeAccountId),
 			})
 
-			return {storeModel}
+			async function setAccess(access: AccessPayload) {
+				currentAccess = access
+				await storeModel.updateAccessOp(ops.ready(access))
+			}
+
+			async function setAccessWithPrivileges(privileges: string[]) {
+				await setAccess(mockAccess({
+					rando,
+					appId,
+					appOrigin,
+					privileges: [
+						appPermissions.privileges["universal"],
+						...privileges,
+					],
+				}))
+			}
+
+			await setAccessWithPrivileges(initialPrivileges)
+
+			async function setLoggedOut() {
+				await setAccess({
+					...mockAccess({
+						rando,
+						appId,
+						appOrigin,
+						privileges: [
+							appPermissions.privileges["universal"]
+						],
+					}),
+					user: undefined,
+				})
+			}
+
+			return {
+				storeModel,
+				setAccess,
+				setLoggedOut,
+				setAccessWithPrivileges,
+			}
 		},
 	}
 }

@@ -8,10 +8,12 @@ export default <Suite>{
 		return {
 			async "merchant can link a bank account"() {
 				const {makeClient} = await storeTestSetup()
-				const {storeModel} = await makeClient()
+				const {storeModel, ...client} = await makeClient()
 				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
 				await storeModel.bank.linkStripeAccount()
 				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).ok()
+				await client.setLoggedOut()
+				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
 			},
 			async "merchant can flip store status online/offline"() {},
 		}
