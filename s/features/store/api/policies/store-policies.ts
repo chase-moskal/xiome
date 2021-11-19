@@ -17,15 +17,15 @@ export function prepareStorePolicies({
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
 	}) {
 
-	/** a merchant owns apps, and links stripe accounts */
+	/** merchant can control bank link */
 	const merchantPolicy: Policy<MerchantMeta, MerchantAuth> = async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
-		const {appId} = auth.access
+		auth.checker.requirePrivilege("control store bank link")
 		return {
 			...auth,
 			stripeLiaison,
 			storeTables: unconstrainedStoreTables.namespaceForApp(
-				DamnId.fromString(appId)
+				DamnId.fromString(auth.access.appId)
 			),
 		}
 	}
@@ -33,18 +33,18 @@ export function prepareStorePolicies({
 	/** a prospect user is checking if ecommerce is available */
 	const prospectPolicy: Policy<ProspectMeta, ProspectAuth> = async(meta, request) => {
 		const auth = await authPolicies.anonPolicy(meta, request)
-		const appId = DamnId.fromString(auth.access.appId)
-		async function getStripeAccount(id: string) {
-			return stripeLiaison.accounts.retrieve(id)
-		}
 		return {
 			...auth,
-			storeTables: unconstrainedStoreTables.namespaceForApp(appId),
-			getStripeAccount,
+			storeTables: unconstrainedStoreTables.namespaceForApp(
+				DamnId.fromString(auth.access.appId)
+			),
+			async getStripeAccount(id: string) {
+				return stripeLiaison.accounts.retrieve(id)
+			},
 		}
 	}
 
-	/** a customer is a user who buys things */
+	/** a customer is a user who can buy things */
 	const customerPolicy: Policy<CustomerMeta, CustomerAuth> = async(meta, request) => {
 		const auth = await authPolicies.userPolicy(meta, request)
 		const appId = DamnId.fromString(auth.access.appId)

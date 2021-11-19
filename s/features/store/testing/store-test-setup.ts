@@ -3,8 +3,10 @@ import {mockRemote} from "renraku/x/remote/mock-remote.js"
 import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
 
 import {storeApi} from "../api/store-api.js"
+import {ops} from "../../../framework/ops.js"
 import {makeStoreModel2} from "../model/store-model2.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStoreTables} from "../api/tables/mock-store-tables.js"
 import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
@@ -12,8 +14,6 @@ import {mockStripeCircuit} from "../stripe2/mocks/mock-stripe-circuit.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
-import {ops} from "../../../framework/ops.js"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
 
 export async function storeTestSetup() {
 	const {appId, rando, config, storage, appOrigin, authPolicies}
@@ -32,7 +32,6 @@ export async function storeTestSetup() {
 	const api = storeApi({
 		config,
 		storeTables,
-		authPolicies,
 		stripeLiaison,
 		accountReturningLinks: {
 			refresh: "https://api.xiome.io/store/stripe?x=refresh",
@@ -43,6 +42,7 @@ export async function storeTestSetup() {
 			success: "https://api.xiome.io/store/stripe?x=success",
 		},
 		generateId: () => rando.randomId(),
+		basePolicy: authPolicies.anonPolicy,
 	})
 
 	return {

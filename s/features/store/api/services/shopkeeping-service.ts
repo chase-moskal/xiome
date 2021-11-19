@@ -19,7 +19,9 @@ const hardcodedInterval = "month"
 export const makeShopkeepingService = (
 		options: StoreServiceOptions
 	) => apiContext<ClerkMeta, ClerkAuth>()({
-	policy: options.storePolicies.clerkPolicy,
+
+	policy: options.storeLinkedPolicy,
+
 	expose: {
 
 		async listSubscriptionPlans({storeTables, authTables}) {

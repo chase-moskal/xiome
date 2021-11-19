@@ -1,46 +1,59 @@
 
 import {asApi} from "renraku/x/identities/as-api.js"
+import {Policy} from "renraku/x/types/primitives/policy.js"
+import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
+import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {StoreTables} from "./tables/types/store-tables.js"
-import {prepareStorePolicies} from "./policies/store-policies.js"
+import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeShoppingService} from "./services/shopping-service.js"
+import {StoreAuth, StoreMeta} from "./policies/types/store-metas-and-auths.js"
 import {makeStripeLiaison} from "../stripe2/liaison/stripe-liaison.js"
 import {makeShopkeepingService} from "./services/shopkeeping-service.js"
 import {makeStripeConnectService} from "./services/stripe-connect-service.js"
 import {makeStatusTogglerService} from "./services/status-toggler-service.js"
 import {makeStatusCheckerService} from "./services/status-checker-service.js"
-import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
-import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {StoreCommonOptions, StoreServiceOptions} from "./types/store-options.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export const storeApi = ({
-		config,
 		storeTables,
-		authPolicies,
 		stripeLiaison,
-		accountReturningLinks,
-		checkoutReturningLinks,
-		generateId,
+		basePolicy,
+		...common
 	}: {
-		config: SecretConfig
 		storeTables: UnconstrainedTables<StoreTables>
 		stripeLiaison: ReturnType<typeof makeStripeLiaison>
-		authPolicies: ReturnType<typeof prepareAuthPolicies>
+		basePolicy: Policy<AnonMeta, AnonAuth>
 	} & StoreCommonOptions) => {
 
-	const storePolicies = prepareStorePolicies({
-		storeTables,
-		authPolicies,
-		stripeLiaison,
-	})
+	async function storePolicy(
+			meta: StoreMeta,
+			request: HttpRequest
+		): Promise<StoreAuth> {
+		const auth = await basePolicy(meta, request)
+		return {
+			...auth,
+			stripeLiaison,
+			storeTables: storeTables.namespaceForApp(
+				DamnId.fromString(auth.access.appId)
+			),
+		}
+	}
 
 	const serviceOptions: StoreServiceOptions = {
-		config,
-		storePolicies,
-		accountReturningLinks,
-		checkoutReturningLinks,
-		generateId,
+		...common,
+		storePolicy,
+		async storeLinkedPolicy(meta, request) {
+			const auth = await storePolicy(meta, request)
+			const {stripeAccountId} = await auth.storeTables.merchant
+				.stripeAccounts
+					.one({conditions: false})
+			return {
+				...auth,
+				stripeLiaisonAccount: stripeLiaison.account(stripeAccountId),
+			}
+		},
 	}
 
 	return asApi({

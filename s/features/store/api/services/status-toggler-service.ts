@@ -2,13 +2,13 @@
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {StoreServiceOptions} from "../types/store-options.js"
-import {ClerkAuth, ClerkMeta} from "../policies/types/store-metas-and-auths.js"
+import {StoreAuth, StoreMeta} from "../policies/types/store-metas-and-auths.js"
 
 export const makeStatusTogglerService = (
 		options: StoreServiceOptions
-	) => apiContext<ClerkMeta, ClerkAuth>()({
+	) => apiContext<StoreMeta, StoreAuth>()({
 
-	policy: options.storePolicies.clerkPolicy,
+	policy: options.storePolicy,
 
 	expose: {
 
