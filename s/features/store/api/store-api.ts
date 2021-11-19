@@ -1,4 +1,5 @@
 
+import {ApiError} from "renraku/x/api/api-error.js"
 import {asApi} from "renraku/x/identities/as-api.js"
 import {Policy} from "renraku/x/types/primitives/policy.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
@@ -46,12 +47,14 @@ export const storeApi = ({
 		storePolicy,
 		async storeLinkedPolicy(meta, request) {
 			const auth = await storePolicy(meta, request)
-			const {stripeAccountId} = await auth.storeTables.merchant
+			const row = await auth.storeTables.merchant
 				.stripeAccounts
 					.one({conditions: false})
+			if (!row)
+				throw new ApiError(400, "store is not available")
 			return {
 				...auth,
-				stripeLiaisonAccount: stripeLiaison.account(stripeAccountId),
+				stripeLiaisonAccount: stripeLiaison.account(row.stripeAccountId),
 			}
 		},
 	}
