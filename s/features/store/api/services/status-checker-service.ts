@@ -4,7 +4,7 @@ import {apiContext} from "renraku/x/api/api-context.js"
 import {StoreStatus} from "./types/store-status.js"
 import {StoreServiceOptions} from "../types/store-options.js"
 import {determineStoreStatus} from "./utils/determine-store-status.js"
-import {StoreMeta, StoreAuth} from "../policies/types/store-metas-and-auths.js"
+import {StoreMeta, StoreAuth} from "../types/store-metas-and-auths.js"
 
 export const makeStatusCheckerService = (
 		options: StoreServiceOptions

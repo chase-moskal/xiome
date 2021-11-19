@@ -6,8 +6,8 @@ import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {StoreServiceOptions} from "../types/store-options.js"
 import {apiProblems} from "../../../../toolbox/api-validate.js"
+import {StoreLinkedAuth, StoreMeta} from "../types/store-metas-and-auths.js"
 import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
-import {ClerkAuth, ClerkMeta} from "../policies/types/store-metas-and-auths.js"
 import {SubscriptionPlanRow} from "../tables/types/rows/subscription-plan-row.js"
 import {RoleRow} from "../../../auth/aspects/permissions/types/permissions-tables.js"
 import {SubscriptionPlanDraft} from "../tables/types/drafts/subscription-plan-draft.js"
@@ -18,7 +18,7 @@ const hardcodedInterval = "month"
 
 export const makeShopkeepingService = (
 		options: StoreServiceOptions
-	) => apiContext<ClerkMeta, ClerkAuth>()({
+	) => apiContext<StoreMeta, StoreLinkedAuth>()({
 
 	policy: options.storeLinkedPolicy,
 
