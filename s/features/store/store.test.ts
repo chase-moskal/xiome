@@ -1,23 +1,27 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
-import {storePrivileges} from "./permissions/store-privileges.js"
-import {storeTestSetup} from "./testing/store-test-setup.js"
+import {simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
 	async "shopkeeping"() {
 		return {
-			async "merchant can link a bank account"() {
-				const {makeClient} = await storeTestSetup()
-				const {storeModel, ...client} = await makeClient()
-				await client.setAccessWithPrivileges(storePrivileges["control store bank link"])
-				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
-				await storeModel.bank.linkStripeAccount()
-				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).ok()
-				await client.setLoggedOut()
-				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
+			"stripe bank account linking": {
+				async "merchant can link a bank account"() {
+					const {storeModel, ...client} = await simpleStoreSetup("control store bank link")
+					expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
+					await storeModel.bank.linkStripeAccount()
+					expect(ops.value(storeModel.state.stripeAccountDetailsOp)).ok()
+					await client.setLoggedOut()
+					expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
+				},
+				async "rejected without the right privilege"() {
+					const {storeModel} = await simpleStoreSetup()
+					expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
+					await expect(async() => storeModel.bank.linkStripeAccount()).throws()
+				},
 			},
-			async "merchant can flip store status online/offline"() {},
+			async "store status online/offline"() {},
 		}
 	},
 	async "subscriptions"() {
