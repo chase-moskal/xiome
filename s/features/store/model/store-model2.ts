@@ -12,6 +12,12 @@ import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {StoreStatus} from "../api/services/types/store-status.js"
 import {SubscriptionPlan} from "../api/services/types/subscription-plan.js"
 import {StripeAccountDetails} from "../api/services/types/stripe-account-details.js"
+import {storageCache} from "../../../toolbox/flex-storage/cache/storage-cache.js"
+import {minute} from "../../../toolbox/goodtimes/times.js"
+import {onesie} from "../../../toolbox/onesie.js"
+import {storePrivileges} from "../permissions/store-privileges.js"
+import {subbies} from "../../../toolbox/subbies.js"
+import {pub} from "../../../toolbox/pub.js"
 
 export function makeStoreModel2({
 		appId,
@@ -55,21 +61,75 @@ export function makeStoreModel2({
 	})
 
 	const bank = (() => {
-
+		const bankChange = pub()
 		async function loadLinkedStripeAccountDetails() {
-			return ops.operation({
+			const details = await ops.operation({
 				promise: stripeAccountsService.getConnectDetails(),
 				setOp: op => state.writable.stripeAccountDetailsOp = op,
 			})
+			return details
 		}
-
 		return {
+			onBankChange: bankChange.subscribe,
 			loadLinkedStripeAccountDetails,
 			async linkStripeAccount() {
 				await triggerBankPopup(
 					await stripeAccountsService.generateConnectSetupLink()
 				)
 				await loadLinkedStripeAccountDetails()
+				await bankChange.publish()
+			},
+		}
+	})()
+
+	const ecommerce = (() => {
+		const cache = storageCache({
+			lifespan: 5 * minute,
+			storage,
+			storageKey: `cache-store-status-${appId}`,
+			load: onesie(statusCheckerService.getStoreStatus),
+		})
+		async function fetchStoreStatus(forceFresh = false) {
+			await ops.operation({
+				setOp: op => state.writable.statusOp = op,
+				promise: forceFresh
+					? cache.readFresh()
+					: cache.read(),
+			})
+		}
+		let alreadyInitialized = false
+		const initialize = (() => {
+			return async function() {
+				if (!alreadyInitialized) {
+					alreadyInitialized = true
+					await fetchStoreStatus()
+				}
+			}
+		})()
+		return {
+			get userCanManageStore() {
+				const privileges =
+					ops.value(state.readable.accessOp)
+						?.permit.privileges
+							?? []
+				return privileges.includes(storePrivileges["manage store"])
+			},
+			initialize,
+			async enableStore() {
+				await statusTogglerService.enableEcommerce()
+				const newStatus = StoreStatus.Enabled
+				await cache.write(newStatus)
+				state.writable.statusOp = ops.ready(newStatus)
+			},
+			async disableStore() {
+				await statusTogglerService.disableEcommerce()
+				const newStatus = StoreStatus.Disabled
+				await cache.write(newStatus)
+				state.writable.statusOp = ops.ready(newStatus)
+			},
+			async handleChange() {
+				if (alreadyInitialized)
+					await fetchStoreStatus(true)
 			},
 		}
 	})()
@@ -78,9 +138,7 @@ export function makeStoreModel2({
 		return {}
 	})()
 
-	const ecommerce = (() => {
-		return {}
-	})()
+	bank.onBankChange(ecommerce.handleChange)
 
 	return {
 		state: state.readable,

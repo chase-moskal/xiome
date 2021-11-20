@@ -1,6 +1,8 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
+import {nap} from "../../toolbox/nap.js"
+import {StoreStatus} from "./api/services/types/store-status.js"
 import {simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
@@ -21,7 +23,29 @@ export default <Suite>{
 					await expect(async() => storeModel.bank.linkStripeAccount()).throws()
 				},
 			},
-			async "store status online/offline"() {},
+			"store status": {
+				async "status starts uninitialized"() {
+					const {storeModel} = await simpleStoreSetup()
+					await storeModel.ecommerce.initialize()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Uninitialized)
+				},
+				async "after account is linked, status is disabled"() {
+					const {storeModel} = await simpleStoreSetup("control store bank link")
+					await storeModel.bank.linkStripeAccount()
+					await storeModel.ecommerce.initialize()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+				},
+				async "bank linkage triggers store status update"() {
+					const {storeModel} = await simpleStoreSetup("control store bank link")
+					await storeModel.ecommerce.initialize()
+					await storeModel.bank.linkStripeAccount()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+				},
+				async "enable and disable the store"() {},
+			},
 		}
 	},
 	async "subscriptions"() {
