@@ -1,3 +1,5 @@
+import deleteIcon from "../../../../../framework/icons/delete.svg.js"
+import muteIcon from "../../../../../framework/icons/mute.svg.js"
 
 import {html} from "../../../../../framework/component.js"
 import {ChatPost} from "../../../common/types/chat-concepts.js"
@@ -23,8 +25,8 @@ export function renderChatPost({
 				${isModerator
 					? html`
 						<span>
-							<xio-button @press=${mute}>mute</xio-button>
-							<xio-button @press=${remove}>delete</xio-button>
+							<xio-button @press=${mute}> ${muteIcon} mute</xio-button>
+							<xio-button @press=${remove}> ${deleteIcon} delete</xio-button>
 						</span>
 					`
 					: null}
