@@ -7,23 +7,17 @@ export default css`
 	display: flex;
 	text-align: center;
 	flex-direction: column-reverse;
-	/*Everything below this is for testing, delete before pull request*/
-	height: 300px;
-	border: 2px solid blue;
+	height: 300px; /*Delete height values when the chat element gets styled*/
 }
 
 .history ol {
 	text-align: left;
-	/*Everything below this is for testing, delete before pull request*/
-	border: 2px dotted green;
 }
 
 .history li {
 	border-radius: 10px;
 	background-color: rgb(60, 60, 60);
 	margin-top: 10px;
-	/*Everything below this is for testing, delete before pull request*/
-	border: 2px dashed yellow;
 }
 
 .nickname {
