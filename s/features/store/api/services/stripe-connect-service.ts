@@ -10,7 +10,11 @@ export const makeStripeConnectService = (
 		options: StoreServiceOptions
 	) => apiContext<StoreMeta, StoreAuth>()({
 
-	policy: options.storePolicy,
+	async policy(meta, request) {
+		const auth = await options.storePolicy(meta, request)
+		auth.checker.requirePrivilege("control store bank link")
+		return auth
+	},
 
 	expose: {
 

@@ -49,7 +49,7 @@ export async function storeTestSetup() {
 		api,
 		stripeLiaison,
 		mockStripeOperations,
-		async makeClient(initialPrivileges: string[] = []) {
+		async makeClient() {
 			let currentAccess: AccessPayload
 
 			const request = mockHttpRequest({origin: appOrigin})
@@ -83,7 +83,7 @@ export async function storeTestSetup() {
 				await storeModel.updateAccessOp(ops.ready(access))
 			}
 
-			async function setAccessWithPrivileges(privileges: string[]) {
+			async function setAccessWithPrivileges(...privileges: string[]) {
 				await setAccess(mockAccess({
 					rando,
 					appId,
@@ -94,8 +94,6 @@ export async function storeTestSetup() {
 					],
 				}))
 			}
-
-			await setAccessWithPrivileges(initialPrivileges)
 
 			async function setLoggedOut() {
 				await setAccess({

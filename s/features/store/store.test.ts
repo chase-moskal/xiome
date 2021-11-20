@@ -1,6 +1,7 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
+import {storePrivileges} from "./permissions/store-privileges.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 
 export default <Suite>{
@@ -9,6 +10,7 @@ export default <Suite>{
 			async "merchant can link a bank account"() {
 				const {makeClient} = await storeTestSetup()
 				const {storeModel, ...client} = await makeClient()
+				await client.setAccessWithPrivileges(storePrivileges["control store bank link"])
 				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
 				await storeModel.bank.linkStripeAccount()
 				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).ok()
