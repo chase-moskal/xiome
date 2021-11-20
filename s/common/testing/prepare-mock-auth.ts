@@ -1,13 +1,13 @@
 
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
-import {getRando} from "../../../../toolbox/get-rando.js"
-import {mockAuthTables} from "../../../auth/tables/mock-auth-tables.js"
-import {mockConfig} from "../../../../assembly/backend/config/mock-config.js"
-import {mockAppTables} from "../../../auth/aspects/apps/tables/mock-app-tables.js"
-import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {memoryFlexStorage} from "../../../../toolbox/flex-storage/memory-flex-storage.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {getRando} from "../../toolbox/get-rando.js"
+import {mockConfig} from "../../assembly/backend/config/mock-config.js"
+import {mockAuthTables} from "../../features/auth/tables/mock-auth-tables.js"
+import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
+import {mockAppTables} from "../../features/auth/aspects/apps/tables/mock-app-tables.js"
+import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
+import {UnconstrainedTables} from "../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function prepareMockAuth() {
 	const rando = await getRando()

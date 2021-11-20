@@ -7,9 +7,9 @@ import {ops} from "../../../framework/ops.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
-import {mockMeta} from "../../auth/testing/mock-meta.js"
+import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {NotesTables} from "../api/tables/notes-tables.js"
-import {prepareMockAuth} from "./basics/prepare-mock-auth.js"
+import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
 import {makeNotesService} from "../api/services/notes-service.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
@@ -74,7 +74,10 @@ export async function notesTestingSetup() {
 	}
 
 	async function browserTab() {
-		const notesService = mockRemote(rawNotesService).withMeta({meta, request})
+		const notesService = mockRemote(rawNotesService).useMeta({
+			getMeta: async() => meta,
+			getRequest: async() => request,
+		})
 		const notesModel = makeNotesModel({notesService})
 		await notesModel.updateAccessOp(ops.ready(access))
 		orchestrateBroadcast(notesModel)

@@ -3,6 +3,7 @@ import {Suite} from "cynic"
 
 import dbby from "./toolbox/dbby/dbby.test.js"
 import chat from "./features/chat/chat.test.js"
+import store from "./features/store/store.test.js"
 import notes from "./features/notes/notes.test.js"
 import videos from "./features/videos/videos.test.js"
 import damnId from "./toolbox/damnedb/damn-id.test.js"
@@ -27,5 +28,6 @@ export default <Suite>{
 		},
 		chat,
 		notes,
+		store,
 	},
 }

@@ -6,8 +6,8 @@ import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {StoreServiceOptions} from "../types/store-options.js"
 import {apiProblems} from "../../../../toolbox/api-validate.js"
+import {StoreLinkedAuth, StoreMeta} from "../types/store-metas-and-auths.js"
 import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
-import {ClerkAuth, ClerkMeta} from "../policies/types/store-metas-and-auths.js"
 import {SubscriptionPlanRow} from "../tables/types/rows/subscription-plan-row.js"
 import {RoleRow} from "../../../auth/aspects/permissions/types/permissions-tables.js"
 import {SubscriptionPlanDraft} from "../tables/types/drafts/subscription-plan-draft.js"
@@ -18,8 +18,10 @@ const hardcodedInterval = "month"
 
 export const makeShopkeepingService = (
 		options: StoreServiceOptions
-	) => apiContext<ClerkMeta, ClerkAuth>()({
-	policy: options.storePolicies.clerkPolicy,
+	) => apiContext<StoreMeta, StoreLinkedAuth>()({
+
+	policy: options.storeLinkedPolicy,
+
 	expose: {
 
 		async listSubscriptionPlans({storeTables, authTables}) {
@@ -41,17 +43,17 @@ export const makeShopkeepingService = (
 		},
 	
 		async createSubscriptionPlan(
-				{stripeLiaisonForApp, storeTables, authTables},
+				{stripeLiaisonAccount, storeTables, authTables},
 				{draft}: {draft: SubscriptionPlanDraft}
 			) {
 
 			apiProblems(validateSubscriptionPlanDraft(draft))
 
-			const stripeProduct = await stripeLiaisonForApp.products.create({
+			const stripeProduct = await stripeLiaisonAccount.products.create({
 				name: draft.label,
 			})
 
-			const stripePrice = await stripeLiaisonForApp.prices.create({
+			const stripePrice = await stripeLiaisonAccount.prices.create({
 				unit_amount: draft.price,
 				currency: hardcodedCurrency,
 				recurring: {interval: hardcodedInterval},
@@ -84,7 +86,7 @@ export const makeShopkeepingService = (
 		},
 
 		async updateSubscriptionPlan(
-			{stripeLiaisonForApp, storeTables, authTables},
+			{stripeLiaisonAccount, storeTables, authTables},
 			{subscriptionPlanId: planIdString, draft}: {
 				subscriptionPlanId: string
 				draft: SubscriptionPlanDraft
@@ -93,7 +95,7 @@ export const makeShopkeepingService = (
 			apiProblems(validateSubscriptionPlanDraft(draft))
 			const subscriptionPlanId = DamnId.fromString(planIdString)
 	
-			const stripeNewPrice = await stripeLiaisonForApp.prices.create({
+			const stripeNewPrice = await stripeLiaisonAccount.prices.create({
 				unit_amount: draft.price,
 				currency: hardcodedCurrency,
 				recurring: {interval: hardcodedInterval},
@@ -122,7 +124,7 @@ export const makeShopkeepingService = (
 		},
 
 		async deactivateSubscriptionPlan(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionPlanId: planIdString}: {subscriptionPlanId: string},
 			) {
 
@@ -130,7 +132,7 @@ export const makeShopkeepingService = (
 			const {stripePriceId} = await storeTables.billing.subscriptionPlans
 				.one(find({subscriptionPlanId}))
 	
-			await stripeLiaisonForApp.prices
+			await stripeLiaisonAccount.prices
 				.update(stripePriceId, {active: false})
 	
 			// TODO cancel all stripe subscriptions

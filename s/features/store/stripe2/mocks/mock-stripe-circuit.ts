@@ -2,7 +2,7 @@
 import {stripeWebhooks} from "../stripe-webhooks.js"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
-import {mockStripeComplex} from "./mock-stripe-complex.js"
+import {mockStripeLiaison} from "./mock-stripe-liaison.js"
 import {pubsub, pubsubs} from "../../../../toolbox/pubsub.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {AuthTables} from "../../../auth/types/auth-tables.js"
@@ -32,7 +32,7 @@ export async function mockStripeCircuit({
 
 	const stripeTables = await mockStripeTables({tableStorage})
 
-	const stripeComplex = mockStripeComplex({
+	const stripeLiaison = mockStripeLiaison({
 		rando,
 		tables: stripeTables,
 		webhooks: webhookPublishers,
@@ -41,7 +41,7 @@ export async function mockStripeCircuit({
 	const webhooks = stripeWebhooks({
 		authTables,
 		storeTables,
-		stripeComplex,
+		stripeLiaison,
 		logger: console,
 	})
 
@@ -49,7 +49,7 @@ export async function mockStripeCircuit({
 		subscribe(webhooks[key].bind(webhooks))
 
 	return {
-		stripeComplex,
+		stripeLiaison,
 		mockStripeOperations: {
 			linkBankWithExistingStripeAccount: async(stripeAccountId: string) => {
 				await stripeTables.accounts.update({
