@@ -1,11 +1,9 @@
 
-import {StoreTables} from "../tables/types/store-tables.js"
+import {Policy} from "renraku/x/types/primitives/policy.js"
+
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {prepareStorePolicies} from "../policies/store-policies.js"
-import {StripeComplex} from "../../stripe2/types/stripe-complex.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {StoreAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
 
 export interface StoreCommonOptions {
 	config: SecretConfig
@@ -20,13 +18,7 @@ export interface StoreCommonOptions {
 	generateId: () => DamnId
 }
 
-export interface StoreApiOptions extends StoreCommonOptions {
-	config: SecretConfig
-	stripeComplex: StripeComplex
-	storeTables: UnconstrainedTables<StoreTables>
-	authPolicies: ReturnType<typeof prepareAuthPolicies>
-}
-
 export interface StoreServiceOptions extends StoreCommonOptions {
-	storePolicies: ReturnType<typeof prepareStorePolicies>
+	storePolicy: Policy<StoreMeta, StoreAuth>
+	storeLinkedPolicy: Policy<StoreMeta, StoreLinkedAuth>
 }

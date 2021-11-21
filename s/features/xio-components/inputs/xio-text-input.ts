@@ -114,9 +114,15 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	private handleInputKeyUp = (event: KeyboardEvent) => {
 		this.updateDraft()
-		if (!this.textarea && event.key === "Enter") {
-			this.dispatchValueChange()
-			this.dispatchEnterPress()
+		if (event.key === "Enter") {
+			const notTextArea = !this.textarea
+			const notIgnoring = !event.shiftKey
+			console.log({isNotTextArea: notTextArea, isNotIgnoringTheEnterPress: notIgnoring})
+			if (notTextArea || notIgnoring) {
+				this.dispatchValueChange()
+				this.dispatchEnterPress()
+				event.preventDefault()
+			}
 		}
 		else {
 			this.dispatchValueChangeDebounced()

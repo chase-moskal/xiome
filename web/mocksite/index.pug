@@ -1,12 +1,23 @@
 
 extends ../_templates/_mocksite.pug
 
+block append head
+	style.
+		xiome-video-display {
+			max-width: 480px;
+		}
+
 block main
 
 	xiome-login-panel(show-logout)
 		section
 			h2 your account
 			xiome-my-account
+
+	section
+		h2 notes
+		xiome-notes-button
+		xiome-notes
 
 	section
 		h2 example
@@ -24,6 +35,10 @@ block main
 		<xio-avatar spec='{"type": "simple", "value": 0.6}'></xio-avatar>
 		<xio-avatar spec='{"type": "simple", "value": 0.8}'></xio-avatar>
 		<xio-avatar spec='{"type": "simple", "value": 0.9}'></xio-avatar>
+
+	section
+		h2 chat
+		xiome-chat
 
 	section
 		h2 videos

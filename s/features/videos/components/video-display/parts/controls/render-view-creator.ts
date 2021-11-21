@@ -6,9 +6,12 @@ import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {PrivilegeDisplay} from "../../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 
 export function renderViewCreator({
-		isContentSelected, isCreateButtonDisabled, privilegesOp, catalogOp,
+		isContentSelected, isCreateButtonDisabled, privilegesOp,catalogOp,
+		selectedContent,
 		queryAll, onCatalogSelect, onPrivilegesSelect, onCreateClick,
-	}: {
+		isPrivilegeSelected,
+}: {
+		selectedContent: number
 		isContentSelected: boolean
 		isCreateButtonDisabled: boolean
 		privilegesOp: Op<PrivilegeDisplay[]>
@@ -16,6 +19,7 @@ export function renderViewCreator({
 		queryAll: <E extends HTMLElement>(selector: string) => E[]
 		onCreateClick: () => void
 		onCatalogSelect: (index: number) => void
+		isPrivilegeSelected: (id: string) => boolean
 		onPrivilegesSelect: (privileges: string[]) => void
 	}) {
 
@@ -27,8 +31,7 @@ export function renderViewCreator({
 	const onPrivilegesSelectChange = () => {
 		onPrivilegesSelect(
 			queryAll<HTMLOptionElement>(".create-privileges select option") 
-				.filter(option => option.selected)
-				.map(option => option.value)
+				.filter(option => option.selected).map(option => option.value)
 		)
 	}
 
@@ -37,11 +40,17 @@ export function renderViewCreator({
 		return html`
 			<div class=create-content>
 				${catalog.length ? html`
-					<p>select content for this view</p>
+					<h5>Select content for this view</h5>
 					<select @change=${onCatalogSelectChange}>
-						<option disabled selected>(select video content)</option>
+						${isContentSelected
+							? null
+							: html`
+								<option disabled selected>
+									(select video content)
+								</option>
+							`}
 						${catalog.map(({provider, type, title}, index) => html`
-							<option value=${index}>
+							<option value=${index} ?selected=${index === selectedContent}>
 								${`${provider} ${type} ${title}`}
 							</option>
 						`)}
@@ -56,11 +65,15 @@ export function renderViewCreator({
 	function renderPrivilegeSelector() {
 		const privileges = ops.value(privilegesOp)
 		return html`
-			<div class=create-privileges>
-				<p>select which privileges have access</p>
+			<div class="create-privileges" ?data-visible=${isContentSelected}>
+				<h5>Select which privileges have access</h5>
 				<select multiple @change=${onPrivilegesSelectChange}>
 					${privileges.map(privilege => html`
-						<option value="${privilege.privilegeId}">${privilege.label}</option>
+						<option
+							?selected=${isPrivilegeSelected(privilege.privilegeId)}
+							value="${privilege.privilegeId}">
+								${privilege.label}
+						</option>
 					`)}
 				</select>
 			</div>
@@ -68,18 +81,20 @@ export function renderViewCreator({
 	}
 
 	return renderOp(ops.combine(catalogOp, privilegesOp), () => html`
-		<div class=create-view>
-			<p>create view</p>
-			${renderContentSelector()}
-			${isContentSelected
-				? renderPrivilegeSelector()
-				: null}
-			<xio-button
-				class=create-button
-				?disabled=${isCreateButtonDisabled}
-				@press=${onCreateClick}>
-					create view
-			</xio-button>
+		<div class=viewcreator>
+			<h4>Assign Video Content</h4>
+			<div class=selectionarea>
+				${renderContentSelector()}
+				${renderPrivilegeSelector()}
+			</div>
+			<div class=buttonbar>
+				<xio-button
+					class=create-button
+					?disabled=${isCreateButtonDisabled}
+					@press=${onCreateClick}>
+						Assign To This Video
+				</xio-button>
+			</div>
 		</div>
 	`)
 }

@@ -5,6 +5,8 @@ import {html} from "../../../../../../framework/component.js"
 import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
 
+import triangle from "../../../../../../framework/icons/triangle.svg.js"
+
 export function videoControls({
 		queryAll,
 		contentModel: model,
@@ -28,14 +30,19 @@ export function videoControls({
 	function render(label: string) {
 		const currentView = model.getView(label)
 		return html`
-			<h2>
-				<span>video display controls</span>
-				<xio-button @press=${toggleControls}>
-					${readable.open ? "close" : "open"}
+			<h3 class=controls-title ?data-open=${readable.open}>
+				<div>
+					<span>video display controls</span>
+					<span>label = <em>"${label}"</em></span>
+				</div>
+				<xio-button
+					class=togglebutton
+					title="${readable.open ? "close" : "open"} video controls"
+					@press=${toggleControls}>
+						${triangle}
 				</xio-button>
-			</h2>
+			</h3>
 			${readable.open ? html`
-				<h3>this view <em>"${label}"</em></h3>
 				${currentView
 					? renderView({
 						view: currentView,
@@ -47,11 +54,16 @@ export function videoControls({
 						catalogOp: model.state.catalogOp,
 						privilegesOp: model.state.privilegesOp,
 						isContentSelected: readable.selectedContent !== undefined,
+						selectedContent: readable.selectedContent,
 						isCreateButtonDisabled:
 							readable.selectedContent === undefined
 							|| readable.selectedPrivileges.length === 0,
 						onCatalogSelect: index => {
 							writable.selectedContent = index
+							writable.selectedPrivileges = []
+						},
+						isPrivilegeSelected: id => {
+							return readable.selectedPrivileges.some(e => e === id)
 						},
 						onPrivilegesSelect: privileges => {
 							writable.selectedPrivileges = privileges

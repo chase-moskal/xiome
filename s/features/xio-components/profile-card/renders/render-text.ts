@@ -3,9 +3,10 @@ import {Validator} from "../../../../toolbox/darkvalley.js"
 import {html} from "../../../../framework/component.js"
 import {ValueChangeEvent} from "../../inputs/events/value-change-event.js"
 
-export function renderText({field, initial, input}: {
+export function renderText({field, initial, text, input}: {
 		field: string
 		initial: string
+		text: string
 		input?: {
 			label: string
 			draftIsChanged: boolean
@@ -19,6 +20,7 @@ export function renderText({field, initial, input}: {
 			<xio-text-input
 				data-field="${field}"
 				initial="${initial}"
+				text="${text}"
 				part="xiotextinput"
 				exportparts="${`
 					label: xiotextinput-label,

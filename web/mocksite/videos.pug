@@ -7,10 +7,13 @@ block head
 			margin: 1em auto;
 		}
 		xiome-video-display {
-			max-width: 480px;
+			max-width: 32em;
 		}
 		xiome-video-display::part(iframe) {
 			aspect-ratio: 16 / 9;
+		}
+		xiome-video-companion {
+			color: green;
 		}
 
 block main
@@ -22,6 +25,11 @@ block main
 		xiome-video-views
 		hr
 		xiome-video-display(initially-hidden mock-embed show-title)
+			p video is on
+			p(slot="unprivileged") you are not privileged to view this video
+			p(slot="unavailable") this video is unavailable
+		xiome-video-companion(initially-hidden)
+			p video companion
 			p(slot="unprivileged") you are not privileged to view this video
 			p(slot="unavailable") this video is unavailable
 		xiome-video-display(initially-hidden mock-embed show-title label="abc")

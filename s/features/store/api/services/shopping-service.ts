@@ -1,16 +1,18 @@
 
 import {apiContext} from "renraku/x/api/api-context.js"
 import {StoreServiceOptions} from "../types/store-options.js"
-import {CustomerAuth, CustomerMeta} from "../policies/types/store-metas-and-auths.js"
+import {StoreLinkedAuth, StoreMeta} from "../types/store-metas-and-auths.js"
 
 export const makeShoppingService = (
 		options: StoreServiceOptions
-	) => apiContext<CustomerMeta, CustomerAuth>()({
-	policy: options.storePolicies.customerPolicy,
+	) => apiContext<StoreMeta, StoreLinkedAuth>()({
+
+	policy: options.storeLinkedPolicy,
+
 	expose: {
 
 		async buySubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionPlanId}: {
 					subscriptionPlanId: string
 				}) {
@@ -18,7 +20,7 @@ export const makeShoppingService = (
 		},
 
 		async updateSubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionId}: {
 					subscriptionId: string
 				}) {
@@ -26,7 +28,7 @@ export const makeShoppingService = (
 		},
 
 		async endSubscription(
-				{stripeLiaisonForApp, storeTables},
+				{stripeLiaisonAccount, storeTables},
 				{subscriptionId}: {
 					subscriptionId: string
 				}) {

@@ -124,6 +124,7 @@ export class XioProfileCard extends AutowatcherComponent {
 							initial: this.profileDraft
 								? this.profileDraft.nickname
 								: user.profile.nickname,
+							text: user.profile.nickname,
 							input: this.readonly
 								? undefined
 								: {
@@ -139,6 +140,7 @@ export class XioProfileCard extends AutowatcherComponent {
 							initial: this.profileDraft
 								? this.profileDraft.tagline
 								: user.profile.tagline,
+							text: user.profile.tagline,
 							input: this.readonly
 								? undefined
 								: {
