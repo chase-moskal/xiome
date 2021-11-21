@@ -5,9 +5,12 @@ export default css`
 :host {
 	display: inline-block;
 	position: relative;
-	--bg-color1: yellow;
+	--bg-color1: grey;
 	--bg-color2: red;
 	--bg-color3: blue;
+	--border: 0.2em solid #bfff00;
+	--padding: 3em;
+	--border-radius: 0.2em;
 }
 
 :host::before {
@@ -61,11 +64,15 @@ button:active .copy-icon {
 .copy-icon svg {
 	width: 1em;
 	height: 1em;
+	
 }
 
 .copy-icon {
 	opacity: 0.4;
 	transition: opacity 100ms linear;
+	border: var(--border);
+	border-radius: var(--border-radius);
+	padding: var(--padding);
 }
 
 `
