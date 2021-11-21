@@ -17,6 +17,7 @@ import {makeStatusCheckerService} from "../api/services/status-checker-service.j
 import {makeStatusTogglerService} from "../api/services/status-toggler-service.js"
 import {makeStripeConnectService} from "../api/services/stripe-connect-service.js"
 import {StripeAccountDetails} from "../api/services/types/stripe-account-details.js"
+import {SubscriptionPlanDraft} from "../api/tables/types/drafts/subscription-plan-draft.js"
 
 export function makeStoreModel2({
 		appId,
@@ -59,6 +60,21 @@ export function makeStoreModel2({
 				ops.none(),
 	})
 
+	const allowance = (() => {
+		const has = (key: keyof typeof storePrivileges) => {
+			const privileges =
+				ops.value(state.readable.accessOp)
+					?.permit.privileges
+						?? []
+			return privileges.includes(storePrivileges[key])
+		}
+		return {
+			get manageStore() { return has("manage store") },
+			get controlStoreBankLink() { return has("control store bank link") },
+			get giveAwayFreebies() { return has("give away freebies") },
+		}
+	})()
+
 	const bank = (() => {
 		const bankChange = pub()
 		async function loadLinkedStripeAccountDetails() {
@@ -96,24 +112,15 @@ export function makeStoreModel2({
 					: cache.read(),
 			})
 		}
-		let alreadyInitialized = false
-		const initialize = (() => {
-			return async function() {
-				if (!alreadyInitialized) {
-					alreadyInitialized = true
-					await fetchStoreStatus()
-				}
+		let alreadyActivated = false
+		async function activate() {
+			if (!alreadyActivated) {
+				alreadyActivated = true
+				await fetchStoreStatus()
 			}
-		})()
+		}
 		return {
-			get userCanManageStore() {
-				const privileges =
-					ops.value(state.readable.accessOp)
-						?.permit.privileges
-							?? []
-				return privileges.includes(storePrivileges["manage store"])
-			},
-			initialize,
+			activate,
 			async enableStore() {
 				await statusTogglerService.enableEcommerce()
 				const newStatus = StoreStatus.Enabled
@@ -127,22 +134,96 @@ export function makeStoreModel2({
 				state.writable.statusOp = ops.ready(newStatus)
 			},
 			async handleChange() {
-				if (alreadyInitialized)
+				if (alreadyActivated)
 					await fetchStoreStatus(true)
 			},
 		}
 	})()
 
 	const planning = (() => {
-		return {}
+		function isPlanningAllowed() {
+			const status = ops.value(state.readable.statusOp)
+			return status === StoreStatus.Enabled
+				? allowance.manageStore
+					? true
+					: false
+				: false
+		}
+
+		const loadPlans = onesie(async function() {
+			if (isPlanningAllowed()) {
+				await ops.operation({
+					promise: shopkeepingService.listSubscriptionPlans(),
+					errorReason: "failed to load subscription plans",
+					setOp: op => state.writable.subscriptionPlansOp = op,
+				})
+			}
+			else {
+				state.writable.subscriptionPlansOp = ops.ready([])
+			}
+		})
+
+		let alreadyActivated = false
+		async function activate() {
+			if (!alreadyActivated) {
+				alreadyActivated = true
+				await loadPlans()
+			}
+		}
+
+		async function createPlan(draft: SubscriptionPlanDraft) {
+			return ops.operation({
+				promise: (async(): Promise<undefined> => {
+					const plan = await shopkeepingService.createSubscriptionPlan({draft})
+					const existingPlans = ops.value(state.readable.subscriptionPlansOp)
+					state.writable.subscriptionPlansOp
+						= ops.ready([...existingPlans, plan])
+					return undefined
+				})(),
+				setOp: op => state.writable.subscriptionPlanCreationOp = op,
+			})
+		}
+
+		async function listAfterwards(action: () => Promise<void>) {
+			return ops.operation({
+				promise: action()
+					.then(shopkeepingService.listSubscriptionPlans),
+				setOp: op => state.writable.subscriptionPlansOp = op,
+			})
+		}
+
+		async function deactivatePlan(subscriptionPlanId: string) {
+			return listAfterwards(() =>
+				shopkeepingService.deactivateSubscriptionPlan({subscriptionPlanId}))
+		}
+	
+		async function deletePlan(subscriptionPlanId: string) {
+			return listAfterwards(() =>
+				shopkeepingService.deleteSubscriptionPlan({subscriptionPlanId}))
+		}
+	
+		return {
+			get planningAllowed() {
+				return isPlanningAllowed()
+			},
+			activate,
+			createPlan,
+			deactivatePlan,
+			deletePlan,
+			async handleChange() {
+				await loadPlans()
+			},
+		}
 	})()
 
 	bank.onBankChange(ecommerce.handleChange)
+	bank.onBankChange(planning.handleChange)
 
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
 
+		allowance,
 		bank,
 		planning,
 		ecommerce,

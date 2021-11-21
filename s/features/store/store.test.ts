@@ -24,20 +24,20 @@ export default <Suite>{
 		"store status": {
 			async "status starts uninitialized"() {
 				const {storeModel} = await simpleStoreSetup()
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Uninitialized)
 			},
 			async "after account is linked, status is disabled"() {
 				const {storeModel} = await simpleStoreSetup("control store bank link")
 				await storeModel.bank.linkStripeAccount()
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
 			},
 			async "bank linkage triggers store status update"() {
 				const {storeModel} = await simpleStoreSetup("control store bank link")
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				await storeModel.bank.linkStripeAccount()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
@@ -46,7 +46,7 @@ export default <Suite>{
 				const {storeModel, ...client} = await simpleStoreSetup("control store bank link")
 				client.setBankLinkToFail()
 				await storeModel.bank.linkStripeAccount()
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Unlinked)
 				client.setBankLinkToSucceed()
@@ -60,7 +60,7 @@ export default <Suite>{
 					"manage store",
 				)
 				await storeModel.bank.linkStripeAccount()
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
 				await storeModel.ecommerce.enableStore()
@@ -73,7 +73,7 @@ export default <Suite>{
 			async "need permission to enable and disable the store"() {
 				const {storeModel} = await simpleStoreSetup("control store bank link")
 				await storeModel.bank.linkStripeAccount()
-				await storeModel.ecommerce.initialize()
+				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
 				expect(async() => storeModel.ecommerce.enableStore()).throws()
@@ -84,7 +84,9 @@ export default <Suite>{
 	},
 	"subscriptions": {
 		"planning": {
-			async "merchant can create a subscription plan"() {},
+			async "merchant can create a subscription plan"() {
+				
+			},
 			async "merchant can see a list of subscription plans"() {},
 			async "merchant can deactivate/activate subscription plans"() {},
 		},
