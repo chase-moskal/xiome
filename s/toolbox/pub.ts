@@ -2,26 +2,29 @@
 export type Listener = (...args: any[]) => void | Promise<void>
 
 export function pub<L extends Listener = () => void | Promise<void>>() {
-	const listeners = new Map<symbol, L>()
+	const records = new Map<symbol, L[]>()
 	return {
 
-		subscribe(listener: L) {
-			const id = Symbol()
-			listeners.set(id, listener)
-			return () => {
-				listeners.delete(id)
+		subscribe(...listeners: L[]) {
+			if (listeners.length) {
+				const id = Symbol()
+				records.set(id, listeners)
+				return () => {
+					records.delete(id)
+				}
 			}
 		},
 
 		async publish(...args: Parameters<L>): Promise<void> {
 			await Promise.all(
-				Array.from(listeners.values())
+				Array.from(records.values())
+					.flat()
 					.map(listener => listener(...args))
 			)
 		},
 
 		clear() {
-			listeners.clear()
+			records.clear()
 		},
 	}
 }

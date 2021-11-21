@@ -216,8 +216,10 @@ export function makeStoreModel2({
 		}
 	})()
 
-	bank.onBankChange(ecommerce.handleChange)
-	bank.onBankChange(planning.handleChange)
+	bank.onBankChange(
+		ecommerce.handleChange,
+		planning.handleChange,
+	)
 
 	return {
 		state: state.readable,
