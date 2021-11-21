@@ -1,7 +1,6 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
-import {nap} from "../../toolbox/nap.js"
 import {StoreStatus} from "./api/services/types/store-status.js"
 import {simpleStoreSetup} from "./testing/store-quick-setups.js"
 
@@ -44,7 +43,32 @@ export default <Suite>{
 					expect(ops.value(storeModel.state.statusOp))
 						.equals(StoreStatus.Disabled)
 				},
-				async "enable and disable the store"() {},
+				async "enable and disable the store"() {
+					const {storeModel} = await simpleStoreSetup(
+						"control store bank link",
+						"manage store",
+					)
+					await storeModel.bank.linkStripeAccount()
+					await storeModel.ecommerce.initialize()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+					await storeModel.ecommerce.enableStore()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Enabled)
+					await storeModel.ecommerce.disableStore()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+				},
+				async "need permission to enable and disable the store"() {
+					const {storeModel} = await simpleStoreSetup("control store bank link")
+					await storeModel.bank.linkStripeAccount()
+					await storeModel.ecommerce.initialize()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+					expect(async() => storeModel.ecommerce.enableStore()).throws()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+				},
 			},
 		}
 	},
