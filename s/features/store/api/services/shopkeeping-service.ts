@@ -20,7 +20,11 @@ export const makeShopkeepingService = (
 		options: StoreServiceOptions
 	) => apiContext<StoreMeta, StoreLinkedAuth>()({
 
-	policy: options.storeLinkedPolicy,
+	async policy(meta, request) {
+		const auth = await options.storeLinkedPolicy(meta, request)
+		auth.checker.requirePrivilege("manage store")
+		return auth
+	},
 
 	expose: {
 
@@ -36,7 +40,8 @@ export const makeShopkeepingService = (
 	
 			const plans = rows.map(plan => subscriptionPlanFromRow({
 				plan,
-				role: roles.find(role => role.roleId === plan.roleId),
+				role: roles.find(role =>
+					role.roleId.toString() === plan.roleId.toString()),
 			}))
 
 			return plans

@@ -133,7 +133,7 @@ export function makeStoreModel2({
 				await cache.write(newStatus)
 				state.writable.statusOp = ops.ready(newStatus)
 			},
-			async handleChange() {
+			async refresh() {
 				if (alreadyActivated)
 					await fetchStoreStatus(true)
 			},
@@ -173,14 +173,15 @@ export function makeStoreModel2({
 
 		async function createPlan(draft: SubscriptionPlanDraft) {
 			return ops.operation({
-				promise: (async(): Promise<undefined> => {
+				promise: (async() => {
 					const plan = await shopkeepingService.createSubscriptionPlan({draft})
 					const existingPlans = ops.value(state.readable.subscriptionPlansOp)
 					state.writable.subscriptionPlansOp
 						= ops.ready([...existingPlans, plan])
-					return undefined
+					return plan
 				})(),
-				setOp: op => state.writable.subscriptionPlanCreationOp = op,
+				setOp: op => state.writable.subscriptionPlanCreationOp =
+					ops.replaceValue(op, undefined),
 			})
 		}
 
@@ -196,12 +197,12 @@ export function makeStoreModel2({
 			return listAfterwards(() =>
 				shopkeepingService.deactivateSubscriptionPlan({subscriptionPlanId}))
 		}
-	
+
 		async function deletePlan(subscriptionPlanId: string) {
 			return listAfterwards(() =>
 				shopkeepingService.deleteSubscriptionPlan({subscriptionPlanId}))
 		}
-	
+
 		return {
 			get planningAllowed() {
 				return isPlanningAllowed()
@@ -210,16 +211,18 @@ export function makeStoreModel2({
 			createPlan,
 			deactivatePlan,
 			deletePlan,
-			async handleChange() {
-				await loadPlans()
+			async refresh() {
+				if (alreadyActivated)
+					await loadPlans()
 			},
 		}
 	})()
 
-	bank.onBankChange(
-		ecommerce.handleChange,
-		planning.handleChange,
-	)
+	async function refreshAll() {
+		await Promise.all([ecommerce.refresh(), planning.refresh()])
+	}
+
+	bank.onBankChange(refreshAll)
 
 	return {
 		state: state.readable,
@@ -233,6 +236,8 @@ export function makeStoreModel2({
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
 			state.writable.stripeAccountDetailsOp = ops.ready(undefined)
+			state.writable.subscriptionPlansOp = ops.ready([])
+			await refreshAll()
 		},
 	}
 }

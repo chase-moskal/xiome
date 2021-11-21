@@ -2,7 +2,7 @@
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {StoreStatus} from "./api/services/types/store-status.js"
-import {simpleStoreSetup} from "./testing/store-quick-setups.js"
+import {merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
 	"shopkeeping": {
@@ -44,12 +44,12 @@ export default <Suite>{
 			},
 			async "after bank link failure, status is unlinked"() {
 				const {storeModel, ...client} = await simpleStoreSetup("control store bank link")
-				client.setBankLinkToFail()
+				client.rigBankLinkToFail()
 				await storeModel.bank.linkStripeAccount()
 				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Unlinked)
-				client.setBankLinkToSucceed()
+				client.rigBankLinkToSucceed()
 				await storeModel.bank.linkStripeAccount()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
@@ -85,7 +85,41 @@ export default <Suite>{
 	"subscriptions": {
 		"planning": {
 			async "merchant can create a subscription plan"() {
-				
+				const {storeModel} = await merchantStoreSetup()
+				expect(storeModel.planning.planningAllowed).ok()
+				await storeModel.planning.activate()
+				expect(ops.isReady(storeModel.state.subscriptionPlansOp)).ok()
+				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
+
+				const label = "super deluxe premium"
+				const price = 10_00
+				const plan = await storeModel.planning.createPlan({label, price})
+				expect(plan).ok()
+				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(1)
+				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].active).equals(true)
+				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].label).equals(label)
+				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].price).equals(price)
+				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].roleId).ok()
+				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].subscriptionPlanId).ok()
+
+				await storeModel.planning.createPlan({price: 10_00, label: "b"})
+				await storeModel.planning.createPlan({price: 10_00, label: "c"})
+				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
+				await storeModel.planning.refresh()
+				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
+
+				return {
+					async "but a plebeian cannot"() {
+						const {storeModel} = await plebeianStoreSetup()
+						expect(storeModel.planning.planningAllowed).not.ok()
+						await storeModel.planning.activate()
+						await expect(
+							async() => storeModel.planning.createPlan({price: 10_00, label: "a"})
+						).throws()
+						expect(ops.value(storeModel.state.subscriptionPlansOp)).ok()
+						expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
+					},
+				}
 			},
 			async "merchant can see a list of subscription plans"() {},
 			async "merchant can deactivate/activate subscription plans"() {},
