@@ -36,3 +36,21 @@ export async function plebeianStoreSetup() {
 	await plebeian.setAccessWithPrivileges()
 	return plebeian
 }
+
+export async function interestingStoreSetup() {
+	const {makeClient} = await storeTestSetup()
+
+	const merchant = await makeClient()
+	await merchant.setAccessWithPrivileges(
+		storePrivileges["control store bank link"],
+		storePrivileges["manage store"],
+	)
+	await merchant.storeModel.bank.linkStripeAccount()
+	await merchant.storeModel.ecommerce.activate()
+	await merchant.storeModel.ecommerce.enableStore()
+
+	const plebeian = await makeClient()
+	await plebeian.setAccessWithPrivileges()
+
+	return {merchant, plebeian}
+}

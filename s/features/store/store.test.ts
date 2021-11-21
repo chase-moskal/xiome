@@ -2,7 +2,7 @@
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {StoreStatus} from "./api/services/types/store-status.js"
-import {merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
+import {interestingStoreSetup, merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
 	"shopkeeping": {
@@ -76,61 +76,99 @@ export default <Suite>{
 				await storeModel.ecommerce.activate()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
-				expect(async() => storeModel.ecommerce.enableStore()).throws()
+				await expect(async() => storeModel.ecommerce.enableStore()).throws()
 				expect(ops.value(storeModel.state.statusOp))
 					.equals(StoreStatus.Disabled)
 			},
 		},
 	},
 	"subscriptions": {
-		"planning": {
-			async "merchant can create a subscription plan"() {
-				const {storeModel} = await merchantStoreSetup()
-				expect(storeModel.planning.planningAllowed).ok()
-				await storeModel.planning.activate()
-				expect(ops.isReady(storeModel.state.subscriptionPlansOp)).ok()
-				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
+		"subscription planning": {
+			"management of subscription plans": {
+				async "merchant can create plans"() {
+					const {storeModel} = await merchantStoreSetup()
+					expect(storeModel.planning.planningAllowed).ok()
+					await storeModel.planning.activate()
+					expect(ops.isReady(storeModel.state.subscriptionPlansOp)).ok()
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
 
-				const label = "super deluxe premium"
-				const price = 10_00
-				const plan = await storeModel.planning.createPlan({label, price})
-				expect(plan).ok()
-				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(1)
-				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].active).equals(true)
-				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].label).equals(label)
-				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].price).equals(price)
-				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].roleId).ok()
-				expect(ops.value(storeModel.state.subscriptionPlansOp)[0].subscriptionPlanId).ok()
+					const label = "super deluxe premium"
+					const price = 10_00
+					const plan = await storeModel.planning.createPlan({label, price})
+					expect(plan).ok()
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(1)
+					expect(ops.value(storeModel.state.subscriptionPlansOp)[0].active).equals(true)
+					expect(ops.value(storeModel.state.subscriptionPlansOp)[0].label).equals(label)
+					expect(ops.value(storeModel.state.subscriptionPlansOp)[0].price).equals(price)
+					expect(ops.value(storeModel.state.subscriptionPlansOp)[0].roleId).ok()
+					expect(ops.value(storeModel.state.subscriptionPlansOp)[0].subscriptionPlanId).ok()
 
-				await storeModel.planning.createPlan({price: 10_00, label: "b"})
-				await storeModel.planning.createPlan({price: 10_00, label: "c"})
-				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
-				await storeModel.planning.refresh()
-				expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
-
-				return {
-					async "but a plebeian cannot"() {
-						const {storeModel} = await plebeianStoreSetup()
-						expect(storeModel.planning.planningAllowed).not.ok()
-						await storeModel.planning.activate()
-						await expect(
-							async() => storeModel.planning.createPlan({price: 10_00, label: "a"})
-						).throws()
-						expect(ops.value(storeModel.state.subscriptionPlansOp)).ok()
-						expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
-					},
-				}
+					await storeModel.planning.createPlan({price: 10_00, label: "b"})
+					await storeModel.planning.createPlan({price: 10_00, label: "c"})
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
+					await storeModel.planning.refresh()
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(3)
+				},
+				async "plebeian cannot create a plan"() {
+					const {storeModel} = await plebeianStoreSetup()
+					expect(storeModel.planning.planningAllowed).not.ok()
+					await storeModel.planning.activate()
+					await expect(
+						async() => storeModel.planning.createPlan({price: 10_00, label: "a"})
+					).throws()
+					expect(ops.value(storeModel.state.subscriptionPlansOp)).ok()
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
+				},
+				async "merchant who switches to plebeian cannot create plans"() {
+					const {storeModel, setAccessWithPrivileges} = await merchantStoreSetup()
+					await storeModel.planning.activate()
+					const plan = await storeModel.planning.createPlan({
+						label: "super deluxe premium",
+						price: 10_00,
+					})
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(1)
+					await setAccessWithPrivileges()
+					expect(ops.value(storeModel.state.subscriptionPlansOp).length).equals(0)
+				},
 			},
-			async "merchant can see a list of subscription plans"() {},
-			async "merchant can deactivate/activate subscription plans"() {},
+			"deactivation of subscription plans": {
+				async "merchant can deactivate a plan"() {
+					const {storeModel} = await merchantStoreSetup()
+					await storeModel.planning.activate()
+					const plan = await storeModel.planning.createPlan({
+						price: 10_00,
+						label: "a",
+					})
+					const getPlans = () => ops.value(storeModel.state.subscriptionPlansOp)
+					expect(getPlans()).ok()
+					expect(getPlans()[0]).ok()
+					expect(getPlans()[0].active).ok()
+					await storeModel.planning.deactivatePlan(plan.subscriptionPlanId)
+					expect(getPlans()[0].active).not.ok()
+					await storeModel.planning.refresh()
+					expect(getPlans()[0].active).not.ok()
+				},
+				async "plebeian cannot deactivate a plan"() {
+					const {storeModel, setAccessWithPrivileges} = await merchantStoreSetup()
+					await storeModel.planning.activate()
+					const plan = await storeModel.planning.createPlan({
+						price: 10_00,
+						label: "a",
+					})
+					await setAccessWithPrivileges()
+					await expect(async() =>
+						storeModel.planning.deactivatePlan(plan.subscriptionPlanId)
+					).throws()
+				},
+			},
 		},
-		"sales": {
+		"subscription sales": {
 			async "customer can purchase a subscription"() {},
 			async "customer can cancel a subscription"() {},
 			async "customer can update subscription's payment method"() {},
 			async "subscription ends if automatic renewal fails"() {},
 		},
-		"bookkeeping": {
+		"subscription bookkeeping": {
 			async "merchant can see how many active subscriptions a plan has"() {},
 			async "customer can view a subscription's details"() {},
 			async "customer can view payment history"() {},
