@@ -43,6 +43,18 @@ export default <Suite>{
 					expect(ops.value(storeModel.state.statusOp))
 						.equals(StoreStatus.Disabled)
 				},
+				async "after bank link failure, status is unlinked"() {
+					const {storeModel, ...client} = await simpleStoreSetup("control store bank link")
+					client.setBankLinkToFail()
+					await storeModel.bank.linkStripeAccount()
+					await storeModel.ecommerce.initialize()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Unlinked)
+					client.setBankLinkToSucceed()
+					await storeModel.bank.linkStripeAccount()
+					expect(ops.value(storeModel.state.statusOp))
+						.equals(StoreStatus.Disabled)
+				},
 				async "enable and disable the store"() {
 					const {storeModel} = await simpleStoreSetup(
 						"control store bank link",

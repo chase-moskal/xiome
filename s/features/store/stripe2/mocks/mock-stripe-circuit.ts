@@ -60,6 +60,15 @@ export async function mockStripeCircuit({
 					},
 				})
 			},
+			failBankLinkageWithExistingStripeAccount: async(stripeAccountId: string) => {
+				await stripeTables.accounts.update({
+					...find({id: stripeAccountId}),
+					write: {
+						payouts_enabled: false,
+						details_submitted: false,
+					},
+				})
+			},
 		},
 	}
 }
