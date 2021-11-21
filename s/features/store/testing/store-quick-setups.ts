@@ -4,23 +4,9 @@ import {storePrivileges} from "../permissions/store-privileges.js"
 
 export async function simpleStoreSetup(...privileges: (keyof typeof storePrivileges)[]) {
 	const {makeClient} = await storeTestSetup()
-
-	let bankLinkWillSucceed = true
-	const rigBankLinkToSucceed = () => bankLinkWillSucceed = true
-	const rigBankLinkToFail = () => bankLinkWillSucceed = false
-
-
-	const client = await makeClient({
-		decideWhetherBankLinkageShouldSucceed: () => bankLinkWillSucceed,
-	})
-
+	const client = await makeClient()
 	await client.setAccessWithPrivileges(...privileges.map(p => storePrivileges[p]))
-
-	return {
-		...client,
-		rigBankLinkToSucceed,
-		rigBankLinkToFail,
-	}
+	return client
 }
 
 export async function merchantStoreSetup() {
@@ -36,11 +22,8 @@ export async function merchantStoreSetup() {
 
 export async function plebeianStoreSetup() {
 	const {makeClient} = await storeTestSetup()
-
 	{
-		const merchant = await makeClient({
-			decideWhetherBankLinkageShouldSucceed: () => true,
-		})
+		const merchant = await makeClient()
 		await merchant.setAccessWithPrivileges(
 			storePrivileges["control store bank link"],
 			storePrivileges["manage store"],
@@ -49,12 +32,7 @@ export async function plebeianStoreSetup() {
 		await merchant.storeModel.ecommerce.activate()
 		await merchant.storeModel.ecommerce.enableStore()
 	}
-
-	const plebeian = await makeClient({
-		decideWhetherBankLinkageShouldSucceed: () => true,
-	})
-
+	const plebeian = await makeClient()
 	await plebeian.setAccessWithPrivileges()
-
 	return plebeian
 }
