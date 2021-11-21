@@ -23,7 +23,8 @@ block maincontent
 						span my account
 						span  component
 					p this component allows users to edit their profile
-					code.htmlcode.codeblock=`<xiome-my-account></xiome-my-account>`
+					xio-code.
+						#{`<xiome-my-account></xiome-my-account>`}
 				.demo
 					demo-xiome-my-account
 			li
@@ -31,8 +32,9 @@ block maincontent
 					h3
 						span login panel
 						span  component
-					p the component allows users to login or logout, and you control what's displayed in different states
-					code.htmlcode.codeblock=`<xiome-login-panel show-logout>\n\t<p>You are logged in</p>\n\t<p slot=logged-out>You are logged out</p>\n</xiome-login-panel>`
+					p this component allows users to login or logout, and you control what's displayed in different states
+					xio-code.
+						#{`<xiome-login-panel show-logout>\n\t<p>You are logged in</p>\n\t<p slot=logged-out>You are logged out</p>\n</xiome-login-panel>`}
 				.demo
 					demo-xiome-login-panel(show-logout)
 						p You are logged in
@@ -43,7 +45,8 @@ block maincontent
 						span questions
 						span  component
 					p a community board where users can post questions
-					code.htmlcode.codeblock=`<xiome-questions board=default></xiome-questions>`
+					xio-code.
+						#{`<xiome-questions board=default></xiome-questions>`}
 				.demo
 					demo-xiome-questions
 			li
@@ -52,7 +55,8 @@ block maincontent
 						span manage users
 						span  component
 					p admins can ban naughty users with this handy search widget
-					code.htmlcode.codeblock=`<xiome-manage-users></xiome-manage-users>`
+					xio-code.
+						#{`<xiome-manage-users></xiome-manage-users>`}
 				.demo
 					demo-xiome-manage-users
 			li
@@ -61,7 +65,8 @@ block maincontent
 						span permissions
 						span  component
 					p admins can setup advanced roles and privileges
-					code.htmlcode.codeblock=`<xiome-permissions></xiome-permissions>`
+					xio-code.
+						#{`<xiome-permissions></xiome-permissions>`}
 				.demo
 					demo-xiome-permissions
 		h2.note

@@ -144,9 +144,11 @@ export class XiomeAppManager extends ComponentWithShare<{
 			<div class=app-code>
 				<h4>connect your website</h4>
 				<p>copy-paste this html into your website's &lt;head&gt; section:</p>
+				<xio-code>
 				<code class=htmlcode>
 					${renderXiomeConfig(appId)}
 				</code>
+				</xio-code>
 				<p>then head over to the <a part=link href="./components">components page</a></p>
 			</div>
 		`
