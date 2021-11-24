@@ -2,7 +2,7 @@
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {StoreStatus} from "./api/services/types/store-status.js"
-import {interestingStoreSetup, merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
+import {merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
 	"shopkeeping": {
@@ -122,7 +122,7 @@ export default <Suite>{
 				async "merchant who switches to plebeian cannot create plans"() {
 					const {storeModel, setAccessWithPrivileges} = await merchantStoreSetup()
 					await storeModel.planning.activate()
-					const plan = await storeModel.planning.createPlan({
+					await storeModel.planning.createPlan({
 						label: "super deluxe premium",
 						price: 10_00,
 					})
