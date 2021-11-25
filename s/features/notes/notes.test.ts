@@ -140,6 +140,24 @@ export default <Suite>{
 		tab2asserts.assertNoteCounts({newCount: 0, oldCount: 1})
 	},
 
+	"email notifications": {
+		async "user can enable/disable emails"() {
+			// const {userId, backend, frontend} = await notesTestingSetup()
+			// const {notesModel, makeCacheAlreadySetup} = frontend
+			// const {notesDepositBox} = backend
+			// const cache = makeCacheAlreadySetup()
+
+			// await notesModel
+
+			// const draft = fakeNoteDraft(userId)
+			// await notesDepositBox.sendNote(draft)
+
+			// await cache.fetchAppropriateNotes()
+			// expect(cache.notes.length).equals(1)
+			// expect(cache.notes[0].title).equals(draft.title)
+		},
+	},
+
 	"pagination": {
 		async "user can flip through pages of new notes"() {
 			const {userId, backend, frontend} = await notesTestingSetup()

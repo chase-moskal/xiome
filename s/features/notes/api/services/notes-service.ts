@@ -13,6 +13,7 @@ import {NotesAuth, NotesMeta} from "../types/notes-auth.js"
 import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
+import {concurrent} from "../../../../toolbox/concurrent.js"
 import {validatePagination} from "../validation/validate-pagination.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
@@ -37,20 +38,33 @@ export const makeNotesService = ({
 	},
 
 	expose: {
-		
-		async getNotesStats({notesTables, access}): Promise<NotesStats> {
+
+		async getNotesStats({authTables, notesTables, access}): Promise<NotesStats> {
 			const {userId} = access.user
-			const newCount = await notesTables.notes.count(find({
-				to: DamnId.fromString(userId),
-				old: false
-			}))
-			const oldCount = await notesTables.notes.count(find({
-				to: DamnId.fromString(userId),
-				old: true
-			}))
-			return {newCount, oldCount}
+			return concurrent({
+				email: (async() => {
+					const emailRow = await authTables.users.emails.one(find({
+						userId: DamnId.fromString(access.user.userId),
+					}))
+					return emailRow?.email
+				})(),
+				emailEnabled: (async() => {
+					const settingsRow = await notesTables.userSettings.one(find({
+						userId: DamnId.fromString(access.user.userId),
+					}))
+					return settingsRow?.emailEnabled ?? false
+				})(),
+				newCount: notesTables.notes.count(find({
+					to: DamnId.fromString(userId),
+					old: false
+				})),
+				oldCount: notesTables.notes.count(find({
+					to: DamnId.fromString(userId),
+					old: true
+				}))
+			})
 		},
-		
+
 		async getNewNotes(
 				{notesTables, access},
 				pagination: Pagination

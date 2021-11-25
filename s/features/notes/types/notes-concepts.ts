@@ -58,6 +58,8 @@ export interface Pagination {
 }
 
 export interface NotesStats {
+	email: string
+	emailEnabled: boolean
 	newCount: number
 	oldCount: number
 }
