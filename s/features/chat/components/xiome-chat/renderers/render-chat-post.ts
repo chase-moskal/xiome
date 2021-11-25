@@ -13,24 +13,28 @@ export function renderChatPost({
 		mute: () => void
 		remove: () => void
 	}) {
+	let postTime = formatDate(post.time)
 	return html`
 		<li data-post="${post.postId}">
 			<header>
+				<span>
 				<span class=nickname>${post.nickname}</span>
 				<span class=userid>${post.userId}</span>
-			</header>
-			<p class=content>${post.content}</p>
-			<footer>
-				<span class=time>${formatDate(post.time).full}</span>
+				</span>
 				${isModerator
 					? html`
 						<span>
-							<xio-button @press=${mute}> ${muteIcon} mute</xio-button>
-							<xio-button @press=${remove}> ${deleteIcon} delete</xio-button>
+							<xio-button style="border: none;" title="Mute" @press=${mute}>${muteIcon}</xio-button>
+							<xio-button title="Delete" @press=${remove}>${deleteIcon}</xio-button>
 						</span>
 					`
 					: null}
+			</header>
+			<p class=content>${post.content}</p>
+			<footer>
+				<span title=${postTime.zone} class=time>${postTime.date} ${postTime.time}</span>
 			</footer>
 		</li>
 	`
 }
+//${formatDate(post.time).date}
