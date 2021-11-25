@@ -2,8 +2,8 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
+import {fetchPrivateUser} from "../routines/user/fetch-user.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {GreenAuth, GreenMeta} from "../../../types/auth-metas.js"
@@ -43,7 +43,7 @@ export const makeGreenService = (
 			if (refreshToken) {
 				const {userId: userIdString} = await options.verifyToken<RefreshPayload>(refreshToken)
 				const userId = DamnId.fromString(userIdString)
-				const user = await fetchUser({
+				const user = await fetchPrivateUser({
 					userId,
 					authTables,
 					permissionsEngine,

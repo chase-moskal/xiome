@@ -1,7 +1,7 @@
 
 import {SignToken} from "redcrypto/x/types.js"
 
-import {fetchUser} from "../user/fetch-user.js"
+import {fetchPrivateUser} from "../user/fetch-user.js"
 import {AuthTables} from "../../../../types/auth-tables.js"
 import {concurrent} from "../../../../../../toolbox/concurrent.js"
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
@@ -32,7 +32,7 @@ export async function signAuthTokens({
 		}) {
 
 	const {user, permit} = await concurrent({
-		user: fetchUser({userId, authTables, permissionsEngine}),
+		user: fetchPrivateUser({userId, authTables, permissionsEngine}),
 		permit: (async() => ({
 			privileges: await permissionsEngine.getUserPrivileges(userId.toString()),
 		}))(),

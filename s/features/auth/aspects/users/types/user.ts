@@ -9,3 +9,5 @@ export type User = {
 	roles: PublicUserRole[]
 	stats: UserStats
 }
+
+export type PrivateUser = {email: string} & User

@@ -1,5 +1,5 @@
 
-import {User} from "../aspects/users/types/user.js"
+import {PrivateUser} from "../aspects/users/types/user.js"
 import {Permit} from "../aspects/permissions/types/permit.js"
 
 export interface AuthTokens {
@@ -10,7 +10,7 @@ export interface AuthTokens {
 export interface AccessPayload {
 	appId: string
 	origins: string[]
-	user: User | undefined
+	user: PrivateUser | undefined
 	scope: Scope
 	permit: Permit
 }

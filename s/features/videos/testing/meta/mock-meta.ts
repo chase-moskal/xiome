@@ -23,6 +23,7 @@ export async function mockVideoMeta({appId, userId, origins, privileges}: {
 				},
 				roles: [],
 				stats: {joined: Date.now()},
+				email: `${userId}@xiome.io`
 			},
 		},
 	})

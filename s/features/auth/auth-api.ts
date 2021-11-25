@@ -3,7 +3,6 @@ import {asApi} from "renraku/x/identities/as-api.js"
 
 import {AuthOptions} from "./types/auth-options.js"
 import {makeAppService} from "./aspects/apps/services/app-service.js"
-import {makeUserService} from "./aspects/users/services/user-service.js"
 import {makeGreenService} from "./aspects/users/services/green-service.js"
 import {makeLoginService} from "./aspects/users/services/login-service.js"
 import {makeAppEditService} from "./aspects/apps/services/app-edit-service.js"
@@ -19,7 +18,6 @@ export function authApi(options: AuthOptions) {
 		users: {
 			greenService: makeGreenService(options),
 			loginService: makeLoginService(options),
-			userService: makeUserService(options),
 			personalService: makePersonalService(options),
 		},
 		permissions: {

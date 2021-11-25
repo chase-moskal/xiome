@@ -64,10 +64,6 @@ export function prepareApiShape({appId, storage}: {
 					[_meta]: standardMeta,
 					setProfile: true,
 				},
-				userService: {
-					[_meta]: standardMeta,
-					getUser: true,
-				},
 			},
 		},
 		example: {

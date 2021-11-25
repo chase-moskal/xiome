@@ -23,7 +23,7 @@ export function mockAccess({
 		permit: {privileges},
 		scope: {core: true},
 		user: {
-			userId: rando.randomId().toString(),
+			userId,
 			profile: {
 				avatar: undefined,
 				nickname: `user ${userId.slice(0, 6)}`,
@@ -31,6 +31,7 @@ export function mockAccess({
 			},
 			roles: [],
 			stats: {joined: Date.now()},
+			email: `${userId}@xiome.io`,
 		},
 	}
 }

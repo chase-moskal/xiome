@@ -53,6 +53,7 @@ export async function testChatSetup() {
 					},
 					roles: [],
 					stats: undefined,
+					email: `${userId}@xiome.io`
 				},
 			}
 			const chatModel = makeChatModel({

@@ -50,6 +50,7 @@ export async function notesTestingSetup() {
 				},
 				roles: [],
 				stats: {joined: Date.now()},
+				email: `${userId}@xiome.io`,
 			},
 		},
 	})
