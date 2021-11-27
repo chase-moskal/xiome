@@ -8,8 +8,8 @@ export default css`
 	--bg-color1: #e6e600;
 	--bg-color2: red;
 	--bg-color3: blue;
-	--border: 0.2em solid #6699cc;
-	--padding: 1em;
+	--border: 0.2em solid LightGray;
+	--padding: 0.5em;
 	--border-radius: 0.2em;
 }
 
@@ -41,11 +41,13 @@ button {
 	flex-direction: row;
 	user-select: none;
 	cursor: pointer;
-	border: none;
-
+	
 	font-size: unset;
 	color: unset;
 	background: transparent;
+
+	border: var(--border);
+	border-radius: 0.5em;
 }
 
 button:hover .copy-icon {
@@ -59,11 +61,26 @@ button:active .copy-icon {
 .content {
 	display: flex;
 	justify-content: row;
+	padding: 1em;
+}
+.code-block{
+	display: flex;
+	flex-wrap: wrap;
+	position: relative;
+	
+	
+}
+
+@media only screen and (min-width: 320px){
+	.code-block{
+		flex-direction: column-reverse;
+	}
 }
 
 .copy-icon svg {
 	width: 1em;
 	height: 1em;
+	padding: var(--padding);
 }
 
 .copy-icon {
@@ -71,7 +88,18 @@ button:active .copy-icon {
 	transition: opacity 100ms linear;
 	border: var(--border);
 	border-radius: var(--border-radius);
-	padding: var(--padding);
+	position: absolute;
+	right: 0.25em;
+	
 }
+
+code{
+	padding: var(--padding);
+	bottom: 1em;
+	top: 0.5em;
+	left: 0.25;
+	right: 2em;
+}
+
 
 `

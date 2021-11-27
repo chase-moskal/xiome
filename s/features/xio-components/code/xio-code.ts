@@ -32,12 +32,14 @@ export class XioCode extends Component {
 
 	render() {
 		return html`
+		<div class=code-block>
 			<button @click=${() => this.#copy()}>
 				<slot></slot>
 				<div class=copy-icon>
 					${clipboardIcon}
 				</div>
 			</button>
+		</div>
 		`
 	}
 
