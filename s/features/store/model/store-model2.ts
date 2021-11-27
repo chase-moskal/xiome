@@ -3,6 +3,7 @@ import {pub} from "../../../toolbox/pub.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {onesie} from "../../../toolbox/onesie.js"
+import {makeActivator} from "./utils/make-activator.js"
 import {minute} from "../../../toolbox/goodtimes/times.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
@@ -84,9 +85,12 @@ export function makeStoreModel2({
 			})
 			return details
 		}
+		const activator = makeActivator(async() => {
+			await loadLinkedStripeAccountDetails()
+		})
 		return {
+			activate: activator.activate,
 			onBankChange: bankChange.subscribe,
-			loadLinkedStripeAccountDetails,
 			async linkStripeAccount() {
 				await triggerBankPopup(
 					await stripeAccountsService.generateConnectSetupLink()
@@ -104,6 +108,7 @@ export function makeStoreModel2({
 			storageKey: `cache-store-status-${appId}`,
 			load: onesie(statusCheckerService.getStoreStatus),
 		})
+
 		async function fetchStoreStatus(forceFresh = false) {
 			await ops.operation({
 				setOp: op => state.writable.statusOp = op,
@@ -112,15 +117,11 @@ export function makeStoreModel2({
 					: cache.read(),
 			})
 		}
-		let alreadyActivated = false
-		async function activate() {
-			if (!alreadyActivated) {
-				alreadyActivated = true
-				await fetchStoreStatus()
-			}
-		}
+
+		const activator = makeActivator(fetchStoreStatus)
+
 		return {
-			activate,
+			activate: activator.activate,
 			async enableStore() {
 				await statusTogglerService.enableEcommerce()
 				const newStatus = StoreStatus.Enabled
@@ -134,7 +135,7 @@ export function makeStoreModel2({
 				state.writable.statusOp = ops.ready(newStatus)
 			},
 			async refresh() {
-				if (alreadyActivated)
+				if (activator.alreadyActivated)
 					await fetchStoreStatus(true)
 			},
 		}
@@ -150,26 +151,18 @@ export function makeStoreModel2({
 				: false
 		}
 
-		const loadPlans = onesie(async function() {
-			if (isPlanningAllowed()) {
+		async function loadPlans() {
+			if (isPlanningAllowed())
 				await ops.operation({
 					promise: shopkeepingService.listSubscriptionPlans(),
 					errorReason: "failed to load subscription plans",
 					setOp: op => state.writable.subscriptionPlansOp = op,
 				})
-			}
-			else {
+			else
 				state.writable.subscriptionPlansOp = ops.ready([])
-			}
-		})
-
-		let alreadyActivated = false
-		async function activate() {
-			if (!alreadyActivated) {
-				alreadyActivated = true
-				await loadPlans()
-			}
 		}
+
+		const activator = makeActivator(loadPlans)
 
 		async function createPlan(draft: SubscriptionPlanDraft) {
 			return ops.operation({
@@ -204,18 +197,23 @@ export function makeStoreModel2({
 		}
 
 		return {
+			activate: activator.activate,
 			get planningAllowed() {
 				return isPlanningAllowed()
 			},
-			activate,
 			createPlan,
 			deactivatePlan,
 			deletePlan,
 			async refresh() {
-				if (alreadyActivated)
+				if (activator.alreadyActivated)
 					await loadPlans()
 			},
 		}
+	})()
+
+	const subscriptionShopping = (() => {
+		const activator = makeActivator(async() => {})
+		return {}
 	})()
 
 	async function refreshAll() {

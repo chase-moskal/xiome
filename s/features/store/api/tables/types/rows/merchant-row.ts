@@ -1,5 +1,5 @@
 
 export type MerchantRow = {
-	userId: string
+	timeLinked: number
 	stripeAccountId: string
 }

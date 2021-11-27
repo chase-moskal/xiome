@@ -4,4 +4,5 @@ export interface StripeAccountDetails {
 	email: string
 	payouts_enabled: boolean
 	details_submitted: boolean
+	timeLinked: number
 }

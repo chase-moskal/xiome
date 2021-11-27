@@ -1,7 +1,9 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
+import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StoreStatus} from "./api/services/types/store-status.js"
+import {storePrivileges} from "./permissions/store-privileges.js"
 import {merchantStoreSetup, plebeianStoreSetup, simpleStoreSetup} from "./testing/store-quick-setups.js"
 
 export default <Suite>{
@@ -19,6 +21,21 @@ export default <Suite>{
 				const {storeModel} = await simpleStoreSetup()
 				expect(ops.value(storeModel.state.stripeAccountDetailsOp)).not.ok()
 				await expect(async() => storeModel.bank.linkStripeAccount()).throws()
+			},
+			async "a different merchant can see that the bank account is linked"() {
+				const {makeClient} = await storeTestSetup()
+				{
+					const client = await makeClient()
+					await client.setAccessWithPrivileges(storePrivileges["control store bank link"])
+					await client.storeModel.bank.linkStripeAccount()
+					expect(ops.value(client.storeModel.state.stripeAccountDetailsOp)).ok()
+				}
+				{
+					const client = await makeClient()
+					await client.setAccessWithPrivileges(storePrivileges["control store bank link"])
+					await client.storeModel.bank.activate()
+					expect(ops.value(client.storeModel.state.stripeAccountDetailsOp)).ok()
+				}
 			},
 		},
 		"store status": {
@@ -163,7 +180,9 @@ export default <Suite>{
 			},
 		},
 		"subscription sales": {
-			async "customer can purchase a subscription"() {},
+			async "customer can purchase a subscription"() {
+
+			},
 			async "customer can cancel a subscription"() {},
 			async "customer can update subscription's payment method"() {},
 			async "subscription ends if automatic renewal fails"() {},

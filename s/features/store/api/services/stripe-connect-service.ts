@@ -19,22 +19,22 @@ export const makeStripeConnectService = (
 	expose: {
 
 		async getConnectDetails(
-				{access, stripeLiaison, storeTables},
+				{stripeLiaison, storeTables},
 			): Promise<undefined | StripeAccountDetails> {
 
-			const {userId} = access.user
-
 			const existingAssociatedStripeAccount = await storeTables
-				.merchant.stripeAccounts.one(find({userId}))
+				.merchant.stripeAccounts.one({conditions: false})
 
 			if (existingAssociatedStripeAccount) {
 				const id = existingAssociatedStripeAccount.stripeAccountId
+				const timeLinked = existingAssociatedStripeAccount.timeLinked
 				const account = await stripeLiaison.accounts.retrieve(id)
 				return {
 					email: account.email,
 					stripeAccountId: account.id,
 					payouts_enabled: account.payouts_enabled,
 					details_submitted: account.details_submitted,
+					timeLinked,
 				}
 			}
 			else {
@@ -50,11 +50,11 @@ export const makeStripeConnectService = (
 
 			const {stripeAccountId} = (
 				await storeTables.merchant.stripeAccounts.assert({
-					...find({userId}),
+					conditions: false,
 					make: async() => {
 						const {id: stripeAccountId} = await stripeLiaison
 							.accounts.create({type: "standard"})
-						return {userId, stripeAccountId}
+						return {userId, stripeAccountId, timeLinked: Date.now()}
 					},
 				})
 			)
