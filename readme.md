@@ -35,8 +35,11 @@
 
 ## 💡 getting started
 
-&nbsp; **fundamental skills that you noobs should brush up on**
+&nbsp; **fundamental skills for noobs to be aware of**
+- you don't have to master all the following skills to get started. just be aware of them. if you're stuck, it's likley because you need more study time on one of these basic webdev skills:
 - learn how to use git and github so you can collaborate
+  you do not have to master all of these skills before getting started.
+  - use a visualization tool like `gitk` to understand git graphs
   - making and managing branches
   - add/reset staged changes, making and amending commits
   - managing git remotes, and fetching/pushing/pulling branches
@@ -47,12 +50,12 @@
 - learn the basics of typescript
 - learn npm, like how to install dependencies and run npm package scripts
 - learn how to write code with style and formatting that matches the rest of the codebase.  
-  your code should "blend in", so we cannot so easily tell which crappy code you wrote.
+  your code should "blend in", so we cannot so easily tell which crappy code you wrote
 
 &nbsp; **technical prerequisites**
+- if you're on windows, first, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux),  
+  or otherwise install a linux virtual machine for development (we recommend debian+kde on vmware)
 - install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
-- if you're on windows, probably setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux),  
-  or, install a linux virtual dev machine (we recommend debian with kde on vmware)
 
 &nbsp; **initial setup**
 - fork the xiome project on github, and git clone your fork
