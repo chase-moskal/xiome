@@ -82,7 +82,8 @@ export async function storeTestSetup() {
 					else
 						mockStripeOperations
 							.failBankLinkageWithExistingStripeAccount(stripeAccountId)
-				}
+				},
+				triggerCheckoutPopup: async() => {},
 			})
 
 			async function setAccess(access: AccessPayload) {

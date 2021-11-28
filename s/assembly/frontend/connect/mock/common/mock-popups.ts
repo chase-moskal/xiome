@@ -1,6 +1,6 @@
 
-import {TriggerBankPopup} from "../../../../../features/store/model/shares/types/trigger-bank-popup.js"
 import {MockStripeOperations} from "../../../../../features/store/stripe2/types/mock-stripe-operations.js"
+import {TriggerCheckoutPopup, TriggerBankPopup} from "../../../../../features/store/model/types/popups.js"
 
 export function mockPopups({mockStripeOperations}: {
 		mockStripeOperations: MockStripeOperations
@@ -11,6 +11,8 @@ export function mockPopups({mockStripeOperations}: {
 			await mockStripeOperations.linkBankWithExistingStripeAccount(stripeAccountId)
 		}),
 
-		subscriptionCheckoutPopup: async() => {},
+		triggerCheckoutPopup: <TriggerCheckoutPopup>(async({stripeAccountId}) => {
+			console.log("")
+		}),
 	}
 }

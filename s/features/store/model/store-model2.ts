@@ -6,8 +6,8 @@ import {makeStoreState} from "./state/make-store-state.js"
 import {makeEcommerceSubmodel} from "./aspects/ecommerce.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStoreAllowance} from "./utils/make-store-allowance.js"
-import {TriggerBankPopup} from "./shares/types/trigger-bank-popup.js"
 import {makeShoppingService} from "../api/services/shopping-service.js"
+import {TriggerCheckoutPopup, TriggerBankPopup} from "./types/popups.js"
 import {makeShopkeepingService} from "../api/services/shopkeeping-service.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {makeStatusCheckerService} from "../api/services/status-checker-service.js"
@@ -25,7 +25,7 @@ export function makeStoreModel2(options: {
 		statusTogglerService: Service<typeof makeStatusTogglerService>
 		stripeAccountsService: Service<typeof makeStripeConnectService>
 		triggerBankPopup: TriggerBankPopup
-		subscriptionCheckoutPopup: SubscriptionCheckoutPopup
+		triggerCheckoutPopup: TriggerCheckoutPopup
 	}) {
 
 	const state = makeStoreState()

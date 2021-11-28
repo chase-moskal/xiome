@@ -4,4 +4,6 @@ export type TriggerBankPopup = ({stripeAccountId, stripeAccountSetupLink}: {
 	stripeAccountSetupLink: string
 }) => Promise<void>
 
-export type SubscriptionCheckoutPopup = () => Promise<void>
+export type TriggerCheckoutPopup = ({stripeAccountId}: {
+	stripeAccountId: string
+}) => Promise<void>

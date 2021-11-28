@@ -1,10 +1,10 @@
 
 import {pub} from "../../../../toolbox/pub.js"
 import {ops} from "../../../../framework/ops.js"
+import {TriggerBankPopup} from "../types/popups.js"
 import {Service} from "../../../../types/service.js"
 import {makeActivator} from "../utils/make-activator.js"
 import {makeStoreState} from "../state/make-store-state.js"
-import {TriggerBankPopup} from "../shares/types/trigger-bank-popup.js"
 import {makeStripeConnectService} from "../../api/services/stripe-connect-service.js"
 
 export function makeBankSubmodel({
