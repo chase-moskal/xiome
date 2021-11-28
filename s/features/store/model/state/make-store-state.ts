@@ -3,7 +3,8 @@ import {Op, ops} from "../../../../framework/ops.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
-import {PlanningSituation} from "../shares/types/planning-situation.js"
+import {SubscriptionPlan} from "../../api/services/types/subscription-plan.js"
+import {StripeAccountDetails} from "../../api/services/types/stripe-account-details.js"
 
 export function makeStoreState() {
 	return snapstate({
@@ -16,8 +17,16 @@ export function makeStoreState() {
 			<Op<StoreStatus>>
 				ops.none(),
 
-		subscriptionPlanning:
-			<PlanningSituation.Any>
-				{mode: PlanningSituation.Mode.LoggedOut},
+		stripeAccountDetailsOp:
+			<Op<StripeAccountDetails>>
+				ops.none(),
+
+		subscriptionPlansOp:
+			<Op<SubscriptionPlan[]>>
+				ops.none(),
+
+		subscriptionPlanCreationOp:
+			<Op<undefined>>
+				ops.none(),
 	})
 }

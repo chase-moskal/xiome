@@ -15,5 +15,9 @@ export function makeActivator(action: () => Promise<void>) {
 	return {
 		activate: onesie(activate),
 		get alreadyActivated() { return activated },
+		async refreshIfActivated() {
+			if (activated)
+				await action()
+		},
 	}
 }

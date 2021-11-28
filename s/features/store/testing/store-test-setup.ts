@@ -60,6 +60,7 @@ export async function storeTestSetup() {
 			}
 
 			const remotes = {
+				shoppingService: mockRemote(api.shoppingService).useMeta(getters),
 				shopkeepingService: mockRemote(api.shopkeepingService).useMeta(getters),
 				statusCheckerService: mockRemote(api.statusCheckerService).useMeta(getters),
 				statusTogglerService: mockRemote(api.statusTogglerService).useMeta(getters),
@@ -69,6 +70,7 @@ export async function storeTestSetup() {
 			const storeModel = makeStoreModel2({
 				storage,
 				appId: appId.toString(),
+				shoppingService: remotes.shoppingService,
 				shopkeepingService: remotes.shopkeepingService,
 				statusCheckerService: remotes.statusCheckerService,
 				statusTogglerService: remotes.statusTogglerService,

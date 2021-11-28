@@ -1,36 +1,25 @@
 
-import {pub} from "../../../toolbox/pub.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
-import {onesie} from "../../../toolbox/onesie.js"
-import {makeActivator} from "./utils/make-activator.js"
-import {minute} from "../../../toolbox/goodtimes/times.js"
+import {makeBankSubmodel} from "./aspects/bank.js"
+import {makeStoreState} from "./state/make-store-state.js"
+import {makeEcommerceSubmodel} from "./aspects/ecommerce.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
-import {StoreStatus} from "../api/services/types/store-status.js"
-import {storePrivileges} from "../permissions/store-privileges.js"
+import {makeStoreAllowance} from "./utils/make-store-allowance.js"
 import {TriggerBankPopup} from "./shares/types/trigger-bank-popup.js"
-import {SubscriptionPlan} from "../api/services/types/subscription-plan.js"
+import {makeShoppingService} from "../api/services/shopping-service.js"
 import {makeShopkeepingService} from "../api/services/shopkeeping-service.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {storageCache} from "../../../toolbox/flex-storage/cache/storage-cache.js"
 import {makeStatusCheckerService} from "../api/services/status-checker-service.js"
 import {makeStatusTogglerService} from "../api/services/status-toggler-service.js"
 import {makeStripeConnectService} from "../api/services/stripe-connect-service.js"
-import {StripeAccountDetails} from "../api/services/types/stripe-account-details.js"
-import {SubscriptionPlanDraft} from "../api/tables/types/drafts/subscription-plan-draft.js"
+import {makeSubscriptionPlanningSubmodel} from "./aspects/subscription-planning.js"
+import {makeSubscriptionShoppingSubmodel} from "./aspects/subscription-shopping.js"
 
-export function makeStoreModel2({
-		appId,
-		storage,
-		shopkeepingService,
-		statusCheckerService,
-		statusTogglerService,
-		stripeAccountsService,
-		triggerBankPopup,
-	}: {
+export function makeStoreModel2(options: {
 		appId: string
 		storage: FlexStorage
+		shoppingService: Service<typeof makeShoppingService>
 		shopkeepingService: Service<typeof makeShopkeepingService>
 		statusCheckerService: Service<typeof makeStatusCheckerService>
 		statusTogglerService: Service<typeof makeStatusTogglerService>
@@ -38,204 +27,42 @@ export function makeStoreModel2({
 		triggerBankPopup: TriggerBankPopup
 	}) {
 
-	const state = snapstate({
+	const state = makeStoreState()
+	const allowance = makeStoreAllowance(state)
 
-		accessOp:
-			<Op<AccessPayload>>
-				ops.none(),
+	const bank = makeBankSubmodel({...options, state})
+	const ecommerce = makeEcommerceSubmodel({...options, state})
+	const planning = makeSubscriptionPlanningSubmodel({...options, state, allowance})
+	const subscriptionShopping = makeSubscriptionShoppingSubmodel({...options, state, allowance})
 
-		statusOp:
-			<Op<StoreStatus>>
-				ops.none(),
-
-		stripeAccountDetailsOp:
-			<Op<StripeAccountDetails>>
-				ops.none(),
-
-		subscriptionPlansOp:
-			<Op<SubscriptionPlan[]>>
-				ops.none(),
-
-		subscriptionPlanCreationOp:
-			<Op<undefined>>
-				ops.none(),
+	bank.onBankChange(async() => {
+		await Promise.all([
+			ecommerce.refresh(),
+			planning.refresh(),
+			subscriptionShopping.refresh(),
+		])
 	})
-
-	const allowance = (() => {
-		const has = (key: keyof typeof storePrivileges) => {
-			const privileges =
-				ops.value(state.readable.accessOp)
-					?.permit.privileges
-						?? []
-			return privileges.includes(storePrivileges[key])
-		}
-		return {
-			get manageStore() { return has("manage store") },
-			get controlStoreBankLink() { return has("control store bank link") },
-			get giveAwayFreebies() { return has("give away freebies") },
-		}
-	})()
-
-	const bank = (() => {
-		const bankChange = pub()
-		async function loadLinkedStripeAccountDetails() {
-			const details = await ops.operation({
-				promise: stripeAccountsService.getConnectDetails(),
-				setOp: op => state.writable.stripeAccountDetailsOp = op,
-			})
-			return details
-		}
-		const activator = makeActivator(async() => {
-			await loadLinkedStripeAccountDetails()
-		})
-		return {
-			activate: activator.activate,
-			onBankChange: bankChange.subscribe,
-			async linkStripeAccount() {
-				await triggerBankPopup(
-					await stripeAccountsService.generateConnectSetupLink()
-				)
-				await loadLinkedStripeAccountDetails()
-				await bankChange.publish()
-			},
-		}
-	})()
-
-	const ecommerce = (() => {
-		const cache = storageCache({
-			lifespan: 5 * minute,
-			storage,
-			storageKey: `cache-store-status-${appId}`,
-			load: onesie(statusCheckerService.getStoreStatus),
-		})
-
-		async function fetchStoreStatus(forceFresh = false) {
-			await ops.operation({
-				setOp: op => state.writable.statusOp = op,
-				promise: forceFresh
-					? cache.readFresh()
-					: cache.read(),
-			})
-		}
-
-		const activator = makeActivator(fetchStoreStatus)
-
-		return {
-			activate: activator.activate,
-			async enableStore() {
-				await statusTogglerService.enableEcommerce()
-				const newStatus = StoreStatus.Enabled
-				await cache.write(newStatus)
-				state.writable.statusOp = ops.ready(newStatus)
-			},
-			async disableStore() {
-				await statusTogglerService.disableEcommerce()
-				const newStatus = StoreStatus.Disabled
-				await cache.write(newStatus)
-				state.writable.statusOp = ops.ready(newStatus)
-			},
-			async refresh() {
-				if (activator.alreadyActivated)
-					await fetchStoreStatus(true)
-			},
-		}
-	})()
-
-	const planning = (() => {
-		function isPlanningAllowed() {
-			const status = ops.value(state.readable.statusOp)
-			return status === StoreStatus.Enabled
-				? allowance.manageStore
-					? true
-					: false
-				: false
-		}
-
-		async function loadPlans() {
-			if (isPlanningAllowed())
-				await ops.operation({
-					promise: shopkeepingService.listSubscriptionPlans(),
-					errorReason: "failed to load subscription plans",
-					setOp: op => state.writable.subscriptionPlansOp = op,
-				})
-			else
-				state.writable.subscriptionPlansOp = ops.ready([])
-		}
-
-		const activator = makeActivator(loadPlans)
-
-		async function createPlan(draft: SubscriptionPlanDraft) {
-			return ops.operation({
-				promise: (async() => {
-					const plan = await shopkeepingService.createSubscriptionPlan({draft})
-					const existingPlans = ops.value(state.readable.subscriptionPlansOp)
-					state.writable.subscriptionPlansOp
-						= ops.ready([...existingPlans, plan])
-					return plan
-				})(),
-				setOp: op => state.writable.subscriptionPlanCreationOp =
-					ops.replaceValue(op, undefined),
-			})
-		}
-
-		async function listAfterwards(action: () => Promise<void>) {
-			return ops.operation({
-				promise: action()
-					.then(shopkeepingService.listSubscriptionPlans),
-				setOp: op => state.writable.subscriptionPlansOp = op,
-			})
-		}
-
-		async function deactivatePlan(subscriptionPlanId: string) {
-			return listAfterwards(() =>
-				shopkeepingService.deactivateSubscriptionPlan({subscriptionPlanId}))
-		}
-
-		async function deletePlan(subscriptionPlanId: string) {
-			return listAfterwards(() =>
-				shopkeepingService.deleteSubscriptionPlan({subscriptionPlanId}))
-		}
-
-		return {
-			activate: activator.activate,
-			get planningAllowed() {
-				return isPlanningAllowed()
-			},
-			createPlan,
-			deactivatePlan,
-			deletePlan,
-			async refresh() {
-				if (activator.alreadyActivated)
-					await loadPlans()
-			},
-		}
-	})()
-
-	const subscriptionShopping = (() => {
-		const activator = makeActivator(async() => {})
-		return {}
-	})()
-
-	async function refreshAll() {
-		await Promise.all([ecommerce.refresh(), planning.refresh()])
-	}
-
-	bank.onBankChange(refreshAll)
 
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
-
 		allowance,
+
 		bank,
 		planning,
 		ecommerce,
+		subscriptionShopping,
 
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
 			state.writable.stripeAccountDetailsOp = ops.ready(undefined)
 			state.writable.subscriptionPlansOp = ops.ready([])
-			await refreshAll()
+			await Promise.all([
+				bank.refresh(),
+				planning.refresh(),
+				ecommerce.refresh(),
+				subscriptionShopping.refresh(),
+			])
 		},
 	}
 }
