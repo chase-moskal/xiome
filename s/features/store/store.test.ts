@@ -181,7 +181,8 @@ export default <Suite>{
 		},
 		"subscription sales": {
 			async "customer can purchase a subscription"() {
-
+				const {storeModel} = await plebeianStoreSetup()
+				await storeModel.subscriptionShopping.activate()
 			},
 			async "customer can cancel a subscription"() {},
 			async "customer can update subscription's payment method"() {},

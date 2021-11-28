@@ -3,9 +3,8 @@ import {apiContext} from "renraku/x/api/api-context.js"
 import {StoreServiceOptions} from "../types/store-options.js"
 import {StoreLinkedAuth, StoreMeta} from "../types/store-metas-and-auths.js"
 
-export const makeShoppingService = (
-		options: StoreServiceOptions
-	) => apiContext<StoreMeta, StoreLinkedAuth>()({
+export const makeShoppingService = (options: StoreServiceOptions) =>
+		apiContext<StoreMeta, StoreLinkedAuth>()({
 
 	policy: options.storeLinkedPolicy,
 

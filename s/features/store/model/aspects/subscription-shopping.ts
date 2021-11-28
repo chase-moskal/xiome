@@ -16,6 +16,7 @@ export function makeSubscriptionShoppingSubmodel({
 	}) {
 
 	const activator = makeActivator(async() => {})
+
 	return {
 		activate: activator.activate,
 		refresh: activator.refreshIfActivated,

@@ -25,6 +25,7 @@ export function makeStoreModel2(options: {
 		statusTogglerService: Service<typeof makeStatusTogglerService>
 		stripeAccountsService: Service<typeof makeStripeConnectService>
 		triggerBankPopup: TriggerBankPopup
+		subscriptionCheckoutPopup: SubscriptionCheckoutPopup
 	}) {
 
 	const state = makeStoreState()
