@@ -1,5 +1,5 @@
 
-import {StoreTables} from "../tables/types/store-tables.js"
+import {StoreTables} from "./store-tables.js"
 import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../../stripe2/liaison/stripe-liaison.js"
 

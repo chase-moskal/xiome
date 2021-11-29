@@ -1,6 +1,6 @@
 
 import {SubscriptionPlan} from "../types/subscription-plan.js"
-import {SubscriptionPlanRow} from "../../tables/types/rows/subscription-plan-row.js"
+import {SubscriptionPlanRow} from "../../types/store-tables.js"
 import {RoleRow} from "../../../../auth/aspects/permissions/types/permissions-tables.js"
 
 export function subscriptionPlanFromRow({role, plan}: {

@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 import {StoreStatus} from "../types/store-status.js"
-import {StoreTables} from "../../tables/types/store-tables.js"
+import {StoreTables} from "../../types/store-tables.js"
 
 export async function determineStoreStatus({
 		storeTables,

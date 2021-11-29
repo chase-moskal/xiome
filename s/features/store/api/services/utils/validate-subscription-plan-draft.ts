@@ -1,5 +1,5 @@
 
-import {SubscriptionPlanDraft} from "../../tables/types/drafts/subscription-plan-draft.js"
+import {SubscriptionPlanDraft} from "../../types/drafts/subscription-plan-draft.js"
 import {depend, maxLength, min, minLength, notWhitespace, number, schema, string} from "../../../../../toolbox/darkvalley.js"
 
 export const validateSubscriptionPlanDraft = schema<SubscriptionPlanDraft>({

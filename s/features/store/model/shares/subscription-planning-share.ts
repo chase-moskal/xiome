@@ -6,7 +6,7 @@ import {Service} from "../../../../types/service.js"
 import {PlanningSituation} from "./types/planning-situation.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {userCanManageStore} from "./permissions-helpers/user-can-manage-store.js"
-import {SubscriptionPlanDraft} from "../../api/tables/types/drafts/subscription-plan-draft.js"
+import {SubscriptionPlanDraft} from "../../api/types/drafts/subscription-plan-draft.js"
 import {makeShopkeepingService} from "../../api/services/shopkeeping-service.js"
 
 export function subscriptionPlanningShare({

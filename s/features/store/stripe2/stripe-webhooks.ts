@@ -1,10 +1,10 @@
 
 import {Stripe} from "stripe"
 
+import {StoreTables} from "../api/types/store-tables.js"
 import {AuthTables} from "../../auth/types/auth-tables.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {makeStripeLiaison} from "./liaison/stripe-liaison.js"
-import {StoreTables} from "../api/tables/types/store-tables.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export function stripeWebhooks({logger}: {
