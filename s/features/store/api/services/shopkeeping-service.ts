@@ -58,11 +58,13 @@ export const makeShopkeepingService = (
 				name: draft.label,
 			})
 
-			const stripePrice = await stripeLiaisonAccount.prices.create({
-				unit_amount: draft.price,
-				currency: hardcodedCurrency,
-				recurring: {interval: hardcodedInterval},
-			})
+			const stripePrices = await Promise.all(draft.tiers.map(async tier => {
+				return stripeLiaisonAccount.prices.create({
+					unit_amount: tier.price,
+					currency: hardcodedCurrency,
+					recurring: {interval: hardcodedInterval},
+				})
+			}))
 
 			const role: RoleRow = {
 				hard: true,
@@ -72,10 +74,9 @@ export const makeShopkeepingService = (
 				assignable: true,
 				time: Date.now(),
 			}
-	
+
 			const plan: SubscriptionPlanRow = {
 				roleId: role.roleId,
-				stripePriceId: stripePrice.id,
 				stripeProductId: stripeProduct.id,
 				subscriptionPlanId: options.generateId(),
 			}
