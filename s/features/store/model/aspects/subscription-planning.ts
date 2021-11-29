@@ -6,7 +6,7 @@ import {makeStoreState} from "../state/make-store-state.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {StoreStatus} from "../../api/services/types/store-status.js"
 import {makeShopkeepingService} from "../../api/services/shopkeeping-service.js"
-import {SubscriptionPlanDraft} from "../../api/types/drafts/subscription-plan-draft.js"
+import {SubscriptionPlanDraft} from "../../api/types/subscription-concepts.js"
 
 export function makeSubscriptionPlanningSubmodel({
 		state,

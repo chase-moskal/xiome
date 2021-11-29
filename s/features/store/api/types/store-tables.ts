@@ -29,19 +29,14 @@ export type StoreInfoRow = {
 
 export type SubscriptionRow = {
 	userId: string
-	active: boolean
-	renewalTime: number
 	subscriptionPlanId: string
 	stripeSubscriptionId: string
 } & CardClues
 
 export type SubscriptionPlanRow = {
 	subscriptionPlanId: DamnId
-	price: number
-	roleId: DamnId
-	active: boolean
-	stripePriceId: string
 	stripeProductId: string
+	roleId: DamnId
 }
 
 //

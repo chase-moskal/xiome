@@ -9,7 +9,7 @@ import {StoreServiceOptions} from "../types/store-options.js"
 import {apiProblems} from "../../../../toolbox/api-validate.js"
 import {StoreLinkedAuth, StoreMeta} from "../types/store-metas-and-auths.js"
 import {subscriptionPlanFromRow} from "./utils/subscription-plan-from-row.js"
-import {SubscriptionPlanDraft} from "../types/drafts/subscription-plan-draft.js"
+import {SubscriptionPlanDraft} from "../types/subscription-concepts.js"
 import {RoleRow} from "../../../auth/aspects/permissions/types/permissions-tables.js"
 import {validateSubscriptionPlanDraft} from "./utils/validate-subscription-plan-draft.js"
 
@@ -74,8 +74,6 @@ export const makeShopkeepingService = (
 			}
 	
 			const plan: SubscriptionPlanRow = {
-				active: true,
-				price: draft.price,
 				roleId: role.roleId,
 				stripePriceId: stripePrice.id,
 				stripeProductId: stripeProduct.id,
