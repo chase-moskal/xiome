@@ -1,5 +1,5 @@
 
-import {TriggerBankPopup} from "../../../../features/store/model/types/popups.js"
+import {TriggerBankPopup} from "../../../../features/store/types/store-popups.js"
 import {openBankPopup} from "../../../../features/store/popups/bank/open-bank-popup.js"
 
 export function systemPopups({popupsBase}: {popupsBase: string}) {

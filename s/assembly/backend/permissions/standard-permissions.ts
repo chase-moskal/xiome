@@ -1,7 +1,7 @@
 
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
+import {storePowerPrivileges} from "../../../features/store/store-privileges.js"
 import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
-import {storePowerPrivileges} from "../../../features/store/permissions/store-privileges.js"
 import {chatPowerPrivileges, chatRegularPrivileges} from "../../../features/chat/common/chat-privileges.js"
 
 export const universalPrivilege = "c1cb5ac1000af6081ff47e80804de7542b57a1425c3faac8153e708aaf79271a"

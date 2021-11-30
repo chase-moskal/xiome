@@ -1,5 +1,5 @@
 
-import {BillingTables, MerchantTables} from "../types/store-tables.js"
+import {BillingTables, MerchantTables} from "../../types/store-tables.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage-tables.js"
 

@@ -1,7 +1,7 @@
 
 import {AuthTables} from "../../../features/auth/types/auth-tables.js"
+import {StoreTables} from "../../../features/store/types/store-tables.js"
 import {VideoTables} from "../../../features/videos/types/video-tables.js"
-import {StoreTables} from "../../../features/store/api/types/store-tables.js"
 import {NotesTables} from "../../../features/notes/api/tables/notes-tables.js"
 import {AppTables} from "../../../features/auth/aspects/apps/types/app-tables.js"
 import {ExampleTables} from "../../../features/example/api/types/example-tables.js"
