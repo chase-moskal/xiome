@@ -22,7 +22,7 @@ export function makeConnectSubmodel({
 	const change = pub()
 
 	async function loadConnectDetails() {
-		if (allowance.controlStoreBankLink) {
+		if (allowance.connectStripeAccount) {
 			const details = await ops.operation({
 				promise: connectService.loadConnectDetails(),
 				setOp: op => state.writable.connectDetailsOp = op,
