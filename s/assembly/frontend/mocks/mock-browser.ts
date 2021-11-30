@@ -6,7 +6,7 @@ import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
-import {MockStripeOperations} from "../../../features/store/stripe2/types/mock-stripe-operations.js"
+import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
 
 export async function mockBrowser({api, mockStripeOperations}: {
 		api: SystemApi

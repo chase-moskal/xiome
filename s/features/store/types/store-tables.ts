@@ -2,7 +2,7 @@
 import {Await} from "../../../types/await.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
-import {CardClues} from "../stripe2/liaison/types/card-clues.js"
+import {CardClues} from "../stripe/liaison/types/card-clues.js"
 import {mockStoreTables} from "../api/tables/mock-store-tables.js"
 
 export type StoreTables = Await<ReturnType<typeof mockStoreTables>>
