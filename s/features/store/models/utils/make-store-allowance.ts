@@ -13,7 +13,7 @@ export function makeStoreAllowance(state: ReturnType<typeof makeStoreState>) {
 	}
 	return {
 		get manageStore() { return has("manage store") },
-		get controlStoreBankLink() { return has("control store bank link") },
+		get controlStoreBankLink() { return has("connect stripe account") },
 		get giveAwayFreebies() { return has("give away freebies") },
 	}
 }

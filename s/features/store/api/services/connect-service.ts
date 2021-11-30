@@ -9,7 +9,7 @@ export const makeConnectService = (
 
 	async policy(meta, request) {
 		const auth = await options.storePolicy(meta, request)
-		auth.checker.requirePrivilege("control store bank link")
+		auth.checker.requirePrivilege("connect stripe account")
 		return auth
 	},
 

@@ -19,7 +19,7 @@ export function makeStoreModel(options: {
 
 	const state = makeStoreState()
 	const allowance = makeStoreAllowance(state)
-	const connectSubmodel = makeConnectSubmodel({...options, state})
+	const connectSubmodel = makeConnectSubmodel({...options, state, allowance})
 
 	return {
 		state: state.readable,
