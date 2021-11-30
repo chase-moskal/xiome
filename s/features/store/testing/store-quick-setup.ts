@@ -1,6 +1,6 @@
 
-import {storePrivileges} from "../store-privileges.js"
 import {storeTestSetup} from "./store-test-setup.js"
+import {storePrivileges} from "../store-privileges.js"
 
 type StorePrivilegeKey = keyof typeof storePrivileges
 

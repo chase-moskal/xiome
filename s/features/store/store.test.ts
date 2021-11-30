@@ -2,8 +2,8 @@
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {storePrivileges} from "./store-privileges.js"
-import {setupSimpleStoreClient} from "./testing/store-quick-setup.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
+import {setupSimpleStoreClient} from "./testing/store-quick-setup.js"
 
 export default <Suite>{
 	"stripe connect": {
