@@ -1,6 +1,6 @@
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
-import {objectMap} from "../../../../../toolbox/object-map.js"
+import {validateRoom} from "../../../common/chat-validators.js"
 import {chatAllowance} from "../../../common/chat-allowance.js"
 import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../../common/types/chat-concepts.js"
 
@@ -25,11 +25,17 @@ export function prepareChatServersideLogic({
 	)
 	const isNotBanned = () => !getAllowance().banned
 
+	function enforceValidation(problems: string[]) {
+		if (problems.length !== 0)
+			throw new Error("chat validation error")
+	}
+
 	return {
 		async updateUserMeta(meta: ChatMeta) {
 			clientRecord.auth = await policy(meta)
 		},
 		async roomSubscribe(room: string) {
+			enforceValidation(validateRoom(room))
 			if (!getAllowance().viewAllChats)
 				return undefined
 			clientRecord.rooms.add(room)
