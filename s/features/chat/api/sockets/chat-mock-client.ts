@@ -17,6 +17,9 @@ export async function chatMockClient({storage}: {
 		rando,
 		persistence,
 		policy: mockChatPolicy,
+		logError(error) {
+			console.error(error)
+		},
 	})
 
 	const {chatConnect} = prepareChatClientCore({

@@ -5,10 +5,11 @@ import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
 import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
 import {ChatClientsideLogic, ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
-export function makeChatServerCore({rando, persistence, policy}: {
+export function makeChatServerCore({rando, persistence, policy, logError}: {
 		rando: Rando
 		persistence: ChatPersistence
 		policy: ChatPolicy
+		logError: (error: Error) => void
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()
@@ -110,12 +111,20 @@ export function makeChatServerCore({rando, persistence, policy}: {
 		clientRecords.add(clientRecord)
 
 		return {
-			handleDataFromClient: lingoHost(prepareChatServersideLogic({
-				rando,
-				persistence,
-				clientRecord,
-				policy,
-			})),
+			handleDataFromClient: (() => {
+				const executor = lingoHost(prepareChatServersideLogic({
+					rando,
+					persistence,
+					clientRecord,
+					policy,
+				}))
+				return async(key: string, ...args: any[]) => {
+					let result: any
+					try { result = await executor(key, ...args) }
+					catch (error) { logError(error) }
+					return result
+				}
+			})(),
 			handleDisconnect() {
 				disconnect()
 				clientRecords.delete(clientRecord)

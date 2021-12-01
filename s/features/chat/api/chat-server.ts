@@ -28,6 +28,9 @@ void async function main() {
 	const servelet = makeChatServerCore({
 		rando,
 		persistence: await mockChatPersistence(storage),
+		logError(error) {
+			console.error(error)
+		},
 		async policy({accessToken}: ChatMeta): Promise<ChatAuth> {
 			return {
 				access: await crypto.verifyToken(accessToken)
