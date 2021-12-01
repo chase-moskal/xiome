@@ -23,11 +23,19 @@ export function makeConnectSubmodel({
 
 	async function loadConnectDetails() {
 		if (allowance.connectStripeAccount) {
-			const details = await ops.operation({
+			await ops.operation({
 				promise: connectService.loadConnectDetails(),
-				setOp: op => state.writable.connectDetailsOp = op,
+				setOp: op => {
+					state.writable.connectStatusOp = ops.replaceValue(op, ops.value(op)?.connectStatus)
+					state.writable.connectDetailsOp = ops.replaceValue(op, ops.value(op)?.connectDetails)
+				},
 			})
-			return details
+		}
+		else if (allowance.manageStore) {
+			await ops.operation({
+				promise: connectService.loadConnectStatus(),
+				setOp: op => state.writable.connectStatusOp = op,
+			})
 		}
 	}
 

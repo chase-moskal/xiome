@@ -11,7 +11,9 @@ export default <Suite>{
 			const {storeModel, ...client} = await setupSimpleStoreClient(
 				"connect stripe account"
 			)
-			const getConnectDetails = () => ops.value(storeModel.state.connectDetailsOp)
+			const getConnectDetails = () => ops.value(
+				storeModel.state.connectDetailsOp
+			)
 			expect(getConnectDetails()).not.ok()
 			await storeModel.connectSubmodel.connectStripeAccount()
 			expect(getConnectDetails()).ok()
@@ -24,26 +26,32 @@ export default <Suite>{
 				async() => storeModel.connectSubmodel.connectStripeAccount()
 			).throws()
 		},
-		async "a different merchant can see the connected account"() {
+		async "a different merchant can see the connect details"() {
 			const {makeClient} = await storeTestSetup()
 			{
 				const client = await makeClient()
-				await client.setAccessWithPrivileges(storePrivileges["connect stripe account"])
+				await client.setAccessWithPrivileges(
+					storePrivileges["connect stripe account"]
+				)
 				await client.storeModel.connectSubmodel.connectStripeAccount()
 				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
 			}
 			{
 				const client = await makeClient()
-				await client.setAccessWithPrivileges(storePrivileges["connect stripe account"])
+				await client.setAccessWithPrivileges(
+					storePrivileges["connect stripe account"]
+				)
 				await client.storeModel.connectSubmodel.activate()
 				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
 			}
 		},
-		async "plebeian cannot see whether the account is linked"() {
+		async "plebeian cannot see connect details or status"() {
 			const {makeClient} = await storeTestSetup()
 			{
 				const client = await makeClient()
-				await client.setAccessWithPrivileges(storePrivileges["connect stripe account"])
+				await client.setAccessWithPrivileges(
+					storePrivileges["connect stripe account"]
+				)
 				await client.storeModel.connectSubmodel.connectStripeAccount()
 				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
 			}
@@ -51,7 +59,26 @@ export default <Suite>{
 				const client = await makeClient()
 				await client.setAccessWithPrivileges()
 				await client.storeModel.connectSubmodel.activate()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).not.ok()
+				expect(ops.value(client.storeModel.state.connectDetailsOp)).not.defined()
+				expect(ops.value(client.storeModel.state.connectStatusOp)).not.defined()
+			}
+		},
+		async "clerk can see the connect status, but not the details"() {
+			const {makeClient} = await storeTestSetup()
+			{
+				const client = await makeClient()
+				await client.setAccessWithPrivileges(
+					storePrivileges["connect stripe account"]
+				)
+				await client.storeModel.connectSubmodel.connectStripeAccount()
+				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
+			}
+			{
+				const client = await makeClient()
+				await client.setAccessWithPrivileges(storePrivileges["manage store"])
+				await client.storeModel.connectSubmodel.activate()
+				expect(ops.value(client.storeModel.state.connectStatusOp)).defined()
+				expect(ops.value(client.storeModel.state.connectDetailsOp)).not.defined()
 			}
 		},
 	},

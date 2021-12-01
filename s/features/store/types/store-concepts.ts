@@ -9,6 +9,8 @@ import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {StoreAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
+export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
+
 export interface StoreCommonOptions {
 	config: SecretConfig
 	accountReturningLinks: {
@@ -23,8 +25,8 @@ export interface StoreCommonOptions {
 }
 
 export interface StoreApiOptions extends StoreCommonOptions {
+	stripeLiaison: StripeLiaison
 	storeTables: UnconstrainedTables<StoreTables>
-	stripeLiaison: ReturnType<typeof makeStripeLiaison>
 	basePolicy: Policy<AnonMeta, AnonAuth>
 }
 
@@ -36,7 +38,7 @@ export interface StoreServiceOptions extends StoreCommonOptions {
 export enum StripeConnectStatus {
 	Unlinked,
 	LinkedButNotReady,
-	Ready,
+	Linked,
 }
 
 export interface StripeConnectDetails {
