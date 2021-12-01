@@ -55,7 +55,7 @@ export const makeConnectService = (
 					})
 				return {stripeAccountId, stripeAccountSetupLink}
 			},
-	
+
 			async disconnect() {
 				throw new Error("TODO implement stripe disconnect")
 			},

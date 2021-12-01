@@ -1,11 +1,12 @@
-import {ops} from "../../../../framework/ops.js"
+
 import {pub} from "../../../../toolbox/pub.js"
+import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeConnectService} from "../../api/services/connect-service.js"
-import {TriggerBankPopup} from "../../types/store-popups.js"
-import {makeStoreState} from "../state/make-store-state.js"
 import {makeActivator} from "../utils/make-activator.js"
+import {makeStoreState} from "../state/make-store-state.js"
+import {TriggerBankPopup} from "../../types/store-popups.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
+import {makeConnectService} from "../../api/services/connect-service.js"
 
 export function makeConnectSubmodel({
 		state,

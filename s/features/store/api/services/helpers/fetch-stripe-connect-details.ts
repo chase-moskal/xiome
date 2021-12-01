@@ -8,7 +8,7 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 	}) {
 
 	let connectDetails: StripeConnectDetails
-	
+
 	const existingAssociatedStripeAccount = await storeTables
 		.merchant.stripeAccounts.one({conditions: false})
 
