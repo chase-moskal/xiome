@@ -11,15 +11,19 @@ button {
 .container {
 	position: relative;
 	display: flex;
-	flex-direction: row;
+	flex-direction: var(--_flex-direction);
 	user-select: none;
 	cursor: pointer;
 	border: none;
+	letter-spacing: 0.1em;
+	align-items: var(--_flex-align-items);
 }
 
 :host {
 	display: inline-block;
 	position: relative;
+	--_flex-direction: row;
+	--_flex-align-items: center;
 }
 
 :host::before {

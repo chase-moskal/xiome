@@ -59,27 +59,34 @@ div.history::-webkit-scrollbar-track {
 
 li > header {
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	flex-direction: row;
 	gap: 1.5em;
 }
 
+li > header > span {
+	display: flex;
+	align-items: center;
+}
+
+.userid {
+	overflow: hidden;
+	width: 3.75em;
+}
+
+xio-id {
+	--_flex-direction: row-reverse;
+}
+
 li > header > span > xio-button {
 	--_border: var(--xio-button-border, none);
-	--_padding: var(--xio-button-padding, 0.2em);
+	--_padding: var(--xio-button-padding, 0.35em);
 }
 
 .nickname {
 	font-size: 1.1em;
 	font-weight: bold;
-}
-
-.userid {
-	font-size: 1em;
-	display: inline-block;
-	opacity: 0.5;
-	overflow: hidden;
-	width: 2.5em;
+	padding-left: 0.25em;
 }
 
 .content {

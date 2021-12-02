@@ -19,7 +19,7 @@ export function renderChatPost({
 			<header>
 				<span>
 				<span class=nickname>${post.nickname}</span>
-				<span class=userid>${post.userId}</span>
+				<xio-id class="userid" title="${post.userId}" id="${post.userId}"></xio-id>
 				</span>
 				${isModerator
 					? html`
