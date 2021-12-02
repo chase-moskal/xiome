@@ -44,6 +44,7 @@ export enum StripeConnectStatus {
 export interface StripeConnectDetails {
 	stripeAccountId: string
 	email: string
+	charges_enabled: boolean
 	payouts_enabled: boolean
 	details_submitted: boolean
 	timeLinked: number

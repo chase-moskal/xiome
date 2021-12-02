@@ -55,12 +55,12 @@ export async function assimilateDatabase({
 			questionPosts: true,
 		},
 		store: {
-			billing: {
-				customers: true,
-				storeInfo: true,
-				subscriptionPlans: true,
-				subscriptions: true,
-			},
+			// billing: {
+			// 	customers: true,
+			// 	storeInfo: true,
+			// 	subscriptionPlans: true,
+			// 	subscriptions: true,
+			// },
 			merchant: {
 				stripeAccounts: true,
 			},

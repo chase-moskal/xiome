@@ -19,6 +19,7 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 		connectDetails = {
 			email: account.email,
 			stripeAccountId: account.id,
+			charges_enabled: account.charges_enabled,
 			payouts_enabled: account.payouts_enabled,
 			details_submitted: account.details_submitted,
 			timeLinked,

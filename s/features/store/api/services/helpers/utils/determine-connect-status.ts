@@ -6,8 +6,14 @@ export function determineConnectStatus(
 	) {
 
 	return details
-		? (details.details_submitted && details.payouts_enabled)
+		? isAccountReady(details)
 			? StripeConnectStatus.Linked
 			: StripeConnectStatus.LinkedButNotReady
 		: StripeConnectStatus.Unlinked
+}
+
+function isAccountReady(details: StripeConnectDetails) {
+	return details.details_submitted
+		&& details.charges_enabled
+		&& details.payouts_enabled
 }
