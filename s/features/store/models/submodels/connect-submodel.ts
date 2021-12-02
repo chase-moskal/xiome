@@ -5,9 +5,9 @@ import {Service} from "../../../../types/service.js"
 import {makeActivator} from "../utils/make-activator.js"
 import {makeStoreState} from "../state/make-store-state.js"
 import {TriggerBankPopup} from "../../types/store-popups.js"
+import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeConnectService} from "../../api/services/connect-service.js"
-import {StripeConnectStatus} from "../../types/store-concepts.js"
 
 export function makeConnectSubmodel({
 		state,
