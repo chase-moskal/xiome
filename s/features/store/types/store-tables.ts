@@ -22,6 +22,45 @@ export type MerchantRow = {
 	paused: boolean
 }
 
+//
+// subscription tables
+//
+
+export type SubscriptionTables = {
+	plans: DbbyTable<SubscriptionPlanRow>
+	tiers: DbbyTable<SubscriptionTierRow>
+}
+
+export type SubscriptionPlanRow = {
+	label: string
+	planId: DamnId
+	roleId: DamnId
+	stripeProductId: string
+	time: number
+}
+
+export type SubscriptionTierRow = {
+	label: string
+	tierId: DamnId
+	planId: DamnId
+	roleId: DamnId
+	stripePriceId: string
+	time: number
+}
+
+export type SubscriptionTierOrderingRow = {
+	planId: DamnId
+	ordering: string
+}
+
+
+
+
+
+
+
+
+
 // //
 // // billing tables
 // //

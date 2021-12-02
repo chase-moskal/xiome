@@ -55,6 +55,7 @@ export async function assimilateDatabase({
 			questionPosts: true,
 		},
 		store: {
+			// TODO store
 			// billing: {
 			// 	customers: true,
 			// 	storeInfo: true,
@@ -63,6 +64,10 @@ export async function assimilateDatabase({
 			// },
 			merchant: {
 				stripeAccounts: true,
+			},
+			subscription: {
+				plans: true,
+				tiers: true,
 			},
 		},
 		videos: {

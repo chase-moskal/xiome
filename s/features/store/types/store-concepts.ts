@@ -51,3 +51,17 @@ export interface StripeConnectDetails {
 	timeLinked: number
 	paused: boolean
 }
+
+export interface SubscriptionTier {
+	tierId: string
+	label: string
+	price: number
+	time: number
+}
+
+export interface SubscriptionPlan {
+	planId: string
+	label: string
+	tiers: SubscriptionTier[]
+	time: number
+}
