@@ -2,11 +2,11 @@
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {storePrivileges} from "./store-privileges.js"
-import {storeTestSetup} from "./testing/store-test-setup.js"
-import {setupSimpleStoreClient} from "./testing/store-quick-setup.js"
+import {StripeConnectStatus} from "./types/store-concepts.js"
+import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
 
 export default <Suite>{
-	"stripe connect": {
+	"store connect submodel": {
 		async "merchant can connect a stripe account"() {
 			const {storeModel, ...client} = await setupSimpleStoreClient(
 				"connect stripe account"
@@ -26,60 +26,78 @@ export default <Suite>{
 				async() => storeModel.connectSubmodel.connectStripeAccount()
 			).throws()
 		},
-		async "a different merchant can see the connect details"() {
-			const {makeClient} = await storeTestSetup()
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges(
-					storePrivileges["connect stripe account"]
-				)
-				await client.storeModel.connectSubmodel.connectStripeAccount()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
-			}
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges(
-					storePrivileges["connect stripe account"]
-				)
-				await client.storeModel.connectSubmodel.activate()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
-			}
+		async "a second merchant can see the connect details"() {
+			const {merchantClient, makeAnotherMerchantClient}
+				= await setupLinkedStore()
+			expect(ops.value(merchantClient.storeModel.state.connectDetailsOp)).ok()
+
+			const anotherMerchant = await makeAnotherMerchantClient()
+			await anotherMerchant.storeModel.connectSubmodel.activate()
+			expect(ops.value(anotherMerchant.storeModel.state.connectDetailsOp)).ok()
 		},
 		async "plebeian cannot see connect details or status"() {
-			const {makeClient} = await storeTestSetup()
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges(
-					storePrivileges["connect stripe account"]
-				)
-				await client.storeModel.connectSubmodel.connectStripeAccount()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
-			}
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges()
-				await client.storeModel.connectSubmodel.activate()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).not.defined()
-				expect(ops.value(client.storeModel.state.connectStatusOp)).not.defined()
-			}
+			const {makePlebeianClient} = await setupLinkedStore()
+			const plebeianClient = await makePlebeianClient()
+			await plebeianClient.storeModel.connectSubmodel.activate()
+			const {state} = plebeianClient.storeModel
+			expect(ops.value(state.connectDetailsOp)).not.defined()
+			expect(ops.value(state.connectStatusOp)).not.defined()
 		},
 		async "clerk can see the connect status, but not the details"() {
-			const {makeClient} = await storeTestSetup()
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges(
-					storePrivileges["connect stripe account"]
-				)
-				await client.storeModel.connectSubmodel.connectStripeAccount()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).ok()
+			const {makeClerkClient} = await setupLinkedStore()
+			const clerkClient = await makeClerkClient()
+			await clerkClient.setAccessWithPrivileges(storePrivileges["manage store"])
+			await clerkClient.storeModel.connectSubmodel.activate()
+			const {state} = clerkClient.storeModel
+			expect(ops.value(state.connectStatusOp)).defined()
+			expect(ops.value(state.connectDetailsOp)).not.defined()
+		},
+		async "merchant can pause and resume a store"() {
+			const {merchantClient} = await setupLinkedStore()
+			const {state, connectSubmodel} = merchantClient.storeModel
+			function expectReady() {
+				expect(ops.value(state.connectStatusOp))
+					.equals(StripeConnectStatus.Ready)
+				expect(ops.value(state.connectDetailsOp)?.paused)
+					.equals(false)
 			}
-			{
-				const client = await makeClient()
-				await client.setAccessWithPrivileges(storePrivileges["manage store"])
-				await client.storeModel.connectSubmodel.activate()
-				expect(ops.value(client.storeModel.state.connectStatusOp)).defined()
-				expect(ops.value(client.storeModel.state.connectDetailsOp)).not.defined()
+			function expectPaused() {
+				expect(ops.value(state.connectStatusOp))
+					.equals(StripeConnectStatus.Paused)
+				expect(ops.value(state.connectDetailsOp)?.paused)
+					.equals(true)
 			}
+			expectReady()
+			await connectSubmodel.pause()
+			expectPaused()
+			await connectSubmodel.refresh()
+			expectPaused()
+			await connectSubmodel.resume()
+			expectReady()
+			await connectSubmodel.refresh()
+			expectReady()
+		},
+		async "clerk can pause and resume a store"() {
+			const {makeClerkClient} = await setupLinkedStore()
+			const clerkClient = await makeClerkClient()
+			const {state, connectSubmodel} = clerkClient.storeModel
+			function expectReady() {
+				expect(ops.value(state.connectStatusOp))
+					.equals(StripeConnectStatus.Ready)
+			}
+			function expectPaused() {
+				expect(ops.value(state.connectStatusOp))
+					.equals(StripeConnectStatus.Paused)
+			}
+			expectReady()
+			await connectSubmodel.pause()
+			expectPaused()
+			await connectSubmodel.refresh()
+			expectPaused()
+			await connectSubmodel.resume()
+			expectReady()
+			await connectSubmodel.refresh()
+			expectReady()
 		},
 	},
 }

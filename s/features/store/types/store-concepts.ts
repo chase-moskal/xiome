@@ -37,8 +37,9 @@ export interface StoreServiceOptions extends StoreCommonOptions {
 
 export enum StripeConnectStatus {
 	Unlinked,
-	LinkedButNotReady,
-	Linked,
+	Incomplete,
+	Paused,
+	Ready,
 }
 
 export interface StripeConnectDetails {
@@ -48,4 +49,5 @@ export interface StripeConnectDetails {
 	payouts_enabled: boolean
 	details_submitted: boolean
 	timeLinked: number
+	paused: boolean
 }

@@ -9,20 +9,21 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 
 	let connectDetails: StripeConnectDetails
 
-	const existingAssociatedStripeAccount = await storeTables
+	const ourRecordOfStripeAccount = await storeTables
 		.merchant.stripeAccounts.one({conditions: false})
 
-	if (existingAssociatedStripeAccount) {
-		const id = existingAssociatedStripeAccount.stripeAccountId
-		const timeLinked = existingAssociatedStripeAccount.timeLinked
-		const account = await stripeLiaison.accounts.retrieve(id)
+	if (ourRecordOfStripeAccount) {
+		const id = ourRecordOfStripeAccount.stripeAccountId
+		const timeLinked = ourRecordOfStripeAccount.time
+		const stripeRecordOfAccount = await stripeLiaison.accounts.retrieve(id)
 		connectDetails = {
-			email: account.email,
-			stripeAccountId: account.id,
-			charges_enabled: account.charges_enabled,
-			payouts_enabled: account.payouts_enabled,
-			details_submitted: account.details_submitted,
 			timeLinked,
+			email: stripeRecordOfAccount.email,
+			paused: ourRecordOfStripeAccount.paused,
+			stripeAccountId: stripeRecordOfAccount.id,
+			charges_enabled: stripeRecordOfAccount.charges_enabled,
+			payouts_enabled: stripeRecordOfAccount.payouts_enabled,
+			details_submitted: stripeRecordOfAccount.details_submitted,
 		}
 	}
 

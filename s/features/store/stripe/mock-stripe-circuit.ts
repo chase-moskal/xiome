@@ -55,6 +55,8 @@ export async function mockStripeCircuit({
 				await stripeTables.accounts.update({
 					...find({id: stripeAccountId}),
 					write: {
+						email: "fake-stripe-account-email@xiome.io",
+						charges_enabled: true,
 						payouts_enabled: true,
 						details_submitted: true,
 					},

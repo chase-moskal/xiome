@@ -7,9 +7,11 @@ import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {makeConnectService} from "./services/connect-service.js"
 import {makeBillingService} from "./services/billing-service.js"
 import {StoreAuth, StoreMeta} from "../types/store-metas-and-auths.js"
-import {StoreApiOptions, StoreServiceOptions} from "../types/store-concepts.js"
+import {determineConnectStatus} from "./services/helpers/utils/determine-connect-status.js"
 import {makeSubscriptionPlanningService} from "./services/subscription-planning-service.js"
 import {makeSubscriptionShoppingService} from "./services/subscription-shopping-service.js"
+import {fetchStripeConnectDetails} from "./services/helpers/fetch-stripe-connect-details.js"
+import {StoreApiOptions, StoreServiceOptions, StripeConnectStatus} from "../types/store-concepts.js"
 
 export const storeApi = ({
 		storeTables,
@@ -37,14 +39,20 @@ export const storeApi = ({
 		storePolicy,
 		async storeLinkedPolicy(meta, request) {
 			const auth = await storePolicy(meta, request)
-			const row = await auth.storeTables.merchant
-				.stripeAccounts
-					.one({conditions: false})
-			if (!row)
-				throw new ApiError(400, "store is not available")
+			const connectDetails = await fetchStripeConnectDetails({
+				storeTables: auth.storeTables,
+				stripeLiaison: auth.stripeLiaison,
+			})
+			const connectStatus = determineConnectStatus(connectDetails)
+			if (connectStatus !== StripeConnectStatus.Ready)
+				throw new ApiError(
+					400,
+					"stripe account is not connected, and this action requires it"
+				)
 			return {
 				...auth,
-				stripeLiaisonAccount: stripeLiaison.account(row.stripeAccountId),
+				stripeLiaisonAccount:
+					stripeLiaison.account(connectDetails.stripeAccountId),
 			}
 		},
 	}

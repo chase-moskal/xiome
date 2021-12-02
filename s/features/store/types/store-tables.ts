@@ -16,8 +16,10 @@ export type MerchantTables = {
 }
 
 export type MerchantRow = {
-	timeLinked: number
+	time: number
+	userId: DamnId
 	stripeAccountId: string
+	paused: boolean
 }
 
 // //

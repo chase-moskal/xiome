@@ -1,6 +1,6 @@
 
 import {storeTestSetup} from "./store-test-setup.js"
-import {storePrivileges} from "../store-privileges.js"
+import {storePowerPrivileges, storePrivileges} from "../store-privileges.js"
 
 type StorePrivilegeKey = keyof typeof storePrivileges
 
@@ -9,6 +9,43 @@ export async function setupSimpleStoreClient(...privileges: StorePrivilegeKey[])
 	const client = await makeClient()
 	await client.setAccessWithPrivileges(...privileges.map(p => storePrivileges[p]))
 	return client
+}
+
+export async function setupLinkedStore() {
+	const {makeClient} = await storeTestSetup()
+
+	async function makeMerchantClient() {
+		const merchantClient = await makeClient()
+		await merchantClient.setAccessWithPrivileges(
+			...Object.values(storePowerPrivileges)
+		)
+		return merchantClient
+	}
+
+	const merchantClient = await makeMerchantClient()
+	await merchantClient.storeModel.connectSubmodel.activate()
+	await merchantClient.storeModel.connectSubmodel.connectStripeAccount()
+
+	return {
+		makeClient,
+		merchantClient,
+		makeAnotherMerchantClient: makeMerchantClient,
+		async makePlebeianClient() {
+			const client = await makeClient()
+			await client.setAccessWithPrivileges()
+			await client.storeModel.connectSubmodel.activate()
+			return client
+		},
+		async makeClerkClient() {
+			const client = await makeClient()
+			await client.setAccessWithPrivileges(
+				storePrivileges["manage store"],
+				storePrivileges["give away freebies"],
+			)
+			await client.storeModel.connectSubmodel.activate()
+			return client
+		},
+	}
 }
 
 // export async function merchantStoreSetup() {
