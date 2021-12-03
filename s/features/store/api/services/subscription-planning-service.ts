@@ -34,17 +34,22 @@ export const makeSubscriptionPlanningService = (
 	expose: {
 
 		async listPlanningDetails(auth): Promise<SubscriptionPlan[]> {
-
 			const helpers = subscriptionHelpers(auth)
+
 			const planRows = await helpers.fetchOurSubscriptionPlanRecords()
-			const data = await helpers.crossReferenceWithStripeProducts(planRows)
-			await helpers.deletePlansThatNoLongerExistOnStripe(data.missingPlanIds)
+			const planCross = await helpers.crossReferencePlansWithStripeProducts(planRows)
+			await helpers.deletePlans(planCross.missingIds)
 
-			// const tierRows = await storeTables.subscription.tiers.read(
-			// 	find({stripeAccountId})
-			// )
+			const tierRows = await helpers.fetchOurRecordsOfPlanTiers(planCross.presentIds)
+			const tierCross = await helpers.crossReferenceTiersWithStripePrices(tierRows)
+			const parentlessTierIds = helpers.identifyTiersWithoutParentPlan(tierRows, planCross.presentIds)
+			const tiersIdsToDelete = helpers.dedupeIds([...tierCross.missingIds, ...parentlessTierIds])
+			await helpers.deleteTiers(tiersIdsToDelete)
 
-			return []
+			return helpers.assembleSubscriptionPlans({
+				plans: {rows: planRows, cross: planCross},
+				tiers: {rows: tierRows, cross: tierCross},
+			})
 		},
 
 		async addPlan({stripeLiaisonAccount, stripeAccountId, authTables, storeTables}, {
@@ -111,12 +116,14 @@ export const makeSubscriptionPlanningService = (
 				planId: planId.toString(),
 				label: planLabel,
 				time: now,
+				active: true,
 				tiers: [
 					{
 						tierId: tierId.toString(),
 						label: tierLabel,
 						price: tierPrice,
 						time: now,
+						active: true,
 					}
 				],
 			}

@@ -60,6 +60,7 @@ export interface SubscriptionTier {
 	label: string
 	price: number
 	time: number
+	active: boolean
 }
 
 export interface SubscriptionPlan {
@@ -67,4 +68,5 @@ export interface SubscriptionPlan {
 	label: string
 	tiers: SubscriptionTier[]
 	time: number
+	active: boolean
 }
