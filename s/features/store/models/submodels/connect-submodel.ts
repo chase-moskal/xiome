@@ -63,6 +63,11 @@ export function makeConnectSubmodel({
 			await loadConnectDetails()
 			await change.publish()
 		},
+		async generateStripeLoginLink() {
+			if (ops.value(state.readable.connectStatusOp) === StripeConnectStatus.Unlinked)
+				throw new Error("no stripe account to generate login link for")
+			return connectService.generateStripeLoginLink()
+		},
 		async pause() {
 			await connectService.pause()
 			state.writable.connectStatusOp = ops.ready(StripeConnectStatus.Paused)

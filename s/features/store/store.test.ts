@@ -3,6 +3,7 @@ import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
+import {url, validator} from "../../toolbox/darkvalley.js"
 
 export default <Suite>{
 
@@ -108,7 +109,14 @@ export default <Suite>{
 
 		"login to stripe account": {
 
-			async "merchant can login to connected stripe account"() {},
+			async "merchant can login to connected stripe account"() {
+				const {merchantClient} = await setupLinkedStore()
+				const {connectSubmodel} = merchantClient.storeModel
+				const link = await connectSubmodel.generateStripeLoginLink()
+				const validate = url()
+				const problems = validate(link)
+				expect(problems.length).equals(0)
+			},
 		},
 	},
 }
