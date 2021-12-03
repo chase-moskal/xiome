@@ -75,8 +75,7 @@ li > header > span {
 }
 
 xio-id {
-	--_div-id-text-overflow: clip;
-	--_div-id-width: 2.7em;
+	--_div-id-width: 4em;
 }
 
 li > header > span > xio-button {

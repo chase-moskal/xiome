@@ -24,7 +24,7 @@ export function renderChatPost({
 				${isModerator
 					? html`
 						<span>
-							<xio-button style="border: none;" title="Mute" @press=${mute}>${muteIcon}</xio-button>
+							<xio-button title="Mute" @press=${mute}>${muteIcon}</xio-button>
 							<xio-button title="Delete" @press=${remove}>${deleteIcon}</xio-button>
 						</span>
 					`
