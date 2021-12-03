@@ -22,6 +22,24 @@ export default <Suite>{
 				expect(getConnectDetails()).not.ok()
 				await storeModel.connectSubmodel.connectStripeAccount()
 				expect(getConnectDetails()).ok()
+				expect(ops.value(storeModel.state.connectStatusOp))
+					.equals(StripeConnectStatus.Ready)
+				await client.setLoggedOut()
+				expect(getConnectDetails()).not.ok()
+			},
+			async "merchant can link incomplete stripe account"() {
+				const {storeModel, ...client} = await setupSimpleStoreClient(
+					"control stripe account"
+				)
+				const getConnectDetails = () => ops.value(
+					storeModel.state.connectDetailsOp
+				)
+				expect(getConnectDetails()).not.ok()
+				client.rigStripeLinkToFail()
+				await storeModel.connectSubmodel.connectStripeAccount()
+				expect(getConnectDetails()).ok()
+				expect(ops.value(storeModel.state.connectStatusOp))
+					.equals(StripeConnectStatus.Incomplete)
 				await client.setLoggedOut()
 				expect(getConnectDetails()).not.ok()
 			},
