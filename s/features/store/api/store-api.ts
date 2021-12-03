@@ -51,6 +51,7 @@ export const storeApi = ({
 				)
 			return {
 				...auth,
+				stripeAccountId: connectDetails.stripeAccountId,
 				stripeLiaisonAccount:
 					stripeLiaison.account(connectDetails.stripeAccountId),
 			}

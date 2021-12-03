@@ -1,17 +1,16 @@
 
 import {StoreTables} from "./store-tables.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
-import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
+import {StripeLiaison, StripeLiaisonAccount} from "./store-concepts.js"
 
 export interface StoreMeta extends AnonMeta {}
 
 export interface StoreAuth extends AnonAuth {
 	storeTables: StoreTables
-	stripeLiaison: ReturnType<typeof makeStripeLiaison>
+	stripeLiaison: StripeLiaison
 }
 
 export interface StoreLinkedAuth extends StoreAuth {
-	stripeLiaisonAccount: ReturnType<
-		ReturnType<typeof makeStripeLiaison>["account"]
-	>
+	stripeAccountId: string
+	stripeLiaisonAccount: StripeLiaisonAccount
 }

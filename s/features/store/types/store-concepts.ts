@@ -10,6 +10,9 @@ import {StoreAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
+export type StripeLiaisonAccount = ReturnType<
+	ReturnType<typeof makeStripeLiaison>["account"]
+>
 
 export interface StoreCommonOptions {
 	config: SecretConfig

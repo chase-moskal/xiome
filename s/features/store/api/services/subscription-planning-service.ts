@@ -3,6 +3,7 @@ import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+import {subscriptionHelpers} from "./helpers/subscription-helpers.js"
 import {StoreLinkedAuth, StoreMeta} from "../../types/store-metas-and-auths.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
@@ -32,9 +33,21 @@ export const makeSubscriptionPlanningService = (
 
 	expose: {
 
-		async listPlanningDetails() {},
+		async listPlanningDetails(auth): Promise<SubscriptionPlan[]> {
 
-		async addPlan({stripeLiaisonAccount, authTables, storeTables}, {
+			const helpers = subscriptionHelpers(auth)
+			const planRows = await helpers.fetchOurSubscriptionPlanRecords()
+			const data = await helpers.crossReferenceWithStripeProducts(planRows)
+			await helpers.deletePlansThatNoLongerExistOnStripe(data.missingPlanIds)
+
+			// const tierRows = await storeTables.subscription.tiers.read(
+			// 	find({stripeAccountId})
+			// )
+
+			return []
+		},
+
+		async addPlan({stripeLiaisonAccount, stripeAccountId, authTables, storeTables}, {
 				planLabel, tierLabel, tierPrice,
 			}: {
 				planLabel: string
@@ -81,6 +94,7 @@ export const makeSubscriptionPlanningService = (
 				roleId: planRoleId,
 				stripeProductId,
 				time: now,
+				stripeAccountId,
 			})
 
 			await storeTables.subscription.tiers.create({
@@ -90,6 +104,7 @@ export const makeSubscriptionPlanningService = (
 				roleId: tierRoleId,
 				stripePriceId,
 				time: now,
+				stripeAccountId,
 			})
 
 			return {

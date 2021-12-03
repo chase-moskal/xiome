@@ -18,8 +18,8 @@ export type MerchantTables = {
 export type MerchantRow = {
 	time: number
 	userId: DamnId
-	stripeAccountId: string
 	paused: boolean
+	stripeAccountId: string
 }
 
 //
@@ -35,8 +35,9 @@ export type SubscriptionPlanRow = {
 	label: string
 	planId: DamnId
 	roleId: DamnId
-	stripeProductId: string
 	time: number
+	stripeAccountId: string
+	stripeProductId: string
 }
 
 export type SubscriptionTierRow = {
@@ -44,16 +45,10 @@ export type SubscriptionTierRow = {
 	tierId: DamnId
 	planId: DamnId
 	roleId: DamnId
-	stripePriceId: string
 	time: number
+	stripePriceId: string
+	stripeAccountId: string
 }
-
-export type SubscriptionTierOrderingRow = {
-	planId: DamnId
-	ordering: string
-}
-
-
 
 
 
