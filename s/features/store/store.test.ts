@@ -9,7 +9,7 @@ export default <Suite>{
 	"store connect submodel": {
 		async "merchant can connect a stripe account"() {
 			const {storeModel, ...client} = await setupSimpleStoreClient(
-				"connect stripe account"
+				"control stripe account"
 			)
 			const getConnectDetails = () => ops.value(
 				storeModel.state.connectDetailsOp

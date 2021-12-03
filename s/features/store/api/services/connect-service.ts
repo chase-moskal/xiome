@@ -62,7 +62,7 @@ export const makeConnectService = (
 			},
 		}),
 
-		...requiredPrivilege("connect stripe account", {
+		...requiredPrivilege("control stripe account", {
 
 			async loadConnectDetails({stripeLiaison, storeTables}) {
 				const connectDetails = await fetchStripeConnectDetails({
