@@ -2,12 +2,11 @@
 import {ApiError} from "renraku/x/api/api-error.js"
 import {apiContext} from "renraku/x/api/api-context.js"
 
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {subscriptionHelpers} from "./helpers/subscription-helpers.js"
 import {StoreLinkedAuth, StoreMeta} from "../../types/store-metas-and-auths.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
-import {RoleRow} from "../../../auth/aspects/permissions/types/permissions-tables.js"
+import {helpersForListingSubscriptions} from "./helpers/helpers-for-listing-subscriptions.js"
+import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
 import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
 
 const hardcodedCurrency = "usd"
@@ -33,8 +32,8 @@ export const makeSubscriptionPlanningService = (
 
 	expose: {
 
-		async listPlanningDetails(auth): Promise<SubscriptionPlan[]> {
-			const helpers = subscriptionHelpers(auth)
+		async listSubscriptionPlans(auth): Promise<SubscriptionPlan[]> {
+			const helpers = helpersForListingSubscriptions(auth)
 
 			const planRows = await helpers.fetchOurSubscriptionPlanRecords()
 			const planCross = await helpers.crossReferencePlansWithStripeProducts(planRows)
@@ -42,6 +41,7 @@ export const makeSubscriptionPlanningService = (
 
 			const tierRows = await helpers.fetchOurRecordsOfPlanTiers(planCross.presentIds)
 			const tierCross = await helpers.crossReferenceTiersWithStripePrices(tierRows)
+
 			const parentlessTierIds = helpers.identifyTiersWithoutParentPlan(tierRows, planCross.presentIds)
 			const tiersIdsToDelete = helpers.dedupeIds([...tierCross.missingIds, ...parentlessTierIds])
 			await helpers.deleteTiers(tiersIdsToDelete)
@@ -52,77 +52,36 @@ export const makeSubscriptionPlanningService = (
 			})
 		},
 
-		async addPlan({stripeLiaisonAccount, stripeAccountId, authTables, storeTables}, {
-				planLabel, tierLabel, tierPrice,
-			}: {
+		async addPlan(auth, inputs: {
 				planLabel: string
 				tierLabel: string
 				tierPrice: number
 			}): Promise<SubscriptionPlan> {
 
-			const {id: stripeProductId}
-				= await stripeLiaisonAccount.products.create({name: planLabel})
+			const helpers = helpersForManagingSubscriptions({...options, ...auth})
 
-			const {id: stripePriceId}
-				= await stripeLiaisonAccount.prices.create({
-					currency: hardcodedCurrency,
-					unit_amount: tierPrice,
-					recurring: {interval: hardcodedInterval},
-				})
-
-			const now = Date.now()
-
-			function makeRole(roleId: DamnId, label: string): RoleRow {
-				return {
-					label,
-					roleId,
-					hard: true,
-					public: true,
-					assignable: true,
-					time: now,
-				}
-			}
-
-			const planId = options.generateId()
-			const planRoleId = options.generateId()
-			const tierId = options.generateId()
-			const tierRoleId = options.generateId()
-
-			await authTables.permissions.role.create(
-				makeRole(planRoleId, planLabel),
-				makeRole(tierRoleId, tierLabel),
-			)
-
-			await storeTables.subscription.plans.create({
-				planId,
-				label: planLabel,
-				roleId: planRoleId,
-				stripeProductId,
-				time: now,
-				stripeAccountId,
+			const stripeDetails = await helpers.createStripeProductAndPrice({
+				...inputs,
+				tierCurrency: hardcodedCurrency,
+				tierInterval: hardcodedInterval,
 			})
 
-			await storeTables.subscription.tiers.create({
-				tierId,
-				planId,
-				label: tierLabel,
-				roleId: tierRoleId,
-				stripePriceId,
-				time: now,
-				stripeAccountId,
+			const {planId, tierId, time} = await helpers.createPlanAndTier({
+				...stripeDetails,
+				...inputs,
 			})
 
 			return {
 				planId: planId.toString(),
-				label: planLabel,
-				time: now,
+				label: inputs.planLabel,
+				time,
 				active: true,
 				tiers: [
 					{
 						tierId: tierId.toString(),
-						label: tierLabel,
-						price: tierPrice,
-						time: now,
+						label: inputs.tierLabel,
+						price: inputs.tierPrice,
+						time,
 						active: true,
 					}
 				],
