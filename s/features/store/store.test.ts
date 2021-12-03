@@ -117,6 +117,13 @@ export default <Suite>{
 				const problems = validate(link)
 				expect(problems.length).equals(0)
 			},
+			async "merchant cannot login to unconnected stripe account"() {
+				const {storeModel} = await setupSimpleStoreClient("control stripe account")
+				expect(async() => storeModel.connectSubmodel.generateStripeLoginLink())
+					.throws()
+			},
+			// async "merchant can login to incomplete stripe account"() {},
+			// async "clerk cannot login to stripe account"() {},
 		},
 	},
 }
