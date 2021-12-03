@@ -11,6 +11,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 			async retrieve(id: string) {
 				return stripe.accounts.retrieve(id)
 			},
+			async createLoginLink(id: string) {
+				return stripe.accounts.createLoginLink(id)
+			},
 		},
 
 		accountLinks: {

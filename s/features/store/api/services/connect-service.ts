@@ -103,6 +103,18 @@ export const makeConnectService = (
 					})
 				return {stripeAccountId, stripeAccountSetupLink}
 			},
+
+			async generateStripeLoginLink({stripeLiaison, storeTables}) {
+				const connectDetails = await fetchStripeConnectDetails({
+					storeTables,
+					stripeLiaison,
+				})
+				let stripeAccountId = connectDetails?.stripeAccountId
+				if (!stripeAccountId)
+					throw new ApiError(404, "no such connected stripe account")
+				const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
+				return url
+			},
 		}),
 	},
 })

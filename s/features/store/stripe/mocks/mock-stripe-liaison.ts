@@ -44,6 +44,13 @@ export function mockStripeLiaison({
 				const account = await tables.accounts.one(find({id}))
 				return respond(<Stripe.Account>account)
 			},
+			async createLoginLink(id) {
+				const loginLink: Partial<Stripe.LoginLink> = {
+					created: Date.now(),
+					url: `https://fake.xiome.io/stripe-account-login-link`,
+				}
+				return respond(<Stripe.LoginLink>loginLink)
+			},
 		},
 
 		accountLinks: {
