@@ -1,7 +1,6 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
-import {storePrivileges} from "./store-privileges.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
 
@@ -49,7 +48,6 @@ export default <Suite>{
 			async "clerk can see the connect status, but not the details"() {
 				const {makeClerkClient} = await setupLinkedStore()
 				const clerkClient = await makeClerkClient()
-				await clerkClient.setAccessWithPrivileges(storePrivileges["manage store"])
 				await clerkClient.storeModel.connectSubmodel.activate()
 				const {state} = clerkClient.storeModel
 				expect(ops.value(state.connectStatusOp)).defined()
