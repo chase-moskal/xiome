@@ -22,6 +22,9 @@ button {
 :host {
 	display: inline-block;
 	position: relative;
+	/*Variables for element customization below*/
+	--_div-id-width: initial;
+	--_div-id-text-overflow: ellipsis;
 	--_flex-direction: row;
 	--_flex-align-items: center;
 }
@@ -62,8 +65,9 @@ button {
 	opacity: 0.75;
 	max-width: var(--id-max-width, 6em);
 	overflow: hidden;
-	text-overflow: ellipsis;
+	text-overflow: var(--_div-id-text-overflow);
 	white-space: nowrap;
+	width: var(--_div-id-width);
 }
 
 .copy svg {

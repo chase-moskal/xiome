@@ -70,12 +70,13 @@ li > header > span {
 }
 
 .userid {
+	margin-left: 1em;
 	overflow: hidden;
-	width: 3.75em;
 }
 
 xio-id {
-	--_flex-direction: row-reverse;
+	--_div-id-text-overflow: clip;
+	--_div-id-width: 2.7em;
 }
 
 li > header > span > xio-button {
@@ -96,6 +97,7 @@ li > header > span > xio-button {
 
 .time {
 	font-size: 1em;
+	opacity: 0.5;
 	padding-left: 0.5em;
 }
 
