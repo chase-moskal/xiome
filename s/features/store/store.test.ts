@@ -1,9 +1,11 @@
 
 import {Suite, expect} from "cynic"
 import {ops} from "../../framework/ops.js"
+import {url} from "../../toolbox/darkvalley.js"
+import {storePrivileges} from "./store-privileges.js"
+import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
-import {url, validator} from "../../toolbox/darkvalley.js"
 
 export default <Suite>{
 
@@ -113,17 +115,30 @@ export default <Suite>{
 				const {merchantClient} = await setupLinkedStore()
 				const {connectSubmodel} = merchantClient.storeModel
 				const link = await connectSubmodel.generateStripeLoginLink()
-				const validate = url()
-				const problems = validate(link)
-				expect(problems.length).equals(0)
+				expect(url()(link).length).equals(0)
 			},
 			async "merchant cannot login to unconnected stripe account"() {
 				const {storeModel} = await setupSimpleStoreClient("control stripe account")
-				expect(async() => storeModel.connectSubmodel.generateStripeLoginLink())
+				await expect(async() => storeModel.connectSubmodel.generateStripeLoginLink())
 					.throws()
 			},
-			// async "merchant can login to incomplete stripe account"() {},
-			// async "clerk cannot login to stripe account"() {},
+			async "merchant can login to incomplete stripe account"() {
+				const setup = await storeTestSetup()
+				const client = await setup.makeClient()
+				await client.setAccessWithPrivileges(storePrivileges["control stripe account"])
+				client.rigStripeLinkToFail()
+				const {connectSubmodel} = client.storeModel
+				await connectSubmodel.connectStripeAccount()
+				const link = await connectSubmodel.generateStripeLoginLink()
+				expect(url()(link).length).equals(0)
+			},
+			async "clerk cannot login to stripe account"() {
+				const setup = await setupLinkedStore()
+				const client = await setup.makeClerkClient()
+				const {connectSubmodel} = client.storeModel
+				await expect(async () => connectSubmodel.generateStripeLoginLink())
+					.throws()
+			},
 		},
 	},
 }
