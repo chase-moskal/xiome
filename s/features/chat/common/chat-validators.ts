@@ -1,32 +1,33 @@
 
+import {ChatDraft, ChatStatus} from "./types/chat-concepts.js"
 import {validateId} from "../../../common/validators/validate-id.js"
-import {each, max, maxLength, min, minLength, number, schema, string, validator, zeroWhitespace} from "../../../toolbox/darkvalley.js"
+import {array, each, max, maxLength, min, minLength, notWhitespace, number, schema, string, validator, zeroWhitespace} from "../../../toolbox/darkvalley.js"
 
-export const validateRoom = validator(
+export const validateChatRoom = validator<string>(
 	string(),
 	minLength(1),
 	maxLength(32),
 	zeroWhitespace(),
 )
 
-export const validateDraft = schema<{
-	content: string
-}>({
-	content: validator(
-		string(),
-	)
+export const validateChatContent = validator<string>(
+	string(),
+	minLength(1),
+	maxLength(280),
+	notWhitespace(),
+)
+
+export const validateChatDraft = schema<ChatDraft>({
+	content: validateChatContent,
 })
 
-export const validateUserIds = validator(
-	each(validateId)
+export const validateIdArray = validator<string[]>(
+	array(),
+	each(validateId),
 )
 
-export const validatePostIds = validator(
-	each(validateId)
-)
-
-export const validateStatus = validator(
+export const validateChatStatus = validator<ChatStatus>(
 	number(),
 	min(0),
-	max(1)
+	max(1),
 )
