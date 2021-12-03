@@ -4,7 +4,7 @@ import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
 import {makeActivator} from "../utils/make-activator.js"
 import {makeStoreState} from "../state/make-store-state.js"
-import {TriggerBankPopup} from "../../types/store-popups.js"
+import {TriggerStripeConnectPopup} from "../../types/store-popups.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeConnectService} from "../../api/services/connect-service.js"
@@ -13,12 +13,12 @@ export function makeConnectSubmodel({
 		state,
 		allowance,
 		connectService,
-		triggerBankPopup,
+		triggerStripeConnectPopup,
 	}: {
 		state: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		connectService: Service<typeof makeConnectService>
-		triggerBankPopup: TriggerBankPopup
+		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
 	const change = pub()
@@ -57,7 +57,7 @@ export function makeConnectSubmodel({
 		onChange: change.subscribe,
 
 		async connectStripeAccount() {
-			await triggerBankPopup(
+			await triggerStripeConnectPopup(
 				await connectService.generateConnectSetupLink()
 			)
 			await loadConnectDetails()

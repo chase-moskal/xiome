@@ -7,13 +7,13 @@ import {makeStoreAllowance} from "./utils/make-store-allowance.js"
 import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeConnectService} from "../api/services/connect-service.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {TriggerBankPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
+import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
 
 export function makeStoreModel(options: {
 		appId: string
 		storageForCache: FlexStorage
 		connectService: Service<typeof makeConnectService>
-		triggerBankPopup: TriggerBankPopup
+		triggerStripeConnectPopup: TriggerStripeConnectPopup
 		triggerCheckoutPopup: TriggerCheckoutPopup
 	}) {
 

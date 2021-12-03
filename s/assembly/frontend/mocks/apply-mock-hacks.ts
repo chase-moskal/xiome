@@ -26,8 +26,8 @@ export function applyMockHacks({connection, frontend}: {
 		},
 	)
 
-	connection.popups.triggerBankPopup = hitchie(
-		connection.popups.triggerBankPopup,
+	connection.popups.triggerStripeConnectPopup = hitchie(
+		connection.popups.triggerStripeConnectPopup,
 		async(...args) => {
 			console.log("mock: bank popup", args)
 		},

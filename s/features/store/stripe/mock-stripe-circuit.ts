@@ -51,7 +51,7 @@ export async function mockStripeCircuit({
 	return {
 		stripeLiaison,
 		mockStripeOperations: {
-			async linkBankWithExistingStripeAccount(stripeAccountId: string) {
+			async linkStripeAccount(stripeAccountId: string) {
 				await stripeTables.accounts.update({
 					...find({id: stripeAccountId}),
 					write: {
@@ -62,16 +62,16 @@ export async function mockStripeCircuit({
 					},
 				})
 			},
-			async failBankLinkageWithExistingStripeAccount(stripeAccountId: string) {
+			async linkStripeAccountThatIsIncomplete(stripeAccountId: string) {
 				await stripeTables.accounts.update({
 					...find({id: stripeAccountId}),
 					write: {
+						charges_enabled: false,
 						payouts_enabled: false,
 						details_submitted: false,
 					},
 				})
 			},
-
 			// async purchaseSubscription(stripeAccountId: string) {},
 		},
 	}

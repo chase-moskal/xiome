@@ -51,7 +51,7 @@ export async function storeTestSetup() {
 		mockStripeOperations,
 		async makeClient() {
 			let currentAccess: AccessPayload
-			let bankLinkWillSucceed = true
+			let stripeLinkWillSucceed = true
 
 			const request = mockHttpRequest({origin: appOrigin})
 			const getters = {
@@ -77,13 +77,13 @@ export async function storeTestSetup() {
 				// statusCheckerService: remotes.statusCheckerService,
 				// statusTogglerService: remotes.statusTogglerService,
 				// stripeAccountsService: remotes.stripeConnectService,
-				triggerBankPopup: async({stripeAccountId}) => {
-					if (bankLinkWillSucceed)
+				triggerStripeConnectPopup: async({stripeAccountId}) => {
+					if (stripeLinkWillSucceed)
 						mockStripeOperations
-							.linkBankWithExistingStripeAccount(stripeAccountId)
+							.linkStripeAccount(stripeAccountId)
 					else
 						mockStripeOperations
-							.failBankLinkageWithExistingStripeAccount(stripeAccountId)
+							.linkStripeAccountThatIsIncomplete(stripeAccountId)
 				},
 				triggerCheckoutPopup: async() => {},
 			})
@@ -124,8 +124,8 @@ export async function storeTestSetup() {
 				setAccess,
 				setLoggedOut,
 				setAccessWithPrivileges,
-				rigBankLinkToFail() { bankLinkWillSucceed = false },
-				rigBankLinkToSucceed() { bankLinkWillSucceed = true },
+				rigStripeLinkToFail() { stripeLinkWillSucceed = false },
+				rigStripeLinkToSucceed() { stripeLinkWillSucceed = true },
 			}
 		},
 	}

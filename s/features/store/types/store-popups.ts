@@ -1,5 +1,5 @@
 
-export type TriggerBankPopup = ({stripeAccountId, stripeAccountSetupLink}: {
+export type TriggerStripeConnectPopup = ({stripeAccountId, stripeAccountSetupLink}: {
 	stripeAccountId: string
 	stripeAccountSetupLink: string
 }) => Promise<void>
