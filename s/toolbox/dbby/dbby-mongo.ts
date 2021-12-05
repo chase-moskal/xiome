@@ -79,11 +79,11 @@ export function dbbyMongo<Row extends DbbyRow>({collection}: {
 
 function prepareQuery<Row extends DbbyRow>({
 		conditions
-	}: DbbyConditional<Row>): Filter<{}> {
+	}: DbbyConditional<Row>): Filter<any> {
 
 	if (!conditions) return {}
 
-	function recurse(tree: DbbyConditionTree<Row>): Filter<{}> {
+	function recurse(tree: DbbyConditionTree<Row>): Filter<any> {
 		const [operator, ...conds] = tree
 
 		const query = conds

@@ -1,16 +1,16 @@
 
-import chalk, {Chalk} from "chalk"
+import {Chalk, ChalkInstance} from "chalk"
 import {Colors, Colorizer} from "./interfaces.js"
 
 export function nodeColors(force?: boolean): Colors {
-	let chalkstick: Chalk
+	let chalkstick: ChalkInstance
 
 	if (force === true)
-		chalkstick = new chalk.Instance({level: 1})
+		chalkstick = new Chalk({level: 1})
 	else if (force === false)
-		chalkstick = new chalk.Instance({level: 0})
+		chalkstick = new Chalk({level: 0})
 	else
-		chalkstick = new chalk.Instance()
+		chalkstick = new Chalk()
 
 	const bind = <T extends Colorizer>(colorfunc: T) =>
 		colorfunc.bind(chalkstick)
