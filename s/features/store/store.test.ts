@@ -10,6 +10,7 @@ import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-se
 export default <Suite>{
 
 	"store connect submodel": {
+
 		"connect a stripe account": {
 
 			async "merchant can connect a stripe account"() {
@@ -157,6 +158,79 @@ export default <Suite>{
 				await expect(async () => connectSubmodel.generateStripeLoginLink())
 					.throws()
 			},
+		},
+	},
+
+	"subscription planning": {
+
+		"clerk can create a new subscription plan": async() => {
+			const {makeClerkClient} = await setupLinkedStore()
+			const clerk = await makeClerkClient()
+			const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+
+			const plans = await planning.listSubscriptionPlans()
+			expect(plans.length).equals(0)
+
+			const newPlan = await planning.addPlan({
+				planLabel: "premium membership",
+				tierLabel: "supporter",
+				tierPrice: 10_00,
+			})
+			expect(newPlan.planId).ok()
+			expect(newPlan.tiers.length).equals(1)
+
+			const plans2 = await planning.listSubscriptionPlans()
+			expect(plans2.length).equals(1)
+			expect(plans2[0]).ok()
+		},
+		"other clerks can view subscription plans": async() => {
+			const {makeClerkClient} = await setupLinkedStore()
+			{
+				const clerk = await makeClerkClient()
+				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+				await Promise.all([
+					planning.addPlan({
+						planLabel: "premium membership",
+						tierLabel: "supporter",
+						tierPrice: 10_00,
+					}),
+					planning.addPlan({
+						planLabel: "underground secret society",
+						tierLabel: "accolyte",
+						tierPrice: 100_00,
+					}),
+				])
+			}
+			{
+				const clerk = await makeClerkClient()
+				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+				const plans = await planning.listSubscriptionPlans()
+				expect(plans.length).equals(2)
+			}
+		},
+		"plebeians cannot view subscriptions from the planning perspective": async() => {
+			const {makeClerkClient, makePlebeianClient} = await setupLinkedStore()
+			{
+				const clerk = await makeClerkClient()
+				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+				await Promise.all([
+					planning.addPlan({
+						planLabel: "premium membership",
+						tierLabel: "supporter",
+						tierPrice: 10_00,
+					}),
+					planning.addPlan({
+						planLabel: "underground secret society",
+						tierLabel: "accolyte",
+						tierPrice: 100_00,
+					}),
+				])
+			}
+			{
+				const plebe = await makePlebeianClient()
+				const {subscriptionPlanningSubmodel: planning} = plebe.storeModel
+				await expect(async() => planning.listSubscriptionPlans()).throws()
+			}
 		},
 	},
 }
