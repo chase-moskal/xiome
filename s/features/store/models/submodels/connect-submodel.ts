@@ -47,9 +47,7 @@ export function makeConnectSubmodel({
 		}
 	}
 
-	const activator = makeActivator(async() => {
-		await loadConnectDetails()
-	})
+	const activator = makeActivator(loadConnectDetails)
 
 	return {
 		activate: activator.activate,

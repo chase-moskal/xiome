@@ -168,7 +168,8 @@ export default <Suite>{
 			const clerk = await makeClerkClient()
 			const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
 
-			const plans = await planning.listSubscriptionPlans()
+			await planning.activate()
+			const plans = ops.value(clerk.storeModel.state.subscriptionPlansOp)
 			expect(plans.length).equals(0)
 
 			const newPlan = await planning.addPlan({
@@ -179,7 +180,8 @@ export default <Suite>{
 			expect(newPlan.planId).ok()
 			expect(newPlan.tiers.length).equals(1)
 
-			const plans2 = await planning.listSubscriptionPlans()
+			await planning.refresh()
+			const plans2 = ops.value(clerk.storeModel.state.subscriptionPlansOp)
 			expect(plans2.length).equals(1)
 			expect(plans2[0]).ok()
 		},
@@ -204,7 +206,8 @@ export default <Suite>{
 			{
 				const clerk = await makeClerkClient()
 				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
-				const plans = await planning.listSubscriptionPlans()
+				await planning.activate()
+				const plans = ops.value(clerk.storeModel.state.subscriptionPlansOp)
 				expect(plans.length).equals(2)
 			}
 		},
@@ -229,7 +232,7 @@ export default <Suite>{
 			{
 				const plebe = await makePlebeianClient()
 				const {subscriptionPlanningSubmodel: planning} = plebe.storeModel
-				await expect(async() => planning.listSubscriptionPlans()).throws()
+				await expect(async() => planning.activate()).throws()
 			}
 		},
 	},

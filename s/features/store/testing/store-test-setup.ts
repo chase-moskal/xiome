@@ -60,23 +60,16 @@ export async function storeTestSetup() {
 			}
 
 			const remotes = {
-				connectService: mockRemote(api.connectService).useMeta(getters),
-				// shoppingService: mockRemote(api.shoppingService).useMeta(getters),
-				// shopkeepingService: mockRemote(api.shopkeepingService).useMeta(getters),
-				// statusCheckerService: mockRemote(api.statusCheckerService).useMeta(getters),
-				// statusTogglerService: mockRemote(api.statusTogglerService).useMeta(getters),
-				// stripeConnectService: mockRemote(api.stripeConnectService).useMeta(getters),
+				connectService:
+					mockRemote(api.connectService).useMeta(getters),
+				subscriptionPlanningService:
+					mockRemote(api.subscriptionPlanningService).useMeta(getters),
 			}
 
 			const storeModel = makeStoreModel({
+				...remotes,
 				appId: appId.toString(),
 				storageForCache: storage,
-				connectService: remotes.connectService,
-				// shoppingService: remotes.shoppingService,
-				// shopkeepingService: remotes.shopkeepingService,
-				// statusCheckerService: remotes.statusCheckerService,
-				// statusTogglerService: remotes.statusTogglerService,
-				// stripeAccountsService: remotes.stripeConnectService,
 				triggerStripeConnectPopup: async({stripeAccountId}) => {
 					if (stripeLinkWillSucceed)
 						mockStripeOperations
