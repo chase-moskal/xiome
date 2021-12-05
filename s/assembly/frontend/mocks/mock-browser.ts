@@ -4,10 +4,9 @@ import {SystemApi} from "../../backend/types/system-api.js"
 import {assembleModels} from "../models/assemble-models.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"
-import {ChatConnect} from "../../../features/chat/common/types/chat-concepts.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
-import {MockStripeOperations} from "../../../features/store/stripe2/types/mock-stripe-operations.js"
 import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
+import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
 
 export async function mockBrowser({api, mockStripeOperations}: {
 		api: SystemApi

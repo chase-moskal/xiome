@@ -4,13 +4,13 @@ import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
 
 import {storeApi} from "../api/store-api.js"
 import {ops} from "../../../framework/ops.js"
-import {makeStoreModel2} from "../model/store-model2.js"
+import {makeStoreModel} from "../models/store-model.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStoreTables} from "../api/tables/mock-store-tables.js"
+import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
 import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
-import {mockStripeCircuit} from "../stripe2/mocks/mock-stripe-circuit.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
@@ -51,6 +51,7 @@ export async function storeTestSetup() {
 		mockStripeOperations,
 		async makeClient() {
 			let currentAccess: AccessPayload
+			let stripeLinkWillSucceed = true
 
 			const request = mockHttpRequest({origin: appOrigin})
 			const getters = {
@@ -59,23 +60,25 @@ export async function storeTestSetup() {
 			}
 
 			const remotes = {
-				shopkeepingService: mockRemote(api.shopkeepingService).useMeta(getters),
-				statusCheckerService: mockRemote(api.statusCheckerService).useMeta(getters),
-				statusTogglerService: mockRemote(api.statusTogglerService).useMeta(getters),
-				stripeConnectService: mockRemote(api.stripeConnectService).useMeta(getters),
+				connectService:
+					mockRemote(api.connectService).useMeta(getters),
+				subscriptionPlanningService:
+					mockRemote(api.subscriptionPlanningService).useMeta(getters),
 			}
 
-			const storeModel = makeStoreModel2({
-				storage,
+			const storeModel = makeStoreModel({
+				...remotes,
 				appId: appId.toString(),
-				shopkeepingService: remotes.shopkeepingService,
-				statusCheckerService: remotes.statusCheckerService,
-				statusTogglerService: remotes.statusTogglerService,
-				stripeAccountsService: remotes.stripeConnectService,
-				triggerBankPopup:
-					async({stripeAccountId}) =>
+				storageForCache: storage,
+				triggerStripeConnectPopup: async({stripeAccountId}) => {
+					if (stripeLinkWillSucceed)
 						mockStripeOperations
-							.linkBankWithExistingStripeAccount(stripeAccountId),
+							.linkStripeAccount(stripeAccountId)
+					else
+						mockStripeOperations
+							.linkStripeAccountThatIsIncomplete(stripeAccountId)
+				},
+				triggerCheckoutPopup: async() => {},
 			})
 
 			async function setAccess(access: AccessPayload) {
@@ -114,6 +117,8 @@ export async function storeTestSetup() {
 				setAccess,
 				setLoggedOut,
 				setAccessWithPrivileges,
+				rigStripeLinkToFail() { stripeLinkWillSucceed = false },
+				rigStripeLinkToSucceed() { stripeLinkWillSucceed = true },
 			}
 		},
 	}

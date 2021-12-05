@@ -1,7 +1,7 @@
 
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
+import {storePowerPrivileges} from "../../../features/store/store-privileges.js"
 import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
-import {storePowerPrivileges} from "../../../features/store/permissions/store-privileges.js"
 import {chatPowerPrivileges, chatRegularPrivileges} from "../../../features/chat/common/chat-privileges.js"
 
 export const universalPrivilege = "c1cb5ac1000af6081ff47e80804de7542b57a1425c3faac8153e708aaf79271a"
@@ -31,10 +31,7 @@ const platformPowerPrivileges = {
 	"view platform stats": "eec7d2ddc20df6080c4166a3dea0b2643b483ce61326cbefad95e45824810692",
 }
 
-const appPowerPrivileges = {
-	"manage store": "c0ffc302f2a431a02fef22592ff2b4321944dfbfe29e7f6f83e13b6332e54b46",
-	"give away freebies": "38a7f04980f1de72b975cb5ae4be7b850aac2ca96b545ba6894daaa8b5d7c9cf",
-}
+const appPowerPrivileges = {}
 
 const active = true
 const INACTIVE = false

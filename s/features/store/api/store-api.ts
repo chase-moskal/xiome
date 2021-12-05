@@ -1,32 +1,24 @@
 
 import {ApiError} from "renraku/x/api/api-error.js"
 import {asApi} from "renraku/x/identities/as-api.js"
-import {Policy} from "renraku/x/types/primitives/policy.js"
 import {HttpRequest} from "renraku/x/types/http/http-request.js"
 
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {StoreTables} from "./tables/types/store-tables.js"
-import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
-import {makeShoppingService} from "./services/shopping-service.js"
-import {StoreAuth, StoreMeta} from "./types/store-metas-and-auths.js"
-import {makeStripeLiaison} from "../stripe2/liaison/stripe-liaison.js"
-import {makeShopkeepingService} from "./services/shopkeeping-service.js"
-import {makeStripeConnectService} from "./services/stripe-connect-service.js"
-import {makeStatusTogglerService} from "./services/status-toggler-service.js"
-import {makeStatusCheckerService} from "./services/status-checker-service.js"
-import {StoreCommonOptions, StoreServiceOptions} from "./types/store-options.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {makeConnectService} from "./services/connect-service.js"
+import {makeBillingService} from "./services/billing-service.js"
+import {StoreAuth, StoreMeta} from "../types/store-metas-and-auths.js"
+import {determineConnectStatus} from "./services/helpers/utils/determine-connect-status.js"
+import {makeSubscriptionPlanningService} from "./services/subscription-planning-service.js"
+import {makeSubscriptionShoppingService} from "./services/subscription-shopping-service.js"
+import {fetchStripeConnectDetails} from "./services/helpers/fetch-stripe-connect-details.js"
+import {StoreApiOptions, StoreServiceOptions, StripeConnectStatus} from "../types/store-concepts.js"
 
 export const storeApi = ({
 		storeTables,
 		stripeLiaison,
 		basePolicy,
 		...common
-	}: {
-		storeTables: UnconstrainedTables<StoreTables>
-		stripeLiaison: ReturnType<typeof makeStripeLiaison>
-		basePolicy: Policy<AnonMeta, AnonAuth>
-	} & StoreCommonOptions) => {
+	}: StoreApiOptions) => {
 
 	async function storePolicy(
 			meta: StoreMeta,
@@ -47,23 +39,29 @@ export const storeApi = ({
 		storePolicy,
 		async storeLinkedPolicy(meta, request) {
 			const auth = await storePolicy(meta, request)
-			const row = await auth.storeTables.merchant
-				.stripeAccounts
-					.one({conditions: false})
-			if (!row)
-				throw new ApiError(400, "store is not available")
+			const connectDetails = await fetchStripeConnectDetails({
+				storeTables: auth.storeTables,
+				stripeLiaison: auth.stripeLiaison,
+			})
+			const connectStatus = determineConnectStatus(connectDetails)
+			if (connectStatus !== StripeConnectStatus.Ready)
+				throw new ApiError(
+					400,
+					"stripe account is not connected, and this action requires it"
+				)
 			return {
 				...auth,
-				stripeLiaisonAccount: stripeLiaison.account(row.stripeAccountId),
+				stripeAccountId: connectDetails.stripeAccountId,
+				stripeLiaisonAccount:
+					stripeLiaison.account(connectDetails.stripeAccountId),
 			}
 		},
 	}
 
 	return asApi({
-		stripeConnectService: makeStripeConnectService(serviceOptions),
-		statusTogglerService: makeStatusTogglerService(serviceOptions),
-		statusCheckerService: makeStatusCheckerService(serviceOptions),
-		shopkeepingService: makeShopkeepingService(serviceOptions),
-		shoppingService: makeShoppingService(serviceOptions),
+		connectService: makeConnectService(serviceOptions),
+		subscriptionPlanningService: makeSubscriptionPlanningService(serviceOptions),
+		subscriptionShoppingService: makeSubscriptionShoppingService(serviceOptions),
+		billingService: makeBillingService(serviceOptions),
 	})
 }
