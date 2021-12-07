@@ -112,21 +112,22 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		this.draft = this.input.value
 	}
 
-	private handleInputKeyUp = (event: KeyboardEvent) => {
-		this.updateDraft()
+	private handleInputKeyPress = (event: KeyboardEvent) => {
 		if (event.key === "Enter") {
 			const notTextArea = !this.textarea
 			const notIgnoring = !event.shiftKey
-			console.log({isNotTextArea: notTextArea, isNotIgnoringTheEnterPress: notIgnoring})
 			if (notTextArea || notIgnoring) {
+				this.updateDraft()
 				this.dispatchValueChange()
 				this.dispatchEnterPress()
 				event.preventDefault()
 			}
 		}
-		else {
-			this.dispatchValueChangeDebounced()
-		}
+	}
+
+	private handleInputKeyUp = (event: KeyboardEvent) => {
+		this.updateDraft()
+		this.dispatchValueChangeDebounced()
 	}
 
 	private handleInputChange = () => {
@@ -147,7 +148,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	render() {
 		const {
 			readonly, disabled, problems, draft, placeholder, textarea,
-			validator, handleInputKeyUp, handleInputChange,
+			validator, handleInputKeyUp, handleInputKeyPress, handleInputChange,
 		} = this
 		const valid = problems.length === 0
 		const showValidation = !this["hide-validation"] && !readonly && validator && (
@@ -176,6 +177,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
 								@keyup=${handleInputKeyUp}
+								@keypress=${handleInputKeyPress}
 								@change=${handleInputChange}
 							></textarea>
 						` : html`
@@ -188,6 +190,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
 								@keyup=${handleInputKeyUp}
+								@keypress=${handleInputKeyPress}
 								@change=${handleInputChange}
 								/>
 						`}

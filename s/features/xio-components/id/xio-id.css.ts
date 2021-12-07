@@ -2,24 +2,10 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
-button {
-	font: inherit;
-	color: inherit;
-	background: transparent;
-}
-
-.container {
-	position: relative;
-	display: flex;
-	flex-direction: row;
-	user-select: none;
-	cursor: pointer;
-	border: none;
-}
-
 :host {
 	display: inline-block;
 	position: relative;
+	width: 6em;
 }
 
 :host::before {
@@ -44,6 +30,22 @@ button {
 	opacity: 1;
 }
 
+button {
+	font: inherit;
+	color: inherit;
+	background: transparent;
+	width: 100%;
+}
+
+.container {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	user-select: none;
+	cursor: pointer;
+	border: none;
+}
+
 .content {
 	display: flex;
 	justify-content: row;
@@ -56,7 +58,6 @@ button {
 
 .id {
 	opacity: 0.75;
-	max-width: var(--id-max-width, 6em);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

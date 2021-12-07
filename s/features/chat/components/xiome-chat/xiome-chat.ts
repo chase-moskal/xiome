@@ -29,6 +29,26 @@ export class XiomeChat extends ComponentWithShare<{
 	#room: ReturnType<typeof makeChatRoom>
 	#dispose = () => {}
 
+	#scrolledToBottom = true
+	#updateScrolledToBottom() {
+		const ol = this.shadowRoot.querySelector("ol")
+		const {scrollTop, scrollHeight, clientHeight} = ol
+		const scrollTotal = scrollHeight - clientHeight
+		const scrollFromBottom = scrollTotal - scrollTop
+		this.#scrolledToBottom = scrollFromBottom < 50
+	}
+	#coordinateScrollingBehavior = () => {
+		const ol = this.shadowRoot.querySelector(".history ol")
+		if (ol) {
+			if (ol.scrollHeight <= ol.clientHeight)
+				this.#scrolledToBottom = true
+			else if (this.#scrolledToBottom)
+				ol.scrollTo(0, ol.scrollHeight - ol.clientHeight)
+		}
+		else
+			this.#scrolledToBottom = true
+	}
+
 	subscribe() {
 		this.#model.session(this.room)
 			.then(({room, dispose}) => {
@@ -41,6 +61,7 @@ export class XiomeChat extends ComponentWithShare<{
 			super.subscribe(),
 			() => this.#dispose(),
 			this.#subscribeTooSoon(),
+			this.#model.subscribeToChange(this.#coordinateScrollingBehavior),
 		]
 
 		return () => {
@@ -91,7 +112,7 @@ export class XiomeChat extends ComponentWithShare<{
 					? html`
 						${this.#room.posts.length
 							? html`
-								<ol>
+								<ol @scroll=${this.#updateScrolledToBottom}>
 									${this.#room.posts.map(post => renderChatPost({
 										post,
 										isModerator: this.#model.allowance.moderateAllChats,
@@ -129,20 +150,21 @@ export class XiomeChat extends ComponentWithShare<{
 		this.tooSoon = since < chatPostCoolOff
 	}
 	#subscribeTooSoon() {
-		const interval = setInterval(
-			this.#updateTooSoon,
-			1000,
-		)
+		const interval = setInterval(this.#updateTooSoon, 1000)
 		return () => clearInterval(interval)
 	}
 
-	#postToChat = () => {
-		const {value} = this.authorshipInput
-		const draft: ChatDraft = {content: value}
-		this.#lastSend = Date.now()
-		this.authorshipInput.text = ""
-		this.#updateTooSoon()
-		this.#room.post(draft)
+	#postToChat = (event: Event) => {
+		event.preventDefault()
+		const {tooSoon} = this
+		if (!tooSoon) {
+			const {value} = this.authorshipInput
+			const draft: ChatDraft = {content: value}
+			this.#lastSend = Date.now()
+			this.authorshipInput.text = ""
+			this.#updateTooSoon()
+			this.#room.post(draft)
+		}
 	}
 
 	#renderParticipation() {
