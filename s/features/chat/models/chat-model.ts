@@ -1,4 +1,5 @@
 
+import {pub} from "../../../toolbox/pub.js"
 import {onesie} from "../../../toolbox/onesie.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeChatState} from "./state/chat-state.js"
@@ -13,8 +14,12 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		getChatMeta: () => Promise<ChatMeta>
 	}) {
 
+	const changeEvent = pub()
 	const state = makeChatState()
-	const clientsideLogic = prepareChatClientsideLogic({state})
+	const clientsideLogic = prepareChatClientsideLogic({
+		state,
+		onChange: changeEvent.publish,
+	})
 
 	const reconnect = onesie(async function() {
 		const connection = ops.value(state.readable.connectionOp)
@@ -44,6 +49,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
+		subscribeToChange: changeEvent.subscribe,
 
 		get allowance() {
 			const access = ops.value(state.readable.accessOp)

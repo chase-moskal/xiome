@@ -2,9 +2,16 @@
 import {makeChatState} from "../../../models/state/chat-state.js"
 import {ChatPost, ChatStatus} from "../../../common/types/chat-concepts.js"
 
-export function prepareChatClientsideLogic({state}: {
+export function prepareChatClientsideLogic({state, onChange}: {
 		state: ReturnType<typeof makeChatState>
+		onChange: () => void
 	}) {
+
+	async function triggerChange() {
+		await state.wait()
+		onChange()
+	}
+
 	return {
 		async roomStatusChanged(room: string, status: ChatStatus) {
 			state.writable.cache = {
@@ -17,6 +24,7 @@ export function prepareChatClientsideLogic({state}: {
 					},
 				},
 			}
+			await triggerChange()
 		},
 		async postsAdded(room: string, posts: ChatPost[]) {
 			state.writable.cache = {
@@ -32,6 +40,7 @@ export function prepareChatClientsideLogic({state}: {
 					},
 				},
 			}
+			await triggerChange()
 		},
 		async postsRemoved(room: string, postIds: string[]) {
 			state.writable.cache = {
@@ -45,6 +54,7 @@ export function prepareChatClientsideLogic({state}: {
 					},
 				},
 			}
+			await triggerChange()
 		},
 		async roomCleared(room: string) {
 			state.writable.cache = {
@@ -57,6 +67,7 @@ export function prepareChatClientsideLogic({state}: {
 					},
 				},
 			}
+			await triggerChange()
 		},
 		async usersMuted(userIds: string[]) {
 			state.writable.cache = {
@@ -66,6 +77,7 @@ export function prepareChatClientsideLogic({state}: {
 					...userIds,
 				],
 			}
+			await triggerChange()
 		},
 		async usersUnmuted(userIds: string[]) {
 			state.writable.cache = {
@@ -73,12 +85,14 @@ export function prepareChatClientsideLogic({state}: {
 				mutedUserIds: state.writable.cache.mutedUserIds
 					.filter(userId => !userIds.includes(userId)),
 			}
+			await triggerChange()
 		},
 		async unmuteAll() {
 			state.writable.cache = {
 				...state.writable.cache,
 				mutedUserIds: [],
 			}
+			await triggerChange()
 		},
 	}
 }
