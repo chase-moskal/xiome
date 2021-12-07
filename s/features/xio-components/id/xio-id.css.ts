@@ -11,22 +11,15 @@ button {
 .container {
 	position: relative;
 	display: flex;
-	flex-direction: var(--_flex-direction);
+	flex-direction: row;
 	user-select: none;
 	cursor: pointer;
 	border: none;
-	letter-spacing: 0.1em;
-	align-items: var(--_flex-align-items);
 }
 
 :host {
 	display: inline-block;
 	position: relative;
-	/*Variables for element customization below*/
-	--_div-id-width: initial;
-	--_div-id-text-overflow: ellipsis;
-	--_flex-direction: row;
-	--_flex-align-items: center;
 }
 
 :host::before {
@@ -65,9 +58,8 @@ button {
 	opacity: 0.75;
 	max-width: var(--id-max-width, 6em);
 	overflow: hidden;
-	text-overflow: var(--_div-id-text-overflow);
+	text-overflow: ellipsis;
 	white-space: nowrap;
-	width: var(--_div-id-width);
 }
 
 .copy svg {

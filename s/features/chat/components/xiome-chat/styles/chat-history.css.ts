@@ -74,10 +74,6 @@ li > header > span {
 	overflow: hidden;
 }
 
-xio-id {
-	--_div-id-width: 4em;
-}
-
 li > header > span > xio-button {
 	--_border: var(--xio-button-border, none);
 	--_padding: var(--xio-button-padding, 0.35em);
