@@ -136,13 +136,18 @@ export class XiomeChat extends ComponentWithShare<{
 		return () => clearInterval(interval)
 	}
 
-	#postToChat = () => {
-		const {value} = this.authorshipInput
-		const draft: ChatDraft = {content: value}
-		this.#lastSend = Date.now()
-		this.authorshipInput.text = ""
-		this.#updateTooSoon()
-		this.#room.post(draft)
+	#postToChat = (event: Event) => {
+		event.preventDefault()
+		const {tooSoon} = this
+		if (!tooSoon) {
+			const {value} = this.authorshipInput
+			const draft: ChatDraft = {content: value}
+			this.#lastSend = Date.now()
+			this.authorshipInput.text = ""
+			this.#updateTooSoon()
+			this.#room.post(draft)
+		}
+		
 	}
 
 	#renderParticipation() {

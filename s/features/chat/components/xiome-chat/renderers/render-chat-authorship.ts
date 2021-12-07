@@ -6,8 +6,8 @@ export function renderChatAuthorship({
 		sendable, onSendClick, onEnterPress, onValidityChange,
 	}: {
 		sendable: boolean
-		onSendClick: () => void
-		onEnterPress: () => void
+		onSendClick: (event: Event) => void
+		onEnterPress: (event: Event) => void
 		onValidityChange: (valid: boolean) => void
 	}) {
 
