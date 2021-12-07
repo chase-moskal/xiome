@@ -102,7 +102,7 @@ export class XiomeChat extends ComponentWithShare<{
 							`
 							: html`
 								<slot name=no-messages>
-									<span class="chat-placeholder">No messages</span>
+									no messages
 								</slot>
 							`}
 					`

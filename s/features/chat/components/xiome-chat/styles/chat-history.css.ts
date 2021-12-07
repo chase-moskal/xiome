@@ -2,98 +2,81 @@
 import {css} from "../../../../../framework/component.js"
 export default css`
 
-.history {
+.history ol,
+.history slot[name="no-messages"] {
+	height: 300px;
 	overflow-y: auto;
-	display: flex;
-	flex-direction: column-reverse;
-	height: 300px; /*Delete height values when the chat element gets styled*/
-	--_scrollbar-width: 0.75em;
-	--_scrollbar-background-color: rgba(100, 100, 100, 0.3);
-	--_scrollbar-component-background-color: rgb(130, 130, 130);
-	--_scrollbar-component-hover-background-color: rgb(150, 150, 150);
-	--_scrollbar-component-active-background-color: rgb(170, 170, 170);
-	--_scrollbar-component-border: 1px solid rgb(230, 230, 230);
-	--_scrollbar-component-border-radius: 2em;
+	scrollbar-color: #0004 #0002;
+	scrollbar-width: thin;
 }
 
-div.history {
-	scrollbar-color: var(--_scrollbar-component-background-color) var(--_scrollbar-background-color);
-	scrollbar-width: var(--_scrollbar_width);
+.history ol::-webkit-scrollbar {
+	width: 0.4em;
 }
 
-div.history::-webkit-scrollbar {
-	width: var(--_scrollbar_width);
+.history ol::-webkit-scrollbar-thumb {
+	border-radius: 1em;
+	background: #0004;
 }
 
-div.history::-webkit-scrollbar-thumb {
-	border: var(--_scrollbar-component-border);
-	border-radius: var(--_scrollbar-component-border-radius);
-	background: var(--_scrollbar-component-background-color);
+.history ol::-webkit-scrollbar-thumb:hover {
+	background: #0008;
 }
 
-div.history::-webkit-scrollbar-thumb:hover {
-	background-color: var(--_scrollbar-component-hover-background-color);
+.history ol::-webkit-scrollbar-thumb:active {
+	background: #000a;
 }
 
-div.history::-webkit-scrollbar-thumb:active {
-	background-color: var(--_scrollbar-component-active-background-color);
+.history ol::-webkit-scrollbar-track {
+	border-radius: 1em;
+	background: #0002;
 }
 
-div.history::-webkit-scrollbar-track {
-	background-image: var(--_scrollbar-background-color);
-}
-
-.chat-placeholder {
-	margin: auto 0 auto 0;
+slot[name="no-messages"] {
 	opacity: 0.5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	text-align: center;
 }
 
-.history ol {
-}
-
 .history li {
-	background-color: rgb(60, 60, 60);
-	margin-top: 1em;
+	margin-top: 0.75em;
 }
 
-li > header {
+.history li > header {
+	opacity: 0.5;
 	display: flex;
-	align-items: stretch;
 	flex-direction: row;
-	gap: 1.5em;
+	align-items: center;
+	gap: 0.5em;
 }
 
-li > header > span {
+.history li .moderation {
+	opacity: 0.5;
+}
+
+.history li > header > span {
 	display: flex;
 	align-items: center;
 }
 
-.userid {
-	margin-left: 1em;
-	overflow: hidden;
+.history li > header > span > xio-button {
+	--xio-button-border: none;
+	--xio-button-padding: 0 0.3em;
 }
 
-li > header > span > xio-button {
-	--_border: var(--xio-button-border, none);
-	--_padding: var(--xio-button-padding, 0.35em);
-}
-
-.nickname {
-	font-size: 1.1em;
-	font-weight: bold;
-	padding-left: 0.25em;
-}
-
-.content {
-	padding: 0.25em;
-	white-space: pre-wrap;
-}
-
-.time {
+.history li .nickname {
 	font-size: 1em;
-	opacity: 0.5;
-	padding-left: 0.5em;
+}
+
+.history li .content {
+	font-size: 1.3em;
+}
+
+.history li .time {
+	opacity: 0.3;
+	font-size: 1rem;
 }
 
 `

@@ -1,5 +1,6 @@
-import deleteIcon from "../../../../../framework/icons/delete.svg.js"
+
 import muteIcon from "../../../../../framework/icons/mute.svg.js"
+import deleteIcon from "../../../../../framework/icons/delete.svg.js"
 
 import {html} from "../../../../../framework/component.js"
 import {ChatPost} from "../../../common/types/chat-concepts.js"
@@ -17,24 +18,25 @@ export function renderChatPost({
 	return html`
 		<li data-post="${post.postId}">
 			<header>
-				<span>
 				<span class=nickname>${post.nickname}</span>
-				<xio-id class="userid" title="${post.userId}" id="${post.userId}"></xio-id>
-				</span>
 				${isModerator
 					? html`
-						<span>
-							<xio-button title="Mute" @press=${mute}>${muteIcon}</xio-button>
-							<xio-button title="Delete" @press=${remove}>${deleteIcon}</xio-button>
+						<span class=moderation>
+							<xio-button title="mute" @press=${mute}>${muteIcon}</xio-button>
+							<xio-button title="delete" @press=${remove}>${deleteIcon}</xio-button>
 						</span>
 					`
 					: null}
+				<xio-id class=userid title="copy user id" id="${post.userId}"></xio-id>
 			</header>
-			<p class=content>${post.content}</p>
-			<footer>
-				<span title=${postTime.zone} class=time>${postTime.date} ${postTime.time}</span>
-			</footer>
+			<div>
+				<p class=content>
+					${post.content}
+					<span class=time title="${postTime.date} ${postTime.zone}">
+						${postTime.time}
+					</span>
+				</p>
+			</div>
 		</li>
 	`
 }
-//${formatDate(post.time).date}
