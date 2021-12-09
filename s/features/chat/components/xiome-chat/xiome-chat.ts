@@ -118,6 +118,7 @@ export class XiomeChat extends ComponentWithShare<{
 										isModerator: this.#model.allowance.moderateAllChats,
 										mute: () => this.#room.mute(post.userId),
 										remove: () => this.#room.remove([post.postId]),
+										mutedIds: this.#room.muted
 									}))}
 								</ol>
 							`
