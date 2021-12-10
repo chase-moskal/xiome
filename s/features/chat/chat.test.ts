@@ -3,8 +3,10 @@ import {assert, expect, Suite} from "cynic"
 
 import {nap} from "../../toolbox/nap.js"
 import {ops} from "../../framework/ops.js"
-import {ChatStatus} from "./common/types/chat-concepts.js"
+import {getRando} from "../../toolbox/get-rando.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
+import {ChatDraft, ChatStatus} from "./common/types/chat-concepts.js"
+import {chatValidationTestSetup} from "./testing/chat-validation-test-setup.js"
 
 export default<Suite>{
 
@@ -429,5 +431,174 @@ export default<Suite>{
 
 	"rate limiting": {
 		async "user who floods chat receives an error notice to slow down"() {},
+	},
+
+	async "serverside validation"() {
+		const setup = async() => (await chatValidationTestSetup(
+			"view all chats",
+			"moderate all chats",
+			"participate in all chats",
+		))
+
+		const invalidStrict = {
+			metas: [
+				undefined,
+			],
+			rooms: [
+				undefined,
+				-99,
+				"",
+				"   ",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			],
+			drafts: [
+				undefined,
+				{content: 123},
+			],
+			ids: [
+				undefined,
+				"abc",
+				":",
+				"    ",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			],
+			statuses: [
+				-99,
+				5,
+				"0",
+				"lol",
+			],
+		}
+
+		const invalid: {[P in keyof typeof invalidStrict]: any[]} = invalidStrict
+
+		const rando = await getRando()
+		const valid = {
+			room: "default",
+			id: rando.randomId().toString(),
+			draft: <ChatDraft>{content: "hello test 123"},
+			status: ChatStatus.Online,
+		}
+
+		async function expectValidationErrors<F extends (...args: any[]) => Promise<any>>(
+				func: F,
+				validArgs: Parameters<F>,
+				invalidArgGroups: any[][],
+			) {
+			await func(...validArgs)
+			await Promise.all(
+				invalidArgGroups.map(
+					async argGroup => {
+						let threw = false
+						try { await func(...argGroup) }
+						catch (error) { threw = true }
+						assert(
+							threw,
+							`validation failed, and let bad data through [${
+								argGroup
+									.map(
+										x => x === undefined
+											? "undefined"
+											: JSON.stringify(x)
+									).join(", ")
+							}]`
+						)
+					}
+				)
+			)
+		}
+
+		return {
+			"updateUserMeta validation": async() => {
+				const {chatServersideLogic, meta} = await setup()
+				await expectValidationErrors(
+					chatServersideLogic.updateUserMeta,
+					[meta],
+					invalid.metas.map(x => [x]),
+				)
+			},
+			"roomSubscribe validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.roomSubscribe,
+				[valid.room],
+				invalid.rooms.map(x => [x]),
+			),
+			"roomUnsubscribe validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.roomUnsubscribe,
+				[valid.room],
+				invalid.rooms.map(x => [x]),
+			),
+			"post validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.post,
+				[valid.room, valid.draft],
+				[
+					...invalid.rooms.map(x => [x, valid.draft]),
+					...invalid.drafts.map(x => [x, valid.draft]),
+				],
+			),
+			"remove validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.remove,
+				[valid.room, [valid.id]],
+				[
+					...invalid.rooms.map(x => [x, [valid.id]]),
+					...invalid.ids.map(x => [valid.room, [x]]),
+					[valid.room, undefined],
+					[valid.room, "lol"],
+				]
+			),
+			"clear validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.clear,
+				[valid.room],
+				invalid.rooms.map(x => [x]),
+			),
+			"mute validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.mute,
+				[[valid.id]],
+				invalid.ids.map(x => [[x]]),
+			),
+			"unmute validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.unmute,
+				[[valid.id]],
+				invalid.ids.map(x => [[x]]),
+			),
+			"setRoomStatus validation": async() => await expectValidationErrors(
+				(await setup()).chatServersideLogic.setRoomStatus,
+				[valid.room, valid.status],
+				[
+					...invalid.rooms.map(x => [x, valid.status]),
+					...invalid.statuses.map(x => [valid.room, x]),
+				],
+			),
+		}
+	},
+
+	async "validation failure does not crash the server"() {
+		const setup = await testChatSetup()
+		const {server, roomLabel} = await setup.startOnline()
+		
+		const p1 = await server.makeClientFor.participant()
+		const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+		// cause a validation failure
+		const badSession = await p1.chatModel.session(<any>-99)
+		await nap()
+
+		const p2 = await server.makeClientFor.participant()
+		const {room: p2room} = await p2.chatModel.session(roomLabel)
+
+		p1room.post({content: "lol"})
+		await nap()
+
+		expect(p1room.posts.length).equals(1)
+		expect(p1room.posts.find(post => post.content === "lol")).ok()
+		expect(p2room.posts.find(post => post.content === "lol")).ok()
+
+		p2room.post({content: "lmao"})
+		await nap()
+
+		expect(p1room.posts.find(post => post.content === "lmao")).ok()
+		expect(p2room.posts.find(post => post.content === "lmao")).ok()
+
+		expect(p1room.posts.length).equals(2)
+		expect(p2room.posts.length).equals(2)
 	},
 }

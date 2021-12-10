@@ -21,6 +21,7 @@ export async function testChatSetup() {
 		const servelet = makeChatServerCore({
 			rando,
 			persistence,
+			logError() {},
 			policy: mockChatPolicy,
 		})
 

@@ -1,7 +1,8 @@
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
-import {objectMap} from "../../../../../toolbox/object-map.js"
+import {schema} from "../../../../../toolbox/darkvalley.js"
 import {chatAllowance} from "../../../common/chat-allowance.js"
+import {validateChatDraft, validateChatRoom, validateChatStatus, validateIdArray} from "../../../common/chat-validators.js"
 import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../../common/types/chat-concepts.js"
 
 export function prepareChatServersideLogic({
@@ -25,22 +26,33 @@ export function prepareChatServersideLogic({
 	)
 	const isNotBanned = () => !getAllowance().banned
 
+	function enforceValidation(problems: string[]) {
+		if (problems.length !== 0)
+			throw new Error("chat validation error")
+	}
+
 	return {
 		async updateUserMeta(meta: ChatMeta) {
 			clientRecord.auth = await policy(meta)
 		},
 		async roomSubscribe(room: string) {
+			enforceValidation(validateChatRoom(room))
 			if (!getAllowance().viewAllChats)
 				return undefined
 			clientRecord.rooms.add(room)
 			clientRemote.roomStatusChanged(room, await persistence.getRoomStatus(room))
 		},
 		async roomUnsubscribe(room: string) {
+			enforceValidation(validateChatRoom(room))
 			if (!getAllowance().viewAllChats)
 				return undefined
 			clientRecord.rooms.delete(room)
 		},
 		async post(room: string, draft: ChatDraft) {
+			enforceValidation(schema({
+				room: validateChatRoom,
+				draft: validateChatDraft,
+			})({room, draft}))
 			if (!getAllowance().participateInAllChats)
 				return undefined
 			if (isNotMuted() && isNotBanned()) {
@@ -56,21 +68,28 @@ export function prepareChatServersideLogic({
 			}
 		},
 		async remove(room: string, postIds: string[]) {
+			enforceValidation(schema({
+				room: validateChatRoom,
+				postIds: validateIdArray,
+			})({room, postIds}))
 			if (!getAllowance().moderateAllChats)
 				return undefined
 			await persistence.removePosts(room, postIds)
 		},
 		async clear(room: string) {
+			enforceValidation(validateChatRoom(room))
 			if (!getAllowance().moderateAllChats)
 				return undefined
 			await persistence.clearRoom(room)
 		},
 		async mute(userIds: string[]) {
+			enforceValidation(validateIdArray(userIds))
 			if (!getAllowance().moderateAllChats)
 				return undefined
 			await persistence.addMute(userIds)
 		},
 		async unmute(userIds: string[]) {
+			enforceValidation(validateIdArray(userIds))
 			if (!getAllowance().moderateAllChats)
 				return undefined
 			await persistence.removeMute(userIds)
@@ -81,6 +100,10 @@ export function prepareChatServersideLogic({
 			await persistence.unmuteAll()
 		},
 		async setRoomStatus(room: string, status: ChatStatus) {
+			enforceValidation(schema({
+				room: validateChatRoom,
+				status: validateChatStatus,
+			})({room, status}))
 			if (!getAllowance().moderateAllChats)
 				return undefined
 			await persistence.setRoomStatus(room, status)
