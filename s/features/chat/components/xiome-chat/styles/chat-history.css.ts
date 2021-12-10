@@ -72,6 +72,7 @@ slot[name="no-messages"] {
 
 .history li .content {
 	font-size: 1.3em;
+	word-break: break-word;
 }
 
 .history li .time {
