@@ -1,5 +1,5 @@
 
-import {getRando, Rando} from "../../../../toolbox/get-rando.js"
+import {getRando} from "../../../../toolbox/get-rando.js"
 import {makeChatServerCore} from "../cores/chat-server-core.js"
 import {prepareChatClientCore} from "../cores/chat-client-core.js"
 import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"

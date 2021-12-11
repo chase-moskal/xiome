@@ -7,25 +7,26 @@ export function makeChatSocketServer({port, servelet}: {
 		servelet: ReturnType<typeof makeChatServerCore>
 	}) {
 
-	const wss = new WebSocketServer({port})
+	const server = new WebSocketServer({port})
 
-	wss.on("connection", async ws => {
+	server.on("connection", async socket => {
 		const chatClient = await servelet.acceptConnection({
-			disconnect: () => ws.close(),
-			sendDataToClient: async(...args: any[]) => ws.send(JSON.stringify(args)),
+			disconnect: () => socket.close(),
+			sendDataToClient: async(...args: any[]) => socket.send(JSON.stringify(args)),
 		})
 
-		ws.on("message", data => {
+		socket.on("message", data => {
 			const args: [string, ...any[]] = JSON.parse(data.toString())
+			console.log("message", ...args)
 			chatClient.handleDataFromClient(...args)
 		})
 
-		ws.on("close", () => chatClient.handleDisconnect())
+		socket.on("close", () => chatClient.handleDisconnect())
 	})
 
 	return {
 		close() {
-			wss.close()
+			server.close()
 		},
 	}
 }
