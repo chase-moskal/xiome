@@ -45,7 +45,7 @@ export function makeChatRoom({label, serverRemote, state}: {
 			serverRemote.clear(label)
 		},
 		mute(userId: string) {
-			state.readable.cache.mutedUserIds.includes(userId) === false ? serverRemote.mute([userId]) : null;
+			serverRemote.mute([userId])
 		},
 		unmute(userId: string) {
 			serverRemote.unmute([userId])

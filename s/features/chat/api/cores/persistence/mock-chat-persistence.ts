@@ -15,7 +15,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		mutes: true,
 		roomStatuses: true,
 	})
-
+	
 	const events = {
 		roomStatusChanged: subbies<{room: string, status: ChatStatus}>(),
 		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
@@ -101,7 +101,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				await chatTables.mutes.create(
 					...userIds.map(userId => ({userId}))
 				)
-				events.mutes.publish({userIds})
+				userIds.map(i => this.isMuted(i) === true ? null : events.mutes.publish({userIds}))
 			}
 		},
 
