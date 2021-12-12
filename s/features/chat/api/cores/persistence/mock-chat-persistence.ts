@@ -15,7 +15,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		mutes: true,
 		roomStatuses: true,
 	})
-	
+
 	const events = {
 		roomStatusChanged: subbies<{room: string, status: ChatStatus}>(),
 		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
@@ -98,10 +98,12 @@ export async function mockChatPersistence(storage: FlexStorage) {
 
 		async addMute(userIds: string[]) {
 			if (userIds.length) {
-				await chatTables.mutes.create(
+				userIds.map(userId => this.isMuted(userId) ? null
+					: chatTables.mutes.create(
 					...userIds.map(userId => ({userId}))
-				)
-				userIds.map(i => this.isMuted(i) === true ? null : events.mutes.publish({userIds}))
+				))
+				userIds.map(userId => this.isMuted(userId) ? null
+					: events.mutes.publish({userIds}))
 			}
 		},
 
