@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import {renrakuService} from "renraku"
 
 import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"

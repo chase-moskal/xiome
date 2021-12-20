@@ -1,17 +1,15 @@
 
-import {apiContext} from "renraku/x/api/api-context.js"
+import {renrakuService} from "renraku"
 import {StoreServiceOptions} from "../../types/store-concepts.js"
-import {StoreLinkedAuth, StoreMeta} from "../../types/store-metas-and-auths.js"
 
 export const makeSubscriptionShoppingService = (
-		options: StoreServiceOptions
-	) => apiContext<StoreMeta, StoreLinkedAuth>()({
+	options: StoreServiceOptions
+) => renrakuService()
 
-	policy: options.storeLinkedPolicy,
+.policy(options.storeLinkedPolicy)
 
-	expose: {
-		async loadSubscriptionPlans() {},
-		async subscribeToTier() {},
-		async unsubscribeFromTier() {},
-	},
-})
+.expose(() => ({
+	async loadSubscriptionPlans() {},
+	async subscribeToTier() {},
+	async unsubscribeFromTier() {},
+}))
