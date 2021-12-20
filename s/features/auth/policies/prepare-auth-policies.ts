@@ -1,10 +1,8 @@
 
 import {VerifyToken} from "redcrypto/x/types.js"
-import {ApiError} from "renraku/x/api/api-error.js"
-import {Policy} from "renraku/x/types/primitives/policy.js"
+import {RenrakuPolicy, RenrakuError} from "renraku"
 
 import {AuthTables} from "../types/auth-tables.js"
-import {isOriginValid} from "./is-origin-valid.js"
 import {AccessPayload} from "../types/auth-tokens.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AppTables} from "../aspects/apps/types/app-tables.js"
@@ -27,14 +25,15 @@ export function prepareAuthPolicies({
 
 	const getStatsHub = prepareStatsHub({appTables, authTables})
 
-	const greenPolicy: Policy<GreenMeta, GreenAuth> = async(meta, request) => ({
+	const greenPolicy: RenrakuPolicy<GreenMeta, GreenAuth> = async meta => ({
 		appTables,
 		authTables,
 	})
 
-	const anonPolicy: Policy<AnonMeta, LoginAuth> = async({accessToken}, request) => {
+	const anonPolicy: RenrakuPolicy<AnonMeta, LoginAuth> = async({accessToken}, headers) => {
 		const access = await verifyToken<AccessPayload>(accessToken)
-		if (isOriginValid(request, access.origins))
+
+		if (access.origins.some(origin => origin === headers.origin))
 			return {
 				access,
 				appTables,
@@ -42,18 +41,18 @@ export function prepareAuthPolicies({
 				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 			}
 		else
-			throw new ApiError(403, "invalid origin")
+			throw new RenrakuError(403, "request origin not allowed")
 	}
 
-	const userPolicy: Policy<UserMeta, UserAuth> = async(meta, request) => {
+	const userPolicy: RenrakuPolicy<UserMeta, UserAuth> = async(meta, request) => {
 		const auth = await anonPolicy(meta, request)
 		if (auth.access.user)
 			return auth
 		else
-			throw new ApiError(403, "not logged in")
+			throw new RenrakuError(403, "not logged in")
 	}
 
-	const platformUserPolicy: Policy<PlatformUserMeta, PlatformUserAuth> = async(meta, request) => {
+	const platformUserPolicy: RenrakuPolicy<PlatformUserMeta, PlatformUserAuth> = async(meta, request) => {
 		const auth = await userPolicy(meta, request)
 		if (auth.access.appId === config.platform.appDetails.appId) {
 			return {
@@ -65,10 +64,10 @@ export function prepareAuthPolicies({
 			}
 		}
 		else
-			throw new ApiError(403, "not platform app")
+			throw new RenrakuError(403, "not platform app")
 	}
 
-	const appOwnerPolicy: Policy<AppOwnerMeta, AppOwnerAuth> = async(meta, request) => {
+	const appOwnerPolicy: RenrakuPolicy<AppOwnerMeta, AppOwnerAuth> = async(meta, request) => {
 		const auth = await platformUserPolicy(meta, request)
 		async function authorizeAppOwner(appId: DamnId) {
 			const allowedToEditAnyApp = auth.checker.hasPrivilege("edit any app")
@@ -77,7 +76,7 @@ export function prepareAuthPolicies({
 			if (allowed)
 				return {authTables: auth.authTables.namespaceForApp(appId)}
 			else
-				throw new ApiError(403, "forbidden: lacking privileges to edit app")
+				throw new RenrakuError(403, "forbidden: lacking privileges to edit app")
 		}
 		return {
 			access: auth.access,
