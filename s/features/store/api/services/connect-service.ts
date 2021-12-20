@@ -15,9 +15,9 @@ export const makeConnectService = (
 
 .policy(options.storePolicy)
 
-.expose(({access, stripeLiaison, storeTables}) => ({
+.expose(({access, stripeLiaison, storeTables, checker}) => ({
 
-	...requiredPrivilege("manage store", {
+	...requiredPrivilege(checker, "manage store", {
 
 		async loadConnectStatus() {
 			const connectDetails = await fetchStripeConnectDetails({
@@ -60,7 +60,7 @@ export const makeConnectService = (
 		},
 	}),
 
-	...requiredPrivilege("control stripe account", {
+	...requiredPrivilege(checker, "control stripe account", {
 
 		async loadConnectDetails() {
 			const connectDetails = await fetchStripeConnectDetails({

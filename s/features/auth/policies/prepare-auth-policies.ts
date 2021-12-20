@@ -44,16 +44,16 @@ export function prepareAuthPolicies({
 			throw new RenrakuError(403, "request origin not allowed")
 	}
 
-	const userPolicy: RenrakuPolicy<UserMeta, UserAuth> = async(meta, request) => {
-		const auth = await anonPolicy(meta, request)
+	const userPolicy: RenrakuPolicy<UserMeta, UserAuth> = async(meta, headers) => {
+		const auth = await anonPolicy(meta, headers)
 		if (auth.access.user)
 			return auth
 		else
 			throw new RenrakuError(403, "not logged in")
 	}
 
-	const platformUserPolicy: RenrakuPolicy<PlatformUserMeta, PlatformUserAuth> = async(meta, request) => {
-		const auth = await userPolicy(meta, request)
+	const platformUserPolicy: RenrakuPolicy<PlatformUserMeta, PlatformUserAuth> = async(meta, headers) => {
+		const auth = await userPolicy(meta, headers)
 		if (auth.access.appId === config.platform.appDetails.appId) {
 			return {
 				...auth,
@@ -67,8 +67,8 @@ export function prepareAuthPolicies({
 			throw new RenrakuError(403, "not platform app")
 	}
 
-	const appOwnerPolicy: RenrakuPolicy<AppOwnerMeta, AppOwnerAuth> = async(meta, request) => {
-		const auth = await platformUserPolicy(meta, request)
+	const appOwnerPolicy: RenrakuPolicy<AppOwnerMeta, AppOwnerAuth> = async(meta, headers) => {
+		const auth = await platformUserPolicy(meta, headers)
 		async function authorizeAppOwner(appId: DamnId) {
 			const allowedToEditAnyApp = auth.checker.hasPrivilege("edit any app")
 			const isOwnerOfApp = isUserOwnerOfApp({appId, appTables, access: auth.access})

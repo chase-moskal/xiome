@@ -35,8 +35,8 @@ export const storeApi = ({
 	const serviceOptions: StoreServiceOptions = {
 		...common,
 		storePolicy,
-		async storeLinkedPolicy(meta, request) {
-			const auth = await storePolicy(meta, request)
+		async storeLinkedPolicy(meta, headers) {
+			const auth = await storePolicy(meta, headers)
 			const connectDetails = await fetchStripeConnectDetails({
 				storeTables: auth.storeTables,
 				stripeLiaison: auth.stripeLiaison,
