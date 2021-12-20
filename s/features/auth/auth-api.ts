@@ -1,5 +1,5 @@
 
-import {asApi} from "renraku/x/identities/as-api.js"
+import {renrakuApi} from "renraku"
 
 import {AuthOptions} from "./types/auth-options.js"
 import {makeAppService} from "./aspects/apps/services/app-service.js"
@@ -11,7 +11,7 @@ import {makePersonalService} from "./aspects/users/services/personal-service.js"
 import {makePermissionsService} from "./aspects/permissions/services/permissions-service.js"
 
 export function authApi(options: AuthOptions) {
-	return asApi({
+	return renrakuApi({
 		apps: {
 			appService: makeAppService(options),
 			appEditService: makeAppEditService(options),
