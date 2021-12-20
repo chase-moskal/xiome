@@ -13,23 +13,12 @@ export async function mockBrowser({api, mockStripeOperations}: {
 		mockStripeOperations: MockStripeOperations
 	}) {
 
-	async function mockAppWindow({
-			appId,
-			apiLink,
-			windowLink,
-		}: {
-			appId: string
-			apiLink: string
-			windowLink: string
-		}) {
-
+	async function mockAppWindow({appId}: {appId: string}) {
 		const storage = memoryFlexStorage()
 		const {remote, authMediator} = mockRemote({
 			api,
 			appId,
-			apiLink,
 			storage,
-			origin: new URL(windowLink).origin,
 		})
 
 		const {nextModalResults} = mockModalSystem()

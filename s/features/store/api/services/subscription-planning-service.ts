@@ -1,6 +1,7 @@
 
 import {renrakuService, RenrakuError} from "renraku"
 
+import {StoreMeta} from "../../types/store-metas-and-auths.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 import {helpersForListingSubscriptions} from "./helpers/helpers-for-listing-subscriptions.js"
@@ -14,7 +15,7 @@ export const makeSubscriptionPlanningService = (
 	options: StoreServiceOptions
 ) => renrakuService()
 
-.policy(async(meta, headers) => {
+.policy(async(meta: StoreMeta, headers) => {
 	const auth = await options.storeLinkedPolicy(meta, headers)
 	auth.checker.requirePrivilege("manage store")
 	const connectStatus = determineConnectStatus(

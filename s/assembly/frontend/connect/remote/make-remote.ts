@@ -1,7 +1,7 @@
 
-import {generateRemote} from "renraku/x/remote/generate-remote.js"
-import {makeJsonRequester} from "renraku/x/remote/make-json-requester.js"
+import {renrakuBrowserClient} from "renraku"
 
+import {SystemApi} from "../../../backend/types/system-api.js"
 import {prepareApiShape} from "../../auth/prepare-api-shape.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
@@ -15,18 +15,14 @@ export function makeRemote({
 		storage: FlexStorage
 	}) {
 
-	const {shape, installAuthMediator} = prepareApiShape({
+	const {metaMap, installAuthMediator} = prepareApiShape({
 		appId,
 		storage,
 	})
 
-	const remote = generateRemote({
-		link: apiLink,
-		shape: shape,
-		requester: makeJsonRequester({
-			fetch: window.fetch,
-			headers: {},
-		}),
+	const remote = renrakuBrowserClient<SystemApi>({
+		metaMap,
+		url: apiLink,
 	})
 
 	const authMediator = installAuthMediator({

@@ -22,14 +22,12 @@ export async function mockConnectApp({
 	}))
 	backend.emails.disableEmails()
 
-	const apiLink = apiOrigin + "/"
 	const ownerEmail = "creative@xiome.io"
 	const adminEmail = "admin@xiome.io"
 
 	let appId = await storage.read<string>("mock-app")
 	if (!appId) {
 		appId = await mockRegisterApp({
-			apiLink,
 			backend,
 			ownerEmail,
 			adminEmail,
@@ -42,10 +40,8 @@ export async function mockConnectApp({
 	backend.emails.enableEmails()
 	const {remote, authMediator} = await mockWiredRemote({
 		appId,
-		apiLink,
 		backend,
 		storage,
-		appWindowLink,
 	})
 
 	const popups = mockPopups({

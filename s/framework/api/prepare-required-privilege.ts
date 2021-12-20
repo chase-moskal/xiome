@@ -1,6 +1,5 @@
 
 import {objectMap} from "../../toolbox/object-map.js"
-import {Topic} from "renraku/x/types/primitives/topic.js"
 import {AnonAuth} from "../../features/auth/types/auth-metas.js"
 
 export function prepareRequiredPrivilege<
@@ -8,7 +7,7 @@ export function prepareRequiredPrivilege<
 		xPrivileges extends {[key: string]: string}
 	>() {
 
-	return function requiredPrivilege<xMethods extends Topic<xAuth>>(
+	return function requiredPrivilege<xMethods extends {[key: string]: (...args: any[]) => Promise<any>}>(
 			key: keyof xPrivileges,
 			methods: xMethods
 		) {

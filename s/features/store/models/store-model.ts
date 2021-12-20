@@ -18,8 +18,8 @@ export function makeStoreModel(options: {
 			Service<typeof makeConnectService>
 		subscriptionPlanningService:
 			Service<typeof makeSubscriptionPlanningService>
-		triggerStripeConnectPopup: TriggerStripeConnectPopup
 		triggerCheckoutPopup: TriggerCheckoutPopup
+		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
 	const state = makeStoreState()

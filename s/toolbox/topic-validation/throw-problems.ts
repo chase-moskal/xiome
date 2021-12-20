@@ -1,7 +1,7 @@
 
-import {ApiError} from "renraku/x/api/api-error.js"
+import {RenrakuError} from "renraku"
 
 export function throwProblems(problems: string[]) {
 	if (problems.length > 0)
-		throw new ApiError(400, problems.join("; "))
+		throw new RenrakuError(400, problems.join("; "))
 }

@@ -1,8 +1,6 @@
 
-import {asShape} from "renraku/x/identities/as-shape.js"
-import {_meta} from "renraku/x/types/symbols/meta-symbol.js"
+import {RenrakuMetaMap, RenrakuRemote} from "renraku"
 
-import {Service} from "../../../types/service.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
@@ -16,129 +14,51 @@ export function prepareApiShape({appId, storage}: {
 
 	let authMediator: AuthMediator
 
-	const standardMeta = async() => ({
-		accessToken: await authMediator.getValidAccessToken(),
-	})
+	async function getStandardMeta() {
+		return {
+			accessToken: await authMediator.getValidAccessToken(),
+		}
+	}
 
-	const shape = asShape<SystemApi>({
+	const metaMap: RenrakuMetaMap<SystemApi> = {
 		auth: {
 			apps: {
-				appService: {
-					[_meta]: standardMeta,
-					listApps: true,
-					registerApp: true,
-				},
-				appEditService: {
-					[_meta]: standardMeta,
-					deleteApp: true,
-					updateApp: true,
-					listAdmins: true,
-					revokeAdmin: true,
-					assignAdmin: true,
-					assignPlatformUserAsAdmin: true,
-				},
+				appService: getStandardMeta,
+				appEditService: getStandardMeta,
 			},
 			permissions: {
-				permissionsService: {
-					[_meta]: standardMeta,
-					assignPrivilege: true,
-					createRole: true,
-					deleteRole: true,
-					fetchPermissions: true,
-					unassignPrivilege: true,
-					createPrivilege: true,
-					deletePrivilege: true,
-				},
+				permissionsService: getStandardMeta,
 			},
 			users: {
-				greenService: {
-					[_meta]: async() => undefined,
-					authorize: true,
-				},
-				loginService: {
-					[_meta]: standardMeta,
-					authenticateViaLoginToken: true,
-					sendLoginLink: true,
-				},
-				personalService: {
-					[_meta]: standardMeta,
-					setProfile: true,
-				},
-				userService: {
-					[_meta]: standardMeta,
-					getUser: true,
-				},
+				greenService: async() => undefined,
+				loginService: getStandardMeta,
+				personalService: getStandardMeta,
+				userService: getStandardMeta,
 			},
 		},
 		example: {
-			exampleService: {
-				[_meta]: standardMeta,
-				exampleFunction: true,
-			},
+			exampleService: getStandardMeta,
 		},
 		administrative: {
-			roleAssignmentService: {
-				[_meta]: standardMeta,
-				assignRoleToUser: true,
-				fetchPermissions: true,
-				revokeRoleFromUser: true,
-				searchUsers: true,
-			},
+			roleAssignmentService: getStandardMeta,
 		},
 		questions: {
-			questionsModerationService: {
-				[_meta]: standardMeta,
-				archiveBoard: true,
-				fetchReportedQuestions: true,
-			},
-			questionsPostingService: {
-				[_meta]: standardMeta,
-				likeQuestion: true,
-				postQuestion: true,
-				reportQuestion: true,
-				archiveQuestion: true,
-			},
-			questionsReadingService: {
-				[_meta]: standardMeta,
-				fetchQuestions: true,
-			},
-			questionsAnsweringService: {
-				[_meta]: standardMeta,
-				archiveAnswer: true,
-				likeAnswer: true,
-				postAnswer: true,
-				reportAnswer: true,
-			},
+			questionsModerationService: getStandardMeta,
+			questionsPostingService: getStandardMeta,
+			questionsReadingService: getStandardMeta,
+			questionsAnsweringService: getStandardMeta,
 		},
 		videos: {
-			dacastService: {
-				[_meta]: standardMeta,
-				clearLink: true,
-				getLink: true,
-				setLink: true,
-			},
-			contentService: {
-				[_meta]: standardMeta,
-				fetchModerationData: true,
-				deleteView: true,
-				getShows: true,
-				writeView: true,
-			},
+			dacastService: getStandardMeta,
+			contentService: getStandardMeta,
 		},
 		notes: {
-			notesService: {
-				[_meta]: standardMeta,
-				getNotesStats: true,
-				getNewNotes: true,
-				getOldNotes: true,
-				markAllNotesOld: true,
-				markNotesNewOrOld: true,
-			},
+			notesService: getStandardMeta,
 		},
-	})
+	}
 
 	function installAuthMediator({greenService}: {
-			greenService: Service<typeof makeGreenService>
+			greenService: RenrakuRemote<ReturnType<typeof makeGreenService>>
 		}) {
 		authMediator = makeAuthMediator({
 			appId,
@@ -148,5 +68,8 @@ export function prepareApiShape({appId, storage}: {
 		return authMediator
 	}
 
-	return {shape, installAuthMediator}
+	return {
+		metaMap,
+		installAuthMediator,
+	}
 }

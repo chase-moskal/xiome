@@ -12,8 +12,6 @@ export async function assembleTestableSystem() {
 
 	const windowForPlatform = await browser.mockAppWindow({
 		appId: backend.platformAppId,
-		apiLink: "https://api.xiome.io/",
-		windowLink: "https://xiome.io/",
 	})
 
 	async function login({email, appWindow}: {
@@ -36,11 +34,7 @@ export async function assembleTestableSystem() {
 		origins: ["https://example.com"],
 	})
 
-	const windowForApp = await browser.mockAppWindow({
-		appId,
-		apiLink: "https://api.xiome.io/",
-		windowLink: "https://example.com/",
-	})
+	const windowForApp = await browser.mockAppWindow({appId})
 
 	return {
 		backend,

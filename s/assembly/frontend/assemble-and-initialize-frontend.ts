@@ -1,5 +1,5 @@
 
-import {Remote} from "renraku/x/types/remote/remote.js"
+import {RenrakuRemote} from "renraku"
 
 import {SystemApi} from "../backend/types/system-api.js"
 import {assembleModels} from "./models/assemble-models.js"
@@ -18,7 +18,7 @@ export async function assembleAndInitializeFrontend({
 		appId: string
 		popups: SystemPopups
 		storage: FlexStorage
-		remote: Remote<SystemApi>
+		remote: RenrakuRemote<SystemApi>
 		authMediator: AuthMediator
 		chatConnect: ChatConnect
 	}) {

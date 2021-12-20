@@ -6,21 +6,17 @@ import {wireMediatorBroadcastChannel} from "./wire-mediator-broadcast-channel.js
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockWiredRemote({
-		apiLink, appId, storage, appWindowLink, backend,
+		appId, storage, backend,
 	}: {
 		appId: string
-		apiLink: string
 		storage: FlexStorage
-		appWindowLink: string
 		backend: Await<ReturnType<typeof backendForNode>>
 	}) {
 
 	const {remote, authMediator} = mockRemote({
 		appId,
-		apiLink,
 		storage,
 		api: backend.api,
-		origin: new URL(appWindowLink).origin,
 	})
 
 	wireMediatorBroadcastChannel({appId, authMediator})

@@ -34,7 +34,7 @@ export const makeRoleAssignmentService = ({
 		authTables,
 	}) => ({
 
-	async fetchPermissions({engine}) {
+	async fetchPermissions() {
 		return engine.getPermissionsDisplay()
 	},
 
@@ -79,15 +79,13 @@ export const makeRoleAssignmentService = ({
 		}))
 	},
 
-	async assignRoleToUser(
-			options: {
-				roleId: string
-				userId: string
-				isPublic: boolean
-				timeframeEnd: undefined | number
-				timeframeStart: undefined | number
-			},
-		) {
+	async assignRoleToUser(options: {
+			roleId: string
+			userId: string
+			isPublic: boolean
+			timeframeEnd: undefined | number
+			timeframeStart: undefined | number
+		}) {
 
 		const {roleId: roleIdString, userId: userIdString, isPublic, timeframeEnd, timeframeStart} = (
 			runValidation(options, schema({
@@ -124,12 +122,10 @@ export const makeRoleAssignmentService = ({
 			})
 	},
 
-	async revokeRoleFromUser(
-			options: {
-				roleId: string
-				userId: string
-			},
-		) {
+	async revokeRoleFromUser(options: {
+			roleId: string
+			userId: string
+		}) {
 
 		const {roleId: roleIdString, userId: userIdString} =
 			runValidation(options, schema({

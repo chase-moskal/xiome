@@ -1,19 +1,18 @@
 
-import {Api} from "renraku/x/types/api/api.js"
-import {Remote} from "renraku/x/types/remote/remote.js"
+import {RenrakuApi, RenrakuRemote} from "renraku"
 
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 
-export function logAllCalls<xApi extends Api>({logger, fullyDebug, remote}: {
+export function logAllCalls<xApi extends RenrakuApi>({logger, fullyDebug, remote}: {
 		logger: Logger
 		fullyDebug: boolean
-		remote: Remote<xApi>
-	}): Remote<xApi> {
+		remote: RenrakuRemote<xApi>
+	}): RenrakuRemote<xApi> {
 
 	let count = 1
 
-	function recurse(remote: Remote<xApi>, path: string[] = []) {
+	function recurse(remote: RenrakuRemote<xApi>, path: string[] = []) {
 		return objectMap(remote, (value, key) => {
 			const currentPath = [...path, key]
 			if (typeof value === "function") {

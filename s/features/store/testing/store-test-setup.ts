@@ -1,6 +1,5 @@
 
-import {mockRemote} from "renraku/x/remote/mock-remote.js"
-import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+import {renrakuMock} from "renraku"
 
 import {storeApi} from "../api/store-api.js"
 import {ops} from "../../../framework/ops.js"
@@ -53,17 +52,16 @@ export async function storeTestSetup() {
 			let currentAccess: AccessPayload
 			let stripeLinkWillSucceed = true
 
-			const request = mockHttpRequest({origin: appOrigin})
-			const getters = {
-				getMeta: async() => mockMeta({access: currentAccess}),
-				getRequest: async() => request,
-			}
+			const getMeta = async() => mockMeta({access: currentAccess})
+			const getHeaders = async() => ({origin: appOrigin})
 
 			const remotes = {
-				connectService:
-					mockRemote(api.connectService).useMeta(getters),
-				subscriptionPlanningService:
-					mockRemote(api.subscriptionPlanningService).useMeta(getters),
+				connectService: renrakuMock()
+					.forService(api.connectService)
+					.withMeta(getMeta, getHeaders),
+				subscriptionPlanningService: renrakuMock()
+					.forService(api.subscriptionPlanningService)
+					.withMeta(getMeta, getHeaders),
 			}
 
 			const storeModel = makeStoreModel({
