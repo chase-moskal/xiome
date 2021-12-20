@@ -75,7 +75,7 @@
 		"mongodb": "^4.2.1",
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.9",
-		"renraku": "0.0.0-dev.43",
+		"renraku": "0.0.0-dev.44",
 		"stripe": "^8.191.0",
 		"typed-rest-client": "^1.8.6",
 		"ws": "^8.3.0"
