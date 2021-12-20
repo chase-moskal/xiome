@@ -7,6 +7,8 @@ import {mockConnect} from "../connect/mock/mock-connect.js"
 import {assembleAndInitializeFrontend} from "../assemble-and-initialize-frontend.js"
 import {DraftForNote, Notes} from "../../../features/notes/types/notes-concepts.js"
 
+// TODO reimplement for proxy-based remotes
+
 export function applyMockHacks({connection, frontend}: {
 		connection: Await<ReturnType<typeof mockConnect>>
 		frontend: Await<ReturnType<typeof assembleAndInitializeFrontend>>
