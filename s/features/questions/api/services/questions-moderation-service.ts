@@ -1,5 +1,5 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
@@ -8,7 +8,7 @@ import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-p
 
 export const makeQuestionsModerationService = (
 	options: QuestionsApiOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(async(meta: UserMeta, headers) => {
 	const auth = await authenticatedQuestionsPolicy(options)(meta, headers)

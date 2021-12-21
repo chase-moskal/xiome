@@ -1,5 +1,5 @@
 
-import {RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
@@ -20,7 +20,7 @@ export async function rateLimitQuestions({userId, questionsTables}: {
 		)
 	})
 	if (count > allowedNumberOfPostsInTimeframe)
-		throw new RenrakuError(429, "too many posts")
+		throw new renraku.ApiError(429, "too many posts")
 }
 
 export async function rateLimitAnswers({userId, questionId, questionsTables}: {
@@ -35,5 +35,5 @@ export async function rateLimitAnswers({userId, questionId, questionsTables}: {
 		)
 	})
 	if (count > allowedNumberOfPostsInTimeframe)
-		throw new RenrakuError(429, "too many posts")
+		throw new renraku.ApiError(429, "too many posts")
 }

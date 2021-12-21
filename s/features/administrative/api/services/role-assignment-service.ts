@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
@@ -17,7 +17,7 @@ import {PermissionsMeta} from "../../../auth/aspects/permissions/types/permissio
 export const makeRoleAssignmentService = ({
 	config,
 	authPolicies,
-}: AdministrativeOptions) => renrakuService()
+}: AdministrativeOptions) => renraku.service()
 
 .policy(async(meta: PermissionsMeta, headers) => {
 	const auth = await authPolicies.userPolicy(meta, headers)
@@ -106,7 +106,7 @@ export const makeRoleAssignmentService = ({
 		}))
 
 		if (existing?.hard)
-			throw new RenrakuError(400, "hard role assignment cannot be overwritten")
+			throw new renraku.ApiError(400, "hard role assignment cannot be overwritten")
 		else
 			await authTables.permissions.userHasRole.assert({
 				conditions: or({equal: {roleId, userId}}),
@@ -142,7 +142,7 @@ export const makeRoleAssignmentService = ({
 		}))
 
 		if (existing?.hard)
-			throw new RenrakuError(400, "hard role assignment cannot be overwritten")
+			throw new renraku.ApiError(400, "hard role assignment cannot be overwritten")
 		else
 			await authTables.permissions.userHasRole.delete({
 				conditions: or({equal: {roleId, userId}}),

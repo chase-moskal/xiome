@@ -1,5 +1,5 @@
 
-import {renrakuApi} from "renraku"
+import * as renraku from "renraku"
 
 import {NotesTables} from "./tables/notes-tables.js"
 import {makeNotesService} from "./services/notes-service.js"
@@ -13,7 +13,7 @@ export function notesApi({config, notesTables, authPolicies}: {
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
 	}) {
 
-	return renrakuApi({
+	return renraku.api({
 		notesService: makeNotesService({
 			config,
 			notesTables,

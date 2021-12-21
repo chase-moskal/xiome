@@ -1,5 +1,5 @@
 
-import {renrakuApi} from "renraku"
+import * as renraku from "renraku"
 
 import {VideoTables} from "../types/video-tables.js"
 import {Dacast} from "../dacast/types/dacast-types.js"
@@ -27,7 +27,7 @@ export function videosApi({
 		basePolicy: authPolicies.anonPolicy,
 	}
 
-	return renrakuApi({
+	return renraku.api({
 		dacastService: makeDacastService({
 			...options,
 			dacastSdk,

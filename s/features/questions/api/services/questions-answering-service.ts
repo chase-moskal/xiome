@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {vote} from "./helpers/vote.js"
 import {AnswerDraft} from "../types/answer-draft.js"
@@ -19,7 +19,7 @@ import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-p
 
 export const makeQuestionsAnsweringService = (
 	options: QuestionsApiOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(async(meta: UserMeta, request) => {
 	const auth = await authenticatedQuestionsPolicy(options)(meta, request)
@@ -29,7 +29,7 @@ export const makeQuestionsAnsweringService = (
 	const isModerator = auth.checker.hasPrivilege("moderate questions")
 	const allowed = canPostQuestions || isModerator
 	if (!allowed)
-		throw new RenrakuError(403, "not allowed to post questions")
+		throw new renraku.ApiError(403, "not allowed to post questions")
 
 	return auth
 })
@@ -48,7 +48,7 @@ export const makeQuestionsAnsweringService = (
 		const questionPost = await questionsTables.questionPosts
 			.one(find({questionId}))
 		if (!questionPost)
-			throw new RenrakuError(400, "unknown questionId")
+			throw new renraku.ApiError(400, "unknown questionId")
 		const userId = DamnId.fromString(access.user.userId)
 		await rateLimitAnswers({
 			userId,

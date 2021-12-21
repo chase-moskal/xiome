@@ -1,5 +1,5 @@
 
-import {RenrakuRemote} from "renraku"
+import * as renraku from "renraku"
 import {SystemApi} from "../../backend/types/system-api.js"
 
-export type SystemRemote = RenrakuRemote<SystemApi>
+export type SystemRemote = renraku.Remote<SystemApi>

@@ -1,10 +1,10 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 import {StoreServiceOptions} from "../../types/store-concepts.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(options.storeLinkedPolicy)
 

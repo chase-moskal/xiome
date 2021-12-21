@@ -1,5 +1,5 @@
 
-import {renrakuApi} from "renraku"
+import * as renraku from "renraku"
 
 import {QuestionsApiOptions} from "./types/questions-api-options.js"
 import {makeQuestionsReadingService} from "./services/questions-reading-service.js"
@@ -8,7 +8,7 @@ import {makeQuestionsAnsweringService} from "./services/questions-answering-serv
 import {makeQuestionsModerationService} from "./services/questions-moderation-service.js"
 
 export function questionsApi(options: QuestionsApiOptions) {
-	return renrakuApi({
+	return renraku.api({
 		questionsReadingService: makeQuestionsReadingService(options),
 		questionsPostingService: makeQuestionsPostingService(options),
 		questionsAnsweringService: makeQuestionsAnsweringService(options),

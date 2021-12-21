@@ -1,5 +1,5 @@
 
-import {RenrakuHttpHeaders, RenrakuPolicy} from "renraku"
+import * as renraku from "renraku"
 
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {QuestionsTables} from "../../../tables/types/questions-tables.js"
@@ -11,9 +11,9 @@ export async function spikeQuestionsAuth<
 		xAuth extends AnonAuth
 	>(
 		meta: xMeta,
-		headers: RenrakuHttpHeaders,
+		headers: renraku.HttpHeaders,
 		questionsTables: UnconstrainedTables<QuestionsTables>,
-		basePolicy: RenrakuPolicy<xMeta, xAuth>,
+		basePolicy: renraku.Policy<xMeta, xAuth>,
 	) {
 
 	const auth = await basePolicy(meta, headers)

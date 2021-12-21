@@ -1,5 +1,5 @@
 
-import {RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {StatsHub} from "../types/stats-hub.js"
 import {AppTables} from "../../apps/types/app-tables.js"
@@ -18,7 +18,7 @@ export function prepareStatsHub({appTables, authTables}: {
 		async function throwForbiddenUser(appId: DamnId) {
 			const row = await appTables.owners.one(find({appId}))
 			if (row.userId.toString() !== userId.toString())
-				throw new RenrakuError(403, "forbidden")
+				throw new renraku.ApiError(403, "forbidden")
 		}
 
 		return {

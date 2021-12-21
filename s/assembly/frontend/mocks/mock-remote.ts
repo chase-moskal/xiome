@@ -1,5 +1,5 @@
 
-import {RenrakuHttpHeaders, renrakuMock, RenrakuMockLatency, waitForMockLatency, RenrakuSpike} from "renraku"
+import * as renraku from "renraku"
 
 import {SystemApi} from "../../backend/types/system-api.js"
 import {prepareApiShape} from "../auth/prepare-api-shape.js"
@@ -17,7 +17,7 @@ export function mockRemote({
 		api: SystemApi
 		logging: boolean
 		storage: FlexStorage
-		headers: RenrakuHttpHeaders
+		headers: renraku.HttpHeaders
 	}) {
 
 	const {metaMap, installAuthMediator} = prepareApiShape({
@@ -25,20 +25,20 @@ export function mockRemote({
 		storage,
 	})
 
-	let mockLatency: undefined | RenrakuMockLatency
-	function setMockLatency(value: undefined | RenrakuMockLatency) {
+	let mockLatency: undefined | renraku.MockLatency
+	function setMockLatency(value: undefined | renraku.MockLatency) {
 		mockLatency = value
 	}
 
-	const spike: RenrakuSpike = async(method, func, ...params) => {
-		const [mockTime] = await stopwatch(waitForMockLatency(mockLatency))
+	const spike: renraku.Spike = async(method, func, ...params) => {
+		const [mockTime] = await stopwatch(renraku.waitForMockLatency(mockLatency))
 		const [executionTime, result] = await stopwatch(func(...params))
 		if (logging)
 			console.log(`📡 ${method}() ${executionTime}ms + mock ${mockTime}ms`)
 		return result
 	}
 
-	const remote = renrakuMock({spike})
+	const remote = renraku.mock({spike})
 		.forApi(api)
 		.withMetaMap(metaMap, async() => headers)
 

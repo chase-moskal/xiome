@@ -1,7 +1,7 @@
 
 import json5 from "json5"
-import {megabytes} from "renraku"
-import {renrakuNodeServer} from "renraku/x/http/node-server.js"
+import * as renraku from "renraku"
+import {nodeServer} from "renraku/x/http/node-server.js"
 
 import {deathWithDignity} from "./toolbox/death-with-dignity.js"
 import {backendForNode} from "./assembly/backend/backend-for-node.js"
@@ -15,10 +15,10 @@ void async function main() {
 
 	const {api} = await backendForNode(config)
 
-	const server = renrakuNodeServer({
+	const server = nodeServer({
 		api,
 		exposeErrors: false,
-		maxPayloadSize: megabytes(10),
+		maxPayloadSize: renraku.megabytes(10),
 	})
 
 	server.listen(config.server.port)

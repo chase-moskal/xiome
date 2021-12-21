@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {vote} from "./helpers/vote.js"
 import {QuestionDraft} from "../types/question-draft.js"
@@ -19,7 +19,7 @@ import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-p
 
 export const makeQuestionsPostingService = (
 		options: QuestionsApiOptions
-	) => renrakuService()
+	) => renraku.service()
 
 .policy(async(meta: UserMeta, headers) => {
 	const auth = await authenticatedQuestionsPolicy(options)(meta, headers)
@@ -29,7 +29,7 @@ export const makeQuestionsPostingService = (
 	const isModerator = auth.checker.hasPrivilege("moderate questions")
 	const allowed = canPostQuestions || isModerator
 	if (!allowed)
-		throw new RenrakuError(403, "not allowed to post questions")
+		throw new renraku.ApiError(403, "not allowed to post questions")
 
 	return auth
 })

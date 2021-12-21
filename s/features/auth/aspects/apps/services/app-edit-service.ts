@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {AppDraft} from "../types/app-draft.js"
 import {appointAdmin} from "../utils/appoint-admin.js"
@@ -17,7 +17,7 @@ const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
 
 export const makeAppEditService = ({
 	rando, config, authPolicies, generateNickname,
-}: AuthOptions) => renrakuService()
+}: AuthOptions) => renraku.service()
 
 .policy(authPolicies.appOwnerPolicy)
 
@@ -88,7 +88,7 @@ export const makeAppEditService = ({
 			.one(find({userId: platformUserId}))
 
 		if (!platformAccount)
-			throw new RenrakuError(404, "platform email account not found")
+			throw new renraku.ApiError(404, "platform email account not found")
 
 		const {email} = platformAccount
 		await appointAdmin({
@@ -110,7 +110,7 @@ export const makeAppEditService = ({
 		const problems = emailValidator(email)
 
 		if (problems.length)
-			throw new RenrakuError(400, "email failed validation: " + problems.join(";"))
+			throw new renraku.ApiError(400, "email failed validation: " + problems.join(";"))
 
 		await appointAdmin({
 			rando,

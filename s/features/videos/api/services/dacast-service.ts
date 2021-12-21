@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuPolicy} from "renraku"
+import * as renraku from "renraku"
 
 import {VideoMeta} from "../../types/video-auth.js"
 import {videoPrivileges} from "../video-privileges.js"
@@ -33,8 +33,8 @@ export const makeDacastService = ({
 	config: SecretConfig
 	dacastSdk: Dacast.Sdk
 	videoTables: UnconstrainedTables<VideoTables>
-	basePolicy: RenrakuPolicy<AnonMeta, AnonAuth>
-}) => renrakuService()
+	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
+}) => renraku.service()
 
 .policy(async(meta: VideoMeta, request) => {
 	const auth = await basePolicy(meta, request)

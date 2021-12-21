@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {MerchantRow} from "../../types/store-tables.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
@@ -11,7 +11,7 @@ import {StoreServiceOptions, StripeConnectStatus} from "../../types/store-concep
 
 export const makeConnectService = (
 	options: StoreServiceOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(options.storePolicy)
 
@@ -34,7 +34,7 @@ export const makeConnectService = (
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Ready)
-				throw new RenrakuError(400, "cannot pause non-ready stripe account")
+				throw new renraku.ApiError(400, "cannot pause non-ready stripe account")
 			else {
 				await storeTables.merchant.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
@@ -50,7 +50,7 @@ export const makeConnectService = (
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Paused)
-				throw new RenrakuError(400, "cannot resume non-paused stripe account")
+				throw new renraku.ApiError(400, "cannot resume non-paused stripe account")
 			else {
 				await storeTables.merchant.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
@@ -109,7 +109,7 @@ export const makeConnectService = (
 			})
 			let stripeAccountId = connectDetails?.stripeAccountId
 			if (!stripeAccountId)
-				throw new RenrakuError(404, "no such connected stripe account")
+				throw new renraku.ApiError(404, "no such connected stripe account")
 			const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
 			return url
 		},

@@ -1,5 +1,5 @@
 
-import {renrakuApi} from "renraku"
+import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 
 import {DatabaseFinal} from "../types/database.js"
@@ -35,7 +35,7 @@ export async function assimilateApi({
 		authTables: database.auth,
 	})
 
-	return renrakuApi({
+	return renraku.api({
 		auth: authApi({
 			rando,
 			config,

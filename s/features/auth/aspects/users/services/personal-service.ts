@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {AuthOptions} from "../../../types/auth-options.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
@@ -8,7 +8,7 @@ import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
 import {validateProfileDraft} from "../routines/personal/validate-profile-draft.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
 
-export const makePersonalService = (options: AuthOptions) => renrakuService()
+export const makePersonalService = (options: AuthOptions) => renraku.service()
 
 .policy(options.authPolicies.userPolicy)
 
@@ -25,7 +25,7 @@ export const makePersonalService = (options: AuthOptions) => renrakuService()
 		const allowed = isProfileOwner || canEditAnyProfile
 
 		if (!allowed)
-			throw new RenrakuError(403, "forbidden: you are not allowed to edit this profile")
+			throw new renraku.ApiError(403, "forbidden: you are not allowed to edit this profile")
 
 		throwProblems(validateProfileDraft(profileDraft))
 

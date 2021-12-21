@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError, RenrakuPolicy} from "renraku"
+import * as renraku from "renraku"
 
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
@@ -22,8 +22,8 @@ export const makeNotesService = ({
 }: {
 	config: SecretConfig
 	notesTables: UnconstrainedTables<NotesTables>
-	basePolicy: RenrakuPolicy<UserMeta, UserAuth>
-}) => renrakuService()
+	basePolicy: renraku.Policy<UserMeta, UserAuth>
+}) => renraku.service()
 
 .policy(async(meta: NotesMeta, headers) => {
 	const auth = await basePolicy(meta, headers)
@@ -135,7 +135,7 @@ export const makeNotesService = ({
 
 		for (const note of notes) {
 			if (userId !== note.to.toString())
-				throw new RenrakuError(
+				throw new renraku.ApiError(
 					403,
 					`user is not privileged for note ${note.to.toString()}`
 				)

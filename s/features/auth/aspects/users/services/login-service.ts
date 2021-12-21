@@ -1,5 +1,5 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {AuthOptions} from "../../../types/auth-options.js"
 import {LoginPayload} from "../../../types/auth-tokens.js"
@@ -14,7 +14,7 @@ import {makePermissionsEngine} from "../../../../../assembly/backend/permissions
 export const makeLoginService = ({
 	rando, config, authPolicies,
 	signToken, verifyToken, sendLoginEmail, generateNickname,
-}: AuthOptions) => renrakuService()
+}: AuthOptions) => renraku.service()
 
 .policy(authPolicies.anonPolicy)
 

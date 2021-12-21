@@ -1,5 +1,5 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {AppDraft} from "../types/app-draft.js"
 import {AppDisplay} from "../types/app-display.js"
@@ -15,7 +15,7 @@ import {throwProblems} from "../../../../../toolbox/topic-validation/throw-probl
 
 export const makeAppService = ({
 	rando, config, authPolicies,
-}: AuthOptions) => renrakuService()
+}: AuthOptions) => renraku.service()
 
 .policy(authPolicies.platformUserPolicy)
 

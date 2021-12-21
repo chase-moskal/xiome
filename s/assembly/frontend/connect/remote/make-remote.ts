@@ -1,5 +1,5 @@
 
-import {renrakuBrowserClient} from "renraku"
+import * as renraku from "renraku"
 
 import {SystemApi} from "../../../backend/types/system-api.js"
 import {prepareApiShape} from "../../auth/prepare-api-shape.js"
@@ -20,7 +20,7 @@ export function makeRemote({
 		storage,
 	})
 
-	const remote = renrakuBrowserClient<SystemApi>({
+	const remote = renraku.browserClient<SystemApi>({
 		metaMap,
 		url: apiLink,
 	})

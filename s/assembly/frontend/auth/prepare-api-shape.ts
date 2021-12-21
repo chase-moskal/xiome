@@ -1,5 +1,5 @@
 
-import {RenrakuMetaMap, RenrakuRemote} from "renraku"
+import * as renraku from "renraku"
 
 import {SystemApi} from "../../backend/types/system-api.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
@@ -20,7 +20,7 @@ export function prepareApiShape({appId, storage}: {
 		}
 	}
 
-	const metaMap: RenrakuMetaMap<SystemApi> = {
+	const metaMap: renraku.MetaMap<SystemApi> = {
 		auth: {
 			apps: {
 				appService: getStandardMeta,
@@ -58,7 +58,7 @@ export function prepareApiShape({appId, storage}: {
 	}
 
 	function installAuthMediator({greenService}: {
-			greenService: RenrakuRemote<ReturnType<typeof makeGreenService>>
+			greenService: renraku.Remote<ReturnType<typeof makeGreenService>>
 		}) {
 		authMediator = makeAuthMediator({
 			appId,

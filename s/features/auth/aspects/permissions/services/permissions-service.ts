@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {AuthOptions} from "../../../types/auth-options.js"
 import {PrivilegeRow} from "../types/permissions-tables.js"
@@ -12,7 +12,7 @@ import {makePermissionsEngine} from "../../../../../assembly/backend/permissions
 
 export const makePermissionsService = ({
 	rando, config, authPolicies,
-}: AuthOptions) => renrakuService()
+}: AuthOptions) => renraku.service()
 
 .policy(async(meta: PermissionsMeta, headers) => {
 	const auth = await authPolicies.userPolicy(meta, headers)
@@ -32,7 +32,7 @@ export const makePermissionsService = ({
 
 	async createRole({label}: {label: string}) {
 		const problems = roleLabelValidator(label)
-		if (problems.length) throw new RenrakuError(
+		if (problems.length) throw new renraku.ApiError(
 			400,
 			`validation error on label: ${problems.join("; ")}`
 		)
@@ -51,10 +51,10 @@ export const makePermissionsService = ({
 		const role = await authTables.permissions.role.one(find({roleId}))
 
 		if (!role)
-			throw new RenrakuError(404, "role not found")
+			throw new renraku.ApiError(404, "role not found")
 
 		if (role.hard)
-			throw new RenrakuError(400, "cannot delete hard role")
+			throw new renraku.ApiError(400, "cannot delete hard role")
 
 		await Promise.all([
 			authTables.permissions.userHasRole.delete(find({roleId})),
@@ -121,10 +121,10 @@ export const makePermissionsService = ({
 		const [privilege] = await engine.getPrivileges([privilegeId.toString()])
 
 		if (!privilege)
-			throw new RenrakuError(400, `cannot delete missing privilege "${privilege.privilegeId.toString()}"`)
+			throw new renraku.ApiError(400, `cannot delete missing privilege "${privilege.privilegeId.toString()}"`)
 
 		if (privilege.hard)
-			throw new RenrakuError(400, `cannot delete hard privilege "${privilege.privilegeId.toString()}"`)
+			throw new renraku.ApiError(400, `cannot delete hard privilege "${privilege.privilegeId.toString()}"`)
 
 		await Promise.all([
 			authTables.permissions

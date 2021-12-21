@@ -1,12 +1,12 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 
-export const makeUserService = (options: AuthOptions) => renrakuService()
+export const makeUserService = (options: AuthOptions) => renraku.service()
 
 .policy(options.authPolicies.anonPolicy)
 

@@ -1,5 +1,5 @@
 
-import {renrakuMock} from "renraku"
+import * as renraku from "renraku"
 
 import {ops} from "../../../framework/ops.js"
 import {subbies} from "../../../toolbox/subbies.js"
@@ -73,7 +73,7 @@ export async function notesTestingSetup() {
 	}
 
 	async function browserTab() {
-		const notesService = renrakuMock()
+		const notesService = renraku.mock()
 			.forService(rawNotesService)
 			.withMeta(async() => meta, async() => headers)
 		const notesModel = makeNotesModel({notesService})

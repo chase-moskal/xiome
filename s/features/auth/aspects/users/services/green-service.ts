@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
@@ -9,7 +9,7 @@ import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 
-export const makeGreenService = (options: AuthOptions) => renrakuService()
+export const makeGreenService = (options: AuthOptions) => renraku.service()
 
 .policy(options.authPolicies.greenPolicy)
 
@@ -33,10 +33,10 @@ export const makeGreenService = (options: AuthOptions) => renrakuService()
 		const appRow = await appTables.registrations.one(find({appId}))
 
 		if (!appRow)
-			throw new RenrakuError(400, "incorrect app id")
+			throw new renraku.ApiError(400, "incorrect app id")
 
 		if (appRow.archived)
-			throw new RenrakuError(403, "app has been archived")
+			throw new renraku.ApiError(403, "app has been archived")
 
 		if (refreshToken) {
 			const {userId: userIdString} = await options.verifyToken<RefreshPayload>(refreshToken)

@@ -1,5 +1,5 @@
 
-import {renrakuService, RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {StoreMeta} from "../../types/store-metas-and-auths.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
@@ -13,7 +13,7 @@ const hardcodedInterval = "month"
 
 export const makeSubscriptionPlanningService = (
 	options: StoreServiceOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(async(meta: StoreMeta, headers) => {
 	const auth = await options.storeLinkedPolicy(meta, headers)
@@ -25,7 +25,7 @@ export const makeSubscriptionPlanningService = (
 		})
 	)
 	if (connectStatus !== StripeConnectStatus.Ready)
-		throw new RenrakuError(400, "stripe connect status not ready")
+		throw new renraku.ApiError(400, "stripe connect status not ready")
 	return auth
 })
 

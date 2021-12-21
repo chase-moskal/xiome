@@ -1,6 +1,6 @@
 
-import {RenrakuRemote, RenrakuService} from "renraku"
+import * as renraku from "renraku"
 
 export type Service<
-	xServiceMaker extends (...args: any[]) => RenrakuService<any, any, any>
-> = RenrakuRemote<ReturnType<xServiceMaker>>
+	xServiceMaker extends (...args: any[]) => renraku.Service<any, any, any>
+> = renraku.Remote<ReturnType<xServiceMaker>>

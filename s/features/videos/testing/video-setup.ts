@@ -1,5 +1,5 @@
 
-import {renrakuMock} from "renraku"
+import * as renraku from "renraku"
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"
@@ -90,11 +90,11 @@ export async function videoSetup() {
 			})
 			const headers = {origin: appOrigin}
 
-			const dacastService = renrakuMock()
+			const dacastService = renraku.mock()
 				.forService(rawDacastService)
 				.withMeta(async() => meta, async() => headers)
 
-			const contentService = renrakuMock()
+			const contentService = renraku.mock()
 				.forService(rawContentService)
 				.withMeta(async() => meta, async() => headers)
 

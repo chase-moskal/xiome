@@ -1,5 +1,5 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {AnonMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
@@ -13,7 +13,7 @@ import {makePermissionsEngine} from "../../../../assembly/backend/permissions/pe
 
 export const makeQuestionsReadingService = (
 	options: QuestionsApiOptions
-) => renrakuService()
+) => renraku.service()
 
 .policy(async(meta: AnonMeta, request) => {
 	const auth = await anonQuestionsPolicy(options)(meta, request)

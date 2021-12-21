@@ -1,5 +1,5 @@
 
-import {renrakuMock} from "renraku"
+import * as renraku from "renraku"
 
 import {storeApi} from "../api/store-api.js"
 import {ops} from "../../../framework/ops.js"
@@ -56,10 +56,10 @@ export async function storeTestSetup() {
 			const getHeaders = async() => ({origin: appOrigin})
 
 			const remotes = {
-				connectService: renrakuMock()
+				connectService: renraku.mock()
 					.forService(api.connectService)
 					.withMeta(getMeta, getHeaders),
-				subscriptionPlanningService: renrakuMock()
+				subscriptionPlanningService: renraku.mock()
 					.forService(api.subscriptionPlanningService)
 					.withMeta(getMeta, getHeaders),
 			}

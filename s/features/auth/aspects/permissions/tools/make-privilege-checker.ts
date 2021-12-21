@@ -1,5 +1,5 @@
 
-import {RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {Permit} from "../types/permit.js"
 import {PrivilegeChecker} from "../types/privilege-checker.js"
@@ -15,12 +15,12 @@ export function makePrivilegeChecker<xPrivileges extends {[key: string]: string}
 
 	function requirePrivilege(key: keyof xPrivileges) {
 		if (!hasPrivilege(key))
-			throw new RenrakuError(403, `forbidden; privilege required "${key}"`)
+			throw new renraku.ApiError(403, `forbidden; privilege required "${key}"`)
 	}
 
 	function requireNotHavePrivilege(key: keyof xPrivileges) {
 		if (hasPrivilege(key))
-			throw new RenrakuError(403, `forbidden: must not have privilege "${key}"`)
+			throw new renraku.ApiError(403, `forbidden: must not have privilege "${key}"`)
 	}
 
 	return {

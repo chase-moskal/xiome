@@ -1,5 +1,5 @@
 
-import {renrakuService} from "renraku"
+import * as renraku from "renraku"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
@@ -10,7 +10,7 @@ export const makeExampleService = ({
 	config,
 	authPolicies,
 	exampleTables,
-}: ExampleApiOptions) => renrakuService()
+}: ExampleApiOptions) => renraku.service()
 
 .policy(async(meta: UserMeta, headers) => {
 	const auth = await authPolicies.userPolicy(meta, headers)

@@ -1,5 +1,5 @@
 
-import {RenrakuError} from "renraku"
+import * as renraku from "renraku"
 
 import {UserStats} from "../../types/user-stats.js"
 import {AuthTables} from "../../../../types/auth-tables.js"
@@ -30,10 +30,10 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		const profile = profiles.find(p => p.userId.toString() === userId.toString())
 
 		if (!account)
-			throw new RenrakuError(404, `account not found for user id ${userId}`)
+			throw new renraku.ApiError(404, `account not found for user id ${userId}`)
 
 		if (!profile)
-			throw new RenrakuError(404, `profile not found for user id ${userId}`)
+			throw new renraku.ApiError(404, `profile not found for user id ${userId}`)
 
 		const roles = publicRolesForUsers
 			.find(r => r.userId.toString() === userId.toString())
