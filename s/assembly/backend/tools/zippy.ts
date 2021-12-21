@@ -1,5 +1,5 @@
 
-import {Await} from "renraku/x/types/tools/await.js"
+import {Await} from "../../../types/await.js"
 
 export type ZipSpec = [string[], any][]
 

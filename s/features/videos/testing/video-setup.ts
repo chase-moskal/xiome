@@ -1,7 +1,5 @@
 
-import {mockRemote} from "renraku/x/remote/mock-remote.js"
-import {HttpRequest} from "renraku/x/types/http/http-request.js"
-import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+import * as renraku from "renraku"
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"
@@ -84,25 +82,28 @@ export async function videoSetup() {
 	return {
 
 		async for(privileges: string[]) {
-			const options = {
-				getMeta: async() => mockVideoMeta({
-					privileges,
-					origins: [appOrigin],
-					appId: appId.toString(),
-					userId: rando.randomId().toString(),
-				}),
-				getRequest: async() => mockHttpRequest({origin: appOrigin}),
-			}
-			const dacastService = mockRemote(rawDacastService).useMeta(options)
-			const contentService = mockRemote(rawContentService).useMeta(options)
+			const meta = await mockVideoMeta({
+				privileges,
+				origins: [appOrigin],
+				appId: appId.toString(),
+				userId: rando.randomId().toString(),
+			})
+			const headers = {origin: appOrigin}
+
+			const dacastService = renraku.mock()
+				.forService(rawDacastService)
+				.withMeta(async() => meta, async() => headers)
+
+			const contentService = renraku.mock()
+				.forService(rawContentService)
+				.withMeta(async() => meta, async() => headers)
+
 			const models = makeVideoModels({
 				dacastService,
 				contentService,
 			})
-			const {access} = await basePolicy(
-				await options.getMeta(),
-				<HttpRequest>await options.getRequest(),
-			)
+
+			const {access} = await basePolicy(meta, headers)
 
 			await Promise.all([
 				models.dacastModel.updateAccessOp(ops.ready(access)),

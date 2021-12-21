@@ -8,28 +8,20 @@ import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-stora
 import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
 import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
 
-export async function mockBrowser({api, mockStripeOperations}: {
+export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
+		appOrigin: string
 		mockStripeOperations: MockStripeOperations
 	}) {
 
-	async function mockAppWindow({
-			appId,
-			apiLink,
-			windowLink,
-		}: {
-			appId: string
-			apiLink: string
-			windowLink: string
-		}) {
-
+	async function mockAppWindow({appId}: {appId: string}) {
 		const storage = memoryFlexStorage()
 		const {remote, authMediator} = mockRemote({
 			api,
 			appId,
-			apiLink,
 			storage,
-			origin: new URL(windowLink).origin,
+			logging: false,
+			headers: {origin: appOrigin},
 		})
 
 		const {nextModalResults} = mockModalSystem()

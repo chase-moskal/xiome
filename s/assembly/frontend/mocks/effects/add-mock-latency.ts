@@ -1,6 +1,5 @@
 
-import {Api} from "renraku/x/types/api/api.js"
-import {Remote} from "renraku/x/types/remote/remote.js"
+import * as renraku from "renraku"
 
 import {nap} from "../../../../toolbox/nap.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
@@ -12,10 +11,10 @@ export interface MockLatencyRange {
 
 export type MockLatency = false | MockLatencyRange
 
-export function addMockLatency<xApi extends Api>({latency, remote}: {
+export function addMockLatency<xApi extends renraku.Api>({latency, remote}: {
 		latency: MockLatency
-		remote: Remote<xApi>
-	}): Remote<xApi> {
+		remote: renraku.Remote<xApi>
+	}): renraku.Remote<xApi> {
 
 	function getRandomizedDelay() {
 		if (latency === false) return 0
@@ -24,7 +23,7 @@ export function addMockLatency<xApi extends Api>({latency, remote}: {
 		return latency.min + randomRange
 	}
 
-	function recurse(remote: Remote<xApi>) {
+	function recurse(remote: renraku.Remote<xApi>) {
 		return objectMap(remote, (value, key) => {
 			if (typeof value === "function") {
 				return async(...args: any[]) => {

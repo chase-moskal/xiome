@@ -1,6 +1,7 @@
 
+import * as renraku from "renraku"
+
 import {VideoTables} from "../types/video-tables.js"
-import {asApi} from "renraku/x/identities/as-api.js"
 import {Dacast} from "../dacast/types/dacast-types.js"
 import {makeDacastService} from "./services/dacast-service.js"
 import {makeContentService} from "./services/content-service.js"
@@ -26,7 +27,7 @@ export function videosApi({
 		basePolicy: authPolicies.anonPolicy,
 	}
 
-	return asApi({
+	return renraku.api({
 		dacastService: makeDacastService({
 			...options,
 			dacastSdk,

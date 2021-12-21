@@ -18,11 +18,7 @@ export async function prepareMockActions({
 				action: (tab: MockTab) => Promise<void>
 			) {
 			const browser = await mockBrowser()
-			const tab = await browser.mockAppWindow({
-				appId,
-				apiLink: window.location.href,
-				windowLink: window.location.href,
-			})
+			const tab = await browser.mockAppWindow({appId})
 			const {accessModel} = tab.models
 			const {loginService} = tab.remote.auth.users
 

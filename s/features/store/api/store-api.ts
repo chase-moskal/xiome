@@ -1,7 +1,5 @@
 
-import {ApiError} from "renraku/x/api/api-error.js"
-import {asApi} from "renraku/x/identities/as-api.js"
-import {HttpRequest} from "renraku/x/types/http/http-request.js"
+import * as renraku from "renraku"
 
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {makeConnectService} from "./services/connect-service.js"
@@ -22,9 +20,9 @@ export const storeApi = ({
 
 	async function storePolicy(
 			meta: StoreMeta,
-			request: HttpRequest
+			headers: renraku.HttpHeaders
 		): Promise<StoreAuth> {
-		const auth = await basePolicy(meta, request)
+		const auth = await basePolicy(meta, headers)
 		return {
 			...auth,
 			stripeLiaison,
@@ -37,15 +35,15 @@ export const storeApi = ({
 	const serviceOptions: StoreServiceOptions = {
 		...common,
 		storePolicy,
-		async storeLinkedPolicy(meta, request) {
-			const auth = await storePolicy(meta, request)
+		async storeLinkedPolicy(meta, headers) {
+			const auth = await storePolicy(meta, headers)
 			const connectDetails = await fetchStripeConnectDetails({
 				storeTables: auth.storeTables,
 				stripeLiaison: auth.stripeLiaison,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Ready)
-				throw new ApiError(
+				throw new renraku.ApiError(
 					400,
 					"stripe account is not connected, and this action requires it"
 				)
@@ -58,7 +56,7 @@ export const storeApi = ({
 		},
 	}
 
-	return asApi({
+	return renraku.api({
 		connectService: makeConnectService(serviceOptions),
 		subscriptionPlanningService: makeSubscriptionPlanningService(serviceOptions),
 		subscriptionShoppingService: makeSubscriptionShoppingService(serviceOptions),

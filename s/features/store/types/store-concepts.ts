@@ -1,5 +1,5 @@
 
-import {Policy} from "renraku/x/types/primitives/policy.js"
+import * as renraku from "renraku"
 
 import {StoreTables} from "./store-tables.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
@@ -30,12 +30,12 @@ export interface StoreCommonOptions {
 export interface StoreApiOptions extends StoreCommonOptions {
 	stripeLiaison: StripeLiaison
 	storeTables: UnconstrainedTables<StoreTables>
-	basePolicy: Policy<AnonMeta, AnonAuth>
+	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }
 
 export interface StoreServiceOptions extends StoreCommonOptions {
-	storePolicy: Policy<StoreMeta, StoreAuth>
-	storeLinkedPolicy: Policy<StoreMeta, StoreLinkedAuth>
+	storePolicy: renraku.Policy<StoreMeta, StoreAuth>
+	storeLinkedPolicy: renraku.Policy<StoreMeta, StoreLinkedAuth>
 }
 
 export enum StripeConnectStatus {

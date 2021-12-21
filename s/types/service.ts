@@ -1,6 +1,6 @@
 
-import {Remote} from "renraku/x/types/remote/remote.js"
-import {ApiContext} from "renraku/x/types/api/api-context.js"
+import * as renraku from "renraku"
 
-export type Service<T extends (...args: any[]) => ApiContext<any, any, any, any>> =
-	Remote<ReturnType<T>>
+export type Service<
+	xServiceMaker extends (...args: any[]) => renraku.Service<any, any, any>
+> = renraku.Remote<ReturnType<xServiceMaker>>

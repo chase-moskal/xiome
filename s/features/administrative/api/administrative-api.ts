@@ -1,11 +1,11 @@
 
-import {asApi} from "renraku/x/identities/as-api.js"
+import * as renraku from "renraku"
 
-import {makeRoleAssignmentService} from "./services/role-assignment-service.js"
 import {AdministrativeOptions} from "./types/administrative-options.js"
+import {makeRoleAssignmentService} from "./services/role-assignment-service.js"
 
 export function makeAdministrativeApi(options: AdministrativeOptions) {
-	return asApi({
+	return renraku.api({
 		roleAssignmentService: makeRoleAssignmentService(options),
 	})
 }

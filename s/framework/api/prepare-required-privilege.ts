@@ -1,22 +1,22 @@
 
 import {objectMap} from "../../toolbox/object-map.js"
-import {Topic} from "renraku/x/types/primitives/topic.js"
 import {AnonAuth} from "../../features/auth/types/auth-metas.js"
+import {PrivilegeChecker} from "../../features/auth/aspects/permissions/types/privilege-checker.js"
 
 export function prepareRequiredPrivilege<
-		xAuth extends AnonAuth,
 		xPrivileges extends {[key: string]: string}
 	>() {
 
-	return function requiredPrivilege<xMethods extends Topic<xAuth>>(
+	return function requiredPrivilege<xMethods extends {[key: string]: (...args: any[]) => Promise<any>}>(
+			checker: PrivilegeChecker<xPrivileges>,
 			key: keyof xPrivileges,
 			methods: xMethods
 		) {
 
 		return <xMethods>objectMap(methods, method =>
-			async(auth: xAuth, ...args: any[]) => {
-				auth.checker.requirePrivilege(<any>key)
-				return method(auth, ...args)
+			async(...args: any[]) => {
+				checker.requirePrivilege(<any>key)
+				return method(...args)
 			}
 		)
 	}

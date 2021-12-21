@@ -10,16 +10,14 @@ import {assembleAndInitializeFrontend} from "./assembly/frontend/assemble-and-in
 void async function demos() {
 	const connection = await mockConnectApp({
 		appWindowLink: window.location.href,
+		appOrigin: window.location.origin,
 		origins: [window.location.origin],
 		storage: memoryFlexStorage(),
 	})
 
 	await demoQuestions(connection)
 
-	connection.remote = addMockLatency({
-		remote: connection.remote,
-		latency: {min: 200, max: 800},
-	})
+	connection.setMockLatency({min: 200, max: 800})
 
 	const frontend = await assembleAndInitializeFrontend(connection)
 	applyMockHacks({connection, frontend})

@@ -3,9 +3,8 @@ import {Await} from "../../../../../types/await.js"
 import {backendForNode} from "../../../../backend/backend-for-node.js"
 
 export async function mockRegisterApp({
-		apiLink, ownerEmail, adminEmail, appOrigins, backend
+		ownerEmail, adminEmail, appOrigins, backend
 	}: {
-		apiLink: string
 		ownerEmail: string
 		adminEmail: string
 		appOrigins: string[]
@@ -14,9 +13,7 @@ export async function mockRegisterApp({
 
 	const mockBrowserForPlatform = await backend.mockBrowser()
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
-		apiLink,
 		appId: backend.platformAppId,
-		windowLink: window.location.href,
 	})
 
 	const {accessModel, appsModel} = mockWindowForPlatform.models

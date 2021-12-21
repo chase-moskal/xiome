@@ -1,10 +1,9 @@
 
-import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
-import {mockConfig} from "../../../backend/config/mock-config.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
-import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
+import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {chatMockClient} from "../../../../features/chat/api/sockets/chat-mock-client.js"
 
 export async function mockConnectPlatform({
@@ -14,20 +13,20 @@ export async function mockConnectPlatform({
 		storage: FlexStorage
 	}) {
 
+	const appOrigin = new URL(platformHome).origin
+
 	const backend = await backendForBrowser(storage)(mockConfig({
 		platformHome,
-		platformOrigins: [new URL(platformHome).origin],
+		platformOrigins: [appOrigin],
 	}))
 
-	const apiLink = apiOrigin + "/"
 	const appId = backend.platformAppId
 
-	const {remote, authMediator} = await mockWiredRemote({
+	const {remote, authMediator, setMockLatency} = await mockWiredRemote({
 		appId,
-		apiLink,
 		backend,
 		storage,
-		appWindowLink: platformHome,
+		appOrigin,
 	})
 
 	const popups = mockPopups({
@@ -36,5 +35,5 @@ export async function mockConnectPlatform({
 
 	const chatConnect = await chatMockClient({storage})
 
-	return {appId, remote, storage, authMediator, backend, popups, chatConnect}
+	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
 }

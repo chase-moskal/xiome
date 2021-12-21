@@ -4,8 +4,8 @@ import {Await} from "../../../types/await.js"
 import {hitchie} from "../../../toolbox/hitchie.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {mockConnect} from "../connect/mock/mock-connect.js"
-import {assembleAndInitializeFrontend} from "../assemble-and-initialize-frontend.js"
 import {DraftForNote, Notes} from "../../../features/notes/types/notes-concepts.js"
+import {assembleAndInitializeFrontend} from "../assemble-and-initialize-frontend.js"
 
 export function applyMockHacks({connection, frontend}: {
 		connection: Await<ReturnType<typeof mockConnect>>

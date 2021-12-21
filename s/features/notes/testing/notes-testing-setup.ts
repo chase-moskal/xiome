@@ -1,17 +1,15 @@
 
-import {mockRemote} from "renraku/x/remote/mock-remote.js"
-import {HttpRequest} from "renraku/x/types/http/http-request.js"
-import {mockHttpRequest} from "renraku/x/remote/mock-http-request.js"
+import * as renraku from "renraku"
 
 import {ops} from "../../../framework/ops.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
-import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {NotesTables} from "../api/tables/notes-tables.js"
-import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
+import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
 import {makeNotesService} from "../api/services/notes-service.js"
+import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
@@ -53,8 +51,9 @@ export async function notesTestingSetup() {
 			},
 		},
 	})
-	const request = mockHttpRequest({origin: appOrigin}) as any as HttpRequest
-	const {access} = await basePolicy(meta, request)
+
+	const headers = {origin: appOrigin}
+	const {access} = await basePolicy(meta, headers)
 
 	const notesDepositBox = makeNotesDepositBox({
 		rando,
@@ -74,10 +73,9 @@ export async function notesTestingSetup() {
 	}
 
 	async function browserTab() {
-		const notesService = mockRemote(rawNotesService).useMeta({
-			getMeta: async() => meta,
-			getRequest: async() => request,
-		})
+		const notesService = renraku.mock()
+			.forService(rawNotesService)
+			.withMeta(async() => meta, async() => headers)
 		const notesModel = makeNotesModel({notesService})
 		await notesModel.updateAccessOp(ops.ready(access))
 		orchestrateBroadcast(notesModel)

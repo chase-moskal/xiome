@@ -57,6 +57,7 @@ export function prepareBackend(configurators: Configurators) {
 			mockBrowser: async() => mockBrowser({
 				api,
 				mockStripeOperations,
+				appOrigin: "http://localhost:5000",
 			}),
 		}
 	}

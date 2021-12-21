@@ -1,5 +1,5 @@
 
-import {HttpRequest} from "renraku/x/types/http/http-request.js"
+import * as renraku from "renraku"
 
 import {AnonMeta} from "../../../../auth/types/auth-metas.js"
 import {spikeQuestionsAuth} from "./common/spike-questions-auth.js"
@@ -10,7 +10,7 @@ export function anonQuestionsPolicy({
 		questionsTables,
 	}: QuestionsApiOptions) {
 
-	return async function(meta: AnonMeta, request: HttpRequest) {
-		return spikeQuestionsAuth(meta, request, questionsTables, authPolicies.anonPolicy)
+	return async function(meta: AnonMeta, headers: renraku.HttpHeaders) {
+		return spikeQuestionsAuth(meta, headers, questionsTables, authPolicies.anonPolicy)
 	}
 }
