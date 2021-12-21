@@ -9,8 +9,9 @@ import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.j
 import {chatMockClient} from "../../../../features/chat/api/sockets/chat-mock-client.js"
 
 export async function mockConnectApp({
-		origins, storage, appWindowLink,
+		appOrigin, origins, storage, appWindowLink,
 	}: {
+		appOrigin: string
 		origins: string[]
 		storage: FlexStorage
 		appWindowLink: string
@@ -38,10 +39,11 @@ export async function mockConnectApp({
 	console.log(`mock: app owner email "${ownerEmail}"`)
 
 	backend.emails.enableEmails()
-	const {remote, authMediator} = await mockWiredRemote({
+	const {remote, authMediator, setMockLatency} = await mockWiredRemote({
 		appId,
 		backend,
 		storage,
+		appOrigin,
 	})
 
 	const popups = mockPopups({
@@ -50,5 +52,5 @@ export async function mockConnectApp({
 
 	const chatConnect = await chatMockClient({storage})
 
-	return {appId, remote, storage, authMediator, backend, popups, chatConnect}
+	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
 }

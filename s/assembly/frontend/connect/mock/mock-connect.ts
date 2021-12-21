@@ -7,6 +7,7 @@ import {simpleFlexStorage} from "../../../../toolbox/flex-storage/simple-flex-st
 export async function mockConnect(config: XiomeMockConfig) {
 	const options = {
 		origins: [window.location.origin],
+		appOrigin: window.location.origin,
 		storage: simpleFlexStorage(window.localStorage),
 		platformHome: window.location.href,
 		appWindowLink: window.location.href,

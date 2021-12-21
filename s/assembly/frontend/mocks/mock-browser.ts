@@ -8,8 +8,9 @@ import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-stora
 import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
 import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
 
-export async function mockBrowser({api, mockStripeOperations}: {
+export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
+		appOrigin: string
 		mockStripeOperations: MockStripeOperations
 	}) {
 
@@ -19,6 +20,8 @@ export async function mockBrowser({api, mockStripeOperations}: {
 			api,
 			appId,
 			storage,
+			logging: false,
+			headers: {origin: appOrigin},
 		})
 
 		const {nextModalResults} = mockModalSystem()
