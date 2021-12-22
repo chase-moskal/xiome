@@ -36,6 +36,10 @@ export type ChatPostRow = {
 	time: number
 } & ChatDraft
 
+export type ChatMuteRow = {
+	userId: DamnId
+}
+
 export type ChatRoomStatusRow = {
 	room: string
 	status: ChatStatus
@@ -43,7 +47,7 @@ export type ChatRoomStatusRow = {
 
 export type ChatTables = {
 	posts: DbbyTable<ChatPostRow>
-	mutes: DbbyTable<{userId: string}>
+	mutes: DbbyTable<ChatMuteRow>
 	roomStatuses: DbbyTable<ChatRoomStatusRow>
 }
 

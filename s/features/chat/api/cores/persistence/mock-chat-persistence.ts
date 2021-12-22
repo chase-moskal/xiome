@@ -3,7 +3,7 @@ import {subbies} from "../../../../../toolbox/subbies.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {ChatPost, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
+import {ChatMuteRow, ChatPost, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
 import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
 
 export async function mockChatPersistence(storage: FlexStorage) {
@@ -98,17 +98,29 @@ export async function mockChatPersistence(storage: FlexStorage) {
 
 		async addMute(userIds: string[]) {
 			if (userIds.length) {
-				await chatTables.mutes.create(
-					...userIds.map(userId => ({userId}))
+				const existingMutes = await chatTables.mutes.read(
+					findAll(userIds, userId => ({
+						userId: DamnId.fromString(userId),
+					}))
 				)
-				events.mutes.publish({userIds})
+				const userIdsAlreadyMuted = existingMutes.map(
+					row => row.userId.toString()
+				)
+				const userIdsToBeMuted = userIds.filter(
+					userId => !userIdsAlreadyMuted.includes(userId)
+				)
+				const newMutes = userIdsToBeMuted.map(userId => ({
+					userId: DamnId.fromString(userId)
+				}))
+				await chatTables.mutes.create(...newMutes)
+				events.mutes.publish({userIds: userIdsToBeMuted})
 			}
 		},
 
 		async removeMute(userIds: string[]) {
 			if (userIds.length) {
 				await chatTables.mutes.delete(
-					findAll(userIds, userId => ({userId}))
+					findAll(userIds, userId => ({userId: DamnId.fromString(userId)}))
 				)
 				events.unmutes.publish({userIds})
 			}

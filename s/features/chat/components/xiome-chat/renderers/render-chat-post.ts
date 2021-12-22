@@ -7,14 +7,16 @@ import {ChatPost} from "../../../common/types/chat-concepts.js"
 import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
 
 export function renderChatPost({
-		post, isModerator, mute, remove,
+		post, isModerator, mute, remove, mutedIds,
 		}: {
 		post: ChatPost
 		isModerator: boolean
 		mute: () => void
 		remove: () => void
+		mutedIds: string[]
 	}) {
-	let postTime = formatDate(post.time)
+	const postTime = formatDate(post.time)
+	const userIsMuted = mutedIds.includes(post.userId)
 	return html`
 		<li data-post="${post.postId}">
 			<header>
@@ -22,8 +24,17 @@ export function renderChatPost({
 				${isModerator
 					? html`
 						<span class=moderation>
-							<xio-button title="mute" @press=${mute}>${muteIcon}</xio-button>
-							<xio-button title="delete" @press=${remove}>${deleteIcon}</xio-button>
+							<xio-button
+								title="mute user"
+								@press=${mute}
+								?disabled=${userIsMuted}>
+									${muteIcon}
+							</xio-button>
+							<xio-button
+								title="delete post"
+								@press=${remove}>
+									${deleteIcon}
+							</xio-button>
 						</span>
 					`
 					: null}
