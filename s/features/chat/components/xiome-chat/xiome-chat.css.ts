@@ -8,8 +8,10 @@ X * { outline: 1px solid #f902; }
 :host {
 	display: block;
     --pad: var(--xio-chat-pad, 0);
+	--header-background: (--xio-chat-header-background,  transparent);
+	--login-panel-background: (--xio-chat-login-panel-background,  transparent);
     --background: var(--xio-chat-background, transparent);
-    --border: var(--xio-chat-border, none);
+    --border: var(--xio-chat-border, 1px solid #f902);
     --border-radius: var(--xio-chat-border-radius, 0em);
 }
 
@@ -22,6 +24,7 @@ X * { outline: 1px solid #f902; }
 
 .chatbox header {
 	display: block;
+	background: var(--header-background);
 }
 
 .chatbox header > span {
@@ -31,9 +34,13 @@ X * { outline: 1px solid #f902; }
 	--xio-button-padding: 0.3em;
 }
 
+.chatbox xiome-login-panel {
+	background: var(--xio-chat-login-panel-background);
+}
+
 div .authorship {
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 }
 
 div[slot="logged-out"] {
