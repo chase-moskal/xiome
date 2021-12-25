@@ -52,10 +52,6 @@ export type ChatRoomStatusRow = {
 	status: ChatStatus
 }
 
-export type ChatMuteRow = {
-  userId: DamnId
-}
-
 export type ChatTables = {
 	posts: DbbyTable<ChatPostRow>
 	mutes: DbbyTable<ChatMuteRow>
