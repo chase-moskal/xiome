@@ -20,6 +20,6 @@ export async function connect({
 	})
 	wireMediatorBroadcastChannel({appId, authMediator})
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
-	const chatConnect = chatSocketClient(`ws://chat.${new URL(apiOrigin).hostname}/`)
+	const chatConnect = chatSocketClient(`ws://chat.${new URL(platformOrigin).hostname}/`)
 	return {appId, remote, storage, authMediator, popups, chatConnect}
 }

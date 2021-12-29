@@ -26,3 +26,7 @@ microservices:
     image: ghcr.io/chase-moskal/xiome/api
     replicas: 2
     port: 8000
+  chat:
+    image: ghcr.io/chase-moskal/xiome/chat
+    replicas: 1
+    port: 8000
