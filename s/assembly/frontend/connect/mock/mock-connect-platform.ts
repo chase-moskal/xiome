@@ -4,7 +4,7 @@ import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
-import {chatMockClient} from "../../../../features/chat/api/sockets/chat-mock-client.js"
+import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectPlatform({
 		platformHome, storage,
@@ -33,7 +33,8 @@ export async function mockConnectPlatform({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	const chatConnect = await chatMockClient({storage})
+	const chatConnect = await chatMockClientEntirely(storage)
+	// chatConnect: chatSocketClient("ws://localhost:8000/"),
 
 	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
 }

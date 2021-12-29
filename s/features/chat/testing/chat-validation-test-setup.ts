@@ -1,12 +1,14 @@
 
+import * as renraku from "renraku"
+
 import {nap} from "../../../toolbox/nap.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 import {chatPrivileges} from "../common/chat-privileges.js"
 import {ClientRecord} from "../common/types/chat-concepts.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
+import {makeChatServerside} from "../api/services/chat-serverside.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
-import {prepareChatServersideLogic} from "../api/cores/logic/chat-serverside-logic.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 
 export async function chatValidationTestSetup(
@@ -29,29 +31,35 @@ export async function chatValidationTestSetup(
 	const clientRecord: ClientRecord = {
 		auth: undefined,
 		rooms: new Set(),
-		clientRemote: {
-			postsAdded: doNothing,
-			postsRemoved: doNothing,
-			roomCleared: doNothing,
-			roomStatusChanged: doNothing,
-			unmuteAll: doNothing,
-			usersMuted: doNothing,
-			usersUnmuted: doNothing,
+		clientside: {
+			chatClient: {
+				postsAdded: doNothing,
+				postsRemoved: doNothing,
+				roomCleared: doNothing,
+				roomStatusChanged: doNothing,
+				unmuteAll: doNothing,
+				usersMuted: doNothing,
+				usersUnmuted: doNothing,
+			},
 		},
 	}
 
-	const chatServersideLogic = prepareChatServersideLogic({
+	const serversideApi = makeChatServerside({
 		rando,
 		persistence,
 		clientRecord,
 		policy: mockChatPolicy,
 	})
 
-	await chatServersideLogic.updateUserMeta(meta)
+	const serverside = renraku.mock()
+		.forApi(serversideApi)
+		.withMetaMap({chatServer: async() => {}})
+
+	await serverside.chatServer.updateUserMeta(meta)
 	await nap()
 
 	return {
 		meta,
-		chatServersideLogic,
+		serverside,
 	}
 }

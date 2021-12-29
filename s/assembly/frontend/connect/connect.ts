@@ -4,8 +4,7 @@ import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfig} from "../types/xiome-config-connected.js"
 import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
-import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
-import {getRando} from "../../../toolbox/get-rando.js"
+import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function connect({
 		appId,
@@ -25,7 +24,8 @@ export async function connect({
 
 	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 
-	const chatConnect = await chatMockClient({storage})
+	const chatConnect = await chatMockClientEntirely(storage)
+	// chatConnect: chatSocketClient("ws://localhost:8000/"),
 
 	return {appId, remote, storage, authMediator, popups, chatConnect}
 }

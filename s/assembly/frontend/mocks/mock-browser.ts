@@ -5,9 +5,8 @@ import {assembleModels} from "../models/assemble-models.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {mockPopups} from "../connect/mock/common/mock-popups.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
-import {chatMockClient} from "../../../features/chat/api/sockets/chat-mock-client.js"
 import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
-import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
+import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
@@ -32,7 +31,7 @@ export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 			storage,
 			authMediator,
 			popups: mockPopups({mockStripeOperations}),
-			chatConnect: await chatMockClient({storage}),
+			chatConnect: await chatMockClientEntirely(storage),
 		})
 
 		return {models, remote, nextModalResults}

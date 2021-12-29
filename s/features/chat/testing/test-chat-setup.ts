@@ -5,8 +5,8 @@ import {makeChatModel} from "../models/chat-model.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 import {ChatStatus} from "../common/types/chat-concepts.js"
 import {chatPrivileges} from "../common/chat-privileges.js"
+import {chatMockClient} from "../api/sockets/chat-mock-client.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
-import {prepareChatClientCore} from "../api/cores/chat-client-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
@@ -18,7 +18,7 @@ export async function testChatSetup() {
 	const persistence = await mockChatPersistence(storage)
 
 	async function makeServer() {
-		const servelet = makeChatServerCore({
+		const serverCore = makeChatServerCore({
 			rando,
 			persistence,
 			logError() {},
@@ -26,18 +26,7 @@ export async function testChatSetup() {
 		})
 
 		async function makeClient(privileges: string[]) {
-			const {chatConnect} = prepareChatClientCore({
-				connectToServer: async({handleDataFromServer}) => {
-					const serverConnection = await servelet.acceptConnection({
-						disconnect: () => {},
-						sendDataToClient: handleDataFromServer,
-					})
-					return {
-						sendDataToServer: serverConnection.handleDataFromClient,
-						disconnect: async() => serverConnection.handleDisconnect(),
-					}
-				},
-			})
+			const chatConnect = chatMockClient(serverCore)
 			const userId = rando.randomId().toString()
 			let access = {
 				appId: undefined,

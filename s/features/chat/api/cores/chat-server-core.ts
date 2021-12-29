@@ -1,9 +1,11 @@
 
+import * as renraku from "renraku"
+
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
-import {lingoHost, lingoRemote} from "../../../../toolbox/lingo/lingo.js"
-import {prepareChatServersideLogic} from "./logic/chat-serverside-logic.js"
-import {ChatClientsideLogic, ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
+import {makeChatClientside} from "../services/chat-clientside.js"
+import {makeChatServerside} from "../services/chat-serverside.js"
+import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export function makeChatServerCore({rando, persistence, policy, logError}: {
 		rando: Rando
@@ -40,7 +42,7 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 	persistence.onRoomStatusChanged(({room, status}) => {
 		broadcastToRoom(
 			room,
-			record => record.clientRemote.roomStatusChanged(room, status),
+			record => record.clientside.chatClient.roomStatusChanged(room, status),
 		)
 	})
 
@@ -49,7 +51,7 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
-					record.clientRemote.postsAdded(room, posts)
+					record.clientside.chatClient.postsAdded(room, posts)
 			},
 		)
 	})
@@ -59,7 +61,7 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
-					record.clientRemote.postsRemoved(room, postIds)
+					record.clientside.chatClient.postsRemoved(room, postIds)
 			}
 		)
 	})
@@ -67,21 +69,21 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 	persistence.onMutes(({userIds}) => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
-				record.clientRemote.usersMuted(userIds)
+				record.clientside.chatClient.usersMuted(userIds)
 		})
 	})
 
 	persistence.onUnmutes(({userIds}) => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
-				record.clientRemote.usersUnmuted(userIds)
+				record.clientside.chatClient.usersUnmuted(userIds)
 		})
 	})
 
 	persistence.onUnmuteAll(() => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
-				record.clientRemote.unmuteAll()
+				record.clientside.chatClient.unmuteAll()
 		})
 	})
 
@@ -90,50 +92,37 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
-					record.clientRemote.roomCleared(room)
+					record.clientside.chatClient.roomCleared(room)
 			},
 		)
 	})
 
-	async function acceptConnection({disconnect, sendDataToClient}: {
-			disconnect(): void
-			sendDataToClient: (...args: any[]) => Promise<void>
+	function acceptNewClient({clientside, handleDisconnect}: {
+			clientside: renraku.Remote<ReturnType<typeof makeChatClientside>>
+			handleDisconnect: () => void
 		}) {
-
 		const clientRecord: ClientRecord = {
 			auth: undefined,
 			rooms: new Set(),
-			clientRemote: lingoRemote<ChatClientsideLogic>({
-				send: sendDataToClient,
-			}),
+			clientside,
 		}
-
 		clientRecords.add(clientRecord)
-
 		return {
-			handleDataFromClient: (() => {
-				const executor = lingoHost(prepareChatServersideLogic({
-					rando,
-					persistence,
-					clientRecord,
-					policy,
-				}))
-				return async(key: string, ...args: any[]) => {
-					let result: any
-					try { result = await executor(key, ...args) }
-					catch (error) { logError(error) }
-					return result
-				}
-			})(),
-			handleDisconnect() {
-				disconnect()
+			api: makeChatServerside({
+				rando,
+				persistence,
+				clientRecord,
+				policy,
+			}),
+			disconnect() {
+				handleDisconnect()
 				clientRecords.delete(clientRecord)
 			},
 		}
 	}
 
 	return {
-		acceptConnection,
+		acceptNewClient,
 		get clientCount() { return clientRecords.size },
 	}
 }

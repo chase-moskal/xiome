@@ -6,8 +6,8 @@ import {makeChatState} from "./state/chat-state.js"
 import {chatAllowance} from "../common/chat-allowance.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {setupRoomManagement} from "./room/room-management.js"
+import {makeChatClientside} from "../api/services/chat-clientside.js"
 import {ChatMeta, ChatConnect} from "../common/types/chat-concepts.js"
-import {prepareChatClientsideLogic} from "../api/cores/logic/chat-clientside-logic.js"
 
 export function makeChatModel({chatConnect, getChatMeta}: {
 		chatConnect: ChatConnect
@@ -16,7 +16,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 
 	const changeEvent = pub()
 	const state = makeChatState()
-	const clientsideLogic = prepareChatClientsideLogic({
+	const clientsideApi = makeChatClientside({
 		state,
 		onChange: changeEvent.publish,
 	})
@@ -25,10 +25,13 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		const connection = ops.value(state.readable.connectionOp)
 			?? await ops.operation({
 				setOp: op => state.writable.connectionOp = op,
-				promise: chatConnect({clientsideLogic}),
+				promise: chatConnect({
+					clientsideApi,
+					handleDisconnect: () => state.writable.connectionOp = ops.none(),
+				}),
 			})
 		const meta = await getChatMeta()
-		await connection.serverRemote.updateUserMeta(meta)
+		await connection.serverside.chatServer.updateUserMeta(meta)
 		return connection
 	})
 
@@ -64,7 +67,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			const connection = ops.value(state.readable.connectionOp)
 			if (connection) {
 				const meta = await getChatMeta()
-				await connection.serverRemote.updateUserMeta(meta)
+				await connection.serverside.chatServer.updateUserMeta(meta)
 			}
 		},
 
