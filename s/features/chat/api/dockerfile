@@ -9,4 +9,4 @@ COPY x x
 
 RUN npm ci --production
 
-CMD ["node", "./x/server.js"]
+CMD ["node", "./x/features/chat/api/chat-server.js"]

@@ -58,6 +58,14 @@ jobs:
         push: true
         tags: ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
 
+    - name: 🎁 push image - chat
+      uses: docker/build-push-action@v2
+      with:
+        file: ./s/features/chat/api/dockerfile
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/chat:${{ github.sha }}
+
     - name: 📜 set kubeconfig
       uses: azure/k8s-set-context@v1
       with:
