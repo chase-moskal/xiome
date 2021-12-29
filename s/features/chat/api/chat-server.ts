@@ -47,7 +47,7 @@ void async function main() {
 				clientside: prepareClientApi<ReturnType<typeof makeChatClientside>>({
 					chatClient: async() => {},
 				}),
-				handleDisconnect: () => controls.close(),
+				handleDisconnect: () => {},
 			})
 			return {
 				api,
