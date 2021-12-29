@@ -206,17 +206,21 @@ export class XiomeChat extends ComponentWithShare<{
 	render() {
 		return renderOp(this.#model.state.connectionOp, () => html`
 			<div class=chatbox>
-				${this.#renderModerationHeader()}
-				${this.#room?.status === ChatStatus.Online
-					? [
-						this.#renderHistory(),
-						this.#renderParticipation(),
-					]
-					: html`
-						<slot name=offline>
-							chat is offline
-						</slot>
-					`}
+				${this.#room?
+					html`
+						${this.#renderModerationHeader()}
+						${this.#room?.status === ChatStatus.Online
+							? [
+								this.#renderHistory(),
+								this.#renderParticipation(),
+							]
+							: html`
+								<slot name=offline>
+									chat is offline
+								</slot>
+							`}
+					`:
+					null}
 			</div>
 		`)
 	}
