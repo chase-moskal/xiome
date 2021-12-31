@@ -51,7 +51,7 @@ export async function mockConnectApp({
 	})
 
 	const chatConnect = await chatMockClientEntirely(storage)
-	// const chatConnect = chatSocketClient("ws://localhost:8000/")
+	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
 	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
 }

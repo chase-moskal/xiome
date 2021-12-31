@@ -23,7 +23,8 @@ head
 		xiome-config(
 			app="77772a748c61250b85b84b6fcee3d2c5f9b3b62afa29adf1afbcfe73c0a7217f"
 			platform="http://localhost:5000"
-			api="http://localhost:8000"
+			api-server="http://localhost:8000/"
+			chat-server="ws://localhost:8001/"
 		)
 		script(defer type="importmap-shim" src=`${base}/importmap.json`)
 		script(defer type="module-shim" src=`${base}/xiome.js`)
@@ -36,18 +37,17 @@ head
 			switch (window.location.hostname) {
 				case "xiome.io": {
 					config.setAttribute("platform", `https://xiome.io`)
-					config.setAttribute("api", `https://api.xiome.io`)
 					break
 				}
 				case "stage.xiome.io": {
 					config.setAttribute("platform", `https://stage.xiome.io`)
-					config.setAttribute("api", `https://api.stage.xiome.io`)
 					document.documentElement.className += " stage"
 					break
 				}
 				case "localhost": {
 					config.setAttribute("platform", `http://localhost:5000`)
-					config.setAttribute("api", `http://localhost:8000`)
+					config.setAttribute("api-server", `http://localhost:8000/`)
+					config.setAttribute("chat-server", `ws://localhost:8001/`)
 					break
 				}
 				default: {
