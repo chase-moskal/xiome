@@ -15,6 +15,9 @@ export interface SecretConfig {
 	database: "mock-storage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
 	dacast: "mock-mode" | true
+	chat: {
+		port: number
+	}
 	crypto: {
 		keys: "mock-mode" | "environment-variables" | ConfigKeys
 		tokenLifespans: {

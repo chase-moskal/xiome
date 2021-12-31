@@ -39,7 +39,7 @@ void async function main() {
 	})
 
 	const server = webSocketServer({
-		port: 8001,
+		port: config?.chat?.port ?? 8000,
 		exposeErrors: true,
 		maxPayloadSize: renraku.megabytes(1),
 		acceptConnection({controls, prepareClientApi}) {
