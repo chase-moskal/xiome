@@ -1,27 +1,37 @@
 
+import {on} from "events"
 import mongodb from "mongodb"
-import {mainModule} from "process"
+import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
+import {ChatMuteRow, ChatPostRow, ChatRoomStatusRow} from "../../../common/types/chat-concepts.js"
 
-// async function listDatabases(client){
-// 	let databasesList = await client.db().admin().listDatabases()
+export async function mongoChatPersistence (){
 
-// 	console.log("Databases:")
-// 	databasesList.databases.forEach(db => console.log(` - ${db.name}`))
-// }
+	const client = await new mongodb.MongoClient("mongodb://localhost:27017/test").connect()
+	const db = client.db('test')
+	const collections = {
+		muteCollection: db.collection('chatCollection'),
+		postCollection: db.collection('chatCollection'),
+		statusCollection: db.collection('chatCollection'),
+	}
 
-void async function main() {
-	const db = new mongodb.MongoClient("mongodb://localhost:27017/test")
-	console.log(db)
-	// const collection = db.collection("chat-collection")
+	const chatTables = {
+		posts: dbbyMongo<ChatPostRow>({collection: collections.postCollection}),
+		mutes: dbbyMongo<ChatMuteRow>({collection: collections.muteCollection}),
+		roomStatuses: dbbyMongo<ChatRoomStatusRow>({collection: collections.statusCollection})
+	}
 
-	// try {
-	// 	await db.connect()
-	// 	await listDatabases(db)
-	// }
-	// catch (e) {
-	// 	console.error(e)
-	// }
-	// finally {
-	// 	await db.close()
-	// }
-} ()
+	const postsChangeStream = collections.postCollection.watch()
+	postsChangeStream.on('change', (change) => {
+		
+	})
+
+	const mutesChangeStream = collections.muteCollection.watch()
+	mutesChangeStream.on('change', (change) => {
+
+	})
+
+	const statusChangeStream = collections.statusCollection.watch()
+	statusChangeStream.on('change', (change) => {
+
+	})
+}
