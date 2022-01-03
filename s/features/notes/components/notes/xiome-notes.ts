@@ -31,17 +31,17 @@ export class XiomeNotes extends ComponentWithShare<{
 		const {switchTabNew, switchTabOld} = this.#cache
 		return html`
 			<div class=tabs>
-				<xio-button 
+				<xio-button
 					@press=${switchTabNew}
-					data-tab="new" ? data-active=${!old}
-					>
-					new
+					data-tab="new"
+					?data-active=${!old}>
+						new
 				</xio-button>
 				<xio-button 
-				@press=${switchTabOld}
-				data-tab="old" ? data-active=${old}
-				>
-					old
+					@press=${switchTabOld}
+					data-tab="old"
+					?data-active=${old}>
+						old
 				</xio-button>
 			</div>
 		`
