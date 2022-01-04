@@ -30,18 +30,22 @@ export class XiomeNotes extends ComponentWithShare<{
 		const {old} = this.#cache.cacheState
 		const {switchTabNew, switchTabOld} = this.#cache
 		return html`
+			
 			<div class=tabs>
+			<div class="tab-new">
 				<xio-button
 					@press=${switchTabNew}
 					data-tab="new"
 					?data-active=${!old}>
-						new
+						NEW
 				</xio-button>
+				</div>
+				<div class="tab-old">
 				<xio-button 
 					@press=${switchTabOld}
 					data-tab="old"
 					?data-active=${old}>
-						old
+						OLD
 				</xio-button>
 			</div>
 		`
@@ -51,26 +55,32 @@ export class XiomeNotes extends ComponentWithShare<{
 		const {old, notesOp} = this.#cache.cacheState
 		const {markSpecificNoteNew, markSpecificNoteOld} = this.#cache
 		return renderOp(notesOp, notes => html`
+			 
 			<ol>
 				${notes.map(note => html`
-					<li>
-						<p>noteId: ${note.noteId}</p>
-						<p>noteTitle: ${note.title}</p>
-						<p>noteText: ${note.text}</p>
-						<p>noteTime: ${note.time}</p>
+					<li class="note-body">
+					${old ? html`
+					<xio-button visibility="visible" @press=${() => markSpecificNoteNew(note.noteId)}>
+						+
+					</xio-button>
+				` : html`
+					<xio-button visibility="invisible" @press=${() => markSpecificNoteOld(note.noteId)}>
+						X
+					</xio-button>
+				`} 
+						<div class="typeandtime"> 
+						<p class="note-type">${note.type}</p>
+						 <p class="note-time">Sent at ${note.time}</p>
+						 </div>
+						 <p class="note-title">${note.title}</p>
+						
+						<p class="note-text">${note.text}</p>
+						
 						<p>noteFrom: ${note.from}</p>
 						<p>noteTo: ${note.to}</p>
 						<p>noteDetails: ${note.details}</p>
-						<p>noteType: ${note.type}</p>
-						${old ? html`
-							<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
-								+
-							</xio-button>
-						` : html`
-							<xio-button @press=${() => markSpecificNoteOld(note.noteId)}>
-								x
-							</xio-button>
-						`}
+						
+						
 					</li>
 				`)}
 			</ol>
@@ -86,6 +96,7 @@ export class XiomeNotes extends ComponentWithShare<{
 		return html`
 			${(isNextPageAvailable || isPreviousPageAvailable)
 				? html`
+				<div class="page-container">
 				<xio-button
 					?disabled=${!isPreviousPageAvailable}
 					@press=${previousPage}>
@@ -99,6 +110,7 @@ export class XiomeNotes extends ComponentWithShare<{
 					@press=${nextPage}>
 						next
 				</xio-button>
+				</div>
 				`
 				: null
 			}
@@ -126,16 +138,23 @@ export class XiomeNotes extends ComponentWithShare<{
 		return html`
 			${ops.value(notesOp)?.length === 0
 				? html`
+				
 					${this.#renderTabs()}
 					<slot name="empty">
 						you have no ${old ? 'old' : 'new'} notifications
 					</slot>
+				
 				`
 				: html`
+					<div class="note-container">
 					${this.#renderTabs()}
+					<div class="note-content-box">
 					${this.#renderNotes()}
 					${this.#renderPagination()}
+					</div>
 					${this.#renderButtonbar()}
+					
+					</div>
 				`}
 		`
 	}
@@ -144,7 +163,9 @@ export class XiomeNotes extends ComponentWithShare<{
 		return renderOp(this.#model.state.accessOp, access =>
 			access?.user
 				? html`
+					
 					${this.#renderBasedOnStateOfNotesArray()}
+				
 				`
 				: html`
 					<slot name="logged-out">
