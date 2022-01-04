@@ -26,6 +26,9 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 	email: "mock-console",
 	database: "mock-storage",
 	stripe: "mock-mode",
+	chat: {
+		port: 8001
+	},
 	crypto: {
 		keys: "mock-mode",
 		tokenLifespans: {

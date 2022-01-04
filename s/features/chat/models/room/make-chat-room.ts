@@ -2,11 +2,11 @@
 import {ops} from "../../../../framework/ops.js"
 import {makeChatState} from "../state/chat-state.js"
 import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
-import {ChatDraft, ChatServersideLogic, ChatStatus} from "../../common/types/chat-concepts.js"
+import {ChatDraft, ChatServerside, ChatStatus} from "../../common/types/chat-concepts.js"
 
-export function makeChatRoom({label, serverRemote, state}: {
+export function makeChatRoom({label, serverside, state}: {
 		label: string
-		serverRemote: ChatServersideLogic
+		serverside: ChatServerside
 		state: ReturnType<typeof makeChatState>
 	}) {
 
@@ -33,25 +33,25 @@ export function makeChatRoom({label, serverRemote, state}: {
 		},
 
 		setRoomStatus(status: ChatStatus) {
-			serverRemote.setRoomStatus(label, status)
+			serverside.chatServer.setRoomStatus(label, status)
 		},
 		post(draft: ChatDraft) {
-			serverRemote.post(label, draft)
+			serverside.chatServer.post(label, draft)
 		},
 		remove(postIds: string[]) {
-			serverRemote.remove(label, postIds)
+			serverside.chatServer.remove(label, postIds)
 		},
 		clear() {
-			serverRemote.clear(label)
+			serverside.chatServer.clear(label)
 		},
 		mute(userId: string) {
-			serverRemote.mute([userId])
+			serverside.chatServer.mute([userId])
 		},
 		unmute(userId: string) {
-			serverRemote.unmute([userId])
+			serverside.chatServer.unmute([userId])
 		},
 		unmuteAll() {
-			serverRemote.unmuteAll()
+			serverside.chatServer.unmuteAll()
 		},
 	}
 }

@@ -1,11 +1,13 @@
 
-import {Await} from "../../../../types/await.js"
-import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {mockChatPersistence} from "../../api/cores/persistence/mock-chat-persistence.js"
-import {prepareChatClientsideLogic} from "../../api/cores/logic/chat-clientside-logic.js"
-import {prepareChatServersideLogic} from "../../api/cores/logic/chat-serverside-logic.js"
-import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+import type * as renraku from "renraku"
+
+import type {Await} from "../../../../types/await.js"
+import type {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+import type {AccessPayload} from "../../../auth/types/auth-tokens.js"
+import type {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
+import type {makeChatServerside} from "../../api/services/chat-serverside.js"
+import type {makeChatClientside} from "../../api/services/chat-clientside.js"
+import type {mockChatPersistence} from "../../api/cores/persistence/mock-chat-persistence.js"
 
 export interface ChatMeta {
 	accessToken: string
@@ -51,24 +53,27 @@ export type ChatTables = {
 	roomStatuses: DbbyTable<ChatRoomStatusRow>
 }
 
+export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
+export type ChatServersideApi = ReturnType<typeof makeChatServerside>
+export type ChatClientsideApi = ReturnType<typeof makeChatClientside>
+
+export type ChatServerside = renraku.Remote<ChatServersideApi>
+export type ChatClientside = renraku.Remote<ChatClientsideApi>
+
 export interface ClientRecord {
 	rooms: Set<string>
 	auth: undefined | ChatAuth
-	clientRemote: ReturnType<typeof prepareChatClientsideLogic>
+	clientside: ChatClientside
 }
-
-export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
-export type ChatServersideLogic = ReturnType<typeof prepareChatServersideLogic>
-export type ChatClientsideLogic = ReturnType<typeof prepareChatClientsideLogic>
 
 export interface ChatConnection {
-	serverRemote: ChatServersideLogic
-	disconnect(): Promise<void>
-	handleDataFromServer(...args: any): Promise<void>
+	serverside: ChatServerside
+	disconnect(): void
 }
 
-export type ChatConnect = ({clientsideLogic}: {
-	clientsideLogic: ChatClientsideLogic
+export type ChatConnect = ({clientsideApi}: {
+	clientsideApi: ChatClientsideApi
+	handleDisconnect(): void
 }) => Promise<ChatConnection>
 
 export enum ChatStatus {

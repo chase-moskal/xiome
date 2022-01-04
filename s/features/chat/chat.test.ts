@@ -510,25 +510,25 @@ export default<Suite>{
 
 		return {
 			"updateUserMeta validation": async() => {
-				const {chatServersideLogic, meta} = await setup()
+				const {serverside, meta} = await setup()
 				await expectValidationErrors(
-					chatServersideLogic.updateUserMeta,
+					serverside.chatServer.updateUserMeta,
 					[meta],
 					invalid.metas.map(x => [x]),
 				)
 			},
 			"roomSubscribe validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.roomSubscribe,
+				(await setup()).serverside.chatServer.roomSubscribe,
 				[valid.room],
 				invalid.rooms.map(x => [x]),
 			),
 			"roomUnsubscribe validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.roomUnsubscribe,
+				(await setup()).serverside.chatServer.roomUnsubscribe,
 				[valid.room],
 				invalid.rooms.map(x => [x]),
 			),
 			"post validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.post,
+				(await setup()).serverside.chatServer.post,
 				[valid.room, valid.draft],
 				[
 					...invalid.rooms.map(x => [x, valid.draft]),
@@ -536,7 +536,7 @@ export default<Suite>{
 				],
 			),
 			"remove validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.remove,
+				(await setup()).serverside.chatServer.remove,
 				[valid.room, [valid.id]],
 				[
 					...invalid.rooms.map(x => [x, [valid.id]]),
@@ -546,22 +546,22 @@ export default<Suite>{
 				]
 			),
 			"clear validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.clear,
+				(await setup()).serverside.chatServer.clear,
 				[valid.room],
 				invalid.rooms.map(x => [x]),
 			),
 			"mute validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.mute,
+				(await setup()).serverside.chatServer.mute,
 				[[valid.id]],
 				invalid.ids.map(x => [[x]]),
 			),
 			"unmute validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.unmute,
+				(await setup()).serverside.chatServer.unmute,
 				[[valid.id]],
 				invalid.ids.map(x => [[x]]),
 			),
 			"setRoomStatus validation": async() => await expectValidationErrors(
-				(await setup()).chatServersideLogic.setRoomStatus,
+				(await setup()).serverside.chatServer.setRoomStatus,
 				[valid.room, valid.status],
 				[
 					...invalid.rooms.map(x => [x, valid.status]),
@@ -571,34 +571,38 @@ export default<Suite>{
 		}
 	},
 
-	async "validation failure does not crash the server"() {
-		const setup = await testChatSetup()
-		const {server, roomLabel} = await setup.startOnline()
+	// // TODO
+	// // currently, errors in the mocks will crash the "virtual server",
+	// // as the mock system differs here from actual websocket server,
+	// // which makes this test non-meaningful.
+	// async "validation failure does not crash the server"() {
+	// 	const setup = await testChatSetup()
+	// 	const {server, roomLabel} = await setup.startOnline()
 		
-		const p1 = await server.makeClientFor.participant()
-		const {room: p1room} = await p1.chatModel.session(roomLabel)
+	// 	const p1 = await server.makeClientFor.participant()
+	// 	const {room: p1room} = await p1.chatModel.session(roomLabel)
 
-		// cause a validation failure
-		const badSession = await p1.chatModel.session(<any>-99)
-		await nap()
+	// 	// cause a validation failure
+	// 	const badSession = await p1.chatModel.session(<any>-99)
+	// 	await nap()
 
-		const p2 = await server.makeClientFor.participant()
-		const {room: p2room} = await p2.chatModel.session(roomLabel)
+	// 	const p2 = await server.makeClientFor.participant()
+	// 	const {room: p2room} = await p2.chatModel.session(roomLabel)
 
-		p1room.post({content: "lol"})
-		await nap()
+	// 	p1room.post({content: "lol"})
+	// 	await nap()
 
-		expect(p1room.posts.length).equals(1)
-		expect(p1room.posts.find(post => post.content === "lol")).ok()
-		expect(p2room.posts.find(post => post.content === "lol")).ok()
+	// 	expect(p1room.posts.length).equals(1)
+	// 	expect(p1room.posts.find(post => post.content === "lol")).ok()
+	// 	expect(p2room.posts.find(post => post.content === "lol")).ok()
 
-		p2room.post({content: "lmao"})
-		await nap()
+	// 	p2room.post({content: "lmao"})
+	// 	await nap()
 
-		expect(p1room.posts.find(post => post.content === "lmao")).ok()
-		expect(p2room.posts.find(post => post.content === "lmao")).ok()
+	// 	expect(p1room.posts.find(post => post.content === "lmao")).ok()
+	// 	expect(p2room.posts.find(post => post.content === "lmao")).ok()
 
-		expect(p1room.posts.length).equals(2)
-		expect(p2room.posts.length).equals(2)
-	},
+	// 	expect(p1room.posts.length).equals(2)
+	// 	expect(p2room.posts.length).equals(2)
+	// },
 }

@@ -1,12 +1,12 @@
 
-import {apiOrigin} from "../../../constants.js"
 import {mockPopups} from "./common/mock-popups.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
-import {chatMockClient} from "../../../../features/chat/api/sockets/chat-mock-client.js"
+// import {chatSocketClient} from "../../../../features/chat/api/sockets/chat-socket-client.js"
+import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectApp({
 		appOrigin, origins, storage, appWindowLink,
@@ -50,7 +50,8 @@ export async function mockConnectApp({
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 
-	const chatConnect = await chatMockClient({storage})
+	const chatConnect = await chatMockClientEntirely(storage)
+	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
 	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
 }

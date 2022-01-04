@@ -13,3 +13,5 @@ web:
 microservices:
   api:
     replicas: 1
+  chat:
+    replicas: 1

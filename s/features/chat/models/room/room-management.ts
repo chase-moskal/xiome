@@ -3,7 +3,6 @@ import {ops} from "../../../../framework/ops.js"
 import {makeChatRoom} from "./make-chat-room.js"
 import {makeChatState} from "../state/chat-state.js"
 import {ChatConnection} from "../../common/types/chat-concepts.js"
-import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 
 export function setupRoomManagement({state, reconnect, disconnect}: {
 		state: ReturnType<typeof makeChatState>
@@ -34,14 +33,14 @@ export function setupRoomManagement({state, reconnect, disconnect}: {
 		if (!room) {
 			room = assertConnection()
 				.then(connection =>
-					connection.serverRemote.roomSubscribe(label)
+					connection.serverside.chatServer.roomSubscribe(label)
 						.then(() => connection)
 				)
 				.then(connection =>
 					makeChatRoom({
 						label,
 						state,
-						serverRemote: connection.serverRemote,
+						serverside: connection.serverside,
 					})
 				)
 			rooms.set(label, room)
@@ -54,7 +53,7 @@ export function setupRoomManagement({state, reconnect, disconnect}: {
 		assertConnection()
 			.then(connection =>
 				room.then(r => {
-					connection.serverRemote.roomUnsubscribe(label)
+					connection.serverside.chatServer.roomUnsubscribe(label)
 				})
 			)
 			.then(() => {

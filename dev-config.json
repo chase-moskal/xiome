@@ -21,6 +21,9 @@
 	"database": "mock-storage",
 	"stripe": "mock-mode",
 	"dacast": "mock-mode",
+	"chat": {
+		"port": 8001
+	},
 	"crypto": {
 		"keys": "mock-mode",
 		"tokenLifespans": {

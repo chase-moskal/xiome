@@ -6,7 +6,8 @@ export function readXiomeConfig(): XiomeConfig {
 	const {attr} = configReading("xiome-config")
 	return {
 		appId: attr("app"),
-		apiOrigin: attr("api"),
+		apiServer: attr("api-server"),
+		chatServer: attr("chat-server"),
 		platformOrigin: attr("platform"),
 	}
 }

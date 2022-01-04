@@ -1,39 +1,32 @@
 
-import {getRando, Rando} from "../../../../toolbox/get-rando.js"
+import * as renraku from "renraku"
+
+import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {makeChatServerCore} from "../cores/chat-server-core.js"
-import {prepareChatClientCore} from "../cores/chat-client-core.js"
-import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"
-import {mockChatPersistence} from "../cores/persistence/mock-chat-persistence.js"
-import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 
-export async function chatMockClient({storage}: {
-		storage: FlexStorage
-	}) {
+export function chatMockClient(
+		serverCore: ReturnType<typeof makeChatServerCore>
+	): ChatConnect {
 
-	const rando = await getRando()
-	const persistence = await mockChatPersistence(storage)
+	return async function chatConnect({clientsideApi, handleDisconnect}) {
 
-	const servelet = makeChatServerCore({
-		rando,
-		persistence,
-		policy: mockChatPolicy,
-		logError(error) {
-			console.error(error)
-		},
-	})
+		const clientside = renraku.mock()
+			.forApi(clientsideApi)
+			.withMetaMap({chatClient: async() => {}})
 
-	const {chatConnect} = prepareChatClientCore({
-		connectToServer: async({handleDataFromServer}) => {
-			const serverConnection = await servelet.acceptConnection({
-				disconnect: () => {},
-				sendDataToClient: handleDataFromServer,
-			})
-			return {
-				sendDataToServer: serverConnection.handleDataFromClient,
-				disconnect: async() => serverConnection.handleDisconnect(),
-			}
+		const {api, disconnect} = serverCore.acceptNewClient({
+			clientside,
+			handleDisconnect: () => {},
+		})
+
+		return {
+			serverside: renraku.mock()
+				.forApi(api)
+				.withMetaMap({chatServer: async() => {}}),
+			disconnect() {
+				disconnect()
+				handleDisconnect()
+			},
 		}
-	})
-
-	return chatConnect
+	}
 }
