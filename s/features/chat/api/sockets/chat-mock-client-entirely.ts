@@ -6,7 +6,6 @@ import {makeChatServerCore} from "../cores/chat-server-core.js"
 import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../cores/persistence/mock-chat-persistence.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
-import {mongoChatPersistence} from "../cores/persistence/chat-persistence-mongo.js"
 
 export async function chatMockClientEntirely(storage: FlexStorage):
 		Promise<ChatConnect> {
