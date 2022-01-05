@@ -16,7 +16,7 @@ export async function testChatSetup() {
 	const rando = await getRando()
 	const storage = memoryFlexStorage()
 	const persistence = await mockChatPersistence(storage)
-	const appId = rando.randomId().toString()
+	const defaultAppId = rando.randomId().toString()
 
 	async function makeServer() {
 		const serverCore = makeChatServerCore({
@@ -25,7 +25,7 @@ export async function testChatSetup() {
 			policy: mockChatPolicy,
 		})
 
-		async function makeClient(privileges: string[]) {
+		async function makeClient(privileges: string[], appId = defaultAppId) {
 			const chatConnect = chatMockClient(serverCore)
 			const userId = rando.randomId().toString()
 			let access = {
@@ -69,14 +69,14 @@ export async function testChatSetup() {
 
 		return {
 			makeClientFor: {
-				forbidden: () => makeClient([]),
-				viewer: () => makeClient([chatPrivileges["view all chats"]]),
-				participant: () => makeClient([chatPrivileges["participate in all chats"]]),
-				moderator: () => makeClient([chatPrivileges["moderate all chats"]]),
-				bannedParticipant: () => makeClient([
+				forbidden: (appId?: string) => makeClient([], appId),
+				viewer: (appId?: string) => makeClient([chatPrivileges["view all chats"]], appId),
+				participant: (appId?: string) => makeClient([chatPrivileges["participate in all chats"]], appId),
+				moderator: (appId?: string) => makeClient([chatPrivileges["moderate all chats"]], appId),
+				bannedParticipant: (appId?: string) => makeClient([
 					chatPrivileges["participate in all chats"],
 					appPermissions.privileges["banned"],
-				]),
+				], appId),
 			},
 		}
 	}

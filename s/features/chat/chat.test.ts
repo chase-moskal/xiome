@@ -429,6 +429,38 @@ export default<Suite>{
 		},
 	},
 
+	"app isolation": {
+		async "chat message in one app doesn't leak into other app"() {
+			const setup = await testChatSetup()
+			const rando = await getRando()
+			const appId_a = rando.randomId().toString()
+			const appId_b = rando.randomId().toString()
+			const {server, roomLabel} = await setup.startOnline()
+			
+			const p1 = await server.makeClientFor.participant(appId_a)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+			const p2 = await server.makeClientFor.participant(appId_b)
+			const {room: p2room} = await p2.chatModel.session(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p1room.posts.find(post => post.content === "lol")).ok()
+			expect(p2room.posts.find(post => post.content === "lol")).not.ok()
+
+			p2room.post({content: "lmao"})
+			await nap()
+
+			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p2room.posts.find(post => post.content === "lmao")).ok()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p2room.posts.length).equals(1)
+		},
+	},
+
 	"rate limiting": {
 		async "user who floods chat receives an error notice to slow down"() {},
 	},
