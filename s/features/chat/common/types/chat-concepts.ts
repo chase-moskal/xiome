@@ -64,6 +64,7 @@ export interface ClientRecord {
 	rooms: Set<string>
 	auth: undefined | ChatAuth
 	clientside: ChatClientside
+	controls: renraku.ConnectionControls
 }
 
 export interface ChatConnection {

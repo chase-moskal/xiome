@@ -4,8 +4,8 @@ import * as renraku from "renraku"
 import {webSocketServer} from "renraku/x/websocket/socket-server.js"
 
 import {getRando} from "../../../toolbox/get-rando.js"
-import {makeChatClientside} from "./services/chat-clientside.js"
 import {makeChatServerCore} from "./cores/chat-server-core.js"
+import {makeChatClientside} from "./services/chat-clientside.js"
 import {deathWithDignity} from "../../../toolbox/death-with-dignity.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {mockChatPersistence} from "./cores/persistence/mock-chat-persistence.js"
@@ -44,6 +44,7 @@ void async function main() {
 		maxPayloadSize: renraku.megabytes(1),
 		acceptConnection({controls, prepareClientApi}) {
 			const {api, disconnect} = core.acceptNewClient({
+				controls,
 				clientside: prepareClientApi<ReturnType<typeof makeChatClientside>>({
 					chatClient: async() => {},
 				}),

@@ -7,6 +7,8 @@ import {makeChatClientside} from "../services/chat-clientside.js"
 import {makeChatServerside} from "../services/chat-serverside.js"
 import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
+const pingInterval = 10 * 1000
+
 export function makeChatServerCore({rando, persistence, policy, logError}: {
 		rando: Rando
 		persistence: ChatPersistence
@@ -97,7 +99,8 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 		)
 	})
 
-	function acceptNewClient({clientside, handleDisconnect}: {
+	function acceptNewClient({controls, clientside, handleDisconnect}: {
+			controls: renraku.ConnectionControls
 			clientside: renraku.Remote<ReturnType<typeof makeChatClientside>>
 			handleDisconnect: () => void
 		}) {
@@ -105,8 +108,10 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			auth: undefined,
 			rooms: new Set(),
 			clientside,
+			controls,
 		}
 		clientRecords.add(clientRecord)
+		const interval = setInterval(controls.ping, pingInterval)
 		return {
 			api: makeChatServerside({
 				rando,
@@ -115,6 +120,7 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 				policy,
 			}),
 			disconnect() {
+				clearInterval(interval)
 				handleDisconnect()
 				clientRecords.delete(clientRecord)
 			},

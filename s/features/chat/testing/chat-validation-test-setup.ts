@@ -31,6 +31,10 @@ export async function chatValidationTestSetup(
 	const clientRecord: ClientRecord = {
 		auth: undefined,
 		rooms: new Set(),
+		controls: {
+			ping() {},
+			close() {},
+		},
 		clientside: {
 			chatClient: {
 				postsAdded: doNothing,
