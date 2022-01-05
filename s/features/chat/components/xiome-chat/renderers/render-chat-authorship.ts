@@ -1,7 +1,7 @@
 
 import {html} from "../../../../../framework/component.js"
-import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 import {validateChatContent} from "../../../common/chat-validators.js"
+import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 
 export function renderChatAuthorship({
 		sendable, onSendClick, onEnterPress, onValidityChange,
