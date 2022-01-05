@@ -1,12 +1,15 @@
 
-name: build pull request
+name: build
 on:
+  push:
+    branches:
+    - master
   pull_request:
     branches:
-      - master
+    - master
 
 jobs:
-  build-pull-request:
+  build:
     runs-on: ubuntu-latest
     steps:
 
@@ -18,6 +21,10 @@ jobs:
       with:
         node-version: '17'
 
-    - name: 📦 npm install and build
+    - name: 📦 npm install
       shell: bash
-      run: npm ci && npm run build
+      run: npm ci
+
+    - name: 📦 build
+      shell: bash
+      run: npm run build
