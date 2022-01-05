@@ -1,14 +1,15 @@
 
-import {on} from "events"
 import mongodb from "mongodb"
+import {objectMap} from "../../../../../toolbox/object-map.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
-import {subbies} from "../../../../../toolbox/subbies.js"
+import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
+import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
+import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
 import {ChatMuteRow, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from "../../../common/types/chat-concepts.js"
-import {mockChatPersistence} from "./mock-chat-persistence.js"
 
-export async function mongoChatPersistence(): ReturnType<typeof mockChatPersistence> {
+export async function mongoChatPersistence() {
 
 	const client = await new mongodb.MongoClient("mongodb://localhost:27017/test").connect()
 	const db = client.db('test')
@@ -18,174 +19,168 @@ export async function mongoChatPersistence(): ReturnType<typeof mockChatPersiste
 		statusCollection: db.collection('statusCollection'),
 	}
 
-	const chatTables = {
-		posts: dbbyMongo<ChatPostRow>({collection: collections.postCollection}),
-		mutes: dbbyMongo<ChatMuteRow>({collection: collections.muteCollection}),
-		roomStatuses: dbbyMongo<ChatRoomStatusRow>({collection: collections.statusCollection})
-	}
+	const chatTablesUnconstrained = new UnconstrainedTables({
+			posts: dbbyMongo<ChatPostRow>({collection: collections.postCollection}),
+			mutes: dbbyMongo<ChatMuteRow>({collection: collections.muteCollection}),
+			roomStatuses: dbbyMongo<ChatRoomStatusRow>({collection: collections.statusCollection})
+		}
+	)
 
 	const events = {
-		roomStatusChanged: subbies<{room: string, status: ChatStatus}>(),
-		postsAdded: subbies<{room: string, posts: ChatPost[]}>(),
-		postsRemoved: subbies<{room: string, postIds: string[]}>(),
-		roomCleared: subbies<{room: string}>(),
-		mutes: subbies<{userIds: string[]}>(),
-		unmutes: subbies<{userIds: string[]}>(),
-		unmuteAll: subbies<undefined>(),
+		roomStatusChanged: subbies<{appId: string, room: string, status: ChatStatus}>(),
+		postsAdded: subbies<{appId: string, room: string, posts: ChatPost[]}>(),
+		postsRemoved: subbies<{appId: string, room: string, postIds: string[]}>(),
+		roomCleared: subbies<{appId: string, room: string}>(),
+		mutes: subbies<{appId: string, userIds: string[]}>(),
+		unmutes: subbies<{appId: string, userIds: string[]}>(),
+		unmuteAll: subbies<{appId: string}>(),
 	}
 
 	const postsChangeStream = collections.postCollection.watch()
 	postsChangeStream.on('change', (change) => {
 		if(change.operationType == 'insert') {
-			const {room, posts} = change.fullDocument
-			events.postsAdded.publish({room, posts})
+			const {appId, room, posts} = change.fullDocument
+			events.postsAdded.publish({appId, room, posts})
 		}
 		else if(change.operationType == 'delete') {
-			const {room, postIds} = change.fullDocument
-			events.postsRemoved.publish({room, postIds})
-			events.roomCleared.publish({room})
+			const {appId, room, postIds} = change.fullDocument
+			events.postsRemoved.publish({appId, room, postIds})
+			events.roomCleared.publish({appId, room})
 		}
 	})
 
 	const mutesChangeStream = collections.muteCollection.watch()
 	mutesChangeStream.on('change', (change) => {
 		if(change.operationType == 'insert') {
-			const {userIds} = change.fullDocument
-			events.mutes.publish({userIds})
+			const {appId, userIdsToBeMuted} = change.fullDocument
+			events.mutes.publish({appId, userIds: userIdsToBeMuted})
 		}
 		else if(change.operationType == 'delete') {
-			const {userIds} = change.fullDocument
-			events.unmutes.publish({userIds})
-			events.unmuteAll.publish(undefined)
+			const {appId, userIds} = change.fullDocument
+			events.unmutes.publish({appId, userIds})
+			events.unmuteAll.publish({appId})
 		}
 	})
 
 	const statusChangeStream = collections.statusCollection.watch()
 	statusChangeStream.on('change', (change) => {
-		const {room, status} = change.fullDocument
-		events.roomStatusChanged.publish({room, status})
+		const {appId, room, status} = change.fullDocument
+		events.roomStatusChanged.publish({appId, room, status})
 	})
 
-	const cachedMutedUserIds = new Set<string>()
+	const eventSubscribers =
+		<{[P in keyof typeof events]: typeof events[P]["subscribe"]}>
+			objectMap(events, (event: Subbie<any>) => event.subscribe)
+
+	const getAppCache = (() => {
+		const appCaches = new AssertiveMap(() => ({
+			mutedUserIds: new Set<string>()
+		}))
+		return (appId: string) => appCaches.assert(appId)
+	})()
+
+	// listen to events to update cache
+	{
+		eventSubscribers.mutes(({appId, userIds}) => {
+			const cache = getAppCache(appId)
+			for (const userId of userIds)
+				cache.mutedUserIds.add(userId)
+		})
+		eventSubscribers.unmutes(({appId, userIds}) => {
+			const cache = getAppCache(appId)
+			for (const userId of userIds)
+				cache.mutedUserIds.delete(userId)
+		})
+		eventSubscribers.unmuteAll(({appId}) => {
+			const cache = getAppCache(appId)
+			cache.mutedUserIds.clear()
+		})
+	}
+
+	function namespaceForApp(appId: string) {
+		const appCache = getAppCache(appId)
+
+		const chatTables =
+			chatTablesUnconstrained
+				.namespaceForApp(DamnId.fromString(appId))
+
+		return {
+			isMuted(userId: string) {
+				return appCache.mutedUserIds.has(userId)
+			},
+
+			async addPosts(room: string, posts: ChatPost[]) {
+				await chatTables.posts.create(...posts.map(post => ({
+					...post,
+					room,
+					userId: DamnId.fromString(post.userId),
+					postId: DamnId.fromString(post.postId),
+				})))
+			},
+
+			async removePosts(room: string, postIds: string[]) {
+				if (postIds.length) {
+					await chatTables.posts.delete(findAll(postIds, postId => ({
+						room,
+						postId: DamnId.fromString(postId)
+					})))
+				}
+			},
+
+			async clearRoom(room: string) {
+				await chatTables.posts.delete(find({room}))
+			},
+
+			async addMute(userIds: string[]) {
+				if (userIds.length) {
+					const existingMutes = await chatTables.mutes.read(
+						findAll(userIds, userId => ({
+							userId: DamnId.fromString(userId),
+						}))
+					)
+					const userIdsAlreadyMuted = existingMutes.map(
+						row => row.userId.toString()
+					)
+					const userIdsToBeMuted = userIds.filter(
+						userId => !userIdsAlreadyMuted.includes(userId)
+					)
+					const newMutes = userIdsToBeMuted.map(userId => ({
+						userId: DamnId.fromString(userId)
+					}))
+					await chatTables.mutes.create(...newMutes)
+				}
+			},
+
+			async removeMute(userIds: string[]) {
+				if (userIds.length) {
+					await chatTables.mutes.delete(
+						findAll(userIds, userId => ({userId: DamnId.fromString(userId)}))
+					)
+				}
+			},
+
+			async unmuteAll() {
+				await chatTables.mutes.delete({conditions: false})
+			},
+
+			async setRoomStatus(room: string, status: ChatStatus) {
+				await chatTables.roomStatuses.update({
+					...find({room}),
+					upsert: {room, status},
+				})
+			},
+
+			async getRoomStatus(room: string) {
+				const row = await chatTables.roomStatuses.one(find({room}))
+				return row
+					? row.status
+					: ChatStatus.Offline
+			},
+		}
+	}
 
 	return {
-
-		onRoomStatusChanged(handler: ({}: {room: string, status: ChatStatus}) => void) {
-			return events.roomStatusChanged.subscribe(handler)
-		},
-
-		onPostsAdded(handler: ({}: {room: string, posts: ChatPost[]}) => void) {
-			return events.postsAdded.subscribe(handler)
-		},
-
-		onPostsRemoved(handler: ({}: {room: string, postIds: string[]}) => void) {
-			return events.postsRemoved.subscribe(handler)
-		},
-
-		onRoomCleared(handler: ({}: {room: string}) => void) {
-			return events.roomCleared.subscribe(handler)
-		},
-
-		onMutes(handler: ({}: {userIds: string[]}) => void) {
-			return events.mutes.subscribe(({userIds}) => {
-				for (const userId of userIds)
-					cachedMutedUserIds.add(userId)
-				handler({userIds})
-			})
-		},
-
-		onUnmutes(handler: ({}: {userIds: string[]}) => void) {
-			return events.unmutes.subscribe(({userIds}) => {
-				for (const userId of userIds)
-					cachedMutedUserIds.delete(userId)
-				handler({userIds})
-			})
-		},
-
-		onUnmuteAll(handler: () => void) {
-			return events.unmuteAll.subscribe(() => {
-				cachedMutedUserIds.clear()
-				handler()
-			})
-		},
-
-		isMuted(userId: string) {
-			return cachedMutedUserIds.has(userId)
-		},
-
-		async addPosts(room: string, posts: ChatPost[]) {
-			await chatTables.posts.create(...posts.map(post => ({
-				...post,
-				room,
-				userId: DamnId.fromString(post.userId),
-				postId: DamnId.fromString(post.postId),
-			})))
-			// events.postsAdded.publish({room, posts})
-		},
-
-		async removePosts(room: string, postIds: string[]) {
-			if (postIds.length) {
-				await chatTables.posts.delete(findAll(postIds, postId => ({
-					room,
-					postId: DamnId.fromString(postId)
-				})))
-				// events.postsRemoved.publish({room, postIds})
-			}
-		},
-
-		async clearRoom(room: string) {
-			await chatTables.posts.delete(find({room}))
-			// events.roomCleared.publish({room})
-		},
-
-		async addMute(userIds: string[]) {
-			if (userIds.length) {
-				const existingMutes = await chatTables.mutes.read(
-					findAll(userIds, userId => ({
-						userId: DamnId.fromString(userId),
-					}))
-				)
-				const userIdsAlreadyMuted = existingMutes.map(
-					row => row.userId.toString()
-				)
-				const userIdsToBeMuted = userIds.filter(
-					userId => !userIdsAlreadyMuted.includes(userId)
-				)
-				const newMutes = userIdsToBeMuted.map(userId => ({
-					userId: DamnId.fromString(userId)
-				}))
-				await chatTables.mutes.create(...newMutes)
-				// events.mutes.publish({userIds: userIdsToBeMuted})
-			}
-		},
-
-		async removeMute(userIds: string[]) {
-			if (userIds.length) {
-				await chatTables.mutes.delete(
-					findAll(userIds, userId => ({userId: DamnId.fromString(userId)}))
-				)
-				// events.unmutes.publish({userIds})
-			}
-		},
-
-		async unmuteAll() {
-			await chatTables.mutes.delete({conditions: false})
-			events.unmuteAll.publish(undefined)
-		},
-
-		async setRoomStatus(room: string, status: ChatStatus) {
-			await chatTables.roomStatuses.update({
-				...find({room}),
-				upsert: {room, status},
-			})
-			// events.roomStatusChanged.publish({room, status})
-		},
-
-		async getRoomStatus(room: string) {
-			const row = await chatTables.roomStatuses.one(find({room}))
-			return row
-				? row.status
-				: ChatStatus.Offline
-		},
+		events: eventSubscribers,
+		namespaceForApp,
 	}
 }
