@@ -28,7 +28,7 @@ export const makeChatServerside = ({
 			clientRecord.auth?.access.permit.privileges ?? []
 		)
 		const isNotMuted = () => !persistence.isMuted(
-			clientRecord.auth.access.user.userId,
+			clientRecord.auth?.access.user?.userId,
 		)
 		const isNotBanned = () => !getAllowance().banned
 

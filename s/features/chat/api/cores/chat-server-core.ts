@@ -9,11 +9,12 @@ import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat
 
 const pingInterval = 10 * 1000
 
-export function makeChatServerCore({rando, persistence, policy, logError}: {
+export function makeChatServerCore({
+		rando, persistence, policy,
+	}: {
 		rando: Rando
 		persistence: ChatPersistence
 		policy: ChatPolicy
-		logError: (error: Error) => void
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()

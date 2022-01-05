@@ -9,8 +9,11 @@ import {makeChatClientside} from "./services/chat-clientside.js"
 import {deathWithDignity} from "../../../toolbox/death-with-dignity.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {mockChatPersistence} from "./cores/persistence/mock-chat-persistence.js"
+import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {configureMongo} from "../../../assembly/backend/configurators/configure-mongo.js"
 import {assimilateCrypto} from "../../../assembly/backend/assimilators/assimilate-crypto.js"
+import {assimilateDatabase} from "../../../assembly/backend/assimilators/assimilate-database.js"
 import {configureTokenFunctions} from "../../../assembly/backend/configurators/configure-token-functions.js"
 
 void async function main() {
@@ -27,15 +30,25 @@ void async function main() {
 		configureTokenFunctions,
 	})
 
+	const {database} = await assimilateDatabase({
+		config,
+		configureMongo,
+		configureMockStorage: () => storage,
+	})
+
+	const authPolicies = prepareAuthPolicies({
+		config,
+		appTables: database.apps,
+		authTables: database.auth,
+		verifyToken: crypto.verifyToken,
+	})
+
 	const persistence = await mockChatPersistence(storage)
 
 	const core = makeChatServerCore({
 		rando,
 		persistence,
-		logError: error => console.error(error),
-		policy: async({accessToken}) => ({
-			access: await crypto.verifyToken(accessToken)
-		}),
+		policy: authPolicies.anonPolicy,
 	})
 
 	const server = webSocketServer({
