@@ -13,7 +13,7 @@ export async function chatMockClientEntirely(storage: FlexStorage):
 
 	const serverCore = makeChatServerCore({
 		rando: await getRando(),
-		persistence: await mongoChatPersistence(),
+		persistence: await mockChatPersistence(storage),
 		policy: mockChatPolicy,
 	})
 

@@ -10,6 +10,7 @@ import {deathWithDignity} from "../../../toolbox/death-with-dignity.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {mockChatPersistence} from "./cores/persistence/mock-chat-persistence.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
+import {mongoChatPersistence} from "./cores/persistence/chat-persistence-mongo.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {configureMongo} from "../../../assembly/backend/configurators/configure-mongo.js"
 import {assimilateCrypto} from "../../../assembly/backend/assimilators/assimilate-crypto.js"
@@ -44,6 +45,7 @@ void async function main() {
 	})
 
 	const persistence = await mockChatPersistence(storage)
+	// const persistence = await mongoChatPersistence()
 
 	const core = makeChatServerCore({
 		rando,
