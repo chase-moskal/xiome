@@ -1,6 +1,6 @@
 
 import {on} from "events"
-import mongodb, {ChangeStream} from "mongodb"
+import mongodb from "mongodb"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
