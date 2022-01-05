@@ -1,4 +1,7 @@
 
+// TODO obsolete
+// usage of these functions should be replaced by the better assertive-map.ts
+
 export function strongRecordKeeper<Key>() {
 	return function<Record>(makeRecord: (key: Key) => Record) {
 
