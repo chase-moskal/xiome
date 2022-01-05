@@ -54,6 +54,8 @@ export type ChatTables = {
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
+export type ChatPersistenceActions = ReturnType<ChatPersistence["namespaceForApp"]>
+
 export type ChatServersideApi = ReturnType<typeof makeChatServerside>
 export type ChatClientsideApi = ReturnType<typeof makeChatClientside>
 

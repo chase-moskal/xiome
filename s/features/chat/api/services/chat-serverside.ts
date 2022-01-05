@@ -20,14 +20,20 @@ export const makeChatServerside = ({
 }) => renraku.api({
 
 	chatServer: renraku.service()
-	.policy(async() => {})
-	.expose(() => {
+	.policy(async() => {
+		const appId = clientRecord.auth?.access.appId
+		const persistenceActions = appId
+			? persistence.namespaceForApp(appId)
+			: undefined
+		return {persistenceActions}
+	})
+	.expose(({persistenceActions}) => {
 
 		const {clientside: {chatClient}} = clientRecord
 		const getAllowance = () => chatAllowance(
 			clientRecord.auth?.access.permit.privileges ?? []
 		)
-		const isNotMuted = () => !persistence.isMuted(
+		const isNotMuted = () => !persistenceActions.isMuted(
 			clientRecord.auth?.access.user?.userId,
 		)
 		const isNotBanned = () => !getAllowance().banned
@@ -46,7 +52,7 @@ export const makeChatServerside = ({
 				if (!getAllowance().viewAllChats)
 					return undefined
 				clientRecord.rooms.add(room)
-				chatClient.roomStatusChanged(room, await persistence.getRoomStatus(room))
+				chatClient.roomStatusChanged(room, await persistenceActions.getRoomStatus(room))
 			},
 			async roomUnsubscribe(room: string) {
 				enforceValidation(validateChatRoom(room))
@@ -70,7 +76,7 @@ export const makeChatServerside = ({
 						userId: clientRecord.auth.access.user.userId,
 						nickname: clientRecord.auth.access.user.profile.nickname,
 					}
-					await persistence.addPosts(room, [post])
+					await persistenceActions.addPosts(room, [post])
 				}
 			},
 			async remove(room: string, postIds: string[]) {
@@ -80,30 +86,30 @@ export const makeChatServerside = ({
 				})({room, postIds}))
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.removePosts(room, postIds)
+				await persistenceActions.removePosts(room, postIds)
 			},
 			async clear(room: string) {
 				enforceValidation(validateChatRoom(room))
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.clearRoom(room)
+				await persistenceActions.clearRoom(room)
 			},
 			async mute(userIds: string[]) {
 				enforceValidation(validateIdArray(userIds))
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.addMute(userIds)
+				await persistenceActions.addMute(userIds)
 			},
 			async unmute(userIds: string[]) {
 				enforceValidation(validateIdArray(userIds))
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.removeMute(userIds)
+				await persistenceActions.removeMute(userIds)
 			},
 			async unmuteAll() {
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.unmuteAll()
+				await persistenceActions.unmuteAll()
 			},
 			async setRoomStatus(room: string, status: ChatStatus) {
 				enforceValidation(schema({
@@ -112,7 +118,7 @@ export const makeChatServerside = ({
 				})({room, status}))
 				if (!getAllowance().moderateAllChats)
 					return undefined
-				await persistence.setRoomStatus(room, status)
+				await persistenceActions.setRoomStatus(room, status)
 			},
 		}
 	}),

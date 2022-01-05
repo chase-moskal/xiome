@@ -16,6 +16,7 @@ export async function testChatSetup() {
 	const rando = await getRando()
 	const storage = memoryFlexStorage()
 	const persistence = await mockChatPersistence(storage)
+	const appId = rando.randomId().toString()
 
 	async function makeServer() {
 		const serverCore = makeChatServerCore({
@@ -28,7 +29,7 @@ export async function testChatSetup() {
 			const chatConnect = chatMockClient(serverCore)
 			const userId = rando.randomId().toString()
 			let access = {
-				appId: undefined,
+				appId,
 				origins: [],
 				permit: {privileges},
 				scope: {core: false},

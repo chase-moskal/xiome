@@ -42,14 +42,14 @@ export function makeChatServerCore({
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
-	persistence.onRoomStatusChanged(({room, status}) => {
+	persistence.events.roomStatusChanged(({room, status}) => {
 		broadcastToRoom(
 			room,
 			record => record.clientside.chatClient.roomStatusChanged(room, status),
 		)
 	})
 
-	persistence.onPostsAdded(({room, posts}) => {
+	persistence.events.postsAdded(({room, posts}) => {
 		broadcastToRoom(
 			room,
 			(record, allowance) => {
@@ -59,7 +59,7 @@ export function makeChatServerCore({
 		)
 	})
 
-	persistence.onPostsRemoved(({room, postIds}) => {
+	persistence.events.postsRemoved(({room, postIds}) => {
 		broadcastToRoom(
 			room,
 			(record, allowance) => {
@@ -69,28 +69,28 @@ export function makeChatServerCore({
 		)
 	})
 
-	persistence.onMutes(({userIds}) => {
+	persistence.events.mutes(({userIds}) => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersMuted(userIds)
 		})
 	})
 
-	persistence.onUnmutes(({userIds}) => {
+	persistence.events.unmutes(({userIds}) => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersUnmuted(userIds)
 		})
 	})
 
-	persistence.onUnmuteAll(() => {
+	persistence.events.unmuteAll(() => {
 		broadcastToAll((record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.unmuteAll()
 		})
 	})
 
-	persistence.onRoomCleared(({room}) => {
+	persistence.events.roomCleared(({room}) => {
 		broadcastToRoom(
 			room,
 			(record, allowance) => {
