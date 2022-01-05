@@ -3,16 +3,13 @@ import {css} from "../../../../framework/component.js"
 import chatHistoryCss from "./styles/chat-history.css.js"
 export default css`
 
-X * { outline: 1px solid #f902; }
-
 :host {
 	display: block;
-    --pad: var(--xio-chat-pad, 0);
+	--pad: var(--xio-chat-pad, 0);
 	--header-background: (--xio-chat-header-background,  transparent);
 	--login-panel-background: (--xio-chat-login-panel-background,  transparent);
-    --background: var(--xio-chat-background, transparent);
-    --border: var(--xio-chat-border, 1px solid #f902);
-    --border-radius: var(--xio-chat-border-radius, 0em);
+	--background: var(--xio-chat-background, transparent);
+	--border-radius: var(--xio-chat-border-radius, 0em);
 }
 
 .chatbox {
