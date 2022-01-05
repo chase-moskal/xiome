@@ -20,17 +20,19 @@ export function makeChatServerCore({
 	const clientRecords = new Set<ClientRecord>()
 
 	async function broadcastToAll(
+			appId: string,
 			action: (
 				record: ClientRecord,
 				allowance: ReturnType<typeof chatAllowance>
 			) => void,
 		) {
 		for (const record of clientRecords.values())
-			if (record.auth)
+			if (record.auth && record.auth.access.appId === appId)
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
 	async function broadcastToRoom(
+			appId: string,
 			room: string,
 			action: (
 				record: ClientRecord,
@@ -38,19 +40,21 @@ export function makeChatServerCore({
 			) => void,
 		) {
 		for (const record of clientRecords.values())
-			if (record.auth && record.rooms.has(room))
+			if (record.auth && record.auth.access.appId === appId && record.rooms.has(room))
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
-	persistence.events.roomStatusChanged(({room, status}) => {
+	persistence.events.roomStatusChanged(({appId, room, status}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			record => record.clientside.chatClient.roomStatusChanged(room, status),
 		)
 	})
 
-	persistence.events.postsAdded(({room, posts}) => {
+	persistence.events.postsAdded(({appId, room, posts}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
@@ -59,8 +63,9 @@ export function makeChatServerCore({
 		)
 	})
 
-	persistence.events.postsRemoved(({room, postIds}) => {
+	persistence.events.postsRemoved(({appId, room, postIds}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
@@ -69,29 +74,30 @@ export function makeChatServerCore({
 		)
 	})
 
-	persistence.events.mutes(({userIds}) => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.mutes(({appId, userIds}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersMuted(userIds)
 		})
 	})
 
-	persistence.events.unmutes(({userIds}) => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.unmutes(({appId, userIds}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersUnmuted(userIds)
 		})
 	})
 
-	persistence.events.unmuteAll(() => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.unmuteAll(({appId}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.unmuteAll()
 		})
 	})
 
-	persistence.events.roomCleared(({room}) => {
+	persistence.events.roomCleared(({appId, room}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
