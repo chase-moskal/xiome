@@ -17,7 +17,7 @@ export interface ChatAuth {
 	access: AccessPayload
 }
 
-export type ChatPolicy = (meta: ChatMeta) => Promise<ChatAuth>
+export type ChatPolicy = (meta: ChatMeta, headers: renraku.HttpHeaders) => Promise<ChatAuth>
 
 export type ChatDraft = {
 	content: string

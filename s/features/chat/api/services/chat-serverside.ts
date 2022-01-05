@@ -20,14 +20,14 @@ export const makeChatServerside = ({
 }) => renraku.api({
 
 	chatServer: renraku.service()
-	.policy(async() => {
+	.policy(async(meta, headers) => {
 		const appId = clientRecord.auth?.access.appId
 		const persistenceActions = appId
 			? persistence.namespaceForApp(appId)
 			: undefined
-		return {persistenceActions}
+		return {persistenceActions, headers}
 	})
-	.expose(({persistenceActions}) => {
+	.expose(({persistenceActions, headers}) => {
 
 		const {clientside: {chatClient}} = clientRecord
 		const getAllowance = () => chatAllowance(
@@ -45,7 +45,7 @@ export const makeChatServerside = ({
 
 		return {
 			async updateUserMeta(meta: ChatMeta) {
-				clientRecord.auth = await policy(meta)
+				clientRecord.auth = await policy(meta, headers)
 			},
 			async roomSubscribe(room: string) {
 				enforceValidation(validateChatRoom(room))
