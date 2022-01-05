@@ -9,7 +9,8 @@
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
-		"declaration": true
+		"declaration": true,
+		"skipLibCheck": true
 	},
 	"include": [
 		"s/**/*.ts",
