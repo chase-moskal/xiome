@@ -1,3 +1,6 @@
+import clearIcon from "../../../../framework/icons/clear.svg.js"
+import unmuteIcon from "../../../../framework/icons/unmute.svg.js"
+import onOffIcon from "../../../../framework/icons/on-off-button.svg.js"
 
 import {makeChatModel} from "../../models/chat-model.js"
 import {renderChatPost} from "./renderers/render-chat-post.js"
@@ -86,18 +89,21 @@ export class XiomeChat extends ComponentWithShare<{
 					<span>room="${this.room}"</span>
 					<span>
 						<xio-button
-							@press=${toggleStatus}>
-								set status
-								${status === ChatStatus.Offline ? "online" : "offline"}
-						</xio-button>
-						<xio-button
 							@press=${() => this.#room.clear()}>
+								${clearIcon}
 								clear room
 						</xio-button>
 						<xio-button
 							?disabled=${muteCount === 0}
 							@press=${() => this.#room.unmuteAll()}>
+								${unmuteIcon}
 								unmute all (${muteCount})
+						</xio-button>
+						<xio-button
+							@press=${toggleStatus}>
+								${onOffIcon}
+								set status
+								${status === ChatStatus.Offline ? "online" : "offline"}
 						</xio-button>
 					</span>
 				</header>

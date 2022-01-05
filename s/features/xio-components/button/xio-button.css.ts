@@ -17,6 +17,7 @@ export default css`
 }
 
 button {
+	height: 100%;
 	cursor: pointer;
 	font: inherit;
 	color: inherit;
