@@ -35,26 +35,27 @@
 
 ## 💡 getting started
 
-&nbsp; **fundamental skills for noobs to be aware of**
-- you don't have to master all the following skills to get started. just be aware of them. if you're stuck, it's likley because you need more study time on one of these basic webdev skills:
+&nbsp; **fundamental skills**
+- ℹ️ you don't have to master these skills. just be aware of them, so you know what to study when you encounter the need
 - learn how to use git and github so you can collaborate
-  you do not have to master all of these skills before getting started.
+  - fork projects on github
   - use a visualization tool like `gitk` to understand git graphs
-  - making and managing branches
-  - add/reset staged changes, making and amending commits
-  - managing git remotes, and fetching/pushing/pulling branches
-  - interactive rebase to rewrite and cleanup branches
-  - keeping your branches up to date by rebasing onto master
-  - resolving merge conflicts
-  - how to make a pull request and respond to code reviews
+  - make and manage branches
+  - add and reset staged changes, make and amend commits
+  - manage git remotes, fetch, pull, and pull branches
+  - interactive rebase to rewrite and cleanup history
+  - keep your branches up to date by rebasing onto master regularly
+  - resolve and merge conflicts
+  - make pull requests on github, and respond to code reviews
+- learn the basics of using a bash shell
 - learn the basics of typescript
-- learn npm, like how to install dependencies and run npm package scripts
-- learn how to write code with style and formatting that matches the rest of the codebase.  
-  your code should "blend in", so we cannot so easily tell which crappy code you wrote
+- learn npm to install dependencies and run npm package scripts
+- learn how to write code that blends in with the style and formatting of the rest of the codebase
+- please be aware of the whitespace you author (the vscode setting `Render whitespace` setting `Boundary` is great for this)
 
 &nbsp; **technical prerequisites**
-- if you're on windows, first, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux),  
-  or otherwise install a linux virtual machine for development (we recommend debian+kde on vmware)
+- if you're on windows, first, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) and learn how it works
+  - or otherwise install a linux virtual machine for development (we recommend debian+kde on vmware)
 - install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 
 &nbsp; **initial setup**
@@ -93,7 +94,7 @@
   - the "database" state is actually saved in `localStorage`
   - in the browser dev console, you can wipe clean all the state by calling `localStorage.clear()` then refreshing the page
 - you can work on the xiome.io website itself at http://localhost:5000/x/
-- you can develop new feature in the "mocksite" at http://localhost:5000/x/mocksite/
+- you can develop new features in the "mocksite" at http://localhost:5000/x/mocksite/
   - the mocksite is a crappy-looking site that mimics a website that had installed xiome
   - it's a "proving grounds" for developing new features
   - you can login with a special email address `creative@xiome.io`, which is a special fake account on the mocksite that has administrator privileges
