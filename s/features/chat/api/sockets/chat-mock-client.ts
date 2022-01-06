@@ -15,6 +15,7 @@ export function chatMockClient(
 			.withMetaMap({chatClient: async() => {}})
 
 		const {api, disconnect} = serverCore.acceptNewClient({
+			headers: {},
 			controls: {
 				ping() {},
 				close() {},

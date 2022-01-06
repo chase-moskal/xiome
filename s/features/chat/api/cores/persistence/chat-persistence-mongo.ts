@@ -11,7 +11,7 @@ import {ChatMuteRow, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from 
 
 export async function mongoChatPersistence() {
 
-	const client = await new mongodb.MongoClient("mongodb://localhost:27017/test").connect()
+	const client = await new mongodb.MongoClient("mongodb+srv://blogStore:blogstore@cluster0.ptcuh.mongodb.net/blogStore?retryWrites=true&w=majority").connect()
 	const db = client.db('test')
 	const collections = {
 		muteCollection: db.collection('mutesCollection'),
@@ -64,6 +64,7 @@ export async function mongoChatPersistence() {
 
 	const statusChangeStream = collections.statusCollection.watch()
 	statusChangeStream.on('change', (change) => {
+		console.log("change stream room status", change)
 		const {appId, room, status} = change.fullDocument
 		events.roomStatusChanged.publish({appId, room, status})
 	})

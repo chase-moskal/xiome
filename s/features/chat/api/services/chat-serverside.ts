@@ -13,12 +13,14 @@ export const makeChatServerside = ({
 		rateLimiter,
 		clientRecord,
 		persistence,
+		headers,
 		policy,
 	}: {
 		rando: Rando
 		rateLimiter: RateLimiter
 		clientRecord: ClientRecord
 		persistence: ChatPersistence
+		headers: renraku.HttpHeaders
 		policy: ChatPolicy
 }) => renraku.api({
 

@@ -57,6 +57,7 @@ export async function chatValidationTestSetup(
 			maximum: 999,
 			timeframe: 1000,
 		}),
+		headers: {},
 		policy: mockChatPolicy,
 	})
 

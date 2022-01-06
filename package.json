@@ -34,6 +34,7 @@
 		"server": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node x/server.js'",
 		"server-debug": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node --inspect-brk x/server.js'",
 		"chat-server": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node x/features/chat/api/chat-server.js'",
+		"chat-server-debug": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node --inspect-brk x/features/chat/api/chat-server.js'",
 		"start": "run-p start-platform",
 		"start-platform": "http-server -p 8080",
 		"start-mocksite": "http-server -p 8081",
