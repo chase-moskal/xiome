@@ -159,7 +159,6 @@ export class XioTextInput<xParsedValue = string> extends Component {
 				? true
 				: vettedLength !== 0
 		)
-		console.log("show validation", showValidation)
 		const showProblems = showValidation && !valid
 		const icon = showValidation
 			? valid
