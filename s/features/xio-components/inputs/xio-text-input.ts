@@ -178,7 +178,7 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								placeholder=${placeholder}
 								@keyup=${handleInputKeyUp}
 								@keypress=${handleInputKeyPress}
-								@change=${handleInputChange}
+								@input=${handleInputChange}
 							></textarea>
 						` : html`
 							<input
