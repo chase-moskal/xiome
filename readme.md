@@ -100,7 +100,7 @@
   - you can login with a special email address `creative@xiome.io`, which is a special fake account on the mocksite that has administrator privileges
 
 &nbsp; **the more you know**
-- this is an open source project, all contributions are under the isc license
+- this is an open source project, all contributions are under the mit license
 
 <br/>
 

@@ -2,7 +2,7 @@
 	"name": "xiome",
 	"version": "0.0.18",
 	"description": "app infrastructure and web components",
-	"license": "ISC",
+	"license": "MIT",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
 	"main": "x/xiome.js",
