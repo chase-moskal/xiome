@@ -22,10 +22,9 @@ export function renderChatAuthorship({
 
 			<xio-text-input
 				textarea
-				@valuechange=${handleContentChange}
 				.validator=${validateChatContent}
+				@valuechange=${handleContentChange}
 				@enterpress=${onEnterPress}>
-					your chat message
 			</xio-text-input>
 
 			<xio-button

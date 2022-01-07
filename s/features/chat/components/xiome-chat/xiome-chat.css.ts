@@ -5,46 +5,88 @@ export default css`
 
 :host {
 	display: block;
-	--pad: var(--xio-chat-pad, 0);
-	--header-background: (--xio-chat-header-background,  transparent);
-	--login-panel-background: (--xio-chat-login-panel-background,  transparent);
-	--background: var(--xio-chat-background, transparent);
-	--border-radius: var(--xio-chat-border-radius, 0em);
+	max-width: 56em;
 }
 
-.chatbox {
-	padding var(--pad);
-	background: var(--background);
-	border: var(--border);
-	border-radius: var(--border-radius);
+.modheader {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: end;
+	padding: 0 1em;
 }
 
-.chatbox header {
-	display: block;
-	background: var(--header-background);
+.modheader > span:nth-child(1) {
+	opacity: 0.5;
+	padding: 0.2em 0;
 }
 
-.chatbox header > span {
-	display: inline-flex;
-	justify-content: center;
-	align-content: center;
-	--xio-button-padding: 0.3em;
+.modheader > span:nth-child(2) {
+	margin-left: auto;
+}
+
+.modheader xio-button {
+	--xio-button-border: none;
+	--xio-button-disabled-border-style: none;
+}
+
+.history {
+	padding: 1em;
+	border: 1px solid;
+	border-radius: 0.5em 0.5em 0 0;
+	border-bottom: 0;
 }
 
 .chatbox xiome-login-panel {
-	background: var(--xio-chat-login-panel-background);
+	display: block;
+	border: 1px solid currentColor;
+	border-radius: 0 0 0.5em 0.5em;
 }
 
-div .authorship {
-	display: flex;
-	align-items: stretch;
+.chatbox xiome-login-panel[state="logged-out"] {
+	padding: 1em;
 }
 
-div[slot="logged-out"] {
+.chatbox slot[name="offline"] {
+	display: block;
+	padding: 2em 1em;
 	text-align: center;
-	line-height: 2em;
+	border: 1px solid currentColor;
+	border-radius: 0.5em;
 }
 
 ${chatHistoryCss}
+
+.authorship {
+	display: flex;
+	align-items: stretch;
+	Xborder: 1px solid;
+}
+
+.authorship xio-text-input {
+	border-right: 1px solid;
+	--xio-text-input-height: 6em;
+	--xio-text-input-label-opacity: 0.5;
+	--xio-text-input-border: 0;
+	--xio-text-input-pad: 1em;
+}
+
+.authorship xio-button {
+	height: 6em;
+	flex: 1 1 auto;
+	--xio-button-border: 0;
+	--xio-button-disabled-border-style: none;
+}
+
+.authorship xio-button::part(button) {
+	width: 100%;
+}
+
+.authorship .inputlabel {
+	display: block;
+	opacity: 0.5;
+	padding: 0.2em 0;
+	margin-left: 1em;
+}
 
 `
