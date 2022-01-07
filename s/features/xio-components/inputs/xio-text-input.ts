@@ -94,11 +94,14 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	@property({type: String})
 	private draft: string = ""
 	private lastDraft: string = ""
+	private vettedLength: number = 0
 
 	private dispatchValueChange = () => {
 		const {draft, lastDraft} = this
-		if (draft !== lastDraft)
+		if (draft !== lastDraft) {
+			this.vettedLength = draft.length
 			this.dispatchEvent(new ValueChangeEvent(this.value))
+		}
 		this.lastDraft = draft
 	}
 
@@ -147,15 +150,16 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	render() {
 		const {
-			readonly, disabled, problems, draft, placeholder, textarea,
+			readonly, disabled, problems, vettedLength, placeholder, textarea,
 			validator, handleInput, handleInputKeyPress, handleChange,
 		} = this
 		const valid = problems.length === 0
 		const showValidation = !this["hide-validation"] && !readonly && validator && (
 			this["show-validation-when-empty"]
 				? true
-				: draft.length !== 0
+				: vettedLength !== 0
 		)
+		console.log("show validation", showValidation)
 		const showProblems = showValidation && !valid
 		const icon = showValidation
 			? valid
