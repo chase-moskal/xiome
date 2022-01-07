@@ -25,6 +25,6 @@ jobs:
       shell: bash
       run: npm ci
 
-    - name: 📦 build
+    - name: 🔨 build
       shell: bash
       run: npm run build
