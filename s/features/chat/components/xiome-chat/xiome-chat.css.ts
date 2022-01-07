@@ -56,10 +56,14 @@ xio-button {
 	padding: 1em;
 }
 
-.chatbox slot[name="offline"] {
+.chatbox slot[name="offline"],
+.chatbox slot[name="muted"] {
 	display: block;
 	padding: 2em 1em;
 	text-align: center;
+}
+
+.chatbox slot[name="offline"] {
 	border: 1px solid currentColor;
 	border-radius: 0.5em;
 }
