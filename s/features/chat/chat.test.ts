@@ -254,7 +254,8 @@ export default<Suite>{
 
 			p1room.post({content: "lmao"})
 			await nap()
-			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p1room.posts.length).equals(2)
+			expect(moderatorRoom.posts.length).equals(2)
 		},
 
 		async "banned user knows they are banned"() {
