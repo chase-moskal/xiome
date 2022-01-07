@@ -242,8 +242,8 @@ export default<Suite>{
 			p1room.post({content: "lol"})
 			await nap()
 
-			const {userId} = moderatorRoom.posts[0]
 			expect(moderatorRoom.posts.length).equals(1)
+			const {userId} = moderatorRoom.posts[0]
 			moderatorRoom.mute(userId)
 			await nap()
 
@@ -254,8 +254,33 @@ export default<Suite>{
 
 			p1room.post({content: "lmao"})
 			await nap()
-			expect(p1room.posts.length).equals(2)
-			expect(moderatorRoom.posts.length).equals(2)
+			expect(p1room.posts.length).equals(1)
+			expect(moderatorRoom.posts.length).equals(1)
+		},
+
+		async "muted user cannot post after re-joining"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
+
+			const p1 = await server.makeClientFor.participant()
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+
+			expect(moderatorRoom.posts.length).equals(1)
+			const {userId} = moderatorRoom.posts[0]
+			moderatorRoom.mute(userId)
+			await nap()
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				room.post({content: "rofl"})
+				await nap()
+				assert(room.posts.length === 1, "muted user should not have been able to post")
+			}
 		},
 
 		async "banned user knows they are banned"() {
