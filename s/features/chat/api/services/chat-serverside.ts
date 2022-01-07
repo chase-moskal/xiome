@@ -52,7 +52,14 @@ export const makeChatServerside = ({
 				if (!getAllowance().viewAllChats)
 					return undefined
 				clientRecord.rooms.add(room)
-				chatClient.roomStatusChanged(room, await persistenceActions.getRoomStatus(room))
+				chatClient.roomStatusChanged(
+					room,
+					await persistenceActions.getRoomStatus(room)
+				)
+				chatClient.postsAdded(
+					room,
+					await persistenceActions.fetchRecentPosts(room)
+				)
 			},
 			async roomUnsubscribe(room: string) {
 				enforceValidation(validateChatRoom(room))

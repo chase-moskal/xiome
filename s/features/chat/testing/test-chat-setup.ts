@@ -26,9 +26,9 @@ export async function testChatSetup() {
 		})
 
 		async function makeClient(privileges: string[], appId = defaultAppId) {
+			const userId = rando.randomId().toString()
 			async function clone() {
 				const chatConnect = chatMockClient(serverCore)
-				const userId = rando.randomId().toString()
 				let access = {
 					appId,
 					origins: [],
@@ -51,6 +51,7 @@ export async function testChatSetup() {
 				})
 				await chatModel.updateAccessOp(ops.ready(access))
 				return {
+					userId,
 					chatModel,
 					async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
 						access = {

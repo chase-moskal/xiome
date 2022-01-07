@@ -36,6 +36,7 @@ export type ChatPostRow = {
 	postId: DamnId
 	userId: DamnId
 	time: number
+	nickname: string
 } & ChatDraft
 
 export type ChatMuteRow = {
