@@ -25,9 +25,18 @@ export default css`
 	margin-left: auto;
 }
 
+xio-button {
+	--xio-button-disabled-border-style: none;
+}
+
 .modheader xio-button {
 	--xio-button-border: none;
-	--xio-button-disabled-border-style: none;
+}
+
+.modheader xio-button::part(button-slot) {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
 }
 
 .history {
