@@ -26,44 +26,51 @@ export async function testChatSetup() {
 		})
 
 		async function makeClient(privileges: string[], appId = defaultAppId) {
-			const chatConnect = chatMockClient(serverCore)
 			const userId = rando.randomId().toString()
-			let access = {
-				appId,
-				origins: [],
-				permit: {privileges},
-				scope: {core: false},
-				user: {
-					userId,
-					profile: {
-						avatar: undefined,
-						nickname: `nickname-${userId.slice(0, 7)}`,
-						tagline: "",
-					},
-					roles: [],
-					stats: undefined,
-				},
-			}
-			const chatModel = makeChatModel({
-				chatConnect,
-				getChatMeta: async() => mockChatMeta({access}),
-			})
-			await chatModel.updateAccessOp(ops.ready(access))
-			return {
-				chatModel,
-				async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
-					access = {
-						...access,
-						permit: {
-							...access.permit,
-							privileges: [
-								...access.permit.privileges,
-								...privilegeKeys.map(key => chatPrivileges[key]),
-							],
+			async function clone() {
+				const chatConnect = chatMockClient(serverCore)
+				let access = {
+					appId,
+					origins: [],
+					permit: {privileges},
+					scope: {core: false},
+					user: {
+						userId,
+						profile: {
+							avatar: undefined,
+							nickname: `nickname-${userId.slice(0, 7)}`,
+							tagline: "",
 						},
-					}
-					await chatModel.updateAccessOp(ops.ready(access))
-				},
+						roles: [],
+						stats: undefined,
+					},
+				}
+				const chatModel = makeChatModel({
+					chatConnect,
+					getChatMeta: async() => mockChatMeta({access}),
+				})
+				await chatModel.updateAccessOp(ops.ready(access))
+				return {
+					userId,
+					chatModel,
+					async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
+						access = {
+							...access,
+							permit: {
+								...access.permit,
+								privileges: [
+									...access.permit.privileges,
+									...privilegeKeys.map(key => chatPrivileges[key]),
+								],
+							},
+						}
+						await chatModel.updateAccessOp(ops.ready(access))
+					},
+				}
+			}
+			return {
+				...await clone(),
+				clone,
 			}
 		}
 

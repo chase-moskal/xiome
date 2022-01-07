@@ -5,9 +5,10 @@ import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {ChatPost, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
+import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
 import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
 import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
 
 export async function mockChatPersistence(storage: FlexStorage) {
 
@@ -71,12 +72,16 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			},
 
 			async addPosts(room: string, posts: ChatPost[]) {
-				await chatTables.posts.create(...posts.map(post => ({
-					...post,
-					room,
-					userId: DamnId.fromString(post.userId),
-					postId: DamnId.fromString(post.postId),
-				})))
+				await chatTables.posts.create(
+					...posts.map(post => (<ChatPostRow>{
+						room: post.room,
+						time: post.time,
+						content: post.content,
+						nickname: post.nickname,
+						userId: DamnId.fromString(post.userId),
+						postId: DamnId.fromString(post.postId),
+					}))
+				)
 				events.postsAdded.publish({appId, room, posts})
 			},
 
@@ -88,6 +93,29 @@ export async function mockChatPersistence(storage: FlexStorage) {
 					})))
 					events.postsRemoved.publish({appId, room, postIds})
 				}
+			},
+
+			async fetchRecentPosts(room: string): Promise<ChatPost[]> {
+				const rawPosts = await chatTables.posts.read({
+					...find({room}),
+					limit: maximumNumberOfPostsShownAtOnce,
+					order: {time: "descend"},
+				})
+				const recentPosts = rawPosts.map(post => ({
+					room: post.room,
+					time: post.time,
+					content: post.content,
+					nickname: post.nickname,
+					postId: post.postId.toString(),
+					userId: post.userId.toString(),
+				}))
+				const postsSortedByTime = recentPosts.sort((a, b) => a.time - b.time)
+				return postsSortedByTime
+			},
+
+			async fetchMutes(): Promise<ChatMute[]> {
+				const rows = await chatTables.mutes.read({conditions: false})
+				return rows.map(row => ({userId: row.userId.toString()}))
 			},
 
 			async clearRoom(room: string) {

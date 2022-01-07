@@ -2,6 +2,7 @@
 import * as renraku from "renraku"
 import {makeChatState} from "../../models/state/chat-state.js"
 import {ChatPost, ChatStatus} from "../../common/types/chat-concepts.js"
+import {maximumNumberOfPostsShownAtOnce} from "../../common/chat-constants.js"
 
 export const makeChatClientside = ({state, onChange}: {
 	state: ReturnType<typeof makeChatState>
@@ -41,7 +42,7 @@ export const makeChatClientside = ({state, onChange}: {
 							posts: [
 								...state.writable.cache.rooms[room]?.posts ?? [],
 								...posts,
-							]
+							].slice(0, maximumNumberOfPostsShownAtOnce)
 						},
 					},
 				}
