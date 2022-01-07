@@ -39,6 +39,10 @@ export type ChatPostRow = {
 	nickname: string
 } & ChatDraft
 
+export type ChatMute = {
+	userId: string
+}
+
 export type ChatMuteRow = {
 	userId: DamnId
 }

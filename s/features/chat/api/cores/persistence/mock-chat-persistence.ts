@@ -5,7 +5,7 @@ import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
+import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
 import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
 import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
 import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
@@ -111,6 +111,11 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				}))
 				const postsSortedByTime = recentPosts.sort((a, b) => a.time - b.time)
 				return postsSortedByTime
+			},
+
+			async fetchMutes(): Promise<ChatMute[]> {
+				const rows = await chatTables.mutes.read({conditions: false})
+				return rows.map(row => ({userId: row.userId.toString()}))
 			},
 
 			async clearRoom(room: string) {

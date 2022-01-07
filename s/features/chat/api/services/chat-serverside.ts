@@ -60,6 +60,10 @@ export const makeChatServerside = ({
 					room,
 					await persistenceActions.fetchRecentPosts(room)
 				)
+				chatClient.usersMuted(
+					(await persistenceActions.fetchMutes())
+						.map(({userId}) => userId)
+				)
 			},
 			async roomUnsubscribe(room: string) {
 				enforceValidation(validateChatRoom(room))
