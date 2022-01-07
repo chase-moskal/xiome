@@ -72,5 +72,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		},
 
 		session: roomManagement.getRoomSession,
+		disconnect,
+		reconnect,
 	}
 }

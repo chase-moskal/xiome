@@ -372,6 +372,54 @@ export default<Suite>{
 		},
 	},
 
+	"appraisal": {
+		async "newly connected user is appraised of existing posts"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.participant()
+			{
+				const {room} = await p1.chatModel.session(roomLabel)
+				room.post({content: "lol"})
+				await nap()
+				expect(room.posts.length).equals(1)
+			}
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				await nap()
+				expect(room.posts.length).equals(1)
+			}
+		},
+		async "newly connected user is appraised of muted users"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
+
+			const p1 = await server.makeClientFor.participant()
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+			p1room.post({content: "lol"})
+			await nap()
+
+			const {userId} = moderatorRoom.posts[0]
+			expect(moderatorRoom.posts.length).equals(1)
+			moderatorRoom.mute(userId)
+			await nap()
+
+			expect(p1room.muted.length).equals(1)
+			expect(moderatorRoom.muted.length).equals(1)
+			expect(moderatorRoom.muted[0]).equals(userId)
+			expect(p1room.weAreMuted).equals(true)
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				assert(room.weAreMuted, "user should still be muted")
+			}
+		},
+	},
+
 	"auth changes": {
 		async "user who gains participation privilege mid-chat can send a message"() {
 			const setup = await testChatSetup()
