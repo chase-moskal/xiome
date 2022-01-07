@@ -30,7 +30,7 @@ export class XioButton extends AutowatcherComponent {
 				part=button
 				@click=${this.handleClick}
 				?disabled=${this.disabled}>
-					<slot></slot>
+					<slot part=button-slot></slot>
 			</button>
 		`
 	}
