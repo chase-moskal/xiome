@@ -32,7 +32,7 @@ export default css`
   .note-container {
     border-style: solid;
     padding: 20px;
-	width: 30%;
+    width: 20%;
   }
   .note-body {
     border-style: solid;
@@ -43,38 +43,37 @@ export default css`
     padding: 10px 10px 10px 10px;
     margin-top: 15px;
     margin-bottom: 15px;
-	word-wrap: break-word;
+    word-wrap: break-word;
   }
 
-  .typeandtime{
-	  display: flex;
-	  flex-direction: row;
+  .typeandtime {
+    display: flex;
+    flex-direction: row;
   }
 
-  .note-type{
-	flex: 1;
+  .note-type {
+    flex: 1;
   }
-  .note-time{
-	  flex: 7;
-  }
-
-  .note-title{
-	 font-size: 40px;
-	 font-weight: 300;
-	 line-height: 45px; 
-  }
-  
-  .note-text{
-	  font-size: 20px;
-	  font-weight: 100;
-	  line-height: 26px;	  
+  .note-time {
+    flex: 7;
   }
 
-  .buttonbar{
-	  display: flex;
-	  justify-content: flex-end;
+  .note-title {
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 45px;
   }
-  
+
+  .note-text {
+    font-size: 20px;
+    font-weight: 100;
+    line-height: 26px;
+  }
+
+  .buttonbar {
+    display: flex;
+    justify-content: flex-end;
+  }
 
   [visibility] {
     top: 0;
@@ -83,11 +82,11 @@ export default css`
     font-weight: normal;
   }
 
-  .page-container{
-	  display: flex;
-	  flex-direction: row;
-	  align-items: center;
-	  justify-content: center;
+  .page-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
   }
 
   .note-content-box {
