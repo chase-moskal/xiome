@@ -5,6 +5,7 @@ import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {chatSocketClient} from "../../../../features/chat/api/sockets/chat-socket-client.js"
 // import {chatSocketClient} from "../../../../features/chat/api/sockets/chat-socket-client.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 

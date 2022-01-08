@@ -13,10 +13,11 @@ export default css`
 	--_hover-color: var(--xio-button-hover-color, inherit);
 	--_hover-background: var(--xio-button-hover-background, var(--_background));
 	--_disabled-opacity: var(--xio-button-disabled-opacity, 0.2);
-	--_disabled-border-style: var(--xio-button--disabled-border-style, dashed);
+	--_disabled-border-style: var(--xio-button-disabled-border-style, dashed);
 }
 
 button {
+	height: 100%;
 	cursor: pointer;
 	font: inherit;
 	color: inherit;

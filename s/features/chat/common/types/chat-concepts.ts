@@ -17,7 +17,7 @@ export interface ChatAuth {
 	access: AccessPayload
 }
 
-export type ChatPolicy = (meta: ChatMeta) => Promise<ChatAuth>
+export type ChatPolicy = (meta: ChatMeta, headers: renraku.HttpHeaders) => Promise<ChatAuth>
 
 export type ChatDraft = {
 	content: string
@@ -36,7 +36,12 @@ export type ChatPostRow = {
 	postId: DamnId
 	userId: DamnId
 	time: number
+	nickname: string
 } & ChatDraft
+
+export type ChatMute = {
+	userId: string
+}
 
 export type ChatMuteRow = {
 	userId: DamnId
@@ -54,6 +59,8 @@ export type ChatTables = {
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
+export type ChatPersistenceActions = ReturnType<ChatPersistence["namespaceForApp"]>
+
 export type ChatServersideApi = ReturnType<typeof makeChatServerside>
 export type ChatClientsideApi = ReturnType<typeof makeChatClientside>
 
@@ -64,6 +71,7 @@ export interface ClientRecord {
 	rooms: Set<string>
 	auth: undefined | ChatAuth
 	clientside: ChatClientside
+	controls: renraku.ConnectionControls
 }
 
 export interface ChatConnection {

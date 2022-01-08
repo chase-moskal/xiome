@@ -242,8 +242,8 @@ export default<Suite>{
 			p1room.post({content: "lol"})
 			await nap()
 
-			const {userId} = moderatorRoom.posts[0]
 			expect(moderatorRoom.posts.length).equals(1)
+			const {userId} = moderatorRoom.posts[0]
 			moderatorRoom.mute(userId)
 			await nap()
 
@@ -254,7 +254,33 @@ export default<Suite>{
 
 			p1room.post({content: "lmao"})
 			await nap()
-			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p1room.posts.length).equals(1)
+			expect(moderatorRoom.posts.length).equals(1)
+		},
+
+		async "muted user cannot post after re-joining"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
+
+			const p1 = await server.makeClientFor.participant()
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+
+			expect(moderatorRoom.posts.length).equals(1)
+			const {userId} = moderatorRoom.posts[0]
+			moderatorRoom.mute(userId)
+			await nap()
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				room.post({content: "rofl"})
+				await nap()
+				assert(room.posts.length === 1, "muted user should not have been able to post")
+			}
 		},
 
 		async "banned user knows they are banned"() {
@@ -372,6 +398,54 @@ export default<Suite>{
 		},
 	},
 
+	"appraisal": {
+		async "newly connected user is appraised of existing posts"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+
+			const p1 = await server.makeClientFor.participant()
+			{
+				const {room} = await p1.chatModel.session(roomLabel)
+				room.post({content: "lol"})
+				await nap()
+				expect(room.posts.length).equals(1)
+			}
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				await nap()
+				expect(room.posts.length).equals(1)
+			}
+		},
+		async "newly connected user is appraised of muted users"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel, moderator} = await setup.startOnline()
+			const {room: moderatorRoom} = await moderator.chatModel.session(roomLabel)
+
+			const p1 = await server.makeClientFor.participant()
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+			p1room.post({content: "lol"})
+			await nap()
+
+			const {userId} = moderatorRoom.posts[0]
+			expect(moderatorRoom.posts.length).equals(1)
+			moderatorRoom.mute(userId)
+			await nap()
+
+			expect(p1room.muted.length).equals(1)
+			expect(moderatorRoom.muted.length).equals(1)
+			expect(moderatorRoom.muted[0]).equals(userId)
+			expect(p1room.weAreMuted).equals(true)
+
+			{
+				const p2 = await p1.clone()
+				const {room} = await p2.chatModel.session(roomLabel)
+				assert(room.weAreMuted, "user should still be muted")
+			}
+		},
+	},
+
 	"auth changes": {
 		async "user who gains participation privilege mid-chat can send a message"() {
 			const setup = await testChatSetup()
@@ -426,6 +500,38 @@ export default<Suite>{
 
 			expect(room1.posts.length).equals(1)
 			expect(room2.posts.length).equals(1)
+		},
+	},
+
+	"app isolation": {
+		async "chat message in one app doesn't leak into other app"() {
+			const setup = await testChatSetup()
+			const rando = await getRando()
+			const appId_a = rando.randomId().toString()
+			const appId_b = rando.randomId().toString()
+			const {server, roomLabel} = await setup.startOnline()
+			
+			const p1 = await server.makeClientFor.participant(appId_a)
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+			const p2 = await server.makeClientFor.participant(appId_b)
+			const {room: p2room} = await p2.chatModel.session(roomLabel)
+
+			p1room.post({content: "lol"})
+			await nap()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p1room.posts.find(post => post.content === "lol")).ok()
+			expect(p2room.posts.find(post => post.content === "lol")).not.ok()
+
+			p2room.post({content: "lmao"})
+			await nap()
+
+			expect(p1room.posts.find(post => post.content === "lmao")).not.ok()
+			expect(p2room.posts.find(post => post.content === "lmao")).ok()
+
+			expect(p1room.posts.length).equals(1)
+			expect(p2room.posts.length).equals(1)
 		},
 	},
 
