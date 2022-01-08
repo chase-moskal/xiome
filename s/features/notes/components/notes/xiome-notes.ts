@@ -153,7 +153,6 @@ export class XiomeNotes extends ComponentWithShare<{
 					${this.#renderPagination()}
 					</div>
 					${this.#renderButtonbar()}
-					
 					</div>
 				`}
 		`

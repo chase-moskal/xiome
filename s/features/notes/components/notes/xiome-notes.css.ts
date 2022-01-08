@@ -32,7 +32,7 @@ export default css`
   .note-container {
     border-style: solid;
     padding: 20px;
-    width: auto;
+	width: 30%;
   }
   .note-body {
     border-style: solid;
