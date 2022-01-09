@@ -7,27 +7,32 @@ import {makeChatClientside} from "../services/chat-clientside.js"
 import {makeChatServerside} from "../services/chat-serverside.js"
 import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
-export function makeChatServerCore({rando, persistence, policy, logError}: {
+const pingInterval = 10 * 1000
+
+export function makeChatServerCore({
+		rando, persistence, policy,
+	}: {
 		rando: Rando
 		persistence: ChatPersistence
 		policy: ChatPolicy
-		logError: (error: Error) => void
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()
 
 	async function broadcastToAll(
+			appId: string,
 			action: (
 				record: ClientRecord,
 				allowance: ReturnType<typeof chatAllowance>
 			) => void,
 		) {
 		for (const record of clientRecords.values())
-			if (record.auth)
+			if (record.auth && record.auth.access.appId === appId)
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
 	async function broadcastToRoom(
+			appId: string,
 			room: string,
 			action: (
 				record: ClientRecord,
@@ -35,19 +40,21 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			) => void,
 		) {
 		for (const record of clientRecords.values())
-			if (record.auth && record.rooms.has(room))
+			if (record.auth && record.auth.access.appId === appId && record.rooms.has(room))
 				action(record, chatAllowance(record.auth.access.permit.privileges))
 	}
 
-	persistence.onRoomStatusChanged(({room, status}) => {
+	persistence.events.roomStatusChanged(({appId, room, status}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			record => record.clientside.chatClient.roomStatusChanged(room, status),
 		)
 	})
 
-	persistence.onPostsAdded(({room, posts}) => {
+	persistence.events.postsAdded(({appId, room, posts}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
@@ -56,8 +63,9 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 		)
 	})
 
-	persistence.onPostsRemoved(({room, postIds}) => {
+	persistence.events.postsRemoved(({appId, room, postIds}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
@@ -66,29 +74,30 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 		)
 	})
 
-	persistence.onMutes(({userIds}) => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.mutes(({appId, userIds}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersMuted(userIds)
 		})
 	})
 
-	persistence.onUnmutes(({userIds}) => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.unmutes(({appId, userIds}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.usersUnmuted(userIds)
 		})
 	})
 
-	persistence.onUnmuteAll(() => {
-		broadcastToAll((record, allowance) => {
+	persistence.events.unmuteAll(({appId}) => {
+		broadcastToAll(appId, (record, allowance) => {
 			if (allowance.viewAllChats)
 				record.clientside.chatClient.unmuteAll()
 		})
 	})
 
-	persistence.onRoomCleared(({room}) => {
+	persistence.events.roomCleared(({appId, room}) => {
 		broadcastToRoom(
+			appId,
 			room,
 			(record, allowance) => {
 				if (allowance.viewAllChats)
@@ -97,7 +106,8 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 		)
 	})
 
-	function acceptNewClient({clientside, handleDisconnect}: {
+	function acceptNewClient({controls, clientside, handleDisconnect}: {
+			controls: renraku.ConnectionControls
 			clientside: renraku.Remote<ReturnType<typeof makeChatClientside>>
 			handleDisconnect: () => void
 		}) {
@@ -105,8 +115,10 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 			auth: undefined,
 			rooms: new Set(),
 			clientside,
+			controls,
 		}
 		clientRecords.add(clientRecord)
+		const interval = setInterval(controls.ping, pingInterval)
 		return {
 			api: makeChatServerside({
 				rando,
@@ -115,6 +127,7 @@ export function makeChatServerCore({rando, persistence, policy, logError}: {
 				policy,
 			}),
 			disconnect() {
+				clearInterval(interval)
 				handleDisconnect()
 				clientRecords.delete(clientRecord)
 			},

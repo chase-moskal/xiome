@@ -11,5 +11,5 @@ export const backendForNode = prepareBackend({
 	configureDacast,
 	configureMailgun,
 	configureTokenFunctions,
-	configureMockStorage: () => configureMockFileStorage("./data.json"),
+	configureMockStorage: () => configureMockFileStorage("./mock-database.json"),
 })

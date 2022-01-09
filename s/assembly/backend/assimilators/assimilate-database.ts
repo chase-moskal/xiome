@@ -18,7 +18,11 @@ export async function assimilateDatabase({
 		config,
 		configureMongo,
 		configureMockStorage,
-	}: AssimilatorOptions): Promise<{
+	}: {
+		config: AssimilatorOptions["config"]
+		configureMongo: AssimilatorOptions["configureMongo"]
+		configureMockStorage: AssimilatorOptions["configureMockStorage"]
+	}): Promise<{
 		database: DatabaseFinal
 		mockStorage: FlexStorage
 	}> {

@@ -1,7 +1,7 @@
 
 import {html} from "../../../../../framework/component.js"
-import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 import {validateChatContent} from "../../../common/chat-validators.js"
+import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 
 export function renderChatAuthorship({
 		sendable, onSendClick, onEnterPress, onValidityChange,
@@ -22,10 +22,9 @@ export function renderChatAuthorship({
 
 			<xio-text-input
 				textarea
-				@valuechange=${handleContentChange}
 				.validator=${validateChatContent}
+				@valuechange=${handleContentChange}
 				@enterpress=${onEnterPress}>
-					your chat message
 			</xio-text-input>
 
 			<xio-button

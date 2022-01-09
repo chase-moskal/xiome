@@ -14,6 +14,9 @@ export class XiomeLoginPanel extends ComponentWithShare<{accessModel: ReturnType
 	@property({type: Boolean, reflect: true})
 	["show-logout"]: boolean = false
 
+	@property({type: String, reflect: true})
+	["status"]: "loading" | "logged-out" | "logged-in" = "loading"
+
 	@property()
 	private sentLoading: Op<{email: string}> = ops.none()
 
@@ -126,6 +129,12 @@ export class XiomeLoginPanel extends ComponentWithShare<{accessModel: ReturnType
 
 	render() {
 		const accessOp = this.share.accessModel.getAccessOp()
+		this.status = "loading"
+		if (ops.isReady(accessOp)) {
+			this.status = ops.value(accessOp)?.user
+				? "logged-in"
+				: "logged-out"
+		}
 		return renderOp(accessOp, access => access?.user
 			? this.renderLoggedIn(access)
 			: this.renderLoggedOut()

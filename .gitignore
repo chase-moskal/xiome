@@ -2,6 +2,7 @@
 /x
 /s/**/_*
 /data.json
+/mock-database.json
 /node_modules
 
 /*.pem
