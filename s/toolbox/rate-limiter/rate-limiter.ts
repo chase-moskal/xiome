@@ -27,4 +27,8 @@ export class RateLimiter {
 			return false
 		}
 	}
+
+	tooMany(): boolean {
+		return !this.hit()
+	}
 }

@@ -6,14 +6,17 @@ import {schema} from "../../../../toolbox/darkvalley.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
 import {validateChatDraft, validateChatRoom, validateChatStatus, validateIdArray} from "../../common/chat-validators.js"
 import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../common/types/chat-concepts.js"
+import {RateLimiter} from "../../../../toolbox/rate-limiter/rate-limiter.js"
 
 export const makeChatServerside = ({
 		rando,
+		rateLimiter,
 		clientRecord,
 		persistence,
 		policy,
 	}: {
 		rando: Rando
+		rateLimiter: RateLimiter
 		clientRecord: ClientRecord
 		persistence: ChatPersistence
 		policy: ChatPolicy
@@ -72,6 +75,8 @@ export const makeChatServerside = ({
 				clientRecord.rooms.delete(room)
 			},
 			async post(room: string, draft: ChatDraft) {
+				if (rateLimiter.tooMany())
+					return undefined
 				enforceValidation(schema({
 					room: validateChatRoom,
 					draft: validateChatDraft,

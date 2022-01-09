@@ -5,6 +5,8 @@ import {Rando} from "../../../../toolbox/get-rando.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
 import {makeChatClientside} from "../services/chat-clientside.js"
 import {makeChatServerside} from "../services/chat-serverside.js"
+import {RateLimiter} from "../../../../toolbox/rate-limiter/rate-limiter.js"
+import {chatPostCoolOff, chatRateLimitingInterval} from "../../common/chat-constants.js"
 import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
 
 const pingInterval = 10 * 1000
@@ -118,10 +120,15 @@ export function makeChatServerCore({
 			controls,
 		}
 		clientRecords.add(clientRecord)
+		const rateLimiter = new RateLimiter({
+			timeframe: chatRateLimitingInterval,
+			maximum: chatRateLimitingInterval / chatPostCoolOff,
+		})
 		const interval = setInterval(controls.ping, pingInterval)
 		return {
 			api: makeChatServerside({
 				rando,
+				rateLimiter,
 				persistence,
 				clientRecord,
 				policy,
