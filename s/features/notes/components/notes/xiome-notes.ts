@@ -14,6 +14,10 @@ export class XiomeNotes extends ComponentWithShare<{
 	#cacheDetails = this.share.notesModel.createNotesCacheDetails()
 	#cache = this.#cacheDetails.cache
 
+	async init() {
+		await this.#model.initialize()
+	}
+
 	subscribe() {
 		const unsubs = [
 			super.subscribe(),
