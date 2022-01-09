@@ -18,7 +18,7 @@ export class XiomeVideoCompanion extends ComponentWithShare<{
 	label: string = "default"
 
 	init() {
-		this.#model.initialize(this.label)
+		this.#model.initializeForVideo(this.label)
 	}
 
 	render() {
