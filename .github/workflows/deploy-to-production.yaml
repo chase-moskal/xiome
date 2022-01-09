@@ -38,9 +38,13 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: 📦 npm install and build
+    - name: 📦 npm install
       shell: bash
-      run: npm ci && npm run build
+      run: npm ci
+
+    - name: 🔨 build
+      shell: bash
+      run: npm run build
 
     - name: 🚀 npm publish
       uses: JS-DevTools/npm-publish@v1
