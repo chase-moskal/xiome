@@ -37,7 +37,7 @@ export class XiomeVideoDisplay extends ComponentWithShare<{
 	})()
 
 	async init() {
-		await this.#model.initialize(this.label)
+		await this.#model.initializeForVideo(this.label)
 	}
 
 	#renderShow() {

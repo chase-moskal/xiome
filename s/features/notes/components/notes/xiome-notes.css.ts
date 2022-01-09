@@ -32,7 +32,7 @@
 	.note-container {
 		border-style: solid;
 		padding: 20px;
-		width: 20%;
+		width: 30%;
 	}
 	.note-body {
 		border-style: solid;

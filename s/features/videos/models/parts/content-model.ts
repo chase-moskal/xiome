@@ -22,8 +22,15 @@ export function makeContentModel({
 	const activeShowLabels = new Set<string>()
 	const currentlyLoadingShows = new Set<string>()
 
+	function getAccess(): undefined | AccessPayload {
+		return ops.value(state.readable.accessOp)
+	}
+
+	let initialized = false
+
 	async function loadModerationData() {
-		const access = ops.value(state.readable.accessOp)
+		initialized = true
+		const access = getAccess()
 		const isModerator = access && access.permit
 			.privileges.includes(videoPrivileges["moderate videos"])
 		if (isModerator) {
@@ -49,7 +56,8 @@ export function makeContentModel({
 	}
 
 	async function loadShow(label: string) {
-		if (currentlyLoadingShows.has(label))
+		initialized = true
+		if (!getAccess() || currentlyLoadingShows.has(label))
 			return undefined
 		currentlyLoadingShows.add(label)
 		activeShowLabels.add(label)
@@ -70,6 +78,9 @@ export function makeContentModel({
 	}
 
 	async function refreshShows() {
+		initialized = true
+		if (!getAccess())
+			return undefined
 		const labels = Array.from(activeShowLabels)
 			.filter(label => !currentlyLoadingShows.has(label))
 		if (labels.length) {
@@ -85,20 +96,6 @@ export function makeContentModel({
 		}
 	}
 
-	let alreadyInitialized = false
-	async function initialize(label: string) {
-		if (ops.isReady(state.readable.accessOp)) {
-			await loadShow(label)
-			if (!alreadyInitialized) {
-				alreadyInitialized = true
-				await loadModerationData()
-			}
-		}
-		else {
-			activeShowLabels.add(label)
-		}
-	}
-
 	return {
 		state: state.readable,
 		subscribe: state.subscribe,
@@ -106,16 +103,33 @@ export function makeContentModel({
 			state.writable.accessOp = op
 			state.writable.catalogOp = ops.none()
 			state.writable.viewsOp = ops.none()
-			await loadModerationData()
-			await refreshShows()
+			if (initialized) {
+				await loadModerationData()
+				await refreshShows()
+			}
 		},
 		async onVideoHostingUpdate() {
-			await loadModerationData()
-			await refreshShows()
+			if (initialized) {
+				await loadModerationData()
+				await refreshShows()
+			}
 		},
 
-		initialize,
-		loadModerationData,
+		async initializeForModerationData() {
+			if (!initialized) {
+				await loadModerationData()
+			}
+		},
+	
+		async initializeForVideo(label: string) {
+			if (!initialized) {
+				await loadShow(label)
+				await loadModerationData()
+			}
+			else {
+				activeShowLabels.add(label)
+			}
+		},
 
 		get allowance() {
 			const access = ops.value(state.readable.accessOp)

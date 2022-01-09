@@ -52,7 +52,7 @@ xio-button {
 	border-radius: 0 0 0.5em 0.5em;
 }
 
-.chatbox xiome-login-panel[state="logged-out"] {
+.chatbox xiome-login-panel[status="logged-out"] {
 	padding: 1em;
 }
 

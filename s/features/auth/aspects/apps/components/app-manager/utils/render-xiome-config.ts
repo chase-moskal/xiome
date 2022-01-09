@@ -10,7 +10,7 @@ export function renderXiomeConfig(appId: string) {
 	const quote = glue(`"`)
 	const noquote = ""
 
-	const bundle_link = "https://unpkg.com/xiome/x/xiome.bundle.min.js"
+	const bundle_link = "https://xiome.io/xiome.bundle.min.js"
 
 	return html`
 		${glue(`<`)}${tag(`script`)} ${attr(`async`)} ${attr(`defer`)} ${attr(`src`)}${glue(`=`)}${quote}${data(bundle_link)}${quote}${glue(`>`)}${glue(`</`)}${tag(`script`)}${glue(`>`)}

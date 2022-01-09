@@ -1,6 +1,7 @@
 
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
+import {onesie} from "../../../toolbox/onesie.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {NotesStats} from "../types/notes-concepts.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
@@ -31,20 +32,37 @@ export function makeNotesModel({notesService}: {
 		}
 	}
 
-	async function loadStats() {
+	const loadStats = onesie(async function loadStats() {
 		return ops.operation({
 			promise: notesService.getNotesStats(),
 			setOp: op => state.writable.statsOp = op,
 		})
+	})
+
+	let initialized = false
+
+	async function initialize() {
+		if (!initialized) {
+			initialized = true
+			if (getIsLoggedIn()) {
+				return loadStats()
+			}
+		}
+	}
+
+	async function loadIfInitialized() {
+		if (initialized)
+			return loadStats()
 	}
 
 	return {
+		initialize,
 		state: state.readable,
 		stateSubscribe: state.subscribe,
 		async updateAccessOp(op: Op<AccessPayload>) {
 			state.writable.accessOp = op
 			if (getIsLoggedIn())
-				await loadStats()
+				await loadIfInitialized()
 			accessUpdate.publish(ops.value(op))
 		},
 
