@@ -11,6 +11,10 @@ export class XiomeVideoViews extends ComponentWithShare<{
 		contentModel: ReturnType<typeof makeContentModel>
 	}> {
 
+	async init() {
+		this.share.contentModel.initializeForModerationData()
+	}
+
 	render() {
 		const model = this.share.contentModel
 		return model.allowance.canModerateVideos
