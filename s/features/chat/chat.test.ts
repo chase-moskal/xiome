@@ -7,7 +7,7 @@ import {getRando} from "../../toolbox/get-rando.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 import {ChatDraft, ChatStatus} from "./common/types/chat-concepts.js"
 import {chatValidationTestSetup} from "./testing/chat-validation-test-setup.js"
-import {chatPostCoolOff} from "./common/chat-constants.js"
+import {chatPostCoolOff, chatRateLimitingInterval} from "./common/chat-constants.js"
 
 export default<Suite>{
 
@@ -547,7 +547,7 @@ export default<Suite>{
 				p1room.post({content: "lol"})
 
 			await nap()
-			const maximum = 60_000 / chatPostCoolOff
+			const maximum = chatRateLimitingInterval / chatPostCoolOff
 			assert(p1room.posts.length <= maximum, `should not be more than ${maximum} posts`)
 		},
 	},
