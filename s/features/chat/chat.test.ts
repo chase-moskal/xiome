@@ -7,6 +7,7 @@ import {getRando} from "../../toolbox/get-rando.js"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 import {ChatDraft, ChatStatus} from "./common/types/chat-concepts.js"
 import {chatValidationTestSetup} from "./testing/chat-validation-test-setup.js"
+import {chatPostCoolOff} from "./common/chat-constants.js"
 
 export default<Suite>{
 
@@ -536,7 +537,19 @@ export default<Suite>{
 	},
 
 	"rate limiting": {
-		async "user who floods chat receives an error notice to slow down"() {},
+		async "user cannot exceed rate limit"() {
+			const setup = await testChatSetup()
+			const {server, roomLabel} = await setup.startOnline()
+			const p1 = await server.makeClientFor.participant()
+			const {room: p1room} = await p1.chatModel.session(roomLabel)
+
+			for (const x of [...Array(100).keys()])
+				p1room.post({content: "lol"})
+
+			await nap()
+			const maximum = 60_000 / chatPostCoolOff
+			assert(p1room.posts.length <= maximum, `should not be more than ${maximum} posts`)
+		},
 	},
 
 	async "serverside validation"() {
