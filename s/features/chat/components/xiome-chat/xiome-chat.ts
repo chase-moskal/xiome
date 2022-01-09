@@ -1,4 +1,8 @@
 
+import clearIcon from "../../../../framework/icons/clear.svg.js"
+import unmuteIcon from "../../../../framework/icons/unmute.svg.js"
+import onOffIcon from "../../../../framework/icons/on-off-button.svg.js"
+
 import {makeChatModel} from "../../models/chat-model.js"
 import {renderChatPost} from "./renderers/render-chat-post.js"
 import {chatPostCoolOff} from "../../common/chat-constants.js"
@@ -82,22 +86,26 @@ export class XiomeChat extends ComponentWithShare<{
 		const muteCount = this.#room.muted.length
 		return this.#model.allowance.moderateAllChats
 			? html`
-				<header>
+				<header class=modheader>
 					<span>room="${this.room}"</span>
 					<span>
 						<xio-button
-							@press=${toggleStatus}>
-								set status
-								${status === ChatStatus.Offline ? "online" : "offline"}
-						</xio-button>
-						<xio-button
-							@press=${() => this.#room.clear()}>
-								clear room
-						</xio-button>
-						<xio-button
+							title="unmute ${muteCount} users"
 							?disabled=${muteCount === 0}
 							@press=${() => this.#room.unmuteAll()}>
-								unmute all (${muteCount})
+								${unmuteIcon} ${muteCount}
+						</xio-button>
+						<xio-button
+							title="clear chat room"
+							@press=${() => this.#room.clear()}>
+								${clearIcon}
+						</xio-button>
+						<xio-button
+							title="set chat ${
+								status === ChatStatus.Offline ? "online" : "offline"
+							}"
+							@press=${toggleStatus}>
+								${onOffIcon}
 						</xio-button>
 					</span>
 				</header>
@@ -184,11 +192,9 @@ export class XiomeChat extends ComponentWithShare<{
 		return html`
 			<xiome-login-panel>
 				${whenOpReady(this.#model.state.accessOp, () => html`
-					<div slot=logged-out>
-						<slot name=logged-out>
-							login to participate in the chat
-						</slot>
-					</div>
+					<slot name=logged-out slot=logged-out>
+						login to participate in the chat
+					</slot>
 					<div class=participation>
 						${this.#model.allowance.participateInAllChats
 							? authorshipArea()

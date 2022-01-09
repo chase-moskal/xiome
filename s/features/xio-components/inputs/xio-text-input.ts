@@ -94,11 +94,14 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	@property({type: String})
 	private draft: string = ""
 	private lastDraft: string = ""
+	private vettedLength: number = 0
 
 	private dispatchValueChange = () => {
 		const {draft, lastDraft} = this
-		if (draft !== lastDraft)
+		if (draft !== lastDraft) {
+			this.vettedLength = draft.length
 			this.dispatchEvent(new ValueChangeEvent(this.value))
+		}
 		this.lastDraft = draft
 	}
 
@@ -125,12 +128,12 @@ export class XioTextInput<xParsedValue = string> extends Component {
 		}
 	}
 
-	private handleInputKeyUp = (event: KeyboardEvent) => {
+	private handleInput = () => {
 		this.updateDraft()
 		this.dispatchValueChangeDebounced()
 	}
 
-	private handleInputChange = () => {
+	private handleChange = () => {
 		this.updateDraft()
 		this.dispatchValueChange()
 	}
@@ -147,14 +150,14 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	render() {
 		const {
-			readonly, disabled, problems, draft, placeholder, textarea,
-			validator, handleInputKeyUp, handleInputKeyPress, handleInputChange,
+			readonly, disabled, problems, vettedLength, placeholder, textarea,
+			validator, handleInput, handleInputKeyPress, handleChange,
 		} = this
 		const valid = problems.length === 0
 		const showValidation = !this["hide-validation"] && !readonly && validator && (
 			this["show-validation-when-empty"]
 				? true
-				: draft.length !== 0
+				: vettedLength !== 0
 		)
 		const showProblems = showValidation && !valid
 		const icon = showValidation
@@ -176,9 +179,9 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
-								@keyup=${handleInputKeyUp}
+								@input=${handleInput}
 								@keypress=${handleInputKeyPress}
-								@change=${handleInputChange}
+								@change=${handleChange}
 							></textarea>
 						` : html`
 							<input
@@ -189,9 +192,9 @@ export class XioTextInput<xParsedValue = string> extends Component {
 								?readonly=${readonly}
 								tabindex=${readonly ? "-1" : "0"}
 								placeholder=${placeholder}
-								@keyup=${handleInputKeyUp}
+								@input=${handleInput}
 								@keypress=${handleInputKeyPress}
-								@change=${handleInputChange}
+								@change=${handleChange}
 								/>
 						`}
 					</div>

@@ -14,7 +14,6 @@ export async function chatMockClientEntirely(storage: FlexStorage):
 		rando: await getRando(),
 		persistence: await mockChatPersistence(storage),
 		policy: mockChatPolicy,
-		logError: error => console.error(error),
 	})
 
 	return chatMockClient(serverCore)

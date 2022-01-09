@@ -16,67 +16,74 @@ export async function testChatSetup() {
 	const rando = await getRando()
 	const storage = memoryFlexStorage()
 	const persistence = await mockChatPersistence(storage)
+	const defaultAppId = rando.randomId().toString()
 
 	async function makeServer() {
 		const serverCore = makeChatServerCore({
 			rando,
 			persistence,
-			logError() {},
 			policy: mockChatPolicy,
 		})
 
-		async function makeClient(privileges: string[]) {
-			const chatConnect = chatMockClient(serverCore)
+		async function makeClient(privileges: string[], appId = defaultAppId) {
 			const userId = rando.randomId().toString()
-			let access = {
-				appId: undefined,
-				origins: [],
-				permit: {privileges},
-				scope: {core: false},
-				user: {
-					userId,
-					profile: {
-						avatar: undefined,
-						nickname: `nickname-${userId.slice(0, 7)}`,
-						tagline: "",
-					},
-					roles: [],
-					stats: undefined,
-				},
-			}
-			const chatModel = makeChatModel({
-				chatConnect,
-				getChatMeta: async() => mockChatMeta({access}),
-			})
-			await chatModel.updateAccessOp(ops.ready(access))
-			return {
-				chatModel,
-				async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
-					access = {
-						...access,
-						permit: {
-							...access.permit,
-							privileges: [
-								...access.permit.privileges,
-								...privilegeKeys.map(key => chatPrivileges[key]),
-							],
+			async function clone() {
+				const chatConnect = chatMockClient(serverCore)
+				let access = {
+					appId,
+					origins: [],
+					permit: {privileges},
+					scope: {core: false},
+					user: {
+						userId,
+						profile: {
+							avatar: undefined,
+							nickname: `nickname-${userId.slice(0, 7)}`,
+							tagline: "",
 						},
-					}
-					await chatModel.updateAccessOp(ops.ready(access))
-				},
+						roles: [],
+						stats: undefined,
+					},
+				}
+				const chatModel = makeChatModel({
+					chatConnect,
+					getChatMeta: async() => mockChatMeta({access}),
+				})
+				await chatModel.updateAccessOp(ops.ready(access))
+				return {
+					userId,
+					chatModel,
+					async addPrivilege(...privilegeKeys: (keyof typeof chatPrivileges)[]) {
+						access = {
+							...access,
+							permit: {
+								...access.permit,
+								privileges: [
+									...access.permit.privileges,
+									...privilegeKeys.map(key => chatPrivileges[key]),
+								],
+							},
+						}
+						await chatModel.updateAccessOp(ops.ready(access))
+					},
+				}
+			}
+			return {
+				...await clone(),
+				clone,
 			}
 		}
 
 		return {
 			makeClientFor: {
-				forbidden: () => makeClient([]),
-				viewer: () => makeClient([chatPrivileges["view all chats"]]),
-				participant: () => makeClient([chatPrivileges["participate in all chats"]]),
-				moderator: () => makeClient([chatPrivileges["moderate all chats"]]),
-				bannedParticipant: () => makeClient([
+				forbidden: (appId?: string) => makeClient([], appId),
+				viewer: (appId?: string) => makeClient([chatPrivileges["view all chats"]], appId),
+				participant: (appId?: string) => makeClient([chatPrivileges["participate in all chats"]], appId),
+				moderator: (appId?: string) => makeClient([chatPrivileges["moderate all chats"]], appId),
+				bannedParticipant: (appId?: string) => makeClient([
 					chatPrivileges["participate in all chats"],
 					appPermissions.privileges["banned"],
-				]),
+				], appId),
 			},
 		}
 	}

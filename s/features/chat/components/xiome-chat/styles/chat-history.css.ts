@@ -40,12 +40,11 @@ slot[name="no-messages"] {
 	text-align: center;
 }
 
-.history li {
+.history li + li {
 	margin-top: 0.75em;
 }
 
 .history li > header {
-	opacity: 0.5;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -68,6 +67,14 @@ slot[name="no-messages"] {
 
 .history li .nickname {
 	font-size: 1em;
+	opacity: var(--xio-chat-nickname-opacity, 0.5);
+	color: var(--xio-chat-nickname-color, currentColor);
+}
+
+.history li .userid {
+	font-size: 1em;
+	opacity: var(--xio-chat-userid-opacity, 0.5);
+	color: var(--xio-chat-userid-color, currentColor);
 }
 
 .history li .content {

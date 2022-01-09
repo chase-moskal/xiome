@@ -1,2 +1,4 @@
 
-export const chatPostCoolOff = 3 * 1000
+export const chatPostCoolOff = 3_000
+export const chatRateLimitingInterval = 60_000
+export const maximumNumberOfPostsShownAtOnce = 50

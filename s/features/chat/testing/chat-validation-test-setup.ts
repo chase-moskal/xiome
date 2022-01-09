@@ -10,6 +10,7 @@ import {makeChatServerside} from "../api/services/chat-serverside.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {RateLimiter} from "../../../toolbox/rate-limiter/rate-limiter.js"
 
 export async function chatValidationTestSetup(
 		...privileges: (keyof typeof chatPrivileges)[]
@@ -31,6 +32,10 @@ export async function chatValidationTestSetup(
 	const clientRecord: ClientRecord = {
 		auth: undefined,
 		rooms: new Set(),
+		controls: {
+			ping() {},
+			close() {},
+		},
 		clientside: {
 			chatClient: {
 				postsAdded: doNothing,
@@ -48,6 +53,10 @@ export async function chatValidationTestSetup(
 		rando,
 		persistence,
 		clientRecord,
+		rateLimiter: new RateLimiter({
+			maximum: 999,
+			timeframe: 1000,
+		}),
 		policy: mockChatPolicy,
 	})
 

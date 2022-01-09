@@ -5,7 +5,7 @@ email us at hello@xiome.io if you have any questions
 
 # xiome.io terms of service
 
-xiome's software and services are provided under the terms of the [isc license](license) and also the terms below
+xiome's software and services are provided under the terms of the [mit license](license) and also the terms below
 
 we're not responsible or liable for anything that happens related to xiome
 
