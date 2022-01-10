@@ -6,8 +6,9 @@ import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {AppNamespace, UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
 import {ChatMuteRow, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from "../../../common/types/chat-concepts.js"
+import {down} from "../../../../../toolbox/dbby/dbby-mongo-row-processing.js"
 
 export async function mongoChatPersistence() {
 
@@ -39,34 +40,34 @@ export async function mongoChatPersistence() {
 	const postsChangeStream = collections.postCollection.watch()
 	postsChangeStream.on('change', (change) => {
 		if(change.operationType == 'insert') {
-			const {appId, room, posts} = change.fullDocument
-			events.postsAdded.publish({appId, room, posts})
+			const {"namespace-appId": appId, room, postId, content, time, userId, nickname} = down<AppNamespace & ChatPostRow>(change.fullDocument)
+			events.postsAdded.publish({appId: appId.toString(), room, posts: [{postId: postId.toString(), content, time, userId: userId.toString(), room, nickname}]})
 		}
 		else if(change.operationType == 'delete') {
-			const {appId, room, postIds} = change.fullDocument
-			events.postsRemoved.publish({appId, room, postIds})
-			events.roomCleared.publish({appId, room})
+			console.log(0, change)
+			const {"namespace-appId":appId, room, postId} = down<AppNamespace & ChatPostRow>(change.fullDocument)
+			events.postsRemoved.publish({appId: appId.toString(), room, postIds: [postId.toString()]})
+			events.roomCleared.publish({appId: appId.toString(), room})
 		}
 	})
 
 	const mutesChangeStream = collections.muteCollection.watch()
 	mutesChangeStream.on('change', (change) => {
 		if(change.operationType == 'insert') {
-			const {appId, userIdsToBeMuted} = change.fullDocument
-			events.mutes.publish({appId, userIds: userIdsToBeMuted})
+			const {'namespace-appId': appId, userId} = down<AppNamespace & ChatMuteRow>(change.fullDocument)
+			events.mutes.publish({appId: appId.toString(), userIds: [userId.toString()]})
 		}
 		else if(change.operationType == 'delete') {
-			const {appId, userIds} = change.fullDocument
-			events.unmutes.publish({appId, userIds})
-			events.unmuteAll.publish({appId})
+			const {'namespace-appId': appId, userId} = down<AppNamespace & ChatMuteRow>(change.fullDocument)
+			events.unmutes.publish({appId: appId.toString(), userIds: [userId.toString()]})
+			events.unmuteAll.publish({appId: appId.toString()})
 		}
 	})
 
-	const statusChangeStream = collections.statusCollection.watch()
+	const statusChangeStream = collections.statusCollection.watch(undefined, {fullDocument: "updateLookup"})
 	statusChangeStream.on('change', (change) => {
-		console.log("change stream room status", change)
-		const {appId, room, status} = change.fullDocument
-		events.roomStatusChanged.publish({appId, room, status})
+		const {'namespace-appId': appId, room, status} = down<AppNamespace & ChatRoomStatusRow>(change.fullDocument)
+		events.roomStatusChanged.publish({appId: appId.toString(), room, status})
 	})
 
 	const eventSubscribers =
