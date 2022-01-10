@@ -4,7 +4,7 @@ export default css`
 
 .history ol,
 .history slot[name="no-messages"] {
-	height: 300px;
+	height: var(--xiome-chat-history-height);
 	overflow-y: auto;
 	scrollbar-color: #0004 #0002;
 	scrollbar-width: thin;

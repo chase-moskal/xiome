@@ -6,6 +6,7 @@ export default css`
 :host {
 	display: block;
 	max-width: 56em;
+	--xiome-chat-history-height: var(--xiome-chat-history-height, 20em);
 }
 
 .modheader {
