@@ -7,10 +7,10 @@ import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {AppNamespace, UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
-import {ChatMuteRow, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from "../../../common/types/chat-concepts.js"
+import {ChatMuteRow, ChatPersistence, ChatPersistenceActions, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from "../../../common/types/chat-concepts.js"
 import {down} from "../../../../../toolbox/dbby/dbby-mongo-row-processing.js"
 
-export async function mongoChatPersistence() {
+export async function mongoChatPersistence(): Promise<ChatPersistence> {
 
 	const client = await new mongodb.MongoClient("mongodb+srv://blogStore:blogstore@cluster0.ptcuh.mongodb.net/blogStore?retryWrites=true&w=majority").connect()
 	const db = client.db('test')
@@ -99,7 +99,7 @@ export async function mongoChatPersistence() {
 		})
 	}
 
-	function namespaceForApp(appId: string) {
+	function namespaceForApp(appId: string): ChatPersistenceActions {
 		const appCache = getAppCache(appId)
 
 		const chatTables =
@@ -109,6 +109,14 @@ export async function mongoChatPersistence() {
 		return {
 			isMuted(userId: string) {
 				return appCache.mutedUserIds.has(userId)
+			},
+
+			async fetchRecentPosts(room) {
+				throw new Error("unimplemented")
+			},
+
+			async fetchMutes() {
+				throw new Error("unimplemented")
 			},
 
 			async addPosts(room: string, posts: ChatPost[]) {
