@@ -16,6 +16,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		await mockStorageTables<ChatTables>(storage, {
 			posts: true,
 			mutes: true,
+			roomUsers: true,
 			roomStatuses: true,
 		})
 	)
@@ -70,6 +71,10 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			isMuted(userId: string) {
 				return appCache.mutedUserIds.has(userId)
 			},
+
+			async getUserCounts() {},
+
+			async addUserCount({}: {participants: number, viewers: number}) {},
 
 			async addPosts(room: string, posts: ChatPost[]) {
 				await chatTables.posts.create(

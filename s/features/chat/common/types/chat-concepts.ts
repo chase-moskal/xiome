@@ -56,6 +56,7 @@ export type ChatTables = {
 	posts: DbbyTable<ChatPostRow>
 	mutes: DbbyTable<ChatMuteRow>
 	roomStatuses: DbbyTable<ChatRoomStatusRow>
+	roomUsers: DbbyTable<{room: string, user?: DamnId, participant: boolean}>
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
