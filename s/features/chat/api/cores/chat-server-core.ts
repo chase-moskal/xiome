@@ -3,11 +3,12 @@ import * as renraku from "renraku"
 
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
+import {chatPrivileges} from "../../common/chat-privileges.js"
 import {makeChatClientside} from "../services/chat-clientside.js"
 import {makeChatServerside} from "../services/chat-serverside.js"
 import {RateLimiter} from "../../../../toolbox/rate-limiter/rate-limiter.js"
 import {chatPostCoolOff, chatRateLimitingInterval} from "../../common/chat-constants.js"
-import {ChatPersistence, ChatPolicy, ClientRecord} from "../../common/types/chat-concepts.js"
+import {ChatPersistence, ChatPolicy, ChatStats, ClientRecord, StatsForChatRoom} from "../../common/types/chat-concepts.js"
 
 const pingInterval = 10 * 1000
 
@@ -20,6 +21,53 @@ export function makeChatServerCore({
 	}) {
 
 	const clientRecords = new Set<ClientRecord>()
+
+	function getStatsFromServerCore(appId: string): ChatStats {
+		const clientRecordsForThisApp = Array.from(clientRecords)
+			.filter(record => record.auth?.access?.appId === appId)
+
+		const statsForRooms: StatsForChatRoom = {}
+
+		for (const record of clientRecordsForThisApp) {
+			for (const roomName of record.rooms) {
+
+				if (!statsForRooms[roomName]) {
+					statsForRooms[roomName] = {
+						totalUsers: 0,
+						viewers: 0,
+						participants: 0,
+						moderators: 0,
+					}
+				}
+
+				const roomStats = statsForRooms[roomName]
+				roomStats.totalUsers += 1
+
+				const isModerator = record.auth.access.permit.privileges
+					.includes(chatPrivileges["moderate all chats"])
+
+				const isParticipant = record.auth.access.permit.privileges
+					.includes(chatPrivileges["participate in all chats"])
+
+				const isViewer = record.auth.access.permit.privileges
+					.includes(chatPrivileges["view all chats"])
+
+				if (isModerator)
+					roomStats.moderators += 1
+
+				else if (isParticipant)
+					roomStats.participants += 1
+
+				else if (isViewer)
+					roomStats.viewers += 1
+			}
+		}
+
+		return {
+			numberOfConnections: clientRecordsForThisApp.length,
+			statsForRooms,
+		}
+	}
 
 	async function broadcastToAll(
 			appId: string,
@@ -134,6 +182,7 @@ export function makeChatServerCore({
 				clientRecord,
 				headers,
 				policy,
+				getStatsFromServerCore,
 			}),
 			disconnect() {
 				clearInterval(interval)

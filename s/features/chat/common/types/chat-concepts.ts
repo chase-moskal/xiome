@@ -88,3 +88,19 @@ export enum ChatStatus {
 	Offline,
 	Online,
 }
+
+export interface ChatRoomStats {
+	totalUsers: number
+	viewers: number
+	participants: number
+	moderators: number
+}
+
+export interface StatsForChatRoom {
+	[roomName: string]: ChatRoomStats
+}
+
+export interface ChatStats {
+	numberOfConnections: number
+	statsForRooms: StatsForChatRoom
+}
