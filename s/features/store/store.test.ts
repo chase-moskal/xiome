@@ -237,4 +237,16 @@ export default <Suite>{
 			}
 		},
 	},
+
+	"subscription purchases": {
+		async "user can purchase a subscription"() {},
+		async "user can cancel a subscription"() {},
+		async "user can update a subscription's payment method"() {},
+	},
+
+	"payment methods": {
+		async "user can store the payment method while purchasing a subscription"() {},
+		async "user can update a credit card payment method"() {},
+		async "user can delete a payment method"() {},
+	},
 }
