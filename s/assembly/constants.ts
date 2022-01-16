@@ -7,5 +7,5 @@ export const technicianEmail = "chasemoskal@gmail.com"
 
 export const popupTrustedOrigins = [
 	"https://xiome.io",
-	"http://localhost:5000",
+	"http://localhost:8080",
 ]
