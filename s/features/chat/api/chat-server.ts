@@ -53,7 +53,7 @@ void async function main() {
 
 	const server = webSocketServer({
 		timeout: 60_000,
-		exposeErrors: true,
+		exposeErrors: false,
 		port: config?.chat?.port ?? 8000,
 		maxPayloadSize: renraku.megabytes(1),
 		acceptConnection({controls, prepareClientApi}) {
