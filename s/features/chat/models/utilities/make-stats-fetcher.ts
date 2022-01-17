@@ -1,5 +1,6 @@
-import {ChatConnection} from "../../common/types/chat-concepts.js"
+
 import {makeChatState} from "../state/chat-state.js"
+import {ChatConnection} from "../../common/types/chat-concepts.js"
 
 export function makeStatsFetcher({state, intervalDuration}: {
 		intervalDuration: number
