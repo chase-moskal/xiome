@@ -74,6 +74,21 @@ export class XiomeChat extends ComponentWithShare<{
 		}
 	}
 
+	#renderRoomStats() {
+		console.log(1, this.#model.state.cache.roomStats.statsForRooms)
+		const {moderators, viewers, participants, totalUsers} = this.#model.state.cache.roomStats.statsForRooms
+		return this.#room
+		? html`
+		<ul>
+			<li>moderators:${moderators}</li>
+			<li>viewers:${viewers}</li>
+			<li>participants:${participants}</li>
+			<li>totalUsers:${totalUsers}</li>
+		</ul>
+		`
+		: null
+	}
+
 	#renderModerationHeader() {
 		const status = this.#room.status
 		const toggleStatus = () => {
@@ -219,6 +234,7 @@ export class XiomeChat extends ComponentWithShare<{
 							? [
 								this.#renderHistory(),
 								this.#renderParticipation(),
+								this.#renderRoomStats()
 							]
 							: html`
 								<slot name=offline>

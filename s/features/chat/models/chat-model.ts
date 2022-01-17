@@ -32,6 +32,11 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			})
 		const meta = await getChatMeta()
 		await connection.serverside.chatServer.updateUserMeta(meta)
+		const stats = await connection.serverside.chatServer.getStats()
+		setInterval(() => {
+			console.log(0,stats)
+			state.writable.cache.roomStats = stats
+		}, 2000)
 		return connection
 	})
 

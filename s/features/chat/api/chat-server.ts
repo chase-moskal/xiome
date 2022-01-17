@@ -42,8 +42,8 @@ void async function main() {
 		verifyToken: crypto.verifyToken,
 	})
 
-	// const persistence = await mockChatPersistence(storage)
-	const persistence = await mongoChatPersistence()
+	const persistence = await mockChatPersistence(storage)	
+	// const persistence = await mongoChatPersistence()
 
 	const core = makeChatServerCore({
 		rando,
