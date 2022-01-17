@@ -30,6 +30,13 @@ export class XiomeChat extends ComponentWithShare<{
 		return this.share.chatModel
 	}
 
+	get #roomStats() {
+		const statsForRooms = this.#model.state.cache.roomStats?.statsForRooms
+		if (statsForRooms) {
+			return statsForRooms[this.room]
+		}
+	}
+
 	#room: ReturnType<typeof makeChatRoom>
 	#dispose = () => {}
 
@@ -75,18 +82,20 @@ export class XiomeChat extends ComponentWithShare<{
 	}
 
 	#renderRoomStats() {
-		console.log(1, this.#model.state.cache.roomStats.statsForRooms)
-		const {moderators, viewers, participants, totalUsers} = this.#model.state.cache.roomStats.statsForRooms
-		return this.#room
-		? html`
-		<ul>
-			<li>moderators:${moderators}</li>
-			<li>viewers:${viewers}</li>
-			<li>participants:${participants}</li>
-			<li>totalUsers:${totalUsers}</li>
-		</ul>
-		`
-		: null
+		const roomStats = this.#roomStats
+		if (roomStats) {
+			const {moderators, viewers, participants, totalUsers} = roomStats
+			return this.#room
+				? html`
+					<ul>
+						<li>moderators:${moderators}</li>
+						<li>viewers:${viewers}</li>
+						<li>participants:${participants}</li>
+						<li>totalUsers:${totalUsers}</li>
+					</ul>
+				`
+				: null
+		}
 	}
 
 	#renderModerationHeader() {
