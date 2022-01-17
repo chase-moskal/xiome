@@ -44,7 +44,7 @@
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^13.1.3",
-		"@types/node": "^17.0.8",
+		"@types/node": "^17.0.9",
 		"@types/pug": "^2.0.6",
 		"@types/ws": "^8.2.2",
 		"chokidar-cli": "^3.0.0",
@@ -76,7 +76,7 @@
 		"mongodb": "^4.3.0",
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.9",
-		"renraku": "0.0.0-dev.52",
+		"renraku": "0.0.0-dev.53",
 		"stripe": "^8.197.0",
 		"typed-rest-client": "^1.8.6",
 		"ws": "^8.4.2"

@@ -7,6 +7,7 @@ export function chatSocketClient(link: string): ChatConnect {
 		const {remote, close} = await renraku
 			.webSocketClient<ChatServersideApi>({
 				link,
+				timeout: 60_000,
 				clientApi: clientsideApi,
 				metaMap: {chatServer: async() => {}},
 				handleConnectionClosed: handleDisconnect,
