@@ -16,6 +16,7 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 import xiomeChatCss from "./xiome-chat.css.js"
+import usersSvg from "../../../../framework/icons/users.svg.js"
 
 @mixinStyles(xiomeChatCss)
 export class XiomeChat extends ComponentWithShare<{
@@ -87,12 +88,13 @@ export class XiomeChat extends ComponentWithShare<{
 			const {moderators, viewers, participants, totalUsers} = roomStats
 			return this.#room
 				? html`
-					<ul>
-						<li>moderators:${moderators}</li>
-						<li>viewers:${viewers}</li>
-						<li>participants:${participants}</li>
-						<li>totalUsers:${totalUsers}</li>
-					</ul>
+					<p class=chatfooter>${usersSvg}${totalUsers}${totalUsers>1 ? "Users" : "User" }
+						<span>
+							( ${moderators} Moderator(s), 
+							${participants} Participant(s), 
+							${viewers} Viewer(s) )
+						</span>
+					</p>
 				`
 				: null
 		}
