@@ -19,8 +19,6 @@ import {configureTokenFunctions} from "../../../assembly/backend/configurators/c
 void async function main() {
 	const {onDeath} = deathWithDignity()
 
-	console.log("starting chat server...")
-
 	const config = json5.parse<SecretConfig>(process.env.XIOME_CONFIG)
 	const rando = await getRando()
 	const storage = memoryFlexStorage()
@@ -43,7 +41,7 @@ void async function main() {
 		verifyToken: crypto.verifyToken,
 	})
 
-	const persistence = await mockChatPersistence(storage)
+	const persistence = await mockChatPersistence(storage)	
 
 	const core = makeChatServerCore({
 		rando,
@@ -51,13 +49,15 @@ void async function main() {
 		policy: authPolicies.anonPolicy,
 	})
 
+	const port = config?.chat?.port ?? 8000
 	const server = webSocketServer({
+		port,
 		timeout: 60_000,
 		exposeErrors: false,
-		port: config?.chat?.port ?? 8000,
 		maxPayloadSize: renraku.megabytes(1),
-		acceptConnection({controls, prepareClientApi}) {
+		acceptConnection({controls, headers, prepareClientApi}) {
 			const {api, disconnect} = core.acceptNewClient({
+				headers,
 				controls,
 				clientside: prepareClientApi<ReturnType<typeof makeChatClientside>>({
 					chatClient: async() => {},
@@ -71,5 +71,6 @@ void async function main() {
 		},
 	})
 
+	console.log(`🚀 chat server listening on port ${port}`)
 	onDeath(() => server.close())
 }()

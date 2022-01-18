@@ -2,7 +2,7 @@
 import {Op, ops} from "../../../../framework/ops.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
-import {ChatConnection, ChatPost, ChatStatus} from "../../common/types/chat-concepts.js"
+import {ChatConnection, ChatPost, ChatStats, ChatStatus, StatsForChatRoom} from "../../common/types/chat-concepts.js"
 
 export function makeChatState() {
 	return snapstate({
@@ -10,6 +10,7 @@ export function makeChatState() {
 		connectionOp: ops.none() as Op<ChatConnection>,
 		cache: {
 			mutedUserIds: [] as string[],
+			roomStats: {} as ChatStats,
 			rooms: {} as {[key: string]: {
 				status: ChatStatus
 				posts: ChatPost[]

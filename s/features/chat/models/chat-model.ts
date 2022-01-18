@@ -6,6 +6,7 @@ import {makeChatState} from "./state/chat-state.js"
 import {chatAllowance} from "../common/chat-allowance.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {setupRoomManagement} from "./room/room-management.js"
+import {makeStatsFetcher} from "./utilities/make-stats-fetcher.js"
 import {makeChatClientside} from "../api/services/chat-clientside.js"
 import {ChatMeta, ChatConnect} from "../common/types/chat-concepts.js"
 
@@ -20,6 +21,7 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		state,
 		onChange: changeEvent.publish,
 	})
+	const statsFetcher = makeStatsFetcher({state, intervalDuration: 2_000})
 
 	const reconnect = onesie(async function() {
 		const connection = ops.value(state.readable.connectionOp)
@@ -32,10 +34,12 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 			})
 		const meta = await getChatMeta()
 		await connection.serverside.chatServer.updateUserMeta(meta)
+		statsFetcher.startInterval(connection)
 		return connection
 	})
 
 	async function disconnect() {
+		statsFetcher.stopInterval()
 		const connection = ops.value(state.readable.connectionOp)
 		if (connection) {
 			state.writable.connectionOp = ops.none()

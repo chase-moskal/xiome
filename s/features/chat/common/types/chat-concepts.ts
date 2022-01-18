@@ -56,6 +56,7 @@ export type ChatTables = {
 	posts: DbbyTable<ChatPostRow>
 	mutes: DbbyTable<ChatMuteRow>
 	roomStatuses: DbbyTable<ChatRoomStatusRow>
+	roomUsers: DbbyTable<{room: string, user?: DamnId, participant: boolean}>
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>
@@ -87,4 +88,20 @@ export type ChatConnect = ({clientsideApi}: {
 export enum ChatStatus {
 	Offline,
 	Online,
+}
+
+export interface ChatRoomStats {
+	totalUsers: number
+	viewers: number
+	participants: number
+	moderators: number
+}
+
+export interface StatsForChatRoom {
+	[roomName: string]: ChatRoomStats
+}
+
+export interface ChatStats {
+	numberOfConnections: number
+	statsForRooms: StatsForChatRoom
 }

@@ -4,22 +4,26 @@ import * as renraku from "renraku"
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {schema} from "../../../../toolbox/darkvalley.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
-import {validateChatDraft, validateChatRoom, validateChatStatus, validateIdArray} from "../../common/chat-validators.js"
-import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStatus, ClientRecord} from "../../common/types/chat-concepts.js"
 import {RateLimiter} from "../../../../toolbox/rate-limiter/rate-limiter.js"
+import {validateChatDraft, validateChatRoom, validateChatStatus, validateIdArray} from "../../common/chat-validators.js"
+import {ChatDraft, ChatMeta, ChatPersistence, ChatPolicy, ChatPost, ChatStats, ChatStatus, ClientRecord} from "../../common/types/chat-concepts.js"
 
 export const makeChatServerside = ({
 		rando,
 		rateLimiter,
 		clientRecord,
 		persistence,
+		headers,
 		policy,
+		getStatsFromServerCore,
 	}: {
 		rando: Rando
 		rateLimiter: RateLimiter
 		clientRecord: ClientRecord
 		persistence: ChatPersistence
+		headers: renraku.HttpHeaders
 		policy: ChatPolicy
+		getStatsFromServerCore: (appId: string) => ChatStats
 }) => renraku.api({
 
 	chatServer: renraku.service()
@@ -49,6 +53,12 @@ export const makeChatServerside = ({
 		return {
 			async updateUserMeta(meta: ChatMeta) {
 				clientRecord.auth = await policy(meta, headers)
+			},
+			async getStats() {
+				const appId = clientRecord.auth?.access?.appId
+				if (!appId)
+					throw new renraku.ApiError(400, "cannot get stats before updateUserMeta")
+				return getStatsFromServerCore(appId)
 			},
 			async roomSubscribe(room: string) {
 				enforceValidation(validateChatRoom(room))

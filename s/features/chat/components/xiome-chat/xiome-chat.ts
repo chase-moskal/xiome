@@ -1,9 +1,11 @@
 
+import usersSvg from "../../../../framework/icons/users.svg.js"
 import clearIcon from "../../../../framework/icons/clear.svg.js"
 import unmuteIcon from "../../../../framework/icons/unmute.svg.js"
 import onOffIcon from "../../../../framework/icons/on-off-button.svg.js"
 
 import {makeChatModel} from "../../models/chat-model.js"
+import {pluralize} from "../../../../toolbox/pluralize.js"
 import {renderChatPost} from "./renderers/render-chat-post.js"
 import {chatPostCoolOff} from "../../common/chat-constants.js"
 import {makeChatRoom} from "../../models/room/make-chat-room.js"
@@ -28,6 +30,13 @@ export class XiomeChat extends ComponentWithShare<{
 
 	get #model() {
 		return this.share.chatModel
+	}
+
+	get #roomStats() {
+		const statsForRooms = this.#model.state.cache.roomStats?.statsForRooms
+		if (statsForRooms) {
+			return statsForRooms[this.room]
+		}
 	}
 
 	#room: ReturnType<typeof makeChatRoom>
@@ -71,6 +80,28 @@ export class XiomeChat extends ComponentWithShare<{
 		return () => {
 			for (const unsub of unsubs)
 				unsub()
+		}
+	}
+
+	#renderRoomStats() {
+		const roomStats = this.#roomStats
+		if (roomStats) {
+			const {moderators, viewers, participants, totalUsers} = roomStats
+			return this.#room
+				? html`
+					<p class=chatfooter>
+						${usersSvg}
+						<span class=user-count>
+							${totalUsers} ${pluralize(totalUsers, "user", "users")}
+						</span>
+						<span class=user-counting-details>
+							(${moderators} ${pluralize(moderators, "moderator", "moderators")},
+							${participants} ${pluralize(participants, "participant", "participants")},
+							${viewers} ${pluralize(viewers, "viewer", "viewers")})
+						</span>
+					</p>
+				`
+				: null
 		}
 	}
 
@@ -219,6 +250,7 @@ export class XiomeChat extends ComponentWithShare<{
 							? [
 								this.#renderHistory(),
 								this.#renderParticipation(),
+								this.#renderRoomStats()
 							]
 							: html`
 								<slot name=offline>

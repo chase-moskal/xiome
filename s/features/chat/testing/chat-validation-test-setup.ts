@@ -57,7 +57,12 @@ export async function chatValidationTestSetup(
 			maximum: 999,
 			timeframe: 1000,
 		}),
+		headers: {},
 		policy: mockChatPolicy,
+		getStatsFromServerCore: (appId: string) => ({
+			numberOfConnections: 0,
+			statsForRooms: {},
+		})
 	})
 
 	const serverside = renraku.mock()

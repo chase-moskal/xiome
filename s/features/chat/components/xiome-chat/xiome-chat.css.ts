@@ -69,6 +69,25 @@ xio-button {
 	border-radius: 0.5em;
 }
 
+.chatfooter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	margin: 0.1em 0.5em;
+}
+
+.chatfooter svg {
+	width: 1.3em;
+}
+
+.chatfooter .user-count {
+	margin: 0 0.5em;
+}
+
+.chatfooter .user-counting-details {
+	opacity: 0.5;
+}
+
 ${chatHistoryCss}
 
 .authorship {

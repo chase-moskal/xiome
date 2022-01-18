@@ -1,24 +1,30 @@
 
+import mongodb from "mongodb"
 import {objectMap} from "../../../../../toolbox/object-map.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
+import {dbbyMongo} from "../../../../../toolbox/dbby/dbby-mongo.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
-import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
-import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
-import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
+import {AppNamespace, UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {ChatMuteRow, ChatPersistence, ChatPersistenceActions, ChatPost, ChatPostRow, ChatRoomStatusRow, ChatStatus} from "../../../common/types/chat-concepts.js"
+import {down} from "../../../../../toolbox/dbby/dbby-mongo-row-processing.js"
 
-export async function mockChatPersistence(storage: FlexStorage) {
+export async function mongoChatPersistence(): Promise<ChatPersistence> {
 
-	const chatTablesUnconstrained = new UnconstrainedTables(
-		await mockStorageTables<ChatTables>(storage, {
-			posts: true,
-			mutes: true,
-			roomUsers: true,
-			roomStatuses: true,
-		})
+	const client = await new mongodb.MongoClient("mongodb+srv://blogStore:blogstore@cluster0.ptcuh.mongodb.net/blogStore?retryWrites=true&w=majority").connect()
+	const db = client.db('test')
+	const collections = {
+		muteCollection: db.collection('mutesCollection'),
+		postCollection: db.collection('postsCollection'),
+		statusCollection: db.collection('statusCollection'),
+	}
+
+	const chatTablesUnconstrained = new UnconstrainedTables({
+			posts: dbbyMongo<ChatPostRow>({collection: collections.postCollection}),
+			mutes: dbbyMongo<ChatMuteRow>({collection: collections.muteCollection}),
+			roomStatuses: dbbyMongo<ChatRoomStatusRow>({collection: collections.statusCollection})
+		}
 	)
 
 	const events = {
@@ -30,6 +36,39 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		unmutes: subbies<{appId: string, userIds: string[]}>(),
 		unmuteAll: subbies<{appId: string}>(),
 	}
+
+	const postsChangeStream = collections.postCollection.watch()
+	postsChangeStream.on('change', (change) => {
+		if(change.operationType == 'insert') {
+			const {"namespace-appId": appId, room, postId, content, time, userId, nickname} = down<AppNamespace & ChatPostRow>(change.fullDocument)
+			events.postsAdded.publish({appId: appId.toString(), room, posts: [{postId: postId.toString(), content, time, userId: userId.toString(), room, nickname}]})
+		}
+		else if(change.operationType == 'delete') {
+			console.log(0, change)
+			const {"namespace-appId":appId, room, postId} = down<AppNamespace & ChatPostRow>(change.fullDocument)
+			events.postsRemoved.publish({appId: appId.toString(), room, postIds: [postId.toString()]})
+			events.roomCleared.publish({appId: appId.toString(), room})
+		}
+	})
+
+	const mutesChangeStream = collections.muteCollection.watch()
+	mutesChangeStream.on('change', (change) => {
+		if(change.operationType == 'insert') {
+			const {'namespace-appId': appId, userId} = down<AppNamespace & ChatMuteRow>(change.fullDocument)
+			events.mutes.publish({appId: appId.toString(), userIds: [userId.toString()]})
+		}
+		else if(change.operationType == 'delete') {
+			const {'namespace-appId': appId, userId} = down<AppNamespace & ChatMuteRow>(change.fullDocument)
+			events.unmutes.publish({appId: appId.toString(), userIds: [userId.toString()]})
+			events.unmuteAll.publish({appId: appId.toString()})
+		}
+	})
+
+	const statusChangeStream = collections.statusCollection.watch(undefined, {fullDocument: "updateLookup"})
+	statusChangeStream.on('change', (change) => {
+		const {'namespace-appId': appId, room, status} = down<AppNamespace & ChatRoomStatusRow>(change.fullDocument)
+		events.roomStatusChanged.publish({appId: appId.toString(), room, status})
+	})
 
 	const eventSubscribers =
 		<{[P in keyof typeof events]: typeof events[P]["subscribe"]}>
@@ -60,7 +99,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 		})
 	}
 
-	function namespaceForApp(appId: string) {
+	function namespaceForApp(appId: string): ChatPersistenceActions {
 		const appCache = getAppCache(appId)
 
 		const chatTables =
@@ -72,18 +111,21 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				return appCache.mutedUserIds.has(userId)
 			},
 
+			async fetchRecentPosts(room) {
+				throw new Error("unimplemented")
+			},
+
+			async fetchMutes() {
+				throw new Error("unimplemented")
+			},
+
 			async addPosts(room: string, posts: ChatPost[]) {
-				await chatTables.posts.create(
-					...posts.map(post => (<ChatPostRow>{
-						room: post.room,
-						time: post.time,
-						content: post.content,
-						nickname: post.nickname,
-						userId: DamnId.fromString(post.userId),
-						postId: DamnId.fromString(post.postId),
-					}))
-				)
-				events.postsAdded.publish({appId, room, posts})
+				await chatTables.posts.create(...posts.map(post => ({
+					...post,
+					room,
+					userId: DamnId.fromString(post.userId),
+					postId: DamnId.fromString(post.postId),
+				})))
 			},
 
 			async removePosts(room: string, postIds: string[]) {
@@ -92,36 +134,11 @@ export async function mockChatPersistence(storage: FlexStorage) {
 						room,
 						postId: DamnId.fromString(postId)
 					})))
-					events.postsRemoved.publish({appId, room, postIds})
 				}
-			},
-
-			async fetchRecentPosts(room: string): Promise<ChatPost[]> {
-				const rawPosts = await chatTables.posts.read({
-					...find({room}),
-					limit: maximumNumberOfPostsShownAtOnce,
-					order: {time: "descend"},
-				})
-				const recentPosts = rawPosts.map(post => ({
-					room: post.room,
-					time: post.time,
-					content: post.content,
-					nickname: post.nickname,
-					postId: post.postId.toString(),
-					userId: post.userId.toString(),
-				}))
-				const postsSortedByTime = recentPosts.sort((a, b) => a.time - b.time)
-				return postsSortedByTime
-			},
-
-			async fetchMutes(): Promise<ChatMute[]> {
-				const rows = await chatTables.mutes.read({conditions: false})
-				return rows.map(row => ({userId: row.userId.toString()}))
 			},
 
 			async clearRoom(room: string) {
 				await chatTables.posts.delete(find({room}))
-				events.roomCleared.publish({appId, room})
 			},
 
 			async addMute(userIds: string[]) {
@@ -141,7 +158,6 @@ export async function mockChatPersistence(storage: FlexStorage) {
 						userId: DamnId.fromString(userId)
 					}))
 					await chatTables.mutes.create(...newMutes)
-					events.mutes.publish({appId, userIds: userIdsToBeMuted})
 				}
 			},
 
@@ -150,13 +166,11 @@ export async function mockChatPersistence(storage: FlexStorage) {
 					await chatTables.mutes.delete(
 						findAll(userIds, userId => ({userId: DamnId.fromString(userId)}))
 					)
-					events.unmutes.publish({appId, userIds})
 				}
 			},
 
 			async unmuteAll() {
 				await chatTables.mutes.delete({conditions: false})
-				events.unmuteAll.publish({appId})
 			},
 
 			async setRoomStatus(room: string, status: ChatStatus) {
@@ -164,7 +178,6 @@ export async function mockChatPersistence(storage: FlexStorage) {
 					...find({room}),
 					upsert: {room, status},
 				})
-				events.roomStatusChanged.publish({appId, room, status})
 			},
 
 			async getRoomStatus(room: string) {
