@@ -1,4 +1,5 @@
 
+import {chatPostMaxLength} from "./chat-constants.js"
 import {ChatDraft, ChatStatus} from "./types/chat-concepts.js"
 import {validateId} from "../../../common/validators/validate-id.js"
 import {array, each, max, maxLength, min, minLength, notWhitespace, number, schema, string, validator, zeroWhitespace} from "../../../toolbox/darkvalley.js"
@@ -13,7 +14,7 @@ export const validateChatRoom = validator<string>(
 export const validateChatContent = validator<string>(
 	string(),
 	minLength(1),
-	maxLength(280),
+	maxLength(chatPostMaxLength),
 	notWhitespace(),
 )
 
