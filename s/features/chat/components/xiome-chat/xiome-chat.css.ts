@@ -73,15 +73,18 @@ xio-button {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	margin: 0.5em 0;
+	margin: 0.1em 0.5em;
 }
 
 .chatfooter svg {
 	width: 1.3em;
 }
 
-.chatfooter span {
-	margin-left: 0.5em;
+.chatfooter .user-count {
+	margin: 0 0.5em;
+}
+
+.chatfooter .user-counting-details {
 	opacity: 0.5;
 }
 

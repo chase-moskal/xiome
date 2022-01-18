@@ -17,6 +17,7 @@ import {ComponentWithShare, html, mixinStyles, property, query} from "../../../.
 
 import xiomeChatCss from "./xiome-chat.css.js"
 import usersSvg from "../../../../framework/icons/users.svg.js"
+import {pluralize} from "../../../../toolbox/pluralize.js"
 
 @mixinStyles(xiomeChatCss)
 export class XiomeChat extends ComponentWithShare<{
@@ -88,11 +89,15 @@ export class XiomeChat extends ComponentWithShare<{
 			const {moderators, viewers, participants, totalUsers} = roomStats
 			return this.#room
 				? html`
-					<p class=chatfooter>${usersSvg}${totalUsers}${totalUsers>1 ? "Users" : "User" }
-						<span>
-							( ${moderators} Moderator(s), 
-							${participants} Participant(s), 
-							${viewers} Viewer(s) )
+					<p class=chatfooter>
+						${usersSvg}
+						<span class=user-count>
+							${totalUsers} ${pluralize(totalUsers, "user", "users")}
+						</span>
+						<span class=user-counting-details>
+							(${moderators} ${pluralize(moderators, "moderator", "moderators")},
+							${participants} ${pluralize(participants, "participant", "participants")},
+							${viewers} ${pluralize(viewers, "viewer", "viewers")})
 						</span>
 					</p>
 				`
