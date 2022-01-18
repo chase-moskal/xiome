@@ -1,9 +1,11 @@
 
+import usersSvg from "../../../../framework/icons/users.svg.js"
 import clearIcon from "../../../../framework/icons/clear.svg.js"
 import unmuteIcon from "../../../../framework/icons/unmute.svg.js"
 import onOffIcon from "../../../../framework/icons/on-off-button.svg.js"
 
 import {makeChatModel} from "../../models/chat-model.js"
+import {pluralize} from "../../../../toolbox/pluralize.js"
 import {renderChatPost} from "./renderers/render-chat-post.js"
 import {chatPostCoolOff} from "../../common/chat-constants.js"
 import {makeChatRoom} from "../../models/room/make-chat-room.js"
@@ -16,8 +18,6 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
 
 import xiomeChatCss from "./xiome-chat.css.js"
-import usersSvg from "../../../../framework/icons/users.svg.js"
-import {pluralize} from "../../../../toolbox/pluralize.js"
 
 @mixinStyles(xiomeChatCss)
 export class XiomeChat extends ComponentWithShare<{
