@@ -130,7 +130,37 @@ export type Upsert<xRow extends Row> = Conditional<xRow> & {upsert: xRow}
 export type Write<xRow extends Row> = Conditional<xRow> & {write: Partial<xRow>}
 export type Whole<xRow extends Row> = Conditional<xRow> & {whole: xRow}
 export type Update<xRow extends Row> = Write<xRow> | Whole<xRow> | Upsert<xRow>
-export type UpdateAmbiguated<xRow extends Row> = Write<xRow> & Whole<xRow> & Upsert<xRow>
+export type AmbiguousUpdate<xRow extends Row> = Write<xRow> & Whole<xRow> & Upsert<xRow>
 export type Assertion<xRow extends Row> = Conditional<xRow> & {
 	make: () => Promise<xRow>
+}
+
+////////
+
+export namespace Operation {
+	export enum Type {
+		Create,
+		Update,
+		Delete,
+	}
+	export interface OpBase {
+		type: Type
+		path: string[]
+	}
+	export interface OpCreate extends OpBase {
+		type: Type.Create
+		rows: Row[]
+	}
+	export interface OpUpdate extends OpBase {
+		type: Type.Update
+		update: Update<Row>
+	}
+	export interface OpDelete extends OpBase {
+		type: Type.Delete
+		conditional: Conditional<Row>
+	}
+	export type Any =
+		| OpCreate
+		| OpUpdate
+		| OpDelete
 }

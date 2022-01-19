@@ -1,8 +1,10 @@
 
-import {Action, Update, Row, Shape, Table, Tables, Conditional} from "../types.js"
-import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
 import {objectMap} from "../../object-map.js"
+import {applyOperation} from "./apply-operation.js"
 import {pathToStorageKey} from "./path-to-storage-key.js"
+import {rowVersusConditional} from "./memory-conditionals.js"
+import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
+import {Action, Row, Shape, Table, Tables, Operation} from "../types.js"
 
 export async function memoryTransaction({shape, storage, action}: {
 		shape: Shape
@@ -26,35 +28,37 @@ export async function memoryTransaction({shape, storage, action}: {
 					<Table<Row>>{
 						async create(...rows) {
 							await loadCacheOnce()
-							operations.push({
-								type: Operation.OpType.Create,
-								path: [...path, key],
+							const operation: Operation.OpCreate = {
+								type: Operation.Type.Create,
+								path: currentPath,
 								rows,
-							})
-							cache.push(...rows)
+							}
+							cache = applyOperation({operation, rows: cache})
+							operations.push(operation)
 						},
 						async read(o) {
 							await loadCacheOnce()
-							// TODO implement conditionals
-							return [...cache]
+							return cache.filter(row => rowVersusConditional(row, o))
 						},
 						async update(o) {
 							await loadCacheOnce()
-							// TODO apply changes to cache
-							operations.push({
-								type: Operation.OpType.Update,
+							const operation: Operation.OpUpdate = {
+								type: Operation.Type.Update,
 								path: currentPath,
 								update: o,
-							})
+							}
+							cache = applyOperation({operation, rows: cache})
+							operations.push(operation)
 						},
 						async delete(o) {
 							await loadCacheOnce()
-							// TODO apply changes to cache
-							operations.push({
-								type: Operation.OpType.Delete,
+							const operation: Operation.OpDelete = {
+								type: Operation.Type.Delete,
 								path: currentPath,
 								conditional: o,
-							})
+							}
+							cache = applyOperation({operation, rows: cache})
+							operations.push(operation)
 						},
 						async count() {
 							await loadCacheOnce()
@@ -62,18 +66,21 @@ export async function memoryTransaction({shape, storage, action}: {
 						},
 						async readOne(o) {
 							await loadCacheOnce()
-							// TODO implement conditional
-							return cache[0]
+							return cache.find(row => rowVersusConditional(row, o))
 						},
 						async assert(o) {
-							const row = cache[0]
-							// TODO implement conditional
-							operations.push({
-								type: Operation.OpType.Delete,
-								path: currentPath,
-								conditional: o,
-							})
-							return row
+							const foundRow = cache.find(row => rowVersusConditional(row, o))
+							if (!foundRow) {
+								const newRow = await o.make()
+								const operation: Operation.OpCreate = {
+									type: Operation.Type.Create,
+									path: currentPath,
+									rows: [newRow],
+								}
+								cache = applyOperation({operation, rows: cache})
+								operations.push(operation)
+							}
+							return foundRow
 						},
 					}:
 					recurse(shape, [])
@@ -90,35 +97,20 @@ export async function memoryTransaction({shape, storage, action}: {
 		},
 	})
 	if (!aborted) {
-		// TODO apply all operations to storage
+		const loadedRows = new Map<string, Row[]>()
+		for (const {path} of operations) {
+			const storageKey = pathToStorageKey(path)
+			loadedRows.set(storageKey, await storage.read(storageKey))
+		}
+		for (const operation of operations) {
+			const storageKey = pathToStorageKey(operation.path)
+			const rows = loadedRows.get(storageKey)
+			const modifiedRows = applyOperation({operation, rows})
+			loadedRows.set(storageKey, modifiedRows)
+		}
+		for (const [storageKey, rows] of loadedRows.entries()) {
+			await storage.write(storageKey, rows)
+		}
 	}
 	return result
-}
-
-export namespace Operation {
-	export enum OpType {
-		Create,
-		Update,
-		Delete,
-	}
-	export interface OpBase {
-		type: OpType
-		path: string[]
-	}
-	export interface OpCreate extends OpBase {
-		type: OpType.Create
-		rows: Row[]
-	}
-	export interface OpUpdate extends OpBase {
-		type: OpType.Update
-		update: Update<Row>
-	}
-	export interface OpDelete extends OpBase {
-		type: OpType.Delete
-		conditional: Conditional<Row>
-	}
-	export type Any =
-		| OpCreate
-		| OpUpdate
-		| OpDelete
 }
