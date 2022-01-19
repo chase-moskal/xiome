@@ -1,15 +1,18 @@
 
 import {obtain} from "../obtain.js"
 import {objectMap} from "../object-map.js"
+import {RowStorage} from "./utilities/row-storage.js"
 import {FlexStorage} from "../flex-storage/types/flex-storage.js"
 import {memoryTransaction} from "./utilities/memory-transaction.js"
 import {pathToStorageKey} from "./utilities/path-to-storage-key.js"
 import {Database, Row, Schema, SchemaToShape, Shape, Table} from "./types.js"
 
 export function flexDatabase<xSchema extends Schema>(
-		storage: FlexStorage,
+		flexStorage: FlexStorage,
 		shape: SchemaToShape<xSchema>,
 	): Database<xSchema> {
+
+	const storage = new RowStorage(flexStorage)
 
 	return {
 

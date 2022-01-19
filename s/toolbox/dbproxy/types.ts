@@ -164,3 +164,16 @@ export namespace Operation {
 		| OpUpdate
 		| OpDelete
 }
+
+////////
+
+export const serializationKey = "__serialized_type__"
+
+export interface SerializedValue {
+	[serializationKey]: string
+	value: any
+}
+
+export interface SerializedRow {
+	[key: string]: any | SerializedValue
+}

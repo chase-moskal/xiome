@@ -1,14 +1,16 @@
 
+import {RowStorage} from "./row-storage.js"
 import {objectMap} from "../../object-map.js"
 import {applyOperation} from "./apply-operation.js"
 import {pathToStorageKey} from "./path-to-storage-key.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
-import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
 import {Action, Row, Shape, Table, Tables, Operation} from "../types.js"
 
-export async function memoryTransaction({shape, storage, action}: {
+export async function memoryTransaction({
+		shape, storage, action
+	}: {
 		shape: Shape
-		storage: FlexStorage
+		storage: RowStorage
 		action: Action<Tables, any>
 	}) {
 
@@ -22,7 +24,7 @@ export async function memoryTransaction({shape, storage, action}: {
 				let cache: Row[] = undefined
 				async function loadCacheOnce() {
 					if (!cache)
-						cache = await storage.read(storageKey)
+						cache = await storage.load(storageKey)
 				}
 				return typeof shape === "boolean"?
 					<Table<Row>>{
@@ -100,7 +102,7 @@ export async function memoryTransaction({shape, storage, action}: {
 		const loadedRows = new Map<string, Row[]>()
 		for (const {path} of operations) {
 			const storageKey = pathToStorageKey(path)
-			loadedRows.set(storageKey, await storage.read(storageKey))
+			loadedRows.set(storageKey, await storage.load(storageKey))
 		}
 		for (const operation of operations) {
 			const storageKey = pathToStorageKey(operation.path)
@@ -109,7 +111,7 @@ export async function memoryTransaction({shape, storage, action}: {
 			loadedRows.set(storageKey, modifiedRows)
 		}
 		for (const [storageKey, rows] of loadedRows.entries()) {
-			await storage.write(storageKey, rows)
+			await storage.save(storageKey, rows)
 		}
 	}
 	return result
