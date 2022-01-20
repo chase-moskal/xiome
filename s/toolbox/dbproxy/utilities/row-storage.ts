@@ -15,7 +15,7 @@ export class RowStorage {
 	}
 
 	async load(key: string) {
-		const serializedRows = await this.#storage.read<Row[]>(key)
+		const serializedRows = await this.#storage.read<Row[]>(key) ?? []
 		return serializedRows.map(deserialize)
 	}
 }

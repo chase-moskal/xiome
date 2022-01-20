@@ -25,6 +25,8 @@ export function deserialize(serializedRow: SerializedRow) {
 			else
 				throw new Error(`unknown serialized type "${value[serializationKey]}"`)
 		}
+		else
+			row[key] = value
 	}
 	return row
 }

@@ -26,7 +26,7 @@ export async function memoryTransaction({
 					if (!cache)
 						cache = await storage.load(storageKey)
 				}
-				return typeof shape === "boolean"?
+				return typeof value === "boolean"?
 					<Table<Row>>{
 						async create(...rows) {
 							await loadCacheOnce()
@@ -85,14 +85,14 @@ export async function memoryTransaction({
 							return foundRow
 						},
 					}:
-					recurse(shape, [])
+					recurse(value, currentPath)
 			})
 		}
 		return recurse(shape, [])
 	})()
 
 	let aborted = false
-	const result = action({
+	const result = await action({
 		tables,
 		abort() {
 			aborted = true
@@ -102,7 +102,8 @@ export async function memoryTransaction({
 		const loadedRows = new Map<string, Row[]>()
 		for (const {path} of operations) {
 			const storageKey = pathToStorageKey(path)
-			loadedRows.set(storageKey, await storage.load(storageKey))
+			const rows = await storage.load(storageKey)
+			loadedRows.set(storageKey, rows)
 		}
 		for (const operation of operations) {
 			const storageKey = pathToStorageKey(operation.path)
