@@ -3,6 +3,7 @@ import {Await} from "../types/await.js"
 import {isNode as stockIsNode} from "./is-node.js"
 // import {identifierFromBinary} from "./identifiers.js"
 import {DamnId} from "./damnedb/damn-id.js"
+import {Id} from "./dbproxy/id.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
 
@@ -47,6 +48,11 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		return new DamnId(buffer)
 	}
 
+	function randomId2() {
+		const buffer = randomBuffer(32)
+		return new Id(buffer)
+	}
+
 	function randomSample<T>(palette: T[]): T {
 		return palette[Math.floor(random() * palette.length)]
 	}
@@ -64,6 +70,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		random,
 		compare,
 		randomId,
+		randomId2,
 		randomBuffer,
 		randomSample,
 		randomSequence,
