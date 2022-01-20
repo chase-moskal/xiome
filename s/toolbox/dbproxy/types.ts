@@ -40,8 +40,6 @@ export interface Table<xRow extends Row> {
 	readOne(o: Conditional<xRow>): Promise<xRow>
 	count(o: Conditional<xRow>): Promise<number>
 	assert(o: Assertion<xRow>): Promise<xRow>
-
-	// TODO implement helpers like find, findAll, and, or
 }
 
 export interface Tables {
