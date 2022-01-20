@@ -179,3 +179,44 @@ export interface SerializedValue {
 export interface SerializedRow {
 	[key: string]: any | SerializedValue
 }
+
+////////
+
+
+// constraints for row
+
+export type UnconstrainRow<xNamespace extends Row, xRow extends Row> =
+	xNamespace & xRow
+
+export type ConstrainRow<xNamespace extends Row, xRow extends Row> =
+	Omit<xRow, keyof xNamespace>
+
+// constraints for table
+
+export type UnconstrainTable<xNamespace extends Row, xTable extends Table<Row>> =
+	xTable extends Table<infer xRow>
+		? Table<UnconstrainRow<xNamespace, xRow>>
+		: never
+
+export type ConstrainTable<xNamespace extends Row, xTable extends Table<Row>> =
+	xTable extends Table<infer xRow>
+		? Table<ConstrainRow<xNamespace, xRow>>
+		: never
+
+// constraints for tables
+
+export type UnconstrainTables<xNamespace extends Row, xTables extends Tables> = {
+	[P in keyof xTables]: xTables[P] extends Table<Row>
+		? UnconstrainTable<xNamespace, xTables[P]>
+		: xTables[P] extends Tables
+			? UnconstrainTables<xNamespace, xTables[P]>
+			: never
+}
+
+export type ConstrainTables<xNamespace extends Row, xTables extends Tables> = {
+	[P in keyof xTables]: xTables[P] extends Table<Row>
+		? ConstrainTable<xNamespace, xTables[P]>
+		: xTables[P] extends Tables
+			? ConstrainTables<xNamespace, xTables[P]>
+			: never
+}
