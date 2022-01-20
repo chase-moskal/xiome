@@ -55,7 +55,10 @@ export default <Suite>{
 				fixedFunction(1),
 				fixedFunction(2),
 			])
-			expect(data.length).equals(2)
+			await fixedFunction(3)
+			await nap()
+			await fixedFunction(4)
+			expect(data.length).equals(4)
 		}
 	},
 	async "concurrent calls return correct results"() {
