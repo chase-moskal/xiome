@@ -2,7 +2,10 @@
 import {nap} from "../nap.js"
 import {remotePromise} from "../remote-promise.js"
 
-export function sequencer<F extends (...args: any[]) => Promise<any>>(fun: F): F {
+export function sequencer<F extends (...args: any[]) => Promise<any>>(
+		fun: F
+	): F {
+
 	const queue: (() => Promise<void>)[] = []
 
 	async function executeNext() {
@@ -18,8 +21,7 @@ export function sequencer<F extends (...args: any[]) => Promise<any>>(fun: F): F
 		const {promise, resolve, reject} = remotePromise()
 		queue.push(async() => {
 			try {
-				const result = await fun(...args)
-				resolve(result)
+				resolve(await fun(...args))
 			}
 			catch (error) { reject(error) }
 			finally {
@@ -27,9 +29,8 @@ export function sequencer<F extends (...args: any[]) => Promise<any>>(fun: F): F
 				executeNext()
 			}
 		})
-		if (queue.length === 1) {
+		if (queue.length === 1)
 			executeNext()
-		}
 		return promise
 	})
 }
