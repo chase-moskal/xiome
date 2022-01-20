@@ -6,7 +6,8 @@ import id from "./id.test.js"
 import {find} from "./helpers.js"
 import {fallback} from "./fallback.js"
 import * as dbproxy from "./dbproxy.js"
-import {SchemaToShape} from "./types.js"
+import {Row, SchemaToShape, Table} from "./types.js"
+import {constraint} from "./constraint.js"
 
 type DemoUser = {
 	userId: string
@@ -53,5 +54,48 @@ export default <Suite>{
 			const rows = await tables.users.read({conditions: false})
 			return expect(rows.length).equals(3)
 		},
+	},
+	"constraint2": async() => {
+		function constrainAppTable<xTable extends Table<Row>>(
+				table: xTable,
+				appId: string,
+			) {
+			return constraint<{appId: string}, xTable>({
+				table,
+				namespace: {appId},
+			})
+		}
+		return {
+			"read all rows from constrained table": async() => {
+				const {tables: {users}} = dbproxy.memoryDatabase<DemoSchema>(demoShape)
+				const alpha = constrainAppTable(users, "a1")
+				await alpha.create(
+					{userId: "u1", balance: 101, location: "canada"},
+					{userId: "u2", balance: 102, location: "america"},
+				)
+				const results = await alpha.read({conditions: false})
+				expect(results.length).equals(2)
+			},
+			"apply app id constraint": async() => {
+				const {tables: {users}} = dbproxy.memoryDatabase<DemoSchema>(demoShape)
+				const a1 = constrainAppTable(users, "a1")
+				const a2 = constrainAppTable(users, "a2")
+				await a1.create({userId: "u1", balance: 100, location: "america"})
+				await a2.create({userId: "u2", balance: 100, location: "canada"})
+				await a2.delete(find({userId: "u1"}))
+				let failed = false
+				try {
+					await a1.update({...find({location: "canada"}), write: {balance: 99}})
+				}
+				catch (error) {
+					failed = true
+				}
+				const userRows = await users.read({conditions: false})
+				const canadian = await users.readOne(find({location: "canada"}))
+				return expect(userRows.length).equals(2)
+					&& expect(canadian.balance).equals(100)
+					&& expect(failed).ok()
+			},
+		}
 	},
 }
