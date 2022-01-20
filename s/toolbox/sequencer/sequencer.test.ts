@@ -1,5 +1,6 @@
 
 import {Suite, expect} from "cynic"
+
 import {nap} from "../nap.js"
 import {sequencer} from "./sequencer.js"
 
