@@ -70,7 +70,7 @@ export type SchemaToRows<xSchema extends Schema> = Rows & {
 
 export type Action<xTables extends Tables, Result> = ({}: {
 	tables: xTables
-	abort(): void
+	abort(): Promise<void>
 }) => Promise<Result>
 
 export interface Database<xSchema extends Schema> {
@@ -78,7 +78,7 @@ export interface Database<xSchema extends Schema> {
 	transaction<Result>(action: Action<SchemaToTables<xSchema>, Result>): Promise<Result>
 }
 
-///////// conditions
+/////////
 
 export interface Condition<xRow extends Row> {
 	set?: Partial<{[P in keyof xRow]: true}>

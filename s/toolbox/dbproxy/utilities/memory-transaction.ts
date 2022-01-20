@@ -100,7 +100,7 @@ export async function memoryTransaction({
 	let aborted = false
 	const result = await action({
 		tables,
-		abort() {
+		async abort() {
 			aborted = true
 		},
 	})
