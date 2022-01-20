@@ -79,18 +79,18 @@ export async function memoryTransaction({
 							return cache.find(row => rowVersusConditional(row, o))
 						},
 						async assert(o) {
-							const foundRow = cache.find(row => rowVersusConditional(row, o))
-							if (!foundRow) {
-								const newRow = await o.make()
+							let row = cache.find(row => rowVersusConditional(row, o))
+							if (!row) {
+								row = await o.make()
 								const operation: Operation.OpCreate = {
 									type: Operation.Type.Create,
 									path: currentPath,
-									rows: [newRow],
+									rows: [row],
 								}
 								cache = applyOperation({operation, rows: cache})
 								operations.push(operation)
 							}
-							return foundRow
+							return row
 						},
 					}):
 					recurse(value, currentPath)
