@@ -20,9 +20,7 @@ export function sequencer<F extends (...args: any[]) => Promise<any>>(
 	return <F>(async(...args) => {
 		const {promise, resolve, reject} = remotePromise()
 		queue.push(async() => {
-			try {
-				resolve(await fun(...args))
-			}
+			try { resolve(await fun(...args)) }
 			catch (error) { reject(error) }
 			finally {
 				await nap()
