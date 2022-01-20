@@ -1,11 +1,11 @@
 
 import {obtain} from "../../obtain.js"
 import {objectMap} from "../../object-map.js"
-import {sequencer} from "../../sequencer/sequencer.js"
 import {RowStorage} from "./flex/row-storage.js"
-import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
+import {sequencer} from "../../sequencer/sequencer.js"
 import {memoryTransaction} from "./flex/memory-transaction.js"
-import {pathToStorageKey} from "./flex/path-to-storage-key.js"
+import {pathToStorageKey} from "./utils/path-to-storage-key.js"
+import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
 import {Database, Row, Schema, SchemaToShape, Shape, Table} from "../types.js"
 
 export function flex<xSchema extends Schema>(

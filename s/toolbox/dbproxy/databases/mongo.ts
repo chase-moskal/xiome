@@ -4,7 +4,7 @@ import {Collection, MongoClient} from "mongodb"
 import {objectMap} from "../../object-map.js"
 import {down, downs, up} from "./mongo/conversions.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
-import {pathToStorageKey} from "./flex/path-to-storage-key.js"
+import {pathToStorageKey} from "./utils/path-to-storage-key.js"
 import {AmbiguousUpdate, Database, Row, Schema, SchemaToShape, Shape, Table} from "../types.js"
 
 export function mongo<xSchema extends Schema>({dbName, client, shape}: {

@@ -4,8 +4,8 @@ import {objectMap} from "../../../object-map.js"
 import {applyOperation} from "./apply-operation.js"
 import {prefixFunctions} from "./prefix-functions.js"
 import {RemoveIndex} from "../../../types/remove-index.js"
-import {pathToStorageKey} from "./path-to-storage-key.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
+import {pathToStorageKey} from "../utils/path-to-storage-key.js"
 import {Action, Row, Shape, Table, Tables, Operation} from "../../types.js"
 
 export async function memoryTransaction({
