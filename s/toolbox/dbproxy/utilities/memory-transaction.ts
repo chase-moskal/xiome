@@ -2,12 +2,13 @@
 import {RowStorage} from "./row-storage.js"
 import {objectMap} from "../../object-map.js"
 import {applyOperation} from "./apply-operation.js"
+import {prefixFunctions} from "./prefix-functions.js"
 import {pathToStorageKey} from "./path-to-storage-key.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
 import {Action, Row, Shape, Table, Tables, Operation} from "../types.js"
 
 export async function memoryTransaction({
-		shape, storage, action
+		shape, storage, action,
 	}: {
 		shape: Shape
 		storage: RowStorage
@@ -27,9 +28,8 @@ export async function memoryTransaction({
 						cache = await storage.load(storageKey)
 				}
 				return typeof value === "boolean"?
-					<Table<Row>>{
+					<Table<Row>>prefixFunctions(loadCacheOnce, {
 						async create(...rows) {
-							await loadCacheOnce()
 							const operation: Operation.OpCreate = {
 								type: Operation.Type.Create,
 								path: currentPath,
@@ -39,12 +39,20 @@ export async function memoryTransaction({
 							operations.push(operation)
 						},
 						async read(o) {
-							await loadCacheOnce()
-							// TODO implement pagination
-							return cache.filter(row => rowVersusConditional(row, o))
+							const rows = cache.filter(row => rowVersusConditional(row, o))
+							const {order, offset = 0, limit = 1000} = o
+							if (order) {
+								for (const [key, value] of Object.entries(order)) {
+									rows.sort((a, b) =>
+										value === "ascend"
+											? a[key] > b[key] ? 1 : -1
+											: a[key] > b[key] ? -1 : 1
+									)
+								}
+							}
+							return rows.slice(offset, offset + limit)
 						},
 						async update(o) {
-							await loadCacheOnce()
 							const operation: Operation.OpUpdate = {
 								type: Operation.Type.Update,
 								path: currentPath,
@@ -54,7 +62,6 @@ export async function memoryTransaction({
 							operations.push(operation)
 						},
 						async delete(o) {
-							await loadCacheOnce()
 							const operation: Operation.OpDelete = {
 								type: Operation.Type.Delete,
 								path: currentPath,
@@ -63,13 +70,10 @@ export async function memoryTransaction({
 							cache = applyOperation({operation, rows: cache})
 							operations.push(operation)
 						},
-						async count() {
-							await loadCacheOnce()
+						async count(o) {
 							return cache.length
 						},
 						async readOne(o) {
-							await loadCacheOnce()
-							// TODO implement pagination
 							return cache.find(row => rowVersusConditional(row, o))
 						},
 						async assert(o) {
@@ -86,7 +90,7 @@ export async function memoryTransaction({
 							}
 							return foundRow
 						},
-					}:
+					}):
 					recurse(value, currentPath)
 			})
 		}
