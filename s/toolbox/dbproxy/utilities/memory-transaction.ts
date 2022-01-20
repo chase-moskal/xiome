@@ -3,6 +3,7 @@ import {RowStorage} from "./row-storage.js"
 import {objectMap} from "../../object-map.js"
 import {applyOperation} from "./apply-operation.js"
 import {prefixFunctions} from "./prefix-functions.js"
+import {RemoveIndex} from "../../types/remove-index.js"
 import {pathToStorageKey} from "./path-to-storage-key.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
 import {Action, Row, Shape, Table, Tables, Operation} from "../types.js"
@@ -28,7 +29,7 @@ export async function memoryTransaction({
 						cache = await storage.load(storageKey)
 				}
 				return typeof value === "boolean"?
-					<Table<Row>>prefixFunctions(loadCacheOnce, {
+					<Table<Row>>prefixFunctions(loadCacheOnce, <RemoveIndex<Table<Row>>>{
 						async create(...rows) {
 							const operation: Operation.OpCreate = {
 								type: Operation.Type.Create,
@@ -71,7 +72,8 @@ export async function memoryTransaction({
 							operations.push(operation)
 						},
 						async count(o) {
-							return cache.length
+							const rows = cache.filter(row => rowVersusConditional(row, o))
+							return rows.length
 						},
 						async readOne(o) {
 							return cache.find(row => rowVersusConditional(row, o))
@@ -104,6 +106,7 @@ export async function memoryTransaction({
 			aborted = true
 		},
 	})
+
 	if (!aborted) {
 		const loadedRows = new Map<string, Row[]>()
 		for (const {path} of operations) {
@@ -121,5 +124,6 @@ export async function memoryTransaction({
 			await storage.save(storageKey, rows)
 		}
 	}
+
 	return result
 }

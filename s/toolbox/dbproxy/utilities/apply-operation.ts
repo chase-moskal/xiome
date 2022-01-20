@@ -24,10 +24,10 @@ export function applyOperation({rows, operation}: {
 			}
 			const {write, whole, upsert} =
 				<AmbiguousUpdate<Row>>operation.update
-			if (operation.update && rowsToUpdate.length) {
+			if (write && rowsToUpdate.length) {
 				rowsToUpdate = rowsToUpdate.map(row => ({...row, ...write}))
 			}
-			if (upsert) {
+			else if (upsert) {
 				if (rowsToUpdate.length)
 					rowsToUpdate = rowsToUpdate.map(row => ({...row, ...upsert}))
 				else
