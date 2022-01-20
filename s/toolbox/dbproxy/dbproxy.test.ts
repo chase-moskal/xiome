@@ -23,14 +23,18 @@ const demoShape: SchemaToShape<DemoSchema> = {
 	users: true
 }
 
-async function setupThreeUserDemo() {
-	const {tables} = dbproxy.memory<DemoSchema>(demoShape)
+async function setupThreeUserDatabase() {
+	const database = dbproxy.memory<DemoSchema>(demoShape)
 	await Promise.all([
-		tables.users.create({userId: "u123", balance: 100, location: "america"}),
-		tables.users.create({userId: "u124", balance: 0, location: "canada"}),
-		tables.users.create({userId: "u125", balance: -100, location: "canada"}),
+		database.tables.users.create({userId: "u123", balance: 100, location: "america"}),
+		database.tables.users.create({userId: "u124", balance: 0, location: "canada"}),
+		database.tables.users.create({userId: "u125", balance: -100, location: "canada"}),
 	])
-	return tables
+	return database
+}
+
+async function setupThreeUserDemo() {
+	return (await setupThreeUserDatabase()).tables
 }
 
 export default <Suite>{
@@ -50,7 +54,7 @@ export default <Suite>{
 			},
 		}
 	},
-	"flex database": {
+	"flex database basics": {
 		"create rows and read 'em back unconditionally": async() => {
 			const tables = await setupThreeUserDemo()
 			const rows = await tables.users.read({conditions: false})
@@ -257,6 +261,59 @@ export default <Suite>{
 			// const all = await table.read({conditions: false})
 			expect(b1.a).equals(1)
 			assert(b1.id instanceof Id, "recovered id is instance")
+		},
+	},
+	"flex database transactions": {
+		"update transaction works": async() => {
+			const database = await setupThreeUserDatabase()
+			await database.transaction(async({tables, abort}) => {
+				await tables.users.update({
+					conditions: and({equal: {userId: "u123"}}),
+					write: {location: "argentina"},
+				})
+			})
+			const row = await database.tables.users
+				.readOne({conditions: and({equal: {userId: "u123"}})})
+			expect(row.location).equals("argentina")
+		},
+		"transaction can return an arbitrary result": async() => {
+			const database = await setupThreeUserDatabase()
+			const result = await database.transaction(async({tables, abort}) => {
+				await tables.users.update({
+					conditions: and({equal: {userId: "u123"}}),
+					write: {location: "argentina"},
+				})
+				return "abc"
+			})
+			const row = await database.tables.users
+				.readOne({conditions: and({equal: {userId: "u123"}})})
+			expect(row.location).equals("argentina")
+			expect(result).equals("abc")
+		},
+		"aborted transaction is rolled back": async() => {
+			const database = await setupThreeUserDatabase()
+			await database.transaction(async({tables, abort}) => {
+				await tables.users.update({
+					conditions: and({equal: {userId: "u123"}}),
+					write: {location: "argentina"},
+				})
+				await abort()
+			})
+			const row = await database.tables.users
+				.readOne({conditions: and({equal: {userId: "u123"}})})
+			expect(row.location).equals("america")
+		},
+		"updates are realized in-transaction": async() => {
+			const database = await setupThreeUserDatabase()
+			await database.transaction(async({tables, abort}) => {
+				await tables.users.update({
+					conditions: and({equal: {userId: "u123"}}),
+					write: {location: "argentina"},
+				})
+				const row = await tables.users
+					.readOne({conditions: and({equal: {userId: "u123"}})})
+				expect(row.location).equals("argentina")
+			})
 		},
 	},
 	"fallback": {
