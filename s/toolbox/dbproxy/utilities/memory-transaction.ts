@@ -40,6 +40,7 @@ export async function memoryTransaction({
 						},
 						async read(o) {
 							await loadCacheOnce()
+							// TODO implement pagination
 							return cache.filter(row => rowVersusConditional(row, o))
 						},
 						async update(o) {
@@ -68,6 +69,7 @@ export async function memoryTransaction({
 						},
 						async readOne(o) {
 							await loadCacheOnce()
+							// TODO implement pagination
 							return cache.find(row => rowVersusConditional(row, o))
 						},
 						async assert(o) {
