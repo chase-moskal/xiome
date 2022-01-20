@@ -20,9 +20,10 @@ export function flex<xSchema extends Schema>(
 
 		tables: (() => {
 			function recurse(shape: Shape, path: string[]) {
-				return objectMap(shape, (value, key) =>
-					typeof value === "boolean"?
-						new Proxy({}, {
+				return objectMap(shape, (value, key) => {
+					const currentPath = [...path, key]
+					return typeof value === "boolean"
+						? new Proxy({}, {
 							get(target, prop) {
 								if (typeof prop === "symbol")
 									throw new Error("symbols not allowed on tables here (string index expected)")
@@ -31,7 +32,7 @@ export function flex<xSchema extends Schema>(
 										shape,
 										storage,
 										async action({tables}) {
-											const table = obtain<Table<Row>>(tables, [...path, key])
+											const table = obtain<Table<Row>>(tables, currentPath)
 											return table[prop](...args)
 										},
 									})
@@ -39,12 +40,12 @@ export function flex<xSchema extends Schema>(
 							},
 							set() {
 								throw new Error(
-									`table "${pathToStorageKey([...path, key])}" is readonly`
+									`table "${pathToStorageKey(currentPath)}" is readonly`
 								)
 							},
-						}):
-						recurse(value, [...path, key])
-				)
+						})
+						: recurse(value, currentPath)
+				})
 			}
 			return recurse(shape, [])
 		})(),
