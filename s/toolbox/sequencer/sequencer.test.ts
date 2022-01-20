@@ -75,4 +75,17 @@ export default <Suite>{
 		expect(b).equals(2)
 		expect(c).equals(3)
 	},
+	async "failed call doesn't disrupt other results"() {
+		async function concurrent(x: number) {
+			await nap(10)
+			if (x === -1)
+				throw new Error("lol")
+			return x
+		}
+		expect(await concurrent(1)).equals(1)
+		expect(await concurrent(2)).equals(2)
+		await expect(async() => concurrent(-1)).throws()
+		expect(await concurrent(3)).equals(3)
+		expect(await concurrent(4)).equals(4)
+	},
 }
