@@ -35,11 +35,11 @@ export interface Table<xRow extends Row> {
 	create(...rows: xRow[]): Promise<void>
 	read(o: PaginatedConditional<xRow>): Promise<xRow[]>
 	update(o: Update<xRow>): Promise<void>
-	delete(o: Conditional<Row>): Promise<void>
+	delete(o: Conditional<xRow>): Promise<void>
 
-	readOne(o: Conditional<Row>): Promise<Row>
-	count(o: Conditional<Row>): Promise<number>
-	assert(o: Assertion<Row>): Promise<Row>
+	readOne(o: Conditional<xRow>): Promise<xRow>
+	count(o: Conditional<xRow>): Promise<number>
+	assert(o: Assertion<xRow>): Promise<xRow>
 
 	// TODO implement helpers like find, findAll, and, or
 }
