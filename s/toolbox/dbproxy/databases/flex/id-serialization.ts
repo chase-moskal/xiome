@@ -1,6 +1,6 @@
 
-import {Id} from "../id.js"
-import {Row, serializationKey, SerializedRow} from "../types.js"
+import {Id} from "../../id.js"
+import {Row, serializationKey, SerializedRow} from "../../types.js"
 
 export function serialize(row: Row) {
 	const serializedRow: SerializedRow = {}

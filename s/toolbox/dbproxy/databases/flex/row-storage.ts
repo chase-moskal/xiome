@@ -1,7 +1,7 @@
 
-import {Row} from "../types.js"
+import {Row} from "../../types.js"
 import {deserialize, serialize} from "./id-serialization.js"
-import {FlexStorage} from "../../flex-storage/types/flex-storage.js"
+import {FlexStorage} from "../../../flex-storage/types/flex-storage.js"
 
 export class RowStorage {
 	#storage: FlexStorage

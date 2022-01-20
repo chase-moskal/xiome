@@ -1,9 +1,9 @@
 
 import {Binary} from "mongodb"
 
-import {Id} from "../id.js"
-import {Row} from "../types.js"
-import {objectMap} from "../../object-map.js"
+import {Id} from "../../id.js"
+import {Row} from "../../types.js"
+import {objectMap} from "../../../object-map.js"
 
 const toArrayBuffer = (buffer: Buffer): ArrayBuffer =>
 	new Uint8Array(buffer).buffer

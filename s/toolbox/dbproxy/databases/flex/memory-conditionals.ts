@@ -1,6 +1,6 @@
 
-import {Id} from "../id.js"
-import {Condition, Conditional, Conditions, ConditionTree, Row} from "../types.js"
+import {Id} from "../../id.js"
+import {Condition, Conditional, Conditions, ConditionTree, Row} from "../../types.js"
 
 export function compare<xRow>(
 		row: xRow,

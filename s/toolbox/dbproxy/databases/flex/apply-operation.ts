@@ -1,5 +1,5 @@
 
-import {AmbiguousUpdate, Operation, Row} from "../types.js"
+import {AmbiguousUpdate, Operation, Row} from "../../types.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
 
 export function applyOperation({rows, operation}: {

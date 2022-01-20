@@ -1,9 +1,9 @@
 
 import {Filter, Sort} from "mongodb"
 import {valueUp} from "./conversions.js"
-import {objectMap} from "../../object-map.js"
-import {escapeRegex} from "../../escape-regex.js"
-import {Condition, Conditional, ConditionTree, Order, Row} from "../types.js"
+import {objectMap} from "../../../object-map.js"
+import {escapeRegex} from "../../../escape-regex.js"
+import {Condition, Conditional, ConditionTree, Order, Row} from "../../types.js"
 
 export function prepareQuery<xRow extends Row>({
 		conditions

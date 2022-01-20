@@ -1,15 +1,13 @@
 
 import {Suite, expect, assert} from "cynic"
 
-import id from "./id.test.js"
-
-import {and, find, or} from "./helpers.js"
+import {Id} from "./id.js"
 import {fallback} from "./fallback.js"
 import * as dbproxy from "./dbproxy.js"
-import {Row, SchemaToShape, Table} from "./types.js"
-import {constraint} from "./constraint.js"
 import {getRando} from "../get-rando.js"
-import {Id} from "./id.js"
+import {constraint} from "./constraint.js"
+import {and, find, or} from "./helpers.js"
+import {Row, SchemaToShape, Table} from "./types.js"
 
 type DemoUser = {
 	userId: string
@@ -26,7 +24,7 @@ const demoShape: SchemaToShape<DemoSchema> = {
 }
 
 async function setupThreeUserDemo() {
-	const {tables} = dbproxy.memoryDatabase<DemoSchema>(demoShape)
+	const {tables} = dbproxy.memory<DemoSchema>(demoShape)
 	await Promise.all([
 		tables.users.create({userId: "u123", balance: 100, location: "america"}),
 		tables.users.create({userId: "u124", balance: 0, location: "canada"}),
@@ -36,7 +34,22 @@ async function setupThreeUserDemo() {
 }
 
 export default <Suite>{
-	id,
+	"id": async() => {
+		const rando = await getRando()
+		return {
+			"many ids survive encode-decode-encode": async() => {
+				for (let i = 0; i < 1000; i++) {
+					const id = rando.randomId()
+					const id_binary = id.toBinary()
+					const id_string = id.toString()
+					const id_back_from_binary = new Id(id_binary)
+					const id_back_from_string = Id.fromString(id_string)
+					expect(id_string).equals(id_back_from_binary.toString())
+					expect(id_string).equals(id_back_from_string.toString())
+				}
+			},
+		}
+	},
 	"flex database": {
 		"create rows and read 'em back unconditionally": async() => {
 			const tables = await setupThreeUserDemo()
@@ -235,7 +248,7 @@ export default <Suite>{
 		},
 		"save and load ids": async() => {
 			const rando = await getRando()
-			const {tables: {table}} = dbproxy.memoryDatabase<{table: {id: Id, a: number}}>({table: true})
+			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({table: true})
 			const a1 = {id: rando.randomId2(), a: 1}
 			const a2 = {id: rando.randomId2(), a: 2}
 			await table.create(a1)
@@ -250,7 +263,7 @@ export default <Suite>{
 		"read": async() => {
 			const {users} = await setupThreeUserDemo()
 			const {tables: {users: usersFallback}}
-				= dbproxy.memoryDatabase<DemoSchema>(demoShape)
+				= dbproxy.memory<DemoSchema>(demoShape)
 			await usersFallback.create({userId: "u92", balance: 92, location: "victoria"})
 			const combinedTable = fallback({table: users, fallbackTable: usersFallback})
 			const result01 = await combinedTable.read({conditions: false})
@@ -271,7 +284,7 @@ export default <Suite>{
 		}
 		return {
 			"read all rows from constrained table": async() => {
-				const {tables: {users}} = dbproxy.memoryDatabase<DemoSchema>(demoShape)
+				const {tables: {users}} = dbproxy.memory<DemoSchema>(demoShape)
 				const alpha = constrainAppTable(users, "a1")
 				await alpha.create(
 					{userId: "u1", balance: 101, location: "canada"},
@@ -281,7 +294,7 @@ export default <Suite>{
 				expect(results.length).equals(2)
 			},
 			"apply app id constraint": async() => {
-				const {tables: {users}} = dbproxy.memoryDatabase<DemoSchema>(demoShape)
+				const {tables: {users}} = dbproxy.memory<DemoSchema>(demoShape)
 				const a1 = constrainAppTable(users, "a1")
 				const a2 = constrainAppTable(users, "a2")
 				await a1.create({userId: "u1", balance: 100, location: "america"})

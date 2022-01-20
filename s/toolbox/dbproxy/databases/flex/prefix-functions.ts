@@ -1,5 +1,5 @@
 
-import {objectMap} from "../../object-map.js"
+import {objectMap} from "../../../object-map.js"
 
 export function prefixFunctions<
 		xFunctions extends {[key: string]: (...args: any[]) => Promise<any>}
