@@ -1,5 +1,6 @@
 
 import {Id} from "./id.js"
+import type {TransactionOptions} from "mongodb"
 
 export type Value =
 	| undefined
@@ -73,7 +74,11 @@ export type Action<xTables extends Tables, Result> = ({}: {
 
 export interface Database<xSchema extends Schema> {
 	tables: SchemaToTables<xSchema>
-	transaction<Result>(action: Action<SchemaToTables<xSchema>, Result>): Promise<Result>
+	transaction<xResult>(action: Action<SchemaToTables<xSchema>, xResult>): Promise<xResult>
+}
+
+export interface MongoDatabase<xSchema extends Schema> extends Database<xSchema> {
+	transaction<xResult>(action: Action<SchemaToTables<xSchema>, xResult>, options?: TransactionOptions): Promise<xResult>
 }
 
 /////////

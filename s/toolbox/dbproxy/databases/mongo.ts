@@ -1,17 +1,20 @@
 
-import {Collection, MongoClient} from "mongodb"
+import {Collection, MongoClient, TransactionOptions} from "mongodb"
 
 import {objectMap} from "../../object-map.js"
 import {down, downs, up} from "./mongo/conversions.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
 import {pathToStorageKey} from "./utils/path-to-storage-key.js"
-import {AmbiguousUpdate, Database, Row, Schema, SchemaToShape, Shape, Table} from "../types.js"
+import {AmbiguousUpdate, MongoDatabase, Row, Schema, SchemaToShape, Shape, Table} from "../types.js"
 
-export function mongo<xSchema extends Schema>({dbName, client, shape}: {
+export function mongo<xSchema extends Schema>({
+		dbName, client, shape, transactionOptions,
+	}: {
 		dbName: string
 		client: MongoClient
 		shape: SchemaToShape<xSchema>
-	}): Database<xSchema> {
+		transactionOptions?: TransactionOptions
+	}): MongoDatabase<xSchema> {
 
 	const db = client.db(dbName)
 
@@ -91,16 +94,16 @@ export function mongo<xSchema extends Schema>({dbName, client, shape}: {
 
 	return {
 		tables,
-		async transaction<xResult>(action) {
+		async transaction(action, options = transactionOptions) {
 			const session = client.startSession()
-			let result: xResult
+			let result: any
 			try {
 				result = await session.withTransaction(async() => action({
 					tables,
 					async abort() {
 						await session.abortTransaction()
 					},
-				}))
+				}), options)
 			}
 			catch (error) {
 				console.error("transaction failed")
