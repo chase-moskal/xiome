@@ -5,7 +5,7 @@ import {Id} from "./id.js"
 import {fallback} from "./fallback.js"
 import * as dbproxy from "./dbproxy.js"
 import {getRando} from "../get-rando.js"
-import {constraint} from "./constraint.js"
+import {constrain} from "./constraints.js"
 import {and, find, or} from "./helpers.js"
 import {Row, SchemaToShape, Table} from "./types.js"
 
@@ -329,12 +329,12 @@ export default <Suite>{
 			expect(result02.length).equals(1)
 		},
 	},
-	"constraint": async() => {
+	"constraints": async() => {
 		function constrainAppTable<xTable extends Table<Row>>(
 				table: xTable,
 				appId: string,
 			) {
-			return constraint<{appId: string}, xTable>({
+			return constrain<{appId: string}, xTable>({
 				table,
 				namespace: {appId},
 			})

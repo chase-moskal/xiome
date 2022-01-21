@@ -14,15 +14,17 @@ export interface Row {
 	[column: string]: Value
 }
 
-export interface Schema {
-	[key: string]: Row | Schema
+export type Schema = Row | {
+	[key: string]: Schema
 }
 
+export type Shape = boolean | {
+	[key: string]: Shape
+}
+
+export type AsRow<xRow extends Row> = xRow
 export type AsSchema<xSchema extends Schema> = xSchema
-
-export interface Shape {
-	[key: string]: boolean | Shape
-}
+export type AsShape<xShape extends Shape> = xShape
 
 export type SchemaToShape<xSchema extends Schema> = {
 	[P in keyof xSchema]: xSchema[P] extends Row
@@ -32,7 +34,11 @@ export type SchemaToShape<xSchema extends Schema> = {
 			: never
 }
 
+export const tableSymbol = Symbol("table")
+
 export interface Table<xRow extends Row> {
+	[tableSymbol]: boolean
+
 	create(...rows: xRow[]): Promise<void>
 	read(o: PaginatedConditional<xRow>): Promise<xRow[]>
 	update(o: Update<xRow>): Promise<void>
@@ -43,8 +49,8 @@ export interface Table<xRow extends Row> {
 	assert(o: Assertion<xRow>): Promise<xRow>
 }
 
-export interface Tables {
-	[key: string]: Tables | Table<Row>
+export type Tables = Table<Row> | {
+	[key: string]: Tables
 }
 
 export type SchemaToTables<xSchema extends Schema> = Tables & {
@@ -55,8 +61,8 @@ export type SchemaToTables<xSchema extends Schema> = Tables & {
 			: never
 }
 
-export interface Rows {
-	[key: string]: Rows | Row[]
+export type Rows = Row[] | {
+	[key: string]: Rows
 }
 
 export type SchemaToRows<xSchema extends Schema> = Rows & {
