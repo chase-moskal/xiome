@@ -329,14 +329,14 @@ export default <Suite>{
 			expect(result02.length).equals(1)
 		},
 	},
-	"constraints": async() => {
+	"constraint": async() => {
 		function constrainAppTable<xTable extends Table<Row>>(
 				table: xTable,
 				appId: string,
 			) {
 			return constrain<{appId: string}, xTable>({
 				table,
-				namespace: {appId},
+				constraint: {appId},
 			})
 		}
 		return {

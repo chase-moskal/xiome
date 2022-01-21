@@ -25,8 +25,6 @@ export function flex<xSchema extends Schema>(
 					return typeof value === "boolean"
 						? new Proxy({}, {
 							get(target, prop) {
-								if (typeof prop === "symbol")
-									throw new Error("symbols not allowed on tables here (string index expected)")
 								if (!target[prop])
 									target[prop] = async(...args: any[]) => safeMemoryTransaction({
 										shape,

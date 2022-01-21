@@ -1,26 +1,26 @@
 
-import {objectMap} from "../object-map.js"
 import {and} from "./helpers.js"
-import {ConditionBranch, Conditions, ConstrainTable, Row, Schema, SchemaToTables, SchemaToTables2, Table, Tables, Tables2, tableSymbol} from "./types.js"
+import {objectMap} from "../object-map.js"
+import {ConditionBranch, Conditions, ConstrainTable, Row, Schema, SchemaToTables, Table, Tables, tableSymbol} from "./types.js"
 
 export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
-			table, namespace,
+			table, constraint,
 		}: {
 			table: xTable
-			namespace: xNamespace
+			constraint: xNamespace
 		}
 	) {
 
 	const spike = (conditionTree: Conditions<Row>) => (
 		conditionTree
-			? <ConditionBranch<"and", Row>>and({equal: <any>namespace}, conditionTree)
-			: <ConditionBranch<"and", Row>>and({equal: <any>namespace})
+			? <ConditionBranch<"and", Row>>and({equal: <any>constraint}, conditionTree)
+			: <ConditionBranch<"and", Row>>and({equal: <any>constraint})
 	)
 
 	return <ConstrainTable<xNamespace, xTable>>{
 		async create(...rows) {
 			return table.create(
-				...rows.map(row => ({...row, ...namespace}))
+				...rows.map(row => ({...row, ...constraint}))
 			)
 		},
 		async read(options) {
@@ -41,7 +41,7 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 				conditions: spike(options.conditions),
 				make: async() => {
 					const row = await options.make()
-					return {...row, ...namespace}
+					return {...row, ...constraint}
 				},
 			})
 		},
@@ -51,13 +51,13 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 				...options,
 				conditions: spike(options.conditions),
 				upsert: opts.upsert
-					? {...opts.upsert, ...namespace}
+					? {...opts.upsert, ...constraint}
 					: undefined,
 				whole: opts.whole
-					? {...opts.whole, ...namespace}
+					? {...opts.whole, ...constraint}
 					: undefined,
 				write: opts.write
-					? {...opts.write, ...namespace}
+					? {...opts.write, ...constraint}
 					: undefined,
 			})
 		},
@@ -77,17 +77,19 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 }
 
 export function constrainTables<xSchema extends Schema>({
-		tables, namespace,
+		constraint, tables,
 	}: {
-		tables: SchemaToTables2<xSchema>
-		namespace: Row
+		constraint: Row
+		tables: SchemaToTables<xSchema>
 	}) {
 
-	function recurse(tables: Tables2) {
-		return objectMap(tables, (value: Table<Row>) =>
+	function recurse(tables: Tables) {
+		return objectMap(tables, (value: Tables | Table<Row>) =>
 			value[tableSymbol] === true
-				? constrain({table: value, namespace})
-				: recurse(value)
+				? constrain({table: <Table<Row>>value, constraint})
+				: recurse(<Tables>value)
 		)
 	}
+
+	return recurse(tables)
 }

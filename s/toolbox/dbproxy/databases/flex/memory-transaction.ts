@@ -6,7 +6,7 @@ import {prefixFunctions} from "./prefix-functions.js"
 import {RemoveIndex} from "../../../types/remove-index.js"
 import {rowVersusConditional} from "./memory-conditionals.js"
 import {pathToStorageKey} from "../utils/path-to-storage-key.js"
-import {Action, Row, Shape, Table, Tables, Operation} from "../../types.js"
+import {Action, Row, Shape, Table, Tables, Operation, tableSymbol} from "../../types.js"
 
 export async function memoryTransaction({
 		shape, storage, action,
@@ -30,6 +30,7 @@ export async function memoryTransaction({
 				}
 				return typeof value === "boolean"?
 					<Table<Row>>prefixFunctions(loadCacheOnce, <RemoveIndex<Table<Row>>>{
+						[tableSymbol]: true,
 						async create(...rows) {
 							const operation: Operation.OpCreate = {
 								type: Operation.Type.Create,

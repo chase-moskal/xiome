@@ -14,12 +14,12 @@ export interface Row {
 	[column: string]: Value
 }
 
-export type Schema = Row | {
-	[key: string]: Schema
+export interface Schema {
+	[key: string]: Row | Schema
 }
 
-export type Shape = boolean | {
-	[key: string]: Shape
+export interface Shape {
+	[key: string]: boolean | Shape
 }
 
 export type AsRow<xRow extends Row> = xRow
@@ -37,7 +37,7 @@ export type SchemaToShape<xSchema extends Schema> = {
 export const tableSymbol = Symbol("table")
 
 export interface Table<xRow extends Row> {
-	[tableSymbol]: boolean
+	[tableSymbol]: true
 
 	create(...rows: xRow[]): Promise<void>
 	read(o: PaginatedConditional<xRow>): Promise<xRow[]>
@@ -49,8 +49,8 @@ export interface Table<xRow extends Row> {
 	assert(o: Assertion<xRow>): Promise<xRow>
 }
 
-export type Tables = Table<Row> | {
-	[key: string]: Tables
+export interface Tables {
+	[key: string]: Tables | Table<Row>
 }
 
 export type SchemaToTables<xSchema extends Schema> = Tables & {
@@ -61,8 +61,8 @@ export type SchemaToTables<xSchema extends Schema> = Tables & {
 			: never
 }
 
-export type Rows = Row[] | {
-	[key: string]: Rows
+export interface Rows {
+	[key: string]: Rows | Row[]
 }
 
 export type SchemaToRows<xSchema extends Schema> = Rows & {
@@ -190,7 +190,6 @@ export interface SerializedRow {
 }
 
 ////////
-
 
 // constraints for row
 
