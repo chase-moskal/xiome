@@ -1,17 +1,16 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type QuestionsTables = {
-	questionPosts: DbbyTable<QuestionPostRow>
-	answerPosts: DbbyTable<AnswerPostRow>
-	likes: SimpleVoteTable
-	reports: SimpleVoteTable
-}
+export type QuestionsTables = dbproxy.AsSchema<{
+	questionPosts: QuestionPostRow
+	answerPosts: AnswerPostRow
+	likes: SimpleVoteRow
+	reports: SimpleVoteRow
+}>
 
 export type CommonContentItem = {
-	questionId: DamnId
-	authorUserId: DamnId
+	questionId: dbproxy.Id
+	authorUserId: dbproxy.Id
 	board: string
 	content: string
 	archive: boolean
@@ -21,12 +20,10 @@ export type CommonContentItem = {
 export type QuestionPostRow = CommonContentItem
 
 export type AnswerPostRow = {
-	answerId: DamnId
+	answerId: dbproxy.Id
 } & CommonContentItem
 
 export type SimpleVoteRow = {
-	userId: DamnId
-	itemId: DamnId
+	userId: dbproxy.Id
+	itemId: dbproxy.Id
 }
-
-export type SimpleVoteTable = DbbyTable<SimpleVoteRow>

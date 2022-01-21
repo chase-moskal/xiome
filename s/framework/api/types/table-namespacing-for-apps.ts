@@ -1,23 +1,30 @@
 
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {namespaceKeyAppId} from "../namespace-key-app-id.js"
 import {dbbyConstrainTables} from "../../../toolbox/dbby/dbby-constrain.js"
 import {AsDbbyRow, DbbyTables, DbbyUnconstrainTables} from "../../../toolbox/dbby/dbby-types.js"
 
-export type AppNamespace = AsDbbyRow<{
-	[namespaceKeyAppId]: DamnId
+export type AppNamespace = dbproxy.AsRow<{
+	[namespaceKeyAppId]: dbproxy.Id
 }>
 
-export type TablesToUnconstrained<xTables extends DbbyTables> = (
-	DbbyUnconstrainTables<AppNamespace, xTables>
-)
+// export type TablesToUnconstrained<xSchema extends dbproxy.Schema> = (
+// 	dbproxy.UnconstrainTables<AppNamespace, dbproxy.SchemaToTables<xSchema>>
+// )
 
-export class UnconstrainedTables<xTables extends DbbyTables> {
-	constructor(private tables: xTables) {}
+export class UnconstrainedTables<xSchema extends dbproxy.Schema> {
+	#tables: dbproxy.SchemaToTables<xSchema>
+	constructor(tables: dbproxy.SchemaToTables<xSchema>) {
+		this.#tables = tables
+	}
 	get unconstrained() {
-		return this.tables
+		return this.#tables
 	}
 	namespaceForApp(appId: DamnId) {
+		return dbproxy.constrain({})
+
 		return dbbyConstrainTables<AppNamespace, xTables>({
 			tables: this.tables,
 			namespace: {[namespaceKeyAppId]: appId},

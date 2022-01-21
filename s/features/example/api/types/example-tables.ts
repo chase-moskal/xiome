@@ -1,12 +1,11 @@
 
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
 
-export type ExampleTables = {
-	examplePosts: DbbyTable<ExamplePost>
-}
+export type ExampleTables = dbproxy.AsSchema<{
+	examplePosts: ExamplePost
+}>
 
-export type ExamplePost = {
-	exampleId: DamnId
+export type ExamplePost = dbproxy.AsRow<{
+	exampleId: dbproxy.Id
 	something: string
-}
+}>

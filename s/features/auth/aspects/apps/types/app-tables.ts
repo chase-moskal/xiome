@@ -1,21 +1,20 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {AsDbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type AppTables = {
-	registrations: DbbyTable<AppRegistrationRow>
-	owners: DbbyTable<OwnerRow>
-}
+export type AppTables = dbproxy.AsSchema<{
+	registrations: AppRegistrationRow
+	owners: OwnerRow
+}>
 
-export type AppRegistrationRow = AsDbbyRow<{
-	appId: DamnId
+export type AppRegistrationRow = dbproxy.AsRow<{
+	appId: dbproxy.Id
 	label: string
 	home: string
 	origins: string
 	archived: boolean
 }>
 
-export type OwnerRow = AsDbbyRow<{
-	appId: DamnId
-	userId: DamnId
+export type OwnerRow = dbproxy.AsRow<{
+	appId: dbproxy.Id
+	userId: dbproxy.Id
 }>

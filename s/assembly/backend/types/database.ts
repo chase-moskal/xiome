@@ -1,4 +1,6 @@
 
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {AuthTables} from "../../../features/auth/types/auth-tables.js"
 import {StoreTables} from "../../../features/store/types/store-tables.js"
 import {VideoTables} from "../../../features/videos/types/video-tables.js"
@@ -8,17 +10,17 @@ import {ExampleTables} from "../../../features/example/api/types/example-tables.
 import {Unconstrain} from "../../../framework/api/types/table-namespacing-for-apps.js"
 import {QuestionsTables} from "../../../features/questions/api/tables/types/questions-tables.js"
 
-export type DatabaseRaw = {
+export type DatabaseRaw = dbproxy.AsSchema<{
 	apps: AppTables
-}
+}>
 
-export type DatabaseNamespaced = {
+export type DatabaseNamespaced = dbproxy.AsSchema<{
 	auth: AuthTables
 	notes: NotesTables
 	store: StoreTables
 	videos: VideoTables
 	example: ExampleTables
 	questions: QuestionsTables
-}
+}>
 
 export type DatabaseFinal = DatabaseRaw & Unconstrain<DatabaseNamespaced>

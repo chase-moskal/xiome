@@ -1,32 +1,31 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {AsDbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type UserTables = {
-	accounts: DbbyTable<AccountRow>
-	profiles: DbbyTable<ProfileRow>
-	emails: DbbyTable<EmailRow>
-	latestLogins: DbbyTable<LatestLoginRow>
-}
+export type UserTables = dbproxy.AsSchema<{
+	accounts: AccountRow
+	profiles: ProfileRow
+	emails: EmailRow
+	latestLogins: LatestLoginRow
+}>
 
-export type AccountRow = AsDbbyRow<{
-	userId: DamnId
+export type AccountRow = dbproxy.AsRow<{
+	userId: dbproxy.Id
 	created: number
 }>
 
-export type ProfileRow = AsDbbyRow<{
-	userId: DamnId
+export type ProfileRow = dbproxy.AsRow<{
+	userId: dbproxy.Id
 	nickname: string
 	tagline: string
 	avatar: undefined | string
 }>
 
-export type EmailRow = AsDbbyRow<{
-	userId: DamnId
+export type EmailRow = dbproxy.AsRow<{
+	userId: dbproxy.Id
 	email: string
 }>
 
-export type LatestLoginRow = AsDbbyRow<{
-	userId: DamnId
+export type LatestLoginRow = dbproxy.AsRow<{
+	userId: dbproxy.Id
 	time: number
 }>

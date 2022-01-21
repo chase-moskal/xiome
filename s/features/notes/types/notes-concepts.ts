@@ -1,14 +1,13 @@
 
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {DbbyRow} from "../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 export namespace Database {
 	export type NoteBase = {
 		type: NoteType
-		noteId: DamnId
+		noteId: dbproxy.Id
 		time: number
-		to: null | DamnId
-		from: null | DamnId
+		to: null | dbproxy.Id
+		from: null | dbproxy.Id
 		title: string
 		text: string
 		old: boolean
@@ -16,7 +15,7 @@ export namespace Database {
 	export namespace NoteDetails {
 		export type Message = {}
 		export type Question = {
-			questionId: DamnId
+			questionId: dbproxy.Id
 		}
 		export type Any =
 			| Message
@@ -46,8 +45,8 @@ export namespace Notes {
 
 export type DraftForNote<N extends Note> = Omit<N, "noteId" | "old" | "time">
 
-export type UndatabaseIds<R extends DbbyRow> = {
-	[P in keyof R]: R[P] extends DamnId
+export type UndatabaseIds<R extends dbproxy.Row> = {
+	[P in keyof R]: R[P] extends dbproxy.Id
 		? string
 		: R[P]
 }
