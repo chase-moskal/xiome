@@ -69,14 +69,24 @@ export type SchemaToRows<xSchema extends Schema> = Rows & {
 			: never
 }
 
-export type Action<xTables extends Tables, Result> = ({}: {
+export type Action<xTables extends Tables, xResult> = ({}: {
 	tables: xTables
 	abort(): Promise<void>
-}) => Promise<Result>
+}) => Promise<xResult>
 
-export interface Database<xSchema extends Schema> {
-	tables: SchemaToTables<xSchema>
-	transaction<xResult>(action: Action<SchemaToTables<xSchema>, xResult>): Promise<xResult>
+export type Transaction<xTables extends Tables, xResult> =
+	(action: Action<xTables, xResult>) => Promise<xResult>
+
+// export interface Database<xSchema extends Schema> {
+// 	tables: SchemaToTables<xSchema>
+// 	transaction<xResult>(action: Action<SchemaToTables<xSchema>, xResult>): Promise<xResult>
+// }
+
+export interface Database<xSchema extends Schema> extends DatabaseFromTables<SchemaToTables<xSchema>> {}
+
+export interface DatabaseFromTables<xTables extends Tables> {
+	tables: xTables
+	transaction<xResult>(action: Action<xTables, xResult>): Promise<xResult>
 }
 
 export interface MongoDatabase<xSchema extends Schema> extends Database<xSchema> {
