@@ -1,15 +1,13 @@
 
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {waitForProperties} from "../tools/zippy.js"
 import {objectMap} from "../../../toolbox/object-map.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {processBlueprint} from "../tools/process-blueprint.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {DatabaseSchema, DatabaseSchemaWithAppIsolation, DatabaseSchemaWithoutAppIsolation} from "../types/database.js"
+import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
-import {AppRegistrationRow} from "../../../features/auth/aspects/apps/types/app-tables.js"
+import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
 
 export async function assimilateDatabase({
 		config,
@@ -19,21 +17,18 @@ export async function assimilateDatabase({
 		config: AssimilatorOptions["config"]
 		configureMongo: AssimilatorOptions["configureMongo"]
 		configureMockStorage: AssimilatorOptions["configureMockStorage"]
-	}): Promise<{
-		database: DatabaseSchema
-		mockStorage: FlexStorage
-	}> {
+	}) {
 
-	const databaseShapeWithoutAppIsolation:
-		dbproxy.SchemaToShape<DatabaseSchemaWithoutAppIsolation> = {
+	const databaseShapeUnisolated:
+		dbproxy.SchemaToShape<DatabaseSchemaUnisolated> = {
 		apps: {
 			registrations: true,
 			owners: true,
 		},
 	}
 
-	const databaseShapeWithAppIsolation:
-		dbproxy.SchemaToShape<DatabaseSchemaWithAppIsolation> = {
+	const databaseShapeRequiresAppIsolation:
+		dbproxy.SchemaToShape<DatabaseSchemaRequiresAppIsolation> = {
 		auth: {
 			users: {
 				accounts: true,
@@ -84,77 +79,75 @@ export async function assimilateDatabase({
 		},
 	}
 
-	async function mockWithStorage(mockStorage: FlexStorage) {
-		const {tables, transaction} = dbproxy.memory({
-			...databaseShapeWithAppIsolation,
-			...databaseShapeWithoutAppIsolation,
-		})
-		const 
-		return {
-			mockStorage,
-			database: tables,
-		}
-
-		// const databaseRaw = <DatabaseSchemaWithoutAppIsolation>await waitForProperties(
-		// 	processBlueprint({
-		// 		blueprint: blueprintForRawDatabase,
-		// 		process: path => dbbyX(mockStorage, path.join("-")),
-		// 	})
-		// )
-		// const databaseUnconstrained = await (async() => {
-		// 	const databaseNamespaced = <DatabaseSchemaWithAppIsolation>await waitForProperties(
-		// 		processBlueprint({
-		// 			blueprint: blueprintForNamespacedDatabase,
-		// 			process: path => dbbyX(mockStorage, path.join("-")),
-		// 		})
-		// 	)
-		// 	return <Unconstrain<DatabaseSchemaWithAppIsolation>>objectMap(
-		// 		databaseNamespaced,
-		// 		value => new UnconstrainedTables(value),
-		// 	)
-		// })()
-		// return {
-		// 	mockStorage,
-		// 	database: {
-		// 		...databaseRaw,
-		// 		...databaseUnconstrained,
-		// 	}
-		// }
+	const databaseShape: dbproxy.SchemaToShape<DatabaseSchema> = {
+		...databaseShapeRequiresAppIsolation,
+		...databaseShapeUnisolated,
 	}
 
-	const results = config.database === "mock-storage"
-		? await mockWithStorage(configureMockStorage())
-		: await configureMongo({
-			blueprintForRawDatabase,
-			blueprintForNamespacedDatabase,
-			config: {...config, database: config.database},
-		})
+	function mockWithStorage(mockStorage: FlexStorage) {
+		return dbproxy.memory<DatabaseSchema>(databaseShape)
+	}
 
-	const bakedAppTables = await (async() => {
-		const platformApp = config.platform.appDetails
-		const {apps: appTables} = results.database
-		return <typeof appTables>{
-			...appTables,
-			registrations: dbbyHardback({
-				frontTable: appTables.registrations,
-				backTable: await dbbyMemory<AppRegistrationRow>([
-					{
-						appId: DamnId.fromString(platformApp.appId),
-						home: platformApp.home,
-						label: platformApp.label,
-						origins: originsToDatabase(platformApp.origins),
-						archived: false,
-					}
-				])
-			}),
+	function processDatabase(database: dbproxy.Database<DatabaseSchema>) {
+		const tables = {
+			...UnconstrainedTable.wrapTables(database.tables),
+			...<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => database.tables[key]),
 		}
-	})()
+		function grabDatabaseSubsection<xTables>(grabber: (t: typeof tables) => xTables) {
+			return {
+				tables: grabber(tables),
+				transaction: (async<xResult>(action: ({}: {
+						tables: xTables
+						abort: () => Promise<void>
+					}) => Promise<xResult>) =>
+					database.transaction(async(options) => action({
+						tables: grabber(tables),
+						abort: options.abort
+					}))
+				),
+			}
+		}
+		const root = grabDatabaseSubsection(t => t)
+		return {
+			tables: root.tables,
+			transaction: root.transaction,
+			grabDatabaseSubsection,
+		}
+	}
+
+	const mockStorage = config.database === "mock-storage"
+		? configureMockStorage()
+		: memoryFlexStorage()
+
+	const database = processDatabase(
+		config.database === "mock-storage"
+			? mockWithStorage(mockStorage)
+			: await configureMongo({
+				databaseShape,
+				config: {...config, database: config.database},
+			})
+	)
+
+	{ // bake app tables
+		const {appId, home, label, origins} = config.platform.appDetails
+		database.tables.apps.registrations = dbproxy.fallback({
+			table: database.tables.apps.registrations,
+			fallbackTable: await (async() => {
+				const fallbackDatabase = dbproxy.memory(databaseShape)
+				await fallbackDatabase.tables.apps.registrations.create({
+					appId: dbproxy.Id.fromString(appId),
+					home,
+					label,
+					origins: originsToDatabase(origins),
+					archived: false,
+				})
+				return fallbackDatabase.tables.apps.registrations
+			})()
+		})
+	}
 
 	return {
-		database: {
-			...results.database,
-			apps: bakedAppTables,
-		},
-		mockStorage: results.mockStorage,
+		database,
+		mockStorage,
 	}
 }
