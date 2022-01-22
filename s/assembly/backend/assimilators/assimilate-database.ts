@@ -7,10 +7,9 @@ import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {processBlueprint} from "../tools/process-blueprint.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {DatabaseFinal, DatabaseNamespaced, DatabaseRaw} from "../types/database.js"
+import {DatabaseSchema, DatabaseSchemaWithAppIsolation, DatabaseSchemaWithoutAppIsolation} from "../types/database.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
 import {AppRegistrationRow} from "../../../features/auth/aspects/apps/types/app-tables.js"
-import {Unconstrain, UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function assimilateDatabase({
 		config,
@@ -21,21 +20,20 @@ export async function assimilateDatabase({
 		configureMongo: AssimilatorOptions["configureMongo"]
 		configureMockStorage: AssimilatorOptions["configureMockStorage"]
 	}): Promise<{
-		database: DatabaseFinal
+		database: DatabaseSchema
 		mockStorage: FlexStorage
 	}> {
 
-
-	const rawDatabaseShape:  = {}
-
-	const blueprintForRawDatabase: BlueprintForTables<DatabaseRaw> = {
+	const databaseShapeWithoutAppIsolation:
+		dbproxy.SchemaToShape<DatabaseSchemaWithoutAppIsolation> = {
 		apps: {
 			registrations: true,
 			owners: true,
 		},
 	}
 
-	const blueprintForNamespacedDatabase: BlueprintForTables<DatabaseNamespaced> = {
+	const databaseShapeWithAppIsolation:
+		dbproxy.SchemaToShape<DatabaseSchemaWithAppIsolation> = {
 		auth: {
 			users: {
 				accounts: true,
@@ -87,31 +85,41 @@ export async function assimilateDatabase({
 	}
 
 	async function mockWithStorage(mockStorage: FlexStorage) {
-		const databaseRaw = <DatabaseRaw>await waitForProperties(
-			processBlueprint({
-				blueprint: blueprintForRawDatabase,
-				process: path => dbbyX(mockStorage, path.join("-")),
-			})
-		)
-		const databaseUnconstrained = await (async() => {
-			const databaseNamespaced = <DatabaseNamespaced>await waitForProperties(
-				processBlueprint({
-					blueprint: blueprintForNamespacedDatabase,
-					process: path => dbbyX(mockStorage, path.join("-")),
-				})
-			)
-			return <Unconstrain<DatabaseNamespaced>>objectMap(
-				databaseNamespaced,
-				value => new UnconstrainedTables(value),
-			)
-		})()
+		const {tables, transaction} = dbproxy.memory({
+			...databaseShapeWithAppIsolation,
+			...databaseShapeWithoutAppIsolation,
+		})
+		const 
 		return {
 			mockStorage,
-			database: {
-				...databaseRaw,
-				...databaseUnconstrained,
-			}
+			database: tables,
 		}
+
+		// const databaseRaw = <DatabaseSchemaWithoutAppIsolation>await waitForProperties(
+		// 	processBlueprint({
+		// 		blueprint: blueprintForRawDatabase,
+		// 		process: path => dbbyX(mockStorage, path.join("-")),
+		// 	})
+		// )
+		// const databaseUnconstrained = await (async() => {
+		// 	const databaseNamespaced = <DatabaseSchemaWithAppIsolation>await waitForProperties(
+		// 		processBlueprint({
+		// 			blueprint: blueprintForNamespacedDatabase,
+		// 			process: path => dbbyX(mockStorage, path.join("-")),
+		// 		})
+		// 	)
+		// 	return <Unconstrain<DatabaseSchemaWithAppIsolation>>objectMap(
+		// 		databaseNamespaced,
+		// 		value => new UnconstrainedTables(value),
+		// 	)
+		// })()
+		// return {
+		// 	mockStorage,
+		// 	database: {
+		// 		...databaseRaw,
+		// 		...databaseUnconstrained,
+		// 	}
+		// }
 	}
 
 	const results = config.database === "mock-storage"

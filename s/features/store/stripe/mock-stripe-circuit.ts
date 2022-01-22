@@ -9,7 +9,7 @@ import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export async function mockStripeCircuit({
 		rando, tableStorage, authTables, storeTables,

@@ -12,7 +12,7 @@ import {DacastLinkDisplay, DacastLinkRow} from "../../types/dacast-link.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {validateDacastApiKeyAllowingMock} from "../validation/validate-dacast-api-key.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../../framework/api/unconstrained-table.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 

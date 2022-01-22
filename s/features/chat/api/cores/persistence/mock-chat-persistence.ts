@@ -7,7 +7,7 @@ import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
 import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
 import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
-import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../../../framework/api/unconstrained-table.js"
 import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
 
 export async function mockChatPersistence(storage: FlexStorage) {

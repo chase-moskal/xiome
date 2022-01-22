@@ -19,7 +19,7 @@ import {mockAppTables} from "../../auth/aspects/apps/tables/mock-app-tables.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export const viewPrivilege = "9244947a5736b1e0343340e8911e1e39bce60241f96dc4e39fbec372eb716bb2"
 

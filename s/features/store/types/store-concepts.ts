@@ -7,7 +7,7 @@ import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {StoreAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
 export type StripeLiaisonAccount = ReturnType<

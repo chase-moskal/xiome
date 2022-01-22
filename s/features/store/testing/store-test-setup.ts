@@ -12,7 +12,7 @@ import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
 import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export async function storeTestSetup() {
 	const {appId, rando, config, storage, appOrigin, authPolicies}

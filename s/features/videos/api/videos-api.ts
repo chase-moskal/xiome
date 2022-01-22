@@ -7,7 +7,7 @@ import {makeDacastService} from "./services/dacast-service.js"
 import {makeContentService} from "./services/content-service.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export function videosApi({
 		config,

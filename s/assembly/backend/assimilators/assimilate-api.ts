@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 
-import {DatabaseFinal} from "../types/database.js"
+import {DatabaseSchema} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
 import {notesApi} from "../../../features/notes/api/notes-api.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
@@ -19,7 +19,7 @@ export async function assimilateApi({
 		config, rando, database, dacastSdk,
 		sendLoginEmail, signToken, verifyToken,
 	}: {
-		database: DatabaseFinal
+		database: DatabaseSchema
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken

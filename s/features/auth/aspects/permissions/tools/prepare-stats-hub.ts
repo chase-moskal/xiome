@@ -7,7 +7,7 @@ import {AuthTables} from "../../../types/auth-tables.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {day, month} from "../../../../../toolbox/goodtimes/times.js"
 import {and, find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../../../framework/api/unconstrained-table.js"
 
 export function prepareStatsHub({appTables, authTables}: {
 		appTables: AppTables

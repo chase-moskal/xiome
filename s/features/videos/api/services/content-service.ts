@@ -20,7 +20,7 @@ import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {VideoHosting, VideoModerationData, VideoShow} from "../../types/video-concepts.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../../framework/api/unconstrained-table.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 

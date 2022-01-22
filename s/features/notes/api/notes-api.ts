@@ -5,7 +5,7 @@ import {NotesTables} from "./tables/notes-tables.js"
 import {makeNotesService} from "./services/notes-service.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export function notesApi({config, notesTables, authPolicies}: {
 		config: SecretConfig,

@@ -12,7 +12,7 @@ import {makeNotesService} from "../api/services/notes-service.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export async function notesTestingSetup() {
 	const {

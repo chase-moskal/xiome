@@ -10,7 +10,7 @@ import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {prepareStatsHub} from "../aspects/permissions/tools/prepare-stats-hub.js"
 import {isUserOwnerOfApp} from "../aspects/apps/utils/is-user-the-owner-of-app.js"
 import {makePrivilegeChecker} from "../aspects/permissions/tools/make-privilege-checker.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
+import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {AnonMeta, AppOwnerAuth, AppOwnerMeta, GreenAuth, GreenMeta, LoginAuth, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../types/auth-metas.js"
 
