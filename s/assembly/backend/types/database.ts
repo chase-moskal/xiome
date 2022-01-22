@@ -9,6 +9,8 @@ import {AppTables} from "../../../features/auth/aspects/apps/types/app-tables.js
 import {ExampleTables} from "../../../features/example/api/types/example-tables.js"
 import {QuestionsTables} from "../../../features/questions/api/tables/types/questions-tables.js"
 import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
+import {assimilateDatabase} from "../assimilators/assimilate-database.js"
+import {Await} from "../../../types/await.js"
 
 export const appConstraintKey = "namespace-appId"
 
@@ -42,3 +44,27 @@ export type DatabaseSchema =
 export type DatabaseTables =
 	dbproxy.SchemaToTables<DatabaseSchemaUnisolated> &
 	SchemaToUnconstrainedTables<DatabaseSchemaRequiresAppIsolation>
+
+export type DatabaseFinal = Await<ReturnType<typeof assimilateDatabase>>["database"]
+
+export type DatabaseSubsection<xGrabbed> = {
+	tables: xGrabbed
+	transaction<xResult>(action: ({}: {
+		tables: xGrabbed
+		abort: () => Promise<void>
+	}) => Promise<xResult>): xResult
+}
+
+// export type DatabaseFinal = {
+// 	tables: DatabaseTables
+// 	transaction<xResult>(action: dbproxy.Action<DatabaseTables, xResult>): Promise<xResult>
+// 	grabDatabaseSubsection<xGrabbed>(grabber: (t: DatabaseTables) => xGrabbed): {
+// 		tables: xGrabbed
+// 		transaction<xResult>(
+// 			action: ({}: {
+// 				tables: xGrabbed
+// 				abort(): Promise<void>
+// 			}) => Promise<xResult>
+// 		): xResult
+// 	}
+// }

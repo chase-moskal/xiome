@@ -1,13 +1,21 @@
 
-import {Rando} from "../../../toolbox/get-rando.js"
-import {NotesTables} from "./tables/notes-tables.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-export function makeNotesDepositBox({rando, notesTables}: {
+import {Rando} from "../../../toolbox/get-rando.js"
+import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
+import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
+import {DatabaseSubsection, DatabaseTables} from "../../../assembly/backend/types/database.js"
+
+export function makeNotesDepositBox({rando, appId, database: databaseRaw}: {
 		rando: Rando
-		notesTables: NotesTables
+		appId: dbproxy.Id
+		database: DatabaseSubsection<DatabaseTables["notes"]>
 	}) {
+
+	const tables = UnconstrainedTable.constrainTablesForApp({
+		appId,
+		unconstrainedTables: databaseRaw.tables,
+	})
 
 	async function sendNotes(
 				drafts: DraftForNote<Notes.Any>[]
@@ -17,15 +25,15 @@ export function makeNotesDepositBox({rando, notesTables}: {
 			noteBase: Database.NoteBase
 			noteDetails: Database.NoteDetails.Any
 		}[] = drafts.map(draft => {
-			const noteId = rando.randomId()
+			const noteId = rando.randomId2()
 			return {
 				noteBase: {
 					...draft,
 					noteId,
-					to: DamnId.fromString(draft.to),
+					to: dbproxy.Id.fromString(draft.to),
 					from: draft.from === undefined
 						? undefined
-						: DamnId.fromString(draft.from),
+						: dbproxy.Id.fromString(draft.from),
 					old: false,
 					time: Date.now(),
 				},
@@ -33,7 +41,7 @@ export function makeNotesDepositBox({rando, notesTables}: {
 			}
 		})
 
-		await notesTables.notes.create(...notes.map(n => n.noteBase))
+		await tables.notes.create(...notes.map(n => n.noteBase))
 
 		return notes.map(({noteBase: {noteId}}) => ({
 			noteId: noteId.toString()

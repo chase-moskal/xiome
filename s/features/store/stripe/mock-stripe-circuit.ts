@@ -1,23 +1,20 @@
 
 import {Rando} from "../../../toolbox/get-rando.js"
-import {StoreTables} from "../types/store-tables.js"
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {pubsub, pubsubs} from "../../../toolbox/pubsub.js"
 import {find} from "../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables} from "../../auth/types/auth-tables.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
+import {DatabaseSubsection, DatabaseTables} from "../../../assembly/backend/types/database.js"
 
 export async function mockStripeCircuit({
-		rando, tableStorage, authTables, storeTables,
+		rando, tableStorage, database,
 	}: {
 		rando: Rando
 		tableStorage: FlexStorage
-		authTables: UnconstrainedTables<AuthTables>
-		storeTables: UnconstrainedTables<StoreTables>
+		database: DatabaseSubsection<Pick<DatabaseTables, "auth" | "store">>
 	}) {
 
 	const {
@@ -39,8 +36,7 @@ export async function mockStripeCircuit({
 	})
 
 	const webhooks = stripeWebhooks({
-		authTables,
-		storeTables,
+		database,
 		stripeLiaison,
 		logger: console,
 	})

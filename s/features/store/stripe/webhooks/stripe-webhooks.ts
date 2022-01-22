@@ -1,17 +1,14 @@
 
 import {Stripe} from "stripe"
 
-import {StoreTables} from "../../types/store-tables.js"
-import {AuthTables} from "../../../auth/types/auth-tables.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
-import {UnconstrainedTables} from "../../../../framework/api/unconstrained-table.js"
+import {DatabaseSubsection, DatabaseTables} from "../../../../assembly/backend/types/database.js"
 
-export function stripeWebhooks({logger}: {
+export function stripeWebhooks({logger, stripeLiaison, database}: {
 		logger: Logger
-		authTables: UnconstrainedTables<AuthTables>
-		storeTables: UnconstrainedTables<StoreTables>
 		stripeLiaison: ReturnType<typeof makeStripeLiaison>
+		database: DatabaseSubsection<Pick<DatabaseTables, "auth" | "store">>
 	}) {
 	return {
 		async "checkout.session.completed"(event: Stripe.Event) {

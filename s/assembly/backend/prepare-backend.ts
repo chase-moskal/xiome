@@ -1,8 +1,9 @@
 
+import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
+
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {Configurators} from "./types/configurators.js"
-import {DamnId} from "../../toolbox/damnedb/damn-id.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {assimilateApi} from "./assimilators/assimilate-api.js"
 import {AssimilatorOptions} from "./types/assilimator-options.js"
@@ -19,9 +20,7 @@ export function prepareBackend(configurators: Configurators) {
 		const options: AssimilatorOptions = {...configurators, config, rando}
 
 		const emails = assimilateEmails(options)
-
 		const {database, mockStorage} = await assimilateDatabase(options)
-
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
 		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
@@ -50,9 +49,10 @@ export function prepareBackend(configurators: Configurators) {
 			stripeLiaison,
 			mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
-			prepareNotesDepositBox: (appId: DamnId) => makeNotesDepositBox({
+			prepareNotesDepositBox: (appId: dbproxy.Id) => makeNotesDepositBox({
 				rando,
-				notesTables: database.notes.namespaceForApp(appId),
+				appId,
+				database: database.subsection(tables => tables.notes),
 			}),
 			mockBrowser: async() => mockBrowser({
 				api,
