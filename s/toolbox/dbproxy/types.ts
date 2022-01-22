@@ -193,38 +193,56 @@ export interface SerializedRow {
 
 // constraints for row
 
-export type UnconstrainRow<xNamespace extends Row, xRow extends Row> =
-	xNamespace & xRow
+export type UnconstrainRow<xConstraint extends Row, xRow extends Row> =
+	xConstraint & xRow
 
-export type ConstrainRow<xNamespace extends Row, xRow extends Row> =
-	Omit<xRow, keyof xNamespace>
+export type ConstrainRow<xConstraint extends Row, xRow extends Row> =
+	Omit<xRow, keyof xConstraint>
 
 // constraints for table
 
-export type UnconstrainTable<xNamespace extends Row, xTable extends Table<Row>> =
+export type UnconstrainTable<xConstraint extends Row, xTable extends Table<Row>> =
 	xTable extends Table<infer xRow>
-		? Table<UnconstrainRow<xNamespace, xRow>>
+		? Table<UnconstrainRow<xConstraint, xRow>>
 		: never
 
-export type ConstrainTable<xNamespace extends Row, xTable extends Table<Row>> =
+export type ConstrainTable<xConstraint extends Row, xTable extends Table<Row>> =
 	xTable extends Table<infer xRow>
-		? Table<ConstrainRow<xNamespace, xRow>>
+		? Table<ConstrainRow<xConstraint, xRow>>
 		: never
 
 // constraints for tables
 
-export type UnconstrainTables<xNamespace extends Row, xTables extends Tables> = {
+export type UnconstrainTables<xConstraint extends Row, xTables extends Tables> = {
 	[P in keyof xTables]: xTables[P] extends Table<Row>
-		? UnconstrainTable<xNamespace, xTables[P]>
+		? UnconstrainTable<xConstraint, xTables[P]>
 		: xTables[P] extends Tables
-			? UnconstrainTables<xNamespace, xTables[P]>
+			? UnconstrainTables<xConstraint, xTables[P]>
 			: never
 }
 
-export type ConstrainTables<xNamespace extends Row, xTables extends Tables> = {
+export type ConstrainTables<xConstraint extends Row, xTables extends Tables> = {
 	[P in keyof xTables]: xTables[P] extends Table<Row>
-		? ConstrainTable<xNamespace, xTables[P]>
+		? ConstrainTable<xConstraint, xTables[P]>
 		: xTables[P] extends Tables
-			? ConstrainTables<xNamespace, xTables[P]>
+			? ConstrainTables<xConstraint, xTables[P]>
+			: never
+}
+
+// constraints for schema
+
+export type UnconstrainSchema<xConstraint extends Row, xSchema extends Schema> = {
+	[P in keyof xSchema]: xSchema[P] extends Row
+		? UnconstrainRow<xConstraint, xSchema[P]>
+		: xSchema[P] extends Schema
+			? ConstrainSchema<xConstraint, xSchema[P]>
+			: never
+}
+
+export type ConstrainSchema<xConstraint extends Row, xSchema extends Schema> = {
+	[P in keyof xSchema]: xSchema[P] extends Row
+		? ConstrainRow<xConstraint, xSchema[P]>
+		: xSchema[P] extends Schema
+			? ConstrainSchema<xConstraint, xSchema[P]>
 			: never
 }
