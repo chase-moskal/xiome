@@ -34,11 +34,7 @@ export type SchemaToShape<xSchema extends Schema> = {
 			: never
 }
 
-export const tableSymbol = Symbol("table")
-
 export interface Table<xRow extends Row> {
-	[tableSymbol]: true
-
 	create(...rows: xRow[]): Promise<void>
 	read(o: PaginatedConditional<xRow>): Promise<xRow[]>
 	update(o: Update<xRow>): Promise<void>

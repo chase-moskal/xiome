@@ -1,7 +1,7 @@
 
 import {and} from "./helpers.js"
 import {objectMap} from "../object-map.js"
-import {ConditionBranch, Conditions, ConstrainTable, ConstrainTables, Row, Schema, SchemaToTables, Table, Tables, tableSymbol} from "./types.js"
+import {ConditionBranch, Conditions, ConstrainTable, ConstrainTables, Row, Schema, SchemaToTables, Table, Tables} from "./types.js"
 
 export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 			table, constraint,
@@ -74,22 +74,4 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 			})
 		},
 	}
-}
-
-export function constrainTables<xNamespace extends Row, xTables extends Tables>({
-		constraint, tables,
-	}: {
-		constraint: xNamespace
-		tables: xTables
-	}): ConstrainTables<xNamespace, xTables> {
-
-	function recurse(tables: Tables) {
-		return objectMap(tables, (value: Tables | Table<Row>) =>
-			value[tableSymbol] === true
-				? constrain({table: <Table<Row>>value, constraint})
-				: recurse(<Tables>value)
-		)
-	}
-
-	return recurse(tables)
 }
