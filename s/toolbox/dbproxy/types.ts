@@ -57,7 +57,7 @@ export type SchemaToTables<xSchema extends Schema> = Tables & {
 	[P in keyof xSchema]: xSchema[P] extends Row
 		? Table<xSchema[P]>
 		: xSchema[P] extends Schema
-			? xSchema[P]
+			? SchemaToTables<xSchema[P]>
 			: never
 }
 
@@ -69,7 +69,7 @@ export type SchemaToRows<xSchema extends Schema> = Rows & {
 	[P in keyof xSchema]: xSchema[P] extends Row
 		? xSchema[P][]
 		: xSchema[P] extends Schema
-			? xSchema[P]
+			? SchemaToRows<xSchema[P]>
 			: never
 }
 
