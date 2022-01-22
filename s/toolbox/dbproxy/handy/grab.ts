@@ -1,5 +1,5 @@
 
-import {Database, DatabaseFromTables, Schema, Tables} from "./types.js"
+import {Database, DatabaseFromTables, Schema, Tables} from "../types.js"
 
 export function grab<xDatabase extends Database<Schema>, xTables extends Tables>(
 		database: xDatabase,
