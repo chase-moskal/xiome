@@ -1,24 +1,19 @@
 
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {objectMap} from "../../../../../toolbox/object-map.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
-import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
-import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatTables} from "../../../common/types/chat-concepts.js"
-import {mockStorageTables} from "../../../../../assembly/backend/tools/mock-storage-tables.js"
-import {UnconstrainedTables} from "../../../../../framework/api/unconstrained-table.js"
 import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
+import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
+import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
+import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatSchema, chatShape} from "../../../common/types/chat-concepts.js"
 
 export async function mockChatPersistence(storage: FlexStorage) {
 
-	const chatTablesUnconstrained = new UnconstrainedTables(
-		await mockStorageTables<ChatTables>(storage, {
-			posts: true,
-			mutes: true,
-			roomUsers: true,
-			roomStatuses: true,
-		})
+	const chatDatabaseRaw = UnconstrainedTable.wrapDatabase(
+		dbproxy.flex<ChatSchema>(storage, chatShape)
 	)
 
 	const events = {
@@ -62,10 +57,14 @@ export async function mockChatPersistence(storage: FlexStorage) {
 
 	function namespaceForApp(appId: string) {
 		const appCache = getAppCache(appId)
+		const chatDatabase = (<dbproxy.Database<ChatSchema>><any>
+			UnconstrainedTable.constrainDatabaseForApp({
+				appId: Id.fromString(appId),
+				database: chatDatabaseRaw,
+			})
+		)
 
-		const chatTables =
-			chatTablesUnconstrained
-				.namespaceForApp(DamnId.fromString(appId))
+		const chatTables = chatDatabase.tables
 
 		return {
 			isMuted(userId: string) {
@@ -79,8 +78,8 @@ export async function mockChatPersistence(storage: FlexStorage) {
 						time: post.time,
 						content: post.content,
 						nickname: post.nickname,
-						userId: DamnId.fromString(post.userId),
-						postId: DamnId.fromString(post.postId),
+						userId: Id.fromString(post.userId),
+						postId: Id.fromString(post.postId),
 					}))
 				)
 				events.postsAdded.publish({appId, room, posts})
@@ -90,7 +89,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				if (postIds.length) {
 					await chatTables.posts.delete(findAll(postIds, postId => ({
 						room,
-						postId: DamnId.fromString(postId)
+						postId: Id.fromString(postId)
 					})))
 					events.postsRemoved.publish({appId, room, postIds})
 				}
@@ -128,7 +127,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 				if (userIds.length) {
 					const existingMutes = await chatTables.mutes.read(
 						findAll(userIds, userId => ({
-							userId: DamnId.fromString(userId),
+							userId: Id.fromString(userId),
 						}))
 					)
 					const userIdsAlreadyMuted = existingMutes.map(
@@ -138,7 +137,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 						userId => !userIdsAlreadyMuted.includes(userId)
 					)
 					const newMutes = userIdsToBeMuted.map(userId => ({
-						userId: DamnId.fromString(userId)
+						userId: Id.fromString(userId)
 					}))
 					await chatTables.mutes.create(...newMutes)
 					events.mutes.publish({appId, userIds: userIdsToBeMuted})
@@ -148,7 +147,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			async removeMute(userIds: string[]) {
 				if (userIds.length) {
 					await chatTables.mutes.delete(
-						findAll(userIds, userId => ({userId: DamnId.fromString(userId)}))
+						findAll(userIds, userId => ({userId: Id.fromString(userId)}))
 					)
 					events.unmutes.publish({appId, userIds})
 				}
@@ -168,7 +167,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 			},
 
 			async getRoomStatus(room: string) {
-				const row = await chatTables.roomStatuses.one(find({room}))
+				const row = await chatTables.roomStatuses.readOne(find({room}))
 				return row
 					? row.status
 					: ChatStatus.Offline

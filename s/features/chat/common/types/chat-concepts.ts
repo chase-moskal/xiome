@@ -1,10 +1,10 @@
 
 import type * as renraku from "renraku"
+import {Id} from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import type {Await} from "../../../../types/await.js"
-import type {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import type {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import type {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
 import type {makeChatServerside} from "../../api/services/chat-serverside.js"
 import type {makeChatClientside} from "../../api/services/chat-clientside.js"
 import type {mockChatPersistence} from "../../api/cores/persistence/mock-chat-persistence.js"
@@ -33,8 +33,8 @@ export type ChatPost = {
 
 export type ChatPostRow = {
 	room: string
-	postId: DamnId
-	userId: DamnId
+	postId: Id
+	userId: Id
 	time: number
 	nickname: string
 } & ChatDraft
@@ -44,7 +44,7 @@ export type ChatMute = {
 }
 
 export type ChatMuteRow = {
-	userId: DamnId
+	userId: Id
 }
 
 export type ChatRoomStatusRow = {
@@ -52,11 +52,19 @@ export type ChatRoomStatusRow = {
 	status: ChatStatus
 }
 
-export type ChatTables = {
-	posts: DbbyTable<ChatPostRow>
-	mutes: DbbyTable<ChatMuteRow>
-	roomStatuses: DbbyTable<ChatRoomStatusRow>
-	roomUsers: DbbyTable<{room: string, user?: DamnId, participant: boolean}>
+export type ChatSchema = dbproxy.AsSchema<{
+	posts: ChatPostRow
+	mutes: ChatMuteRow
+	roomStatuses: ChatRoomStatusRow
+	roomUsers: {room: string, user?: Id, participant: boolean}
+}>
+
+export type ChatShape = dbproxy.SchemaToShape<ChatSchema>
+export const chatShape: ChatShape = {
+	posts: true,
+	mutes: true,
+	roomStatuses: true,
+	roomUsers: true,
 }
 
 export type ChatPersistence = Await<ReturnType<typeof mockChatPersistence>>

@@ -34,6 +34,15 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		>recurse(unconstrainedTables)
 	}
 
+	static wrapDatabase<xSchema extends dbproxy.Schema>(
+			database: dbproxy.Database<xSchema>
+		) {
+		return dbproxy.subsection(
+			database,
+			tables => UnconstrainedTable.wrapTables(tables)
+		)
+	}
+
 	static constrainTablesForApp<xTables extends TablesMixed>({
 			appId,
 			unconstrainedTables,
