@@ -1,9 +1,8 @@
 
 import * as renraku from "renraku"
+import {Id, find, or} from "../../../../toolbox/dbproxy/dbproxy.js"
 
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
-import {find, or} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {schema, boolean} from "../../../../toolbox/darkvalley.js"
 import {validateTimeframe} from "./validation/validate-timeframe.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
@@ -23,16 +22,13 @@ export const makeRoleAssignmentService = ({
 	const auth = await authPolicies.userPolicy(meta, headers)
 	auth.checker.requirePrivilege("administrate user roles")
 	const engine = makePermissionsEngine({
-		permissionsTables: auth.authTables.permissions,
+		permissionsTables: auth.database.tables.auth.permissions,
 		isPlatform: auth.access.appId === config.platform.appDetails.appId,
 	})
 	return {...auth, engine}
 })
 
-.expose(({
-		engine,
-		authTables,
-	}) => ({
+.expose(({engine, database}) => ({
 
 	async fetchPermissions() {
 		return engine.getPermissionsDisplay()
@@ -45,10 +41,10 @@ export const makeRoleAssignmentService = ({
 
 		const regex = new RegExp(escapeRegex(term), "i")
 
-		const profiles = await authTables.users.profiles.read({
+		const profiles = await database.tables.auth.users.profiles.read({
 			limit: 100,
-			conditions: DamnId.isId(term)
-				? or({equal: {userId: DamnId.fromString(term)}})
+			conditions: Id.isId(term)
+				? or({equal: {userId: Id.fromString(term)}})
 				: or(
 					{search: {nickname: regex}},
 					{search: {tagline: regex}},
@@ -61,8 +57,8 @@ export const makeRoleAssignmentService = ({
 
 		const users = await fetchUsers({
 			userIds,
-			authTables,
 			permissionsEngine: engine,
+			authTables: database.tables.auth,
 		})
 
 		const usersAndRoles = await engine.getUsersHaveRoles({
@@ -97,10 +93,10 @@ export const makeRoleAssignmentService = ({
 			}))
 		)
 
-		const roleId = DamnId.fromString(roleIdString)
-		const userId = DamnId.fromString(userIdString)
+		const roleId = Id.fromString(roleIdString)
+		const userId = Id.fromString(userIdString)
 
-		const existing = await authTables.permissions.userHasRole.one(find({
+		const existing = await database.tables.auth.permissions.userHasRole.readOne(find({
 			userId,
 			roleId,
 		}))
@@ -108,7 +104,7 @@ export const makeRoleAssignmentService = ({
 		if (existing?.hard)
 			throw new renraku.ApiError(400, "hard role assignment cannot be overwritten")
 		else
-			await authTables.permissions.userHasRole.assert({
+			await database.tables.auth.permissions.userHasRole.assert({
 				conditions: or({equal: {roleId, userId}}),
 				make: async() => ({
 					hard: false,
@@ -133,10 +129,10 @@ export const makeRoleAssignmentService = ({
 				userId: validateId,
 			}))
 
-		const roleId = DamnId.fromString(roleIdString)
-		const userId = DamnId.fromString(userIdString)
+		const roleId = Id.fromString(roleIdString)
+		const userId = Id.fromString(userIdString)
 
-		const existing = await authTables.permissions.userHasRole.one(find({
+		const existing = await database.tables.auth.permissions.userHasRole.readOne(find({
 			userId,
 			roleId,
 		}))
@@ -144,7 +140,7 @@ export const makeRoleAssignmentService = ({
 		if (existing?.hard)
 			throw new renraku.ApiError(400, "hard role assignment cannot be overwritten")
 		else
-			await authTables.permissions.userHasRole.delete({
+			await database.tables.auth.permissions.userHasRole.delete({
 				conditions: or({equal: {roleId, userId}}),
 			})
 	},
