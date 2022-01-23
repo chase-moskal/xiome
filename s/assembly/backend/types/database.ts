@@ -11,6 +11,7 @@ import {QuestionsTables} from "../../../features/questions/api/tables/types/ques
 import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
 import {assimilateDatabase} from "../assimilators/assimilate-database.js"
 import {Await} from "../../../types/await.js"
+import {RemoveIndex} from "../../../toolbox/types/remove-index.js"
 
 export const appConstraintKey = "namespace-appId"
 
@@ -54,6 +55,8 @@ export type DatabaseSubsection<xGrabbed> = {
 		abort: () => Promise<void>
 	}) => Promise<xResult>): xResult
 }
+
+export type DatabaseSubsection2<K extends keyof RemoveIndex<DatabaseTables>> = DatabaseSubsection<Pick<DatabaseTables, K>>
 
 // export type DatabaseFinal = {
 // 	tables: DatabaseTables

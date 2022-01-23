@@ -59,7 +59,7 @@ export async function assimilateApi({
 			rando,
 			config,
 			authPolicies,
-			exampleTables: database.example,
+			database: database.subsection(tables => tables.example),
 		}),
 		videos: videosApi({
 			config,
