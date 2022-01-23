@@ -1,8 +1,8 @@
 
 import {objectMap} from "../../toolbox/object-map.js"
 import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
+import {AppConstraint, appConstraintKey} from "../../assembly/backend/types/database.js"
 import {ConstrainMixedTables, SchemaToUnconstrainedTables, TablesMixed} from "./types/unconstrained-tables.js"
-import {AppConstraint, appConstraintKey, DatabaseSubsection} from "../../assembly/backend/types/database.js"
 
 export class UnconstrainedTable<xRow extends dbproxy.Row> {
 

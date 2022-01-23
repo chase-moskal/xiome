@@ -1,7 +1,7 @@
 
 import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type QuestionsTables = dbproxy.AsSchema<{
+export type QuestionsSchema = dbproxy.AsSchema<{
 	questionPosts: QuestionPostRow
 	answerPosts: AnswerPostRow
 	likes: SimpleVoteRow

@@ -1,12 +1,12 @@
 
-import {AuthTables} from "../../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../../types/auth-schema.js"
 import {DamnId} from "../../../../../../../toolbox/damnedb/damn-id.js"
 import {find} from "../../../../../../../toolbox/dbby/dbby-helpers.js"
 import {SecretConfig} from "../../../../../../../assembly/backend/types/secret-config.js"
 
 export async function isTechnician({userId, authTables, technician}: {
 		userId: DamnId
-		authTables: AuthTables
+		authTables: AuthSchema
 		technician: SecretConfig["platform"]["technician"]
 	}) {
 

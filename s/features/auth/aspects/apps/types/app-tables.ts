@@ -1,7 +1,7 @@
 
 import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type AppTables = dbproxy.AsSchema<{
+export type AppSchema = dbproxy.AsSchema<{
 	registrations: AppRegistrationRow
 	owners: OwnerRow
 }>

@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 
-import {StoreTables} from "./store-tables.js"
+import {StoreSchema} from "./store-schema.js"
 import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
@@ -29,7 +29,7 @@ export interface StoreCommonOptions {
 
 export interface StoreApiOptions extends StoreCommonOptions {
 	stripeLiaison: StripeLiaison
-	storeTables: UnconstrainedTables<StoreTables>
+	storeTables: UnconstrainedTables<StoreSchema>
 	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }
 

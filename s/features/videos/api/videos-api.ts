@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 
-import {VideoTables} from "../types/video-tables.js"
+import {VideoSchema} from "../types/video-schema.js"
 import {Dacast} from "../dacast/types/dacast-types.js"
 import {makeDacastService} from "./services/dacast-service.js"
 import {makeContentService} from "./services/content-service.js"
@@ -16,7 +16,7 @@ export function videosApi({
 		dacastSdk,
 	}: {
 		config: SecretConfig
-		videoTables: UnconstrainedTables<VideoTables>
+		videoTables: UnconstrainedTables<VideoSchema>
 		authPolicies: ReturnType<typeof prepareAuthPolicies>
 		dacastSdk: Dacast.Sdk
 	}) {

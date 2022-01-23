@@ -7,7 +7,7 @@ import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
-import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated, DatabaseFinal, DatabaseTables, DatabaseSubsection} from "../types/database.js"
+import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
 
 export async function assimilateDatabase({
 		config,

@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 
-import {MerchantRow} from "../../types/store-tables.js"
+import {MerchantRow} from "../../types/store-schema.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"

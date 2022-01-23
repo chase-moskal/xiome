@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
-import {QuestionsTables} from "../../../tables/types/questions-tables.js"
+import {QuestionsSchema} from "../../../tables/types/questions-tables.js"
 import {AnonAuth, AnonMeta} from "../../../../../auth/types/auth-metas.js"
 import {UnconstrainedTables} from "../../../../../../framework/api/unconstrained-table.js"
 
@@ -12,7 +12,7 @@ export async function spikeQuestionsAuth<
 	>(
 		meta: xMeta,
 		headers: renraku.HttpHeaders,
-		questionsTables: UnconstrainedTables<QuestionsTables>,
+		questionsTables: UnconstrainedTables<QuestionsSchema>,
 		basePolicy: renraku.Policy<xMeta, xAuth>,
 	) {
 

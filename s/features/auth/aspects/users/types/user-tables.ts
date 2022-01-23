@@ -1,7 +1,7 @@
 
 import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type UserTables = dbproxy.AsSchema<{
+export type UserSchema = dbproxy.AsSchema<{
 	accounts: AccountRow
 	profiles: ProfileRow
 	emails: EmailRow

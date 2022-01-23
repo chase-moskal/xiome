@@ -15,7 +15,7 @@ export type ViewDacastRow = dbproxy.AsRow<{
 	type: DacastData.ContentType
 }>
 
-export type VideoTables = dbproxy.AsSchema<{
+export type VideoSchema = dbproxy.AsSchema<{
 	dacastAccountLinks: DacastLinkRow
 	viewPrivileges: ViewPrivilegeRow
 	viewDacast: ViewDacastRow

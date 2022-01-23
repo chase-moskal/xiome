@@ -4,7 +4,7 @@ import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"
 import {mockVideoMeta} from "./meta/mock-meta.js"
-import {VideoTables} from "../types/video-tables.js"
+import {VideoSchema} from "../types/video-schema.js"
 import {getRando} from "../../../toolbox/get-rando.js"
 import {makeVideoModels} from "../models/video-models.js"
 import {videoPrivileges} from "../api/video-privileges.js"
@@ -60,7 +60,7 @@ export async function videoSetup() {
 	})
 	const basePolicy = authPolicies.anonPolicy
 	const videoTables = new UnconstrainedTables(
-		await mockStorageTables<VideoTables>(storage, {
+		await mockStorageTables<VideoSchema>(storage, {
 			dacastAccountLinks: true,
 			viewDacast: true,
 			viewPrivileges: true,

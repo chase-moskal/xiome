@@ -1,5 +1,5 @@
 
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../types/auth-schema.js"
 import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {generateAccountRow} from "./generate-account-row.js"
 import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
@@ -20,7 +20,7 @@ export async function assertEmailAccount({
 		rando: Rando
 		email: string
 		config: SecretConfig
-		authTables: AuthTables
+		authTables: AuthSchema
 		generateNickname: () => string
 	}) {
 

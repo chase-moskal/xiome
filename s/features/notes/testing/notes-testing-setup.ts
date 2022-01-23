@@ -5,7 +5,7 @@ import {ops} from "../../../framework/ops.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
-import {NotesTables} from "../api/tables/notes-tables.js"
+import {NotesSchema} from "../api/tables/notes-schema.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
 import {makeNotesService} from "../api/services/notes-service.js"
@@ -20,7 +20,7 @@ export async function notesTestingSetup() {
 	} = await prepareMockAuth()
 
 	const notesTables = new UnconstrainedTables(
-		await mockStorageTables<NotesTables>(storage, {
+		await mockStorageTables<NotesSchema>(storage, {
 			notes: true,
 			questionDetails: true,
 		})

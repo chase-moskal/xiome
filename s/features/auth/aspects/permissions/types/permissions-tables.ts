@@ -1,7 +1,7 @@
 
 import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type PermissionsTables = dbproxy.AsSchema<{
+export type PermissionsSchema = dbproxy.AsSchema<{
 	role: RoleRow
 	privilege: PrivilegeRow
 	userHasRole: UserHasRoleRow

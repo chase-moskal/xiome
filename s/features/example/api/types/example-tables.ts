@@ -1,7 +1,7 @@
 
 import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
 
-export type ExampleTables = dbproxy.AsSchema<{
+export type ExampleSchema = dbproxy.AsSchema<{
 	examplePosts: ExamplePost
 }>
 

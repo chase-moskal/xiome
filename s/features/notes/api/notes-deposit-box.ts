@@ -3,18 +3,18 @@ import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
+import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
-import {DatabaseSubsection, DatabaseTables} from "../../../assembly/backend/types/database.js"
 
 export function makeNotesDepositBox({rando, appId, database: databaseRaw}: {
 		rando: Rando
 		appId: dbproxy.Id
-		database: DatabaseSubsection<DatabaseTables["notes"]>
+		database: DatabaseSelect<"notes">
 	}) {
 
-	const tables = UnconstrainedTable.constrainTablesForApp({
+	const database = UnconstrainedTable.constrainDatabaseForApp({
 		appId,
-		unconstrainedTables: databaseRaw.tables,
+		database: databaseRaw,
 	})
 
 	async function sendNotes(
@@ -41,7 +41,7 @@ export function makeNotesDepositBox({rando, appId, database: databaseRaw}: {
 			}
 		})
 
-		await tables.notes.create(...notes.map(n => n.noteBase))
+		await database.tables.notes.notes.create(...notes.map(n => n.noteBase))
 
 		return notes.map(({noteBase: {noteId}}) => ({
 			noteId: noteId.toString()

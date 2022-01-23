@@ -1,5 +1,5 @@
 
-import {AuthTables} from "../../../types/auth-tables.js"
+import {AuthSchema} from "../../../types/auth-schema.js"
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
@@ -15,7 +15,7 @@ export async function appointAdmin({
 		rando: Rando
 		email: string
 		config: SecretConfig
-		authTables: AuthTables
+		authTables: AuthSchema
 		generateNickname: () => string
 	}) {
 

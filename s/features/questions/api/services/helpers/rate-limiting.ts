@@ -4,14 +4,14 @@ import * as renraku from "renraku"
 import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {QuestionsTables} from "../../tables/types/questions-tables.js"
+import {QuestionsSchema} from "../../tables/types/questions-tables.js"
 
 const timeframe = 1 * day
 const allowedNumberOfPostsInTimeframe = 10
 
 export async function rateLimitQuestions({userId, questionsTables}: {
 		userId: DamnId
-		questionsTables: QuestionsTables
+		questionsTables: QuestionsSchema
 	}) {
 	const count = await questionsTables.questionPosts.count({
 		conditions: and(
@@ -26,7 +26,7 @@ export async function rateLimitQuestions({userId, questionsTables}: {
 export async function rateLimitAnswers({userId, questionId, questionsTables}: {
 		userId: DamnId
 		questionId: DamnId
-		questionsTables: QuestionsTables
+		questionsTables: QuestionsSchema
 	}) {
 	const count = await questionsTables.answerPosts.count({
 		conditions: and(

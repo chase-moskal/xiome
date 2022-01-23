@@ -1,10 +1,10 @@
 
-import {AuthTables} from "../../../../auth/types/auth-tables.js"
+import {AuthSchema} from "../../../../auth/types/auth-schema.js"
 import {PrivilegeDisplay} from "../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 import {viewPrivilege} from "../../../testing/video-setup.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 import {AccessPayload} from "../../../../auth/types/auth-tokens.js"
-import {PermissionsTables} from "../../../../auth/aspects/permissions/types/permissions-tables.js"
+import {PermissionsSchema} from "../../../../auth/aspects/permissions/types/permissions-tables.js"
 
 export async function getAllPrivileges({
 	access,
@@ -13,7 +13,7 @@ export async function getAllPrivileges({
 	}: {
 		access: AccessPayload
 		platformAppId: string
-		permissionsTables: PermissionsTables
+		permissionsTables: PermissionsSchema
 	}): Promise<PrivilegeDisplay[]> {
 	
 	const permissionsEngine = makePermissionsEngine({

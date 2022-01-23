@@ -1,9 +1,9 @@
 
-import {StoreTables} from "../../../types/store-tables.js"
+import {StoreSchema} from "../../../types/store-schema.js"
 import {StripeConnectDetails, StripeLiaison} from "../../../types/store-concepts.js"
 
 export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
-		storeTables: StoreTables
+		storeTables: StoreSchema
 		stripeLiaison: StripeLiaison
 	}) {
 

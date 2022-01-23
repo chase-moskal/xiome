@@ -3,12 +3,12 @@ import {makeVotingBooth} from "./voting-booth.js"
 import {Question} from "../../types/questions-and-answers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
+import {QuestionPostRow, QuestionsSchema} from "../../tables/types/questions-tables.js"
 
 export async function resolveQuestions({userId, questionPosts, questionsTables}: {
 		userId?: DamnId
 		questionPosts: QuestionPostRow[]
-		questionsTables: QuestionsTables
+		questionsTables: QuestionsSchema
 	}) {
 
 	const questionIds = questionPosts.map(post => post.questionId)

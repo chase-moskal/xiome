@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 
 import {UserStats} from "../../types/user-stats.js"
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../types/auth-schema.js"
 import {profileFromRow} from "../profile/profile-from-row.js"
 import {or} from "../../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
@@ -10,7 +10,7 @@ import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/
 
 export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		userIds: DamnId[]
-		authTables: AuthTables
+		authTables: AuthSchema
 		permissionsEngine: PermissionsEngine
 	}) {
 

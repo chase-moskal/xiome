@@ -1,12 +1,12 @@
 
 import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-import {AppTables} from "../types/app-tables.js"
+import {AppSchema} from "../types/app-tables.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 
 export async function isUserOwnerOfApp({appId, access, appTables}: {
 		appId: dbproxy.Id
-		appTables: dbproxy.SchemaToTables<AppTables>
+		appTables: dbproxy.SchemaToTables<AppSchema>
 		access: AccessPayload
 	}) {
 

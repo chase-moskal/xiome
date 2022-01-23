@@ -3,7 +3,7 @@ import * as renraku from "renraku"
 
 import {VideoMeta} from "../../types/video-auth.js"
 import {videoPrivileges} from "../video-privileges.js"
-import {VideoTables} from "../../types/video-tables.js"
+import {VideoSchema} from "../../types/video-schema.js"
 import {schema} from "../../../../toolbox/darkvalley.js"
 import {Dacast} from "../../dacast/types/dacast-types.js"
 import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
@@ -32,7 +32,7 @@ export const makeDacastService = ({
 }: {
 	config: SecretConfig
 	dacastSdk: Dacast.Sdk
-	videoTables: UnconstrainedTables<VideoTables>
+	videoTables: UnconstrainedTables<VideoSchema>
 	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }) => renraku.service()
 

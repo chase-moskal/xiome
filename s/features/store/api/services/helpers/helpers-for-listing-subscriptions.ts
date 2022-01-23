@@ -4,7 +4,7 @@ import {DbbyRow} from "../../../../../toolbox/dbby/dbby-types.js"
 import {find, findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {stripeAttempt} from "../../../stripe/liaison/helpers/stripe-attempt.js"
 import {StripeLiaisonAccount, SubscriptionPlan} from "../../../types/store-concepts.js"
-import {StoreTables, SubscriptionPlanRow, SubscriptionTierRow} from "../../../types/store-tables.js"
+import {StoreSchema, SubscriptionPlanRow, SubscriptionTierRow} from "../../../types/store-schema.js"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForListingSubscriptions = ({

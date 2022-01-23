@@ -2,7 +2,7 @@
 import {SignToken} from "redcrypto/x/types.js"
 
 import {fetchUser} from "../user/fetch-user.js"
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../types/auth-schema.js"
 import {concurrent} from "../../../../../../toolbox/concurrent.js"
 import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../../types/auth-tokens.js"
@@ -22,7 +22,7 @@ export async function signAuthTokens({
 			appId: string
 			userId: DamnId
 			origins: string[]
-			authTables: AuthTables
+			authTables: AuthSchema
 			permissionsEngine: PermissionsEngine
 			lifespans: {
 				access: number

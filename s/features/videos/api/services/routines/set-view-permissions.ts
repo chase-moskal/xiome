@@ -1,5 +1,5 @@
 
-import {VideoTables} from "../../../types/video-tables.js"
+import {VideoSchema} from "../../../types/video-schema.js"
 import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions/types/permissions-engine.js"
@@ -12,7 +12,7 @@ export async function setViewPermissions({
 	}: {
 		label: string
 		privileges: string[]
-		videoTables: VideoTables
+		videoTables: VideoSchema
 		engine: PermissionsEngine
 	}) {
 

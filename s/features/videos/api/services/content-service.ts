@@ -5,7 +5,7 @@ import {VideoMeta} from "../../types/video-auth.js"
 import {getCatalog} from "./routines/get-catalog.js"
 import {videoPrivileges} from "../video-privileges.js"
 import {getAllViews} from "./routines/get-all-views.js"
-import {VideoTables} from "../../types/video-tables.js"
+import {VideoSchema} from "../../types/video-schema.js"
 import {Dacast} from "../../dacast/types/dacast-types.js"
 import {getVideoViews} from "./routines/get-video-views.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
@@ -32,7 +32,7 @@ export const makeContentService = ({
 }: {
 	config: SecretConfig
 	dacastSdk: Dacast.Sdk
-	videoTables: UnconstrainedTables<VideoTables>
+	videoTables: UnconstrainedTables<VideoSchema>
 	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }) => renraku.service()
 

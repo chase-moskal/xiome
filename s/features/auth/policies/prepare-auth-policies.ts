@@ -5,7 +5,7 @@ import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {AccessPayload} from "../types/auth-tokens.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
-import {DatabaseSubsection2} from "../../../assembly/backend/types/database.js"
+import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {prepareStatsHub} from "../aspects/permissions/tools/prepare-stats-hub.js"
 import {isUserOwnerOfApp} from "../aspects/apps/utils/is-user-the-owner-of-app.js"
@@ -17,7 +17,7 @@ export function prepareAuthPolicies({
 		config, database, verifyToken,
 	}: {
 		config: SecretConfig
-		database: DatabaseSubsection2<"apps" | "auth">
+		database: DatabaseSelect<"apps" | "auth">
 		verifyToken: VerifyToken
 	}) {
 

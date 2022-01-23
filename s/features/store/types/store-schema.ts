@@ -1,17 +1,16 @@
 
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {Await} from "../../../types/await.js"
-import {mockStoreTables} from "../api/tables/mock-store-tables.js"
-// import {CardClues} from "../stripe/liaison/types/card-clues.js"
-
-export type StoreTables = Await<ReturnType<typeof mockStoreTables>>
+export type StoreSchema = dbproxy.AsSchema<{
+	merchant: MerchantSchema
+	subscription: SubscriptionSchema
+}>
 
 //
 // merchant tables
 //
 
-export type MerchantTables = dbproxy.AsSchema<{
+export type MerchantSchema = dbproxy.AsSchema<{
 	stripeAccounts: MerchantRow
 }>
 
@@ -26,7 +25,7 @@ export type MerchantRow = dbproxy.AsRow<{
 // subscription tables
 //
 
-export type SubscriptionTables = dbproxy.AsSchema<{
+export type SubscriptionSchema = dbproxy.AsSchema<{
 	plans: SubscriptionPlanRow
 	tiers: SubscriptionTierRow
 }>

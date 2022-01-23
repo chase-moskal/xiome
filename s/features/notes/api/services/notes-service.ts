@@ -7,7 +7,7 @@ import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {UnconstrainedTables} from "../../../../framework/api/unconstrained-table.js"
 
 import {NotesMeta} from "../types/notes-auth.js"
-import {NotesTables} from "../tables/notes-tables.js"
+import {NotesSchema} from "../tables/notes-schema.js"
 import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
@@ -21,7 +21,7 @@ export const makeNotesService = ({
 	notesTables: rawNotesTables,
 }: {
 	config: SecretConfig
-	notesTables: UnconstrainedTables<NotesTables>
+	notesTables: UnconstrainedTables<NotesSchema>
 	basePolicy: renraku.Policy<UserMeta, UserAuth>
 }) => renraku.service()
 
