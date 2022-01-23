@@ -2,7 +2,7 @@
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
-export async function mockStorageTables<xSchema extends dbproxy.Schema>(
+export function mockStorageTables<xSchema extends dbproxy.Schema>(
 		flexStorage: FlexStorage,
 		shape: dbproxy.SchemaToShape<xSchema>,
 	) {

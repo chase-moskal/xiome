@@ -8,6 +8,8 @@ import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
+import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
+import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 
 export async function assimilateDatabase({
 		config,
@@ -84,29 +86,17 @@ export async function assimilateDatabase({
 		...databaseShapeUnisolated,
 	}
 
-	function mockWithStorage(mockStorage: FlexStorage) {
-		return dbproxy.flex<DatabaseSchema>(mockStorage, databaseShape)
-	}
-
 	const mockStorage = config.database === "mock-storage"
 		? configureMockStorage()
 		: memoryFlexStorage()
 
-	const databaseRaw = dbproxy.subsection(
+	const databaseRaw = applyDatabaseWrapping(
 		config.database === "mock-storage"
-			? mockWithStorage(mockStorage)
+			? mockDatabaseUnwrapped(mockStorage)
 			: await configureMongo({
 				databaseShape,
 				config: {...config, database: config.database},
-			}),
-		tables => {
-			const wrappedTables = UnconstrainedTable.wrapTables(tables)
-			const nakedTables = (<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => databaseRaw.tables[key]))
-			return {
-				...wrappedTables,
-				...nakedTables,
-			}
-		},
+			})
 	)
 
 	{ // bake app tables

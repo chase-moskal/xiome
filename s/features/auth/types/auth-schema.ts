@@ -8,3 +8,18 @@ export type AuthSchema = dbproxy.AsSchema<{
 	users: UserSchema
 	permissions: PermissionsSchema
 }>
+
+export const authShape: dbproxy.SchemaToShape<AuthSchema> = {
+	users: {
+		accounts: true,
+		emails: true,
+		latestLogins: true,
+		profiles: true,
+	},
+	permissions: {
+		privilege: true,
+		role: true,
+		roleHasPrivilege: true,
+		userHasRole: true,
+	},
+}
