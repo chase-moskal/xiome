@@ -1,13 +1,13 @@
 
 import * as renraku from "renraku"
+import {Id} from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {StoreSchema} from "./store-schema.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {StoreAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
-import {UnconstrainedTables} from "../../../framework/api/unconstrained-table.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
 export type StripeLiaisonAccount = ReturnType<
@@ -24,12 +24,11 @@ export interface StoreCommonOptions {
 		cancel: string
 		success: string
 	}
-	generateId: () => DamnId
+	generateId: () => Id
 }
 
 export interface StoreApiOptions extends StoreCommonOptions {
 	stripeLiaison: StripeLiaison
-	storeTables: UnconstrainedTables<StoreSchema>
 	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }
 

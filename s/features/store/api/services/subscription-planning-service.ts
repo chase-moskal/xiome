@@ -20,7 +20,7 @@ export const makeSubscriptionPlanningService = (
 	auth.checker.requirePrivilege("manage store")
 	const connectStatus = determineConnectStatus(
 		await fetchStripeConnectDetails({
-			storeTables: auth.storeTables,
+			storeTables: auth.database.tables.store,
 			stripeLiaison: auth.stripeLiaison,
 		})
 	)

@@ -1,16 +1,18 @@
 
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {StoreSchema} from "../../../types/store-schema.js"
 import {StripeConnectDetails, StripeLiaison} from "../../../types/store-concepts.js"
 
 export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
-		storeTables: StoreSchema
+		storeTables: dbproxy.SchemaToTables<StoreSchema>
 		stripeLiaison: StripeLiaison
 	}) {
 
 	let connectDetails: StripeConnectDetails
 
 	const ourRecordOfStripeAccount = await storeTables
-		.merchant.stripeAccounts.one({conditions: false})
+		.merchant.stripeAccounts.readOne({conditions: false})
 
 	if (ourRecordOfStripeAccount) {
 		const id = ourRecordOfStripeAccount.stripeAccountId

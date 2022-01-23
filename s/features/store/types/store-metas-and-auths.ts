@@ -6,7 +6,6 @@ import {StripeLiaison, StripeLiaisonAccount} from "./store-concepts.js"
 export interface StoreMeta extends AnonMeta {}
 
 export interface StoreAuth extends AnonAuth {
-	storeTables: StoreSchema
 	stripeLiaison: StripeLiaison
 }
 
