@@ -1,9 +1,7 @@
 
 import * as renraku from "renraku"
 import {Id} from "../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {StoreSchema} from "./store-schema.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
