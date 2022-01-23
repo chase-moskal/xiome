@@ -1,5 +1,6 @@
 
 import * as renraku from "renraku"
+import {Id, find, and, or} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {AppDraft} from "../types/app-draft.js"
 import {AppDisplay} from "../types/app-display.js"
@@ -7,9 +8,7 @@ import {isPlatform} from "../../../utils/is-platform.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {validateAppDraft} from "../utils/validate-app-draft.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
-import {and, find, or} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
 
@@ -19,17 +18,17 @@ export const makeAppService = ({
 
 .policy(authPolicies.platformUserPolicy)
 
-.expose(({appTables, statsHub}) => ({
+.expose(({database, statsHub}) => ({
 
 	async listApps({ownerUserId: ownerUserIdString}: {
 			ownerUserId: string
 		}): Promise<AppDisplay[]> {
 
-		const ownerUserId = DamnId.fromString(ownerUserIdString)
+		const ownerUserId = Id.fromString(ownerUserIdString)
 
-		const ownerships = await appTables.owners.read(find({userId: ownerUserId}))
+		const ownerships = await database.tables.apps.owners.read(find({userId: ownerUserId}))
 		const appRows = ownerships.length
-			? await appTables.registrations.read({
+			? await database.tables.apps.registrations.read({
 				conditions: and(
 					or(...ownerships.map(own => ({equal: {appId: own.appId}}))),
 					{equal: {archived: false}},
@@ -57,18 +56,18 @@ export const makeAppService = ({
 
 		throwProblems(validateAppDraft(appDraft))
 
-		const ownerUserId = DamnId.fromString(ownerUserIdString)
+		const ownerUserId = Id.fromString(ownerUserIdString)
+		const appId = rando.randomId2()
 
-		const appId = rando.randomId()
 		await Promise.all([
-			appTables.registrations.create({
+			database.tables.apps.registrations.create({
 				appId,
 				label: appDraft.label,
 				home: appDraft.home,
 				origins: originsToDatabase(appDraft.origins),
 				archived: false,
 			}),
-			appTables.owners.create({
+			database.tables.apps.owners.create({
 				appId,
 				userId: ownerUserId,
 			}),

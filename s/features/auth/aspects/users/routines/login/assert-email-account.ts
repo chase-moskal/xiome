@@ -1,10 +1,10 @@
 
-import {AuthSchema} from "../../../../types/auth-schema.js"
+import {Id, find} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {generateAccountRow} from "./generate-account-row.js"
-import {find} from "../../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {initializeUserProfile} from "../profile/initialize-user-profile.js"
+import {DatabaseSafe} from "../../../../../../assembly/backend/types/database.js"
 import {SecretConfig} from "../../../../../../assembly/backend/types/secret-config.js"
 import {universalPermissions} from "../../../../../../assembly/backend/permissions/standard-permissions.js"
 
@@ -15,16 +15,17 @@ const standardRoleIds = {
 }
 
 export async function assertEmailAccount({
-		rando, email, authTables, config, generateNickname,
+		rando, email, databaseForApp, config, generateNickname,
 	}: {
 		rando: Rando
 		email: string
 		config: SecretConfig
-		authTables: AuthSchema
+		databaseForApp: DatabaseSafe
 		generateNickname: () => string
 	}) {
 
 	email = email.toLowerCase()
+	const authTables = databaseForApp.tables.auth
 
 	const accountViaEmail = await authTables.users.emails.assert({
 		...find({email}),
@@ -38,7 +39,7 @@ export async function assertEmailAccount({
 			const createProfile = initializeUserProfile({
 				userId,
 				email,
-				authTables,
+				database: databaseForApp,
 				generateNickname,
 			})
 
@@ -46,7 +47,7 @@ export async function assertEmailAccount({
 				userId,
 				hard: true,
 				public: false,
-				roleId: DamnId.fromString(standardRoleIds.everybody),
+				roleId: Id.fromString(standardRoleIds.everybody),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 				time: Date.now(),
@@ -56,7 +57,7 @@ export async function assertEmailAccount({
 				userId,
 				hard: true,
 				public: false,
-				roleId: DamnId.fromString(standardRoleIds.authenticated),
+				roleId: Id.fromString(standardRoleIds.authenticated),
 				timeframeEnd: undefined,
 				timeframeStart: undefined,
 				time: Date.now(),
@@ -68,7 +69,7 @@ export async function assertEmailAccount({
 					hard: true,
 					public: true,
 					timeframeEnd: undefined,
-					roleId: DamnId.fromString(standardRoleIds.technician),
+					roleId: Id.fromString(standardRoleIds.technician),
 					timeframeStart: undefined,
 					time: Date.now(),
 				})

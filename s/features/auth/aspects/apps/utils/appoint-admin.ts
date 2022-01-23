@@ -1,21 +1,21 @@
 
-import {AuthSchema} from "../../../types/auth-schema.js"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../../../../toolbox/get-rando.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+import {DatabaseSafe} from "../../../../../assembly/backend/types/database.js"
 import {SecretConfig} from "../../../../../assembly/backend/types/secret-config.js"
 import {assertEmailAccount} from "../../users/routines/login/assert-email-account.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
-const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
+const adminRoleId = Id.fromString(appPermissions.roles.admin.roleId)
 
 export async function appointAdmin({
-		email, authTables, rando, config, generateNickname,
+		email, rando, config, databaseForApp, generateNickname,
 	}: {
 		rando: Rando
 		email: string
 		config: SecretConfig
-		authTables: AuthSchema
+		databaseForApp: DatabaseSafe
 		generateNickname: () => string
 	}) {
 
@@ -23,11 +23,11 @@ export async function appointAdmin({
 		rando,
 		email,
 		config,
-		authTables,
+		databaseForApp,
 		generateNickname,
 	})
 
-	await authTables.permissions.userHasRole.assert({
+	await databaseForApp.tables.auth.permissions.userHasRole.assert({
 		...find({userId: adminUserId, roleId: adminRoleId}),
 		make: async () => ({
 			userId: adminUserId,

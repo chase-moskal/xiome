@@ -1,19 +1,18 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {AppDraft} from "../types/app-draft.js"
 import {appointAdmin} from "../utils/appoint-admin.js"
 import {AuthOptions} from "../../../types/auth-options.js"
 import {validateAppDraft} from "../utils/validate-app-draft.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {emailValidator} from "../utils/admin-email-validator.js"
 import {AdminEmailDisplay} from "../types/admin-email-display.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 
-const adminRoleId = DamnId.fromString(appPermissions.roles.admin.roleId)
+const adminRoleId = Id.fromString(appPermissions.roles.admin.roleId)
 
 export const makeAppEditService = ({
 	rando, config, authPolicies, generateNickname,
@@ -21,18 +20,18 @@ export const makeAppEditService = ({
 
 .policy(authPolicies.appOwnerPolicy)
 
-.expose(({appTables, authTablesForPlatform, authorizeAppOwner}) => ({
+.expose(({database, authorizeAppOwner}) => ({
 
 	async updateApp({appId: appIdString, appDraft}: {
 			appId: string
 			appDraft: AppDraft
 		}) {
 		throwProblems(validateAppDraft(appDraft))
-		const appId = DamnId.fromString(appIdString)
+		const appId = Id.fromString(appIdString)
 
 		await authorizeAppOwner(appId)
 
-		await appTables.registrations.update({
+		await database.tables.apps.registrations.update({
 			...find({appId}),
 			whole: {
 				appId,
@@ -47,9 +46,9 @@ export const makeAppEditService = ({
 	async deleteApp({appId: appIdString}: {
 			appId: string
 		}) {
-		const appId = DamnId.fromString(appIdString)
+		const appId = Id.fromString(appIdString)
 		await authorizeAppOwner(appId)
-		await appTables.registrations.update({
+		await database.tables.apps.registrations.update({
 			...find({appId}),
 			write: {archived: true},
 		})
@@ -58,14 +57,15 @@ export const makeAppEditService = ({
 	async listAdmins({appId: appIdString}: {
 			appId: string
 		}): Promise<AdminEmailDisplay[]> {
-		const appId = DamnId.fromString(appIdString)
+		const appId = Id.fromString(appIdString)
 
-		const {authTables} = await authorizeAppOwner(appId)
+		const databaseForApp = await authorizeAppOwner(appId)
 
-		const usersWithAdminRole = await authTables.permissions.userHasRole
-			.read(find({roleId: adminRoleId}))
+		const usersWithAdminRole = await databaseForApp
+			.tables.auth.permissions.userHasRole
+				.read(find({roleId: adminRoleId}))
 
-		const adminsViaEmail = await authTables.users.emails
+		const adminsViaEmail = await databaseForApp.tables.auth.users.emails
 			.read(find(...usersWithAdminRole.map(({userId}) => ({userId}))))
 
 		return adminsViaEmail.map(({userId, email}) => ({
@@ -80,12 +80,12 @@ export const makeAppEditService = ({
 				platformUserId: string
 			}
 		) {
-		const appId = DamnId.fromString(appIdString)
-		const {authTables} = await authorizeAppOwner(appId)
-		const platformUserId = DamnId.fromString(platformUserIdString)
+		const appId = Id.fromString(appIdString)
+		const databaseForApp = await authorizeAppOwner(appId)
+		const platformUserId = Id.fromString(platformUserIdString)
 
-		const platformAccount = await authTablesForPlatform.users.emails
-			.one(find({userId: platformUserId}))
+		const platformAccount = await database.tables.auth.users.emails
+			.readOne(find({userId: platformUserId}))
 
 		if (!platformAccount)
 			throw new renraku.ApiError(404, "platform email account not found")
@@ -95,7 +95,7 @@ export const makeAppEditService = ({
 			rando,
 			config,
 			email,
-			authTables,
+			databaseForApp,
 			generateNickname,
 		})
 	},
@@ -105,8 +105,8 @@ export const makeAppEditService = ({
 			email: string
 		}): Promise<void> {
 
-		const appId = DamnId.fromString(appIdString)
-		const {authTables} = await authorizeAppOwner(appId)
+		const appId = Id.fromString(appIdString)
+		const databaseForApp = await authorizeAppOwner(appId)
 		const problems = emailValidator(email)
 
 		if (problems.length)
@@ -116,7 +116,7 @@ export const makeAppEditService = ({
 			rando,
 			config,
 			email: email.toLowerCase(),
-			authTables,
+			databaseForApp,
 			generateNickname,
 		})
 	},
@@ -126,11 +126,11 @@ export const makeAppEditService = ({
 			userId: string
 		}): Promise<void> {
 
-		const appId = DamnId.fromString(appIdString)
-		const userId = DamnId.fromString(userIdString)
-		const {authTables} = await authorizeAppOwner(appId)
+		const appId = Id.fromString(appIdString)
+		const userId = Id.fromString(userIdString)
+		const databaseForApp = await authorizeAppOwner(appId)
 
-		await authTables.permissions.userHasRole.delete(find({
+		await databaseForApp.tables.auth.permissions.userHasRole.delete(find({
 			userId,
 			roleId: adminRoleId,
 		}))

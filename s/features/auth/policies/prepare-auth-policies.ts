@@ -4,7 +4,7 @@ import {VerifyToken} from "redcrypto/x/types.js"
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {AccessPayload} from "../types/auth-tokens.js"
-import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
+import {DatabaseRaw, DatabaseSafe} from "../../../assembly/backend/types/database.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {prepareStatsHub} from "../aspects/permissions/tools/prepare-stats-hub.js"
@@ -79,7 +79,10 @@ export function prepareAuthPolicies({
 				const isOwnerOfApp = isUserOwnerOfApp({appId, appTables, access: auth.access})
 				const allowed = isOwnerOfApp || allowedToEditAnyApp
 				if (allowed)
-					return auth.database
+					return <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
+						appId,
+						database: databaseRaw,
+					})
 				else
 					throw new renraku.ApiError(403, "forbidden: lacking privileges to edit app")
 			},
