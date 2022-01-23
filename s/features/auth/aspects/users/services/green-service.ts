@@ -1,19 +1,19 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../types/auth-tokens.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
+import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 
 export const makeGreenService = (options: AuthOptions) => renraku.service()
 
 .policy(options.authPolicies.greenPolicy)
 
-.expose(({appTables, authTables: unconstrainedAuthTables}) => ({
+.expose(({databaseRaw}) => ({
 
 	async authorize({
 			scope, refreshToken, appId: appIdString,
@@ -23,14 +23,17 @@ export const makeGreenService = (options: AuthOptions) => renraku.service()
 			refreshToken?: string
 		}) {
 
-		const appId = DamnId.fromString(appIdString)
-		const authTables = unconstrainedAuthTables.namespaceForApp(appId)
+		const appId = Id.fromString(appIdString)
+		const databaseForApp = UnconstrainedTable.constrainDatabaseForApp({
+			appId,
+			database: databaseRaw,
+		})
 		const permissionsEngine = makePermissionsEngine({
-			permissionsTables: authTables.permissions,
+			permissionsTables: databaseForApp.tables.auth.permissions,
 			isPlatform: appId.toString() === options.config.platform.appDetails.appId,
 		})
 
-		const appRow = await appTables.registrations.one(find({appId}))
+		const appRow = await databaseRaw.tables.apps.registrations.readOne(find({appId}))
 
 		if (!appRow)
 			throw new renraku.ApiError(400, "incorrect app id")
@@ -40,13 +43,13 @@ export const makeGreenService = (options: AuthOptions) => renraku.service()
 
 		if (refreshToken) {
 			const {userId: userIdString} = await options.verifyToken<RefreshPayload>(refreshToken)
-			const userId = DamnId.fromString(userIdString)
+			const userId = Id.fromString(userIdString)
 			const user = await fetchUser({
 				userId,
-				authTables,
 				permissionsEngine,
+				authTables: databaseForApp.tables.auth,
 			})
-			await authTables.users.latestLogins.update({
+			await databaseForApp.tables.auth.users.latestLogins.update({
 				...find({userId}),
 				upsert: {userId, time: Date.now()},
 			})
