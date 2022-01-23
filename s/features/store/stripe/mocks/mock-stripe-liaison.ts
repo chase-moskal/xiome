@@ -6,7 +6,7 @@ import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
-import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
+import {MockStripeTables} from "./tables/types/mock-stripe-database.js"
 import {dbbyConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
 
 export function mockStripeLiaison({
