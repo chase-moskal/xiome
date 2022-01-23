@@ -32,3 +32,10 @@ export type ConstrainMixedTables<xTables extends TablesMixed> = {
 				? ConstrainMixedTables<xTables[P]>
 				: never
 }
+
+export type ConstrainMixedDatabaseLike<xDatabase extends dbproxy.DatabaseLike<any>> =
+	xDatabase extends dbproxy.DatabaseLike<infer xTables>
+		? xTables extends TablesMixed
+			? dbproxy.DatabaseLike<ConstrainMixedTables<xTables>>
+			: never
+		: never

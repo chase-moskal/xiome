@@ -8,6 +8,6 @@ export * from "./constraints.js"
 export * from "./databases/flex.js"
 export * from "./databases/memory.js"
 
-export * from "./handy/grab.js"
 export * from "./handy/is-table.js"
+export * from "./handy/subsection.js"
 

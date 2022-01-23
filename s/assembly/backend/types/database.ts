@@ -53,7 +53,7 @@ export type DatabaseSubsection<xGrabbed> = {
 	transaction<xResult>(action: ({}: {
 		tables: xGrabbed
 		abort: () => Promise<void>
-	}) => Promise<xResult>): xResult
+	}) => Promise<xResult>): Promise<xResult>
 }
 
 export type DatabaseSubsection2<K extends keyof RemoveIndex<DatabaseTables>> = DatabaseSubsection<Pick<DatabaseTables, K>>

@@ -1,7 +1,7 @@
 
 import {objectMap} from "../../toolbox/object-map.js"
 import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
-import {ConstrainMixedTables, SchemaToUnconstrainedTables} from "./types/unconstrained-tables.js"
+import {ConstrainMixedTables, SchemaToUnconstrainedTables, TablesMixed} from "./types/unconstrained-tables.js"
 import {AppConstraint, appConstraintKey, DatabaseSubsection} from "../../assembly/backend/types/database.js"
 
 export class UnconstrainedTable<xRow extends dbproxy.Row> {
@@ -34,11 +34,12 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		>recurse(unconstrainedTables)
 	}
 
-	static constrainTablesForApp<xSchema extends dbproxy.Schema>({
-			appId, unconstrainedTables,
+	static constrainTablesForApp<xTables extends TablesMixed>({
+			appId,
+			unconstrainedTables,
 		}: {
 			appId: dbproxy.Id
-			unconstrainedTables: SchemaToUnconstrainedTables<xSchema>
+			unconstrainedTables: xTables
 		}) {
 		function recurse(tables: any) {
 			return objectMap(tables, value =>
@@ -47,18 +48,35 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 					: recurse(value)
 			)
 		}
-		return <dbproxy.ConstrainTables<
-			AppConstraint,
-			dbproxy.SchemaToTables<xSchema>>
-		>recurse(unconstrainedTables)
+		return <ConstrainMixedTables<xTables>>recurse(unconstrainedTables)
 	}
 
-	static constrainDatabaseSubsectionForApp<xDatabaseSubsection extends DatabaseSubsection<any>>({
+	// static constrainTablesForApp<xSchema extends dbproxy.Schema>({
+	// 		appId,
+	// 		unconstrainedTables,
+	// 	}: {
+	// 		appId: dbproxy.Id
+	// 		unconstrainedTables: SchemaToUnconstrainedTables<xSchema>
+	// 	}) {
+	// 	function recurse(tables: any) {
+	// 		return objectMap(tables, value =>
+	// 			value instanceof UnconstrainedTable
+	// 				? value.constrainForApp(appId)
+	// 				: recurse(value)
+	// 		)
+	// 	}
+	// 	return <dbproxy.ConstrainTables<
+	// 		AppConstraint,
+	// 		dbproxy.SchemaToTables<xSchema>>
+	// 	>recurse(unconstrainedTables)
+	// }
+
+	static constrainDatabaseForApp<xDatabase extends dbproxy.DatabaseLike<TablesMixed>>({
 			appId,
-			subsection,
+			database,
 		}: {
 			appId: dbproxy.Id
-			subsection: xDatabaseSubsection
+			database: xDatabase
 		}) {
 		function recurse(tables: any) {
 			return objectMap(tables, value =>
@@ -70,11 +88,11 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 			)
 		}
 		return {
-			tables: <ConstrainMixedTables<xDatabaseSubsection["tables"]>>recurse(subsection),
+			tables: <ConstrainMixedTables<xDatabase["tables"]>>recurse(database),
 			transaction: (async<xResult>(action: ({}: {
-				tables: ConstrainMixedTables<xDatabaseSubsection["tables"]>
+				tables: ConstrainMixedTables<xDatabase["tables"]>
 				abort: () => Promise<void>
-			}) => xResult) => subsection.transaction<xResult>(async({tables, abort}) => action({
+			}) => xResult) => database.transaction<xResult>(async({tables, abort}) => action({
 				tables: recurse(tables),
 				abort,
 			})))

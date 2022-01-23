@@ -1,6 +1,7 @@
 
 import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {DatabaseFinal} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
@@ -30,9 +31,11 @@ export async function assimilateApi({
 
 	const authPolicies = prepareAuthPolicies({
 		config,
+		database: dbproxy.subsection(database, tables => ({
+			apps: tables.apps,
+			auth: tables.auth,
+		})),
 		verifyToken,
-		appTables: database.apps,
-		authTables: database.auth,
 	})
 
 	return renraku.api({
@@ -59,7 +62,7 @@ export async function assimilateApi({
 			rando,
 			config,
 			authPolicies,
-			database: database.subsection(tables => tables.example),
+			database: dbproxy.subsection(database, tables => tables.example),
 		}),
 		videos: videosApi({
 			config,

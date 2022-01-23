@@ -85,47 +85,28 @@ export async function assimilateDatabase({
 	}
 
 	function mockWithStorage(mockStorage: FlexStorage) {
-		return dbproxy.memory<DatabaseSchema>(databaseShape)
-	}
-
-	function processDatabase(database: dbproxy.Database<DatabaseSchema>) {
-		const tables = {
-			...UnconstrainedTable.wrapTables(database.tables),
-			...<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => database.tables[key]),
-		}
-		function subsection<xGrabbed>(grabber: (t: typeof tables) => xGrabbed): DatabaseSubsection<xGrabbed> {
-			return {
-				tables: grabber(tables),
-				transaction: <DatabaseSubsection<xGrabbed>["transaction"]>(async<xResult>(action: ({}: {
-						tables: xGrabbed
-						abort: () => Promise<void>
-					}) => Promise<xResult>) =>
-					database.transaction(async(options) => action({
-						tables: grabber(tables),
-						abort: options.abort
-					}))
-				),
-			}
-		}
-		const root = subsection(t => t)
-		return {
-			tables: root.tables,
-			transaction: root.transaction,
-			subsection,
-		}
+		return dbproxy.flex<DatabaseSchema>(mockStorage, databaseShape)
 	}
 
 	const mockStorage = config.database === "mock-storage"
 		? configureMockStorage()
 		: memoryFlexStorage()
 
-	const database = processDatabase(
+	const database = dbproxy.subsection(
 		config.database === "mock-storage"
 			? mockWithStorage(mockStorage)
 			: await configureMongo({
 				databaseShape,
 				config: {...config, database: config.database},
-			})
+			}),
+		tables => {
+			const wrappedTables = UnconstrainedTable.wrapTables(tables)
+			const nakedTables = (<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => database.tables[key]))
+			return {
+				...wrappedTables,
+				...nakedTables,
+			}
+		},
 	)
 
 	{ // bake app tables
