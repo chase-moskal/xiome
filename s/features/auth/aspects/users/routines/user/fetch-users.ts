@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 import {Id, or} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {UserStats} from "../../types/user-stats.js"
 import {AuthSchema} from "../../../../types/auth-schema.js"

@@ -4,7 +4,7 @@ import * as renraku from "renraku"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
-import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
+import {authenticatedQuestionsPolicy} from "./policies/questions-policies.js"
 
 export const makeQuestionsModerationService = (
 	options: QuestionsApiOptions
@@ -17,15 +17,14 @@ export const makeQuestionsModerationService = (
 	return auth
 })
 
-.expose(({questionsTables}) => ({
+.expose(({database}) => ({
 
 	async archiveBoard({board}: {board: string}) {
-		await questionsTables.questionPosts.update({
+		await database.tables.questions.questionPosts.update({
 			...find({board}),
 			write: {archive: true},
 		})
 	},
 
-	// TODO implement
 	async fetchReportedQuestions() {},
 }))
