@@ -4,7 +4,7 @@ import * as renraku from "renraku"
 import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {and} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {QuestionsSchema} from "../../tables/types/questions-tables.js"
+import {QuestionsSchema} from "../../types/questions-schema.js"
 
 const timeframe = 1 * day
 const allowedNumberOfPostsInTimeframe = 10

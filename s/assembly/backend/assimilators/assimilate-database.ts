@@ -92,7 +92,7 @@ export async function assimilateDatabase({
 		? configureMockStorage()
 		: memoryFlexStorage()
 
-	const database = dbproxy.subsection(
+	const databaseRaw = dbproxy.subsection(
 		config.database === "mock-storage"
 			? mockWithStorage(mockStorage)
 			: await configureMongo({
@@ -101,7 +101,7 @@ export async function assimilateDatabase({
 			}),
 		tables => {
 			const wrappedTables = UnconstrainedTable.wrapTables(tables)
-			const nakedTables = (<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => database.tables[key]))
+			const nakedTables = (<dbproxy.SchemaToTables<DatabaseSchemaUnisolated>>objectMap(databaseShapeUnisolated, (v, key) => databaseRaw.tables[key]))
 			return {
 				...wrappedTables,
 				...nakedTables,
@@ -111,8 +111,8 @@ export async function assimilateDatabase({
 
 	{ // bake app tables
 		const {appId, home, label, origins} = config.platform.appDetails
-		database.tables.apps.registrations = dbproxy.fallback({
-			table: database.tables.apps.registrations,
+		databaseRaw.tables.apps.registrations = dbproxy.fallback({
+			table: databaseRaw.tables.apps.registrations,
 			fallbackTable: await (async() => {
 				const fallbackDatabase = dbproxy.memory(databaseShape)
 				await fallbackDatabase.tables.apps.registrations.create({
@@ -128,7 +128,7 @@ export async function assimilateDatabase({
 	}
 
 	return {
-		database,
+		databaseRaw,
 		mockStorage,
 	}
 }

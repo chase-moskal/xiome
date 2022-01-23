@@ -1,5 +1,5 @@
 
-import {QuestionsSchema} from "./types/questions-tables.js"
+import {QuestionsSchema} from "../types/questions-schema.js"
 
 import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
 import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage-tables.js"

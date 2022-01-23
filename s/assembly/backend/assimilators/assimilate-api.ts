@@ -3,7 +3,7 @@ import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {DatabaseFinal} from "../types/database.js"
+import {DatabaseRaw, DatabaseSchema} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
 import {notesApi} from "../../../features/notes/api/notes-api.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
@@ -15,12 +15,14 @@ import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
+import {QuestionsSchema} from "../../../features/questions/api/types/questions-schema.js"
+import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
 
 export async function assimilateApi({
-		config, rando, database, dacastSdk,
+		config, rando, databaseRaw, dacastSdk,
 		sendLoginEmail, signToken, verifyToken,
 	}: {
-		database: DatabaseFinal
+		databaseRaw: DatabaseRaw
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken
@@ -31,10 +33,7 @@ export async function assimilateApi({
 
 	const authPolicies = prepareAuthPolicies({
 		config,
-		database: dbproxy.subsection(database, tables => ({
-			apps: tables.apps,
-			auth: tables.auth,
-		})),
+		databaseRaw,
 		verifyToken,
 	})
 
@@ -56,13 +55,11 @@ export async function assimilateApi({
 			rando,
 			config,
 			authPolicies,
-			questionsTables: database.questions,
 		}),
 		example: exampleApi({
 			rando,
 			config,
 			authPolicies,
-			database: dbproxy.subsection(database, tables => tables.example),
 		}),
 		videos: videosApi({
 			config,

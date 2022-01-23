@@ -1,10 +1,10 @@
 
 import * as renraku from "renraku"
+import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
-import {QuestionsSchema} from "../../../tables/types/questions-tables.js"
 import {AnonAuth, AnonMeta} from "../../../../../auth/types/auth-metas.js"
-import {UnconstrainedTables} from "../../../../../../framework/api/unconstrained-table.js"
+import {DatabaseSelect} from "../../../../../../assembly/backend/types/database.js"
+import {UnconstrainedTable} from "../../../../../../framework/api/unconstrained-table.js"
 
 export async function spikeQuestionsAuth<
 		xMeta extends AnonMeta,
@@ -12,14 +12,15 @@ export async function spikeQuestionsAuth<
 	>(
 		meta: xMeta,
 		headers: renraku.HttpHeaders,
-		questionsTables: UnconstrainedTables<QuestionsSchema>,
+		questionsDatabase: DatabaseSelect<"questions">,
 		basePolicy: renraku.Policy<xMeta, xAuth>,
 	) {
 
 	const auth = await basePolicy(meta, headers)
-	const appId = DamnId.fromString(auth.access.appId)
+	const appId = dbproxy.Id.fromString(auth.access.appId)
 	return {
 		...auth,
-		questionsTables: questionsTables.namespaceForApp(appId),
+		questionsDatabase: UnconstrainedTable
+			.constrainDatabaseForApp({database: questionsDatabase, appId}),
 	}
 }

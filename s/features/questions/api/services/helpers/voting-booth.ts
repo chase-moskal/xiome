@@ -1,18 +1,17 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {SimpleVoteTable} from "../../tables/types/questions-tables.js"
+import {SimpleVoteTable} from "../../types/questions-schema.js"
+import {Id, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 export async function makeVotingBooth({userId, itemIds, likesTable, reportsTable}: {
-		userId?: DamnId
-		itemIds: DamnId[]
+		userId?: Id
+		itemIds: Id[]
 		likesTable: SimpleVoteTable
 		reportsTable: SimpleVoteTable
 	}) {
 	const likes = await makeVoteCounter({itemIds, voteTable: likesTable})
 	const reports = await makeVoteCounter({itemIds, voteTable: reportsTable})
 	return {
-		getVotingDetails(itemId: DamnId) {
+		getVotingDetails(itemId: Id) {
 			return {
 				likes: likes.countVotes(itemId),
 				reports: reports.countVotes(itemId),
@@ -28,21 +27,21 @@ export async function makeVotingBooth({userId, itemIds, likesTable, reportsTable
 }
 
 async function makeVoteCounter({itemIds, voteTable}: {
-		itemIds: DamnId[]
+		itemIds: Id[]
 		voteTable: SimpleVoteTable
 	}) {
 	const votes = itemIds.length
 		? await voteTable.read(findAll(itemIds, itemId => ({itemId})))
 		: []
 	return {
-		countVotes(itemId: DamnId) {
+		countVotes(itemId: Id) {
 			return votes
 				.filter(vote => vote.itemId.toString() === itemId.toString())
 				.length
 		},
 		voteStatus({userId, itemId}: {
-				userId: DamnId
-				itemId: DamnId
+				userId: Id
+				itemId: Id
 			}) {
 			const votesByUser = votes
 				.filter(vote => vote.userId.toString() === userId.toString())

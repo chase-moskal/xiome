@@ -7,13 +7,13 @@ import {AppSchema} from "../aspects/apps/types/app-tables.js"
 import {StatsHub} from "../aspects/permissions/types/stats-hub.js"
 import {PrivilegeChecker} from "../aspects/permissions/types/privilege-checker.js"
 import {appPermissions, platformPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
+import {DatabaseRaw, DatabaseSafe, DatabaseSelect} from "../../../assembly/backend/types/database.js"
 import {ConstrainMixedDatabaseLike, ConstrainMixedTables} from "../../../framework/api/types/unconstrained-tables.js"
 
 export type GreenMeta = undefined
 
 export interface GreenAuth {
-	database: DatabaseSelect<"apps" | "auth">
+	databaseRaw: DatabaseRaw
 }
 
 export interface AnonMeta {
@@ -22,7 +22,7 @@ export interface AnonMeta {
 
 export interface AnonAuth {
 	access: AccessPayload
-	database: ConstrainMixedDatabaseLike<DatabaseSelect<"auth">>
+	database: DatabaseSafe
 	checker: PrivilegeChecker<typeof appPermissions["privileges"]>
 }
 
@@ -34,15 +34,14 @@ export interface UserAuth extends AnonAuth {}
 
 export interface PlatformUserMeta extends UserMeta {}
 
-export interface PlatformUserAuth extends Omit<UserAuth, "database" | "checker"> {
+export interface PlatformUserAuth extends Omit<UserAuth, "checker"> {
 	statsHub: StatsHub
-	database: DatabaseSelect<"apps" | "auth">
+	databaseRaw: DatabaseRaw
 	checker: PrivilegeChecker<typeof platformPermissions["privileges"]>
 }
 
 export interface AppOwnerMeta extends PlatformUserMeta {}
 
-export interface AppOwnerAuth extends Omit<PlatformUserAuth, "database"> {
-	authTablesForPlatform: dbproxy.SchemaToTables<AuthSchema>
-	authorizeAppOwner(appId: dbproxy.Id): Promise<{authTables: dbproxy.SchemaToTables<AuthSchema>}>
+export interface AppOwnerAuth extends PlatformUserAuth {
+	authorizeAppOwner(appId: dbproxy.Id): Promise<DatabaseSafe>
 }

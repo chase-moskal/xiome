@@ -4,10 +4,10 @@ import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {StatsHub} from "../types/stats-hub.js"
 import {day, month} from "../../../../../toolbox/goodtimes/times.js"
-import {DatabaseSelect} from "../../../../../assembly/backend/types/database.js"
+import {DatabaseRaw} from "../../../../../assembly/backend/types/database.js"
 
 export function prepareStatsHub({database}: {
-		database: DatabaseSelect<"apps" | "auth">
+		database: DatabaseRaw
 	}) {
 	return async function getStatsHub(userId: dbproxy.Id): Promise<StatsHub> {
 

@@ -51,26 +51,6 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		return <ConstrainMixedTables<xTables>>recurse(unconstrainedTables)
 	}
 
-	// static constrainTablesForApp<xSchema extends dbproxy.Schema>({
-	// 		appId,
-	// 		unconstrainedTables,
-	// 	}: {
-	// 		appId: dbproxy.Id
-	// 		unconstrainedTables: SchemaToUnconstrainedTables<xSchema>
-	// 	}) {
-	// 	function recurse(tables: any) {
-	// 		return objectMap(tables, value =>
-	// 			value instanceof UnconstrainedTable
-	// 				? value.constrainForApp(appId)
-	// 				: recurse(value)
-	// 		)
-	// 	}
-	// 	return <dbproxy.ConstrainTables<
-	// 		AppConstraint,
-	// 		dbproxy.SchemaToTables<xSchema>>
-	// 	>recurse(unconstrainedTables)
-	// }
-
 	static constrainDatabaseForApp<xDatabase extends dbproxy.DatabaseLike<TablesMixed>>({
 			appId,
 			database,

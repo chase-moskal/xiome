@@ -1,5 +1,5 @@
 
-import {AnswerPostRow} from "../../tables/types/questions-tables.js"
+import {AnswerPostRow} from "../../types/questions-schema.js"
 import {PrivilegeChecker} from "../../../../auth/aspects/permissions/types/privilege-checker.js"
 import {appPermissions} from "../../../../../assembly/backend/permissions/standard-permissions.js"
 

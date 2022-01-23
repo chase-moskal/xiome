@@ -10,7 +10,7 @@ import {VideoSchema} from "../../../features/videos/types/video-schema.js"
 import {NotesSchema} from "../../../features/notes/api/tables/notes-schema.js"
 import {AppSchema} from "../../../features/auth/aspects/apps/types/app-tables.js"
 import {ExampleSchema} from "../../../features/example/api/types/example-tables.js"
-import {QuestionsSchema} from "../../../features/questions/api/tables/types/questions-tables.js"
+import {QuestionsSchema} from "../../../features/questions/api/types/questions-schema.js"
 import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
 
 export const appConstraintKey = "namespace-appId"
@@ -47,15 +47,18 @@ export type DatabaseTables = RemoveIndex<
 	SchemaToUnconstrainedTables<DatabaseSchemaRequiresAppIsolation>
 >
 
-export type DatabaseFinal = Await<ReturnType<typeof assimilateDatabase>>["database"]
+export type DatabaseRaw = dbproxy.DatabaseLike<DatabaseTables>
+export type DatabaseSafe = dbproxy.Database<DatabaseSchema>
 
-export type DatabaseSubsection<xGrabbed> = {
-	tables: xGrabbed
-	transaction<xResult>(action: ({}: {
-		tables: xGrabbed
-		abort: () => Promise<void>
-	}) => Promise<xResult>): Promise<xResult>
-}
+//Await<ReturnType<typeof assimilateDatabase>>["database"]
+
+// export type DatabaseSubsection<xGrabbed> = {
+// 	tables: xGrabbed
+// 	transaction<xResult>(action: ({}: {
+// 		tables: xGrabbed
+// 		abort: () => Promise<void>
+// 	}) => Promise<xResult>): Promise<xResult>
+// }
 
 export type DatabaseSelect<K extends keyof DatabaseTables> =
-	DatabaseSubsection<Pick<DatabaseTables, K>>
+	dbproxy.DatabaseLike<Pick<DatabaseTables, K>>

@@ -4,8 +4,8 @@ import {VerifyToken} from "redcrypto/x/types.js"
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {AccessPayload} from "../types/auth-tokens.js"
+import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
-import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {prepareStatsHub} from "../aspects/permissions/tools/prepare-stats-hub.js"
 import {isUserOwnerOfApp} from "../aspects/apps/utils/is-user-the-owner-of-app.js"
@@ -14,17 +14,17 @@ import {appPermissions, platformPermissions} from "../../../assembly/backend/per
 import {AnonMeta, AppOwnerAuth, AppOwnerMeta, GreenAuth, GreenMeta, LoginAuth, PlatformUserAuth, PlatformUserMeta, UserAuth, UserMeta} from "../types/auth-metas.js"
 
 export function prepareAuthPolicies({
-		config, database, verifyToken,
+		config, databaseRaw, verifyToken,
 	}: {
 		config: SecretConfig
-		database: DatabaseSelect<"apps" | "auth">
+		databaseRaw: DatabaseRaw
 		verifyToken: VerifyToken
 	}) {
 
-	const getStatsHub = prepareStatsHub({database})
+	const getStatsHub = prepareStatsHub({database: databaseRaw})
 
 	const greenPolicy: renraku.Policy<GreenMeta, GreenAuth> = async meta => ({
-		database,
+		databaseRaw,
 	})
 
 	const anonPolicy: renraku.Policy<AnonMeta, LoginAuth> = async({accessToken}, headers) => {
@@ -34,7 +34,7 @@ export function prepareAuthPolicies({
 				access,
 				database: UnconstrainedTable.constrainDatabaseForApp({
 					appId: dbproxy.Id.fromString(access.appId),
-					database: dbproxy.subsection(database, tables => ({auth: tables.auth})),
+					database: databaseRaw,
 				}),
 				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 			}
@@ -56,7 +56,7 @@ export function prepareAuthPolicies({
 		if (auth.access.appId === config.platform.appDetails.appId) {
 			return {
 				...auth,
-				database,
+				databaseRaw,
 				checker: makePrivilegeChecker(auth.access.permit, platformPermissions.privileges),
 				statsHub: await getStatsHub(userId),
 			}
@@ -67,26 +67,19 @@ export function prepareAuthPolicies({
 
 	const appOwnerPolicy: renraku.Policy<AppOwnerMeta, AppOwnerAuth> = async(meta, headers) => {
 		const auth = await platformUserPolicy(meta, headers)
-		const appTables = database.tables.apps
+		const appTables = databaseRaw.tables.apps
 		return {
 			access: auth.access,
+			database: auth.database,
 			checker: auth.checker,
 			statsHub: auth.statsHub,
-			authTablesForPlatform: UnconstrainedTable.constrainTablesForApp({
-				appId: dbproxy.Id.fromString(config.platform.appDetails.appId),
-				unconstrainedTables: database.tables.auth,
-			}),
+			databaseRaw,
 			async authorizeAppOwner(appId: dbproxy.Id) {
 				const allowedToEditAnyApp = auth.checker.hasPrivilege("edit any app")
 				const isOwnerOfApp = isUserOwnerOfApp({appId, appTables, access: auth.access})
 				const allowed = isOwnerOfApp || allowedToEditAnyApp
 				if (allowed)
-					return {
-						authTables: UnconstrainedTable.constrainTablesForApp({
-							appId,
-							unconstrainedTables: database.tables.auth,
-						})
-					}
+					return auth.database
 				else
 					throw new renraku.ApiError(403, "forbidden: lacking privileges to edit app")
 			},
