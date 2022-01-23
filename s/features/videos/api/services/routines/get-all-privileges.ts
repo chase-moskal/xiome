@@ -1,7 +1,7 @@
 
-import {AuthSchema} from "../../../../auth/types/auth-schema.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {PrivilegeDisplay} from "../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
-import {viewPrivilege} from "../../../testing/video-setup.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
 import {AccessPayload} from "../../../../auth/types/auth-tokens.js"
 import {PermissionsSchema} from "../../../../auth/aspects/permissions/types/permissions-tables.js"
@@ -13,7 +13,7 @@ export async function getAllPrivileges({
 	}: {
 		access: AccessPayload
 		platformAppId: string
-		permissionsTables: PermissionsSchema
+		permissionsTables: dbproxy.SchemaToTables<PermissionsSchema>
 	}): Promise<PrivilegeDisplay[]> {
 	
 	const permissionsEngine = makePermissionsEngine({

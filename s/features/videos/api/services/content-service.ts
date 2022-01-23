@@ -1,5 +1,6 @@
 
 import * as renraku from "renraku"
+import {find} from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {VideoMeta} from "../../types/video-auth.js"
 import {getCatalog} from "./routines/get-catalog.js"
@@ -9,8 +10,6 @@ import {VideoSchema} from "../../types/video-schema.js"
 import {Dacast} from "../../dacast/types/dacast-types.js"
 import {getVideoViews} from "./routines/get-video-views.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {getDacastEmbed} from "./routines/get-dacast-embed.js"
 import {getDacastApiKey} from "./routines/get-dacast-api-key.js"
 import {getAllPrivileges} from "./routines/get-all-privileges.js"
@@ -20,50 +19,45 @@ import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {VideoHosting, VideoModerationData, VideoShow} from "../../types/video-concepts.js"
-import {UnconstrainedTables} from "../../../../framework/api/unconstrained-table.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 export const makeContentService = ({
 	config,
 	dacastSdk,
-	videoTables: rawVideoTables,
 	basePolicy,
 }: {
 	config: SecretConfig
 	dacastSdk: Dacast.Sdk
-	videoTables: UnconstrainedTables<VideoSchema>
 	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
 }) => renraku.service()
 
 .policy(async(meta: VideoMeta, headers) => {
 	const auth = await basePolicy(meta, headers)
-	const appId = DamnId.fromString(auth.access.appId)
 	const checker = makePrivilegeChecker(auth.access.permit, videoPrivileges)
 	const engine = makePermissionsEngine({
 		isPlatform: auth.access.appId === config.platform.appDetails.appId,
-		permissionsTables: auth.authTables.permissions,
+		permissionsTables: auth.database.tables.auth.permissions,
 	})
 	return {
 		...auth,
 		engine,
 		checker,
-		videoTables: rawVideoTables.namespaceForApp(appId),
 	}
 })
 
-.expose(({access, authTables, videoTables, checker, engine}) => ({
+.expose(({access, database, checker, engine}) => ({
 
 	async fetchModerationData(): Promise<VideoModerationData> {
 		checker.requirePrivilege("moderate videos")
 		return concurrent({
-			views: getAllViews({videoTables}),
+			views: getAllViews({videoTables: database.tables.videos}),
 			privileges: getAllPrivileges({
 				access,
-				permissionsTables: authTables.permissions,
+				permissionsTables: database.tables.auth.permissions,
 				platformAppId: config.platform.appDetails.appId,
 			}),
-			catalog: getDacastApiKey(videoTables)
+			catalog: getDacastApiKey(database.tables.videos)
 				.then(async(apiKey): Promise<VideoHosting.AnyContent[]> =>
 					apiKey
 						? getCatalog({dacast: dacastSdk.getClient(apiKey)})
@@ -80,7 +74,7 @@ export const makeContentService = ({
 			reference: VideoHosting.AnyReference
 		}) {
 		checker.requirePrivilege("moderate videos")
-		await videoTables.viewDacast.update({
+		await database.tables.videos.viewDacast.update({
 			...find({label}),
 			whole: {
 				label,
@@ -92,25 +86,25 @@ export const makeContentService = ({
 			label,
 			engine,
 			privileges,
-			videoTables,
+			videoTables: database.tables.videos,
 		})
 	},
 
 	async deleteView({label}: {label: string}) {
 		checker.requirePrivilege("moderate videos")
-		await videoTables.viewDacast.delete(find({label}))
-		await videoTables.viewPrivileges.delete(find({label}))
+		await database.tables.videos.viewDacast.delete(find({label}))
+		await database.tables.videos.viewPrivileges.delete(find({label}))
 	},
 
 	async getShows({labels}: {labels: string[]}) {
-		const apiKey = await getDacastApiKey(videoTables)
+		const apiKey = await getDacastApiKey(database.tables.videos)
 		if (!apiKey)
 			return []
 
 		const views = await getVideoViews({
 			labels,
 			checker,
-			videoTables,
+			videoTables: database.tables.videos,
 			userPrivileges: access.permit.privileges,
 		})
 

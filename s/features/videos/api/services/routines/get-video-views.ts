@@ -1,9 +1,11 @@
 
+import {findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {videoPrivileges} from "../../video-privileges.js"
 import {VideoView} from "../../../types/video-concepts.js"
 import {VideoSchema} from "../../../types/video-schema.js"
 import {isPermittedToView} from "./is-permitted-to-view.js"
-import {findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
 import {PrivilegeChecker} from "../../../../auth/aspects/permissions/types/privilege-checker.js"
 
 export async function getVideoViews({
@@ -11,7 +13,7 @@ export async function getVideoViews({
 	}: {
 		labels: string[]
 		userPrivileges: string[]
-		videoTables: VideoSchema
+		videoTables: dbproxy.SchemaToTables<VideoSchema>
 		checker: PrivilegeChecker<typeof videoPrivileges>
 	}): Promise<VideoView[]> {
 
