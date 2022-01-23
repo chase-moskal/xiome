@@ -6,15 +6,15 @@ import {find} from "../../../toolbox/dbby/dbby-helpers.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
-import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
+import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
 export async function mockStripeCircuit({
-		rando, tableStorage, database,
+		rando, tableStorage, databaseRaw,
 	}: {
 		rando: Rando
+		databaseRaw: DatabaseRaw
 		tableStorage: FlexStorage
-		database: DatabaseSelect<"auth" | "store">
 	}) {
 
 	const {
@@ -36,7 +36,7 @@ export async function mockStripeCircuit({
 	})
 
 	const webhooks = stripeWebhooks({
-		database,
+		databaseRaw,
 		stripeLiaison,
 		logger: console,
 	})

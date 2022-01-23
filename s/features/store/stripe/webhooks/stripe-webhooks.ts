@@ -3,12 +3,12 @@ import {Stripe} from "stripe"
 
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
-import {DatabaseSelect} from "../../../../assembly/backend/types/database.js"
+import {DatabaseRaw} from "../../../../assembly/backend/types/database.js"
 
-export function stripeWebhooks({logger, stripeLiaison, database}: {
+export function stripeWebhooks({logger, stripeLiaison, databaseRaw}: {
 		logger: Logger
+		databaseRaw: DatabaseRaw
 		stripeLiaison: ReturnType<typeof makeStripeLiaison>
-		database: DatabaseSelect<"auth" | "store">
 	}) {
 	return {
 		async "checkout.session.completed"(event: Stripe.Event) {

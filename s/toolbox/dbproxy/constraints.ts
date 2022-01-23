@@ -1,13 +1,14 @@
 
 import {and} from "./helpers.js"
 import {objectMap} from "../object-map.js"
-import {ConditionBranch, Conditions, ConstrainTable, ConstrainTables, Row, Schema, SchemaToTables, Table, Tables} from "./types.js"
+import {isTable} from "./handy/is-table.js"
+import {ConditionBranch, Conditions, ConstrainTable, ConstrainTables, Row, Table, Tables} from "./types.js"
 
-export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
+export function constrain<xConstraint extends Row, xTable extends Table<Row>>({
 			table, constraint,
 		}: {
 			table: xTable
-			constraint: xNamespace
+			constraint: xConstraint
 		}
 	) {
 
@@ -17,7 +18,7 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 			: <ConditionBranch<"and", Row>>and({equal: <any>constraint})
 	)
 
-	return <ConstrainTable<xNamespace, xTable>>{
+	return <ConstrainTable<xConstraint, xTable>>{
 		async create(...rows) {
 			return table.create(
 				...rows.map(row => ({...row, ...constraint}))
@@ -74,4 +75,20 @@ export function constrain<xNamespace extends Row, xTable extends Table<Row>>({
 			})
 		},
 	}
+}
+
+export function constrainTables<xConstraint extends Row, xTables extends Tables>({tables, constraint}: {
+		tables: xTables
+		constraint: xConstraint
+	}): ConstrainTables<xConstraint, xTables> {
+
+	function recurse(t: any) {
+		return objectMap(t, value =>
+			isTable(value)
+				? constrain({constraint, table: value})
+				: recurse(value)
+		)
+	}
+
+	return recurse(tables)
 }

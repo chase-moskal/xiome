@@ -1,7 +1,7 @@
 
 import {MockAccount} from "./rows/mock-account.js"
-import {DbbyTable} from "../../../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 export type AccountingTables = {
-	accounts: DbbyTable<MockAccount>
+	accounts: dbproxy.Table<MockAccount>
 }

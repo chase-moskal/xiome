@@ -4,14 +4,14 @@ import {FlexibleRow} from "./rows/custom-db/flexible-row.js"
 import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 export type MockStripeSchema = {
-	prices: Stripe.Price
-	accounts: Stripe.Account
-	products: Stripe.Product
-	customers: Stripe.Customer
-	setupIntents: Stripe.SetupIntent
-	subscriptions: Stripe.Subscription
-	paymentMethods: Stripe.PaymentMethod
-	checkoutSessions: Stripe.Checkout.Session
+	prices: Partial<Stripe.Price>
+	accounts: Partial<Stripe.Account>
+	products: Partial<Stripe.Product>
+	customers: Partial<Stripe.Customer>
+	setupIntents: Partial<Stripe.SetupIntent>
+	subscriptions: Partial<Stripe.Subscription>
+	paymentMethods: Partial<Stripe.PaymentMethod>
+	checkoutSessions: Partial<Stripe.Checkout.Session>
 }
 
 export type MockStripeTables = {
