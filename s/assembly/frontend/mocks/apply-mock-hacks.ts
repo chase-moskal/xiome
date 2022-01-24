@@ -13,11 +13,14 @@ export function applyMockHacks({connection, frontend}: {
 		frontend: Await<ReturnType<typeof assembleAndInitializeFrontend>>
 	}) {
 
+	debugger
+
 	const {loginService} = connection.remote.auth.users
 
 	loginService.sendLoginLink = hitchie(
 		loginService.sendLoginLink,
 		async(func, ...args) => {
+			debugger
 			await func(...args)
 			const details = connection.backend.emails.recallLatestLoginEmail()
 			console.log("mock: logging in...")
@@ -58,4 +61,6 @@ export function applyMockHacks({connection, frontend}: {
 			console.log(`note sent! ${noteId}`)
 		}
 	}
+
+	debugger
 }
