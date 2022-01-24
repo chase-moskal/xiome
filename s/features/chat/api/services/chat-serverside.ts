@@ -98,7 +98,7 @@ export const makeChatServerside = ({
 						...draft,
 						room,
 						time: Date.now(),
-						postId: rando.randomId2().toString(),
+						postId: rando.randomId().toString(),
 						userId: clientRecord.auth.access.user.userId,
 						nickname: clientRecord.auth.access.user.profile.nickname,
 					}

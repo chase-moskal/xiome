@@ -45,7 +45,7 @@ export const makeQuestionsPostingService = (
 			userId: Id.fromString(access.user.userId),
 		})
 		const row: QuestionPostRow = {
-			questionId: options.rando.randomId2(),
+			questionId: options.rando.randomId(),
 			authorUserId: Id.fromString(access.user.userId),
 			archive: false,
 			timePosted: Date.now(),

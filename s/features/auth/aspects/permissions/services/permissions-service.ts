@@ -40,7 +40,7 @@ export const makePermissionsService = ({
 			hard: false,
 			public: true,
 			assignable: true,
-			roleId: rando.randomId2(),
+			roleId: rando.randomId(),
 			time: Date.now(),
 		})
 	},
@@ -102,7 +102,7 @@ export const makePermissionsService = ({
 		const privilege: PrivilegeRow = {
 			label,
 			hard: false,
-			privilegeId: rando.randomId2(),
+			privilegeId: rando.randomId(),
 			time: Date.now(),
 		}
 		await database.tables.auth.permissions.privilege.create(privilege)

@@ -18,7 +18,7 @@ export function makeNotesDepositBox({rando, database}: {
 			noteBase: Database.NoteBase
 			noteDetails: Database.NoteDetails.Any
 		}[] = drafts.map(draft => {
-			const noteId = rando.randomId2()
+			const noteId = rando.randomId()
 			return {
 				noteBase: {
 					...draft,

@@ -57,7 +57,7 @@ export const makeAppService = ({
 		throwProblems(validateAppDraft(appDraft))
 
 		const ownerUserId = Id.fromString(ownerUserIdString)
-		const appId = rando.randomId2()
+		const appId = rando.randomId()
 
 		await Promise.all([
 			database.tables.apps.registrations.create({

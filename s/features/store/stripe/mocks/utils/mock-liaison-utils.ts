@@ -17,7 +17,7 @@ export function mockLiaisonUtils({rando, tables}: {
 		tables: MockStripeTables
 	}) {
 
-	const generateId = () => rando.randomId2()
+	const generateId = () => rando.randomId()
 
 	const procedures = {
 		async insertAccount(account: MockAccount) {

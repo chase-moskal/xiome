@@ -508,8 +508,8 @@ export default<Suite>{
 		async "chat message in one app doesn't leak into other app"() {
 			const setup = await testChatSetup()
 			const rando = await getRando()
-			const appId_a = rando.randomId2().toString()
-			const appId_b = rando.randomId2().toString()
+			const appId_a = rando.randomId().toString()
+			const appId_b = rando.randomId().toString()
 			const {server, roomLabel} = await setup.startOnline()
 			
 			const p1 = await server.makeClientFor.participant(appId_a)
@@ -594,7 +594,7 @@ export default<Suite>{
 		const rando = await getRando()
 		const valid = {
 			room: "default",
-			id: rando.randomId2().toString(),
+			id: rando.randomId().toString(),
 			draft: <ChatDraft>{content: "hello test 123"},
 			status: ChatStatus.Online,
 		}

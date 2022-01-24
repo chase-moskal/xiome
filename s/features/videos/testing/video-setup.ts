@@ -33,7 +33,7 @@ const dacastSdk = mockDacastSdk({goodApiKey})
 
 export async function videoSetup() {
 	const rando = await getRando()
-	const appId = rando.randomId2()
+	const appId = rando.randomId()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
 		platformHome: `https://xiome.io/`,
@@ -78,7 +78,7 @@ export async function videoSetup() {
 				privileges,
 				origins: [appOrigin],
 				appId: appId.toString(),
-				userId: rando.randomId2().toString(),
+				userId: rando.randomId().toString(),
 			})
 			const headers = {origin: appOrigin}
 

@@ -9,7 +9,7 @@ import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-pol
 
 export async function prepareMockAuth() {
 	const rando = await getRando()
-	const appId = rando.randomId2()
+	const appId = rando.randomId()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
 		platformHome: `https://xiome.io/`,

@@ -17,7 +17,7 @@ export async function notesTestingSetup() {
 	} = await prepareMockAuth()
 
 	const basePolicy = authPolicies.userPolicy
-	const userId = rando.randomId2().toString()
+	const userId = rando.randomId().toString()
 	const meta = await mockMeta<UserMeta>({
 		access: {
 			appId: appId.toString(),

@@ -24,7 +24,7 @@ export async function chatValidationTestSetup(
 		access: mockAccess({
 			rando,
 			privileges,
-			appId: rando.randomId2(),
+			appId: rando.randomId(),
 			appOrigin: "https://xiome.io",
 		})
 	})

@@ -56,7 +56,7 @@ export const makeQuestionsAnsweringService = (
 		})
 		const row: AnswerPostRow = {
 			questionId,
-			answerId: options.rando.randomId2(),
+			answerId: options.rando.randomId(),
 			authorUserId: userId,
 			archive: false,
 			timePosted: Date.now(),

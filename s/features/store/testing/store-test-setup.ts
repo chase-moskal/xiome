@@ -32,7 +32,7 @@ export async function storeTestSetup() {
 			cancel: "https://api.xiome.io/store/stripe?x=cancel",
 			success: "https://api.xiome.io/store/stripe?x=success",
 		},
-		generateId: () => rando.randomId2(),
+		generateId: () => rando.randomId(),
 		basePolicy: authPolicies.anonPolicy,
 	})
 

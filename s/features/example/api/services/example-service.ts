@@ -21,7 +21,7 @@ export const makeExampleService = ({
 .expose(({database}) => ({
 	async exampleFunction({something}: {something: string}) {
 		await database.tables.examplePosts.create({
-			exampleId: rando.randomId2(),
+			exampleId: rando.randomId(),
 			something,
 		})
 	},

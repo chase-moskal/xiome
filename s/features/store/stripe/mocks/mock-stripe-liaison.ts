@@ -17,7 +17,7 @@ export function mockStripeLiaison({
 		webhooks: StripeWebhooks
 	}): ReturnType<typeof makeStripeLiaison> {
 
-	const generateId = () => rando.randomId2()
+	const generateId = () => rando.randomId()
 	function respond<xResource>(resource: xResource): Stripe.Response<xResource> {
 		return {
 			headers: {},

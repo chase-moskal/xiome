@@ -43,7 +43,7 @@ export default <Suite>{
 		return {
 			"many ids survive encode-decode-encode": async() => {
 				for (let i = 0; i < 1000; i++) {
-					const id = rando.randomId2()
+					const id = rando.randomId()
 					const id_binary = id.toBinary()
 					const id_string = id.toString()
 					const id_back_from_binary = new Id(id_binary)
@@ -253,8 +253,8 @@ export default <Suite>{
 		"save and load ids": async() => {
 			const rando = await getRando()
 			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({table: true})
-			const a1 = {id: rando.randomId2(), a: 1}
-			const a2 = {id: rando.randomId2(), a: 2}
+			const a1 = {id: rando.randomId(), a: 1}
+			const a2 = {id: rando.randomId(), a: 2}
 			await table.create(a1)
 			await table.create(a2)
 			const b1 = await table.readOne(find({id: a1.id}))

@@ -36,7 +36,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		return view.getFloat64(0, true) - 1
 	}
 
-	function randomId2() {
+	function randomId() {
 		const buffer = randomBuffer(32)
 		return new Id(buffer)
 	}
@@ -57,7 +57,7 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 	return {
 		random,
 		compare,
-		randomId2,
+		randomId,
 		randomBuffer,
 		randomSample,
 		randomSequence,

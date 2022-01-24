@@ -16,7 +16,7 @@ export function mockAccess({
 		privileges: string[]
 	}): AccessPayload {
 
-	const userId = rando.randomId2().toString()
+	const userId = rando.randomId().toString()
 
 	return {
 		appId: appId.toString(),
@@ -24,7 +24,7 @@ export function mockAccess({
 		permit: {privileges},
 		scope: {core: true},
 		user: {
-			userId: rando.randomId2().toString(),
+			userId: rando.randomId().toString(),
 			profile: {
 				avatar: undefined,
 				nickname: `user ${userId.slice(0, 6)}`,

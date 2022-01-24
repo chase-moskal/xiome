@@ -44,9 +44,9 @@ export function applyMockHacks({connection, frontend}: {
 			from: undefined,
 			details: {},
 			text: "this is a message note "
-				+ connection.backend.rando.randomId2().toString().slice(0, 8),
+				+ connection.backend.rando.randomId().toString().slice(0, 8),
 			title: "this is a message title "
-				+ connection.backend.rando.randomId2().toString().slice(0, 8),
+				+ connection.backend.rando.randomId().toString().slice(0, 8),
 			type: "message" as const,
 			to: userId,
 			...draft,
