@@ -1,6 +1,7 @@
 
 import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
 
+import {DatabaseSafe} from "./types/database.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {Configurators} from "./types/configurators.js"
@@ -14,7 +15,6 @@ import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {makeNotesDepositBox} from "../../features/notes/api/notes-deposit-box.js"
 import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
-import {DatabaseSafe} from "./types/database.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {

@@ -1,15 +1,12 @@
 
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {objectMap} from "../../../toolbox/object-map.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
+import {mockDatabaseUnwrapped} from "../database/mock-database.js"
+import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
 import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
-import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
-import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 
 export async function assimilateDatabase({
 		config,
@@ -101,20 +98,20 @@ export async function assimilateDatabase({
 
 	{ // bake app tables
 		const {appId, home, label, origins} = config.platform.appDetails
-		databaseRaw.tables.apps.registrations = dbproxy.fallback({
-			table: databaseRaw.tables.apps.registrations,
-			fallbackTable: await (async() => {
-				const fallbackDatabase = dbproxy.memory(databaseShape)
-				await fallbackDatabase.tables.apps.registrations.create({
-					appId: dbproxy.Id.fromString(appId),
-					home,
-					label,
-					origins: originsToDatabase(origins),
-					archived: false,
-				})
-				return fallbackDatabase.tables.apps.registrations
-			})()
+		const table = databaseRaw.tables.apps.registrations
+		const fallbackDatabase = dbproxy.memory(databaseShape)
+		await fallbackDatabase.tables.apps.registrations.create({
+			appId: dbproxy.Id.fromString(appId),
+			home,
+			label,
+			origins: originsToDatabase(origins),
+			archived: false,
 		})
+		const moddedTable = dbproxy.fallback({
+			table,
+			fallbackTable: fallbackDatabase.tables.apps.registrations,
+		})
+		databaseRaw.tables.apps.registrations = moddedTable
 	}
 
 	return {

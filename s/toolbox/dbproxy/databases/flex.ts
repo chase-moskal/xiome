@@ -22,6 +22,9 @@ export function flex<xSchema extends Schema>(
 				return objectMap(shape, (value, key) => {
 					const currentPath = [...path, key]
 					return typeof value === "boolean"
+						// TODO consider replacing proxy with regular object,
+						// because the proxy behaves strangely when returned
+						// from an async function
 						? new Proxy({}, {
 							get(target, prop) {
 								if (!target[prop]) {
