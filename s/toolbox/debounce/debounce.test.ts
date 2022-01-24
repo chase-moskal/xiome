@@ -50,7 +50,7 @@ export default <Suite>{
 		await nap(50)
 		increment()
 		expect(done).equals(false)
-		await nap(101)
+		await nap(201)
 		expect(done).equals(true)
 	},
 }
