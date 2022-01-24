@@ -1,7 +1,6 @@
 
-import {Id} from "./dbproxy/id.js"
+import {Id} from "./dbproxy/dbproxy.js"
 import {Await} from "../types/await.js"
-import {DamnId} from "./damnedb/damn-id.js"
 import {isNode as stockIsNode} from "./is-node.js"
 
 export type Rando = Await<ReturnType<typeof getRando>>
@@ -37,16 +36,6 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 		return view.getFloat64(0, true) - 1
 	}
 
-	// function randomId_old() {
-	// 	const buffer = randomBuffer(32)
-	// 	return identifierFromBinary(buffer)
-	// }
-
-	function randomId() {
-		const buffer = randomBuffer(32)
-		return new DamnId(buffer)
-	}
-
 	function randomId2() {
 		const buffer = randomBuffer(32)
 		return new Id(buffer)
@@ -68,7 +57,6 @@ export async function getRando({isNode = stockIsNode}: {isNode?: boolean} = {}) 
 	return {
 		random,
 		compare,
-		randomId,
 		randomId2,
 		randomBuffer,
 		randomSample,

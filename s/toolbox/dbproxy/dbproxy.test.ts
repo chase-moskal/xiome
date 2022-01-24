@@ -43,7 +43,7 @@ export default <Suite>{
 		return {
 			"many ids survive encode-decode-encode": async() => {
 				for (let i = 0; i < 1000; i++) {
-					const id = rando.randomId()
+					const id = rando.randomId2()
 					const id_binary = id.toBinary()
 					const id_string = id.toString()
 					const id_back_from_binary = new Id(id_binary)

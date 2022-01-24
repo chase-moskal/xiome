@@ -47,7 +47,7 @@ export default <Suite>{
 		const {notesDepositBox} = backend
 		const cache = makeCacheAlreadySetup()
 
-		const draft = fakeNoteDraft(rando.randomId().toString())
+		const draft = fakeNoteDraft(rando.randomId2().toString())
 		await notesDepositBox.sendNote(draft)
 
 		await cache.fetchAppropriateNotes()

@@ -78,7 +78,7 @@ export async function videoSetup() {
 				privileges,
 				origins: [appOrigin],
 				appId: appId.toString(),
-				userId: rando.randomId().toString(),
+				userId: rando.randomId2().toString(),
 			})
 			const headers = {origin: appOrigin}
 

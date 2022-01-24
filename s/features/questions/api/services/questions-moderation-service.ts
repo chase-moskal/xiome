@@ -1,8 +1,8 @@
 
 import * as renraku from "renraku"
+import {find} from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {authenticatedQuestionsPolicy} from "./policies/questions-policies.js"
 

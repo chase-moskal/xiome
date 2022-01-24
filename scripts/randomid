@@ -6,5 +6,5 @@ import {getRando} from "./x/toolbox/get-rando.js"
 	const rando = await getRando()
 	const howMany = parseInt(process.argv[2] ?? 1)
 	for (let i = 0; i < howMany; i++)
-		console.log(rando.randomId().toString())
+		console.log(rando.randomId2().toString())
 })()
