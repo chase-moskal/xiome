@@ -13,6 +13,8 @@ import {assimilateStripe} from "./assimilators/assimilate-stripe.js"
 import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {makeNotesDepositBox} from "../../features/notes/api/notes-deposit-box.js"
+import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
+import {DatabaseSafe} from "./types/database.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {
@@ -20,12 +22,12 @@ export function prepareBackend(configurators: Configurators) {
 		const options: AssimilatorOptions = {...configurators, config, rando}
 
 		const emails = assimilateEmails(options)
-		const {database, mockStorage} = await assimilateDatabase(options)
+		const {databaseRaw, mockStorage} = await assimilateDatabase(options)
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
 		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
 			...options,
-			database,
+			databaseRaw,
 			mockStorage,
 		})
 
@@ -33,8 +35,8 @@ export function prepareBackend(configurators: Configurators) {
 
 		const api = await assimilateApi({
 			...options,
-			database,
 			dacastSdk,
+			databaseRaw,
 			signToken,
 			verifyToken,
 			sendLoginEmail: emails.sendLoginEmail,
@@ -45,14 +47,16 @@ export function prepareBackend(configurators: Configurators) {
 			api,
 			config,
 			emails,
-			database,
+			databaseRaw,
 			stripeLiaison,
 			mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
 			prepareNotesDepositBox: (appId: dbproxy.Id) => makeNotesDepositBox({
 				rando,
-				appId,
-				database: database.subsection(tables => tables.notes),
+				database: <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
+					appId,
+					database: databaseRaw,
+				}),
 			}),
 			mockBrowser: async() => mockBrowser({
 				api,

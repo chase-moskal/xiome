@@ -28,7 +28,7 @@ void async function main() {
 		configureTokenFunctions,
 	})
 
-	const {database} = await assimilateDatabase({
+	const {databaseRaw} = await assimilateDatabase({
 		config,
 		configureMongo,
 		configureMockStorage: () => storage,
@@ -36,8 +36,7 @@ void async function main() {
 
 	const authPolicies = prepareAuthPolicies({
 		config,
-		appTables: database.apps,
-		authTables: database.auth,
+		databaseRaw,
 		verifyToken: crypto.verifyToken,
 	})
 

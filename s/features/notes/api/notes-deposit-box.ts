@@ -2,20 +2,13 @@
 import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
 import {Rando} from "../../../toolbox/get-rando.js"
+import {DatabaseSafe} from "../../../assembly/backend/types/database.js"
 import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
-import {DatabaseSelect} from "../../../assembly/backend/types/database.js"
-import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 
-export function makeNotesDepositBox({rando, appId, database: databaseRaw}: {
+export function makeNotesDepositBox({rando, database}: {
 		rando: Rando
-		appId: dbproxy.Id
-		database: DatabaseSelect<"notes">
+		database: DatabaseSafe
 	}) {
-
-	const database = UnconstrainedTable.constrainDatabaseForApp({
-		appId,
-		database: databaseRaw,
-	})
 
 	async function sendNotes(
 				drafts: DraftForNote<Notes.Any>[]

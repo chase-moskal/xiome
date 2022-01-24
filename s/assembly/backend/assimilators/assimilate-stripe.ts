@@ -5,21 +5,18 @@ import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 import {mockStripeCircuit} from "../../../features/store/stripe/mock-stripe-circuit.js"
 
 export async function assimilateStripe({
-		database, mockStorage,
+		databaseRaw, mockStorage,
 		config, rando,
 	}: {
-		database: DatabaseRaw
+		databaseRaw: DatabaseRaw
 		mockStorage: FlexStorage
 	} & AssimilatorOptions) {
 
 	if (config.stripe === "mock-mode") {
 		return mockStripeCircuit({
 			rando,
+			databaseRaw,
 			tableStorage: mockStorage,
-			database: database.subsection(tables => ({
-				auth: tables.auth,
-				store: tables.store,
-			})),
 		})
 	}
 	else {

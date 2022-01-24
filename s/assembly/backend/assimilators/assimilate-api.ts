@@ -1,9 +1,8 @@
 
 import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-import {DatabaseRaw, DatabaseSchema} from "../types/database.js"
+import {DatabaseRaw} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
 import {notesApi} from "../../../features/notes/api/notes-api.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
@@ -15,8 +14,6 @@ import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
-import {QuestionsSchema} from "../../../features/questions/api/types/questions-schema.js"
-import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
 
 export async function assimilateApi({
 		config, rando, databaseRaw, dacastSdk,
@@ -65,12 +62,10 @@ export async function assimilateApi({
 			config,
 			dacastSdk,
 			authPolicies,
-			videoTables: database.videos,
 		}),
 		notes: notesApi({
 			config,
 			authPolicies,
-			notesTables: database.notes,
 		})
 	})
 }
