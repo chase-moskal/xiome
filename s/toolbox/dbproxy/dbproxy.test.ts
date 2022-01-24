@@ -398,5 +398,35 @@ export default <Suite>{
 			const rows = await layer2.tables.loltable.read({conditions: false})
 			expect(rows.length).equals(3)
 		},
+		async "data written within subsection is readable outside"() {
+			const database = dbproxy.memory<{
+				layer1: {
+					layer2: {
+						loltable: {n: number}
+					},
+				}
+			}>({
+				layer1: {
+					layer2: {
+						loltable: true,
+					},
+				},
+			})
+			await database.tables.layer1.layer2.loltable.create(
+				{n: 1},
+				{n: 2},
+				{n: 3},
+			)
+			const layer2 = dbproxy.subsection(database, tables => {
+				return tables.layer1.layer2
+			})
+			await layer2.tables.loltable.create(
+				{n: 4},
+				{n: 5},
+				{n: 6},
+			)
+			const rows = await database.tables.layer1.layer2.loltable.read({conditions: false})
+			expect(rows.length).equals(6)
+		},
 	},
 }

@@ -34,7 +34,8 @@ export function applyOperation({rows, operation}: {
 					rowsToUpdate.push({...upsert})
 			}
 			else if (whole) {
-				rowsToUpdate = rowsToUpdate.map(() => whole)
+				rowsToUpdate = []
+				rowsToUpdate = [whole]
 			}
 			else throw new Error("invalid update")
 			return [...rowsToUpdate, ...otherRows]

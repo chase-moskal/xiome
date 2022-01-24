@@ -20,7 +20,7 @@ export default <Suite>{
 				await perspectives.moderator.dacastModel.initialize()
 				await perspectives.moderator.dacastModel.linkAccount({apiKey: goodApiKey})
 				expect(perspectives.moderator.dacastModel.linkedAccount).ok()
-	
+
 				const {contentModel} = perspectives.moderator
 				await contentModel.initializeForVideo(label)
 				expect(contentModel.catalog.length).ok()
