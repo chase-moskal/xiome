@@ -25,15 +25,15 @@ export function flex<xSchema extends Schema>(
 					return typeof value === "boolean"
 						? new Proxy({}, {
 							get(target, prop) {
-								if (!target[prop])
+								if (!target[prop]) {
 									target[prop] = async(...args: any[]) => safeMemoryTransaction({
 										shape,
 										storage,
 										async action({tables}) {
-											const table = obtain<Table<Row>>(tables, currentPath)
-											return table[prop](...args)
+											return tables[key][prop](...args)
 										},
 									})
+								}
 								return target[prop]
 							},
 							set() {

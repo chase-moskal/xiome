@@ -77,7 +77,7 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 			)
 		}
 		return {
-			tables: <ConstrainMixedTables<xDatabase["tables"]>>recurse(database),
+			tables: <ConstrainMixedTables<xDatabase["tables"]>>recurse(database.tables),
 			transaction: (async<xResult>(action: ({}: {
 				tables: ConstrainMixedTables<xDatabase["tables"]>
 				abort: () => Promise<void>

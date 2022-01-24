@@ -372,4 +372,31 @@ export default <Suite>{
 			},
 		}
 	},
+	"subsection": {
+		async "basic database subsection is readable"() {
+			const database = dbproxy.memory<{
+				layer1: {
+					layer2: {
+						loltable: {n: number}
+					},
+				}
+			}>({
+				layer1: {
+					layer2: {
+						loltable: true,
+					},
+				},
+			})
+			await database.tables.layer1.layer2.loltable.create(
+				{n: 1},
+				{n: 2},
+				{n: 3},
+			)
+			const layer2 = dbproxy.subsection(database, tables => {
+				return tables.layer1.layer2
+			})
+			const rows = await layer2.tables.loltable.read({conditions: false})
+			expect(rows.length).equals(3)
+		},
+	},
 }
