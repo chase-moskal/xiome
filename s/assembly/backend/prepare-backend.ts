@@ -1,8 +1,10 @@
 
+import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
+
+import {DatabaseSafe} from "./types/database.js"
 import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {Configurators} from "./types/configurators.js"
-import {DamnId} from "../../toolbox/damnedb/damn-id.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"
 import {assimilateApi} from "./assimilators/assimilate-api.js"
 import {AssimilatorOptions} from "./types/assilimator-options.js"
@@ -12,6 +14,7 @@ import {assimilateStripe} from "./assimilators/assimilate-stripe.js"
 import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {makeNotesDepositBox} from "../../features/notes/api/notes-deposit-box.js"
+import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {
@@ -19,14 +22,12 @@ export function prepareBackend(configurators: Configurators) {
 		const options: AssimilatorOptions = {...configurators, config, rando}
 
 		const emails = assimilateEmails(options)
-
-		const {database, mockStorage} = await assimilateDatabase(options)
-
+		const {databaseRaw, mockStorage} = await assimilateDatabase(options)
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
 		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
 			...options,
-			database,
+			databaseRaw,
 			mockStorage,
 		})
 
@@ -34,8 +35,8 @@ export function prepareBackend(configurators: Configurators) {
 
 		const api = await assimilateApi({
 			...options,
-			database,
 			dacastSdk,
+			databaseRaw,
 			signToken,
 			verifyToken,
 			sendLoginEmail: emails.sendLoginEmail,
@@ -46,13 +47,16 @@ export function prepareBackend(configurators: Configurators) {
 			api,
 			config,
 			emails,
-			database,
+			databaseRaw,
 			stripeLiaison,
 			mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
-			prepareNotesDepositBox: (appId: DamnId) => makeNotesDepositBox({
+			prepareNotesDepositBox: (appId: dbproxy.Id) => makeNotesDepositBox({
 				rando,
-				notesTables: database.notes.namespaceForApp(appId),
+				database: <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
+					appId,
+					database: databaseRaw,
+				}),
 			}),
 			mockBrowser: async() => mockBrowser({
 				api,

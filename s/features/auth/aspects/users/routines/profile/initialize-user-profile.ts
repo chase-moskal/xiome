@@ -1,19 +1,20 @@
 
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {generateProfileRow} from "./generate-profile-row.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
+import {DatabaseSafe} from "../../../../../../assembly/backend/types/database.js"
 import {randomXioAvatarSimpleSpec} from "../../../../../xio-components/avatar/helpers/random-xio-avatar-simple-spec.js"
 
-export async function initializeUserProfile({userId, authTables, email, generateNickname}: {
-		userId: DamnId
-		authTables: AuthTables
+export async function initializeUserProfile({userId, database, email, generateNickname}: {
+		userId: Id
+		database: DatabaseSafe
 		email: string | undefined
 		generateNickname: () => string
 	}) {
 
 	const avatar = JSON.stringify(randomXioAvatarSimpleSpec())
 
-	await authTables.users.profiles.create(generateProfileRow({
+	await database.tables.auth.users.profiles.create(generateProfileRow({
 		userId,
 		avatar,
 		generateNickname,

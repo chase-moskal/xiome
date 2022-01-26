@@ -1,21 +1,20 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {vote} from "./helpers/vote.js"
 import {AnswerDraft} from "../types/answer-draft.js"
 import {Answer} from "../types/questions-and-answers.js"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
+import {AnswerPostRow} from "../types/questions-schema.js"
 import {rateLimitAnswers} from "./helpers/rate-limiting.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {boolean, schema} from "../../../../toolbox/darkvalley.js"
-import {AnswerPostRow} from "../tables/types/questions-tables.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
 import {validateAnswerDraft} from "./validation/validate-question-draft.js"
+import {authenticatedQuestionsPolicy} from "./policies/questions-policies.js"
 import {requireUserCanEditAnswer} from "./helpers/require-user-can-edit-answer.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 
 export const makeQuestionsAnsweringService = (
 	options: QuestionsApiOptions
@@ -34,7 +33,7 @@ export const makeQuestionsAnsweringService = (
 	return auth
 })
 
-.expose(({access, questionsTables, checker}) => ({
+.expose(({access, database, checker}) => ({
 
 	async postAnswer(inputs: {questionId: string, answerDraft: AnswerDraft}) {
 		const {questionId: questionIdString, answerDraft} = runValidation(
@@ -44,16 +43,16 @@ export const makeQuestionsAnsweringService = (
 				answerDraft: validateAnswerDraft,
 			})
 		)
-		const questionId = DamnId.fromString(questionIdString)
-		const questionPost = await questionsTables.questionPosts
-			.one(find({questionId}))
+		const questionId = Id.fromString(questionIdString)
+		const questionPost = await database.tables.questions.questionPosts
+			.readOne(find({questionId}))
 		if (!questionPost)
 			throw new renraku.ApiError(400, "unknown questionId")
-		const userId = DamnId.fromString(access.user.userId)
+		const userId = Id.fromString(access.user.userId)
 		await rateLimitAnswers({
 			userId,
+			database,
 			questionId,
-			questionsTables,
 		})
 		const row: AnswerPostRow = {
 			questionId,
@@ -64,7 +63,7 @@ export const makeQuestionsAnsweringService = (
 			board: questionPost.board,
 			...answerDraft,
 		}
-		await questionsTables.answerPosts.create(row)
+		await database.tables.questions.answerPosts.create(row)
 		const answer: Answer = {
 			answerId: row.answerId.toString(),
 			questionId: row.questionId.toString(),
@@ -88,10 +87,10 @@ export const makeQuestionsAnsweringService = (
 				answerId: validateId,
 			}),
 		)
-		const answerId = DamnId.fromString(answerIdString)
-		const answerPost = await questionsTables.answerPosts.one(find({answerId}))
+		const answerId = Id.fromString(answerIdString)
+		const answerPost = await database.tables.questions.answerPosts.readOne(find({answerId}))
 		requireUserCanEditAnswer({userId: access.user.userId, checker, answerPost})
-		await questionsTables.answerPosts.update({
+		await database.tables.questions.answerPosts.update({
 			...find({answerId}),
 			write: {archive},
 		})
@@ -110,9 +109,9 @@ export const makeQuestionsAnsweringService = (
 		checker.requirePrivilege("like questions")
 		await vote({
 			status: like,
-			voteTable: questionsTables.likes,
-			userId: DamnId.fromString(access.user.userId),
-			itemId: DamnId.fromString(answerIdString),
+			voteTable: database.tables.questions.likes,
+			userId: Id.fromString(access.user.userId),
+			itemId: Id.fromString(answerIdString),
 		})
 	},
 
@@ -127,9 +126,9 @@ export const makeQuestionsAnsweringService = (
 		checker.requirePrivilege("report questions")
 		await vote({
 			status: report,
-			voteTable: questionsTables.reports,
-			userId: DamnId.fromString(access.user.userId),
-			itemId: DamnId.fromString(answerIdString),
+			voteTable: database.tables.questions.reports,
+			userId: Id.fromString(access.user.userId),
+			itemId: Id.fromString(answerIdString),
 		})
 	},
 }))

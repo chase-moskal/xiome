@@ -1,9 +1,11 @@
 
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {VideoView} from "../../../types/video-concepts.js"
-import {VideoTables} from "../../../types/video-tables.js"
+import {VideoSchema} from "../../../types/video-schema.js"
 
 export async function getAllViews({videoTables}: {
-		videoTables: VideoTables
+		videoTables: dbproxy.SchemaToTables<VideoSchema>
 	}): Promise<VideoView[]> {
 	const viewDacastRows = await videoTables.viewDacast.read({
 		conditions: false,

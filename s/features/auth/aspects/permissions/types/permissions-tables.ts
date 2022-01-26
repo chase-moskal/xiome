@@ -1,16 +1,15 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {AsDbbyRow, DbbyTable} from "../../../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
-export type PermissionsTables = {
-	role: DbbyTable<RoleRow>
-	privilege: DbbyTable<PrivilegeRow>
-	userHasRole: DbbyTable<UserHasRoleRow>
-	roleHasPrivilege: DbbyTable<RoleHasPrivilegeRow>
-}
+export type PermissionsSchema = dbproxy.AsSchema<{
+	role: RoleRow
+	privilege: PrivilegeRow
+	userHasRole: UserHasRoleRow
+	roleHasPrivilege: RoleHasPrivilegeRow
+}>
 
-export type RoleRow = AsDbbyRow<{
-	roleId: DamnId
+export type RoleRow = dbproxy.AsRow<{
+	roleId: dbproxy.Id
 	label: string
 	time: number
 
@@ -24,16 +23,16 @@ export type RoleRow = AsDbbyRow<{
 	assignable: boolean
 }>
 
-export type PrivilegeRow = AsDbbyRow<{
-	privilegeId: DamnId
+export type PrivilegeRow = dbproxy.AsRow<{
+	privilegeId: dbproxy.Id
 	label: string
 	hard: boolean
 	time: number
 }>
 
-export type UserHasRoleRow = AsDbbyRow<{
-	userId: DamnId
-	roleId: DamnId
+export type UserHasRoleRow = dbproxy.AsRow<{
+	userId: dbproxy.Id
+	roleId: dbproxy.Id
 	timeframeStart: undefined | number
 	timeframeEnd: undefined | number
 	public: boolean
@@ -41,9 +40,9 @@ export type UserHasRoleRow = AsDbbyRow<{
 	time: number
 }>
 
-export type RoleHasPrivilegeRow = AsDbbyRow<{
-	roleId: DamnId
-	privilegeId: DamnId
+export type RoleHasPrivilegeRow = dbproxy.AsRow<{
+	roleId: dbproxy.Id
+	privilegeId: dbproxy.Id
 	immutable: boolean
 	active: boolean
 	time: number

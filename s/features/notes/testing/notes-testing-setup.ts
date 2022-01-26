@@ -5,33 +5,18 @@ import {ops} from "../../../framework/ops.js"
 import {subbies} from "../../../toolbox/subbies.js"
 import {UserMeta} from "../../auth/types/auth-metas.js"
 import {makeNotesModel} from "../models/notes-model.js"
-import {NotesTables} from "../api/tables/notes-tables.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {makeNotesDepositBox} from "../api/notes-deposit-box.js"
 import {makeNotesService} from "../api/services/notes-service.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
-import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function notesTestingSetup() {
 	const {
-		rando, appId, config, authPolicies, storage, appOrigin,
+		rando, appId, config, authPolicies, storage, appOrigin, databaseRaw,
 	} = await prepareMockAuth()
 
-	const notesTables = new UnconstrainedTables(
-		await mockStorageTables<NotesTables>(storage, {
-			notes: true,
-			questionDetails: true,
-		})
-	)
-
 	const basePolicy = authPolicies.userPolicy
-	const rawNotesService = makeNotesService({
-		config,
-		notesTables,
-		basePolicy,
-	})
 	const userId = rando.randomId().toString()
 	const meta = await mockMeta<UserMeta>({
 		access: {
@@ -53,11 +38,16 @@ export async function notesTestingSetup() {
 	})
 
 	const headers = {origin: appOrigin}
-	const {access} = await basePolicy(meta, headers)
+	const {access, database} = await basePolicy(meta, headers)
 
 	const notesDepositBox = makeNotesDepositBox({
 		rando,
-		notesTables: notesTables.namespaceForApp(appId),
+		database,
+	})
+
+	const notesService = makeNotesService({
+		config,
+		basePolicy,
 	})
 
 	const broadcast = subbies<ReturnType<typeof makeNotesModel>>()
@@ -73,10 +63,11 @@ export async function notesTestingSetup() {
 	}
 
 	async function browserTab() {
-		const notesService = renraku.mock()
-			.forService(rawNotesService)
-			.withMeta(async() => meta, async() => headers)
-		const notesModel = makeNotesModel({notesService})
+		const notesModel = makeNotesModel({
+			notesService: renraku.mock()
+				.forService(notesService)
+				.withMeta(async() => meta, async() => headers)
+		})
 		await notesModel.updateAccessOp(ops.ready(access))
 		orchestrateBroadcast(notesModel)
 		return {

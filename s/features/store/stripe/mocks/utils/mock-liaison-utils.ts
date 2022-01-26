@@ -1,11 +1,12 @@
 
 import {Stripe} from "stripe"
+import {find, and} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {MockAccount} from "../tables/types/rows/mock-account.js"
 import {MockCustomer} from "../tables/types/rows/mock-customer.js"
-import {and, find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {MockStripeTables} from "../tables/types/mock-stripe-tables.js"
+import {MockStripeTables} from "../tables/types/mock-stripe-database.js"
 import {MockSetupIntent} from "../tables/types/rows/mock-setup-intent.js"
 import {MockSubscription} from "../tables/types/rows/mock-subscription.js"
 import {MockPaymentMethod} from "../tables/types/rows/mock-payment-method.js"
@@ -35,19 +36,19 @@ export function mockLiaisonUtils({rando, tables}: {
 			await tables.paymentMethods.create(paymentMethod)
 		},
 		async fetchAccount(id: string) {
-			return tables.accounts.one(find({id}))
+			return tables.accounts.readOne(find({id}))
 		},
 		async fetchCustomer(id: string) {
-			return tables.customers.one({conditions: and({equal: {id}})})
+			return tables.customers.readOne({conditions: and({equal: {id}})})
 		},
 		async fetchSubscription(id: string) {
-			return tables.subscriptions.one({conditions: and({equal: {id}})})
+			return tables.subscriptions.readOne({conditions: and({equal: {id}})})
 		},
 		async fetchPaymentMethod(id: string) {
-			return tables.paymentMethods.one({conditions: and({equal: {id}})})
+			return tables.paymentMethods.readOne({conditions: and({equal: {id}})})
 		},
 		async fetchSetupIntent(id: string) {
-			return tables.setupIntents.one({conditions: and({equal: {id}})})
+			return tables.setupIntents.readOne({conditions: and({equal: {id}})})
 		},
 		async updateCustomer(customerId: string, customer: Partial<MockCustomer>) {
 			return tables.customers.update({
@@ -115,8 +116,8 @@ export function mockLiaisonUtils({rando, tables}: {
 				object: undefined,
 				settings: undefined,
 			}
-			await procedures.insertAccount(account)
-			return account
+			await procedures.insertAccount(<MockAccount>account)
+			return <MockAccount>account
 		},
 		async customer(): Promise<MockCustomer> {
 			const customer = {
@@ -170,7 +171,6 @@ export function mockLiaisonUtils({rando, tables}: {
 				id: generateId().toString(),
 				status: "active",
 				// plan: {id: planId},
-				
 				customer: customer.id,
 				cancel_at_period_end: false,
 				current_period_end: Date.now() + (30 * day),

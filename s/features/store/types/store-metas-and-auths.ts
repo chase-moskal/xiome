@@ -1,12 +1,11 @@
 
-import {StoreTables} from "./store-tables.js"
+import {StoreSchema} from "./store-schema.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {StripeLiaison, StripeLiaisonAccount} from "./store-concepts.js"
 
 export interface StoreMeta extends AnonMeta {}
 
 export interface StoreAuth extends AnonAuth {
-	storeTables: StoreTables
 	stripeLiaison: StripeLiaison
 }
 

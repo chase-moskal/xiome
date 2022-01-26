@@ -1,10 +1,9 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {AuthOptions} from "../../../types/auth-options.js"
 import {PrivilegeRow} from "../types/permissions-tables.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsMeta} from "../types/permissions-auth-and-metas.js"
 import {PrivilegeDisplay} from "../../users/routines/permissions/types/privilege-display.js"
 import {roleLabelValidator} from "../../users/routines/permissions/validators/role-label-validator.js"
@@ -18,13 +17,13 @@ export const makePermissionsService = ({
 	const auth = await authPolicies.userPolicy(meta, headers)
 	auth.checker.requirePrivilege("customize permissions")
 	const engine = makePermissionsEngine({
-		permissionsTables: auth.authTables.permissions,
+		permissionsTables: auth.database.tables.auth.permissions,
 		isPlatform: auth.access.appId === config.platform.appDetails.appId,
 	})
 	return {...auth, engine}
 })
 
-.expose(({authTables, engine}) => ({
+.expose(({database, engine}) => ({
 
 	async fetchPermissions() {
 		return engine.getPermissionsDisplay()
@@ -36,7 +35,7 @@ export const makePermissionsService = ({
 			400,
 			`validation error on label: ${problems.join("; ")}`
 		)
-		await authTables.permissions.role.create({
+		await database.tables.auth.permissions.role.create({
 			label,
 			hard: false,
 			public: true,
@@ -47,8 +46,9 @@ export const makePermissionsService = ({
 	},
 
 	async deleteRole({roleId: roleIdString}: {roleId: string}) {
-		const roleId = DamnId.fromString(roleIdString)
-		const role = await authTables.permissions.role.one(find({roleId}))
+		const roleId = Id.fromString(roleIdString)
+		const role = await database.tables.auth.permissions.role
+			.readOne(find({roleId}))
 
 		if (!role)
 			throw new renraku.ApiError(404, "role not found")
@@ -57,8 +57,8 @@ export const makePermissionsService = ({
 			throw new renraku.ApiError(400, "cannot delete hard role")
 
 		await Promise.all([
-			authTables.permissions.userHasRole.delete(find({roleId})),
-			authTables.permissions.role.delete(find({roleId})),
+			database.tables.auth.permissions.userHasRole.delete(find({roleId})),
+			database.tables.auth.permissions.role.delete(find({roleId})),
 		])
 	},
 
@@ -66,9 +66,9 @@ export const makePermissionsService = ({
 			roleId: string
 			privilegeId: string
 		}) {
-		const roleId = DamnId.fromString(roleIdString)
-		const privilegeId = DamnId.fromString(privilegeIdString)
-		await authTables.permissions.roleHasPrivilege.update({
+		const roleId = Id.fromString(roleIdString)
+		const privilegeId = Id.fromString(privilegeIdString)
+		await database.tables.auth.permissions.roleHasPrivilege.update({
 			...find({roleId, privilegeId}),
 			upsert: {
 				roleId,
@@ -84,9 +84,9 @@ export const makePermissionsService = ({
 			roleId: string
 			privilegeId: string
 		}) {
-		const roleId = DamnId.fromString(roleIdString)
-		const privilegeId = DamnId.fromString(privilegeIdString)
-		await authTables.permissions.roleHasPrivilege.update({
+		const roleId = Id.fromString(roleIdString)
+		const privilegeId = Id.fromString(privilegeIdString)
+		await database.tables.auth.permissions.roleHasPrivilege.update({
 			...find({roleId, privilegeId}),
 			upsert: {
 				roleId,
@@ -105,7 +105,7 @@ export const makePermissionsService = ({
 			privilegeId: rando.randomId(),
 			time: Date.now(),
 		}
-		await authTables.permissions.privilege.create(privilege)
+		await database.tables.auth.permissions.privilege.create(privilege)
 		return {
 			hard: privilege.hard,
 			label: privilege.label,
@@ -117,7 +117,7 @@ export const makePermissionsService = ({
 	async deletePrivilege({privilegeId: privilegeIdString}: {
 			privilegeId: string
 		}) {
-		const privilegeId = DamnId.fromString(privilegeIdString)
+		const privilegeId = Id.fromString(privilegeIdString)
 		const [privilege] = await engine.getPrivileges([privilegeId.toString()])
 
 		if (!privilege)
@@ -127,9 +127,9 @@ export const makePermissionsService = ({
 			throw new renraku.ApiError(400, `cannot delete hard privilege "${privilege.privilegeId.toString()}"`)
 
 		await Promise.all([
-			authTables.permissions
+			database.tables.auth.permissions
 				.roleHasPrivilege.delete(find({privilegeId})),
-			authTables.permissions
+			database.tables.auth.permissions
 				.privilege.delete(find({privilegeId})),
 		])
 	},

@@ -1,17 +1,18 @@
 
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, findAll, or} from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {merge} from "../../../toolbox/merge.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {find, findAll, or} from "../../../toolbox/dbby/dbby-helpers.js"
 import {permissionsMergingFacility} from "./merging/permissions-merging-facility.js"
 import {PublicUserRole} from "../../../features/auth/aspects/users/types/public-user-role.js"
-import {PermissionsTables, PrivilegeRow, RoleRow} from "../../../features/auth/aspects/permissions/types/permissions-tables.js"
+import {PermissionsSchema, PrivilegeRow, RoleRow} from "../../../features/auth/aspects/permissions/types/permissions-tables.js"
 import {PermissionsDisplay} from "../../../features/auth/aspects/users/routines/permissions/types/permissions-display.js"
 import {isCurrentlyWithinTimeframe} from "../../../features/auth/aspects/users/routines/user/utils/is-currently-within-timeframe.js"
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
-		permissionsTables: PermissionsTables
+		permissionsTables: dbproxy.SchemaToTables<PermissionsSchema>
 	}) {
 
 	const {
@@ -25,7 +26,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const roleId = hardPermissions.roles.everybody.roleId
 		const hard = getHardPrivilegeDetails(roleId)
 		const soft = await permissionsTables.roleHasPrivilege
-			.read(find({roleId: DamnId.fromString(roleId)}))
+			.read(find({roleId: Id.fromString(roleId)}))
 		return getActivePrivilegeIds(mergeRoleHasPrivileges({hard, soft}))
 			.map(id => id.toString())
 	}
@@ -43,7 +44,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				throw new Error("invalid: user ids cannot be empty")
 			const usersHaveRolesRaw = await permissionsTables.userHasRole.read({
 				conditions: or(...userIds.map(userId => ({
-					equal: {userId: DamnId.fromString(userId)}
+					equal: {userId: Id.fromString(userId)}
 				}))),
 			})
 			const roleIds = usersHaveRolesRaw.map(u => u.roleId)
@@ -119,7 +120,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 			if (found) {
 				const [label, role] = found
 				return {
-					roleId: DamnId.fromString(roleId),
+					roleId: Id.fromString(roleId),
 					label,
 					hard: true,
 					public: role.public,
@@ -135,7 +136,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		const allSoftRoles = allRoleIds.length
 			? await permissionsTables.role.read({
 				conditions: or(...allRoleIds.map(
-					roleId => ({equal: {roleId: DamnId.fromString(roleId)}})
+					roleId => ({equal: {roleId: Id.fromString(roleId)}})
 				))
 			})
 			: []
@@ -180,7 +181,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		function getAllHardPrivileges(): PrivilegeRow[] {
 			return Object.entries(hardPermissions.privileges)
 				.map(([label, privilegeId]) => ({
-					privilegeId: DamnId.fromString(privilegeId),
+					privilegeId: Id.fromString(privilegeId),
 					label,
 					hard: true,
 					time: 0,
@@ -200,7 +201,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 				const soft = privilegeIds.length
 					? await permissionsTables.privilege
 						.read(findAll(privilegeIds, id => ({
-							privilegeId: DamnId.fromString(id)
+							privilegeId: Id.fromString(id)
 						})))
 					: []
 				const hard = getAllHardPrivileges()
@@ -224,7 +225,7 @@ export function makePermissionsEngine({isPlatform, permissionsTables}: {
 					.map(([label, r]) => ({
 						label,
 						hard: true,
-						roleId: DamnId.fromString(r.roleId),
+						roleId: Id.fromString(r.roleId),
 						public: r.public,
 						assignable: r.assignable,
 						time: 0,

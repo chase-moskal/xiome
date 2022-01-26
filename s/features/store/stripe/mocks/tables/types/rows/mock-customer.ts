@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
-import {FlexibleDbbyRow} from "./dbby-bespoke/flexible-dbby-row.js"
+import {FlexibleRow} from "./custom-db/flexible-row.js"
 
-export type MockCustomer = {
+export type MockCustomer = FlexibleRow<{
 	id: string
-} & Partial<Stripe.Customer> & FlexibleDbbyRow
+} & Partial<Stripe.Customer>>

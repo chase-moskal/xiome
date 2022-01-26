@@ -1,6 +1,7 @@
 
+import {Id} from "../../../../toolbox/dbproxy/dbproxy.js"
+
 import {AnyPermissions} from "../permissions-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {appPermissions, platformPermissions} from "../standard-permissions.js"
 import {RoleHasPrivilegeRow} from "../../../../features/auth/aspects/permissions/types/permissions-tables.js"
 
@@ -61,8 +62,8 @@ export function permissionsMergingFacility({isPlatform}: {
 
 		function toSofty(hardy: HardPrivilegeDetail): RoleHasPrivilegeRow {
 			return {
-				roleId: DamnId.fromString(hardy.roleId),
-				privilegeId: DamnId.fromString(hardy.privilegeId),
+				roleId: Id.fromString(hardy.roleId),
+				privilegeId: Id.fromString(hardy.privilegeId),
 				active: hardy.active,
 				immutable: hardy.immutable,
 				time: 0,

@@ -8,9 +8,9 @@ import {ClientRecord} from "../common/types/chat-concepts.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
 import {makeChatServerside} from "../api/services/chat-serverside.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
+import {RateLimiter} from "../../../toolbox/rate-limiter/rate-limiter.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
 import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
-import {RateLimiter} from "../../../toolbox/rate-limiter/rate-limiter.js"
 
 export async function chatValidationTestSetup(
 		...privileges: (keyof typeof chatPrivileges)[]

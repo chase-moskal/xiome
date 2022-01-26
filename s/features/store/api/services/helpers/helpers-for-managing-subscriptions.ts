@@ -1,20 +1,21 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+import {Id} from "../../../../../toolbox/dbproxy/dbproxy.js"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForManagingSubscriptions = ({
-		authTables,
-		storeTables,
+		database,
 		stripeAccountId,
 		stripeLiaisonAccount,
 		generateId,
 	}: StoreLinkedAuth & {
-		generateId: () => DamnId
+		generateId: () => Id
 	}) => {
 
+	const authTables = database.tables.auth
+	const storeTables = database.tables.store
 	const time = Date.now()
 
-	function makeRoleRow(roleId: DamnId, label: string) {
+	function makeRoleRow(roleId: Id, label: string) {
 		return {
 			label,
 			roleId,

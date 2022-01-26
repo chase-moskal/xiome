@@ -5,9 +5,12 @@ import {Id} from "./id.js"
 import {fallback} from "./fallback.js"
 import * as dbproxy from "./dbproxy.js"
 import {getRando} from "../get-rando.js"
-import {constraint} from "./constraint.js"
+import {constrain} from "./constraints.js"
 import {and, find, or} from "./helpers.js"
 import {Row, SchemaToShape, Table} from "./types.js"
+import {FlexStorage} from "../flex-storage/types/flex-storage.js"
+import {memoryFlexStorage} from "../flex-storage/memory-flex-storage.js"
+import {pathToStorageKey} from "./databases/utils/path-to-storage-key.js"
 
 type DemoUser = {
 	userId: string
@@ -84,28 +87,6 @@ export default <Suite>{
 					conditions: and({notSet: {location: true}})
 				})).userId
 			).equals("u999")
-		},
-		"assert one": async() => {
-			const {users} = await setupThreeUserDemo()
-			const fallback: DemoUser = {
-				userId: "u000",
-				balance: 1000,
-				location: "russia",
-			}
-			return (true
-				&& expect(
-						(await users.assert({
-							conditions: and({equal: {userId: "u123"}}),
-							make: async() => fallback,
-						})).location
-					).equals("america")
-				&& expect(
-						(await users.assert({
-							conditions: and({equal: {userId: "u000"}}),
-							make: async() => fallback,
-						})).location
-					).equals("russia")
-			)
 		},
 		"read sorting via order": async() => {
 			const {users} = await setupThreeUserDemo()
@@ -253,14 +234,33 @@ export default <Suite>{
 		"save and load ids": async() => {
 			const rando = await getRando()
 			const {tables: {table}} = dbproxy.memory<{table: {id: Id, a: number}}>({table: true})
-			const a1 = {id: rando.randomId2(), a: 1}
-			const a2 = {id: rando.randomId2(), a: 2}
+			const a1 = {id: rando.randomId(), a: 1}
+			const a2 = {id: rando.randomId(), a: 2}
 			await table.create(a1)
 			await table.create(a2)
 			const b1 = await table.readOne(find({id: a1.id}))
 			// const all = await table.read({conditions: false})
 			expect(b1.a).equals(1)
 			assert(b1.id instanceof Id, "recovered id is instance")
+		},
+	},
+	"storage": {
+		async "storage keys represent full path to tables"() {
+			let keyThatWasWrittenTo: string = "nope"
+			const storage = memoryFlexStorage()
+			const storageSpy: FlexStorage = {...storage, async write(key, data) {
+				keyThatWasWrittenTo = key
+				return storage.write(key, data)
+			}}
+			const {tables} = dbproxy.flex<{
+				alpha: {
+					bravo: {
+						charlie: {x: string}
+					}
+				}
+			}>(storageSpy, {alpha: {bravo: {charlie: true}}})
+			await tables.alpha.bravo.charlie.create({x: "abc"})
+			expect(keyThatWasWrittenTo).equals(pathToStorageKey(["alpha", "bravo", "charlie"]))
 		},
 	},
 	"flex database transactions": {
@@ -334,9 +334,9 @@ export default <Suite>{
 				table: xTable,
 				appId: string,
 			) {
-			return constraint<{appId: string}, xTable>({
+			return constrain<{appId: string}, xTable>({
 				table,
-				namespace: {appId},
+				constraint: {appId},
 			})
 		}
 		return {
@@ -371,5 +371,62 @@ export default <Suite>{
 					&& expect(failed).ok()
 			},
 		}
+	},
+	"subsection": {
+		async "basic database subsection is readable"() {
+			const database = dbproxy.memory<{
+				layer1: {
+					layer2: {
+						loltable: {n: number}
+					},
+				}
+			}>({
+				layer1: {
+					layer2: {
+						loltable: true,
+					},
+				},
+			})
+			await database.tables.layer1.layer2.loltable.create(
+				{n: 1},
+				{n: 2},
+				{n: 3},
+			)
+			const layer2 = dbproxy.subsection(database, tables => {
+				return tables.layer1.layer2
+			})
+			const rows = await layer2.tables.loltable.read({conditions: false})
+			expect(rows.length).equals(3)
+		},
+		async "data written within subsection is readable outside"() {
+			const database = dbproxy.memory<{
+				layer1: {
+					layer2: {
+						loltable: {n: number}
+					},
+				}
+			}>({
+				layer1: {
+					layer2: {
+						loltable: true,
+					},
+				},
+			})
+			await database.tables.layer1.layer2.loltable.create(
+				{n: 1},
+				{n: 2},
+				{n: 3},
+			)
+			const layer2 = dbproxy.subsection(database, tables => {
+				return tables.layer1.layer2
+			})
+			await layer2.tables.loltable.create(
+				{n: 4},
+				{n: 5},
+				{n: 6},
+			)
+			const rows = await database.tables.layer1.layer2.loltable.read({conditions: false})
+			expect(rows.length).equals(6)
+		},
 	},
 }

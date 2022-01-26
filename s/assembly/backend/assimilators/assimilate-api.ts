@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 
-import {DatabaseFinal} from "../types/database.js"
+import {DatabaseRaw} from "../types/database.js"
 import {authApi} from "../../../features/auth/auth-api.js"
 import {notesApi} from "../../../features/notes/api/notes-api.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
@@ -16,10 +16,10 @@ import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
 
 export async function assimilateApi({
-		config, rando, database, dacastSdk,
+		config, rando, databaseRaw, dacastSdk,
 		sendLoginEmail, signToken, verifyToken,
 	}: {
-		database: DatabaseFinal
+		databaseRaw: DatabaseRaw
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken
@@ -30,9 +30,8 @@ export async function assimilateApi({
 
 	const authPolicies = prepareAuthPolicies({
 		config,
+		databaseRaw,
 		verifyToken,
-		appTables: database.apps,
-		authTables: database.auth,
 	})
 
 	return renraku.api({
@@ -53,24 +52,20 @@ export async function assimilateApi({
 			rando,
 			config,
 			authPolicies,
-			questionsTables: database.questions,
 		}),
 		example: exampleApi({
 			rando,
 			config,
 			authPolicies,
-			exampleTables: database.example,
 		}),
 		videos: videosApi({
 			config,
 			dacastSdk,
 			authPolicies,
-			videoTables: database.videos,
 		}),
 		notes: notesApi({
 			config,
 			authPolicies,
-			notesTables: database.notes,
 		})
 	})
 }

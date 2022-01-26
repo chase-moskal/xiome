@@ -1,9 +1,9 @@
 
 import {ProfileRow} from "../../types/user-tables.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
+import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 export const generateProfileRow = ({userId, avatar, generateNickname}: {
-		userId: DamnId
+		userId: Id
 		avatar: undefined | string
 		generateNickname: () => string
 	}): ProfileRow => ({

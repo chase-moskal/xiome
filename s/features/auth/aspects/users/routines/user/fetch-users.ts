@@ -1,16 +1,16 @@
 
 import * as renraku from "renraku"
+import {Id, or} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {UserStats} from "../../types/user-stats.js"
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../types/auth-schema.js"
 import {profileFromRow} from "../profile/profile-from-row.js"
-import {or} from "../../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/types/permissions-engine.js"
 
 export async function fetchUsers({userIds, authTables, permissionsEngine}: {
-		userIds: DamnId[]
-		authTables: AuthTables
+		userIds: Id[]
+		authTables: dbproxy.SchemaToTables<AuthSchema>
 		permissionsEngine: PermissionsEngine
 	}) {
 
@@ -25,7 +25,7 @@ export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		await permissionsEngine
 			.getPublicRolesForUsers(userIds.map(id => id.toString()))
 
-	function assembleDetailsForEachUser(userId: DamnId) {
+	function assembleDetailsForEachUser(userId: Id) {
 		const account = accounts.find(a => a.userId.toString() === userId.toString())
 		const profile = profiles.find(p => p.userId.toString() === userId.toString())
 

@@ -1,22 +1,18 @@
 
 import * as renraku from "renraku"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {StatsHub} from "../types/stats-hub.js"
-import {AppTables} from "../../apps/types/app-tables.js"
-import {AuthTables} from "../../../types/auth-tables.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {day, month} from "../../../../../toolbox/goodtimes/times.js"
-import {and, find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {UnconstrainedTables} from "../../../../../framework/api/types/table-namespacing-for-apps.js"
+import {DatabaseRaw} from "../../../../../assembly/backend/types/database.js"
 
-export function prepareStatsHub({appTables, authTables}: {
-		appTables: AppTables
-		authTables: UnconstrainedTables<AuthTables>
+export function prepareStatsHub({database}: {
+		database: DatabaseRaw
 	}) {
-	return async function getStatsHub(userId: DamnId): Promise<StatsHub> {
+	return async function getStatsHub(userId: dbproxy.Id): Promise<StatsHub> {
 
-		async function throwForbiddenUser(appId: DamnId) {
-			const row = await appTables.owners.one(find({appId}))
+		async function throwForbiddenUser(appId: dbproxy.Id) {
+			const row = await database.tables.apps.owners.readOne(dbproxy.find({appId}))
 			if (row.userId.toString() !== userId.toString())
 				throw new renraku.ApiError(403, "forbidden")
 		}
@@ -24,20 +20,26 @@ export function prepareStatsHub({appTables, authTables}: {
 		return {
 			countUsers: async appId => {
 				await throwForbiddenUser(appId)
-				return await authTables.namespaceForApp(appId).users.accounts.count({conditions: false})
+				const accountsTable = database.tables.auth.users.accounts
+					.constrainForApp(appId)
+				return accountsTable.count({conditions: false})
 			},
 			countUsersActiveDaily: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - day
-				return authTables.namespaceForApp(appId).users.latestLogins.count({
-					conditions: and({greater: {time: timeToStartCounting}}),
+				const latestLoginsTable = database.tables.auth.users.latestLogins
+					.constrainForApp(appId)
+				return latestLoginsTable.count({
+					conditions: dbproxy.and({greater: {time: timeToStartCounting}}),
 				})
 			},
 			countUsersActiveMonthly: async appId => {
 				await throwForbiddenUser(appId)
 				const timeToStartCounting = Date.now() - month
-				return authTables.namespaceForApp(appId).users.latestLogins.count({
-					conditions: and({greater: {time: timeToStartCounting}}),
+				const latestLoginsTable = database.tables.auth.users.latestLogins
+					.constrainForApp(appId)
+				return latestLoginsTable.count({
+					conditions: dbproxy.and({greater: {time: timeToStartCounting}}),
 				})
 			},
 		}

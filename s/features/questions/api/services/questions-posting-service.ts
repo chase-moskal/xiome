@@ -1,21 +1,21 @@
 
 import * as renraku from "renraku"
 
+import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
+
 import {vote} from "./helpers/vote.js"
 import {QuestionDraft} from "../types/question-draft.js"
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {Question} from "../types/questions-and-answers.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
+import {QuestionPostRow} from "../types/questions-schema.js"
 import {rateLimitQuestions} from "./helpers/rate-limiting.js"
 import {boolean, schema} from "../../../../toolbox/darkvalley.js"
-import {QuestionPostRow} from "../tables/types/questions-tables.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
 import {validateQuestionDraft} from "./validation/validate-question-draft.js"
+import {authenticatedQuestionsPolicy} from "./policies/questions-policies.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {requireUserCanEditQuestion} from "./helpers/require-user-can-edit-question.js"
-import {authenticatedQuestionsPolicy} from "./policies/authenticated-questions-policy.js"
 
 export const makeQuestionsPostingService = (
 		options: QuestionsApiOptions
@@ -34,24 +34,24 @@ export const makeQuestionsPostingService = (
 	return auth
 })
 
-.expose(({access, questionsTables, checker}) => ({
+.expose(({access, database, checker}) => ({
 
 	async postQuestion(inputs: {questionDraft: QuestionDraft}): Promise<Question> {
 		const {questionDraft} = runValidation(inputs, schema({
 			questionDraft: validateQuestionDraft,
 		}))
 		await rateLimitQuestions({
-			questionsTables,
-			userId: DamnId.fromString(access.user.userId),
+			database,
+			userId: Id.fromString(access.user.userId),
 		})
 		const row: QuestionPostRow = {
 			questionId: options.rando.randomId(),
-			authorUserId: DamnId.fromString(access.user.userId),
+			authorUserId: Id.fromString(access.user.userId),
 			archive: false,
 			timePosted: Date.now(),
 			...questionDraft,
 		}
-		await questionsTables.questionPosts.create(row)
+		await database.tables.questions.questionPosts.create(row)
 		return {
 			archive: row.archive,
 			authorUserId: row.authorUserId.toString(),
@@ -75,11 +75,11 @@ export const makeQuestionsPostingService = (
 				questionId: validateId,
 			}),
 		)
-		const questionId = DamnId.fromString(questionIdString)
-		const questionPost = await questionsTables.questionPosts
-			.one(find({questionId}))
+		const questionId = Id.fromString(questionIdString)
+		const questionPost = await database.tables.questions.questionPosts
+			.readOne(find({questionId}))
 		requireUserCanEditQuestion({userId: access.user.userId, checker, questionPost})
-		await questionsTables.questionPosts.update({
+		await database.tables.questions.questionPosts.update({
 			...find({questionId}),
 			write: {archive: !!archive},
 		})
@@ -96,9 +96,9 @@ export const makeQuestionsPostingService = (
 		checker.requirePrivilege("like questions")
 		await vote({
 			status: like,
-			voteTable: questionsTables.likes,
-			userId: DamnId.fromString(access.user.userId),
-			itemId: DamnId.fromString(questionIdString),
+			voteTable: database.tables.questions.likes,
+			userId: Id.fromString(access.user.userId),
+			itemId: Id.fromString(questionIdString),
 		})
 	},
 
@@ -113,9 +113,9 @@ export const makeQuestionsPostingService = (
 		checker.requirePrivilege("report questions")
 		await vote({
 			status: report,
-			voteTable: questionsTables.reports,
-			userId: DamnId.fromString(access.user.userId),
-			itemId: DamnId.fromString(questionIdString),
+			voteTable: database.tables.questions.reports,
+			userId: Id.fromString(access.user.userId),
+			itemId: Id.fromString(questionIdString),
 		})
 	},
 }))

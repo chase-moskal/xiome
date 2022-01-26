@@ -7,30 +7,22 @@ import {makeStoreModel} from "../models/store-model.js"
 import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
-import {mockStoreTables} from "../api/tables/mock-store-tables.js"
 import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
-import {mockAuthTables} from "../../auth/tables/mock-auth-tables.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function storeTestSetup() {
-	const {appId, rando, config, storage, appOrigin, authPolicies}
+	const {appId, rando, config, storage, appOrigin, authPolicies, databaseRaw}
 		= await prepareMockAuth()
-
-	const authTables = new UnconstrainedTables(await mockAuthTables(storage))
-	const storeTables = new UnconstrainedTables(await mockStoreTables(storage))
 
 	const {stripeLiaison, mockStripeOperations} = await mockStripeCircuit({
 		rando,
-		authTables,
-		storeTables,
+		databaseRaw,
 		tableStorage: storage,
 	})
 
 	const api = storeApi({
 		config,
-		storeTables,
 		stripeLiaison,
 		accountReturningLinks: {
 			refresh: "https://api.xiome.io/store/stripe?x=refresh",

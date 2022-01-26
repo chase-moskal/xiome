@@ -1,14 +1,15 @@
 
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {makeVotingBooth} from "./voting-booth.js"
 import {Question} from "../../types/questions-and-answers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {findAll} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {QuestionPostRow, QuestionsTables} from "../../tables/types/questions-tables.js"
+import {QuestionPostRow, QuestionsSchema} from "../../types/questions-schema.js"
 
 export async function resolveQuestions({userId, questionPosts, questionsTables}: {
-		userId?: DamnId
+		userId?: Id
 		questionPosts: QuestionPostRow[]
-		questionsTables: QuestionsTables
+		questionsTables: dbproxy.SchemaToTables<QuestionsSchema>
 	}) {
 
 	const questionIds = questionPosts.map(post => post.questionId)

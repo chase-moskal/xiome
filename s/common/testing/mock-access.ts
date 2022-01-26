@@ -1,7 +1,8 @@
 
-import {AccessPayload} from "../../features/auth/types/auth-tokens.js"
-import {DamnId} from "../../toolbox/damnedb/damn-id.js"
+import {Id} from "../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../toolbox/get-rando.js"
+import {AccessPayload} from "../../features/auth/types/auth-tokens.js"
 
 export function mockAccess({
 		rando,
@@ -10,7 +11,7 @@ export function mockAccess({
 		privileges,
 	}: {
 		rando: Rando
-		appId: DamnId
+		appId: Id
 		appOrigin: string
 		privileges: string[]
 	}): AccessPayload {

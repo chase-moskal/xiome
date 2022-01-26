@@ -1,20 +1,11 @@
 
-import {dbbyX} from "../../../toolbox/dbby/dbby-x.js"
-import {objectMap} from "../../../toolbox/object-map.js"
-import {concurrent} from "../../../toolbox/concurrent.js"
-import {BlueprintForTables} from "../types/blueprint-for-tables.js"
-import {DbbyRow, DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
 
-export async function mockStorageTables<xTables extends {[key: string]: DbbyTable<DbbyRow>}>(
+export function mockStorageTables<xSchema extends dbproxy.Schema>(
 		flexStorage: FlexStorage,
-		blueprint: BlueprintForTables<xTables>,
-	): Promise<xTables> {
+		shape: dbproxy.SchemaToShape<xSchema>,
+	) {
 
-	return <xTables><any>await concurrent(
-		objectMap(
-			blueprint,
-			async(value, key) => await dbbyX(flexStorage, key),
-		)
-	)
+	return dbproxy.flex(flexStorage, shape).tables
 }

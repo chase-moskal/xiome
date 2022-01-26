@@ -1,12 +1,13 @@
 
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../../toolbox/get-rando.js"
-import {NotesTables} from "./tables/notes-tables.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
+import {DatabaseSafe} from "../../../assembly/backend/types/database.js"
 import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
 
-export function makeNotesDepositBox({rando, notesTables}: {
+export function makeNotesDepositBox({rando, database}: {
 		rando: Rando
-		notesTables: NotesTables
+		database: DatabaseSafe
 	}) {
 
 	async function sendNotes(
@@ -22,10 +23,10 @@ export function makeNotesDepositBox({rando, notesTables}: {
 				noteBase: {
 					...draft,
 					noteId,
-					to: DamnId.fromString(draft.to),
+					to: dbproxy.Id.fromString(draft.to),
 					from: draft.from === undefined
 						? undefined
-						: DamnId.fromString(draft.from),
+						: dbproxy.Id.fromString(draft.from),
 					old: false,
 					time: Date.now(),
 				},
@@ -33,7 +34,7 @@ export function makeNotesDepositBox({rando, notesTables}: {
 			}
 		})
 
-		await notesTables.notes.create(...notes.map(n => n.noteBase))
+		await database.tables.notes.notes.create(...notes.map(n => n.noteBase))
 
 		return notes.map(({noteBase: {noteId}}) => ({
 			noteId: noteId.toString()

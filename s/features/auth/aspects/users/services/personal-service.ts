@@ -1,9 +1,8 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {AuthOptions} from "../../../types/auth-options.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
 import {validateProfileDraft} from "../routines/personal/validate-profile-draft.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
@@ -12,14 +11,14 @@ export const makePersonalService = (options: AuthOptions) => renraku.service()
 
 .policy(options.authPolicies.userPolicy)
 
-.expose(({access, authTables, checker}) => ({
+.expose(({access, database, checker}) => ({
 
 	async setProfile({userId: userIdString, profileDraft}: {
 			userId: string
 			profileDraft: ProfileDraft
 		}) {
 
-		const userId = DamnId.fromString(userIdString)
+		const userId = Id.fromString(userIdString)
 		const isProfileOwner = access.user.userId === userIdString
 		const canEditAnyProfile = checker.hasPrivilege("edit any profile")
 		const allowed = isProfileOwner || canEditAnyProfile
@@ -29,7 +28,7 @@ export const makePersonalService = (options: AuthOptions) => renraku.service()
 
 		throwProblems(validateProfileDraft(profileDraft))
 
-		await authTables.users.profiles.update({
+		await database.tables.auth.users.profiles.update({
 			...find({userId}),
 			write: {
 				nickname: profileDraft.nickname,

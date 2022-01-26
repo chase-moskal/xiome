@@ -1,54 +1,53 @@
 
-import {Await} from "../../../types/await.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
-import {DbbyTable} from "../../../toolbox/dbby/dbby-types.js"
-import {CardClues} from "../stripe/liaison/types/card-clues.js"
-import {mockStoreTables} from "../api/tables/mock-store-tables.js"
+import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
 
-export type StoreTables = Await<ReturnType<typeof mockStoreTables>>
+export type StoreSchema = dbproxy.AsSchema<{
+	merchant: MerchantSchema
+	subscription: SubscriptionSchema
+}>
 
 //
 // merchant tables
 //
 
-export type MerchantTables = {
-	stripeAccounts: DbbyTable<MerchantRow>
-}
+export type MerchantSchema = dbproxy.AsSchema<{
+	stripeAccounts: MerchantRow
+}>
 
-export type MerchantRow = {
+export type MerchantRow = dbproxy.AsRow<{
 	time: number
-	userId: DamnId
+	userId: dbproxy.Id
 	paused: boolean
 	stripeAccountId: string
-}
+}>
 
 //
 // subscription tables
 //
 
-export type SubscriptionTables = {
-	plans: DbbyTable<SubscriptionPlanRow>
-	tiers: DbbyTable<SubscriptionTierRow>
-}
+export type SubscriptionSchema = dbproxy.AsSchema<{
+	plans: SubscriptionPlanRow
+	tiers: SubscriptionTierRow
+}>
 
-export type SubscriptionPlanRow = {
+export type SubscriptionPlanRow = dbproxy.AsRow<{
 	label: string
-	planId: DamnId
-	roleId: DamnId
+	planId: dbproxy.Id
+	roleId: dbproxy.Id
 	time: number
 	stripeAccountId: string
 	stripeProductId: string
-}
+}>
 
-export type SubscriptionTierRow = {
+export type SubscriptionTierRow = dbproxy.AsRow<{
 	label: string
-	tierId: DamnId
-	planId: DamnId
-	roleId: DamnId
+	tierId: dbproxy.Id
+	planId: dbproxy.Id
+	roleId: dbproxy.Id
 	time: number
 	stripePriceId: string
 	stripeAccountId: string
-}
+}>
 
 
 

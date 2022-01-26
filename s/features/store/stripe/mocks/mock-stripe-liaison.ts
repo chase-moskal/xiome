@@ -1,13 +1,13 @@
 
 import Stripe from "stripe"
+import {find} from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {Rando} from "../../../../toolbox/get-rando.js"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
-import {DbbyTable} from "../../../../toolbox/dbby/dbby-types.js"
-import {MockStripeTables} from "./tables/types/mock-stripe-tables.js"
-import {dbbyConstrainTables} from "../../../../toolbox/dbby/dbby-constrain.js"
+import {MockAccount} from "./tables/types/rows/mock-account.js"
+import {MockStripeTables} from "./tables/types/mock-stripe-database.js"
 
 export function mockStripeLiaison({
 		rando, tables, webhooks,
@@ -37,11 +37,11 @@ export function mockStripeLiaison({
 					type: params.type,
 					email: params.email,
 				}
-				await tables.accounts.create(account)
+				await tables.accounts.create(<MockAccount>account)
 				return respond(<Stripe.Account>account)
 			},
 			async retrieve(id) {
-				const account = await tables.accounts.one(find({id}))
+				const account = await tables.accounts.readOne(find({id}))
 				return respond(<Stripe.Account>account)
 			},
 			async createLoginLink(id) {
@@ -74,11 +74,11 @@ export function mockStripeLiaison({
 				})
 			}
 
-			const tables = dbbyConstrainTables({
+			const tables = dbproxy.constrainTables({
 				tables: rawTables,
-				namespace: {"_connectedAccount": stripeAccount},
+				constraint: {"_connectedAccount": stripeAccount},
 			})
-	
+
 			function ignoreUndefined<X extends {}>(input: X): X {
 				const output = {}
 				for (const [key, value] of Object.entries(input)) {
@@ -88,7 +88,7 @@ export function mockStripeLiaison({
 				return <X>output
 			}
 	
-			function prepMockResource<xResource>(table: DbbyTable<any>) {
+			function prepMockResource<xResource>(table: dbproxy.Table<any>) {
 				return {
 					create<xParams>({makeData, hook = async() => {}}: {
 							makeData: (params: xParams) => Partial<xResource>
@@ -106,7 +106,7 @@ export function mockStripeLiaison({
 					},
 					retrieve() {
 						return async function(id: string) {
-							const resource = await table.one(find({id}))
+							const resource = await table.readOne(find({id}))
 							return respond<xResource>(resource)
 						}
 					},
@@ -119,7 +119,7 @@ export function mockStripeLiaison({
 								...find({id}),
 								write: ignoreUndefined(makeData(params)),
 							})
-							const resource = await table.one(find({id}))
+							const resource = await table.readOne(find({id}))
 							await hook(<xResource>resource)
 							return respond(<xResource>resource)
 						}
@@ -139,7 +139,7 @@ export function mockStripeLiaison({
 					createHook,
 					updateHook,
 				}: {
-					table: DbbyTable<any>
+					table: dbproxy.Table<any>
 					createData: (params: xCreateParams) => Partial<xResource>
 					updateData: (params: xUpdateParams) => Partial<xResource>
 					createHook?: (resource: xResource) => Promise<void>

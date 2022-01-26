@@ -1,8 +1,9 @@
 
+import {Id} from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {nap} from "../../../toolbox/nap.js"
 import {Await} from "../../../types/await.js"
 import {hitchie} from "../../../toolbox/hitchie.js"
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {mockConnect} from "../connect/mock/mock-connect.js"
 import {DraftForNote, Notes} from "../../../features/notes/types/notes-concepts.js"
 import {assembleAndInitializeFrontend} from "../assemble-and-initialize-frontend.js"
@@ -34,7 +35,7 @@ export function applyMockHacks({connection, frontend}: {
 	)
 
 	const notesDepositBox = connection.backend.prepareNotesDepositBox(
-		DamnId.fromString(frontend.appId)
+		Id.fromString(frontend.appId)
 	)
 
 	window["fakeNote"] = async(draft: Partial<DraftForNote<Notes.Any>>) => {

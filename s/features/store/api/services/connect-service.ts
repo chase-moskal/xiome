@@ -1,9 +1,8 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
 
-import {MerchantRow} from "../../types/store-tables.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {MerchantRow} from "../../types/store-schema.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
@@ -15,14 +14,14 @@ export const makeConnectService = (
 
 .policy(options.storePolicy)
 
-.expose(({access, stripeLiaison, storeTables, checker}) => ({
+.expose(({access, stripeLiaison, database, checker}) => ({
 
 	...requiredPrivilege(checker, "manage store", {
 
 		async loadConnectStatus() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables,
+				storeTables: database.tables.store,
 			})
 			return determineConnectStatus(connectDetails)
 		},
@@ -30,13 +29,13 @@ export const makeConnectService = (
 		async pause() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables,
+				storeTables: database.tables.store,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Ready)
 				throw new renraku.ApiError(400, "cannot pause non-ready stripe account")
 			else {
-				await storeTables.merchant.stripeAccounts.update({
+				await database.tables.store.merchant.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: true},
 				})
@@ -46,13 +45,13 @@ export const makeConnectService = (
 		async resume() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables,
+				storeTables: database.tables.store,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Paused)
 				throw new renraku.ApiError(400, "cannot resume non-paused stripe account")
 			else {
-				await storeTables.merchant.stripeAccounts.update({
+				await database.tables.store.merchant.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: false},
 				})
@@ -65,7 +64,7 @@ export const makeConnectService = (
 		async loadConnectDetails() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables,
+				storeTables: database.tables.store,
 			})
 			return {
 				connectDetails,
@@ -75,7 +74,7 @@ export const makeConnectService = (
 
 		async generateConnectSetupLink() {
 			const connectDetails = await fetchStripeConnectDetails({
-				storeTables,
+				storeTables: database.tables.store,
 				stripeLiaison,
 			})
 			let stripeAccountId = connectDetails?.stripeAccountId
@@ -86,10 +85,10 @@ export const makeConnectService = (
 				const row: MerchantRow = {
 					stripeAccountId,
 					time: Date.now(),
-					userId: DamnId.fromString(access.user.userId),
+					userId: Id.fromString(access.user.userId),
 					paused: false,
 				}
-				await storeTables.merchant.stripeAccounts.create(row)
+				await database.tables.store.merchant.stripeAccounts.create(row)
 			}
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
@@ -104,7 +103,7 @@ export const makeConnectService = (
 
 		async generateStripeLoginLink() {
 			const connectDetails = await fetchStripeConnectDetails({
-				storeTables,
+				storeTables: database.tables.store,
 				stripeLiaison,
 			})
 			let stripeAccountId = connectDetails?.stripeAccountId

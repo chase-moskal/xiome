@@ -1,7 +1,6 @@
 
 import * as renraku from "renraku"
 
-import {DamnId} from "../../../toolbox/damnedb/damn-id.js"
 import {makeConnectService} from "./services/connect-service.js"
 import {makeBillingService} from "./services/billing-service.js"
 import {StoreAuth, StoreMeta} from "../types/store-metas-and-auths.js"
@@ -12,7 +11,6 @@ import {fetchStripeConnectDetails} from "./services/helpers/fetch-stripe-connect
 import {StoreApiOptions, StoreServiceOptions, StripeConnectStatus} from "../types/store-concepts.js"
 
 export const storeApi = ({
-		storeTables,
 		stripeLiaison,
 		basePolicy,
 		...common
@@ -26,9 +24,6 @@ export const storeApi = ({
 		return {
 			...auth,
 			stripeLiaison,
-			storeTables: storeTables.namespaceForApp(
-				DamnId.fromString(auth.access.appId)
-			),
 		}
 	}
 
@@ -38,7 +33,7 @@ export const storeApi = ({
 		async storeLinkedPolicy(meta, headers) {
 			const auth = await storePolicy(meta, headers)
 			const connectDetails = await fetchStripeConnectDetails({
-				storeTables: auth.storeTables,
+				storeTables: auth.database.tables.store,
 				stripeLiaison: auth.stripeLiaison,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)

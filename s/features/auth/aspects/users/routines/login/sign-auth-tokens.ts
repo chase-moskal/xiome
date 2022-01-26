@@ -1,10 +1,11 @@
 
 import {SignToken} from "redcrypto/x/types.js"
+import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {fetchUser} from "../user/fetch-user.js"
-import {AuthTables} from "../../../../types/auth-tables.js"
+import {AuthSchema} from "../../../../types/auth-schema.js"
 import {concurrent} from "../../../../../../toolbox/concurrent.js"
-import {DamnId} from "../../../../../../toolbox/damnedb/damn-id.js"
 import {AccessPayload, RefreshPayload, Scope} from "../../../../types/auth-tokens.js"
 import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/types/permissions-engine.js"
 
@@ -20,10 +21,10 @@ export async function signAuthTokens({
 		}: {
 			scope: Scope
 			appId: string
-			userId: DamnId
+			userId: Id
 			origins: string[]
-			authTables: AuthTables
 			permissionsEngine: PermissionsEngine
+			authTables: dbproxy.SchemaToTables<AuthSchema>
 			lifespans: {
 				access: number
 				refresh: number

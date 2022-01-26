@@ -1,7 +1,8 @@
 
-import {VideoTables} from "../../../types/video-tables.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
+import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
+import {VideoSchema} from "../../../types/video-schema.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions/types/permissions-engine.js"
 
 export async function setViewPermissions({
@@ -12,7 +13,7 @@ export async function setViewPermissions({
 	}: {
 		label: string
 		privileges: string[]
-		videoTables: VideoTables
+		videoTables: dbproxy.SchemaToTables<VideoSchema>
 		engine: PermissionsEngine
 	}) {
 
@@ -30,7 +31,7 @@ export async function setViewPermissions({
 	await videoTables.viewPrivileges.create(
 		...privileges.map(privilege => ({
 			label,
-			privilegeId: DamnId.fromString(privilege),
+			privilegeId: Id.fromString(privilege),
 		}))
 	)
 }

@@ -1,14 +1,13 @@
 
 import * as renraku from "renraku"
+import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, findAll} from "../../../../toolbox/dbproxy/dbproxy.js"
 
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {UnconstrainedTables} from "../../../../framework/api/types/table-namespacing-for-apps.js"
 
 import {NotesMeta} from "../types/notes-auth.js"
-import {NotesTables} from "../tables/notes-tables.js"
-import {find, findAll} from "../../../../toolbox/dbby/dbby-helpers.js"
+import {NotesSchema} from "../tables/notes-schema.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 
 import {validatePagination} from "../validation/validate-pagination.js"
@@ -18,32 +17,31 @@ import {array, boolean, each, maxLength, schema, validator} from "../../../../to
 
 export const makeNotesService = ({
 	config, basePolicy,
-	notesTables: rawNotesTables,
 }: {
 	config: SecretConfig
-	notesTables: UnconstrainedTables<NotesTables>
 	basePolicy: renraku.Policy<UserMeta, UserAuth>
 }) => renraku.service()
 
 .policy(async(meta: NotesMeta, headers) => {
 	const auth = await basePolicy(meta, headers)
-	const appId = DamnId.fromString(auth.access.appId)
 	return {
 		...auth,
-		notesTables: rawNotesTables.namespaceForApp(appId),
+		notesDatabase: (<dbproxy.Database<NotesSchema>>
+			dbproxy.subsection(auth.database, tables => tables.notes))
+		,
 	}
 })
 
-.expose(({notesTables, access}) => ({
+.expose(({notesDatabase, access}) => ({
 
 	async getNotesStats(): Promise<NotesStats> {
 		const {userId} = access.user
-		const newCount = await notesTables.notes.count(find({
-			to: DamnId.fromString(userId),
+		const newCount = await notesDatabase.tables.notes.count(find({
+			to: Id.fromString(userId),
 			old: false
 		}))
-		const oldCount = await notesTables.notes.count(find({
-			to: DamnId.fromString(userId),
+		const oldCount = await notesDatabase.tables.notes.count(find({
+			to: Id.fromString(userId),
 			old: true
 		}))
 		return {newCount, oldCount}
@@ -53,9 +51,9 @@ export const makeNotesService = ({
 		const {offset, limit} = runValidation(pagination, validatePagination)
 		const {userId} = access.user
 
-		const newNotes = await notesTables.notes.read({
+		const newNotes = await notesDatabase.tables.notes.read({
 			...find({
-				to: DamnId.fromString(userId),
+				to: Id.fromString(userId),
 				old: false
 			}),
 			offset,
@@ -80,9 +78,9 @@ export const makeNotesService = ({
 		const {offset, limit} = runValidation(pagination, validatePagination)
 		const {userId} = access.user
 
-		const oldNotes = await notesTables.notes.read({
+		const oldNotes = await notesDatabase.tables.notes.read({
 			...find({
-				to: DamnId.fromString(userId),
+				to: Id.fromString(userId),
 				old: true
 			}),
 			offset,
@@ -105,9 +103,9 @@ export const makeNotesService = ({
 
 	async markAllNotesOld() {
 		const {userId} = access.user
-		await notesTables.notes.update({
+		await notesDatabase.tables.notes.update({
 			...find({
-				to: DamnId.fromString(userId),
+				to: Id.fromString(userId),
 				old: false,
 			}),
 			write: {old:true},
@@ -128,8 +126,8 @@ export const makeNotesService = ({
 				each(validateId),
 			),
 		}))
-		const noteIds = noteIdStrings.map(id => DamnId.fromString(id))
-		const notes = await notesTables.notes.read(
+		const noteIds = noteIdStrings.map(id => Id.fromString(id))
+		const notes = await notesDatabase.tables.notes.read(
 			findAll(noteIds, noteId => ({noteId}))
 		)
 
@@ -141,7 +139,7 @@ export const makeNotesService = ({
 				)
 		}
 
-		await notesTables.notes.update({
+		await notesDatabase.tables.notes.update({
 			...findAll(noteIds, noteId => ({noteId})),
 			write: {old}
 		})

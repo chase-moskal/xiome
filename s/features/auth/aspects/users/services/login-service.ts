@@ -1,10 +1,10 @@
 
 import * as renraku from "renraku"
 
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+
 import {AuthOptions} from "../../../types/auth-options.js"
 import {LoginPayload} from "../../../types/auth-tokens.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
 import {signAuthTokens} from "../routines/login/sign-auth-tokens.js"
 import {assertEmailAccount} from "../routines/login/assert-email-account.js"
 import {schema, email as emailValidator} from "../../../../../toolbox/darkvalley.js"
@@ -18,7 +18,7 @@ export const makeLoginService = ({
 
 .policy(authPolicies.anonPolicy)
 
-.expose(({access, authTables, appTables}) => ({
+.expose(({access, database}) => ({
 
 	async sendLoginLink(inputs: {email: string}) {
 		const {email: rawEmail} = runValidation(
@@ -27,10 +27,10 @@ export const makeLoginService = ({
 		)
 		const email = rawEmail.toLowerCase()
 
-		const appId = DamnId.fromString(access.appId)
-		const appRow = await appTables.registrations.one(find({appId}))
+		const appId = Id.fromString(access.appId)
+		const appRow = await database.tables.apps.registrations.readOne(find({appId}))
 		const {userId} = await assertEmailAccount({
-			rando, email, config, authTables, generateNickname,
+			rando, email, config, databaseForApp: database, generateNickname,
 		})
 		const loginTokenPayload = {userId: userId.toString()}
 		await sendLoginEmail({
@@ -48,8 +48,9 @@ export const makeLoginService = ({
 	},
 
 	async authenticateViaLoginToken({loginToken}: {loginToken: string}) {
+		const authTables = database.tables.auth
 		const verified = await verifyToken<LoginPayload>(loginToken)
-		const userId = DamnId.fromString(verified.userId)
+		const userId = Id.fromString(verified.userId)
 		const authTokens = await signAuthTokens({
 			userId,
 			authTables,

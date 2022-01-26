@@ -1,11 +1,10 @@
 
-import {DamnId} from "../../../../../toolbox/damnedb/damn-id.js"
-import {find} from "../../../../../toolbox/dbby/dbby-helpers.js"
-import {SimpleVoteTable} from "../../tables/types/questions-tables.js"
+import {SimpleVoteTable} from "../../types/questions-schema.js"
+import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 export async function vote({status, userId, itemId, voteTable}: {
-		userId: DamnId
-		itemId: DamnId
+		userId: Id
+		itemId: Id
 		status: boolean
 		voteTable: SimpleVoteTable
 	}) {

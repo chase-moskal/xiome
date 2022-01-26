@@ -1,23 +1,21 @@
 
+import {find} from "../../../toolbox/dbproxy/dbproxy.js"
+
 import {Rando} from "../../../toolbox/get-rando.js"
-import {StoreTables} from "../types/store-tables.js"
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {pubsub, pubsubs} from "../../../toolbox/pubsub.js"
-import {find} from "../../../toolbox/dbby/dbby-helpers.js"
-import {AuthTables} from "../../auth/types/auth-tables.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
+import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
-import {UnconstrainedTables} from "../../../framework/api/types/table-namespacing-for-apps.js"
 
 export async function mockStripeCircuit({
-		rando, tableStorage, authTables, storeTables,
+		rando, tableStorage, databaseRaw,
 	}: {
 		rando: Rando
+		databaseRaw: DatabaseRaw
 		tableStorage: FlexStorage
-		authTables: UnconstrainedTables<AuthTables>
-		storeTables: UnconstrainedTables<StoreTables>
 	}) {
 
 	const {
@@ -39,8 +37,7 @@ export async function mockStripeCircuit({
 	})
 
 	const webhooks = stripeWebhooks({
-		authTables,
-		storeTables,
+		databaseRaw,
 		stripeLiaison,
 		logger: console,
 	})

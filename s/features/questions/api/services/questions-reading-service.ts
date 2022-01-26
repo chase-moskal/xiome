@@ -1,12 +1,11 @@
 
 import * as renraku from "renraku"
+import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {AnonMeta} from "../../../auth/types/auth-metas.js"
-import {find} from "../../../../toolbox/dbby/dbby-helpers.js"
-import {DamnId} from "../../../../toolbox/damnedb/damn-id.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"
+import {anonQuestionsPolicy} from "./policies/questions-policies.js"
 import {QuestionsApiOptions} from "../types/questions-api-options.js"
-import {anonQuestionsPolicy} from "./policies/anon-questions-policy.js"
 import {fetchUsers} from "../../../auth/aspects/users/routines/user/fetch-users.js"
 import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
@@ -21,10 +20,10 @@ export const makeQuestionsReadingService = (
 	return auth
 })
 
-.expose(({access, authTables, questionsTables}) => ({
+.expose(({access, database}) => ({
 
 	async fetchQuestions({board}: {board: string}) {
-		const posts = await questionsTables.questionPosts.read({
+		const posts = await database.tables.questions.questionPosts.read({
 			...find({board, archive: false}),
 			limit: 100,
 			offset: 0,
@@ -35,10 +34,10 @@ export const makeQuestionsReadingService = (
 			return {users: [], questions: []}
 
 		const resolvedQuestions = await resolveQuestions({
-			questionsTables,
+			questionsTables: database.tables.questions,
 			questionPosts: posts,
 			userId: access?.user?.userId
-				? DamnId.fromString(access.user.userId)
+				? Id.fromString(access.user.userId)
 				: undefined,
 		})
 
@@ -57,7 +56,7 @@ export const makeQuestionsReadingService = (
 		})()
 
 		const permissionsEngine = makePermissionsEngine({
-			permissionsTables: authTables.permissions,
+			permissionsTables: database.tables.auth.permissions,
 			isPlatform: access.appId === options.config.platform.appDetails.appId,
 		})
 
@@ -67,9 +66,9 @@ export const makeQuestionsReadingService = (
 
 		const users =
 			(await fetchUsers({
-				authTables,
+				authTables: database.tables.auth,
 				permissionsEngine,
-				userIds: userIds.map(id => DamnId.fromString(id)),
+				userIds: userIds.map(id => Id.fromString(id)),
 			}))
 				.filter(u => !bannedUserIds.includes(u.userId))
 
