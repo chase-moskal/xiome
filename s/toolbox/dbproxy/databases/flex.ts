@@ -1,4 +1,5 @@
 
+import {obtain} from "../../obtain.js"
 import {objectMap} from "../../object-map.js"
 import {RowStorage} from "./flex/row-storage.js"
 import {sequencer} from "../../sequencer/sequencer.js"
@@ -18,8 +19,8 @@ export function flex<xSchema extends Schema>(
 	return {
 
 		tables: (() => {
-			function recurse(shape: Shape, path: string[]) {
-				return objectMap(shape, (value, key) => {
+			function recurse(innerShape: Shape, path: string[]) {
+				return objectMap(innerShape, (value, key) => {
 					const currentPath = [...path, key]
 					return typeof value === "boolean"
 						// TODO consider replacing proxy with regular object,
@@ -32,7 +33,7 @@ export function flex<xSchema extends Schema>(
 										shape,
 										storage,
 										async action({tables}) {
-											return tables[key][prop](...args)
+											return obtain(tables, currentPath)[prop](...args)
 										},
 									})
 								}

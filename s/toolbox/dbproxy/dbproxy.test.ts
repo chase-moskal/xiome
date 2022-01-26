@@ -8,6 +8,9 @@ import {getRando} from "../get-rando.js"
 import {constrain} from "./constraints.js"
 import {and, find, or} from "./helpers.js"
 import {Row, SchemaToShape, Table} from "./types.js"
+import {FlexStorage} from "../flex-storage/types/flex-storage.js"
+import {memoryFlexStorage} from "../flex-storage/memory-flex-storage.js"
+import {pathToStorageKey} from "./databases/utils/path-to-storage-key.js"
 
 type DemoUser = {
 	userId: string
@@ -261,6 +264,25 @@ export default <Suite>{
 			// const all = await table.read({conditions: false})
 			expect(b1.a).equals(1)
 			assert(b1.id instanceof Id, "recovered id is instance")
+		},
+	},
+	"storage": {
+		async "storage keys represent full path to tables"() {
+			let keyThatWasWrittenTo: string = "nope"
+			const storage = memoryFlexStorage()
+			const storageSpy: FlexStorage = {...storage, async write(key, data) {
+				keyThatWasWrittenTo = key
+				return storage.write(key, data)
+			}}
+			const {tables} = dbproxy.flex<{
+				alpha: {
+					bravo: {
+						charlie: {x: string}
+					}
+				}
+			}>(storageSpy, {alpha: {bravo: {charlie: true}}})
+			await tables.alpha.bravo.charlie.create({x: "abc"})
+			expect(keyThatWasWrittenTo).equals(pathToStorageKey(["alpha", "bravo", "charlie"]))
 		},
 	},
 	"flex database transactions": {
