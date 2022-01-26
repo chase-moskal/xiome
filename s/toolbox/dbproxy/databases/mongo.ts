@@ -2,7 +2,7 @@
 import {Collection, MongoClient, TransactionOptions} from "mongodb"
 
 import {objectMap} from "../../object-map.js"
-import {down, downs, up} from "./mongo/conversions.js"
+import {down, downs, up, ups} from "./mongo/conversions.js"
 import {orderToSort, prepareQuery} from "./mongo/queries.js"
 import {pathToStorageKey} from "./utils/path-to-storage-key.js"
 import {AmbiguousUpdate, MongoDatabase, Row, Schema, SchemaToShape, Shape, Table} from "../types.js"
@@ -21,7 +21,7 @@ export function mongo<xSchema extends Schema>({
 	function makeTable(collection: Collection): Table<Row> {
 		return {
 			async create(...rows) {
-				await collection.insertMany(rows)
+				await collection.insertMany(ups(rows))
 			},
 			async read({conditions, order, offset, limit}) {
 				const query = prepareQuery({conditions: conditions})
