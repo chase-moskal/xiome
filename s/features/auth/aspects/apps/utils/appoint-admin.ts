@@ -1,5 +1,5 @@
 
-import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert} from "../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {DatabaseSafe} from "../../../../../assembly/backend/types/database.js"
@@ -27,9 +27,10 @@ export async function appointAdmin({
 		generateNickname,
 	})
 
-	await databaseForApp.tables.auth.permissions.userHasRole.assert({
-		...find({userId: adminUserId, roleId: adminRoleId}),
-		make: async () => ({
+	await assert(
+		databaseForApp.tables.auth.permissions.userHasRole,
+		find({userId: adminUserId, roleId: adminRoleId}),
+		async() => ({
 			userId: adminUserId,
 			roleId: adminRoleId,
 			hard: false,
@@ -38,5 +39,5 @@ export async function appointAdmin({
 			timeframeStart: undefined,
 			time: Date.now()
 		})
-	})
+	)
 }

@@ -36,16 +36,16 @@ export function constrain<xConstraint extends Row, xTable extends Table<Row>>({
 				conditions: spike(options.conditions),
 			})
 		},
-		async assert(options) {
-			return table.assert({
-				...options,
-				conditions: spike(options.conditions),
-				make: async() => {
-					const row = await options.make()
-					return {...row, ...constraint}
-				},
-			})
-		},
+		// async assert(options) {
+		// 	return table.assert({
+		// 		...options,
+		// 		conditions: spike(options.conditions),
+		// 		make: async() => {
+		// 			const row = await options.make()
+		// 			return {...row, ...constraint}
+		// 		},
+		// 	})
+		// },
 		async update(options) {
 			const opts: any = options
 			return table.update({

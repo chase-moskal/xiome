@@ -1,5 +1,5 @@
 
-import {Row, ConditionLeaf} from "./types.js"
+import {Row, ConditionLeaf, Table, Conditional} from "./types.js"
 
 export function and<
 		xRow extends Row,
@@ -26,4 +26,17 @@ export function findAll<V, xRow extends Row = Row>(
 		valueForRow: (v: V) => Partial<xRow>,
 	) {
 	return {conditions: or(...values.map(v => ({equal: valueForRow(v)})))}
+}
+
+export async function assert<xRow extends Row>(
+		table: Table<xRow>,
+		conditional: Conditional<xRow>,
+		make: () => Promise<xRow>,
+	) {
+	let row = await table.readOne(conditional)
+	if (!row) {
+		row = await make()
+		await table.create(row)
+	}
+	return row
 }

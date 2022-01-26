@@ -64,15 +64,15 @@ export function mongo<xSchema extends Schema>({
 				const row = await collection.findOne<Row>(query)
 				return down<Row>(row)
 			},
-			async assert({make, ...conditional}) {
-				const query = prepareQuery(conditional)
-				let row = down<Row>(await collection.findOne<Row>(query))
-				if (!row) {
-					row = await make()
-					await collection.insertOne(up<Row>(row))
-				}
-				return row
-			},
+			// async assert({make, ...conditional}) {
+			// 	const query = prepareQuery(conditional)
+			// 	let row = down<Row>(await collection.findOne<Row>(query))
+			// 	if (!row) {
+			// 		row = await make()
+			// 		await collection.insertOne(up<Row>(row))
+			// 	}
+			// 	return row
+			// },
 		}
 	}
 

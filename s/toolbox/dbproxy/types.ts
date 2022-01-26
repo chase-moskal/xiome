@@ -42,8 +42,13 @@ export interface Table<xRow extends Row> {
 
 	readOne(o: Conditional<xRow>): Promise<xRow>
 	count(o: Conditional<xRow>): Promise<number>
-	assert(o: Assertion<xRow>): Promise<xRow>
+	// assert(o: Assertion<xRow>): Promise<xRow>
 }
+
+export type RowFromTable<xTable extends Table<Row>> =
+	xTable extends Table<infer xRow>
+		? xRow
+		: never
 
 export interface Tables {
 	[key: string]: Tables | Table<Row>

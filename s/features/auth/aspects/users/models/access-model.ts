@@ -28,6 +28,7 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 			await accessOperation(authMediator.initialize())
 		},
 		async sendLoginLink(email: string) {
+			debugger
 			return loginService.sendLoginLink({email})
 		},
 		async login(loginToken: string) {

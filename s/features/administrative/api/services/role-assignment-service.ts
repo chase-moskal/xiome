@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id, find, or} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, or, assert} from "../../../../toolbox/dbproxy/dbproxy.js"
 
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {schema, boolean} from "../../../../toolbox/darkvalley.js"
@@ -104,9 +104,10 @@ export const makeRoleAssignmentService = ({
 		if (existing?.hard)
 			throw new renraku.ApiError(400, "hard role assignment cannot be overwritten")
 		else
-			await database.tables.auth.permissions.userHasRole.assert({
-				conditions: or({equal: {roleId, userId}}),
-				make: async() => ({
+			await assert(
+				database.tables.auth.permissions.userHasRole,
+				find({roleId, userId}),
+				async() => ({
 					hard: false,
 					public: isPublic,
 					roleId,
@@ -114,8 +115,8 @@ export const makeRoleAssignmentService = ({
 					timeframeEnd,
 					timeframeStart,
 					time: Date.now(),
-				}),
-			})
+				})
+			)
 	},
 
 	async revokeRoleFromUser(options: {

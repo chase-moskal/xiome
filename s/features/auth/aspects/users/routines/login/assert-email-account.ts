@@ -1,5 +1,5 @@
 
-import {Id, find} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert, RowFromTable} from "../../../../../../toolbox/dbproxy/dbproxy.js"
 
 import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {generateAccountRow} from "./generate-account-row.js"
@@ -27,9 +27,10 @@ export async function assertEmailAccount({
 	email = email.toLowerCase()
 	const authTables = databaseForApp.tables.auth
 
-	const accountViaEmail = await authTables.users.emails.assert({
-		...find({email}),
-		make: async function makeNewAccountViaEmail() {
+	const accountViaEmail = await assert<RowFromTable<typeof authTables.users.emails>>(
+		authTables.users.emails,
+		find({email}),
+		async function makeNewAccountViaEmail() {
 			const isTechnician = email === config.platform.technician.email
 			const account = generateAccountRow({rando})
 			const {userId} = account
@@ -85,7 +86,7 @@ export async function assertEmailAccount({
 
 			return {email, userId}
 		},
-	})
+	)
 
 	return {userId: accountViaEmail.userId}
 }
