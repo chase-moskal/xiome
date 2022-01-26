@@ -88,28 +88,6 @@ export default <Suite>{
 				})).userId
 			).equals("u999")
 		},
-		// "assert one": async() => {
-		// 	const {users} = await setupThreeUserDemo()
-		// 	const fallback: DemoUser = {
-		// 		userId: "u000",
-		// 		balance: 1000,
-		// 		location: "russia",
-		// 	}
-		// 	return (true
-		// 		&& expect(
-		// 				(await users.assert({
-		// 					conditions: and({equal: {userId: "u123"}}),
-		// 					make: async() => fallback,
-		// 				})).location
-		// 			).equals("america")
-		// 		&& expect(
-		// 				(await users.assert({
-		// 					conditions: and({equal: {userId: "u000"}}),
-		// 					make: async() => fallback,
-		// 				})).location
-		// 			).equals("russia")
-		// 	)
-		// },
 		"read sorting via order": async() => {
 			const {users} = await setupThreeUserDemo()
 			const result1 = await users.read({conditions: false, order: {balance: "ascend"}})
