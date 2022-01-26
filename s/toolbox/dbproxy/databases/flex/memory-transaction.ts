@@ -28,8 +28,8 @@ export async function memoryTransaction({
 					if (!cache)
 						cache = await storage.load(storageKey)
 				}
-				return typeof value === "boolean"?
-					<Table<Row>>prefixFunctions(loadCacheOnce, <RemoveIndex<Table<Row>>>{
+				return typeof value === "boolean"
+					? <Table<Row>>prefixFunctions(loadCacheOnce, <RemoveIndex<Table<Row>>>{
 						async create(...rows) {
 							const operation: Operation.OpCreate = {
 								type: Operation.Type.Create,
@@ -78,8 +78,8 @@ export async function memoryTransaction({
 						async readOne(o) {
 							return cache.find(row => rowVersusConditional(row, o))
 						},
-					}):
-					recurse(value, currentPath)
+					})
+					: recurse(value, currentPath)
 			})
 		}
 		return recurse(shape, [])
