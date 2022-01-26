@@ -16,12 +16,9 @@ export async function mockRegisterApp({
 		appId: backend.platformAppId,
 	})
 
-	debugger
 	const {accessModel, appsModel} = mockWindowForPlatform.models
 	await accessModel.sendLoginLink(ownerEmail)
-	debugger
 	await accessModel.login(backend.emails.recallLatestLoginEmail().loginToken)
-	debugger
 
 	const {appId} = await appsModel.registerApp({
 		label: "Mock App",

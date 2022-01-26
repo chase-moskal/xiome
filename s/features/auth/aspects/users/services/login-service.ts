@@ -21,7 +21,6 @@ export const makeLoginService = ({
 .expose(({access, database}) => ({
 
 	async sendLoginLink(inputs: {email: string}) {
-		debugger
 		const {email: rawEmail} = runValidation(
 			inputs,
 			schema({email: emailValidator()}),
