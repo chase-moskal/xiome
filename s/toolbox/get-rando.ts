@@ -1,5 +1,5 @@
 
-import {Id} from "./dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 import {Await} from "../types/await.js"
 import {isNode as stockIsNode} from "./is-node.js"
 

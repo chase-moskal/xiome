@@ -1,5 +1,5 @@
 
-import {Id, find, assert} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert} from "dbmage"
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {DatabaseSafe} from "../../../../../assembly/backend/types/database.js"

@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {StatsHub} from "../types/stats-hub.js"
 import {day, month} from "../../../../../toolbox/goodtimes/times.js"
@@ -9,10 +9,10 @@ import {DatabaseRaw} from "../../../../../assembly/backend/types/database.js"
 export function prepareStatsHub({database}: {
 		database: DatabaseRaw
 	}) {
-	return async function getStatsHub(userId: dbproxy.Id): Promise<StatsHub> {
+	return async function getStatsHub(userId: dbmage.Id): Promise<StatsHub> {
 
-		async function throwForbiddenUser(appId: dbproxy.Id) {
-			const row = await database.tables.apps.owners.readOne(dbproxy.find({appId}))
+		async function throwForbiddenUser(appId: dbmage.Id) {
+			const row = await database.tables.apps.owners.readOne(dbmage.find({appId}))
 			if (row.userId.toString() !== userId.toString())
 				throw new renraku.ApiError(403, "forbidden")
 		}
@@ -30,7 +30,7 @@ export function prepareStatsHub({database}: {
 				const latestLoginsTable = database.tables.auth.users.latestLogins
 					.constrainForApp(appId)
 				return latestLoginsTable.count({
-					conditions: dbproxy.and({greater: {time: timeToStartCounting}}),
+					conditions: dbmage.and({greater: {time: timeToStartCounting}}),
 				})
 			},
 			countUsersActiveMonthly: async appId => {
@@ -39,7 +39,7 @@ export function prepareStatsHub({database}: {
 				const latestLoginsTable = database.tables.auth.users.latestLogins
 					.constrainForApp(appId)
 				return latestLoginsTable.count({
-					conditions: dbproxy.and({greater: {time: timeToStartCounting}}),
+					conditions: dbmage.and({greater: {time: timeToStartCounting}}),
 				})
 			},
 		}

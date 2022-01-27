@@ -1,5 +1,5 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {PrivilegeDisplay} from "../../../../auth/aspects/users/routines/permissions/types/privilege-display.js"
 import {makePermissionsEngine} from "../../../../../assembly/backend/permissions/permissions-engine.js"
@@ -13,7 +13,7 @@ export async function getAllPrivileges({
 	}: {
 		access: AccessPayload
 		platformAppId: string
-		permissionsTables: dbproxy.SchemaToTables<PermissionsSchema>
+		permissionsTables: dbmage.SchemaToTables<PermissionsSchema>
 	}): Promise<PrivilegeDisplay[]> {
 	
 	const permissionsEngine = makePermissionsEngine({

@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
-import {Id, or} from "../../../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, or} from "dbmage"
+import * as dbmage from "dbmage"
 
 import {UserStats} from "../../types/user-stats.js"
 import {AuthSchema} from "../../../../types/auth-schema.js"
@@ -10,7 +10,7 @@ import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/
 
 export async function fetchUsers({userIds, authTables, permissionsEngine}: {
 		userIds: Id[]
-		authTables: dbproxy.SchemaToTables<AuthSchema>
+		authTables: dbmage.SchemaToTables<AuthSchema>
 		permissionsEngine: PermissionsEngine
 	}) {
 

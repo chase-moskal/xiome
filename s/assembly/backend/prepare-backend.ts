@@ -1,5 +1,5 @@
 
-import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {DatabaseSafe} from "./types/database.js"
 import {getRando} from "../../toolbox/get-rando.js"
@@ -51,7 +51,7 @@ export function prepareBackend(configurators: Configurators) {
 			stripeLiaison,
 			mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
-			prepareNotesDepositBox: (appId: dbproxy.Id) => makeNotesDepositBox({
+			prepareNotesDepositBox: (appId: dbmage.Id) => makeNotesDepositBox({
 				rando,
 				database: <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
 					appId,

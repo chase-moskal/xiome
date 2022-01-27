@@ -1,5 +1,5 @@
 
-import {Id} from "../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {Rando} from "../../toolbox/get-rando.js"
 import {AccessPayload} from "../../features/auth/types/auth-tokens.js"

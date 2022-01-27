@@ -1,6 +1,6 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
-import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, find} from "dbmage"
 
 import {VideoSchema} from "../../../types/video-schema.js"
 import {PermissionsEngine} from "../../../../../assembly/backend/permissions/types/permissions-engine.js"
@@ -13,7 +13,7 @@ export async function setViewPermissions({
 	}: {
 		label: string
 		privileges: string[]
-		videoTables: dbproxy.SchemaToTables<VideoSchema>
+		videoTables: dbmage.SchemaToTables<VideoSchema>
 		engine: PermissionsEngine
 	}) {
 

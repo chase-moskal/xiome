@@ -1,5 +1,5 @@
 
-import {find} from "../../../toolbox/dbproxy/dbproxy.js"
+import {find} from "dbmage"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {StripeWebhooks} from "./types/stripe-webhooks.js"

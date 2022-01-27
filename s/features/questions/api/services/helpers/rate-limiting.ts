@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 
 import {day} from "../../../../../toolbox/goodtimes/times.js"
-import {Id, and} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, and} from "dbmage"
 import {QuestionsDatabase} from "../../types/questions-schema.js"
 
 const timeframe = 1 * day

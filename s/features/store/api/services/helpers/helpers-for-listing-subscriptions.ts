@@ -1,6 +1,6 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
-import {Id, find, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, find, findAll} from "dbmage"
 
 import {SubscriptionPlan} from "../../../types/store-concepts.js"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
@@ -125,7 +125,7 @@ export interface StripeCrossReference {
 }
 
 async function crossReferenceWithStripe<
-			xRow extends dbproxy.Row,
+			xRow extends dbmage.Row,
 			xStripeResource extends BasicStripeResource
 		>({rows, getRowId, getStripeResource}: {
 			rows: xRow[]

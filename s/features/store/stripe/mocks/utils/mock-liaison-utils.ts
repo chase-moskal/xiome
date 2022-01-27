@@ -1,6 +1,6 @@
 
 import {Stripe} from "stripe"
-import {find, and} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {find, and} from "dbmage"
 
 import {Rando} from "../../../../../toolbox/get-rando.js"
 import {day} from "../../../../../toolbox/goodtimes/times.js"

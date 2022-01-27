@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {fetchUser} from "../routines/user/fetch-user.js"
 import {AuthOptions} from "../../../types/auth-options.js"

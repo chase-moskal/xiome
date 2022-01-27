@@ -1,13 +1,13 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 export namespace Database {
 	export type NoteBase = {
 		type: NoteType
-		noteId: dbproxy.Id
+		noteId: dbmage.Id
 		time: number
-		to: null | dbproxy.Id
-		from: null | dbproxy.Id
+		to: null | dbmage.Id
+		from: null | dbmage.Id
 		title: string
 		text: string
 		old: boolean
@@ -15,7 +15,7 @@ export namespace Database {
 	export namespace NoteDetails {
 		export type Message = {}
 		export type Question = {
-			questionId: dbproxy.Id
+			questionId: dbmage.Id
 		}
 		export type Any =
 			| Message
@@ -45,8 +45,8 @@ export namespace Notes {
 
 export type DraftForNote<N extends Note> = Omit<N, "noteId" | "old" | "time">
 
-export type UndatabaseIds<R extends dbproxy.Row> = {
-	[P in keyof R]: R[P] extends dbproxy.Id
+export type UndatabaseIds<R extends dbmage.Row> = {
+	[P in keyof R]: R[P] extends dbmage.Id
 		? string
 		: R[P]
 }

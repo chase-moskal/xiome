@@ -1,41 +1,41 @@
 
 import {UnconstrainedTable} from "../unconstrained-table.js"
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 import {AppConstraint} from "../../../assembly/backend/types/database.js"
 
-export type SchemaToUnconstrainedTables<xSchema extends dbproxy.Schema> = {
-	[P in keyof xSchema]: xSchema[P] extends dbproxy.Row
+export type SchemaToUnconstrainedTables<xSchema extends dbmage.Schema> = {
+	[P in keyof xSchema]: xSchema[P] extends dbmage.Row
 		? UnconstrainedTable<xSchema[P]>
-		: xSchema[P] extends dbproxy.Schema
+		: xSchema[P] extends dbmage.Schema
 			? SchemaToUnconstrainedTables<xSchema[P]>
 			: never
 }
 
 export interface TablesMixed {
 	[key: string]:
-		UnconstrainedTable<dbproxy.Row> |
-		dbproxy.Table<dbproxy.Row> |
+		UnconstrainedTable<dbmage.Row> |
+		dbmage.Table<dbmage.Row> |
 		TablesMixed
 }
 
-export type ReconstrainTable<xTable extends UnconstrainedTable<dbproxy.Row>> =
+export type ReconstrainTable<xTable extends UnconstrainedTable<dbmage.Row>> =
 	xTable extends UnconstrainedTable<infer xRow>
-		? dbproxy.Table<xRow>
+		? dbmage.Table<xRow>
 		: never
 
 export type ConstrainMixedTables<xTables extends TablesMixed> = {
 	[P in keyof xTables]: xTables[P] extends UnconstrainedTable<infer xRow>
-		? dbproxy.ConstrainTable<AppConstraint, dbproxy.Table<xRow>>
-		: xTables[P] extends dbproxy.Table<dbproxy.Row>
+		? dbmage.ConstrainTable<AppConstraint, dbmage.Table<xRow>>
+		: xTables[P] extends dbmage.Table<dbmage.Row>
 			? xTables[P]
 			: xTables[P] extends TablesMixed
 				? ConstrainMixedTables<xTables[P]>
 				: never
 }
 
-export type ConstrainMixedDatabaseLike<xDatabase extends dbproxy.DatabaseLike<any>> =
-	xDatabase extends dbproxy.DatabaseLike<infer xTables>
+export type ConstrainMixedDatabaseLike<xDatabase extends dbmage.DatabaseLike<any>> =
+	xDatabase extends dbmage.DatabaseLike<infer xTables>
 		? xTables extends TablesMixed
-			? dbproxy.DatabaseLike<ConstrainMixedTables<xTables>>
+			? dbmage.DatabaseLike<ConstrainMixedTables<xTables>>
 			: never
 		: never

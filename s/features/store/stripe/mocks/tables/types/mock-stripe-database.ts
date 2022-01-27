@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 import {FlexibleRow} from "./rows/custom-db/flexible-row.js"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 export type MockStripeSchema = {
 	prices: Partial<Stripe.Price>
@@ -15,10 +15,10 @@ export type MockStripeSchema = {
 }
 
 export type MockStripeTables = {
-	[P in keyof MockStripeSchema]: dbproxy.Table<FlexibleRow<MockStripeSchema[P]>>
+	[P in keyof MockStripeSchema]: dbmage.Table<FlexibleRow<MockStripeSchema[P]>>
 }
 
-export type MockStripeShape = dbproxy.AsShape<{
+export type MockStripeShape = dbmage.AsShape<{
 	prices: boolean
 	accounts: boolean
 	products: boolean

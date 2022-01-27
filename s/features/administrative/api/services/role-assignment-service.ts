@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id, find, or, assert} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, or, assert} from "dbmage"
 
 import {escapeRegex} from "../../../../toolbox/escape-regex.js"
 import {schema, boolean} from "../../../../toolbox/darkvalley.js"

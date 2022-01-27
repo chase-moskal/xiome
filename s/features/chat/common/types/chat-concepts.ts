@@ -1,7 +1,7 @@
 
 import type * as renraku from "renraku"
-import {Id} from "../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
+import * as dbmage from "dbmage"
 
 import type {Await} from "../../../../types/await.js"
 import type {AccessPayload} from "../../../auth/types/auth-tokens.js"
@@ -52,14 +52,14 @@ export type ChatRoomStatusRow = {
 	status: ChatStatus
 }
 
-export type ChatSchema = dbproxy.AsSchema<{
+export type ChatSchema = dbmage.AsSchema<{
 	posts: ChatPostRow
 	mutes: ChatMuteRow
 	roomStatuses: ChatRoomStatusRow
 	roomUsers: {room: string, user?: Id, participant: boolean}
 }>
 
-export type ChatShape = dbproxy.SchemaToShape<ChatSchema>
+export type ChatShape = dbmage.SchemaToShape<ChatSchema>
 export const chatShape: ChatShape = {
 	posts: true,
 	mutes: true,

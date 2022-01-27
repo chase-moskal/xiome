@@ -1,5 +1,5 @@
 
-import {Id, find, assert, RowFromTable} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert, RowFromTable} from "dbmage"
 
 import {Rando} from "../../../../../../toolbox/get-rando.js"
 import {generateAccountRow} from "./generate-account-row.js"

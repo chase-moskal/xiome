@@ -1,11 +1,16 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {makeTableNameWithHyphens} from "../../../common/make-table-name-with-hyphens.js"
 
-export function mockStorageTables<xSchema extends dbproxy.Schema>(
+export function mockStorageTables<xSchema extends dbmage.Schema>(
 		flexStorage: FlexStorage,
-		shape: dbproxy.SchemaToShape<xSchema>,
+		shape: dbmage.SchemaToShape<xSchema>,
 	) {
 
-	return dbproxy.flex(flexStorage, shape).tables
+	return dbmage.flex({
+		shape,
+		flexStorage,
+		makeTableName: makeTableNameWithHyphens,
+	}).tables
 }

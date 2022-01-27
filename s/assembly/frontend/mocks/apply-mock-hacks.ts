@@ -1,5 +1,5 @@
 
-import {Id} from "../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {nap} from "../../../toolbox/nap.js"
 import {Await} from "../../../types/await.js"

@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {AnonMeta, UserMeta} from "../../../../auth/types/auth-metas.js"
 import {QuestionsApiOptions} from "../../types/questions-api-options.js"
@@ -14,7 +14,7 @@ export function anonQuestionsPolicy({
 		const auth = await authPolicies.anonPolicy(meta, headers)
 		return {
 			...auth,
-			database: dbproxy.subsection(auth.database, tables => ({
+			database: dbmage.subsection(auth.database, tables => ({
 				auth: tables.auth,
 				questions: tables.questions
 			})),
@@ -30,7 +30,7 @@ export function authenticatedQuestionsPolicy({
 		const auth = await authPolicies.userPolicy(meta, headers)
 		return {
 			...auth,
-			database: dbproxy.subsection(auth.database, tables => ({
+			database: dbmage.subsection(auth.database, tables => ({
 				auth: tables.auth,
 				questions: tables.questions
 			})),

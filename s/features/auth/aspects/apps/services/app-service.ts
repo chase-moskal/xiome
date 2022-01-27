@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id, find, and, or} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, and, or} from "dbmage"
 
 import {AppDraft} from "../types/app-draft.js"
 import {AppDisplay} from "../types/app-display.js"

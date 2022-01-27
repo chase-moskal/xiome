@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
-import {Id, find, findAll} from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, find, findAll} from "dbmage"
 
 import {UserAuth, UserMeta} from "../../../auth/types/auth-metas.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
@@ -26,8 +26,8 @@ export const makeNotesService = ({
 	const auth = await basePolicy(meta, headers)
 	return {
 		...auth,
-		notesDatabase: (<dbproxy.Database<NotesSchema>>
-			dbproxy.subsection(auth.database, tables => tables.notes))
+		notesDatabase: (<dbmage.Database<NotesSchema>>
+			dbmage.subsection(auth.database, tables => tables.notes))
 		,
 	}
 })

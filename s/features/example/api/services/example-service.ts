@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {UserMeta} from "../../../auth/types/auth-metas.js"
 import {ExampleApiOptions} from "../types/example-api-options.js"
@@ -14,7 +14,7 @@ export const makeExampleService = ({
 	const auth = await authPolicies.userPolicy(meta, headers)
 	return {
 		...auth,
-		database: dbproxy.subsection(auth.database, tables => tables.example),
+		database: dbmage.subsection(auth.database, tables => tables.example),
 	}
 })
 

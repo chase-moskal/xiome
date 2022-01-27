@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {AnonAuth, AnonMeta} from "../../../../../auth/types/auth-metas.js"
 import {DatabaseSelect} from "../../../../../../assembly/backend/types/database.js"
@@ -17,7 +17,7 @@ export async function spikeQuestionsAuth<
 	) {
 
 	const auth = await basePolicy(meta, headers)
-	const appId = dbproxy.Id.fromString(auth.access.appId)
+	const appId = dbmage.Id.fromString(auth.access.appId)
 	return {
 		...auth,
 		questionsDatabase: UnconstrainedTable

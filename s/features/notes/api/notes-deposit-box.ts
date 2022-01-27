@@ -1,5 +1,5 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {Rando} from "../../../toolbox/get-rando.js"
 import {DatabaseSafe} from "../../../assembly/backend/types/database.js"
@@ -23,10 +23,10 @@ export function makeNotesDepositBox({rando, database}: {
 				noteBase: {
 					...draft,
 					noteId,
-					to: dbproxy.Id.fromString(draft.to),
+					to: dbmage.Id.fromString(draft.to),
 					from: draft.from === undefined
 						? undefined
-						: dbproxy.Id.fromString(draft.from),
+						: dbmage.Id.fromString(draft.from),
 					old: false,
 					time: Date.now(),
 				},

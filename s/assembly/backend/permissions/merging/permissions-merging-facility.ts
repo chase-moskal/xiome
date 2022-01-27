@@ -1,5 +1,5 @@
 
-import {Id} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {AnyPermissions} from "../permissions-helpers.js"
 import {appPermissions, platformPermissions} from "../standard-permissions.js"

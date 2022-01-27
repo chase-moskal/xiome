@@ -1,5 +1,5 @@
 
-import {Id} from "../../../../../toolbox/dbproxy/id.js"
+import {Id} from "dbmage"
 
 export interface StatsHub {
 	countUsers(appId: Id): Promise<number>

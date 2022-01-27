@@ -1,4 +1,4 @@
 
-import {Row} from "../../../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Row} from "dbmage"
 
 export type FlexibleRow<X> = X & Row

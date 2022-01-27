@@ -1,7 +1,7 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export type StoreSchema = dbproxy.AsSchema<{
+export type StoreSchema = dbmage.AsSchema<{
 	merchant: MerchantSchema
 	subscription: SubscriptionSchema
 }>
@@ -10,13 +10,13 @@ export type StoreSchema = dbproxy.AsSchema<{
 // merchant tables
 //
 
-export type MerchantSchema = dbproxy.AsSchema<{
+export type MerchantSchema = dbmage.AsSchema<{
 	stripeAccounts: MerchantRow
 }>
 
-export type MerchantRow = dbproxy.AsRow<{
+export type MerchantRow = dbmage.AsRow<{
 	time: number
-	userId: dbproxy.Id
+	userId: dbmage.Id
 	paused: boolean
 	stripeAccountId: string
 }>
@@ -25,25 +25,25 @@ export type MerchantRow = dbproxy.AsRow<{
 // subscription tables
 //
 
-export type SubscriptionSchema = dbproxy.AsSchema<{
+export type SubscriptionSchema = dbmage.AsSchema<{
 	plans: SubscriptionPlanRow
 	tiers: SubscriptionTierRow
 }>
 
-export type SubscriptionPlanRow = dbproxy.AsRow<{
+export type SubscriptionPlanRow = dbmage.AsRow<{
 	label: string
-	planId: dbproxy.Id
-	roleId: dbproxy.Id
+	planId: dbmage.Id
+	roleId: dbmage.Id
 	time: number
 	stripeAccountId: string
 	stripeProductId: string
 }>
 
-export type SubscriptionTierRow = dbproxy.AsRow<{
+export type SubscriptionTierRow = dbmage.AsRow<{
 	label: string
-	tierId: dbproxy.Id
-	planId: dbproxy.Id
-	roleId: dbproxy.Id
+	tierId: dbmage.Id
+	planId: dbmage.Id
+	roleId: dbmage.Id
 	time: number
 	stripePriceId: string
 	stripeAccountId: string

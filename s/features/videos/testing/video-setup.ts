@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id} from "../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"

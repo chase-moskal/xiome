@@ -1,5 +1,5 @@
 
-import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {generateProfileRow} from "./generate-profile-row.js"
 import {DatabaseSafe} from "../../../../../../assembly/backend/types/database.js"
