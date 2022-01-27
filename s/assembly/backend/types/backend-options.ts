@@ -1,6 +1,6 @@
 
 import {Rando} from "dbmage"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 
 export interface BackendOptions {

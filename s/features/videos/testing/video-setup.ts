@@ -14,7 +14,7 @@ import {makeContentService} from "../api/services/content-service.js"
 import {goodApiKey} from "../dacast/mocks/parts/mock-dacast-constants.js"
 import {mockConfig} from "../../../assembly/backend/config/mock-config.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
-import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {mockDatabase} from "../../../assembly/backend/database/mock-database.js"
 

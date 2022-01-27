@@ -5,7 +5,7 @@ import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
-import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
 import {makeTableNameWithHyphens} from "../../../common/make-table-name-with-hyphens.js"
 import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
 

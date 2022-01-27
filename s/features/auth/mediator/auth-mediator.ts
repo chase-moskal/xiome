@@ -6,7 +6,7 @@ import {AccessPayload, AuthTokens} from "../types/auth-tokens.js"
 import {AccessEventListener} from "./types/access-event-listener.js"
 import {decodeAccessToken} from "../utils/tokens/decode-access-token.js"
 import {makeGreenService} from "../aspects/users/services/green-service.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 
 export function makeAuthMediator({
 		appId,

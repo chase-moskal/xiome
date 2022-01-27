@@ -1,6 +1,6 @@
 
 import {prepareBackend} from "./prepare-backend.js"
-import {FlexStorage} from "../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 
 class ConfigNotSupportedInBrowserError extends Error {
 	constructor(message: string) {

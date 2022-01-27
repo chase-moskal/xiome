@@ -1,7 +1,7 @@
 
 import {mockConfig} from "../backend/config/mock-config.js"
 import {backendForBrowser} from "../backend/backend-for-browser.js"
-import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
 
 export async function assembleTestableSystem() {
 	const backend = await backendForBrowser(memoryFlexStorage())(mockConfig({

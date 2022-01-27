@@ -1,7 +1,7 @@
 
 import {demoQuestions} from "./assembly/frontend/demos/demo-questions.js"
 import {applyMockHacks} from "./assembly/frontend/mocks/apply-mock-hacks.js"
-import {memoryFlexStorage} from "./toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
 import {registerComponents} from "./framework/component/register-components.js"
 import {mockConnectApp} from "./assembly/frontend/connect/mock/mock-connect-app.js"
 import {addMockLatency} from "./assembly/frontend/mocks/effects/add-mock-latency.js"

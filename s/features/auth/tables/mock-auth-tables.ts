@@ -1,6 +1,6 @@
 
 import {AuthSchema} from "../types/auth-schema.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 import {mockStorageTables} from "../../../assembly/backend/tools/mock-storage-tables.js"
 
 export function mockAuthTables(tableStorage: FlexStorage) {

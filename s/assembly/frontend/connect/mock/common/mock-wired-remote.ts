@@ -3,7 +3,7 @@ import {Await} from "../../../../../types/await.js"
 import {mockRemote} from "../../../mocks/mock-remote.js"
 import {backendForNode} from "../../../../backend/backend-for-node.js"
 import {wireMediatorBroadcastChannel} from "./wire-mediator-broadcast-channel.js"
-import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 
 export async function mockWiredRemote({
 		appId, appOrigin, storage, backend,

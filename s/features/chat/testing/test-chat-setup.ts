@@ -9,7 +9,7 @@ import {chatMockClient} from "../api/sockets/chat-mock-client.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
-import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export async function testChatSetup() {

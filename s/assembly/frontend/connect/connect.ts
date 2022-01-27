@@ -2,7 +2,7 @@
 import {makeRemote} from "./remote/make-remote.js"
 import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfig} from "../types/xiome-config-connected.js"
-import {simpleFlexStorage} from "../../../toolbox/flex-storage/simple-flex-storage.js"
+import {simpleFlexStorage} from "dbmage"
 import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
 

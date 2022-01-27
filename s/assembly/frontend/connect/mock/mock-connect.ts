@@ -2,7 +2,7 @@
 import {mockConnectApp} from "./mock-connect-app.js"
 import {mockConnectPlatform} from "./mock-connect-platform.js"
 import {XiomeMockConfig} from "../../types/xiome-config-mock.js"
-import {simpleFlexStorage} from "../../../../toolbox/flex-storage/simple-flex-storage.js"
+import {simpleFlexStorage} from "dbmage"
 
 export async function mockConnect(config: XiomeMockConfig) {
 	const options = {
