@@ -1,7 +1,7 @@
 
-import {Id, find, assert, RowFromTable} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert, RowFromTable} from "dbmage"
 
-import {Rando} from "../../../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {generateAccountRow} from "./generate-account-row.js"
 import {initializeUserProfile} from "../profile/initialize-user-profile.js"
 import {DatabaseSafe} from "../../../../../../assembly/backend/types/database.js"

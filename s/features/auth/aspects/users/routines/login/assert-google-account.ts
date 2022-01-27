@@ -1,5 +1,5 @@
 
-// import {Rando} from "../../../../../../toolbox/get-rando.js"
+// import {Rando} from "dbmage"
 // import {AuthTables} from "../../../../types/auth-tables.js"
 // import {generateAccountRow} from "./generate-account-row.js"
 

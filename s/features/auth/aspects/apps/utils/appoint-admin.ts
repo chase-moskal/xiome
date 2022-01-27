@@ -1,7 +1,7 @@
 
-import {Id, find, assert} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find, assert} from "dbmage"
 
-import {Rando} from "../../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {DatabaseSafe} from "../../../../../assembly/backend/types/database.js"
 import {SecretConfig} from "../../../../../assembly/backend/types/secret-config.js"
 import {assertEmailAccount} from "../../users/routines/login/assert-email-account.js"

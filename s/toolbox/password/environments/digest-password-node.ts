@@ -1,5 +1,5 @@
 
-import {decodeHex} from "../../binary/hex.js"
+import {decodeHex} from "dbmage"
 import {digestIterations, digestByteLength, digestAlgorithm} from "../password-constants.js"
 
 export async function digestPasswordNode({salt, password}: {

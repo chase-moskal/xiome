@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 import {VideoMeta} from "../../types/video-auth.js"
 import {videoPrivileges} from "../video-privileges.js"

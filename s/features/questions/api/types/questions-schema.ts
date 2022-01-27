@@ -1,24 +1,24 @@
 
 import {AuthSchema} from "../../../auth/types/auth-schema.js"
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export type QuestionsDatabase = dbproxy.Database<{
+export type QuestionsDatabase = dbmage.Database<{
 	auth: AuthSchema
 	questions: QuestionsSchema
 }>
 
-export type QuestionsSchema = dbproxy.AsSchema<{
+export type QuestionsSchema = dbmage.AsSchema<{
 	questionPosts: QuestionPostRow
 	answerPosts: AnswerPostRow
 	likes: SimpleVoteRow
 	reports: SimpleVoteRow
 }>
 
-export type SimpleVoteTable = dbproxy.Table<SimpleVoteRow>
+export type SimpleVoteTable = dbmage.Table<SimpleVoteRow>
 
-export type CommonContentItem = dbproxy.AsRow<{
-	questionId: dbproxy.Id
-	authorUserId: dbproxy.Id
+export type CommonContentItem = dbmage.AsRow<{
+	questionId: dbmage.Id
+	authorUserId: dbmage.Id
 	board: string
 	content: string
 	archive: boolean
@@ -27,11 +27,11 @@ export type CommonContentItem = dbproxy.AsRow<{
 
 export type QuestionPostRow = CommonContentItem
 
-export type AnswerPostRow = dbproxy.AsRow<{
-	answerId: dbproxy.Id
+export type AnswerPostRow = dbmage.AsRow<{
+	answerId: dbmage.Id
 }> & CommonContentItem
 
-export type SimpleVoteRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
-	itemId: dbproxy.Id
+export type SimpleVoteRow = dbmage.AsRow<{
+	userId: dbmage.Id
+	itemId: dbmage.Id
 }>

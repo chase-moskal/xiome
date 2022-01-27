@@ -1,7 +1,7 @@
 
 // import {pubsub} from "../../../toolbox/pubsub.js"
 // import {makeTokenStore2} from "../../../features/auth/goblin/token-store2.js"
-// import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+// import {memoryFlexStorage} from "dbmage"
 
 // type TokenStorageListener = (iframeId: number) => void | Promise<void>
 

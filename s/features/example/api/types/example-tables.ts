@@ -1,11 +1,11 @@
 
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export type ExampleSchema = dbproxy.AsSchema<{
+export type ExampleSchema = dbmage.AsSchema<{
 	examplePosts: ExamplePost
 }>
 
-export type ExamplePost = dbproxy.AsRow<{
-	exampleId: dbproxy.Id
+export type ExamplePost = dbmage.AsRow<{
+	exampleId: dbmage.Id
 	something: string
 }>

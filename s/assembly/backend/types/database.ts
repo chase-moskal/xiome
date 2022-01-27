@@ -1,5 +1,5 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {RemoveIndex} from "../../../toolbox/types/remove-index.js"
 import {AuthSchema} from "../../../features/auth/types/auth-schema.js"
@@ -13,20 +13,20 @@ import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstr
 
 export const appConstraintKey = "namespace-appId"
 
-export type AppConstraint = dbproxy.AsRow<{
-	[appConstraintKey]: dbproxy.Id
+export type AppConstraint = dbmage.AsRow<{
+	[appConstraintKey]: dbmage.Id
 }>
 
-export type DatabaseSchemaUnisolated = dbproxy.UnconstrainSchema<
+export type DatabaseSchemaUnisolated = dbmage.UnconstrainSchema<
 	AppConstraint,
-	dbproxy.AsSchema<{
+	dbmage.AsSchema<{
 		apps: AppSchema
 	}>
 >
 
-export type DatabaseSchemaRequiresAppIsolation = dbproxy.UnconstrainSchema<
+export type DatabaseSchemaRequiresAppIsolation = dbmage.UnconstrainSchema<
 	AppConstraint,
-	dbproxy.AsSchema<{
+	dbmage.AsSchema<{
 		auth: AuthSchema
 		notes: NotesSchema
 		store: StoreSchema
@@ -41,12 +41,12 @@ export type DatabaseSchema =
 	DatabaseSchemaRequiresAppIsolation
 
 export type DatabaseTables = RemoveIndex<
-	dbproxy.SchemaToTables<DatabaseSchemaUnisolated> &
+	dbmage.SchemaToTables<DatabaseSchemaUnisolated> &
 	SchemaToUnconstrainedTables<DatabaseSchemaRequiresAppIsolation>
 >
 
-export type DatabaseRaw = dbproxy.DatabaseLike<DatabaseTables>
-export type DatabaseSafe = dbproxy.Database<DatabaseSchema>
+export type DatabaseRaw = dbmage.DatabaseLike<DatabaseTables>
+export type DatabaseSafe = dbmage.Database<DatabaseSchema>
 
 export type DatabaseSelect<K extends keyof DatabaseTables> =
-	dbproxy.DatabaseLike<Pick<DatabaseTables, K>>
+	dbmage.DatabaseLike<Pick<DatabaseTables, K>>

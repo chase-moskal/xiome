@@ -1,11 +1,12 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
-import {memoryFlexStorage} from "../../../toolbox/flex-storage/memory-flex-storage.js"
+import {memoryFlexStorage} from "dbmage"
+import {makeTableNameWithHyphens} from "../../../common/make-table-name-with-hyphens.js"
 import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
 
 export async function assimilateDatabase({
@@ -19,7 +20,7 @@ export async function assimilateDatabase({
 	}) {
 
 	const databaseShapeUnisolated:
-		dbproxy.SchemaToShape<DatabaseSchemaUnisolated> = {
+		dbmage.SchemaToShape<DatabaseSchemaUnisolated> = {
 		apps: {
 			registrations: true,
 			owners: true,
@@ -27,7 +28,7 @@ export async function assimilateDatabase({
 	}
 
 	const databaseShapeRequiresAppIsolation:
-		dbproxy.SchemaToShape<DatabaseSchemaRequiresAppIsolation> = {
+		dbmage.SchemaToShape<DatabaseSchemaRequiresAppIsolation> = {
 		auth: {
 			users: {
 				accounts: true,
@@ -78,7 +79,7 @@ export async function assimilateDatabase({
 		},
 	}
 
-	const databaseShape: dbproxy.SchemaToShape<DatabaseSchema> = {
+	const databaseShape: dbmage.SchemaToShape<DatabaseSchema> = {
 		...databaseShapeRequiresAppIsolation,
 		...databaseShapeUnisolated,
 	}
@@ -99,15 +100,18 @@ export async function assimilateDatabase({
 	{ // bake app tables
 		const {appId, home, label, origins} = config.platform.appDetails
 		const table = databaseRaw.tables.apps.registrations
-		const fallbackDatabase = dbproxy.memory(databaseShape)
+		const fallbackDatabase = dbmage.memory({
+			shape: databaseShape,
+			makeTableName: makeTableNameWithHyphens,
+		})
 		await fallbackDatabase.tables.apps.registrations.create({
-			appId: dbproxy.Id.fromString(appId),
+			appId: dbmage.Id.fromString(appId),
 			home,
 			label,
 			origins: originsToDatabase(origins),
 			archived: false,
 		})
-		const moddedTable = dbproxy.fallback({
+		const moddedTable = dbmage.fallback({
 			table,
 			fallbackTable: fallbackDatabase.tables.apps.registrations,
 		})

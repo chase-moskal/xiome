@@ -1,6 +1,6 @@
 
 import {ProfileRow} from "../../types/user-tables.js"
-import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 
 export const generateProfileRow = ({userId, avatar, generateNickname}: {
 		userId: Id

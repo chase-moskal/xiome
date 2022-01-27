@@ -1,17 +1,18 @@
 
 import mongodb from "mongodb"
 
+import * as dbmage from "dbmage"
+import {mongo} from "dbmage/x/drivers/mongo.js"
 import {DatabaseSchema} from "../types/database.js"
 import {SecretConfig} from "../types/secret-config.js"
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
-import {mongo} from "../../../toolbox/dbproxy/databases/mongo.js"
 import {ConfigDatabaseMongo} from "../types/config-database-mongo.js"
+import {makeTableNameWithHyphens} from "../../../common/make-table-name-with-hyphens.js"
 
 export async function configureMongo({
 		config, databaseShape,
 	}: {
 		config: {database: ConfigDatabaseMongo} & SecretConfig
-		databaseShape: dbproxy.SchemaToShape<DatabaseSchema>
+		databaseShape: dbmage.SchemaToShape<DatabaseSchema>
 	}) {
 
 	const client = await new mongodb.MongoClient(config.database.mongo.link).connect()
@@ -19,5 +20,6 @@ export async function configureMongo({
 		client,
 		shape: databaseShape,
 		dbName: config.database.mongo.db,
+		makeTableName: makeTableNameWithHyphens,
 	})
 }

@@ -1,5 +1,5 @@
 
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
 import {prepareAuthPolicies} from "../../../auth/policies/prepare-auth-policies.js"
 

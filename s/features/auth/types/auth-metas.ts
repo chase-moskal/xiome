@@ -1,5 +1,5 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {AuthSchema} from "./auth-schema.js"
 import {AccessPayload} from "./auth-tokens.js"
@@ -43,5 +43,5 @@ export interface PlatformUserAuth extends Omit<UserAuth, "checker"> {
 export interface AppOwnerMeta extends PlatformUserMeta {}
 
 export interface AppOwnerAuth extends PlatformUserAuth {
-	authorizeAppOwner(appId: dbproxy.Id): Promise<DatabaseSafe>
+	authorizeAppOwner(appId: dbmage.Id): Promise<DatabaseSafe>
 }

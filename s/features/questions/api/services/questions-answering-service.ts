@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find} from "dbmage"
 
 import {vote} from "./helpers/vote.js"
 import {AnswerDraft} from "../types/answer-draft.js"

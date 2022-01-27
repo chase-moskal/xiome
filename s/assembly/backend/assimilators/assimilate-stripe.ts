@@ -1,7 +1,7 @@
 
 import {DatabaseRaw} from "../types/database.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 import {mockStripeCircuit} from "../../../features/store/stripe/mock-stripe-circuit.js"
 
 export async function assimilateStripe({

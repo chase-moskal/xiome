@@ -1,31 +1,31 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export type UserSchema = dbproxy.AsSchema<{
+export type UserSchema = dbmage.AsSchema<{
 	accounts: AccountRow
 	profiles: ProfileRow
 	emails: EmailRow
 	latestLogins: LatestLoginRow
 }>
 
-export type AccountRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
+export type AccountRow = dbmage.AsRow<{
+	userId: dbmage.Id
 	created: number
 }>
 
-export type ProfileRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
+export type ProfileRow = dbmage.AsRow<{
+	userId: dbmage.Id
 	nickname: string
 	tagline: string
 	avatar: undefined | string
 }>
 
-export type EmailRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
+export type EmailRow = dbmage.AsRow<{
+	userId: dbmage.Id
 	email: string
 }>
 
-export type LatestLoginRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
+export type LatestLoginRow = dbmage.AsRow<{
+	userId: dbmage.Id
 	time: number
 }>

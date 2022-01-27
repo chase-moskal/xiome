@@ -1,9 +1,9 @@
 
 import Stripe from "stripe"
-import {find} from "../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../toolbox/dbproxy/dbproxy.js"
+import {find} from "dbmage"
+import * as dbmage from "dbmage"
 
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {MockAccount} from "./tables/types/rows/mock-account.js"
@@ -74,7 +74,7 @@ export function mockStripeLiaison({
 				})
 			}
 
-			const tables = dbproxy.constrainTables({
+			const tables = dbmage.constrainTables({
 				tables: rawTables,
 				constraint: {"_connectedAccount": stripeAccount},
 			})
@@ -88,7 +88,7 @@ export function mockStripeLiaison({
 				return <X>output
 			}
 	
-			function prepMockResource<xResource>(table: dbproxy.Table<any>) {
+			function prepMockResource<xResource>(table: dbmage.Table<any>) {
 				return {
 					create<xParams>({makeData, hook = async() => {}}: {
 							makeData: (params: xParams) => Partial<xResource>
@@ -139,7 +139,7 @@ export function mockStripeLiaison({
 					createHook,
 					updateHook,
 				}: {
-					table: dbproxy.Table<any>
+					table: dbmage.Table<any>
 					createData: (params: xCreateParams) => Partial<xResource>
 					updateData: (params: xUpdateParams) => Partial<xResource>
 					createHook?: (resource: xResource) => Promise<void>

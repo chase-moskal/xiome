@@ -1,19 +1,24 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
-import {Id, find, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, find, findAll} from "dbmage"
 
 import {objectMap} from "../../../../../toolbox/object-map.js"
 import {Subbie, subbies} from "../../../../../toolbox/subbies.js"
 import {AssertiveMap} from "../../../../../toolbox/assertive-map.js"
 import {maximumNumberOfPostsShownAtOnce} from "../../../common/chat-constants.js"
-import {FlexStorage} from "../../../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 import {ChatMute, ChatPost, ChatPostRow, ChatStatus, ChatSchema, chatShape} from "../../../common/types/chat-concepts.js"
+import {makeTableNameWithHyphens} from "../../../../../common/make-table-name-with-hyphens.js"
 
 export async function mockChatPersistence(storage: FlexStorage) {
 
 	const chatDatabaseRaw = UnconstrainedTable.wrapDatabase(
-		dbproxy.flex<ChatSchema>(storage, chatShape)
+		dbmage.flex<ChatSchema>({
+			shape: chatShape,
+			flexStorage: storage,
+			makeTableName: makeTableNameWithHyphens,
+		})
 	)
 
 	const events = {
@@ -57,7 +62,7 @@ export async function mockChatPersistence(storage: FlexStorage) {
 
 	function namespaceForApp(appId: string) {
 		const appCache = getAppCache(appId)
-		const chatDatabase = (<dbproxy.Database<ChatSchema>><any>
+		const chatDatabase = (<dbmage.Database<ChatSchema>><any>
 			UnconstrainedTable.constrainDatabaseForApp({
 				appId: Id.fromString(appId),
 				database: chatDatabaseRaw,

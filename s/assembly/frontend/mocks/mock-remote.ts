@@ -4,7 +4,7 @@ import * as renraku from "renraku"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {prepareApiShape} from "../auth/prepare-api-shape.js"
 import {stopwatch} from "../../../toolbox/goodtimes/stopwatch.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 
 export function mockRemote({
 		api,

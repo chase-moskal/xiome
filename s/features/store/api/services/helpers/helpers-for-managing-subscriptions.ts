@@ -1,5 +1,5 @@
 
-import {Id} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForManagingSubscriptions = ({

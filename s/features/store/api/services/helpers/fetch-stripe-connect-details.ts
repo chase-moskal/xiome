@@ -1,11 +1,11 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {StoreSchema} from "../../../types/store-schema.js"
 import {StripeConnectDetails, StripeLiaison} from "../../../types/store-concepts.js"
 
 export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
-		storeTables: dbproxy.SchemaToTables<StoreSchema>
+		storeTables: dbmage.SchemaToTables<StoreSchema>
 		stripeLiaison: StripeLiaison
 	}) {
 

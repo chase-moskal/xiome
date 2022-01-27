@@ -1,6 +1,6 @@
 
-import {findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {findAll} from "dbmage"
+import * as dbmage from "dbmage"
 
 import {videoPrivileges} from "../../video-privileges.js"
 import {VideoView} from "../../../types/video-concepts.js"
@@ -13,7 +13,7 @@ export async function getVideoViews({
 	}: {
 		labels: string[]
 		userPrivileges: string[]
-		videoTables: dbproxy.SchemaToTables<VideoSchema>
+		videoTables: dbmage.SchemaToTables<VideoSchema>
 		checker: PrivilegeChecker<typeof videoPrivileges>
 	}): Promise<VideoView[]> {
 

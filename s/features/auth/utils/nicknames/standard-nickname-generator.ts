@@ -1,5 +1,5 @@
 
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {standardDictionary} from "./standard-dictionary.js"
 import {makeNicknameGenerator} from "./make-nickname-generator.js"
 

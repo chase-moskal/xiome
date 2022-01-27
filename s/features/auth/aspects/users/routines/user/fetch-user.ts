@@ -1,6 +1,6 @@
 
-import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
+import * as dbmage from "dbmage"
 
 import {fetchUsers} from "./fetch-users.js"
 import {AuthSchema} from "../../../../types/auth-schema.js"
@@ -9,7 +9,7 @@ import {PermissionsEngine} from "../../../../../../assembly/backend/permissions/
 export async function fetchUser({userId, ...options}: {
 		userId: Id
 		permissionsEngine: PermissionsEngine
-		authTables: dbproxy.SchemaToTables<AuthSchema>
+		authTables: dbmage.SchemaToTables<AuthSchema>
 	}) {
 	const results = await fetchUsers({...options, userIds: [userId]})
 	return results.find(r => r.userId)

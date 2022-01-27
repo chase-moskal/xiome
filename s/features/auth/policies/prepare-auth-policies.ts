@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 import {VerifyToken} from "redcrypto/x/types.js"
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
 import {AccessPayload} from "../types/auth-tokens.js"
 import {DatabaseRaw, DatabaseSafe} from "../../../assembly/backend/types/database.js"
@@ -33,7 +33,7 @@ export function prepareAuthPolicies({
 			return <LoginAuth>{
 				access,
 				database: UnconstrainedTable.constrainDatabaseForApp({
-					appId: dbproxy.Id.fromString(access.appId),
+					appId: dbmage.Id.fromString(access.appId),
 					database: databaseRaw,
 				}),
 				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
@@ -52,7 +52,7 @@ export function prepareAuthPolicies({
 
 	const platformUserPolicy: renraku.Policy<PlatformUserMeta, PlatformUserAuth> = async(meta, headers) => {
 		const auth = await userPolicy(meta, headers)
-		const userId = dbproxy.Id.fromString(auth.access.user.userId)
+		const userId = dbmage.Id.fromString(auth.access.user.userId)
 		if (auth.access.appId === config.platform.appDetails.appId) {
 			return {
 				...auth,
@@ -74,7 +74,7 @@ export function prepareAuthPolicies({
 			checker: auth.checker,
 			statsHub: auth.statsHub,
 			databaseRaw,
-			async authorizeAppOwner(appId: dbproxy.Id) {
+			async authorizeAppOwner(appId: dbmage.Id) {
 				const allowedToEditAnyApp = auth.checker.hasPrivilege("edit any app")
 				const isOwnerOfApp = isUserOwnerOfApp({appId, appTables, access: auth.access})
 				const allowed = isOwnerOfApp || allowedToEditAnyApp

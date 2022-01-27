@@ -4,7 +4,7 @@ import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
-import {FlexStorage} from "../../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectApp({

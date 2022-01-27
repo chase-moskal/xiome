@@ -1,6 +1,6 @@
 
 import {SimpleVoteTable} from "../../types/questions-schema.js"
-import {Id, find} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find} from "dbmage"
 
 export async function vote({status, userId, itemId, voteTable}: {
 		userId: Id

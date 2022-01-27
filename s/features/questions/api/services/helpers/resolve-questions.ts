@@ -1,6 +1,6 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
-import {Id, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, findAll} from "dbmage"
 
 import {makeVotingBooth} from "./voting-booth.js"
 import {Question} from "../../types/questions-and-answers.js"
@@ -9,7 +9,7 @@ import {QuestionPostRow, QuestionsSchema} from "../../types/questions-schema.js"
 export async function resolveQuestions({userId, questionPosts, questionsTables}: {
 		userId?: Id
 		questionPosts: QuestionPostRow[]
-		questionsTables: dbproxy.SchemaToTables<QuestionsSchema>
+		questionsTables: dbmage.SchemaToTables<QuestionsSchema>
 	}) {
 
 	const questionIds = questionPosts.map(post => post.questionId)

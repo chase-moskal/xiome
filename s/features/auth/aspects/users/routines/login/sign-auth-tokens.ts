@@ -1,7 +1,7 @@
 
 import {SignToken} from "redcrypto/x/types.js"
-import {Id} from "../../../../../../toolbox/dbproxy/dbproxy.js"
-import * as dbproxy from "../../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id} from "dbmage"
+import * as dbmage from "dbmage"
 
 import {fetchUser} from "../user/fetch-user.js"
 import {AuthSchema} from "../../../../types/auth-schema.js"
@@ -24,7 +24,7 @@ export async function signAuthTokens({
 			userId: Id
 			origins: string[]
 			permissionsEngine: PermissionsEngine
-			authTables: dbproxy.SchemaToTables<AuthSchema>
+			authTables: dbmage.SchemaToTables<AuthSchema>
 			lifespans: {
 				access: number
 				refresh: number

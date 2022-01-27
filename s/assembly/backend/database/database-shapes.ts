@@ -1,9 +1,9 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 import {DatabaseSchema, DatabaseSchemaRequiresAppIsolation, DatabaseSchemaUnisolated} from "../types/database.js"
 
 export const databaseShapeUnisolated:
-	dbproxy.SchemaToShape<DatabaseSchemaUnisolated> = {
+	dbmage.SchemaToShape<DatabaseSchemaUnisolated> = {
 	apps: {
 		registrations: true,
 		owners: true,
@@ -11,7 +11,7 @@ export const databaseShapeUnisolated:
 }
 
 export const databaseShapeRequiresAppIsolation:
-	dbproxy.SchemaToShape<DatabaseSchemaRequiresAppIsolation> = {
+	dbmage.SchemaToShape<DatabaseSchemaRequiresAppIsolation> = {
 	auth: {
 		users: {
 			accounts: true,
@@ -62,7 +62,7 @@ export const databaseShapeRequiresAppIsolation:
 	},
 }
 
-export const databaseShape: dbproxy.SchemaToShape<DatabaseSchema> = {
+export const databaseShape: dbmage.SchemaToShape<DatabaseSchema> = {
 	...databaseShapeRequiresAppIsolation,
 	...databaseShapeUnisolated,
 }

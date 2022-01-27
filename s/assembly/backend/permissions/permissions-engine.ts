@@ -1,6 +1,6 @@
 
-import * as dbproxy from "../../../toolbox/dbproxy/dbproxy.js"
-import {Id, find, findAll, or} from "../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
+import {Id, find, findAll, or} from "dbmage"
 
 import {merge} from "../../../toolbox/merge.js"
 import {concurrent} from "../../../toolbox/concurrent.js"
@@ -12,7 +12,7 @@ import {isCurrentlyWithinTimeframe} from "../../../features/auth/aspects/users/r
 
 export function makePermissionsEngine({isPlatform, permissionsTables}: {
 		isPlatform: boolean
-		permissionsTables: dbproxy.SchemaToTables<PermissionsSchema>
+		permissionsTables: dbmage.SchemaToTables<PermissionsSchema>
 	}) {
 
 	const {

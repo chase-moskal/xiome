@@ -1,15 +1,15 @@
 
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export type PermissionsSchema = dbproxy.AsSchema<{
+export type PermissionsSchema = dbmage.AsSchema<{
 	role: RoleRow
 	privilege: PrivilegeRow
 	userHasRole: UserHasRoleRow
 	roleHasPrivilege: RoleHasPrivilegeRow
 }>
 
-export type RoleRow = dbproxy.AsRow<{
-	roleId: dbproxy.Id
+export type RoleRow = dbmage.AsRow<{
+	roleId: dbmage.Id
 	label: string
 	time: number
 
@@ -23,16 +23,16 @@ export type RoleRow = dbproxy.AsRow<{
 	assignable: boolean
 }>
 
-export type PrivilegeRow = dbproxy.AsRow<{
-	privilegeId: dbproxy.Id
+export type PrivilegeRow = dbmage.AsRow<{
+	privilegeId: dbmage.Id
 	label: string
 	hard: boolean
 	time: number
 }>
 
-export type UserHasRoleRow = dbproxy.AsRow<{
-	userId: dbproxy.Id
-	roleId: dbproxy.Id
+export type UserHasRoleRow = dbmage.AsRow<{
+	userId: dbmage.Id
+	roleId: dbmage.Id
 	timeframeStart: undefined | number
 	timeframeEnd: undefined | number
 	public: boolean
@@ -40,9 +40,9 @@ export type UserHasRoleRow = dbproxy.AsRow<{
 	time: number
 }>
 
-export type RoleHasPrivilegeRow = dbproxy.AsRow<{
-	roleId: dbproxy.Id
-	privilegeId: dbproxy.Id
+export type RoleHasPrivilegeRow = dbmage.AsRow<{
+	roleId: dbmage.Id
+	privilegeId: dbmage.Id
 	immutable: boolean
 	active: boolean
 	time: number

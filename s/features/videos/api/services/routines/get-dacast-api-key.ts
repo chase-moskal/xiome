@@ -1,8 +1,8 @@
 
 import {VideoSchema} from "../../../types/video-schema.js"
-import * as dbproxy from "../../../../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 
-export async function getDacastApiKey(videoTables: dbproxy.SchemaToTables<VideoSchema>) {
+export async function getDacastApiKey(videoTables: dbmage.SchemaToTables<VideoSchema>) {
 
 	const link = await videoTables.dacastAccountLinks
 		.readOne({conditions: false})

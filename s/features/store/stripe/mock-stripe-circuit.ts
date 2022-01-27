@@ -1,14 +1,14 @@
 
-import {find} from "../../../toolbox/dbproxy/dbproxy.js"
+import {find} from "dbmage"
 
-import {Rando} from "../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {pubsub, pubsubs} from "../../../toolbox/pubsub.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
-import {FlexStorage} from "../../../toolbox/flex-storage/types/flex-storage.js"
+import {FlexStorage} from "dbmage"
 
 export async function mockStripeCircuit({
 		rando, tableStorage, databaseRaw,

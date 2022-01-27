@@ -1,17 +1,17 @@
 
 import {objectMap} from "../../toolbox/object-map.js"
-import * as dbproxy from "../../toolbox/dbproxy/dbproxy.js"
+import * as dbmage from "dbmage"
 import {AppConstraint, appConstraintKey} from "../../assembly/backend/types/database.js"
 import {ConstrainMixedTables, SchemaToUnconstrainedTables, TablesMixed} from "./types/unconstrained-tables.js"
 
-export class UnconstrainedTable<xRow extends dbproxy.Row> {
+export class UnconstrainedTable<xRow extends dbmage.Row> {
 
-	static wrapTables<xSchema extends dbproxy.Schema>(
-			tables: dbproxy.SchemaToTables<xSchema>
+	static wrapTables<xSchema extends dbmage.Schema>(
+			tables: dbmage.SchemaToTables<xSchema>
 		) {
 		function recurse(t: any) {
 			return objectMap(t, value =>
-				dbproxy.isTable(value)
+				dbmage.isTable(value)
 					? new UnconstrainedTable(value)
 					: recurse(value)
 			)
@@ -19,7 +19,7 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		return <SchemaToUnconstrainedTables<xSchema>>recurse(tables)
 	}
 
-	static unwrapTables<xSchema extends dbproxy.Schema>(
+	static unwrapTables<xSchema extends dbmage.Schema>(
 			unconstrainedTables: SchemaToUnconstrainedTables<xSchema>
 		) {
 		function recurse(tables: any) {
@@ -29,15 +29,15 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 					: recurse(value)
 			)
 		}
-		return <dbproxy.ConstrainTables<
-			{[appConstraintKey]: dbproxy.Id}, dbproxy.SchemaToTables<xSchema>>
+		return <dbmage.ConstrainTables<
+			{[appConstraintKey]: dbmage.Id}, dbmage.SchemaToTables<xSchema>>
 		>recurse(unconstrainedTables)
 	}
 
-	static wrapDatabase<xSchema extends dbproxy.Schema>(
-			database: dbproxy.Database<xSchema>
+	static wrapDatabase<xSchema extends dbmage.Schema>(
+			database: dbmage.Database<xSchema>
 		) {
-		return dbproxy.subsection(
+		return dbmage.subsection(
 			database,
 			tables => UnconstrainedTable.wrapTables(tables)
 		)
@@ -47,7 +47,7 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 			appId,
 			unconstrainedTables,
 		}: {
-			appId: dbproxy.Id
+			appId: dbmage.Id
 			unconstrainedTables: xTables
 		}) {
 		function recurse(tables: any) {
@@ -60,18 +60,18 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		return <ConstrainMixedTables<xTables>>recurse(unconstrainedTables)
 	}
 
-	static constrainDatabaseForApp<xDatabase extends dbproxy.DatabaseLike<TablesMixed>>({
+	static constrainDatabaseForApp<xDatabase extends dbmage.DatabaseLike<TablesMixed>>({
 			appId,
 			database,
 		}: {
-			appId: dbproxy.Id
+			appId: dbmage.Id
 			database: xDatabase
 		}) {
 		function recurse(tables: any) {
 			return objectMap(tables, value =>
 				value instanceof UnconstrainedTable
 					? value.constrainForApp(appId)
-					: dbproxy.isTable(value)
+					: dbmage.isTable(value)
 						? value
 						: recurse(value)
 			)
@@ -88,14 +88,14 @@ export class UnconstrainedTable<xRow extends dbproxy.Row> {
 		}
 	}
 
-	unconstrained: dbproxy.UnconstrainTable<AppConstraint, dbproxy.Table<xRow>>
+	unconstrained: dbmage.UnconstrainTable<AppConstraint, dbmage.Table<xRow>>
 
-	constructor(table: dbproxy.Table<xRow>) {
-		this.unconstrained = <dbproxy.UnconstrainTable<AppConstraint, dbproxy.Table<xRow>>>table
+	constructor(table: dbmage.Table<xRow>) {
+		this.unconstrained = <dbmage.UnconstrainTable<AppConstraint, dbmage.Table<xRow>>>table
 	}
 
-	constrainForApp(appId: dbproxy.Id) {
-		return dbproxy.constrain({
+	constrainForApp(appId: dbmage.Id) {
+		return dbmage.constrain({
 			table: this.unconstrained,
 			constraint: {[appConstraintKey]: appId},
 		})

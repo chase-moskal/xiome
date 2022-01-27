@@ -1,6 +1,6 @@
 
 import * as renraku from "renraku"
-import {Id, find} from "../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, find} from "dbmage"
 
 import {AnonMeta} from "../../../auth/types/auth-metas.js"
 import {resolveQuestions} from "./helpers/resolve-questions.js"

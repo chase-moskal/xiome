@@ -1,6 +1,6 @@
 
 import {SimpleVoteTable} from "../../types/questions-schema.js"
-import {Id, findAll} from "../../../../../toolbox/dbproxy/dbproxy.js"
+import {Id, findAll} from "dbmage"
 
 export async function makeVotingBooth({userId, itemIds, likesTable, reportsTable}: {
 		userId?: Id
