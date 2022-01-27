@@ -1,5 +1,5 @@
 
-import {isNode as stockIsNode} from "../is-node.js"
+import {isNode as stockIsNode} from "dbmage"
 
 import {digestPasswordNode} from "./environments/digest-password-node.js"
 import {digestPasswordBrowser} from "./environments/digest-password-browser.js"
