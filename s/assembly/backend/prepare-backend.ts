@@ -1,8 +1,8 @@
 
+import {getRando} from "dbmage"
 import * as dbmage from "dbmage"
 
 import {DatabaseSafe} from "./types/database.js"
-import {getRando} from "../../toolbox/get-rando.js"
 import {SecretConfig} from "./types/secret-config.js"
 import {Configurators} from "./types/configurators.js"
 import {mockBrowser} from "../frontend/mocks/mock-browser.js"

@@ -5,7 +5,7 @@ import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"
 import {mockVideoMeta} from "./meta/mock-meta.js"
-import {getRando} from "../../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {makeVideoModels} from "../models/video-models.js"
 import {videoPrivileges} from "../api/video-privileges.js"
 import {mockDacastSdk} from "../dacast/mocks/mock-dacast-sdk.js"

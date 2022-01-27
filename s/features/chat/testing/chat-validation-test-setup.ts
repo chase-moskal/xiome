@@ -2,7 +2,7 @@
 import * as renraku from "renraku"
 
 import {nap} from "../../../toolbox/nap.js"
-import {getRando} from "../../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {chatPrivileges} from "../common/chat-privileges.js"
 import {ClientRecord} from "../common/types/chat-concepts.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"

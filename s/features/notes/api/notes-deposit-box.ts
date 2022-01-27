@@ -1,7 +1,7 @@
 
 import * as dbmage from "dbmage"
 
-import {Rando} from "../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {DatabaseSafe} from "../../../assembly/backend/types/database.js"
 import {Database, DraftForNote, Notes} from "../types/notes-concepts.js"
 

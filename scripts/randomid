@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 ":" //# comment; exec /usr/bin/env node --input-type=module - "$@" < "$0"
 
-import {getRando} from "./x/toolbox/get-rando.js"
+import {getRando} from "dbmage"
 ;(async() => {
 	const rando = await getRando()
 	const howMany = parseInt(process.argv[2] ?? 1)

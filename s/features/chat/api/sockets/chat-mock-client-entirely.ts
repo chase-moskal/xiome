@@ -1,6 +1,6 @@
 
 import {chatMockClient} from "./chat-mock-client.js"
-import {getRando} from "../../../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {ChatConnect} from "../../common/types/chat-concepts.js"
 import {makeChatServerCore} from "../cores/chat-server-core.js"
 import {mockChatPolicy} from "../../testing/mocks/mock-chat-policy.js"

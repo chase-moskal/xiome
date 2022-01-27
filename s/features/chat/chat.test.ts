@@ -3,7 +3,7 @@ import {assert, expect, Suite} from "cynic"
 
 import {nap} from "../../toolbox/nap.js"
 import {ops} from "../../framework/ops.js"
-import {getRando} from "../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {testChatSetup} from "./testing/test-chat-setup.js"
 import {ChatDraft, ChatStatus} from "./common/types/chat-concepts.js"
 import {chatValidationTestSetup} from "./testing/chat-validation-test-setup.js"

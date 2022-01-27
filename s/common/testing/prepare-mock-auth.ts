@@ -1,7 +1,7 @@
 
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
-import {getRando} from "../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {mockConfig} from "../../assembly/backend/config/mock-config.js"
 import {mockDatabase} from "../../assembly/backend/database/mock-database.js"
 import {memoryFlexStorage} from "../../toolbox/flex-storage/memory-flex-storage.js"

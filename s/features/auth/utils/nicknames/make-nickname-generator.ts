@@ -1,6 +1,6 @@
 
 import {Dictionary} from "./types/dictionary.js"
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {NicknameStructure} from "./types/nickname-structure.js"
 
 export function makeNicknameGenerator({

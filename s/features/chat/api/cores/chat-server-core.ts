@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {chatAllowance} from "../../common/chat-allowance.js"
 import {chatPrivileges} from "../../common/chat-privileges.js"
 import {makeChatClientside} from "../services/chat-clientside.js"

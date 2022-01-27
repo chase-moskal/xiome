@@ -3,7 +3,7 @@ import json5 from "json5"
 import * as renraku from "renraku"
 import {webSocketServer} from "renraku/x/websocket/socket-server.js"
 
-import {getRando} from "../../../toolbox/get-rando.js"
+import {getRando} from "dbmage"
 import {makeChatServerCore} from "./cores/chat-server-core.js"
 import {makeChatClientside} from "./services/chat-clientside.js"
 import {deathWithDignity} from "../../../toolbox/death-with-dignity.js"

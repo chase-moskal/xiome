@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
 
-import {Rando} from "../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {schema} from "../../../../toolbox/darkvalley.js"
 import {chatAllowance} from "../../common/chat-allowance.js"
 import {RateLimiter} from "../../../../toolbox/rate-limiter/rate-limiter.js"

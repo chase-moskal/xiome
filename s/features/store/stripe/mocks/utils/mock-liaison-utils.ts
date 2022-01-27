@@ -2,7 +2,7 @@
 import {Stripe} from "stripe"
 import {find, and} from "dbmage"
 
-import {Rando} from "../../../../../toolbox/get-rando.js"
+import {Rando} from "dbmage"
 import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {MockAccount} from "../tables/types/rows/mock-account.js"
 import {MockCustomer} from "../tables/types/rows/mock-customer.js"
