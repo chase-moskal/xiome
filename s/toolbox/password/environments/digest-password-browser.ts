@@ -1,5 +1,5 @@
 
-import {decodeHex, encodeHex} from "../../binary/hex.js"
+import {decodeHex, encodeHex} from "dbmage"
 import {pbkdf2Algorithm, digestBitLength} from "../password-constants.js"
 
 export async function digestPasswordBrowser({salt, password}: {
