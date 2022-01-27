@@ -88,7 +88,7 @@ export async function assimilateDatabase({
 		? configureMockStorage()
 		: memoryFlexStorage()
 
-	const databaseRaw = applyDatabaseWrapping(
+	let databaseRaw = applyDatabaseWrapping(
 		config.database === "mock-storage"
 			? mockDatabaseUnwrapped(mockStorage)
 			: await configureMongo({
@@ -111,11 +111,19 @@ export async function assimilateDatabase({
 			origins: originsToDatabase(origins),
 			archived: false,
 		})
-		const moddedTable = dbmage.fallback({
+		const appRegistrationsTableWithFallback = dbmage.fallback({
 			table,
 			fallbackTable: fallbackDatabase.tables.apps.registrations,
 		})
-		databaseRaw.tables.apps.registrations = moddedTable
+		databaseRaw = dbmage.subsection(databaseRaw, tables => {
+			return {
+				...tables,
+				apps: {
+					...tables.apps,
+					registrations: appRegistrationsTableWithFallback,
+				},
+			}
+		})
 	}
 
 	return {
