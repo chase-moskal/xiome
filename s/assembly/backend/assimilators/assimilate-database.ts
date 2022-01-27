@@ -99,21 +99,17 @@ export async function assimilateDatabase({
 
 	{ // bake app tables
 		const {appId, home, label, origins} = config.platform.appDetails
-		const table = databaseRaw.tables.apps.registrations
-		const fallbackDatabase = dbmage.memory({
-			shape: databaseShape,
-			makeTableName: makeTableNameWithHyphens,
-		})
-		await fallbackDatabase.tables.apps.registrations.create({
-			appId: dbmage.Id.fromString(appId),
-			home,
-			label,
-			origins: originsToDatabase(origins),
-			archived: false,
-		})
 		const appRegistrationsTableWithFallback = dbmage.fallback({
-			table,
-			fallbackTable: fallbackDatabase.tables.apps.registrations,
+			table: databaseRaw.tables.apps.registrations,
+			fallbackRows: [
+				{
+					appId: dbmage.Id.fromString(appId),
+					home,
+					label,
+					origins: originsToDatabase(origins),
+					archived: false,
+				}
+			],
 		})
 		databaseRaw = dbmage.subsection(databaseRaw, tables => {
 			return {
