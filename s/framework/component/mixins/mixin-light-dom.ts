@@ -1,8 +1,8 @@
 
 import {LitElement} from "lit"
-import {ConstructorFor} from "../../../types/constructor-for.js"
+import {Constructor} from "../../../types/constructor.js"
 
-export function mixinLightDom<C extends ConstructorFor<LitElement>>(
+export function mixinLightDom<C extends Constructor<LitElement>>(
 		Base: C
 	): C {
 

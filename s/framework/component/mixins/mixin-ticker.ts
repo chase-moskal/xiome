@@ -1,14 +1,14 @@
 
 import {LitElement} from "lit"
 import {Mixin} from "../../../types/mixin.js"
-import {ConstructorFor} from "../../../types/constructor-for.js"
+import {Constructor} from "../../../types/constructor.js"
 
 export interface TickerComponent {
 	tick(): void
 }
 
 export function mixinTicker(period: number) {
-	return function<C extends ConstructorFor<LitElement>>(
+	return function<C extends Constructor<LitElement>>(
 			Base: C
 		): Mixin<C, TickerComponent> {
 

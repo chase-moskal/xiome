@@ -1,13 +1,13 @@
 
 import {Mixin} from "../../../types/mixin.js"
-import {ConstructorFor} from "../../../types/constructor-for.js"
+import {Constructor} from "../../../types/constructor.js"
 
 export interface WithShare<xShare> {
 	get share(): xShare
 }
 
 export function mixinShare<xShare>(providedShare: xShare) {
-	return function<C extends ConstructorFor>(
+	return function<C extends Constructor>(
 			Base: C
 		): Mixin<C, WithShare<xShare>> {
 
@@ -20,7 +20,7 @@ export function mixinShare<xShare>(providedShare: xShare) {
 }
 
 export function mixinRequireShare<xShare>(name?: string) {
-	return function<C extends ConstructorFor>(
+	return function<C extends Constructor>(
 			Base: C
 		): Mixin<C, WithShare<xShare>> {
 
