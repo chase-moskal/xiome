@@ -1,9 +1,8 @@
 
-import {Constructor, CustomElement} from "../types/component-types.js"
+export function mixinInitiallyHidden<C extends CustomElementConstructor>(
+		Base: C
+	): C {
 
-export function mixinInitiallyHidden<
-		C extends Constructor<CustomElement>
-	>(Base: C) {
 	return class extends Base {
 		connectedCallback() {
 			super.connectedCallback()

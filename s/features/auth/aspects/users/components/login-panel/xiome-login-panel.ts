@@ -6,10 +6,12 @@ import {email} from "../../../../../../toolbox/darkvalley.js"
 import {AccessPayload} from "../../../../types/auth-tokens.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
-import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../../../framework/component.js"
+import {Component, html, mixinRequireShare, mixinStyles, property, query} from "../../../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeLoginPanel extends ComponentWithShare<{accessModel: ReturnType<typeof makeAccessModel>}> {
+export class XiomeLoginPanel extends mixinRequireShare<{
+		accessModel: ReturnType<typeof makeAccessModel>
+	}>()(Component) {
 
 	@property({type: Boolean, reflect: true})
 	["show-logout"]: boolean = false

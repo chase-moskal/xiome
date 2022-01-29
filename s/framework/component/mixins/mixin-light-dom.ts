@@ -1,7 +1,11 @@
 
-import {Constructor, LitBase} from "../types/component-types.js"
+import {LitElement} from "lit"
+import {ConstructorFor} from "../../../types/constructor-for.js"
 
-export function mixinLightDom<C extends Constructor<LitBase>>(Base: C) {
+export function mixinLightDom<C extends ConstructorFor<LitElement>>(
+		Base: C
+	): C {
+
 	return class extends Base {
 		createRenderRoot() {
 			return this

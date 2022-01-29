@@ -3,12 +3,12 @@ import {ops} from "../../../../framework/ops.js"
 import styles from "./xiome-video-companion.css.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
+import {Component, mixinStyles, html, property, mixinRequireShare} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeVideoCompanion extends ComponentWithShare<{
+export class XiomeVideoCompanion extends mixinRequireShare<{
 		contentModel: ReturnType<typeof makeContentModel>
-	}> {
+	}>()(Component) {
 
 	get #model() {
 		return this.share.contentModel

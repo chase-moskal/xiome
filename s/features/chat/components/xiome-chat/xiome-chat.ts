@@ -15,15 +15,15 @@ import {renderChatAuthorship} from "./renderers/render-chat-authorship.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {whenOpReady} from "../../../../framework/op-rendering/when-op-ready.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, html, mixinStyles, property, query} from "../../../../framework/component.js"
+import {Component, html, mixinRequireShare, mixinStyles, property, query} from "../../../../framework/component.js"
 
 import xiomeChatCss from "./xiome-chat.css.js"
 
 @mixinStyles(xiomeChatCss)
-export class XiomeChat extends ComponentWithShare<{
+export class XiomeChat extends mixinRequireShare<{
 		modals: ModalSystem
 		chatModel: ReturnType<typeof makeChatModel>
-	}> {
+	}>()(Component) {
 
 	@property({type: String})
 	room: string = "default"

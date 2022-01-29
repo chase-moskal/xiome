@@ -1,9 +1,5 @@
 
 import {LitElement, PropertyValues, TemplateResult} from "lit"
-
-import {LitBase} from "./component/types/component-types.js"
-import {ConstructorFor} from "../types/constructor-for.js"
-import {mixinAutowatcher} from "./component/mixins/mixin-autowatcher.js"
 import {mixinInitiallyHidden} from "./component/mixins/mixin-initially-hidden.js"
 
 export * from "lit"
@@ -12,9 +8,6 @@ export * from "lit/decorators.js"
 export * from "./component/theme-components.js"
 export * from "./component/register-components.js"
 
-export * from "./component/mixins/mixin-autotrack.js"
-export * from "./component/mixins/mixin-autowatcher.js"
-export * from "./component/mixins/mixin-happy.js"
 export * from "./component/mixins/mixin-focusable.js"
 export * from "./component/mixins/mixin-initially-hidden.js"
 export * from "./component/mixins/mixin-light-dom.js"
@@ -52,33 +45,5 @@ export class Component extends mixinInitiallyHidden(LitElement) {
 
 	render(): TemplateResult {
 		throw new Error("component render method not implemented")
-	}
-}
-
-export class ComponentWithShare<xShare> extends Component {
-	readonly share: xShare
-
-	constructor() {
-		super()
-		if (this.share === undefined)
-			throw new Error("component requires share")
-	}
-}
-
-export class AutowatcherComponent extends mixinAutowatcher(mixinInitiallyHidden(<ConstructorFor<LitBase>>(<any>LitElement))) {
-	init() {}
-	firstUpdated(changes: PropertyValues) {
-		this.init()
-		super.firstUpdated(changes)
-	}
-}
-
-export class AutowatcherComponentWithShare<xShare> extends AutowatcherComponent {
-	readonly share: xShare
-
-	constructor() {
-		super()
-		if (this.share === undefined)
-			throw new Error("component requires share")
 	}
 }

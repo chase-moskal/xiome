@@ -2,14 +2,12 @@
 import {ops} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {QuestionsModelOptions} from "./types/questions-model-options.js"
-import {makeQuestionsModelHappy} from "./parts/questions-model-happy.js"
+import {makeQuestionsModelHappy} from "./parts/questions-model-state.js"
 import {prepareQuestionsBoardModelGetter} from "./parts/questions-board-model.js"
 
 export function makeQuestionsModel(options: QuestionsModelOptions) {
 	const {questionsReadingService} = options
-
-	const happy = makeQuestionsModelHappy()
-	const {actions, getState, onStateChange} = happy
+	const {state, actions, subscribe} = makeQuestionsModelHappy()
 
 	async function loadQuestionsForBoard(board: string) {
 		await ops.operation({
@@ -24,14 +22,14 @@ export function makeQuestionsModel(options: QuestionsModelOptions) {
 	}
 
 	async function refreshAllBoards() {
-		const state = getState()
 		await Promise.all(Object.keys(state.boardOps).map(loadQuestionsForBoard))
 	}
 
 	return {
-		onStateChange,
+		subscribe,
 		makeBoardModel: prepareQuestionsBoardModelGetter({
-			happy,
+			state,
+			actions,
 			loadQuestionsForBoard,
 			...options,
 		}),

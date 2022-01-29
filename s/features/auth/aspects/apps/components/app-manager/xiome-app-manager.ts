@@ -13,13 +13,13 @@ import {happystate} from "../../../../../../toolbox/happystate/happystate.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../../../framework/component.js"
+import {Component, mixinStyles, html, mixinRequireShare} from "../../../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeAppManager extends ComponentWithShare<{
+export class XiomeAppManager extends mixinRequireShare<{
 		modals: ModalSystem
 		appsModel: ReturnType<typeof makeAppsModel>
-	}> {
+	}>()(Component) {
 
 	init() {
 		this.share.appsModel.loadApps()

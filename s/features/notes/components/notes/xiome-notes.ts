@@ -1,14 +1,15 @@
 
 import styles from "./xiome-notes.css.js"
+
+import {ops} from "../../../../framework/ops.js"
 import {makeNotesModel} from "../../models/notes-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
-import {ops} from "../../../../framework/ops.js"
+import {Component, mixinStyles, html, mixinRequireShare} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeNotes extends ComponentWithShare<{
+export class XiomeNotes extends mixinRequireShare<{
 		notesModel: ReturnType<typeof makeNotesModel>
-	}> {
+	}>()(Component) {
 
 	#model = this.share.notesModel
 	#cacheDetails = this.share.notesModel.createNotesCacheDetails()

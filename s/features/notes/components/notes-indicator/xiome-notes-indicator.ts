@@ -1,16 +1,16 @@
 
-import {ops} from "../../../../framework/ops.js"
-import {makeNotesModel} from "../../models/notes-model.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
-import bell from "../../../../framework/icons/bell.svg.js"
-import {property} from "../../../../framework/component.js"
-
 import styles from "./xiome-notes-indicator.css.js"
+import bell from "../../../../framework/icons/bell.svg.js"
+
+import {makeNotesModel} from "../../models/notes-model.js"
+import {property} from "../../../../framework/component.js"
+import {Component, mixinStyles, html, mixinRequireShare} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeNotesIndicator extends ComponentWithShare<{
+export class XiomeNotesIndicator extends mixinRequireShare<{
 		notesModel: ReturnType<typeof makeNotesModel>
-	}> {
+	}>()(Component) {
+
 	@property({attribute: "no-icon"})
 	noIcon: boolean = false
  

@@ -1,11 +1,11 @@
 
 import styles from "./xio-id.css.js"
 import clipboardIcon from "../../../framework/icons/clipboard.svg.js"
-import {AutowatcherComponent, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
+import {Component, html, mixinStyles, property, mixinFocusable} from "../../../framework/component.js"
 
 @mixinFocusable
 @mixinStyles(styles)
-export class XioId extends AutowatcherComponent {
+export class XioId extends Component {
 
 	@property()
 	id: string

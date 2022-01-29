@@ -10,27 +10,24 @@ import {renderDetails} from "./renders/render-details.js"
 import {User} from "../../auth/aspects/users/types/user.js"
 import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
+import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
+import {Component, property, html} from "../../../framework/component.js"
 import {mixinStyles} from "../../../framework/component/mixins/mixin-styles.js"
-import {AutowatcherComponent, property, html} from "../../../framework/component.js"
 import {ProfileDraft} from "../../auth/aspects/users/routines/personal/types/profile-draft.js"
 import {profileValidators} from "../../auth/aspects/users/routines/personal/validate-profile-draft.js"
 
 @mixinStyles(styles)
-export class XioProfileCard extends AutowatcherComponent {
+export class XioProfileCard extends Component {
 
-	#state = this.auto.state({
+	#state = snapstate({
 		busy: <Op<void>>ops.ready(undefined),
 	})
 
-	#actions = this.auto.actions({
-		setBusy: (op: Op<void>) => {
-			this.#state.busy = op
-		},
-	})
-
 	init() {
-		this.#actions.setBusy(ops.ready(undefined))
+		this.addSubscription(
+			() => this.#state.subscribe(() => this.requestUpdate())
+		)
 	}
 
 	@property({type: Boolean})
@@ -97,8 +94,10 @@ export class XioProfileCard extends AutowatcherComponent {
 				.finally(() => {
 					this.profileDraft = null
 				}),
-			setOp: op => this.#actions.setBusy(op),
+			setOp: op => this.#state.writable.busy = op,
 		})
+		this.requestUpdate()
+		await this.updateComplete
 		const setToTextField = (field: string, text: string) => {
 			const input = this.shadowRoot.querySelector<XioTextInput>(
 				`xio-text-input[data-field="${field}"]`
@@ -114,7 +113,7 @@ export class XioProfileCard extends AutowatcherComponent {
 		if (!user)
 			return null
 		const avatarSpec = user.profile.avatar
-		return renderOp(this.#state.busy, () => html`
+		return renderOp(this.#state.readable.busy, () => html`
 			<div class=container ?data-readonly=${this.readonly}>
 				<xio-avatar part=avatar .spec=${avatarSpec}></xio-avatar>
 				<div class=box>

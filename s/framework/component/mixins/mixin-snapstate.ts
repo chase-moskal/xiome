@@ -1,11 +1,21 @@
 
+import {LitElement} from "lit"
+
+import {Mixin} from "../../../types/mixin.js"
 import {Subscribe} from "../../../toolbox/pubsub.js"
 import {Track} from "../../../toolbox/snapstate/parts/types.js"
-import {Constructor, LitBase} from "../types/component-types.js"
+import {ConstructorFor} from "../../../types/constructor-for.js"
+
+export interface SnapstateTracking {
+	attachTracking(...newTracks: Track[]): void
+}
 
 export function mixinSnapstateTracking(...tracks: Track[]) {
-	return function<C extends Constructor<LitBase>>(Base: C) {
-		return class extends Base {
+	return function<C extends ConstructorFor<LitElement>>(
+			Base: C
+		): Mixin<C, SnapstateTracking> {
+
+		return <any>class extends Base implements SnapstateTracking {
 
 			#tracks: Track[] = [...tracks]
 			#unsubscribes: (() => void)[] = []
@@ -50,7 +60,10 @@ export function mixinSnapstateTracking(...tracks: Track[]) {
 }
 
 export function mixinSnapstateSubscriptions(...subscriptions: Subscribe[]) {
-	return function<C extends Constructor<LitBase>>(Base: C) {
+	return function<C extends ConstructorFor<LitElement>>(
+			Base: C
+		): C {
+
 		return class extends Base {
 
 			#unsubscribes: (() => void)[] = []

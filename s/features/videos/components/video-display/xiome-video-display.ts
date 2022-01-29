@@ -4,12 +4,12 @@ import {prepareEmbeds} from "./parts/embeds/prepare-embeds.js"
 import {videoControls} from "./parts/controls/video-controls.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
+import {Component, mixinStyles, html, property, mixinRequireShare} from "../../../../framework/component.js"
 
 @mixinStyles(styles)
-export class XiomeVideoDisplay extends ComponentWithShare<{
+export class XiomeVideoDisplay extends mixinRequireShare<{
 		contentModel: ReturnType<typeof makeContentModel>
-	}> {
+	}>()(Component) {
 
 	@property({type: String})
 	label: string = "default"

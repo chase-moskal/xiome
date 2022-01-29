@@ -1,29 +1,28 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {AnswerDraft} from "../../api/types/answer-draft.js"
-import {QuestionDraft} from "../../api/types/question-draft.js"
-import {makeQuestionsModelHappy} from "./questions-model-happy.js"
+import {makeQuestionsModelHappy} from "./questions-model-state.js"
 import {QuestionsModelOptions} from "../types/questions-model-options.js"
 import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function prepareQuestionsBoardModelGetter({
-		happy,
+		state,
+		actions,
 		questionsPostingService,
 		questionsAnsweringService,
 		questionsModerationService,
 		getAccess,
 		loadQuestionsForBoard,
 	}: {
-		happy: ReturnType<typeof makeQuestionsModelHappy>
+		state: ReturnType<typeof makeQuestionsModelHappy>["state"]
+		actions: ReturnType<typeof makeQuestionsModelHappy>["actions"]
 		loadQuestionsForBoard: (board: string) => Promise<void>
 	} & QuestionsModelOptions) {
-
-	const {actions, getState} = happy
 
 	return (board: string) => ({
 
 		getPermissions() {
-			const {access} = getState()
+			const {access} = state
 			return {
 				"read questions":
 					access
@@ -71,19 +70,19 @@ export function prepareQuestionsBoardModelGetter({
 		},
 
 		getAccess() {
-			return getState().access
+			return state.access
 		},
 
 		getBoardOp() {
-			return getState().boardOps[board]
+			return state.boardOps[board]
 		},
 
 		getPostingOp() {
-			return getState().postingOp
+			return state.postingOp
 		},
 
 		getQuestions() {
-			return getState().questions
+			return state.questions
 				.filter(question => question.board === board)
 				.filter(question => question.archive === false)
 				.map(question => ({
@@ -94,7 +93,7 @@ export function prepareQuestionsBoardModelGetter({
 		},
 
 		getUser(userId: string) {
-			return getState().users.find(user => user.userId === userId)
+			return state.users.find(user => user.userId === userId)
 		},
 
 		async loadQuestions() {
@@ -173,7 +172,7 @@ export function prepareQuestionsBoardModelGetter({
 
 		async archiveBoard() {
 			await questionsModerationService.archiveBoard({board})
-			for (const question of getState().questions)
+			for (const question of state.questions)
 				actions.setQuestionArchive(question.questionId, true)
 		},
 	})

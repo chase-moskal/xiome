@@ -6,16 +6,16 @@ import {makeDacastModel} from "../../models/parts/dacast-model.js"
 import warningIcon from "../../../../framework/icons/warning.svg.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ComponentWithShare, mixinStyles, html} from "../../../../framework/component.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {validateDacastApiKeyAllowingMock} from "../../api/validation/validate-dacast-api-key.js"
+import {Component, mixinStyles, html, mixinRequireShare} from "../../../../framework/component.js"
 
 import styles from "./xiome-video-hosting.css.js"
 
 @mixinStyles(styles)
-export class XiomeVideoHosting extends ComponentWithShare<{
+export class XiomeVideoHosting extends mixinRequireShare<{
 		dacastModel: ReturnType<typeof makeDacastModel>
-	}> {
+	}>()(Component) {
 
 	get state() {
 		return this.share.dacastModel.state

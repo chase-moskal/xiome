@@ -2,14 +2,14 @@
 import styles from "./xiome-video-views.css.js"
 import {makeContentModel} from "../../models/parts/content-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ComponentWithShare, mixinStyles, html, property} from "../../../../framework/component.js"
+import {Component, mixinStyles, html, mixinRequireShare} from "../../../../framework/component.js"
 
 import {renderView} from "../video-display/parts/controls/render-view.js"
 
 @mixinStyles(styles)
-export class XiomeVideoViews extends ComponentWithShare<{
+export class XiomeVideoViews extends mixinRequireShare<{
 		contentModel: ReturnType<typeof makeContentModel>
-	}> {
+	}>()(Component) {
 
 	async init() {
 		this.share.contentModel.initializeForModerationData()

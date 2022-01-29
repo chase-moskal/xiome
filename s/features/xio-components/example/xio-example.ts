@@ -1,9 +1,9 @@
 
 import styles from "./xio-example.css.js"
-import {AutowatcherComponent, html, mixinStyles} from "../../../framework/component.js"
+import {Component, html, mixinStyles} from "../../../framework/component.js"
 
- @mixinStyles(styles)
-export class XioExample extends AutowatcherComponent {
+@mixinStyles(styles)
+export class XioExample extends Component {
 	render() {
 		return html`
 			<div class=example>

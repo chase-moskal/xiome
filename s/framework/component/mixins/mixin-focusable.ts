@@ -1,7 +1,8 @@
 
-import {Constructor, LitBase} from "../types/component-types.js"
+export function mixinFocusable<C extends CustomElementConstructor>(
+		Base: C
+	): C {
 
-export function mixinFocusable<C extends Constructor<LitBase>>(Base: C) {
 	return class extends Base {
 		connectedCallback() {
 			super.connectedCallback()
