@@ -5,6 +5,7 @@ import {ops} from "../../../../framework/ops.js"
 import {makeNotesModel} from "../../models/notes-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {Component, mixinStyles, html, mixinRequireShare} from "../../../../framework/component.js"
+import {formatDuration} from "../../../../toolbox/goodtimes/format-duration.js"
 
 @mixinStyles(styles)
 export class XiomeNotes extends mixinRequireShare<{
@@ -42,7 +43,7 @@ export class XiomeNotes extends mixinRequireShare<{
 					?data-active=${!old}>
 						new
 				</xio-button>
-				<xio-button 
+				<xio-button
 					@press=${switchTabOld}
 					data-tab="old"
 					?data-active=${old}>
@@ -59,23 +60,19 @@ export class XiomeNotes extends mixinRequireShare<{
 			<ol>
 				${notes.map(note => html`
 					<li>
-						<p>noteId: ${note.noteId}</p>
-						<p>noteTitle: ${note.title}</p>
-						<p>noteText: ${note.text}</p>
-						<p>noteTime: ${note.time}</p>
-						<p>noteFrom: ${note.from}</p>
-						<p>noteTo: ${note.to}</p>
-						<p>noteDetails: ${note.details}</p>
-						<p>noteType: ${note.type}</p>
-						${old ? html`
-							<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
-								+
-							</xio-button>
-						` : html`
-							<xio-button @press=${() => markSpecificNoteOld(note.noteId)}>
-								x
-							</xio-button>
-						`}
+						<header class="note-header">
+							<p><strong>${note.type}</strong> ${formatDuration(note.time).days}</p>
+							${old ? html`
+								<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
+									+
+								</xio-button>
+							` : html`
+								<xio-button @press=${() => markSpecificNoteOld(note.noteId)}>
+									x
+								</xio-button>
+							`}
+						</header>
+						<h1>${note.title}</h1>
 					</li>
 				`)}
 			</ol>
