@@ -14,7 +14,7 @@
 
 <br/>
 
-## xiome installation
+## how to install xiome on your website
 
 1. create your community at https://xiome.io/setup
 2. copy-paste your community's html install snippet into your web page's html `<head>`
