@@ -2,8 +2,6 @@
 import {makeEditorState} from "../../helpers/editor-state.js"
 import {QuestionsBoardModel} from "../../../../model/types/board-model.js"
 import {strongRecordKeeper} from "../../../../../../toolbox/record-keeper.js"
-import {happystate} from "../../../../../../toolbox/happystate/happystate.js"
-import {happyCombine} from "../../../../../../toolbox/happystate/happy-combine.js"
 import {XioTextInput} from "../../../../../xio-components/inputs/xio-text-input.js"
 
 export function makeAnswerEditorGetter({
@@ -15,19 +13,8 @@ export function makeAnswerEditorGetter({
 	}) {
 
 	const getRecord = strongRecordKeeper<string>()(questionId => {
-		const editorHappy = makeEditorState()
-		const answerHappy = happystate({
-			state: {
-				editMode: false,
-			},
-			actions: state => ({
-				toggleEditMode() {
-					state.editMode = !state.editMode
-				},
-			}),
-		})
-		const happy = happyCombine(editorHappy)(answerHappy).combine()
-		happy.onStateChange(requestUpdate)
+		const state = makeEditorState()
+		state.subscribe(requestUpdate)
 
 		const resetEditor = () => {
 			const input = getTextInput(questionId)
@@ -35,11 +22,13 @@ export function makeAnswerEditorGetter({
 		}
 
 		return {
-			...happy,
+			state: state.readable,
+			actions: state.actions,
+			subscribe: state.subscribe,
 			submitAnswer: async() => {
-				const {draftText} = happy.getState()
+				const {draftText} = state.readable
 				resetEditor()
-				happy.actions.toggleEditMode()
+				state.actions.toggleEditMode()
 				await getBoardModel().postAnswer(questionId, {content: draftText})
 			},
 		}

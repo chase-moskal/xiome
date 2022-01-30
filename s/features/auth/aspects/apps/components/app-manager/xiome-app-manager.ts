@@ -7,9 +7,9 @@ import {AppDisplay} from "../../types/app-display.js"
 import {makeAppsModel} from "../../models/apps-model.js"
 import {makeAdminManager} from "./admins/admin-manager.js"
 import {AppRecords} from "../../models/types/app-records.js"
+import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
 import {strongRecordKeeper} from "../../../../../../toolbox/record-keeper.js"
-import {happystate} from "../../../../../../toolbox/happystate/happystate.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"
 import {appDisplayToFormDraft} from "./form/utils/app-display-to-form-draft.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
@@ -44,17 +44,21 @@ export class XiomeAppManager extends mixinRequireShare<{
 	private getAppState = strongRecordKeeper<string>()(appId => {
 		const app = this.share.appsModel.getApp(appId)
 
-		const {actions, getState, onStateChange} = happystate({
-			state: {editMode: false},
-			actions: state => ({
-				toggleEditMode() { state.editMode = !state.editMode },
-			}),
+		const state = snapstate({
+			editMode: false,
 		})
-		onStateChange(() => { this.requestUpdate() })
+
+		const actions = {
+			toggleEditMode() {
+				state.writable.editMode = !state.writable.editMode
+			},
+		}
+
+		state.subscribe(() => this.requestUpdate())
 
 		return {
 			toggleEditMode: actions.toggleEditMode,
-			get editMode() { return getState().editMode },
+			get editMode() { return state.readable.editMode },
 			appForm: makeAppForm({
 				clearOnSubmit: false,
 				showAdditionalOrigins: true,
@@ -79,10 +83,7 @@ export class XiomeAppManager extends mixinRequireShare<{
 						.querySelector(`.app[data-app-id="${app.appId}"] .adminmanager`)
 						.querySelector(selector)
 				})
-				manager.track({
-					watcher: () => { manager.render() },
-					effect: () => this.requestUpdate(),
-				})
+				manager.subscribe(() => this.requestUpdate())
 				manager.controls.listAdmins()
 				return manager
 			})(),

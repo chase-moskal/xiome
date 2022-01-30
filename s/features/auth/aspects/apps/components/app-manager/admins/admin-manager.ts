@@ -1,10 +1,10 @@
 
 import {AppDisplay} from "../../../types/app-display.js"
 import {Service} from "../../../../../../../types/service.js"
+import {html} from "../../../../../../../framework/component.js"
 import {emailValidator} from "../../../utils/admin-email-validator.js"
 import {makeAppEditService} from "../../../services/app-edit-service.js"
 import {adminManagerControls} from "./aspects/admin-manager-controls.js"
-import {html} from "../../../../../../../framework/component.js"
 import {renderOp} from "../../../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../../../xio-components/inputs/xio-text-input.js"
 import {adminManagerStateAndActions} from "./aspects/admin-manager-state-and-actions.js"
@@ -16,7 +16,7 @@ export function makeAdminManager({app, appEditService, query}: {
 		query: <E extends HTMLElement>(selector: string) => E
 	}) {
 
-	const {state, actions, track} = adminManagerStateAndActions()
+	const {state, actions, subscribe} = adminManagerStateAndActions()
 	const controls = adminManagerControls({
 		app,
 		state,
@@ -89,5 +89,5 @@ export function makeAdminManager({app, appEditService, query}: {
 		`
 	}
 
-	return {render, controls, track}
+	return {render, controls, subscribe}
 }

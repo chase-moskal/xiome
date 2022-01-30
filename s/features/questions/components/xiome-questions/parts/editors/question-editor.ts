@@ -11,8 +11,8 @@ export function makeQuestionEditor({
 		getBoardModel: () => QuestionsBoardModel
 	}) {
 
-	const {actions, getState, onStateChange} = makeEditorState()
-	onStateChange(requestUpdate)
+	const state = makeEditorState()
+	state.subscribe(requestUpdate)
 
 	const resetEditor = () => {
 		const input = getTextInput()
@@ -20,11 +20,12 @@ export function makeQuestionEditor({
 	}
 
 	return {
-		actions,
-		getState,
+		state: state.readable,
+		actions: state.actions,
+		subscribe: state.subscribe,
 		getTextInput,
 		submitQuestion: async() => {
-			const {draftText} = getState()
+			const {draftText} = state.readable
 			resetEditor()
 			await getBoardModel().postQuestion({
 				content: draftText,

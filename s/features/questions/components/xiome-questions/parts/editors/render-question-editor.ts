@@ -16,7 +16,7 @@ export function renderQuestionEditor({
 		questionEditor: ReturnType<typeof makeQuestionEditor>
 	}) {
 	const author = access?.user
-	const editorState = questionEditor.getState()
+	const editorState = questionEditor.state
 	return renderOp(postingOp, () => html`
 		<div class="editor question-editor" part=question-editor>
 			<div class=intro>

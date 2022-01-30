@@ -2,30 +2,29 @@
 import {AssignerDraft} from "./types/assigner-draft.js"
 import {Op, ops} from "../../../../../../../../framework/ops.js"
 import {AdminEmailDisplay} from "../../../../types/admin-email-display.js"
-import {autowatcher} from "../../../../../../../../toolbox/autowatcher/autowatcher.js"
+import {snapstate} from "../../../../../../../../toolbox/snapstate/snapstate.js"
 
 export function adminManagerStateAndActions() {
-	const auto = autowatcher()
 
-	const state = auto.state({
+	const state = snapstate({
 		admins: <Op<AdminEmailDisplay[]>>ops.none(),
 		assignerDraft: <AssignerDraft>{
 			email: undefined,
 		},
 	})
 
-	const actions = auto.actions({
+	const actions = {
 		setAdmins(op: Op<AdminEmailDisplay[]>) {
-			state.admins = op
+			state.writable.admins = op
 		},
 		setAssignerDraft(draft: AssignerDraft) {
-			state.assignerDraft = draft
+			state.writable.assignerDraft = draft
 		},
-	})
+	}
 
 	return {
-		track: auto.track,
-		state,
+		subscribe: state.subscribe,
+		state: state.readable,
 		actions,
 	}
 }

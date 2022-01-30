@@ -1,13 +1,13 @@
 
+import {renderAnswer} from "./render-answer.js"
 import {renderPost} from "./post/render-post.js"
 import {PostType} from "./post/types/post-options.js"
 import {html} from "../../../../../framework/component.js"
 import {makeAnswerEditorGetter} from "./editors/answer-editor.js"
+import {renderAnswerEditor} from "./editors/render-answer-editor.js"
 import {QuestionsBoardModel} from "../../../model/types/board-model.js"
 import {Answer, Question} from "../../../api/types/questions-and-answers.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
-import {renderAnswer} from "./render-answer.js"
-import {renderAnswerEditor} from "./editors/render-answer-editor.js"
 
 export function renderQuestion({
 		now, question, modals, boardModel, answerEditor,
@@ -65,7 +65,7 @@ export function renderQuestion({
 			await boardModel.reportQuestion(questionId, report)
 	}
 
-	const answerEditorState = answerEditor.getState()
+	const answerEditorState = answerEditor.state
 
 	const canDeleteAnswer = (answer: Answer) => {
 		const isAuthor = access?.user?.userId === answer.authorUserId

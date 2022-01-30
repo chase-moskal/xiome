@@ -13,7 +13,7 @@ export function renderAnswerEditor({
 		answerEditor: ReturnType<ReturnType<typeof makeAnswerEditorGetter>>
 	}) {
 
-	const answerEditorState = answerEditor.getState()
+	const answerEditorState = answerEditor.state
 
 	return html`
 		<div class="editor answer-editor">
