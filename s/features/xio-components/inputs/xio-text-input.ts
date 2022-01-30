@@ -16,7 +16,7 @@ import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 export class XioTextInput<xParsedValue = string> extends Component {
 
 	@property({type: String, reflect: true})
-	["initial"]: string = ""
+	["initial"] = ""
 
 	@property({type: Boolean, reflect: true})
 	["readonly"]: boolean = false
@@ -34,10 +34,10 @@ export class XioTextInput<xParsedValue = string> extends Component {
 	["disabled"] = false
 
 	@property({type: String, reflect: true})
-	["placeholder"]: string = ""
+	["placeholder"] = ""
 
 	@property({type: Boolean, reflect: true})
-	["hidden"]: boolean = false
+	["hidden"] = false
 
 	private get input(): HTMLInputElement | HTMLTextAreaElement {
 		return this.shadowRoot
@@ -117,14 +117,21 @@ export class XioTextInput<xParsedValue = string> extends Component {
 
 	private handleInputKeyPress = (event: KeyboardEvent) => {
 		if (event.key === "Enter") {
-			const notTextArea = !this.textarea
-			const notIgnoring = !event.shiftKey
-			if (notTextArea || notIgnoring) {
+			const isTextArea = this.textarea
+			const isPressingShift = event.shiftKey
+			const fireEnterPress = () => {
 				this.updateDraft()
 				this.dispatchValueChange()
 				this.dispatchEnterPress()
 				event.preventDefault()
 			}
+
+			if (isTextArea) {
+				if (isPressingShift)
+					fireEnterPress()
+			}
+			else
+				fireEnterPress()
 		}
 	}
 
