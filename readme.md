@@ -20,20 +20,13 @@
 2. copy-paste your community's html install snippet into your web page's html `<head>`
 3. copy-paste any components you like from https://xiome.io/components into your website's `<body>`
 
-<br/>
-
-<br/>
-
----
----
-
-<br/>
+<br/><br/>
 
 # how to work on xiome as a developer
 
-<br/>
-
 ## 💡 getting started
+
+<details><summary>(click to show details)</summary>
 
 &nbsp; **fundamental skills**
 - ℹ️ you don't have to master these skills. just be aware of them, so you know what to study when you encounter the need
@@ -102,9 +95,13 @@
 &nbsp; **the more you know**
 - this is an open source project, all contributions are under the mit license
 
+</details>
+
 <br/>
 
 ## 🦅 xiome's codebase from a bird's eye view
+
+<details><summary>(click to show details)</summary>
 
 everything about xiome is fully contained in this single git repository.  
 let's take a stroll through the codebase.
@@ -149,9 +146,13 @@ let's take a stroll through the codebase.
   these are just build artifacts.  
   never write code here — it's deleted and regenerated every build.  
 
+</details>
+
 <br/>
 
 ## 🦵 the anatomy of a feature
+
+<details><summary>(click to show details)</summary>
 
 xiome's fun code is organized conceptually into features.  
 these features are probably what you want to work on.  
@@ -246,6 +247,8 @@ each layer has its own little landscape of concepts and tools you'll need to lea
   - it's just some functions for validating user inputs
   - learn more about `darkvalley` further down
 
+</details>
+
 <br/>
 
 ## ⚙️ systems to learn
@@ -253,6 +256,8 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 <br/>
 
 ### **ops** — *loading spinners everywhere*
+
+<details><summary>(click to show details)</summary>
 
 - "ops" is xiome's system for displaying loading spinners for asynchronous operations
 - it's designed to be compatbile with state management libraries — this is why ops are simple object literals, instead of fancy class instances with methods and stuff
@@ -338,9 +343,13 @@ each layer has its own little landscape of concepts and tools you'll need to lea
     }
     ```
 
+</details>
+
 <br/>
 
 ### **snapstate** — *tiny state management*
+
+<details><summary>(click to show details)</summary>
 
 - snapstate is an experimental little state management library. it's the minimalistic successor to `autowatcher` and `happystate` which were previous incarnations in its lineage.
 - the concept of snapstate, is that we create a `readable` and `writable` version of a state object.
@@ -443,9 +452,13 @@ each layer has its own little landscape of concepts and tools you'll need to lea
   //> (sweet silence)
   ```
 
+</details>
+
 <br/>
 
 ### **dbby** — *agnostic mock-ready database adapter*
+
+<details><summary>(click to show details)</summary>
 
 - dbby is xiome's database adapter.
 - we can write drivers for mongodb, postgres, or any kind of database.
@@ -592,9 +605,13 @@ each layer has its own little landscape of concepts and tools you'll need to lea
     ```
     - to reiterate: you should only see DamnId being used right where database work is happening. elsewhere in the system, you should see the ids as regular strings.
 
+</details>
+
 <br/>
 
 ### **darkvalley** — *minimalistic validation*
+
+<details><summary>(click to show details)</summary>
 
 - darkvalley is xiome's validation system for user inputs
 - it's used on the frontend and backend alike, for validating forms, and apis
@@ -725,9 +742,13 @@ each layer has its own little landscape of concepts and tools you'll need to lea
    //= ]
   ```
 
+</details>
+
 <br/>
 
 ## 💰 bitcoin bounties
+
+<details><summary>(click to show details)</summary>
 
 we like to give little bitcoin rewards to show appreciation for good contributions.
 
@@ -740,3 +761,5 @@ how to participate:
 if we merge the work to master, you may be eligible to receive a reward.
 
 but remember, there are no guarantees: bounties are fun rewards, not contracts. the rules became too complicated, so now all bounties and rewards are arbitrated by chase moskal based on subjective factors and personal honor code.
+
+</details>
