@@ -239,10 +239,10 @@ each layer has its own little landscape of concepts and tools you'll need to lea
   - `auth` is where you'll find info about the current user
   - `auth` is where you'll find the database tables you need to use
   - `auth` is returned by the `policy` that each service has
-- learn `dbby` to interact with the database
-  - never forget that every id must be a `DamnId` instance in the database
-  - dbby is what powers the magical serverless mock mode for development
-  - learn more about `dbby` further down
+- learn `dbmage` to interact with the database
+  - never forget that every id must be a `dbmage.Id` instance in the database
+  - dbmage is what powers the magical serverless mock mode for development
+  - learn more about `dbmage` further down
 - learn `darkvalley` for validation
   - it's just some functions for validating user inputs
   - learn more about `darkvalley` further down
@@ -456,154 +456,12 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 <br/>
 
-### **dbby** — *agnostic mock-ready database adapter*
+### **dbmage** — *agnostic mock-ready database adapter*
 
 <details><summary>(click to show details)</summary>
 
-- dbby is xiome's database adapter.
-- we can write drivers for mongodb, postgres, or any kind of database.
-- most importantly, dbby has drivers written for
-  - in memory
-  - localStorage
-  - json file on disk
-- this allows us to test the entire backend and provide a 'mock' database instead of a real one
-- this is what powers xiome's powerful mock modes, during development, and testing
-- dbby basically implements classic `crud` functionality
-- let's assume the xiome system has passed you a dbby table for your work, like this
-  ```ts
-  import {find, findAll, and, or} from "./s/toolbox/dbby/dbby-helpers.js"
-  async function doSomeDatabaseWork(
-        table: DbbyTable<{alpha: number, bravo: string}>
-      ) {
-
-    // ...and you'll do some database work here...
-  }
-  ```
-- creating rows in the table
-  ```ts
-  await table.create({alpha: 1, bravo: "canada"})
-  await table.create(
-    {alpha: 2, bravo: "america"},
-    {alpha: 3, bravo: "mexico"},
-  )
-  ```
-- reading rows from the table
-  ```ts
-  // read all the data in the table, unconditionally
-  const rows1 = await table.read({conditions: false})
-
-  // add pagination details to any read operation
-  const rows1 = await table.read({
-    conditions: false,
-    limit: 100,
-    offset: 0,
-    order: {alpha: "descend", bravo: "ascend"},
-  })
-
-  // simple query, find rows with matching data
-  const rows2 = await table.read(find({alpha: 2}))
-
-  // same exact query, but without the `find` helper
-  const rows3 = await table.read({
-    conditions: and({equal: {alpha: 2}})
-  })
-
-  // many different conditions are possible
-  const rows4 = await table.read({conditions: and({greater: {alpha: 2}})})
-  const rows5 = await table.read({conditions: and({notGreater: {alpha: 2}})})
-  const rows6 = await table.read({conditions: and({search: {bravo: /nad/i}})})
-
-  // use 'and' when multiple conditions must be met
-  const rows7 = await table.read({
-    conditions: and({greater: {alpha: 2}}, {equal: {bravo: "mexico"}})
-  })
-
-  // use 'or' when only one condition must be met
-  const rows8 = await table.read({
-    conditions: or({greater: {alpha: 2}}, {equal: {bravo: "canada"}})
-  })
-
-  // get wild, chain lots of and/or's together
-  const rows9 = await table.read({
-    conditions: and(
-      or({less: {alpha: 2}}, {equal: {bravo: "mexico"}}),
-      or({notEqual: {alpha: 5}}, {search: {bravo: /nad/i}}),
-    )
-  })
-
-  // helper to find many records (just makes 'or-equal' conditions)
-  await table.read(findAll([1, 2, 3], alpha => ({alpha})))
-  ```
-- update rows in the table
-  ```ts
-  // update row, or insert whole new row if it's missing
-  await table.update({
-    conditions: and({equal: {alpha: 1}}),
-    upsert: {alpha: 1, bravo: "netherlands"},
-  })
-
-  // exact same upsert, but using the 'find' helper
-  await table.update({
-    ...find({alpha: 1}),
-    upsert: {alpha: 1, bravo: "netherlands"}, // must be whole row
-  })
-
-  // wholly replace found rows
-  await table.update({
-    ...find({alpha: 1}),
-    whole: {alpha: 1, bravo: "spain"}, // must be whole row
-  })
-
-  // write partial data to found rows
-  await table.update({
-    ...find({alpha: 1}),
-    write: {bravo: "india"}, // can be partial row
-  })
-
-  // there's also this 'assert' helper method,
-  // it finds a row and returns it,
-  // if the row is not found, it creates a row and returns it
-  const row1 = await table.assert({
-    ...find({alpha: 1}),
-    make: async() => ({alpha: 1, bravo: "canada"}),
-  })
-  ```
-- delete rows in the table
-  ```ts
-  // delete works like read, except, it deletes stuff, and returns nothing
-  await table.delete(find({alpha: 1}))
-  ```
-- count rows in the table
-  ```ts
-  // count works like read, except it returns the number of rows
-  const howMany = await table.count({conditions: false})
-  ```
-- dbby, xiome, and `DamnId`
-  - xiome has this class called `DamnId` which is stores a 256-bit unique id in *binary form*
-  - every id in all of xiome is one of these ids: users, posts, absolutely everything, is identified uniquely by this kind of id
-  - usually, these ids are 64-character hex strings
-  - but whenever we're doing database work, we must use `DamnId` instances instead of the hex strings -- when ids go in or out of a database table, they are damnids
-  - the reason for this, is that binary ids are much more efficient to query in a database
-  - dbby's database drivers recognize `DamnId` instances, and will treat these ids properly in binary form
-  - we should *never* find an id anywhere in the database as a string, it should always be going through dbby as a `DamnId`
-  - but everywhere else in the system, we simply pass the ids around as strings, because they are easier to work with in javascript, to run `===` comparisons and such
-  - so, using DamnId should look like this
-    ```ts
-    const myId = "2e7a6458e3c74833f0b2c28d5fbb291b87b30e456f7e38e069cc42fdce6c9c26"
-
-    await table.create({
-      myId: DamnId.fromString(myId), // <-- only damnids go into the database
-      whatever: "lol",
-    })
-
-    const data = await table.one(
-      find({myId: DamnId.fromString(myId)}) // <-- use damnids for querying
-    )
-
-    // convert damnid to string when passing to other systems
-    return data.myId.toString()
-    ```
-    - to reiterate: you should only see DamnId being used right where database work is happening. elsewhere in the system, you should see the ids as regular strings.
+- 🧙‍♂️ dbmage is how xiome systems interact with the database.
+- see dbmage's readme on github: https://github.com/chase-moskal/dbmage
 
 </details>
 
