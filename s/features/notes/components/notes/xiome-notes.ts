@@ -56,12 +56,13 @@ export class XiomeNotes extends mixinRequireShare<{
 	#renderNotes() {
 		const {old, notesOp} = this.#cache.cacheState
 		const {markSpecificNoteNew, markSpecificNoteOld} = this.#cache
+		const now = Date.now()
 		return renderOp(notesOp, notes => html`
 			<ol>
 				${notes.map(note => html`
 					<li>
 						<header class="note-header">
-							<p><strong>${note.type}</strong> ${formatDuration(note.time).days}</p>
+							<p><strong>${note.type}</strong> ${formatDuration(now - note.time).ago}</p>
 							${old ? html`
 								<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
 									+
