@@ -12,7 +12,7 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 	let connectDetails: StripeConnectDetails
 
 	const ourRecordOfStripeAccount = await storeTables
-		.merchant.stripeAccounts.readOne({conditions: false})
+		.merchants.stripeAccounts.readOne({conditions: false})
 
 	if (ourRecordOfStripeAccount) {
 		const id = ourRecordOfStripeAccount.stripeAccountId

@@ -2,17 +2,18 @@
 import * as dbmage from "dbmage"
 
 export type StoreSchema = dbmage.AsSchema<{
-	merchant: MerchantSchema
-	subscription: SubscriptionSchema
+	merchants: {
+		stripeAccounts: MerchantRow
+	}
+	subscriptions: {
+		plans: SubscriptionPlanRow
+		tiers: SubscriptionTierRow
+	}
 }>
 
 //
 // merchant tables
 //
-
-export type MerchantSchema = dbmage.AsSchema<{
-	stripeAccounts: MerchantRow
-}>
 
 export type MerchantRow = dbmage.AsRow<{
 	time: number
@@ -24,11 +25,6 @@ export type MerchantRow = dbmage.AsRow<{
 //
 // subscription tables
 //
-
-export type SubscriptionSchema = dbmage.AsSchema<{
-	plans: SubscriptionPlanRow
-	tiers: SubscriptionTierRow
-}>
 
 export type SubscriptionPlanRow = dbmage.AsRow<{
 	label: string

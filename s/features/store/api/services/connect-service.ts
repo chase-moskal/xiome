@@ -35,7 +35,7 @@ export const makeConnectService = (
 			if (connectStatus !== StripeConnectStatus.Ready)
 				throw new renraku.ApiError(400, "cannot pause non-ready stripe account")
 			else {
-				await database.tables.store.merchant.stripeAccounts.update({
+				await database.tables.store.merchants.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: true},
 				})
@@ -51,7 +51,7 @@ export const makeConnectService = (
 			if (connectStatus !== StripeConnectStatus.Paused)
 				throw new renraku.ApiError(400, "cannot resume non-paused stripe account")
 			else {
-				await database.tables.store.merchant.stripeAccounts.update({
+				await database.tables.store.merchants.stripeAccounts.update({
 					...find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: false},
 				})
@@ -88,7 +88,7 @@ export const makeConnectService = (
 					userId: Id.fromString(access.user.userId),
 					paused: false,
 				}
-				await database.tables.store.merchant.stripeAccounts.create(row)
+				await database.tables.store.merchants.stripeAccounts.create(row)
 			}
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({

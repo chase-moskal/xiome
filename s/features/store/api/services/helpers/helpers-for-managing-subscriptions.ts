@@ -67,7 +67,7 @@ export const helpersForManagingSubscriptions = ({
 				makeRoleRow(tierRoleId, tierLabel),
 			)
 
-			await storeTables.subscription.plans.create({
+			await storeTables.subscriptions.plans.create({
 				planId,
 				label: planLabel,
 				roleId: planRoleId,
@@ -76,7 +76,7 @@ export const helpersForManagingSubscriptions = ({
 				stripeAccountId,
 			})
 
-			await storeTables.subscription.tiers.create({
+			await storeTables.subscriptions.tiers.create({
 				tierId,
 				planId,
 				label: tierLabel,
