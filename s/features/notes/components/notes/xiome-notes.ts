@@ -1,5 +1,9 @@
 
 import styles from "./xiome-notes.css.js"
+import chevronLeft from "../../../../framework/icons/chevron-left.svg.js"
+import chevronRight from "../../../../framework/icons/chevron-right.svg.js"
+import plus from "../../../../framework/icons/plus.svg.js"
+import cross from "../../../../framework/icons/cross.svg.js"
 
 import {ops} from "../../../../framework/ops.js"
 import {makeNotesModel} from "../../models/notes-model.js"
@@ -40,13 +44,13 @@ export class XiomeNotes extends mixinRequireShare<{
 				<xio-button
 					@press=${switchTabNew}
 					data-tab="new"
-					?data-active=${!old}>
+					data-active=${!old}>
 						new
 				</xio-button>
 				<xio-button
 					@press=${switchTabOld}
 					data-tab="old"
-					?data-active=${old}>
+					data-active=${old}>
 						old
 				</xio-button>
 			</div>
@@ -65,11 +69,11 @@ export class XiomeNotes extends mixinRequireShare<{
 							<p><strong>${note.type}</strong> ${formatDuration(now - note.time).ago}</p>
 							${old ? html`
 								<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
-									+
+									${plus}
 								</xio-button>
 							` : html`
 								<xio-button @press=${() => markSpecificNoteOld(note.noteId)}>
-									x
+									${cross}
 								</xio-button>
 							`}
 						</header>
@@ -89,19 +93,21 @@ export class XiomeNotes extends mixinRequireShare<{
 		return html`
 			${(isNextPageAvailable || isPreviousPageAvailable)
 				? html`
-				<xio-button
-					?disabled=${!isPreviousPageAvailable}
-					@press=${previousPage}>
-						previous
-				</xio-button>
-				<span>
-					${pageNumber} / ${totalPages}
-				</span>
-				<xio-button
-					?disabled=${!isNextPageAvailable}
-					@press=${nextPage}>
-						next
-				</xio-button>
+				<div class="paginationBar">
+					<xio-button
+						?disabled=${!isPreviousPageAvailable}
+						@press=${previousPage}>
+							${chevronLeft}
+					</xio-button>
+					<span>
+						${pageNumber} / ${totalPages}
+					</span>
+					<xio-button
+						?disabled=${!isNextPageAvailable}
+						@press=${nextPage}>
+							${chevronRight}
+					</xio-button>
+				</div>
 				`
 				: null
 			}
