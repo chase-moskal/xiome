@@ -1,4 +1,6 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {onesie} from "../../../toolbox/onesie.js"
@@ -6,7 +8,6 @@ import {subbies} from "../../../toolbox/subbies.js"
 import {NotesStats} from "../types/notes-concepts.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {prepareNotesCacheCreator} from "./cache/notes-cache.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {makeNotesService} from "../api/services/notes-service.js"
 
 export function makeNotesModel({notesService}: {

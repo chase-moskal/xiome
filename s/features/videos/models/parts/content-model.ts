@@ -1,8 +1,9 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../../framework/ops.js"
 import {videoPrivileges} from "../../api/video-privileges.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {VideoModelsOptions} from "../types/video-models-options.js"
 import {VideoHosting, VideoShow, VideoView} from "../../types/video-concepts.js"
 import {PrivilegeDisplay} from "../../../auth/aspects/users/routines/permissions/types/privilege-display.js"

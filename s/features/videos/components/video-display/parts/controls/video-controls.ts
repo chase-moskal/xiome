@@ -1,8 +1,9 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {renderView} from "./render-view.js"
 import {renderViewCreator} from "./render-view-creator.js"
 import {html} from "../../../../../../framework/component.js"
-import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {makeContentModel} from "../../../../models/parts/content-model.js"
 
 import triangle from "../../../../../../framework/icons/triangle.svg.js"

@@ -1,11 +1,12 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {AppDraft} from "../types/app-draft.js"
 import {AppRecords} from "./types/app-records.js"
 import {AppDisplay} from "../types/app-display.js"
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AppModelOptions} from "./types/apps-model-options.js"
-import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 
 export function makeAppsModel({
 		appService,

@@ -1,7 +1,7 @@
 
 import {Op, ops} from "../../../../framework/ops.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {composeSnapstate, snapstate} from "../../../../toolbox/snapstate/snapstate.js"
+import {composeSnapstate, snapstate} from "@chasemoskal/snapstate"
 import {StripeConnectDetails, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
 
 export function makeStoreState() {

@@ -1,8 +1,9 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../framework/ops.js"
 import {Service} from "../../../types/service.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {makeRoleAssignmentService} from "../api/services/role-assignment-service.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {makeAllowanceChecker} from "../../../assembly/backend/permissions/tools/make-allowance-checker.js"

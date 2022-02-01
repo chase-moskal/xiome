@@ -1,7 +1,8 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../../framework/ops.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {ChatConnection, ChatPost, ChatStats, ChatStatus, StatsForChatRoom} from "../../common/types/chat-concepts.js"
 
 export function makeChatState() {

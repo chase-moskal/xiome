@@ -1,5 +1,5 @@
 
-import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
+import {snapstate} from "@chasemoskal/snapstate"
 import {ValueChangeEvent} from "../../../../xio-components/inputs/events/value-change-event.js"
 
 export function makeEditorState() {

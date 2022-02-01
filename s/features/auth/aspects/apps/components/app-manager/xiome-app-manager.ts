@@ -1,4 +1,6 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import styles from "./xiome-app-manager.css.js"
 import {renderXiomeConfig} from "./utils/render-xiome-config.js"
 
@@ -7,7 +9,6 @@ import {AppDisplay} from "../../types/app-display.js"
 import {makeAppsModel} from "../../models/apps-model.js"
 import {makeAdminManager} from "./admins/admin-manager.js"
 import {AppRecords} from "../../models/types/app-records.js"
-import {snapstate} from "../../../../../../toolbox/snapstate/snapstate.js"
 import {formDraftToAppDraft} from "./form/utils/form-draft-to-app-draft.js"
 import {strongRecordKeeper} from "../../../../../../toolbox/record-keeper.js"
 import {renderOp} from "../../../../../../framework/op-rendering/render-op.js"

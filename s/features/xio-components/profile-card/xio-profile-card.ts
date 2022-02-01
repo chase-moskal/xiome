@@ -1,4 +1,6 @@
 
+import {snapstate, debounce} from "@chasemoskal/snapstate"
+
 import styles from "./xio-profile-card.css.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {deepEqual} from "../../../toolbox/deep.js"
@@ -8,9 +10,7 @@ import {select} from "../../../toolbox/select/select.js"
 import {XioTextInput} from "../inputs/xio-text-input.js"
 import {renderDetails} from "./renders/render-details.js"
 import {User} from "../../auth/aspects/users/types/user.js"
-import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {makeProfileDraft} from "./helpers/make-profile-draft.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 import {renderOp} from "../../../framework/op-rendering/render-op.js"
 import {Component, property, html} from "../../../framework/component.js"
 import {mixinStyles} from "../../../framework/component/mixins/mixin-styles.js"

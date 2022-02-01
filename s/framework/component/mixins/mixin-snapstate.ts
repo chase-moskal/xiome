@@ -1,10 +1,10 @@
 
 import {LitElement} from "lit"
+import {Track} from "@chasemoskal/snapstate"
 
 import {Mixin} from "../../../types/mixin.js"
 import {Subscribe} from "../../../toolbox/pubsub.js"
 import {Constructor} from "../../../types/constructor.js"
-import {Track} from "../../../toolbox/snapstate/parts/types.js"
 
 export interface SnapstateTracking {
 	attachTracking(...newTracks: Track[]): void

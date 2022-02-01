@@ -11,7 +11,7 @@ import {makeConnectService} from "../api/services/connect-service.js"
 import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
 import {makeSubscriptionPlanningSubmodel} from "./submodels/subscription-planning-submodel.js"
 import {makeSubscriptionPlanningService} from "../api/services/subscription-planning-service.js"
-import {composeSnapstate, snapstate} from "../../../toolbox/snapstate/snapstate.js"
+import {composeSnapstate, snapstate} from "@chasemoskal/snapstate"
 
 export function makeStoreModel(options: {
 		appId: string

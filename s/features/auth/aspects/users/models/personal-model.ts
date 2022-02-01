@@ -1,7 +1,8 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
-import {snapstate} from "../../../../../toolbox/snapstate/snapstate.js"
 import {PersonalModelOptions} from "./types/personal-model-options.js"
 import {ProfileDraft} from "../routines/personal/types/profile-draft.js"
 

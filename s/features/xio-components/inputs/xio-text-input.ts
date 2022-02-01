@@ -1,15 +1,16 @@
 
+import {debounce} from "@chasemoskal/snapstate"
+
 import styles from "./xio-text-input.css.js"
+import svgWarning from "../../../framework/icons/warning.svg.js"
+import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+
 import {noopParser} from "./parsing/noop-parser.js"
 import {EnterPressEvent} from "./events/enter-press.js"
 import {TextInputParser} from "./types/text-input-parser.js"
-import {debounce} from "../../../toolbox/debounce/debounce.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {TextInputValidator} from "./types/text-input-validator.js"
 import {Component, html, mixinStyles, mixinFocusable, property} from "../../../framework/component.js"
-
-import svgWarning from "../../../framework/icons/warning.svg.js"
-import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 
  @mixinFocusable
  @mixinStyles(styles)

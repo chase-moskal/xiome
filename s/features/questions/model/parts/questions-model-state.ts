@@ -1,9 +1,10 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {merge} from "../../../../toolbox/merge.js"
 import {Op, ops} from "../../../../framework/ops.js"
 import {User} from "../../../auth/aspects/users/types/user.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {Answer, Question} from "../../api/types/questions-and-answers.js"
 
 export function makeQuestionsModelHappy() {

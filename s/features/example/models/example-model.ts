@@ -1,7 +1,8 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op} from "../../../framework/ops.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {snapstate} from "../../../toolbox/snapstate/snapstate.js"
 
 export function makeExampleModel({getAccessOp}: {
 		getAccessOp: () => Op<AccessPayload>

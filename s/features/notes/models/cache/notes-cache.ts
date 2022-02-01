@@ -1,8 +1,9 @@
 
+import {snapstate} from "@chasemoskal/snapstate"
+
 import {Op, ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
 import {Subbie} from "../../../../toolbox/subbies.js"
-import {snapstate} from "../../../../toolbox/snapstate/snapstate.js"
 import {makeNotesService} from "../../api/services/notes-service.js"
 import {Notes, NotesStats, Pagination} from "../../types/notes-concepts.js"
 

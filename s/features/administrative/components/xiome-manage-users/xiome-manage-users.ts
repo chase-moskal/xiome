@@ -1,10 +1,11 @@
 
+import {debounce} from "@chasemoskal/snapstate"
+
 import styles from "./xiome-manage-users.css.js"
 import wrenchSvg from "../../../../framework/icons/wrench.svg.js"
 
 import {Op, ops} from "../../../../framework/ops.js"
 import {UserResult} from "../../api/types/user-result.js"
-import {debounce} from "../../../../toolbox/debounce/debounce.js"
 import {makeUserStates} from "./parts/make-user-states.js"
 import {renderEditWidget} from "./parts/render-edit-widget.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
