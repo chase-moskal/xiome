@@ -28,11 +28,11 @@ export function makeConnectSubmodel({
 			await ops.operation({
 				promise: connectService.loadConnectDetails(),
 				setOp: op => {
-					state.writable.connectStatusOp = ops.replaceValue(
+					state.writable.stripeConnect.connectStatusOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectStatus
 					)
-					state.writable.connectDetailsOp = ops.replaceValue(
+					state.writable.stripeConnect.connectDetailsOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectDetails
 					)
@@ -42,7 +42,7 @@ export function makeConnectSubmodel({
 		else if (allowance.manageStore) {
 			await ops.operation({
 				promise: connectService.loadConnectStatus(),
-				setOp: op => state.writable.connectStatusOp = op,
+				setOp: op => state.writable.stripeConnect.connectStatusOp = op,
 			})
 		}
 	}
@@ -62,25 +62,25 @@ export function makeConnectSubmodel({
 			await change.publish()
 		},
 		async generateStripeLoginLink() {
-			if (ops.value(state.readable.connectStatusOp) === StripeConnectStatus.Unlinked)
+			if (ops.value(state.readable.stripeConnect.connectStatusOp) === StripeConnectStatus.Unlinked)
 				throw new Error("no stripe account to generate login link for")
 			return connectService.generateStripeLoginLink()
 		},
 		async pause() {
 			await connectService.pause()
-			state.writable.connectStatusOp = ops.ready(StripeConnectStatus.Paused)
+			state.writable.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Paused)
 			if (allowance.manageStore)
-				state.writable.connectDetailsOp = ops.ready({
-					...ops.value(state.readable.connectDetailsOp),
+				state.writable.stripeConnect.connectDetailsOp = ops.ready({
+					...ops.value(state.readable.stripeConnect.connectDetailsOp),
 					paused: true,
 				})
 		},
 		async resume() {
 			await connectService.resume()
-			state.writable.connectStatusOp = ops.ready(StripeConnectStatus.Ready)
+			state.writable.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Ready)
 			if (allowance.manageStore)
-				state.writable.connectDetailsOp = ops.ready({
-					...ops.value(state.readable.connectDetailsOp),
+				state.writable.stripeConnect.connectDetailsOp = ops.ready({
+					...ops.value(state.readable.stripeConnect.connectDetailsOp),
 					paused: false,
 				})
 		},

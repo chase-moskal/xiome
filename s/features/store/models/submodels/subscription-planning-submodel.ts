@@ -1,10 +1,10 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
-import {makeStoreState} from "../state/make-store-state.js"
 import {makeActivator} from "../utils/make-activator.js"
+import {makeStoreState} from "../state/make-store-state.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
+import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
 
 export function makeSubscriptionPlanningSubmodel({
 		state,
@@ -16,9 +16,11 @@ export function makeSubscriptionPlanningSubmodel({
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
 	}) {
 
+	const planningState = state.tree.subscriptionPlanning
+
 	async function loadSubscriptionPlans() {
 		await ops.operation({
-			setOp: op => state.writable.subscriptionPlansOp = op,
+			setOp: op => planningState.writable.subscriptionPlansOp = op,
 			promise: subscriptionPlanningService.listSubscriptionPlans(),
 		})
 	}
@@ -35,9 +37,9 @@ export function makeSubscriptionPlanningSubmodel({
 				tierPrice: number
 			}) {
 			const newPlan = await subscriptionPlanningService.addPlan(options)
-			const oldPlans = ops.value(state.readable.subscriptionPlansOp) ?? []
-			state.writable.subscriptionPlansOp = ops.replaceValue(
-				state.readable.subscriptionPlansOp,
+			const oldPlans = ops.value(planningState.readable.subscriptionPlansOp) ?? []
+			planningState.writable.subscriptionPlansOp = ops.replaceValue(
+				planningState.readable.subscriptionPlansOp,
 				[...oldPlans, newPlan],
 			)
 			return newPlan
