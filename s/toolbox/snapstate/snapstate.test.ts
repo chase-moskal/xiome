@@ -1,6 +1,6 @@
 
 import {Suite, assert, expect} from "cynic"
-import {snapstate} from "./snapstate.js"
+import {composeSnapstate, snapstate} from "./snapstate.js"
 
 export default <Suite>{
 	async "subscriptions are fired"() {
@@ -27,6 +27,31 @@ export default <Suite>{
 		state.writable.count += 1
 		await state.wait()
 		assert(fired === 3, `track reactions should be debounced, 3 expected, got ${fired}`)
+	},
+	async "relevant track reactions are fired"() {
+		const state = snapstate({a: 0, b: 0})
+		let aReactionCount = 0
+		let bReactionCount = 0
+		state.track(() => {
+			void state.readable.a
+			aReactionCount += 1
+		})
+		state.track(() => {
+			void state.readable.b
+			bReactionCount += 1
+		})
+		expect(aReactionCount).equals(1)
+		expect(bReactionCount).equals(1)
+
+		state.writable.a += 1
+		await state.wait()
+		expect(aReactionCount).equals(2)
+		expect(bReactionCount).equals(1)
+
+		state.writable.b += 1
+		await state.wait()
+		expect(aReactionCount).equals(2)
+		expect(bReactionCount).equals(2)
 	},
 	async "advanced tracks are fired"() {
 		const state = snapstate({count: 0})
@@ -60,6 +85,80 @@ export default <Suite>{
 			})
 		}).throws()
 	},
+	"snapstate compose": {
+		async "composed snapstates are readable"() {
+			const state = composeSnapstate({
+				alpha: snapstate({a: 1}),
+				bravo: snapstate({b: 1}),
+			})
+			expect(state.readable.alpha.a).equals(1)
+			expect(state.readable.bravo.b).equals(1)
+			expect(state.writable.alpha.a).equals(1)
+			expect(state.writable.bravo.b).equals(1)
+		},
+		async "composed snapstates are writable"() {
+			const state = composeSnapstate({
+				alpha: snapstate({a: 1}),
+				bravo: snapstate({b: 1}),
+			})
+			state.writable.alpha.a = 2
+			state.writable.bravo.b = 2
+			await state.wait()
+			expect(state.readable.alpha.a).equals(2)
+			expect(state.readable.bravo.b).equals(2)
+			expect(state.writable.alpha.a).equals(2)
+			expect(state.writable.bravo.b).equals(2)
+		},
+		async "composed snapstates are subscribable"() {
+			const state = composeSnapstate({
+				alpha: snapstate({a: 1}),
+				bravo: snapstate({b: 1}),
+			})
+			let alphaRead: number
+			let bravoRead: number
+			state.subscribe(() => {
+				alphaRead = state.readable.alpha.a
+				bravoRead = state.readable.bravo.b
+			})
+
+			state.writable.alpha.a = 2
+			await state.wait()
+			expect(state.readable.alpha.a).equals(2)
+			expect(alphaRead).equals(2)
+
+			state.writable.bravo.b = 2
+			await state.wait()
+			expect(state.readable.bravo.b).equals(2)
+			expect(bravoRead).equals(2)
+		},
+		async "composed snapstates are trackable"() {
+			const state = composeSnapstate({
+				alpha: snapstate({a: 1}),
+				bravo: snapstate({b: 1}),
+			})
+			let numberOfAlphaTrackingResponses = 0
+			let numberOfBravoTrackingResponses = 0
+			state.track(() => void state.readable.alpha.a, () => {
+				numberOfAlphaTrackingResponses += 1
+			})
+			state.track(() => void state.readable.bravo.b, () => {
+				numberOfBravoTrackingResponses += 1
+			})
+			expect(numberOfAlphaTrackingResponses).equals(0)
+			expect(numberOfBravoTrackingResponses).equals(0)
+
+			state.writable.alpha.a += 1
+			await state.wait()
+			expect(numberOfAlphaTrackingResponses).equals(1)
+			expect(numberOfBravoTrackingResponses).equals(0)
+
+			state.writable.bravo.b += 1
+			await state.wait()
+			expect(numberOfAlphaTrackingResponses).equals(1)
+			expect(numberOfBravoTrackingResponses).equals(1)
+		},
+	},
+
 	// async "forbid circular: sneaky track"() {
 	// 	const state = snapstate({count: 0})
 	// 	let cond = false
