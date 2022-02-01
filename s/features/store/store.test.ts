@@ -238,15 +238,23 @@ export default <Suite>{
 		},
 	},
 
-	"subscription purchases": {
-		async "user can purchase a subscription"() {},
-		async "user can cancel a subscription"() {},
-		async "user can update a subscription's payment method"() {},
+	"billing": {
+		async "user can add their payment method"() {},
+		async "user can view their payment method"() {},
+		async "user can update their payment method"() {},
+		async "user can delete their payment method"() {},
 	},
 
-	"payment methods": {
-		async "user can store the payment method while purchasing a subscription"() {},
-		async "user can update a credit card payment method"() {},
-		async "user can delete a payment method"() {},
+	"subscription purchases": {
+		async "user can purchase a subscription, with an existing payment method"() {},
+		async "user can purchase a subscription, while providing a new payment method"() {},
+		async "user can cancel a subscription"() {},
+		async "user can upgrade a subscription to a higher tier"() {},
+		async "user can downgrade a subscription to a lower tier"() {},
+	},
+
+	"billing interactions with subscriptions": {
+		async "when a user updates their payment method, subscriptions are updated"() {},
+		async "when a user deletes their payment method, subscriptions will stop recurring"() {},
 	},
 }

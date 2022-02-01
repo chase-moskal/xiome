@@ -1,4 +1,6 @@
 
+import {FlexStorage} from "dbmage"
+
 import {Service} from "../../../types/service.js"
 import {Op, ops} from "../../../framework/ops.js"
 import {makeStoreState} from "./state/make-store-state.js"
@@ -6,7 +8,6 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStoreAllowance} from "./utils/make-store-allowance.js"
 import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeConnectService} from "../api/services/connect-service.js"
-import {FlexStorage} from "dbmage"
 import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
 import {makeSubscriptionPlanningSubmodel} from "./submodels/subscription-planning-submodel.js"
 import {makeSubscriptionPlanningService} from "../api/services/subscription-planning-service.js"
