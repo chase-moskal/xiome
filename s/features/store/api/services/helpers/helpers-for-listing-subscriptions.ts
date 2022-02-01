@@ -14,7 +14,7 @@ export const helpersForListingSubscriptions = ({
 	return ({
 
 		async fetchOurSubscriptionPlanRecords() {
-			return storeTables.subscription.plans.read(find({stripeAccountId}))
+			return storeTables.subscriptions.plans.read(find({stripeAccountId}))
 		},
 
 		async crossReferencePlansWithStripeProducts(planRows: SubscriptionPlanRow[]) {
@@ -27,7 +27,7 @@ export const helpersForListingSubscriptions = ({
 
 		async deletePlans(planIds: Id[]) {
 			if (planIds.length)
-				await storeTables.subscription.plans.delete(
+				await storeTables.subscriptions.plans.delete(
 					findAll(planIds, planId => ({planId, stripeAccountId}))
 				)
 		},
@@ -36,7 +36,7 @@ export const helpersForListingSubscriptions = ({
 					planIds: Id[]
 				): Promise<SubscriptionTierRow[]> {
 			return planIds.length
-				? storeTables.subscription.tiers.read(
+				? storeTables.subscriptions.tiers.read(
 					findAll(planIds, planId => ({planId, stripeAccountId}))
 				)
 				: []
@@ -52,7 +52,7 @@ export const helpersForListingSubscriptions = ({
 
 		async deleteTiers(tierIds: Id[]) {
 			if (tierIds.length) {
-				await storeTables.subscription.tiers.delete(
+				await storeTables.subscriptions.tiers.delete(
 					findAll(tierIds, tierId => ({tierId, stripeAccountId}))
 				)
 			}
@@ -76,7 +76,7 @@ export const helpersForListingSubscriptions = ({
 
 		async deleteTiersWithoutParentPlan(tierIds: Id[]) {
 			if (tierIds.length) {
-				await storeTables.subscription.tiers.delete(
+				await storeTables.subscriptions.tiers.delete(
 					findAll(tierIds, tierId => ({tierId, stripeAccountId}))
 				)
 			}

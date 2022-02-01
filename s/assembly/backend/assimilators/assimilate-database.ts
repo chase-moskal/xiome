@@ -60,10 +60,10 @@ export async function assimilateDatabase({
 			// 	subscriptionPlans: true,
 			// 	subscriptions: true,
 			// },
-			merchant: {
+			merchants: {
 				stripeAccounts: true,
 			},
-			subscription: {
+			subscriptions: {
 				plans: true,
 				tiers: true,
 			},

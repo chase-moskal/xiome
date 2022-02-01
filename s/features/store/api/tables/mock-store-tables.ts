@@ -5,10 +5,10 @@ import {mockStorageTables} from "../../../../assembly/backend/tools/mock-storage
 
 export async function mockStoreTables(tableStorage: FlexStorage) {
 	return mockStorageTables<StoreSchema>(tableStorage, {
-		merchant: {
+		merchants: {
 			stripeAccounts: true,
 		},
-		subscription: {
+		subscriptions: {
 			plans: true,
 			tiers: true,
 		},

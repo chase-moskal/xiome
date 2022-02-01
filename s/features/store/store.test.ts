@@ -19,12 +19,12 @@ export default <Suite>{
 					"control stripe account"
 				)
 				const getConnectDetails = () => ops.value(
-					storeModel.state.connectDetailsOp
+					storeModel.state.stripeConnect.connectDetailsOp
 				)
 				expect(getConnectDetails()).not.ok()
 				await storeModel.connectSubmodel.connectStripeAccount()
 				expect(getConnectDetails()).ok()
-				expect(ops.value(storeModel.state.connectStatusOp))
+				expect(ops.value(storeModel.state.stripeConnect.connectStatusOp))
 					.equals(StripeConnectStatus.Ready)
 				await client.setLoggedOut()
 				expect(getConnectDetails()).not.ok()
@@ -34,13 +34,13 @@ export default <Suite>{
 					"control stripe account"
 				)
 				const getConnectDetails = () => ops.value(
-					storeModel.state.connectDetailsOp
+					storeModel.state.stripeConnect.connectDetailsOp
 				)
 				expect(getConnectDetails()).not.ok()
 				client.rigStripeLinkToFail()
 				await storeModel.connectSubmodel.connectStripeAccount()
 				expect(getConnectDetails()).ok()
-				expect(ops.value(storeModel.state.connectStatusOp))
+				expect(ops.value(storeModel.state.stripeConnect.connectStatusOp))
 					.equals(StripeConnectStatus.Incomplete)
 				await client.setLoggedOut()
 				expect(getConnectDetails()).not.ok()
@@ -54,27 +54,27 @@ export default <Suite>{
 			async "a second merchant can see the connect details"() {
 				const {merchantClient, makeAnotherMerchantClient}
 					= await setupLinkedStore()
-				expect(ops.value(merchantClient.storeModel.state.connectDetailsOp)).ok()
+				expect(ops.value(merchantClient.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 	
 				const anotherMerchant = await makeAnotherMerchantClient()
 				await anotherMerchant.storeModel.connectSubmodel.activate()
-				expect(ops.value(anotherMerchant.storeModel.state.connectDetailsOp)).ok()
+				expect(ops.value(anotherMerchant.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 			},
 			async "plebeian cannot see connect details or status"() {
 				const {makePlebeianClient} = await setupLinkedStore()
 				const plebeianClient = await makePlebeianClient()
 				await plebeianClient.storeModel.connectSubmodel.activate()
 				const {state} = plebeianClient.storeModel
-				expect(ops.value(state.connectDetailsOp)).not.defined()
-				expect(ops.value(state.connectStatusOp)).not.defined()
+				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
+				expect(ops.value(state.stripeConnect.connectStatusOp)).not.defined()
 			},
 			async "clerk can see the connect status, but not the details"() {
 				const {makeClerkClient} = await setupLinkedStore()
 				const clerkClient = await makeClerkClient()
 				await clerkClient.storeModel.connectSubmodel.activate()
 				const {state} = clerkClient.storeModel
-				expect(ops.value(state.connectStatusOp)).defined()
-				expect(ops.value(state.connectDetailsOp)).not.defined()
+				expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
+				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
 			},
 		},
 
@@ -84,15 +84,15 @@ export default <Suite>{
 				const {merchantClient} = await setupLinkedStore()
 				const {state, connectSubmodel} = merchantClient.storeModel
 				function expectReady() {
-					expect(ops.value(state.connectStatusOp))
+					expect(ops.value(state.stripeConnect.connectStatusOp))
 						.equals(StripeConnectStatus.Ready)
-					expect(ops.value(state.connectDetailsOp)?.paused)
+					expect(ops.value(state.stripeConnect.connectDetailsOp)?.paused)
 						.equals(false)
 				}
 				function expectPaused() {
-					expect(ops.value(state.connectStatusOp))
+					expect(ops.value(state.stripeConnect.connectStatusOp))
 						.equals(StripeConnectStatus.Paused)
-					expect(ops.value(state.connectDetailsOp)?.paused)
+					expect(ops.value(state.stripeConnect.connectDetailsOp)?.paused)
 						.equals(true)
 				}
 				expectReady()
@@ -110,11 +110,11 @@ export default <Suite>{
 				const clerkClient = await makeClerkClient()
 				const {state, connectSubmodel} = clerkClient.storeModel
 				function expectReady() {
-					expect(ops.value(state.connectStatusOp))
+					expect(ops.value(state.stripeConnect.connectStatusOp))
 						.equals(StripeConnectStatus.Ready)
 				}
 				function expectPaused() {
-					expect(ops.value(state.connectStatusOp))
+					expect(ops.value(state.stripeConnect.connectStatusOp))
 						.equals(StripeConnectStatus.Paused)
 				}
 				expectReady()
@@ -170,7 +170,7 @@ export default <Suite>{
 			const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
 
 			await planning.activate()
-			const plans = ops.value(clerk.storeModel.state.subscriptionPlansOp)
+			const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
 			expect(plans.length).equals(0)
 
 			const newPlan = await planning.addPlan({
@@ -182,7 +182,7 @@ export default <Suite>{
 			expect(newPlan.tiers.length).equals(1)
 
 			await planning.refresh()
-			const plans2 = ops.value(clerk.storeModel.state.subscriptionPlansOp)
+			const plans2 = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
 			expect(plans2.length).equals(1)
 			expect(plans2[0]).ok()
 		},
@@ -208,7 +208,7 @@ export default <Suite>{
 				const clerk = await makeClerkClient()
 				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
 				await planning.activate()
-				const plans = ops.value(clerk.storeModel.state.subscriptionPlansOp)
+				const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
 				expect(plans.length).equals(2)
 			}
 		},
@@ -236,5 +236,25 @@ export default <Suite>{
 				await expect(async() => planning.activate()).throws()
 			}
 		},
+	},
+
+	"billing": {
+		async "user can add their payment method"() {},
+		async "user can view their payment method"() {},
+		async "user can update their payment method"() {},
+		async "user can delete their payment method"() {},
+	},
+
+	"subscription purchases": {
+		async "user can purchase a subscription, with an existing payment method"() {},
+		async "user can purchase a subscription, while providing a new payment method"() {},
+		async "user can cancel a subscription"() {},
+		async "user can upgrade a subscription to a higher tier"() {},
+		async "user can downgrade a subscription to a lower tier"() {},
+	},
+
+	"billing interactions with subscriptions": {
+		async "when a user updates their payment method, subscriptions are updated"() {},
+		async "when a user deletes their payment method, subscriptions will stop recurring"() {},
 	},
 }

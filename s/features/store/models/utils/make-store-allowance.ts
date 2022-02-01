@@ -6,7 +6,7 @@ import {makeStoreState} from "../state/make-store-state.js"
 export function makeStoreAllowance(state: ReturnType<typeof makeStoreState>) {
 	const has = (key: keyof typeof storePrivileges) => {
 		const privileges =
-			ops.value(state.readable.accessOp)
+			ops.value(state.readable.user.accessOp)
 				?.permit.privileges
 					?? []
 		return privileges.includes(storePrivileges[key])

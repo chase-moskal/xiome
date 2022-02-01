@@ -7,6 +7,7 @@ import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.
 import {helpersForListingSubscriptions} from "./helpers/helpers-for-listing-subscriptions.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
 import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
+import {fetchSubscriptionPlans} from "./helpers/fetch-subscription-plans.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -32,23 +33,7 @@ export const makeSubscriptionPlanningService = (
 .expose(auth => ({
 
 	async listSubscriptionPlans(): Promise<SubscriptionPlan[]> {
-		const helpers = helpersForListingSubscriptions(auth)
-
-		const planRows = await helpers.fetchOurSubscriptionPlanRecords()
-		const planCross = await helpers.crossReferencePlansWithStripeProducts(planRows)
-		await helpers.deletePlans(planCross.missingIds)
-
-		const tierRows = await helpers.fetchOurRecordsOfPlanTiers(planCross.presentIds)
-		const tierCross = await helpers.crossReferenceTiersWithStripePrices(tierRows)
-
-		const parentlessTierIds = helpers.identifyTiersWithoutParentPlan(tierRows, planCross.presentIds)
-		const tiersIdsToDelete = helpers.dedupeIds([...tierCross.missingIds, ...parentlessTierIds])
-		await helpers.deleteTiers(tiersIdsToDelete)
-
-		return helpers.assembleSubscriptionPlans({
-			plans: {rows: planRows, cross: planCross},
-			tiers: {rows: tierRows, cross: tierCross},
-		})
+		return fetchSubscriptionPlans(auth)
 	},
 
 	async addPlan(inputs: {
