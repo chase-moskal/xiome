@@ -8,7 +8,7 @@ export function obtain<xResult>(
 	): xResult {
 
 	return path.reduce(
-		(x, y) => x && x[y] || undefined,
+		(x, y) => (x !== undefined && x[y]) ?? undefined,
 		object,
 	)
 }
