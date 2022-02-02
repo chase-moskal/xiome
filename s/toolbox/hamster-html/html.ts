@@ -13,15 +13,16 @@ export class HtmlTemplate {
 		this.#strings.forEach((string, index) => {
 			result += `${string}${index === this.#strings.length - 1
 				?""
-				:this.#values instanceof HtmlTemplate
+				:this.#values[index] instanceof HtmlTemplate
 					? this.#values[index]
 					: escapeHtml(this.#values[index])
 			}`
 		})
+		return result
 	}
 }
 
-export function html(strings: string[], ...values:any[]): HtmlTemplate {
+export function html(strings: TemplateStringsArray, ...values:any[]): HtmlTemplate {
 	return new HtmlTemplate({strings, values})
 }
 
