@@ -66,7 +66,7 @@ export class XiomeNotes extends mixinRequireShare<{
 				${notes.map(note => html`
 					<li>
 						<header class="note-header">
-							<p><strong>${note.type}</strong> ${formatDuration(now - note.time).ago}</p>
+							<h2>${note.title}</h2>
 							${old ? html`
 								<xio-button @press=${() => markSpecificNoteNew(note.noteId)}>
 									${plus}
@@ -77,7 +77,7 @@ export class XiomeNotes extends mixinRequireShare<{
 								</xio-button>
 							`}
 						</header>
-						<h1>${note.title}</h1>
+						<p><strong>${note.type}</strong> – <em>${formatDuration(now - note.time).ago}</em></p>
 					</li>
 				`)}
 			</ol>
