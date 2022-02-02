@@ -7,19 +7,20 @@ export default css`
 	flex-direction: column;
 	align-items: stretch;
 	justify-content: center;
-	max-width: 50em;
+	max-width: 32em;
 	border: solid 0.1em;
 }
 
 xio-button {
-  --xio-button-border: none;
+	--xio-button-border: none;
+	--_disabled-border-style: none;
 }
 
 /* Note tabs new/old */
 
 .tabs {
 	display: flex;
-	justify-content: center;
+	justify-content: space-evenly;
 	padding-bottom: 1em;
 	margin: 1em 2em;
 	border-bottom: solid 0.1em;
@@ -27,12 +28,10 @@ xio-button {
 
 [data-tab] {
 	font-weight: normal;
-	margin: auto;
 }
 
 [data-tab][data-active='true'] {
 	font-weight: bold;
-	color: bisque;
 	border-bottom: solid 0.2em;
 }
 
@@ -52,7 +51,10 @@ ol > li > header {
 	justify-content: space-between;
 	align-self: flex-end;
 	width: 100%;
-	margin-bottom: 0.5em;
+}
+
+ol > li > p {
+	opacity: 0.6;
 }
 
 /* Pagination */
@@ -71,7 +73,7 @@ ol > li > header {
 /* Button bar */
 
 .buttonbar {
-	display:flex;
+	display: flex;
 	justify-content: flex-end;
 	padding-top: 1em;
 	margin: 0 2em 1em 2em;
@@ -79,6 +81,6 @@ ol > li > header {
 }
 
 .buttonbar > xio-button {
-  --xio-button-border: solid 0.1em;
+	--xio-button-border: solid 0.1em;
 }
 `

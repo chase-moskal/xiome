@@ -39,13 +39,13 @@ export function prepareNotesCacheCreator({
 		const cacheState = snapstate({
 			old: false,
 			pageNumber: 1,
-			pageSize: 10,
+			pageSize: 5,
 			notesOp: ops.none() as Op<Notes.Any[]>,
 		})
 
 		function resetPagination() {
 			cacheState.writable.pageNumber = 1
-			cacheState.writable.pageSize = 10
+			cacheState.writable.pageSize = 5
 		}
 
 		async function fetchAppropriateNotes(): Promise<Notes.Any[]> {
