@@ -1,4 +1,6 @@
 
+import {substate} from "@chasemoskal/snapstate"
+
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
 import {makeActivator} from "../utils/make-activator.js"
@@ -16,7 +18,7 @@ export function makeSubscriptionPlanningSubmodel({
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
 	}) {
 
-	const planningState = state.tree.subscriptionPlanning
+	const planningState = substate(state, tree => tree.subscriptionPlanning)
 
 	async function loadSubscriptionPlans() {
 		await ops.operation({

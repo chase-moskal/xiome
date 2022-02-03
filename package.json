@@ -64,7 +64,7 @@
 		"typescript": "^4.5.5"
 	},
 	"dependencies": {
-		"@chasemoskal/snapstate": "0.0.0-dev.2",
+		"@chasemoskal/snapstate": "0.0.0-dev.6",
 		"@stripe/stripe-js": "^1.22.0",
 		"broadcastchannel-polyfill": "1.0.1",
 		"chalk": "^5.0.0",

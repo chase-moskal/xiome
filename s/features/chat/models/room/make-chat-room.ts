@@ -1,8 +1,8 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {makeChatState} from "../state/chat-state.js"
-import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 import {ChatDraft, ChatServerside, ChatStatus} from "../../common/types/chat-concepts.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
 
 export function makeChatRoom({label, serverside, state}: {
 		label: string

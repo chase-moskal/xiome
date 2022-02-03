@@ -1,13 +1,14 @@
 
 import {LitElement} from "lit"
-import {Track} from "@chasemoskal/snapstate"
+import {Observer, Reaction, Snapstate, Subscription} from "@chasemoskal/snapstate"
 
 import {Mixin} from "../../../types/mixin.js"
-import {Subscribe} from "../../../toolbox/pubsub.js"
 import {Constructor} from "../../../types/constructor.js"
 
+export type Track = (observer: Observer<any, any>, reaction: Reaction<any>) => () => void
+
 export interface SnapstateTracking {
-	attachTracking(...newTracks: Track[]): void
+	attachSnapstateTracking(...tracks: Track[]): void
 }
 
 export function mixinSnapstateTracking(...tracks: Track[]) {
@@ -17,49 +18,51 @@ export function mixinSnapstateTracking(...tracks: Track[]) {
 
 		return <any>class extends Base implements SnapstateTracking {
 
-			#tracks: Track[] = [...tracks]
-			#unsubscribes: (() => void)[] = []
+			#tracks = [...tracks]
+			#untracks: (() => void)[] = []
 
 			render() {
 				return super.render && super.render()
 			}
 
-			#subscribe = (track: Track) => {
-				return track(
+			#startRenderTracking(...tracks: Track[]) {
+				this.#untracks.push(...tracks.map(track => track(
 					() => { this.render() },
 					() => { this.requestUpdate() },
-				)
+				)))
 			}
 
-			#sub(tracks: Track[]) {
-				this.#unsubscribes.push(...tracks.map(this.#subscribe))
+			#stopRenderTracking() {
+				for (const untrack of this.#untracks)
+					untrack()
+				this.#untracks = []
 			}
 
-			#unsub() {
-				for (const unsubscribe of this.#unsubscribes)
-					unsubscribe()
-				this.#unsubscribes = []
-			}
-
-			attachTracking(...newTracks: Track[]) {
-				this.#tracks.push(...newTracks)
-				this.#sub(newTracks)
+			attachSnapstateTracking(...tracks: Track[]) {
+				this.#tracks.push(...tracks)
+				this.#startRenderTracking(...tracks)
 			}
 
 			connectedCallback() {
 				super.connectedCallback()
-				this.#sub(this.#tracks)
+				this.#startRenderTracking(...this.#tracks)
 			}
 
 			disconnectedCallback() {
 				super.disconnectedCallback()
-				this.#unsub()
+				this.#stopRenderTracking()
 			}
 		}
 	}
 }
 
-export function mixinSnapstateSubscriptions(...subscriptions: Subscribe[]) {
+export function mixinSnapstate(...states: Snapstate<any>[]) {
+	return mixinSnapstateTracking(...states.map(state => state.track))
+}
+
+export type Subscribe = (subscription: Subscription<any>) => () => void
+
+export function mixinSnapstateSubscriptions(...subscribes: Subscribe[]) {
 	return function<C extends Constructor<LitElement>>(
 			Base: C
 		): C {
@@ -71,8 +74,7 @@ export function mixinSnapstateSubscriptions(...subscriptions: Subscribe[]) {
 			connectedCallback() {
 				super.connectedCallback()
 				const update = () => { this.requestUpdate() }
-				this.#unsubscribes =
-					subscriptions.map(subscription => subscription(update))
+				this.#unsubscribes = subscribes.map(subscribe => subscribe(update))
 			}
 
 			disconnectedCallback() {

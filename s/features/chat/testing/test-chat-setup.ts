@@ -1,15 +1,15 @@
 
+import {getRando, memoryFlexStorage} from "dbmage"
+
 import {nap} from "../../../toolbox/nap.js"
 import {ops} from "../../../framework/ops.js"
 import {makeChatModel} from "../models/chat-model.js"
-import {getRando} from "dbmage"
 import {ChatStatus} from "../common/types/chat-concepts.js"
 import {chatPrivileges} from "../common/chat-privileges.js"
 import {chatMockClient} from "../api/sockets/chat-mock-client.js"
 import {makeChatServerCore} from "../api/cores/chat-server-core.js"
 import {mockChatMeta, mockChatPolicy} from "./mocks/mock-chat-policy.js"
 import {mockChatPersistence} from "../api/cores/persistence/mock-chat-persistence.js"
-import {memoryFlexStorage} from "dbmage"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export async function testChatSetup() {
