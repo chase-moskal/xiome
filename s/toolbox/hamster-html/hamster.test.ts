@@ -1,6 +1,6 @@
 
-import { Suite, assert, expect } from "cynic";
 import { html, render } from "./html.js";
+import { Suite, assert, expect } from "cynic";
 
 export default <Suite>{
 	"santization": {
