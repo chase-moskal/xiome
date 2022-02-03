@@ -9,16 +9,15 @@ export class HtmlTemplate {
 		this.#values = values
 	}
 	toString() {
-		let result = ""
-		this.#strings.forEach((string, index) => {
-			result += `${string}${index === this.#strings.length - 1
-				?""
-				:this.#values[index] instanceof HtmlTemplate
-					? this.#values[index]
-					: escapeHtml(this.#values[index])
-			}`
-		})
-		return result
+		return this.#strings.reduce(
+			(previous, current, index) => {
+				const value = this.#values[index] ?? ""
+				const safeValue = value instanceof HtmlTemplate
+					? value.toString()
+					: escapeHtml(value.toString())
+				return previous + current + safeValue
+			}, ""
+		)
 	}
 }
 
