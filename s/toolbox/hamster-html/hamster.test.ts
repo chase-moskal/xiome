@@ -1,6 +1,6 @@
 
-import { html, render } from "./html.js";
-import { Suite, assert, expect } from "cynic";
+import {html, render} from "./html.js"
+import {Suite, assert, expect} from "cynic"
 
 export default <Suite>{
 	"santization": {
@@ -9,20 +9,26 @@ export default <Suite>{
 			const output = "&lt;div&gt;&lt;/div&gt;"
 
 			assert(render(input)===output,"sanitization does not occur")
-		},
+		}
+	},
+	"nesting": {
 		"nested html functions must not be sanitized": async () => {
 			const input = html`${html`<div></div>`}`
 			const output = "<div></div>"
 	
 			assert(render(input)===output, "nested html function is sanitized")
-		}
-	},
-	"nesting": {
+		},
 		"multiple html functions can be nested": async () => {
 			const input = html`${html`${html`${html`<div></div>`}`}`}`
 			const output = "<div></div>"
 
 			expect(render(input)).equals(output)
+		},
+		"nested injected values are sanitized": async () => {
+			const input = html`${html`${`<script></script>`}`}`
+			const output = "&lt;script&gt;&lt;/script&gt;"
+
+			assert(render(input)===output, "nested injected values are not sanitized")
 		}
 	}
 }
