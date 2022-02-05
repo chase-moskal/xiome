@@ -70,6 +70,15 @@ ol > li > p {
 	margin: 0em 1em;
 }
 
+/* Notifications */
+
+xio-op[mode="loading"], slot {
+	display: block;
+	text-align: center;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
 /* Button bar */
 
 .buttonbar {
