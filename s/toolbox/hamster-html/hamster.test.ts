@@ -8,7 +8,7 @@ export default <Suite>{
 			const input = html`${"<div></div>"}`
 			const output = "&lt;div&gt;&lt;/div&gt;"
 
-			assert(render(input)===output,"sanitization does not occur")
+			assert(render(input)===output,"sanitization should occur, but doesn't")
 		}
 	},
 	"nesting": {
