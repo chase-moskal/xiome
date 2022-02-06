@@ -40,10 +40,10 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 
 	async function disconnect() {
 		statsFetcher.stopInterval()
-		const connection = {...ops.value(state.readable.connectionOp)}
+		const connection = ops.value(state.readable.connectionOp)
 		if (connection) {
 			state.writable.connectionOp = ops.none()
-			await connection.disconnect()
+			connection.disconnect()
 		}
 	}
 
