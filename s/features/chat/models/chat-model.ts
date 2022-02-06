@@ -42,8 +42,8 @@ export function makeChatModel({chatConnect, getChatMeta}: {
 		statsFetcher.stopInterval()
 		const connection = ops.value(state.readable.connectionOp)
 		if (connection) {
-			state.writable.connectionOp = ops.none()
 			connection.disconnect()
+			state.writable.connectionOp = ops.none()
 		}
 	}
 
