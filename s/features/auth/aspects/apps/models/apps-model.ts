@@ -1,5 +1,5 @@
 
-import {snapstate} from "@chasemoskal/snapstate"
+import {snapstate, unproxy} from "@chasemoskal/snapstate"
 
 import {AppDraft} from "../types/app-draft.js"
 import {AppRecords} from "./types/app-records.js"
@@ -99,7 +99,7 @@ export function makeAppsModel({
 		const records = ops.value(writable.appRecords)
 		if (!records)
 			throw new Error("cannot update app while loading records")
-		const existingApp = ops.value(records[appId])
+		const existingApp = unproxy(ops.value(records[appId]))
 		if (!existingApp)
 			throw new Error("cannot update app not present in records")
 		return ops.operation({
@@ -135,12 +135,7 @@ export function makeAppsModel({
 		state: readable,
 		subscribe,
 		appEditService,
-		getApp(appId: string) {
-			const records = ops.value(readable.appRecords)
-			return records
-				? ops.value(records[appId])
-				: undefined
-		},
+		getApp,
 		loadApps,
 		deleteApp,
 		updateApp,
