@@ -24,12 +24,17 @@ export class HtmlTemplate {
 					? value.map(this.#processValue).join("")
 					: this.#processValue(value)
 				return previous + current + safeValue
-			}, ""
+			},
+			""
 		)
 	}
 }
 
-export function html(strings: TemplateStringsArray, ...values:any[]): HtmlTemplate {
+export function html(
+		strings: TemplateStringsArray,
+		...values: any[]
+	): HtmlTemplate {
+
 	return new HtmlTemplate({strings, values})
 }
 
