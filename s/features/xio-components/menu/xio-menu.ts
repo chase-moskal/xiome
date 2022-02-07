@@ -32,12 +32,12 @@ export class XioMenu extends Component {
 	#scrollEvents = ["scroll", "resize"]
 
 	#scrollListener = () => {
-		this.#snap.state.scrollTop = this.sticky
-			? document.body.scrollTop
-				?? document.documentElement.scrollTop
-				?? window.pageYOffset
-				?? 0
-			: 0
+		if (!this.active)
+			this.#snap.state.scrollTop = this.sticky
+				? window.scrollY
+					?? window.pageYOffset
+					?? 0
+				: 0
 	}
 
 	createRenderRoot() {
@@ -52,6 +52,7 @@ export class XioMenu extends Component {
 			() => this.render(),
 			() => this.requestUpdate(),
 		)
+		this.#scrollListener()
 		for (const event of this.#scrollEvents)
 			window.addEventListener(event, this.#scrollListener)
 	}
@@ -69,6 +70,7 @@ export class XioMenu extends Component {
 			? undefined
 			: index
 		this.active = this.#snap.state.activeIndex !== undefined
+		this.#scrollListener()
 	}
 
 	getMenuItems() {
@@ -92,9 +94,9 @@ export class XioMenu extends Component {
 	}
 
 	render() {
-		const {scrollTop} = this.#snap.state
+		const {scrollTop, activeIndex} = this.#snap.state
 		return html`
-			<div class=system style="${`top: ${scrollTop}px`}">
+			<div class=system data-active-index=${activeIndex} style="${`top: ${scrollTop}px`}">
 				<div class=blanket @click=${this.#handleBlanketClick}></div>
 				<div class=list>
 					<slot></slot>
