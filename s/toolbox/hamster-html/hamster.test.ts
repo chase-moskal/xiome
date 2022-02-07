@@ -30,5 +30,12 @@ export default <Suite>{
 
 			assert(render(input)===output, "nested injected values are not sanitized")
 		}
-	}
+	},
+	"arrays": {
+		async "arrays of values are joined together cleanly"() {
+			const items = ["alpha", "bravo"]
+			const output = render(html`${items}`)
+			assert(output === "alphabravo", "arrays should be cleanly joined")
+		},
+	},
 }
