@@ -7,8 +7,10 @@ type MockBrowser = Await<ReturnType<Connection["backend"]["mockBrowser"]>>
 type MockTab = Await<ReturnType<MockBrowser["mockAppWindow"]>>
 
 export async function prepareMockActions({
+		appOrigin,
 		connection: {appId, backend: {emails, mockBrowser}},
 	}: {
+		appOrigin: string
 		connection: Await<ReturnType<typeof mockConnectApp>>
 	}) {
 
@@ -17,7 +19,7 @@ export async function prepareMockActions({
 				email: string,
 				action: (tab: MockTab) => Promise<void>
 			) {
-			const browser = await mockBrowser()
+			const browser = await mockBrowser({appOrigin})
 			const tab = await browser.mockAppWindow({appId})
 			const {accessModel} = tab.models
 			const {loginService} = tab.remote.auth.users

@@ -3,11 +3,12 @@ import {Await} from "../../../types/await.js"
 import {mockConnectApp} from "../connect/mock/mock-connect-app.js"
 import {prepareMockActions} from "../mocks/prepare-mock-actions.js"
 
-export async function demoQuestions(
+export async function demoQuestions({appOrigin, connection}: {
+		appOrigin: string,
 		connection: Await<ReturnType<typeof mockConnectApp>>
-	) {
+	}) {
 
-	const {asMockPerson} = await prepareMockActions({connection})
+	const {asMockPerson} = await prepareMockActions({appOrigin, connection})
 	let questionId: string
 	await asMockPerson("a@xiome.io", async tab => {
 		const boardModel = tab.models.questionsModel.makeBoardModel("default")

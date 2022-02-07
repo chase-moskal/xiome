@@ -3,15 +3,16 @@ import {Await} from "../../../../../types/await.js"
 import {backendForNode} from "../../../../backend/backend-for-node.js"
 
 export async function mockRegisterApp({
-		ownerEmail, adminEmail, appOrigins, backend
+		ownerEmail, adminEmail, appOrigins, platformOrigin, backend
 	}: {
 		ownerEmail: string
 		adminEmail: string
 		appOrigins: string[]
+		platformOrigin: string
 		backend: Await<ReturnType<typeof backendForNode>>
 	}) {
 
-	const mockBrowserForPlatform = await backend.mockBrowser()
+	const mockBrowserForPlatform = await backend.mockBrowser({appOrigin: platformOrigin})
 	const mockWindowForPlatform = await mockBrowserForPlatform.mockAppWindow({
 		appId: backend.platformAppId,
 	})

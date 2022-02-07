@@ -58,10 +58,10 @@ export function prepareBackend(configurators: Configurators) {
 					database: databaseRaw,
 				}),
 			}),
-			mockBrowser: async() => mockBrowser({
+			mockBrowser: async({appOrigin}: {appOrigin: string}) => mockBrowser({
 				api,
+				appOrigin,
 				mockStripeOperations,
-				appOrigin: "http://localhost:8080",
 			}),
 		}
 	}

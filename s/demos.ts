@@ -1,21 +1,25 @@
 
+import {memoryFlexStorage} from "dbmage"
+
 import {demoQuestions} from "./assembly/frontend/demos/demo-questions.js"
 import {applyMockHacks} from "./assembly/frontend/mocks/apply-mock-hacks.js"
-import {memoryFlexStorage} from "dbmage"
 import {registerComponents} from "./framework/component/register-components.js"
 import {mockConnectApp} from "./assembly/frontend/connect/mock/mock-connect-app.js"
-import {addMockLatency} from "./assembly/frontend/mocks/effects/add-mock-latency.js"
 import {assembleAndInitializeFrontend} from "./assembly/frontend/assemble-and-initialize-frontend.js"
 
 void async function demos() {
+
+	const appWindowLink = window.location.href
+	const appOrigin = window.location.origin
+
 	const connection = await mockConnectApp({
-		appWindowLink: window.location.href,
-		appOrigin: window.location.origin,
-		origins: [window.location.origin],
+		appWindowLink,
+		appOrigin,
+		origins: [appOrigin],
 		storage: memoryFlexStorage(),
 	})
 
-	await demoQuestions(connection)
+	await demoQuestions({appOrigin, connection})
 
 	connection.setMockLatency({min: 200, max: 800})
 

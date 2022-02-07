@@ -32,6 +32,7 @@ export async function mockConnectApp({
 			ownerEmail,
 			adminEmail,
 			appOrigins: origins,
+			platformOrigin: appOrigin,
 		})
 		await storage.write<string>("mock-app", appId)
 	}
