@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"rootDir": "s",
 		"outDir": "x",
-		"target": "es2020",
+		"target": "es2019",
 		"lib": ["esnext", "dom"],
 		"module": "esnext",
 		"moduleResolution": "node",
