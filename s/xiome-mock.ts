@@ -1,5 +1,4 @@
 
-import "menutown"
 import "./assembly/frontend/types/window-globals.js"
 
 import {assembleXiomeMock} from "./assembly/assemble-mocks.js"

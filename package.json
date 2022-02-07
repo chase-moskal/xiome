@@ -75,7 +75,6 @@
 		"json5": "^2.2.0",
 		"lit": "^2.1.2",
 		"mailgun.js": "^4.2.1",
-		"menutown": "0.0.1",
 		"mongodb": "^4.3.1",
 		"pug": "^3.0.2",
 		"redcrypto": "0.0.0-dev.9",

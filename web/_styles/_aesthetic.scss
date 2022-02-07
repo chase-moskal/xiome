@@ -103,7 +103,7 @@ code { background: #0002; }
 	&[data-page-subtitle=components] nav a[href$="/components"] { @extend .marked-link }
 }
 
-menu-system {
+xio-menu {
 	color: #fffa;
 	--menu-background: #fff2;
 	--menu-panel-background: #324a71cc;

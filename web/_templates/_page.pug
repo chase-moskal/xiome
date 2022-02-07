@@ -78,8 +78,8 @@ body(data-page=pageName)
 				a(href=`${base}/`) learn
 				a(href=`${base}/setup`) setup
 				a(href=`${base}/components`) components
-		menu-system(sticky initially-hidden)
-			menu-display(data-label="account")
+		xio-menu(sticky initially-hidden)
+			xio-menu-item(data-label="account")
 				xiome-my-avatar(slot="button")
 				xiome-login-panel(show-logout)
 					xiome-my-account
