@@ -2,8 +2,8 @@
 name: deploy to production
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+    - release
 
 env:
   REGISTRY: ghcr.io
