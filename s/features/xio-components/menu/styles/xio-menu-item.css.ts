@@ -7,6 +7,8 @@ export default css`
 }
 
 :host([theme="concrete"]) button {
+	font-size: inherit;
+	color: inherit;
 	position: relative;
 	display: block;
 	margin: var(--menu-gapsize, 0.15rem);

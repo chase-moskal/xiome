@@ -2,14 +2,6 @@
 import {css} from "../../../../../../framework/component.js"
 export default css`
 
-.avatar {
-	display: block;
-	width: 3em;
-	height: 3em;
-	padding: 0.2em;
-	border-radius: 0.3em;
-}
-
 :host([logged-in]) .avatar {
 	color: #fff;
 }

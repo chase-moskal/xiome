@@ -5,8 +5,8 @@ export default css`
 
 :host {
 	display: inline-block;
-	width: var(--avatar-size, 3em);
-	height: var(--avatar-size, 3em);
+	width: var(--avatar-size, 2em);
+	height: var(--avatar-size, 2em);
 	border-radius: var(--avatar-border-radius, 0.3em);
 	overflow: hidden;
 	user-select: none;
