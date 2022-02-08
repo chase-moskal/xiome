@@ -22,9 +22,7 @@ jobs:
         node-version: '17'
 
     - name: 📦 npm install
-      shell: bash
       run: npm ci
 
     - name: 🔨 build
-      shell: bash
       run: npm run build
