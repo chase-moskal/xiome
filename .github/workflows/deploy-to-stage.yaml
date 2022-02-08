@@ -39,11 +39,9 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 📦 npm install
-      shell: bash
       run: npm ci
 
     - name: 🔨 build
-      shell: bash
       run: npm run build
 
     - name: 🐳 push image - web
@@ -78,7 +76,6 @@ jobs:
       id: setcontext
 
     - name: ⚓ helm deployment
-      shell: bash
       env:
         GITHASH: ${{ github.sha }}
         XIOME_CONFIG: ${{ secrets.STAGE_XIOME_CONFIG }}

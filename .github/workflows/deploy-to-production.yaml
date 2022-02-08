@@ -2,8 +2,8 @@
 name: deploy to production
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+    - release
 
 env:
   REGISTRY: ghcr.io
@@ -39,11 +39,9 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 📦 npm install
-      shell: bash
       run: npm ci
 
     - name: 🔨 build
-      shell: bash
       run: npm run build
 
     - name: 🚀 npm publish
@@ -83,7 +81,6 @@ jobs:
       id: setcontext
 
     - name: ⚓ helm deployment
-      shell: bash
       env:
         GITHASH: ${{ github.sha }}
         XIOME_CONFIG: ${{ secrets.PROD_XIOME_CONFIG }}

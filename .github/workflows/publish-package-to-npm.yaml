@@ -1,16 +1,17 @@
 
-name: build
+name: publish package to npm
 on:
   push:
-    branches:
-    - master
-  pull_request:
-    branches:
-    - master
+    tags:
+    - 'v*'
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
-  build:
+  publish-package-to-npm:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'chase-moskal'
     steps:
 
     - name: 🛎️ checkout
@@ -26,3 +27,8 @@ jobs:
 
     - name: 🔨 build
       run: npm run build
+
+    - name: 🚀 npm publish
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
