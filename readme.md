@@ -347,110 +347,12 @@ each layer has its own little landscape of concepts and tools you'll need to lea
 
 <br/>
 
-### **snapstate** — *tiny state management*
+### **snapstate** — *tiny robust state management*
 
 <details><summary>(click to show details)</summary>
 
-- snapstate is an experimental little state management library. it's the minimalistic successor to `autowatcher` and `happystate` which were previous incarnations in its lineage.
-- the concept of snapstate, is that we create a `readable` and `writable` version of a state object.
-- this allow us to write functions that have write access to the state via `writable`, but then we only expose the `readable` to the outside
-- example
-  ```ts
-  function makeCounterModel() {
-
-    const state = snapstate({
-      count: 0,
-    })
-
-    function increment() {
-      state.writable.count += 1
-    }
-
-    return {
-      subscribe: state.subscribe,
-      state: state.readable,
-      increment,
-    }
-  }
-
-  const counterModel = makeCounterModel()
-  console.log(counterModel.state.count) // 0
-
-  counterModel.increment()
-  console.log(counterModel.state.count) // 1
-
-  counterModel.subscribe(() => console.log(counterModel.state.count))
-  counterModel.increment()
-  //> 2
-
-  counterModel.state.count = 4 // ERROR readonly
-  ```
-  - we return the readable state, which provides read-only access to the state object.
-  - we also return action functions that have exclusive access to the writable state.
-  - we also return a subscribe function, to subscribe to state changes
-- snapstate changes are debounced
-  ```ts
-  const counterModel = makeCounterModel()
-  counterModel.subscribe(() => console.log(counterModel.state.count))
-  counterModel.increment()
-  counterModel.increment()
-  counterModel.increment()
-  //> 3
-  ```
-  - this is very important to understand. this means changes don't instantly trigger the subscribed listeners
-  - instead, many changes to the state can be queued up in a single tick, then subscribe is called afterwards
-- snapstate returns a `wait` function
-  ```ts
-  async function example() {
-    const counterModel = makeCounterModel()
-    let sideEffect = false
-
-    counterModel.subscribe(() => {
-      sideEffect = true
-    })
-
-    counterModel.increment()
-
-    console.log(sideEffect) // false
-    await counterModel.wait()
-    console.log(sideEffect) // true
-  }
-  ```
-  - this allows you to wait for the debounced subscribed effects to fire
-- snapstate returns a `track` function
-  ```ts
-  const counterModel = makeCounterModel()
-  counterModel.track(() => console.log(counterModel.state.count))
-  //> 0
-  counterModel.increment()
-  //> 1
-  ```
-  - track is similar to subscribe, but works like mobx autorun
-    - track will immediately execute the listener function, and internally record which state properties are read
-    - then, whenever those specific state properties are written to, it will fire the affected listener function
-    - this can be efficient, because your track won't be triggered for unrelated changes to other state properties
-- both `subscribe` and `track` return stop functions to unsubscribe
-  ```ts
-  const counterModel = makeCounterModel()
-
-  const unsubscribe = counterModel.subscribe(
-    () => console.log(counterModel.state.count)
-  )
-
-  const untrack = counterModel.track(
-    () => console.log(counterModel.state.count)
-  )
-  //> 0
-
-  counterModel.increment()
-  //> 1
-  //> 1
-
-  unsubscribe()
-  untrack()
-  counterModel.increment()
-  //> (sweet silence)
-  ```
+- 🔮 snapstate is how xiome manages frontend application state
+- see snapstate's readme on github: https://github.com/chase-moskal/snapstate
 
 </details>
 
