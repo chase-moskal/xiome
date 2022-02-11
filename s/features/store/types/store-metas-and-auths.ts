@@ -1,5 +1,4 @@
 
-import {StoreSchema} from "./store-schema.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {StripeLiaison, StripeLiaisonAccount} from "./store-concepts.js"
 
@@ -11,5 +10,6 @@ export interface StoreAuth extends AnonAuth {
 
 export interface StoreLinkedAuth extends StoreAuth {
 	stripeAccountId: string
+	stripeCustomerId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
 }

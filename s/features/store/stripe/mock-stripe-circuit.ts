@@ -1,14 +1,14 @@
 
 import {find} from "dbmage"
-
 import {Rando} from "dbmage"
+import {FlexStorage} from "dbmage"
+
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {pubsub, pubsubs} from "../../../toolbox/pubsub.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
-import {FlexStorage} from "dbmage"
 
 export async function mockStripeCircuit({
 		rando, tableStorage, databaseRaw,
@@ -66,6 +66,26 @@ export async function mockStripeCircuit({
 						charges_enabled: false,
 						payouts_enabled: false,
 						details_submitted: false,
+					},
+				})
+			},
+			async updatePaymentMethod(stripeSessionId: string) {
+				const session = await stripeTables.checkoutSessions.readOne(find({
+					id: stripeSessionId,
+				}))
+				const customer = <string>session.customer
+				await stripeTables.paymentMethods.update({
+					...find({customer}),
+					upsert: {
+						id: rando.randomId().toString(),
+						customer,
+						card: <any>{
+							brand: "fakevisa",
+							country: "canada",
+							exp_month: 1,
+							exp_year: 2032,
+							last4: "1234",
+						},
 					},
 				})
 			},

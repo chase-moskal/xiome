@@ -24,8 +24,8 @@ export function makeStoreModel(options: {
 			Service<typeof makeSubscriptionPlanningService>
 		billingService:
 			Service<typeof makeBillingService>
-		triggerCheckoutPopup: TriggerCheckoutPopup
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
+		triggerCheckoutPaymentMethodPopup: TriggerCheckoutPopup
 	}) {
 
 	const snap = makeStoreState()

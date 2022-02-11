@@ -9,12 +9,12 @@ import {makeBillingService} from "../../api/services/billing-service.js"
 import {TriggerCheckoutPopup} from "../../types/store-popups.js"
 
 export function makeBillingSubmodel({
-		snap, allowance, billingService, triggerCheckoutPopup,
+		snap, allowance, billingService, triggerCheckoutPaymentMethodPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		billingService: Service<typeof makeBillingService>
-		triggerCheckoutPopup: TriggerCheckoutPopup
+		triggerCheckoutPaymentMethodPopup: TriggerCheckoutPopup
 	}) {
 
 	async function loadPaymentMethodDetails() {
@@ -31,8 +31,9 @@ export function makeBillingSubmodel({
 	}
 
 	async function checkoutPaymentMethod() {
-		const {stripeSessionUrl} = await billingService.checkoutPaymentMethod()
-		await triggerCheckoutPopup({stripeSessionUrl})
+		const {stripeSessionId, stripeSessionUrl} =
+			await billingService.checkoutPaymentMethod()
+		await triggerCheckoutPaymentMethodPopup({stripeSessionId, stripeSessionUrl})
 		await loadPaymentMethodDetails()
 	}
 

@@ -10,19 +10,20 @@ export const makeBillingService = (
 
 .policy(options.storeLinkedPolicy)
 
-.expose(({access, database, stripeLiaisonAccount}) => ({
+.expose(({access, database, stripeLiaisonAccount, stripeCustomerId}) => ({
 
 	async checkoutPaymentMethod() {
 		const session = await stripeLiaisonAccount.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "setup",
-			customer: "",
+			customer: stripeCustomerId,
 
 			// TODO implement session urls
 			success_url: "TODO",
 			cancel_url: "TODO",
 		})
 		return {
+			stripeSessionId: session.id,
 			stripeSessionUrl: session.url,
 		}
 	},

@@ -1,12 +1,11 @@
 
 import * as dbmage from "dbmage"
 
-import {DatabaseSchema} from "../types/database.js"
+import {databaseShape} from "../database/database-shapes.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
-import {databaseShapeRequiresAppIsolation, databaseShapeUnisolated} from "../database/database-shapes.js"
 
 export async function assimilateDatabase({
 		config,
@@ -17,11 +16,6 @@ export async function assimilateDatabase({
 		configureMongo: AssimilatorOptions["configureMongo"]
 		configureMockStorage: AssimilatorOptions["configureMockStorage"]
 	}) {
-
-	const databaseShape: dbmage.SchemaToShape<DatabaseSchema> = {
-		...databaseShapeRequiresAppIsolation,
-		...databaseShapeUnisolated,
-	}
 
 	const mockStorage = config.database === "mock-storage"
 		? configureMockStorage()

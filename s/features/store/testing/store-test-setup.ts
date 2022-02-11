@@ -71,7 +71,9 @@ export async function storeTestSetup() {
 						mockStripeOperations
 							.linkStripeAccountThatIsIncomplete(stripeAccountId)
 				},
-				triggerCheckoutPopup: async() => {},
+				triggerCheckoutPaymentMethodPopup: async({stripeSessionId}) => {
+					await mockStripeOperations.updatePaymentMethod(stripeSessionId)
+				},
 			})
 
 			async function setAccess(access: AccessPayload) {

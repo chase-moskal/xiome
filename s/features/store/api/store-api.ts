@@ -1,4 +1,5 @@
 
+import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {makeConnectService} from "./services/connect-service.js"
@@ -42,11 +43,26 @@ export const storeApi = ({
 					400,
 					"stripe account is not connected, and this action requires it"
 				)
+			const stripeLiaisonAccount = stripeLiaison.account(connectDetails.stripeAccountId)
+
+			const userId = dbmage.Id.fromString(auth.access.user.userId)
+			let customerRow = await auth.database.tables.store.billing.customers
+				.readOne(dbmage.find({userId}))
+			if (!customerRow) {
+				const {id: stripeCustomerId} = await stripeLiaisonAccount.customers.create({})
+				customerRow = {
+					userId,
+					stripeCustomerId,
+				}
+				await auth.database.tables.store.billing.customers.create()
+			}
+			const {stripeCustomerId} = customerRow
+
 			return {
 				...auth,
+				stripeCustomerId,
 				stripeAccountId: connectDetails.stripeAccountId,
-				stripeLiaisonAccount:
-					stripeLiaison.account(connectDetails.stripeAccountId),
+				stripeLiaisonAccount,
 			}
 		},
 	}

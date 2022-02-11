@@ -10,6 +10,7 @@ export type StoreSchema = dbmage.AsSchema<{
 		tiers: SubscriptionTierRow
 	}
 	billing: {
+		customers: CustomerRow
 		paymentMethods: PaymentMethodRow
 	}
 }>
@@ -28,6 +29,11 @@ export type MerchantRow = dbmage.AsRow<{
 //
 // billing tables
 //
+
+export type CustomerRow = dbmage.AsRow<{
+	userId: dbmage.Id
+	stripeCustomerId: string
+}>
 
 export type PaymentMethodRow = dbmage.AsRow<{
 	userId: dbmage.Id

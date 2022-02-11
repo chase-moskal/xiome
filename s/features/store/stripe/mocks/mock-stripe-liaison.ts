@@ -96,7 +96,7 @@ export function mockStripeLiaison({
 						}) {
 						return async function(params: xParams) {
 							const resource = <Partial<xResource>><any>{
-								id: generateId(),
+								id: generateId().toString(),
 								...makeData(params),
 							}
 							await table.create(resource)
@@ -249,7 +249,9 @@ export function mockStripeLiaison({
 						...resource,
 						delete: undefined,
 						async detach(id: string) {
+							const paymentMethod = resource.retrieve(id)
 							await resource.delete(id)
+							return respond(paymentMethod)
 						}
 					}
 				})(),
@@ -285,7 +287,7 @@ export function mockStripeLiaison({
 							object: "list",
 							has_more: false,
 							data: <any>params.items.map(itemParams => ({
-								id: generateId(),
+								id: generateId().toString(),
 								billing_thresholds: itemParams.billing_thresholds,
 								price: itemParams.price,
 								price_data: itemParams.price_data,

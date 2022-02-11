@@ -1,6 +1,6 @@
 
+import * as dbmage from "dbmage"
 import * as renraku from "renraku"
-import {Id} from "dbmage"
 
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
@@ -22,7 +22,7 @@ export interface StoreCommonOptions {
 		cancel: string
 		success: string
 	}
-	generateId: () => Id
+	generateId: () => dbmage.Id
 }
 
 export interface StoreApiOptions extends StoreCommonOptions {
