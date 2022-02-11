@@ -9,9 +9,7 @@ import {StripeConnectStatus} from "./types/store-concepts.js"
 import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
 
 export default <Suite>{
-
 	"store connect submodel": {
-
 		"connect a stripe account": {
 
 			async "merchant can connect a stripe account"() {
@@ -76,8 +74,8 @@ export default <Suite>{
 				expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
 			},
-		},
 
+		},
 		"pause and resume the stripe account": {
 
 			async "merchant can pause and resume a store"() {
@@ -127,8 +125,8 @@ export default <Suite>{
 				await connectSubmodel.refresh()
 				expectReady()
 			},
-		},
 
+		},
 		"login to stripe account": {
 
 			async "merchant can login to connected stripe account"() {
@@ -160,8 +158,8 @@ export default <Suite>{
 					.throws()
 			},
 		},
-	},
 
+	},
 	"subscription planning": {
 
 		"clerk can create a new subscription plan": async() => {
@@ -236,25 +234,29 @@ export default <Suite>{
 				await expect(async() => planning.activate()).throws()
 			}
 		},
-	},
 
+	},
 	"billing": {
+
 		async "user can add their payment method"() {},
 		async "user can view their payment method"() {},
 		async "user can update their payment method"() {},
 		async "user can delete their payment method"() {},
-	},
 
+	},
 	"subscription purchases": {
+
 		async "user can purchase a subscription, with an existing payment method"() {},
 		async "user can purchase a subscription, while providing a new payment method"() {},
 		async "user can cancel a subscription"() {},
 		async "user can upgrade a subscription to a higher tier"() {},
 		async "user can downgrade a subscription to a lower tier"() {},
-	},
 
+	},
 	"billing interactions with subscriptions": {
+
 		async "when a user updates their payment method, subscriptions are updated"() {},
 		async "when a user deletes their payment method, subscriptions will stop recurring"() {},
+
 	},
 }
