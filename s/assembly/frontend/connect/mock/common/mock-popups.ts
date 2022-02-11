@@ -11,8 +11,8 @@ export function mockPopups({mockStripeOperations}: {
 			await mockStripeOperations.linkStripeAccount(stripeAccountId)
 		}),
 
-		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({stripeSessionId}) => {
-			await mockStripeOperations.updatePaymentMethod(stripeSessionId)
+		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({stripeAccountId, stripeSessionId}) => {
+			await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
 		}),
 	}
 }

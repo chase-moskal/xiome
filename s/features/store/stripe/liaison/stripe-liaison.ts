@@ -59,6 +59,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					},
 				},
 				paymentMethods: {
+					async create(params: Stripe.PaymentMethodCreateParams) {
+						return stripe.paymentMethods.create(params, connection)
+					},
 					async retrieve(id: string) {
 						return stripe.paymentMethods.retrieve(id, connection)
 					},
@@ -69,6 +72,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 				setupIntents: {
 					async retrieve(id: string) {
 						return stripe.setupIntents.retrieve(id, connection)
+					},
+					async create(params: Stripe.SetupIntentCreateParams) {
+						return stripe.setupIntents.create(params, connection)
 					},
 				},
 				subscriptions: {

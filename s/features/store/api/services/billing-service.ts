@@ -1,8 +1,9 @@
 
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
-import {CardClues} from "../../stripe/liaison/types/card-clues.js"
 import {StoreServiceOptions} from "../../types/store-concepts.js"
+import {CardClues} from "../../stripe/liaison/types/card-clues.js"
+import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
 
 export const makeBillingService = (
 	options: StoreServiceOptions
@@ -10,19 +11,24 @@ export const makeBillingService = (
 
 .policy(options.storeLinkedPolicy)
 
-.expose(({access, database, stripeLiaisonAccount, stripeCustomerId}) => ({
+.expose(({access, database, stripeLiaisonAccount, stripeAccountId, stripeCustomerId}) => ({
 
 	async checkoutPaymentMethod() {
 		const session = await stripeLiaisonAccount.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "setup",
 			customer: stripeCustomerId,
+			client_reference_id: stripeClientReferenceId.build({
+				appId: access.appId,
+				userId: access.user.userId,
+			}),
 
 			// TODO implement session urls
 			success_url: "TODO",
 			cancel_url: "TODO",
 		})
 		return {
+			stripeAccountId,
 			stripeSessionId: session.id,
 			stripeSessionUrl: session.url,
 		}

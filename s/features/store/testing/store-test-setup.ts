@@ -8,6 +8,7 @@ import {mockMeta} from "../../../common/testing/mock-meta.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
+import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
 import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
@@ -19,6 +20,7 @@ export async function storeTestSetup() {
 		rando,
 		databaseRaw,
 		tableStorage: storage,
+		logger: new DisabledLogger(),
 	})
 
 	const api = storeApi({
@@ -71,8 +73,8 @@ export async function storeTestSetup() {
 						mockStripeOperations
 							.linkStripeAccountThatIsIncomplete(stripeAccountId)
 				},
-				triggerCheckoutPaymentMethodPopup: async({stripeSessionId}) => {
-					await mockStripeOperations.updatePaymentMethod(stripeSessionId)
+				triggerCheckoutPaymentMethodPopup: async({stripeAccountId, stripeSessionId}) => {
+					await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
 				},
 			})
 

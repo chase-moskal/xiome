@@ -16,6 +16,7 @@ export async function assimilateStripe({
 		return mockStripeCircuit({
 			rando,
 			databaseRaw,
+			logger: console,
 			tableStorage: mockStorage,
 		})
 	}

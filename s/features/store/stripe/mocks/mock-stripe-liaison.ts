@@ -1,20 +1,18 @@
 
 import Stripe from "stripe"
 import {find} from "dbmage"
+import {Rando} from "dbmage"
 import * as dbmage from "dbmage"
 
-import {Rando} from "dbmage"
-import {StripeWebhooks} from "../types/stripe-webhooks.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {MockAccount} from "./tables/types/rows/mock-account.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-database.js"
 
 export function mockStripeLiaison({
-		rando, tables, webhooks,
+		rando, tables,
 	}: {
 		rando: Rando
 		tables: MockStripeTables
-		webhooks: StripeWebhooks
 	}): ReturnType<typeof makeStripeLiaison> {
 
 	const generateId = () => rando.randomId()
@@ -63,16 +61,6 @@ export function mockStripeLiaison({
 		},
 
 		account(stripeAccount: string): any {
-
-			async function webhookEvent<xObject extends {}>(
-					type: keyof StripeWebhooks,
-					object: xObject,
-				) {
-				return webhooks[type](<Stripe.Event>{
-					type,
-					data: <Stripe.Event.Data>{object},
-				})
-			}
 
 			const tables = dbmage.constrainTables({
 				tables: rawTables,
@@ -221,14 +209,10 @@ export function mockStripeLiaison({
 						table: tables.checkoutSessions,
 						createData: params => ({
 							customer: params.customer,
+							mode: params.mode,
+							client_reference_id: params.client_reference_id,
 						}),
 						updateData: params => ({}),
-						createHook: async session => {
-							await webhookEvent("checkout.session.completed", session)
-						},
-						updateHook: async session => {
-							await webhookEvent("checkout.session.completed", session)
-						},
 					}),
 				},
 	
@@ -242,6 +226,7 @@ export function mockStripeLiaison({
 						createData: params => ({
 							type: params.type,
 							customer: params.customer,
+							card: <any>params.card,
 						}),
 						updateData: params => ({}),
 					})
@@ -300,9 +285,6 @@ export function mockStripeLiaison({
 						cancel_at_period_end: params.cancel_at_period_end,
 						default_payment_method: params.default_payment_method,
 					}),
-					updateHook: async subscription => {
-						await webhookEvent("customer.subscription.updated", subscription)
-					},
 				}),
 			}
 		}

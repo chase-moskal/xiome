@@ -10,6 +10,7 @@ import {MockStripeTables} from "../tables/types/mock-stripe-database.js"
 import {MockSetupIntent} from "../tables/types/rows/mock-setup-intent.js"
 import {MockSubscription} from "../tables/types/rows/mock-subscription.js"
 import {MockPaymentMethod} from "../tables/types/rows/mock-payment-method.js"
+import {stripeClientReferenceId} from "../../../api/utils/stripe-client-reference-id.js"
 import {SetupSubscriptionMetadata} from "../../liaison/types/setup-subscription-metadata.js"
 
 export function mockLiaisonUtils({rando, tables}: {
@@ -60,10 +61,12 @@ export function mockLiaisonUtils({rando, tables}: {
 
 	const initializers = {
 		sessionForSubscriptionPurchase({
+				appId,
 				userId,
 				customer,
 				subscription,
 			}: {
+				appId: string
 				userId: string
 				customer: MockCustomer
 				subscription: MockSubscription
@@ -72,16 +75,21 @@ export function mockLiaisonUtils({rando, tables}: {
 				id: generateId().toString(),
 				mode: "subscription",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: stripeClientReferenceId.build({
+					appId,
+					userId,
+				}),
 				subscription: subscription.id,
 			}
 		},
 		sessionForSubscriptionUpdate({
+				appId,
 				userId,
 				customer,
 				setupIntent,
 				subscriptionId,
 			}: {
+				appId: string
 				userId: string
 				customer: MockCustomer
 				subscriptionId: string
@@ -91,7 +99,10 @@ export function mockLiaisonUtils({rando, tables}: {
 				id: generateId().toString(),
 				mode: "setup",
 				customer: customer.id,
-				client_reference_id: userId,
+				client_reference_id: stripeClientReferenceId.build({
+					appId,
+					userId,
+				}),
 				setup_intent: setupIntent.id,
 				metadata: <SetupSubscriptionMetadata>{
 					flow: "update-subscription",

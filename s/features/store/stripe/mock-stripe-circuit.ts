@@ -1,49 +1,49 @@
 
 import {find} from "dbmage"
 import {Rando} from "dbmage"
+import {Stripe} from "stripe"
 import {FlexStorage} from "dbmage"
 
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
-import {pubsub, pubsubs} from "../../../toolbox/pubsub.js"
+import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
 
 export async function mockStripeCircuit({
-		rando, tableStorage, databaseRaw,
+		rando, logger, tableStorage, databaseRaw,
 	}: {
 		rando: Rando
+		logger: Logger
 		databaseRaw: DatabaseRaw
 		tableStorage: FlexStorage
 	}) {
-
-	const {
-		publishers: webhookPublishers,
-		subscribers: webhookSubscribers,
-	} = pubsubs<StripeWebhooks>({
-		"checkout.session.completed": pubsub(),
-		"invoice.paid": pubsub(),
-		"invoice.payment_failed": pubsub(),
-		"customer.subscription.updated": pubsub(),
-	})
 
 	const stripeTables = await mockStripeTables({tableStorage})
 
 	const stripeLiaison = mockStripeLiaison({
 		rando,
 		tables: stripeTables,
-		webhooks: webhookPublishers,
 	})
 
 	const webhooks = stripeWebhooks({
+		logger,
 		databaseRaw,
 		stripeLiaison,
-		logger: console,
 	})
 
-	for (const [key, subscribe] of Object.entries(webhookSubscribers))
-		subscribe(webhooks[key].bind(webhooks))
+	async function webhookEvent<xObject extends {}>(
+			type: keyof StripeWebhooks,
+			stripeAccountId: string,
+			object: xObject,
+		) {
+		return webhooks[type](<Stripe.Event>{
+			type,
+			account: stripeAccountId,
+			data: <Stripe.Event.Data>{object},
+		})
+	}
 
 	return {
 		stripeLiaison,
@@ -69,27 +69,39 @@ export async function mockStripeCircuit({
 					},
 				})
 			},
-			async updatePaymentMethod(stripeSessionId: string) {
+			async updatePaymentMethod(stripeAccountId: string, stripeSessionId: string) {
+				const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 				const session = await stripeTables.checkoutSessions.readOne(find({
 					id: stripeSessionId,
 				}))
 				const customer = <string>session.customer
+				const paymentMethod = await stripeLiaisonAccount.paymentMethods.create({
+					customer,
+					card: <any>{
+						brand: "fakevisa",
+						country: "canada",
+						exp_month: 1,
+						exp_year: 2032,
+						last4: "1234",
+					},
+				})
 				await stripeTables.paymentMethods.update({
 					...find({customer}),
 					upsert: {
-						id: rando.randomId().toString(),
-						customer,
-						card: <any>{
-							brand: "fakevisa",
-							country: "canada",
-							exp_month: 1,
-							exp_year: 2032,
-							last4: "1234",
-						},
+						id: paymentMethod.id,
+						customer: <string>paymentMethod.customer,
+						card: <any>paymentMethod.card,
 					},
 				})
+				const setupIntent = await stripeLiaisonAccount.setupIntents.create({
+					payment_method: paymentMethod.id,
+				})
+				await webhookEvent("checkout.session.completed", stripeAccountId, {
+					mode: "setup",
+					setup_intent: setupIntent.id,
+					client_reference_id: session.client_reference_id,
+				})
 			},
-			// async purchaseSubscription(stripeAccountId: string) {},
 		},
 	}
 }
