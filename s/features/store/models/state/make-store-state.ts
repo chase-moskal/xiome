@@ -3,7 +3,7 @@ import {snapstate} from "@chasemoskal/snapstate"
 
 import {Op, ops} from "../../../../framework/ops.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {StripeConnectDetails, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
+import {PaymentMethod, StripeConnectDetails, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
 
 export function makeStoreState() {
 	return snapstate({
@@ -18,7 +18,7 @@ export function makeStoreState() {
 			subscriptionPlansOp: ops.none() as Op<SubscriptionPlan[]>,
 		},
 		billing: {
-			paymentMethodOp: ops.none() as Op<any>,
+			paymentMethodOp: ops.none() as Op<undefined | PaymentMethod>,
 		},
 		subscriptions: {
 			subscriptionsOp: ops.none() as Op<any>,

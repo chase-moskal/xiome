@@ -228,7 +228,9 @@ export function mockStripeLiaison({
 							customer: params.customer,
 							card: <any>params.card,
 						}),
-						updateData: params => ({}),
+						updateData: params => ({
+							card: <any>params.card,
+						}),
 					})
 					return {
 						...resource,

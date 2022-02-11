@@ -250,9 +250,59 @@ export default <Suite>{
 			await billingSubmodel.checkoutPaymentMethod()
 			expect(getPaymentMethod()).ok()
 		},
-		async "user can view their payment method"() {},
-		async "user can update their payment method"() {},
-		async "user can delete their payment method"() {},
+		async "user can add a payment method, and it's still there after re-logging in"() {
+			const {makePlebeianClient, makeClient} = await setupLinkedStore()
+			const clientFirstLogin = await makePlebeianClient()
+			{
+				const {billingSubmodel} = clientFirstLogin.storeModel
+				const getPaymentMethod = () => ops.value(
+					billingSubmodel.snap.state.billing.paymentMethodOp
+				)
+				await billingSubmodel.initialize()
+				expect(getPaymentMethod()).not.defined()
+				await billingSubmodel.checkoutPaymentMethod()
+				expect(getPaymentMethod()).ok()
+			}
+			{
+				const client = await makeClient()
+				await client.setAccess(ops.value(client.storeModel.state.user.accessOp))
+				const {billingSubmodel} = clientFirstLogin.storeModel
+				const getPaymentMethod = () => ops.value(
+					billingSubmodel.snap.state.billing.paymentMethodOp
+				)
+				await billingSubmodel.initialize()
+				expect(getPaymentMethod()).ok()
+			}
+		},
+		async "user can update their payment method"() {
+			const {makePlebeianClient} = await setupLinkedStore()
+			const client = await makePlebeianClient()
+			const {billingSubmodel} = client.storeModel
+			const getPaymentMethod = () => ops.value(
+				billingSubmodel.snap.state.billing.paymentMethodOp
+			)
+			await billingSubmodel.initialize()
+			await billingSubmodel.checkoutPaymentMethod()
+			expect(getPaymentMethod()).ok()
+			const previousLast4 = getPaymentMethod()?.cardClues.last4
+			await billingSubmodel.checkoutPaymentMethod()
+			expect(getPaymentMethod()).ok()
+			expect(getPaymentMethod()?.cardClues.last4)
+				.not.equals(previousLast4)
+		},
+		async "user can delete their payment method"() {
+			const {makePlebeianClient} = await setupLinkedStore()
+			const client = await makePlebeianClient()
+			const {billingSubmodel} = client.storeModel
+			const getPaymentMethod = () => ops.value(
+				billingSubmodel.snap.state.billing.paymentMethodOp
+			)
+			await billingSubmodel.initialize()
+			await billingSubmodel.checkoutPaymentMethod()
+			expect(getPaymentMethod()).ok()
+			await billingSubmodel.disconnectPaymentMethod()
+			expect(getPaymentMethod()).not.ok()
+		},
 
 	},
 	"subscription purchases": {

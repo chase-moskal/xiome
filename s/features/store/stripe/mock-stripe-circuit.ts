@@ -75,6 +75,7 @@ export async function mockStripeCircuit({
 					id: stripeSessionId,
 				}))
 				const customer = <string>session.customer
+				await stripeTables.paymentMethods.delete(find({customer}))
 				const paymentMethod = await stripeLiaisonAccount.paymentMethods.create({
 					customer,
 					card: <any>{
@@ -82,15 +83,7 @@ export async function mockStripeCircuit({
 						country: "canada",
 						exp_month: 1,
 						exp_year: 2032,
-						last4: "1234",
-					},
-				})
-				await stripeTables.paymentMethods.update({
-					...find({customer}),
-					upsert: {
-						id: paymentMethod.id,
-						customer: <string>paymentMethod.customer,
-						card: <any>paymentMethod.card,
+						last4: rando.randomSequence(4, [..."0123456789"]),
 					},
 				})
 				const setupIntent = await stripeLiaisonAccount.setupIntents.create({

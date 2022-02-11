@@ -41,6 +41,13 @@ export function makeBillingSubmodel({
 		await loadPaymentMethodDetails()
 	}
 
+	async function disconnectPaymentMethod() {
+		return ops.operation({
+			promise: billingService.disconnectPaymentMethod(),
+			setOp: op => snap.state.billing.paymentMethodOp = ops.replaceValue(op, undefined),
+		})
+	}
+
 	return {
 		allowance,
 		state: snap.readable,
@@ -48,5 +55,6 @@ export function makeBillingSubmodel({
 		initialize,
 		loadPaymentMethodDetails,
 		checkoutPaymentMethod,
+		disconnectPaymentMethod,
 	}
 }

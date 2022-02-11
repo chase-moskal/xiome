@@ -1,9 +1,10 @@
 
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
-import {StoreServiceOptions} from "../../types/store-concepts.js"
+
 import {CardClues} from "../../stripe/liaison/types/card-clues.js"
 import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
+import {PaymentMethod, StoreServiceOptions} from "../../types/store-concepts.js"
 
 export const makeBillingService = (
 	options: StoreServiceOptions
@@ -34,7 +35,7 @@ export const makeBillingService = (
 		}
 	},
 
-	async getPaymentMethodDetails() {
+	async getPaymentMethodDetails(): Promise<PaymentMethod> {
 		const paymentMethod = await database.tables.store.billing.paymentMethods.readOne(dbmage.find({
 			userId: dbmage.Id.fromString(access.user.userId),
 		}))

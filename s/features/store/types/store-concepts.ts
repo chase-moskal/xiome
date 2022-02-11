@@ -2,6 +2,7 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
+import {CardClues} from "../stripe/liaison/types/card-clues.js"
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
@@ -66,4 +67,8 @@ export interface SubscriptionPlan {
 	tiers: SubscriptionTier[]
 	time: number
 	active: boolean
+}
+
+export interface PaymentMethod {
+	cardClues: CardClues
 }
