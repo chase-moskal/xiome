@@ -62,6 +62,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async retrieve(id: string) {
 						return stripe.paymentMethods.retrieve(id, connection)
 					},
+					async detach(id: string) {
+						return stripe.paymentMethods.detach(id, undefined, connection)
+					},
 				},
 				setupIntents: {
 					async retrieve(id: string) {

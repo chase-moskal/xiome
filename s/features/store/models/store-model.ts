@@ -1,6 +1,6 @@
 
 import {FlexStorage} from "dbmage"
-import {snapstate} from "@chasemoskal/snapstate"
+import {restricted} from "@chasemoskal/snapstate"
 
 import {Service} from "../../../types/service.js"
 import {Op, ops} from "../../../framework/ops.js"
@@ -9,9 +9,11 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStoreAllowance} from "./utils/make-store-allowance.js"
 import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeConnectService} from "../api/services/connect-service.js"
-import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
-import {makeSubscriptionPlanningSubmodel} from "./submodels/subscription-planning-submodel.js"
 import {makeSubscriptionPlanningService} from "../api/services/subscription-planning-service.js"
+import {makeSubscriptionPlanningSubmodel} from "./submodels/subscription-planning-submodel.js"
+import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
+import {makeBillingSubmodel} from "./submodels/billing-submodel.js"
+import {makeBillingService} from "../api/services/billing-service.js"
 
 export function makeStoreModel(options: {
 		appId: string
@@ -20,29 +22,42 @@ export function makeStoreModel(options: {
 			Service<typeof makeConnectService>
 		subscriptionPlanningService:
 			Service<typeof makeSubscriptionPlanningService>
+		billingService:
+			Service<typeof makeBillingService>
 		triggerCheckoutPopup: TriggerCheckoutPopup
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
-	const state = makeStoreState()
-	const allowance = makeStoreAllowance(state)
-	const connectSubmodel = makeConnectSubmodel({...options, state, allowance})
+	const snap = makeStoreState()
+	const allowance = makeStoreAllowance(snap)
+
+	const connectSubmodel = makeConnectSubmodel({
+		...options, snap, allowance
+	})
+
 	const subscriptionPlanningSubmodel = makeSubscriptionPlanningSubmodel({
-		...options, state, allowance,
+		...options, snap, allowance,
+	})
+
+	const billingSubmodel = makeBillingSubmodel({
+		...options,
+		snap,
+		allowance,
 	})
 
 	return {
-		state: state.readable,
-		subscribe: state.subscribe,
 		allowance,
+		state: snap.readable,
+		snap: restricted(snap),
 
 		connectSubmodel,
 		subscriptionPlanningSubmodel,
+		billingSubmodel,
 
 		async updateAccessOp(op: Op<AccessPayload>) {
-			state.writable.user.accessOp = op
-			state.writable.stripeConnect.connectStatusOp = ops.none()
-			state.writable.stripeConnect.connectDetailsOp = ops.none()
+			snap.writable.user.accessOp = op
+			snap.writable.stripeConnect.connectStatusOp = ops.none()
+			snap.writable.stripeConnect.connectDetailsOp = ops.none()
 			await Promise.all([
 				connectSubmodel.refresh(),
 			])

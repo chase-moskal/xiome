@@ -232,18 +232,27 @@ export function mockStripeLiaison({
 					}),
 				},
 	
-				paymentMethods: mockResource<
-						Stripe.PaymentMethod,
-						Stripe.PaymentMethodCreateParams,
-						Stripe.PaymentMethodUpdateParams
-					>({
-					table: tables.paymentMethods,
-					createData: params => ({
-						type: params.type,
-						customer: params.customer,
-					}),
-					updateData: params => ({}),
-				}),
+				paymentMethods: (() => {
+					const resource = mockResource<
+							Stripe.PaymentMethod,
+							Stripe.PaymentMethodCreateParams,
+							Stripe.PaymentMethodUpdateParams
+						>({
+						table: tables.paymentMethods,
+						createData: params => ({
+							type: params.type,
+							customer: params.customer,
+						}),
+						updateData: params => ({}),
+					})
+					return {
+						...resource,
+						delete: undefined,
+						async detach(id: string) {
+							await resource.delete(id)
+						}
+					}
+				})(),
 	
 				setupIntents: mockResource<
 						Stripe.SetupIntent,

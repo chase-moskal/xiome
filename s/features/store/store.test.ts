@@ -238,7 +238,18 @@ export default <Suite>{
 	},
 	"billing": {
 
-		async "user can add their payment method"() {},
+		async "user can add their payment method"() {
+			const {makePlebeianClient} = await setupLinkedStore()
+			const client = await makePlebeianClient()
+			const {billingSubmodel} = client.storeModel
+			const getPaymentMethod = () => ops.value(
+				billingSubmodel.snap.state.billing.paymentMethodOp
+			)
+			await billingSubmodel.initialize()
+			expect(getPaymentMethod()).not.defined()
+			await billingSubmodel.checkoutPaymentMethod()
+			expect(getPaymentMethod()).ok()
+		},
 		async "user can view their payment method"() {},
 		async "user can update their payment method"() {},
 		async "user can delete their payment method"() {},

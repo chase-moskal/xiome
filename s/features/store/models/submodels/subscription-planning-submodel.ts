@@ -9,20 +9,20 @@ import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
 
 export function makeSubscriptionPlanningSubmodel({
-		state,
+		snap,
 		allowance,
 		subscriptionPlanningService,
 	}: {
-		state: ReturnType<typeof makeStoreState>
+		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
 	}) {
 
-	const planningState = substate(state, tree => tree.subscriptionPlanning)
+	const planningSnap = substate(snap, tree => tree.subscriptionPlanning)
 
 	async function loadSubscriptionPlans() {
 		await ops.operation({
-			setOp: op => planningState.writable.subscriptionPlansOp = op,
+			setOp: op => planningSnap.writable.subscriptionPlansOp = op,
 			promise: subscriptionPlanningService.listSubscriptionPlans(),
 		})
 	}
@@ -39,9 +39,9 @@ export function makeSubscriptionPlanningSubmodel({
 				tierPrice: number
 			}) {
 			const newPlan = await subscriptionPlanningService.addPlan(options)
-			const oldPlans = ops.value(planningState.readable.subscriptionPlansOp) ?? []
-			planningState.writable.subscriptionPlansOp = ops.replaceValue(
-				planningState.readable.subscriptionPlansOp,
+			const oldPlans = ops.value(planningSnap.readable.subscriptionPlansOp) ?? []
+			planningSnap.writable.subscriptionPlansOp = ops.replaceValue(
+				planningSnap.readable.subscriptionPlansOp,
 				[...oldPlans, newPlan],
 			)
 			return newPlan
