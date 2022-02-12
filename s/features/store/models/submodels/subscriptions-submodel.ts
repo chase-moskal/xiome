@@ -5,6 +5,7 @@ import {makeStoreState} from "../state/make-store-state.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
 import {makeSubscriptionShoppingService} from "../../api/services/subscription-shopping-service.js"
+import {TriggerCheckoutPopup} from "../../types/store-popups.js"
 
 export function makeSubscriptionsSubmodel({
 		snap,
@@ -12,12 +13,14 @@ export function makeSubscriptionsSubmodel({
 		subscriptionPlanningService,
 		subscriptionShoppingService,
 		initializeConnectSubmodel,
+		triggerCheckoutSubscriptionPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
 		subscriptionShoppingService: Service<typeof makeSubscriptionShoppingService>
 		initializeConnectSubmodel: () => Promise<void>
+		triggerCheckoutSubscriptionPopup: TriggerCheckoutPopup
 	}) {
 
 	const {state} = snap
@@ -40,13 +43,17 @@ export function makeSubscriptionsSubmodel({
 			await loadSubscriptionPlans()
 	}
 
-	async function checkoutSubscription() {
-		
+	async function checkoutSubscriptionTier(tierId: string) {
+		const session = await subscriptionShoppingService.checkoutSubscriptionTier(tierId)
+		await triggerCheckoutSubscriptionPopup(session)
+		await refresh()
 	}
 
 	return {
 		initialize,
 		refresh,
+
+		checkoutSubscriptionTier,
 
 		async addPlan(options: {
 				planLabel: string

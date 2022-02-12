@@ -93,6 +93,9 @@ export async function storeTestSetup() {
 				triggerCheckoutPaymentMethodPopup: async({stripeAccountId, stripeSessionId}) => {
 					await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
 				},
+				triggerCheckoutSubscriptionPopup: async({stripeAccountId, stripeSessionId}) => {
+					await mockStripeOperations.checkoutSubscriptionTier(stripeAccountId, stripeSessionId)
+				},
 			})
 
 			async function setAccess(access: AccessPayload) {

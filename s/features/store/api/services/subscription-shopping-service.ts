@@ -19,6 +19,7 @@ export const makeSubscriptionShoppingService = (
 
 	async checkoutSubscriptionTier(tierId: string) {
 		const storeTables = auth.database.tables.store
+
 		const tierRow = await storeTables.subscriptions.tiers
 			.readOne(dbmage.find({tierId: dbmage.Id.fromString(tierId)}))
 
@@ -45,8 +46,8 @@ export const makeSubscriptionShoppingService = (
 
 		return {
 			stripeAccountId: auth.stripeAccountId,
-			sessionUrl: session.url,
-			sessionId: session.id,
+			stripeSessionUrl: session.url,
+			stripeSessionId: session.id,
 		}
 	},
 
