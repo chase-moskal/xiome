@@ -9,11 +9,12 @@ import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeBillingService} from "../../api/services/billing-service.js"
 
 export function makeBillingSubmodel({
-		snap, allowance, billingService, triggerCheckoutPaymentMethodPopup,
+		snap, allowance, billingService, initializeConnectSubmodel, triggerCheckoutPaymentMethodPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		billingService: Service<typeof makeBillingService>
+		initializeConnectSubmodel: () => Promise<void>
 		triggerCheckoutPaymentMethodPopup: TriggerCheckoutPopup
 	}) {
 
@@ -25,9 +26,14 @@ export function makeBillingSubmodel({
 	}
 
 	async function initialize() {
-		if (ops.isNone(snap.state.billing.paymentMethodOp)) {
+		await initializeConnectSubmodel()
+		if (ops.isNone(snap.state.billing.paymentMethodOp))
 			await loadPaymentMethodDetails()
-		}
+	}
+
+	async function refresh() {
+		if (!ops.isNone(snap.state.billing.paymentMethodOp))
+			await loadPaymentMethodDetails()
 	}
 
 	async function checkoutPaymentMethod() {
@@ -49,10 +55,9 @@ export function makeBillingSubmodel({
 	}
 
 	return {
-		allowance,
-		state: snap.readable,
-		snap: restricted(snap),
 		initialize,
+		refresh,
+		allowance,
 		loadPaymentMethodDetails,
 		checkoutPaymentMethod,
 		disconnectPaymentMethod,

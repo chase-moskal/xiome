@@ -23,7 +23,7 @@ export async function setupLinkedStore() {
 	}
 
 	const merchantClient = await makeMerchantClient()
-	await merchantClient.storeModel.connectSubmodel.activate()
+	await merchantClient.storeModel.connectSubmodel.initialize()
 	await merchantClient.storeModel.connectSubmodel.connectStripeAccount()
 
 	return {
@@ -33,7 +33,7 @@ export async function setupLinkedStore() {
 		async makePlebeianClient() {
 			const client = await makeClient()
 			await client.setAccessWithPrivileges()
-			await client.storeModel.connectSubmodel.activate()
+			await client.storeModel.connectSubmodel.initialize()
 			return client
 		},
 		async makeClerkClient() {
@@ -42,10 +42,25 @@ export async function setupLinkedStore() {
 				storePrivileges["manage store"],
 				storePrivileges["give away freebies"],
 			)
-			await client.storeModel.connectSubmodel.activate()
+			await client.storeModel.connectSubmodel.initialize()
 			return client
 		},
 	}
+}
+
+export async function setupStoreWithSubscriptionsSetup() {
+	const {makeClerkClient} = await setupLinkedStore()
+	const clerk = await makeClerkClient()
+	const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+
+	planning.initialize()
+	const plan = await planning.addPlan({
+		planLabel: "membership",
+		tierLabel: "benevolent donor",
+		tierPrice: 5_00,
+	})
+
+
 }
 
 // export async function merchantStoreSetup() {

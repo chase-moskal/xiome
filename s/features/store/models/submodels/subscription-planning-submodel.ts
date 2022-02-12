@@ -3,7 +3,6 @@ import {substate} from "@chasemoskal/snapstate"
 
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeActivator} from "../utils/make-activator.js"
 import {makeStoreState} from "../state/make-store-state.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
@@ -12,10 +11,12 @@ export function makeSubscriptionPlanningSubmodel({
 		snap,
 		allowance,
 		subscriptionPlanningService,
+		initializeConnectSubmodel,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
+		initializeConnectSubmodel: () => Promise<void>
 	}) {
 
 	const planningSnap = substate(snap, tree => tree.subscriptionPlanning)
@@ -27,11 +28,20 @@ export function makeSubscriptionPlanningSubmodel({
 		})
 	}
 
-	const activator = makeActivator(loadSubscriptionPlans)
+	async function initialize() {
+		await initializeConnectSubmodel()
+		if (ops.isNone(snap.state.subscriptionPlanning.subscriptionPlansOp))
+			await loadSubscriptionPlans()
+	}
+
+	async function refresh() {
+		if (!ops.isNone(snap.state.subscriptionPlanning.subscriptionPlansOp))
+			await loadSubscriptionPlans()
+	}
 
 	return {
-		activate: activator.activate,
-		refresh: activator.refreshIfActivated,
+		initialize,
+		refresh,
 
 		async addPlan(options: {
 				planLabel: string

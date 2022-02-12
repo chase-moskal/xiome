@@ -1,12 +1,10 @@
 
-import {pub} from "../../../../toolbox/pub.js"
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeActivator} from "../utils/make-activator.js"
 import {makeStoreState} from "../state/make-store-state.js"
-import {TriggerStripeConnectPopup} from "../../types/store-popups.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
+import {TriggerStripeConnectPopup} from "../../types/store-popups.js"
 import {makeConnectService} from "../../api/services/connect-service.js"
 
 export function makeConnectSubmodel({
@@ -21,18 +19,16 @@ export function makeConnectSubmodel({
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
-	const change = pub()
-
-	async function loadConnectDetails() {
+	async function loadConnectInfo() {
 		if (allowance.connectStripeAccount) {
 			await ops.operation({
 				promise: connectService.loadConnectDetails(),
 				setOp: op => {
-					snap.writable.stripeConnect.connectStatusOp = ops.replaceValue(
+					snap.state.stripeConnect.connectStatusOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectStatus
 					)
-					snap.writable.stripeConnect.connectDetailsOp = ops.replaceValue(
+					snap.state.stripeConnect.connectDetailsOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectDetails
 					)
@@ -42,24 +38,32 @@ export function makeConnectSubmodel({
 		else if (allowance.manageStore) {
 			await ops.operation({
 				promise: connectService.loadConnectStatus(),
-				setOp: op => snap.writable.stripeConnect.connectStatusOp = op,
+				setOp: op => snap.state.stripeConnect.connectStatusOp = op,
 			})
 		}
 	}
 
-	const activator = makeActivator(loadConnectDetails)
+	async function initialize() {
+		if (ops.isNone(snap.state.stripeConnect.connectStatusOp)) {
+			await loadConnectInfo()
+		}
+	}
+
+	async function refresh() {
+		if (!ops.isNone(snap.state.stripeConnect.connectStatusOp)) {
+			await loadConnectInfo()
+		}
+	}
 
 	return {
-		activate: activator.activate,
-		refresh: activator.refreshIfActivated,
-		onChange: change.subscribe,
+		initialize,
+		refresh,
 
 		async connectStripeAccount() {
 			await triggerStripeConnectPopup(
 				await connectService.generateConnectSetupLink()
 			)
-			await loadConnectDetails()
-			await change.publish()
+			await loadConnectInfo()
 		},
 		async generateStripeLoginLink() {
 			if (ops.value(snap.readable.stripeConnect.connectStatusOp) === StripeConnectStatus.Unlinked)

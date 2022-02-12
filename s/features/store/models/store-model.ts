@@ -35,14 +35,19 @@ export function makeStoreModel(options: {
 		...options, snap, allowance
 	})
 
+	async function initializeConnectSubmodel() {
+		await connectSubmodel.initialize()
+	}
+
 	const subscriptionPlanningSubmodel = makeSubscriptionPlanningSubmodel({
-		...options, snap, allowance,
+		...options, snap, allowance, initializeConnectSubmodel,
 	})
 
 	const billingSubmodel = makeBillingSubmodel({
 		...options,
 		snap,
 		allowance,
+		initializeConnectSubmodel,
 	})
 
 	return {

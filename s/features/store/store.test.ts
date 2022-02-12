@@ -55,13 +55,13 @@ export default <Suite>{
 				expect(ops.value(merchantClient.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 	
 				const anotherMerchant = await makeAnotherMerchantClient()
-				await anotherMerchant.storeModel.connectSubmodel.activate()
+				await anotherMerchant.storeModel.connectSubmodel.initialize()
 				expect(ops.value(anotherMerchant.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 			},
 			async "plebeian cannot see connect details or status"() {
 				const {makePlebeianClient} = await setupLinkedStore()
 				const plebeianClient = await makePlebeianClient()
-				await plebeianClient.storeModel.connectSubmodel.activate()
+				await plebeianClient.storeModel.connectSubmodel.initialize()
 				const {state} = plebeianClient.storeModel
 				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
 				expect(ops.value(state.stripeConnect.connectStatusOp)).not.defined()
@@ -69,7 +69,7 @@ export default <Suite>{
 			async "clerk can see the connect status, but not the details"() {
 				const {makeClerkClient} = await setupLinkedStore()
 				const clerkClient = await makeClerkClient()
-				await clerkClient.storeModel.connectSubmodel.activate()
+				await clerkClient.storeModel.connectSubmodel.initialize()
 				const {state} = clerkClient.storeModel
 				expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
@@ -96,11 +96,7 @@ export default <Suite>{
 				expectReady()
 				await connectSubmodel.pause()
 				expectPaused()
-				await connectSubmodel.refresh()
-				expectPaused()
 				await connectSubmodel.resume()
-				expectReady()
-				await connectSubmodel.refresh()
 				expectReady()
 			},
 			async "clerk can pause and resume a store"() {
@@ -167,7 +163,7 @@ export default <Suite>{
 			const clerk = await makeClerkClient()
 			const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
 
-			await planning.activate()
+			await planning.initialize()
 			const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
 			expect(plans.length).equals(0)
 
@@ -205,7 +201,7 @@ export default <Suite>{
 			{
 				const clerk = await makeClerkClient()
 				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
-				await planning.activate()
+				await planning.initialize()
 				const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
 				expect(plans.length).equals(2)
 			}
@@ -231,7 +227,7 @@ export default <Suite>{
 			{
 				const plebe = await makePlebeianClient()
 				const {subscriptionPlanningSubmodel: planning} = plebe.storeModel
-				await expect(async() => planning.activate()).throws()
+				await expect(async() => planning.initialize()).throws()
 			}
 		},
 
@@ -241,9 +237,9 @@ export default <Suite>{
 		async "user can add their payment method"() {
 			const {makePlebeianClient} = await setupLinkedStore()
 			const client = await makePlebeianClient()
-			const {billingSubmodel} = client.storeModel
+			const {billingSubmodel, snap} = client.storeModel
 			const getPaymentMethod = () => ops.value(
-				billingSubmodel.snap.state.billing.paymentMethodOp
+				snap.state.billing.paymentMethodOp
 			)
 			await billingSubmodel.initialize()
 			expect(getPaymentMethod()).not.defined()
@@ -254,9 +250,9 @@ export default <Suite>{
 			const {makePlebeianClient, makeClient} = await setupLinkedStore()
 			const clientFirstLogin = await makePlebeianClient()
 			{
-				const {billingSubmodel} = clientFirstLogin.storeModel
+				const {billingSubmodel, snap} = clientFirstLogin.storeModel
 				const getPaymentMethod = () => ops.value(
-					billingSubmodel.snap.state.billing.paymentMethodOp
+					snap.state.billing.paymentMethodOp
 				)
 				await billingSubmodel.initialize()
 				expect(getPaymentMethod()).not.defined()
@@ -266,9 +262,9 @@ export default <Suite>{
 			{
 				const client = await makeClient()
 				await client.setAccess(ops.value(client.storeModel.state.user.accessOp))
-				const {billingSubmodel} = clientFirstLogin.storeModel
+				const {billingSubmodel, snap} = clientFirstLogin.storeModel
 				const getPaymentMethod = () => ops.value(
-					billingSubmodel.snap.state.billing.paymentMethodOp
+					snap.state.billing.paymentMethodOp
 				)
 				await billingSubmodel.initialize()
 				expect(getPaymentMethod()).ok()
@@ -277,9 +273,9 @@ export default <Suite>{
 		async "user can update their payment method"() {
 			const {makePlebeianClient} = await setupLinkedStore()
 			const client = await makePlebeianClient()
-			const {billingSubmodel} = client.storeModel
+			const {billingSubmodel, snap} = client.storeModel
 			const getPaymentMethod = () => ops.value(
-				billingSubmodel.snap.state.billing.paymentMethodOp
+				snap.state.billing.paymentMethodOp
 			)
 			await billingSubmodel.initialize()
 			await billingSubmodel.checkoutPaymentMethod()
@@ -293,9 +289,9 @@ export default <Suite>{
 		async "user can delete their payment method"() {
 			const {makePlebeianClient} = await setupLinkedStore()
 			const client = await makePlebeianClient()
-			const {billingSubmodel} = client.storeModel
+			const {billingSubmodel, snap} = client.storeModel
 			const getPaymentMethod = () => ops.value(
-				billingSubmodel.snap.state.billing.paymentMethodOp
+				snap.state.billing.paymentMethodOp
 			)
 			await billingSubmodel.initialize()
 			await billingSubmodel.checkoutPaymentMethod()
@@ -307,7 +303,9 @@ export default <Suite>{
 	},
 	"subscription purchases": {
 
-		async "user can purchase a subscription, with an existing payment method"() {},
+		async "user can purchase a subscription, with an existing payment method"() {
+			const {makePlebeianClient} = await setupLinkedStore()
+		},
 		async "user can purchase a subscription, while providing a new payment method"() {},
 		async "user can cancel a subscription"() {},
 		async "user can upgrade a subscription to a higher tier"() {},
