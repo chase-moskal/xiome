@@ -155,13 +155,14 @@ export default <Suite>{
 				async "can login to connected stripe account"() {
 					const {merchantClient} = await setupLinkedStore()
 					const {connectSubmodel} = merchantClient.storeModel
-					const link = await connectSubmodel.generateStripeLoginLink()
-					expect(url()(link).length).equals(0)
+					await connectSubmodel.stripeLogin()
+					expect(merchantClient.getStripeLoginCount()).equals(1)
 				},
 				async "cannot login to unconnected stripe account"() {
-					const {storeModel} = await setupSimpleStoreClient("control stripe account")
-					await expect(async() => storeModel.connectSubmodel.generateStripeLoginLink())
+					const {storeModel, getStripeLoginCount} = await setupSimpleStoreClient("control stripe account")
+					await expect(async() => storeModel.connectSubmodel.stripeLogin())
 						.throws()
+					expect(getStripeLoginCount()).equals(0)
 				},
 				async "can login to incomplete stripe account"() {
 					const setup = await storeTestSetup()
@@ -170,8 +171,38 @@ export default <Suite>{
 					client.rigStripeLinkToFail()
 					const {connectSubmodel} = client.storeModel
 					await connectSubmodel.connectStripeAccount()
-					const link = await connectSubmodel.generateStripeLoginLink()
-					expect(url()(link).length).equals(0)
+					await connectSubmodel.stripeLogin()
+					expect(client.getStripeLoginCount()).equals(1)
+				},
+				async "can login to complete an incomplete account"() {
+					const setup = await storeTestSetup()
+					const client = await setup.makeClient()
+					await client.setAccessWithPrivileges(storePrivileges["control stripe account"])
+					client.rigStripeLinkToFail()
+					const {connectSubmodel} = client.storeModel
+					await connectSubmodel.connectStripeAccount()
+					client.rigStripeLoginToConfigureCompleteAccount()
+					await connectSubmodel.stripeLogin()
+					expect(client.getStripeLoginCount()).equals(1)
+					await connectSubmodel.refresh()
+					const {state} = client.storeModel.snap
+					const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
+					expect(connectStatus).equals(StripeConnectStatus.Ready)
+				},
+				async "can login to change an account to become incomplete"() {
+					const setup = await storeTestSetup()
+					const client = await setup.makeClient()
+					await client.setAccessWithPrivileges(storePrivileges["control stripe account"])
+					const {connectSubmodel} = client.storeModel
+					client.rigStripeLinkToSucceed()
+					await connectSubmodel.connectStripeAccount()
+					client.rigStripeLoginToConfigureIncompleteAccount()
+					await connectSubmodel.stripeLogin()
+					expect(client.getStripeLoginCount()).equals(1)
+					await connectSubmodel.refresh()
+					const {state} = client.storeModel.snap
+					const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
+					expect(connectStatus).equals(StripeConnectStatus.Incomplete)
 				},
 
 			},
@@ -181,7 +212,7 @@ export default <Suite>{
 					const setup = await setupLinkedStore()
 					const client = await setup.makeClerkClient()
 					const {connectSubmodel} = client.storeModel
-					await expect(async () => connectSubmodel.generateStripeLoginLink())
+					await expect(async () => connectSubmodel.stripeLogin())
 						.throws()
 				},
 
@@ -192,7 +223,7 @@ export default <Suite>{
 					const setup = await setupLinkedStore()
 					const client = await setup.makeRegularClient()
 					const {connectSubmodel} = client.storeModel
-					await expect(async () => connectSubmodel.generateStripeLoginLink())
+					await expect(async () => connectSubmodel.stripeLogin())
 						.throws()
 				},
 

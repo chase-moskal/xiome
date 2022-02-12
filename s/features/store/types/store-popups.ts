@@ -4,6 +4,11 @@ export type TriggerStripeConnectPopup = ({stripeAccountId, stripeAccountSetupLin
 	stripeAccountSetupLink: string
 }) => Promise<void>
 
+export type TriggerStripeLogin = ({url, stripeAccountId}: {
+	url: string
+	stripeAccountId: string
+}) => Promise<void>
+
 export type TriggerCheckoutPopup = ({stripeAccountId, stripeSessionId, stripeSessionUrl}: {
 	stripeAccountId: string
 	stripeSessionId: string

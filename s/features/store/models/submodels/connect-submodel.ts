@@ -4,18 +4,20 @@ import {Service} from "../../../../types/service.js"
 import {makeStoreState} from "../state/make-store-state.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
-import {TriggerStripeConnectPopup} from "../../types/store-popups.js"
+import {TriggerStripeConnectPopup, TriggerStripeLogin} from "../../types/store-popups.js"
 import {makeConnectService} from "../../api/services/connect-service.js"
 
 export function makeConnectSubmodel({
 		snap,
 		allowance,
 		connectService,
+		triggerStripeLogin,
 		triggerStripeConnectPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		connectService: Service<typeof makeConnectService>
+		triggerStripeLogin: TriggerStripeLogin
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
@@ -65,10 +67,16 @@ export function makeConnectSubmodel({
 			)
 			await loadConnectInfo()
 		},
-		async generateStripeLoginLink() {
-			if (ops.value(snap.readable.stripeConnect.connectStatusOp) === StripeConnectStatus.Unlinked)
+		async stripeLogin() {
+			const connectStatus = ops.value(snap.readable.stripeConnect.connectStatusOp)
+			const connectDetails = ops.value(snap.state.stripeConnect.connectDetailsOp)
+			if (connectStatus === StripeConnectStatus.Unlinked)
 				throw new Error("no stripe account to generate login link for")
-			return connectService.generateStripeLoginLink()
+			if (!connectDetails)
+				throw new Error("stripe connect details missing for login")
+			const url = await connectService.generateStripeLoginLink()
+			const {stripeAccountId} = connectDetails
+			await triggerStripeLogin({stripeAccountId, url})
 		},
 		async pause() {
 			await connectService.pause()

@@ -45,6 +45,9 @@ export async function storeTestSetup() {
 		async makeClient() {
 			let currentAccess: AccessPayload
 			let stripeLinkWillSucceed = true
+			let stripeLoginResultsWillChange: undefined | "complete" | "incomplete" = undefined
+
+			let stripeLoginCount = 0
 
 			const getMeta = async() => mockMeta({access: currentAccess})
 			const getHeaders = async() => ({origin: appOrigin})
@@ -75,6 +78,17 @@ export async function storeTestSetup() {
 					else
 						mockStripeOperations
 							.linkStripeAccountThatIsIncomplete(stripeAccountId)
+				},
+				triggerStripeLogin: async({stripeAccountId}) => {
+					if (stripeLoginResultsWillChange) {
+						mockStripeOperations.configureStripeAccount(
+							stripeAccountId,
+							stripeLoginResultsWillChange === "complete"
+								? true
+								: false
+						)
+					}
+					stripeLoginCount += 1
 				},
 				triggerCheckoutPaymentMethodPopup: async({stripeAccountId, stripeSessionId}) => {
 					await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
@@ -117,8 +131,11 @@ export async function storeTestSetup() {
 				setAccess,
 				setLoggedOut,
 				setAccessWithPrivileges,
+				getStripeLoginCount() { return stripeLoginCount },
 				rigStripeLinkToFail() { stripeLinkWillSucceed = false },
 				rigStripeLinkToSucceed() { stripeLinkWillSucceed = true },
+				rigStripeLoginToConfigureCompleteAccount() { stripeLoginResultsWillChange = "complete" },
+				rigStripeLoginToConfigureIncompleteAccount() { stripeLoginResultsWillChange = "incomplete" },
 			}
 		},
 	}

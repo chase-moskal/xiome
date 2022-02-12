@@ -69,6 +69,22 @@ export async function mockStripeCircuit({
 					},
 				})
 			},
+			async configureStripeAccount(stripeAccountId: string, completed: boolean) {
+				await stripeTables.accounts.update({
+					...find({id: stripeAccountId}),
+					write: completed
+						? {
+							charges_enabled: true,
+							payouts_enabled: true,
+							details_submitted: true,
+						}
+						: {
+							charges_enabled: false,
+							payouts_enabled: false,
+							details_submitted: false,
+						},
+				})
+			},
 			async updatePaymentMethod(stripeAccountId: string, stripeSessionId: string) {
 				const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 				const session = await stripeTables.checkoutSessions.readOne(find({
