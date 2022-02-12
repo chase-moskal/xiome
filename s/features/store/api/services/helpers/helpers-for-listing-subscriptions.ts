@@ -99,16 +99,14 @@ export const helpersForListingSubscriptions = ({
 			const presentTierRows = tiers.rows
 				.filter(({tierId}) => tiers.cross.presentIds.includes(tierId))
 
-			return presentPlanRows.map(row => ({
-				time: row.time,
-				label: row.label,
-				planId: row.planId.toString(),
-				active: plans.cross.activeIds.includes(row.planId),
+			return presentPlanRows.map(planRow => (<SubscriptionPlan>{
+				time: planRow.time,
+				label: planRow.label,
+				planId: planRow.planId.toString(),
+				active: plans.cross.activeIds.includes(planRow.planId),
 				tiers: presentTierRows
 					.filter(
-						({planId}) => {
-							
-						}
+						tierRow => tierRow.planId.toString() === planRow.planId.toString()
 					)
 					.map(p => undefined),
 			}))

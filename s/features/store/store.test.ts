@@ -2,7 +2,6 @@
 import {Suite, expect} from "cynic"
 
 import {ops} from "../../framework/ops.js"
-import {url} from "../../toolbox/darkvalley.js"
 import {storePrivileges} from "./store-privileges.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
@@ -238,11 +237,11 @@ export default <Suite>{
 				const {makeClerkClient} = await setupLinkedStore()
 				const clerk = await makeClerkClient()
 				const {subscriptionsSubmodel} = clerk.storeModel
-	
+
 				await subscriptionsSubmodel.initialize()
 				const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans.length).equals(0)
-	
+
 				const newPlan = await subscriptionsSubmodel.addPlan({
 					planLabel: "premium membership",
 					tierLabel: "supporter",
@@ -250,11 +249,49 @@ export default <Suite>{
 				})
 				expect(newPlan.planId).ok()
 				expect(newPlan.tiers.length).equals(1)
-	
+
 				await subscriptionsSubmodel.refresh()
 				const plans2 = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans2.length).equals(1)
 				expect(plans2[0]).ok()
+				expect(plans2[0].tiers.length).equals(1)
+			},
+			async "can create multiple plans, and the tiers aren't scrambled"() {
+				const {makeClerkClient} = await setupLinkedStore()
+				const clerk = await makeClerkClient()
+				const {subscriptionsSubmodel, snap: {state}} = clerk.storeModel
+				const getPlans = () => ops.value(state.subscriptions.subscriptionPlansOp)
+				const getPlan = (id: string) => getPlans().find(p => p.planId === id)
+
+				await subscriptionsSubmodel.initialize()
+				expect(getPlans().length).equals(0)
+
+				const newPlan1 = await subscriptionsSubmodel.addPlan({
+					planLabel: "video membership",
+					tierLabel: "all videos",
+					tierPrice: 10_00,
+				})
+				expect(getPlans().length).equals(1)
+				expect(getPlan(newPlan1.planId)).ok()
+				expect(getPlan(newPlan1.planId).tiers.length).equals(1)
+
+				const newPlan2 = await subscriptionsSubmodel.addPlan({
+					planLabel: "deluxe membership",
+					tierLabel: "deluxe",
+					tierPrice: 20_00,
+				})
+				expect(getPlans().length).equals(2)
+				expect(getPlan(newPlan2.planId)).ok()
+				expect(getPlan(newPlan2.planId).tiers.length).equals(1)
+				expect(getPlan(newPlan1.planId)).ok()
+				expect(getPlan(newPlan1.planId).tiers.length).equals(1)
+
+				await subscriptionsSubmodel.refresh()
+				expect(getPlans().length).equals(2)
+				expect(getPlan(newPlan2.planId)).ok()
+				expect(getPlan(newPlan2.planId).tiers.length).equals(1)
+				expect(getPlan(newPlan1.planId)).ok()
+				expect(getPlan(newPlan1.planId).tiers.length).equals(1)
 			},
 			async "can view subscription plans made by other clerks"() {
 				const {makeClerkClient} = await setupLinkedStore()
@@ -412,7 +449,7 @@ export default <Suite>{
 				await billingSubmodel.checkoutPaymentMethod()
 				await subscriptionsSubmodel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
-				console.log(plan)
+				// console.log(plan)
 				// await subscriptionsSubmodel
 			},
 			async "can purchase a subscription, while providing a new payment method"() {},
