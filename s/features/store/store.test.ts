@@ -6,7 +6,8 @@ import {url} from "../../toolbox/darkvalley.js"
 import {storePrivileges} from "./store-privileges.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
-import {setupSimpleStoreClient, setupLinkedStore} from "./testing/store-quick-setup.js"
+import {setupSimpleStoreClient, setupLinkedStore, setupStoreWithSubscriptionsSetup} from "./testing/store-quick-setup.js"
+import {unproxy} from "@chasemoskal/snapstate"
 
 export default <Suite>{
 	"store connect submodel": {
@@ -58,13 +59,13 @@ export default <Suite>{
 				await anotherMerchant.storeModel.connectSubmodel.initialize()
 				expect(ops.value(anotherMerchant.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 			},
-			async "plebeian cannot see connect details or status"() {
+			async "plebeian cannot see connect status, but not connect details"() {
 				const {makePlebeianClient} = await setupLinkedStore()
 				const plebeianClient = await makePlebeianClient()
 				await plebeianClient.storeModel.connectSubmodel.initialize()
 				const {state} = plebeianClient.storeModel
+				expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 				expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
-				expect(ops.value(state.stripeConnect.connectStatusOp)).not.defined()
 			},
 			async "clerk can see the connect status, but not the details"() {
 				const {makeClerkClient} = await setupLinkedStore()
@@ -304,7 +305,14 @@ export default <Suite>{
 	"subscription purchases": {
 
 		async "user can purchase a subscription, with an existing payment method"() {
-			const {makePlebeianClient} = await setupLinkedStore()
+			const {makePlebeianClient} = await setupStoreWithSubscriptionsSetup()
+			const client = await makePlebeianClient()
+			// const {snap: {state}, subscriptionPlanningSubmodel: planning} = client.storeModel
+			// await planning.initialize()
+			// const getPlans = () => unproxy(
+			// 	ops.value(state.subscriptionPlanning.subscriptionPlansOp)
+			// )
+			// expect(getPlans().length).equals(1)
 		},
 		async "user can purchase a subscription, while providing a new payment method"() {},
 		async "user can cancel a subscription"() {},

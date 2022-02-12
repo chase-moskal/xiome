@@ -16,15 +16,15 @@ export const makeConnectService = (
 
 .expose(({access, stripeLiaison, database, checker}) => ({
 
-	...requiredPrivilege(checker, "manage store", {
+	async loadConnectStatus() {
+		const connectDetails = await fetchStripeConnectDetails({
+			stripeLiaison,
+			storeTables: database.tables.store,
+		})
+		return determineConnectStatus(connectDetails)
+	},
 
-		async loadConnectStatus() {
-			const connectDetails = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeTables: database.tables.store,
-			})
-			return determineConnectStatus(connectDetails)
-		},
+	...requiredPrivilege(checker, "manage store", {
 
 		async pause() {
 			const connectDetails = await fetchStripeConnectDetails({

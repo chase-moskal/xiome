@@ -35,7 +35,7 @@ export function makeConnectSubmodel({
 				},
 			})
 		}
-		else if (allowance.manageStore) {
+		else {
 			await ops.operation({
 				promise: connectService.loadConnectStatus(),
 				setOp: op => snap.state.stripeConnect.connectStatusOp = op,

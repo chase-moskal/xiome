@@ -49,18 +49,16 @@ export async function setupLinkedStore() {
 }
 
 export async function setupStoreWithSubscriptionsSetup() {
-	const {makeClerkClient} = await setupLinkedStore()
-	const clerk = await makeClerkClient()
+	const store = await setupLinkedStore()
+	const clerk = await store.makeClerkClient()
 	const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
-
 	planning.initialize()
-	const plan = await planning.addPlan({
+	await planning.addPlan({
 		planLabel: "membership",
 		tierLabel: "benevolent donor",
 		tierPrice: 5_00,
 	})
-
-
+	return store
 }
 
 // export async function merchantStoreSetup() {
