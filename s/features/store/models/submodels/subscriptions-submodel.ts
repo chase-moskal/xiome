@@ -40,6 +40,10 @@ export function makeSubscriptionsSubmodel({
 			await loadSubscriptionPlans()
 	}
 
+	async function checkoutSubscription() {
+		
+	}
+
 	return {
 		initialize,
 		refresh,

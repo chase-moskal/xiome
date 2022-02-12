@@ -15,7 +15,12 @@ export const makeSubscriptionShoppingService = (
 		return fetchSubscriptionPlans(auth)
 	},
 
-	async subscribeToTier() {},
+	async purchaseSubscriptionTier() {
+		// const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
+		// 	mode: "subscription",
+		// 	line_items: {},
+		// })
+	},
 
 	async unsubscribeFromTier() {},
 }))

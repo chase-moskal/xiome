@@ -405,6 +405,15 @@ export default <Suite>{
 			async "can purchase a subscription, with an existing payment method"() {
 				const {makeRegularClient} = await setupStoreWithSubscriptionsSetup()
 				const client = await makeRegularClient()
+				const {
+					storeModel: {snap: {state}, billingSubmodel, subscriptionsSubmodel}
+				} = client
+				await billingSubmodel.initialize()
+				await billingSubmodel.checkoutPaymentMethod()
+				await subscriptionsSubmodel.initialize()
+				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
+				console.log(plan)
+				// await subscriptionsSubmodel
 			},
 			async "can purchase a subscription, while providing a new payment method"() {},
 			async "can cancel a subscription"() {},
