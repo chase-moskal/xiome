@@ -77,10 +77,10 @@ export default <Suite>{
 					).throws()
 				},
 				async "can see connect status, but not connect details"() {
-					const {makePlebeianClient} = await setupLinkedStore()
-					const plebeianClient = await makePlebeianClient()
-					await plebeianClient.storeModel.connectSubmodel.initialize()
-					const {state} = plebeianClient.storeModel
+					const {makeRegularClient} = await setupLinkedStore()
+					const client = await makeRegularClient()
+					await client.storeModel.connectSubmodel.initialize()
+					const {state} = client.storeModel
 					expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 					expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
 				},
@@ -141,8 +141,8 @@ export default <Suite>{
 			"a user with regular permissions": {
 
 				async "cannot pause or resume the store"() {
-					const {makePlebeianClient} = await setupLinkedStore()
-					const client = await makePlebeianClient()
+					const {makeRegularClient} = await setupLinkedStore()
+					const client = await makeRegularClient()
 					const {connectSubmodel} = client.storeModel
 					expect(async() => connectSubmodel.pause()).throws()
 					expect(async() => connectSubmodel.resume()).throws()
@@ -249,7 +249,7 @@ export default <Suite>{
 		"a user with regular permissions": {
 
 			async "cannot view subscriptions from the planning perspective"() {
-				const {makeClerkClient, makePlebeianClient} = await setupLinkedStore()
+				const {makeClerkClient, makeRegularClient} = await setupLinkedStore()
 				{
 					const clerk = await makeClerkClient()
 					const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
@@ -267,8 +267,8 @@ export default <Suite>{
 					])
 				}
 				{
-					const plebe = await makePlebeianClient()
-					const {subscriptionPlanningSubmodel: planning} = plebe.storeModel
+					const client = await makeRegularClient()
+					const {subscriptionPlanningSubmodel: planning} = client.storeModel
 					await expect(async() => planning.initialize()).throws()
 				}
 			},
@@ -279,8 +279,8 @@ export default <Suite>{
 		"a user with regular permissions": {
 
 			async "can add their payment method"() {
-				const {makePlebeianClient} = await setupLinkedStore()
-				const client = await makePlebeianClient()
+				const {makeRegularClient} = await setupLinkedStore()
+				const client = await makeRegularClient()
 				const {billingSubmodel, snap} = client.storeModel
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
@@ -291,8 +291,8 @@ export default <Suite>{
 				expect(getPaymentMethod()).ok()
 			},
 			async "can add a payment method, and it's still there after re-logging in"() {
-				const {makePlebeianClient, makeClient} = await setupLinkedStore()
-				const clientFirstLogin = await makePlebeianClient()
+				const {makeRegularClient, makeClient} = await setupLinkedStore()
+				const clientFirstLogin = await makeRegularClient()
 				{
 					const {billingSubmodel, snap} = clientFirstLogin.storeModel
 					const getPaymentMethod = () => ops.value(
@@ -315,8 +315,8 @@ export default <Suite>{
 				}
 			},
 			async "can update their payment method"() {
-				const {makePlebeianClient} = await setupLinkedStore()
-				const client = await makePlebeianClient()
+				const {makeRegularClient} = await setupLinkedStore()
+				const client = await makeRegularClient()
 				const {billingSubmodel, snap} = client.storeModel
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
@@ -331,8 +331,8 @@ export default <Suite>{
 					.not.equals(previousLast4)
 			},
 			async "can delete their payment method"() {
-				const {makePlebeianClient} = await setupLinkedStore()
-				const client = await makePlebeianClient()
+				const {makeRegularClient} = await setupLinkedStore()
+				const client = await makeRegularClient()
 				const {billingSubmodel, snap} = client.storeModel
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
@@ -350,8 +350,8 @@ export default <Suite>{
 		"a user with regular permissions": {
 
 			async "can purchase a subscription, with an existing payment method"() {
-				const {makePlebeianClient} = await setupStoreWithSubscriptionsSetup()
-				const client = await makePlebeianClient()
+				const {makeRegularClient} = await setupStoreWithSubscriptionsSetup()
+				const client = await makeRegularClient()
 				// const {snap: {state}, subscriptionPlanningSubmodel: planning} = client.storeModel
 				// await planning.initialize()
 				// const getPlans = () => unproxy(
