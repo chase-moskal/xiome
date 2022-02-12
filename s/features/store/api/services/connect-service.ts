@@ -1,6 +1,6 @@
 
-import * as renraku from "renraku"
 import {Id, find} from "dbmage"
+import * as renraku from "renraku"
 
 import {MerchantRow} from "../../types/store-schema.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"
