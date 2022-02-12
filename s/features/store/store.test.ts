@@ -188,7 +188,15 @@ export default <Suite>{
 
 			},
 			"a user with regular permissions": {
-				
+
+				async "cannot login to stripe account"() {
+					const setup = await setupLinkedStore()
+					const client = await setup.makeRegularClient()
+					const {connectSubmodel} = client.storeModel
+					await expect(async () => connectSubmodel.generateStripeLoginLink())
+						.throws()
+				},
+
 			},
 		},
 
