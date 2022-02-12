@@ -449,8 +449,7 @@ export default <Suite>{
 				await billingSubmodel.checkoutPaymentMethod()
 				await subscriptionsSubmodel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
-				// console.log(plan)
-				// await subscriptionsSubmodel
+				// TODO
 			},
 			async "can purchase a subscription, while providing a new payment method"() {},
 			async "can cancel a subscription"() {},
