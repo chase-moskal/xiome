@@ -1,6 +1,5 @@
 
 import {Suite, expect} from "cynic"
-import {unproxy} from "@chasemoskal/snapstate"
 
 import {ops} from "../../framework/ops.js"
 import {url} from "../../toolbox/darkvalley.js"
@@ -207,13 +206,13 @@ export default <Suite>{
 			async "can create a new subscription plan"() {
 				const {makeClerkClient} = await setupLinkedStore()
 				const clerk = await makeClerkClient()
-				const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+				const {subscriptionsSubmodel} = clerk.storeModel
 	
-				await planning.initialize()
-				const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
+				await subscriptionsSubmodel.initialize()
+				const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans.length).equals(0)
 	
-				const newPlan = await planning.addPlan({
+				const newPlan = await subscriptionsSubmodel.addPlan({
 					planLabel: "premium membership",
 					tierLabel: "supporter",
 					tierPrice: 10_00,
@@ -221,8 +220,8 @@ export default <Suite>{
 				expect(newPlan.planId).ok()
 				expect(newPlan.tiers.length).equals(1)
 	
-				await planning.refresh()
-				const plans2 = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
+				await subscriptionsSubmodel.refresh()
+				const plans2 = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans2.length).equals(1)
 				expect(plans2[0]).ok()
 			},
@@ -230,14 +229,14 @@ export default <Suite>{
 				const {makeClerkClient} = await setupLinkedStore()
 				{
 					const clerk = await makeClerkClient()
-					const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+					const {subscriptionsSubmodel} = clerk.storeModel
 					await Promise.all([
-						planning.addPlan({
+						subscriptionsSubmodel.addPlan({
 							planLabel: "premium membership",
 							tierLabel: "supporter",
 							tierPrice: 10_00,
 						}),
-						planning.addPlan({
+						subscriptionsSubmodel.addPlan({
 							planLabel: "underground secret society",
 							tierLabel: "accolyte",
 							tierPrice: 100_00,
@@ -246,9 +245,9 @@ export default <Suite>{
 				}
 				{
 					const clerk = await makeClerkClient()
-					const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
-					await planning.initialize()
-					const plans = ops.value(clerk.storeModel.state.subscriptionPlanning.subscriptionPlansOp)
+					const {subscriptionsSubmodel} = clerk.storeModel
+					await subscriptionsSubmodel.initialize()
+					const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 					expect(plans.length).equals(2)
 				}
 			},
@@ -256,18 +255,18 @@ export default <Suite>{
 		},
 		"a user with regular permissions": {
 
-			async "cannot view subscriptions from the planning perspective"() {
+			async "can view subscriptions"() {
 				const {makeClerkClient, makeRegularClient} = await setupLinkedStore()
 				{
 					const clerk = await makeClerkClient()
-					const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+					const {subscriptionsSubmodel} = clerk.storeModel
 					await Promise.all([
-						planning.addPlan({
+						subscriptionsSubmodel.addPlan({
 							planLabel: "premium membership",
 							tierLabel: "supporter",
 							tierPrice: 10_00,
 						}),
-						planning.addPlan({
+						subscriptionsSubmodel.addPlan({
 							planLabel: "underground secret society",
 							tierLabel: "accolyte",
 							tierPrice: 100_00,
@@ -276,9 +275,24 @@ export default <Suite>{
 				}
 				{
 					const client = await makeRegularClient()
-					const {subscriptionPlanningSubmodel: planning} = client.storeModel
-					await expect(async() => planning.initialize()).throws()
+					const {snap: {state}, subscriptionsSubmodel} = client.storeModel
+					await subscriptionsSubmodel.initialize()
+					expect(ops.value(state.subscriptions.subscriptionPlansOp).length).equals(2)
 				}
+			},
+			async "cannot create a new subscription plan"() {
+				const {makeRegularClient} = await setupLinkedStore()
+				const client = await makeRegularClient()
+				const {subscriptionsSubmodel} = client.storeModel
+
+				await subscriptionsSubmodel.initialize()
+				await expect(async() => {
+					await subscriptionsSubmodel.addPlan({
+						planLabel: "premium membership",
+						tierLabel: "supporter",
+						tierPrice: 10_00,
+					})
+				}).throws()
 			},
 
 		},
@@ -360,12 +374,6 @@ export default <Suite>{
 			async "can purchase a subscription, with an existing payment method"() {
 				const {makeRegularClient} = await setupStoreWithSubscriptionsSetup()
 				const client = await makeRegularClient()
-				// const {snap: {state}, subscriptionPlanningSubmodel: planning} = client.storeModel
-				// await planning.initialize()
-				// const getPlans = () => unproxy(
-				// 	ops.value(state.subscriptionPlanning.subscriptionPlansOp)
-				// )
-				// expect(getPlans().length).equals(1)
 			},
 			async "can purchase a subscription, while providing a new payment method"() {},
 			async "can cancel a subscription"() {},

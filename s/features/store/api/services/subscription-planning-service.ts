@@ -32,10 +32,6 @@ export const makeSubscriptionPlanningService = (
 
 .expose(auth => ({
 
-	async listSubscriptionPlans(): Promise<SubscriptionPlan[]> {
-		return fetchSubscriptionPlans(auth)
-	},
-
 	async addPlan(inputs: {
 			planLabel: string
 			tierLabel: string

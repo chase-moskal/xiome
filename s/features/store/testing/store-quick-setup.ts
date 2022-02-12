@@ -51,7 +51,7 @@ export async function setupLinkedStore() {
 export async function setupStoreWithSubscriptionsSetup() {
 	const store = await setupLinkedStore()
 	const clerk = await store.makeClerkClient()
-	const {subscriptionPlanningSubmodel: planning} = clerk.storeModel
+	const {subscriptionsSubmodel: planning} = clerk.storeModel
 	planning.initialize()
 	await planning.addPlan({
 		planLabel: "membership",

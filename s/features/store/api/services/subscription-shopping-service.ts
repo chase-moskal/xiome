@@ -11,7 +11,7 @@ export const makeSubscriptionShoppingService = (
 
 .expose(auth => ({
 
-	async loadSubscriptionPlans() {
+	async listSubscriptionPlans() {
 		return fetchSubscriptionPlans(auth)
 	},
 

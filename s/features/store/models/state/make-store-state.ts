@@ -14,14 +14,11 @@ export function makeStoreState() {
 			connectStatusOp: ops.none() as Op<StripeConnectStatus>,
 			connectDetailsOp: ops.none() as Op<StripeConnectDetails>,
 		},
-		subscriptionPlanning: {
+		subscriptions: {
 			subscriptionPlansOp: ops.none() as Op<SubscriptionPlan[]>,
 		},
 		billing: {
 			paymentMethodOp: ops.none() as Op<undefined | PaymentMethod>,
-		},
-		subscriptions: {
-			subscriptionsOp: ops.none() as Op<any>,
 		},
 	})
 }

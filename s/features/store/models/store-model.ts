@@ -10,10 +10,11 @@ import {makeStoreAllowance} from "./utils/make-store-allowance.js"
 import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeConnectService} from "../api/services/connect-service.js"
 import {makeSubscriptionPlanningService} from "../api/services/subscription-planning-service.js"
-import {makeSubscriptionPlanningSubmodel} from "./submodels/subscription-planning-submodel.js"
+import {makeSubscriptionsSubmodel} from "./submodels/subscriptions-submodel.js"
 import {TriggerStripeConnectPopup, TriggerCheckoutPopup} from "../types/store-popups.js"
 import {makeBillingSubmodel} from "./submodels/billing-submodel.js"
 import {makeBillingService} from "../api/services/billing-service.js"
+import {makeSubscriptionShoppingService} from "../api/services/subscription-shopping-service.js"
 
 export function makeStoreModel(options: {
 		appId: string
@@ -22,6 +23,8 @@ export function makeStoreModel(options: {
 			Service<typeof makeConnectService>
 		subscriptionPlanningService:
 			Service<typeof makeSubscriptionPlanningService>
+		subscriptionShoppingService:
+			Service<typeof makeSubscriptionShoppingService>
 		billingService:
 			Service<typeof makeBillingService>
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
@@ -39,7 +42,7 @@ export function makeStoreModel(options: {
 		await connectSubmodel.initialize()
 	}
 
-	const subscriptionPlanningSubmodel = makeSubscriptionPlanningSubmodel({
+	const subscriptionsSubmodel = makeSubscriptionsSubmodel({
 		...options, snap, allowance, initializeConnectSubmodel,
 	})
 
@@ -56,7 +59,7 @@ export function makeStoreModel(options: {
 		snap: restricted(snap),
 
 		connectSubmodel,
-		subscriptionPlanningSubmodel,
+		subscriptionsSubmodel,
 		billingSubmodel,
 
 		async updateAccessOp(op: Op<AccessPayload>) {

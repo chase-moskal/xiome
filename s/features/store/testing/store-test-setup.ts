@@ -56,6 +56,9 @@ export async function storeTestSetup() {
 				subscriptionPlanningService: renraku.mock()
 					.forService(api.subscriptionPlanningService)
 					.withMeta(getMeta, getHeaders),
+				subscriptionShoppingService: renraku.mock()
+					.forService(api.subscriptionShoppingService)
+					.withMeta(getMeta, getHeaders),
 				billingService: renraku.mock()
 					.forService(api.billingService)
 					.withMeta(getMeta, getHeaders),
