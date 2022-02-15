@@ -15,8 +15,8 @@ export class XiomeMyAvatar extends mixinRequireShare<{
 			accessOp,
 			access => html`
 				<xio-avatar
+					part=avatar
 					.spec=${access?.user?.profile.avatar}
-					part="xio-avatar"
 				></xio-avatar>
 			`,
 			null,

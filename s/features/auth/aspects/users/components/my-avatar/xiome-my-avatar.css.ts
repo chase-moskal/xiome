@@ -6,6 +6,7 @@ export default css`
 	display: block;
 	width: var(--avatar-size, 2em);
 	height: var(--avatar-size, 2em);
+	--op-size: var(--avatar-size, 2em);
 }
 
 :host([logged-in]) .avatar {

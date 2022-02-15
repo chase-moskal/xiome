@@ -50,7 +50,7 @@ html {
 		xiome-login-panel::part(buttonbar) {
 			text-align: right;
 		}
-		xiome-my-avatar::part(xio-avatar) {
+		xiome-my-avatar::part(avatar) {
 			display: block;
 		}
 		xio-themer {
@@ -60,7 +60,7 @@ html {
 		xiome-my-avatar {
 			width: 100%;
 			height: 100%;
-			&::part(xio-avatar) {
+			&::part(avatar) {
 				width: 100%;
 				height: 100%;
 			}
