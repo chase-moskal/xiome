@@ -8,7 +8,7 @@ import {XioExample} from "./example/xio-example.js"
 import {XioMenuItem} from "./menu/xio-menu-item.js"
 import {XioCheckbox} from "./checkbox/xio-checkbox.js"
 import {XioTextInput} from "./inputs/xio-text-input.js"
-import {XioNightlight} from "./themer/xio-nightlight.js"
+import {XioNightlight} from "./nightlight/xio-nightlight.js"
 import {XioProfileCard} from "./profile-card/xio-profile-card.js"
 
 export function integrateXioComponents() {
