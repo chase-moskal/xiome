@@ -1,8 +1,8 @@
 
 import {snapstate} from "@chasemoskal/snapstate"
 
-import {XioMenuItem} from "./xio-menu-item.js"
 import {getAssignedElements} from "./utils/get-assigned-elements.js"
+import {MenuPanelChangeEvent, XioMenuItem} from "./xio-menu-item.js"
 import {Component, property, html, mixinStyles} from "../../../framework/component.js"
 
 import xioMenuCss from "./styles/xio-menu.css.js"
@@ -65,14 +65,6 @@ export class XioMenu extends Component {
 			window.removeEventListener(event, this.#scrollListener)
 	}
 
-	toggleItem(index: number) {
-		this.#snap.state.activeIndex = index === this.#snap.state.activeIndex
-			? undefined
-			: index
-		this.active = this.#snap.state.activeIndex !== undefined
-		this.#scrollListener()
-	}
-
 	getMenuItems() {
 		const slot = this.shadowRoot.querySelector("slot")
 		return getAssignedElements<XioMenuItem>(slot)
@@ -80,25 +72,37 @@ export class XioMenu extends Component {
 	}
 
 	updated() {
-		const items = this.getMenuItems()
-		items.forEach((item, index) => {
+		for (const item of this.getMenuItems())
 			item.theme = this.theme
-			item.lefty = this.lefty
-			item.toggle = () => this.toggleItem(index)
-			item.open = index === this.#snap.state.activeIndex
-		})
 	}
 
 	#handleBlanketClick = () => {
-		this.toggleItem(this.#snap.state.activeIndex)
+		const items = this.getMenuItems()
+		for (const item of items)
+			item.toggle(false)
+	}
+
+	#enforceOnePanelOpen(target: XioMenuItem, menuItems: XioMenuItem[]) {
+		const otherMenuItems = menuItems.filter(item => item !== target)
+		for (const item of otherMenuItems)
+			item.open = false
+	}
+
+	#handleMenuPanelChange = ({target, detail: {open}}: MenuPanelChangeEvent) => {
+		const menuItems = this.getMenuItems()
+
+		if (open)
+			this.#enforceOnePanelOpen(<XioMenuItem>target, menuItems)
+
+		this.active = !!menuItems.find(item => item.open)
 	}
 
 	render() {
 		const {scrollTop, activeIndex} = this.#snap.state
 		return html`
 			<div class=system data-active-index=${activeIndex} style="${`top: ${scrollTop}px`}">
-				<div class=blanket @click=${this.#handleBlanketClick}></div>
-				<div class=list>
+				<div part=blanket @click=${this.#handleBlanketClick}></div>
+				<div part=list @menuPanelChange=${this.#handleMenuPanelChange}>
 					<slot></slot>
 				</div>
 			</div>

@@ -9,6 +9,7 @@ block variables
 head
 	meta(charset="utf-8")
 	meta(name="viewport" content="width=device-width,initial-scale=1")
+	meta(name="darkreader" content="dark")
 	title xiome.io#{pageSubtitle && " – " + pageSubtitle}
 	link(rel="stylesheet" href=`${base}/styles.css`)
 	link(rel="icon" type="image/png" href=`${base}/favicon.png`)
@@ -79,9 +80,9 @@ body(data-page=pageName)
 				a(href=`${base}/setup`) setup
 				a(href=`${base}/components`) components
 		xio-menu(sticky initially-hidden)
-			xio-menu-item(data-label="account")
-				xiome-my-avatar(slot="button")
-				xiome-login-panel(show-logout)
+			xio-menu-item
+				xiome-my-avatar
+				xiome-login-panel(slot="panel" show-logout)
 					xiome-my-account
 						h3 your account
 

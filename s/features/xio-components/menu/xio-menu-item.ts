@@ -1,9 +1,18 @@
 
 import xioMenuItemCss from "./styles/xio-menu-item.css.js"
-import {Component, property, html, mixinStyles} from "../../../framework/component.js"
+import {getAssignedElements} from "./utils/get-assigned-elements.js"
+import {Component, property, html, mixinStyles, mixinFocusable} from "../../../framework/component.js"
+
+export class MenuPanelChangeEvent extends CustomEvent<{open: boolean}> {
+	constructor(detail: {open: boolean}) {
+		super("menuPanelChange", {detail, bubbles: true})
+	}
+}
 
 @mixinStyles(xioMenuItemCss)
 export class XioMenuItem extends Component {
+
+	#hasPanel = false
 
 	@property({type: String, reflect: true})
 	theme = ""
@@ -14,27 +23,40 @@ export class XioMenuItem extends Component {
 	@property({type: Boolean, reflect: true})
 	open = false
 
-	toggle = () => {}
+	onMenuPanelChange: (event: MenuPanelChangeEvent) => void
+
+	toggle(open = !this.open) {
+		this.open = open
+		const event = new MenuPanelChangeEvent({open})
+		this.dispatchEvent(event)
+		if (this.onMenuPanelChange)
+			this.onMenuPanelChange(event)
+	}
 
 	updated(changedProperties: any) {
-		if (changedProperties.has("open") && this.open)
-			this.shadowRoot.querySelector("button").focus()
+		const panelSlot = this.shadowRoot.querySelector<HTMLSlotElement>(`slot[name="panel"]`)
+		const panelIsProvided = !!getAssignedElements(panelSlot).length
+		if (this.#hasPanel !== panelIsProvided) {
+			this.#hasPanel = panelIsProvided
+			this.requestUpdate()
+		}
 	}
 
 	#handleButtonClick = () => {
-		this.toggle()
+		if (this.#hasPanel)
+			this.toggle()
+		this.shadowRoot.querySelector("button").focus()
 	}
 
 	render() {
 		return html`
-			<div class=display>
-				<button @click=${this.#handleButtonClick}>
-					<slot name=button></slot>
-				</button>
-				<div class=panel>
-					<slot></slot>
-				</div>
-			</div>
+			<button
+				part=button
+				tabindex=${this.#hasPanel ? 0 : -1}
+				@click=${this.#handleButtonClick}>
+					<slot part=buttoncontent></slot>
+			</button>
+			<slot name=panel part=panel></slot>
 		`
 	}
 }

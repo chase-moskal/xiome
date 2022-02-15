@@ -2,36 +2,56 @@
 import {css} from "../../../../framework/component.js"
 export default css`
 
-*:focus {
-	outline: var(--focus-outline, 2px solid #0af);
+:host {
+	display: block;
+	width: 2em;
+	height: 2em;
 }
 
-:host([theme="concrete"]) button {
+:host([theme="concrete"]) [part="button"] {
 	font-size: inherit;
 	color: inherit;
 	position: relative;
 	display: block;
-	margin: var(--menu-gapsize, 0.15rem);
 	padding: 0;
 	border: none;
 	background: transparent;
+	width: 100%;
+	height: 100%;
 }
 
-.panel {
+:host([theme="concrete"]) [part="buttoncontent"] {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+:host([theme="concrete"]) [part="buttoncontent"] {
+	transform: scale(1);
+	transition: transform 100ms ease;
+}
+
+:host([theme="concrete"]) [part="buttoncontent"]:active {
+	transform: scale(0.8);
+}
+
+[part="panel"] {
 	display: none;
 }
 
-:host([open]) .panel {
+:host([open]) [part="panel"] {
 	display: block;
 }
 
-:host([theme="concrete"]) .panel {
+:host([theme="concrete"]) [part="panel"] {
 	position: absolute;
 	left: var(--menu-lanesize, 1rem);
 	right: var(--menu-lanesize, 1rem);
 	width: var(--menu-panel-width, 640px);
 	max-width: calc(100% - calc(var(--menu-lanesize, 1rem) * 2));
-	margin-top: var(--menu-gapsize, 0.15rem);
+	margin-top: var(--menu-padding, 0.15rem);
 	margin-left: auto;
 	padding: var(--menu-panel-padding, 1rem);
 	background: var(--menu-panel-background, white);
@@ -41,11 +61,11 @@ export default css`
 	--webkit-backdrop-filter: var(--menu-panel-backdrop-filter, none);
 }
 
-:host([theme="concrete"][sticky]) .panel {
+:host([theme="concrete"][sticky]) [part="panel"] {
 	top: 100%;
 }
 
-:host([theme="concrete"][lefty]) .panel {
+:host([theme="concrete"][lefty]) [part="panel"] {
 	margin-left: unset;
 	margin-right: auto;
 }
