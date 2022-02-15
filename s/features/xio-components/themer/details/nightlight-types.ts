@@ -8,3 +8,7 @@ export interface NightlightChangeDetail {
 export interface NightlightChangeHandler {
 	(event: NightlightChangeEvent): void
 }
+
+export interface NightlightSettings {
+	night: boolean
+}
