@@ -11,12 +11,12 @@ export class XioOp<xPayload = any> extends Component {
 	@property({type: String, reflect: true})
 	mode: string = "none"
 
-	// @property({type: Object})
-	// op: Op<xPayload> = ops.none()
 	private _op: Op<xPayload> = ops.none()
+
 	get op() {
 		return this._op
 	}
+
 	@property({type: Object})
 	set op(op: Op<xPayload>) {
 		const old = this._op
@@ -32,10 +32,22 @@ export class XioOp<xPayload = any> extends Component {
 	loadingIcon = svgSpinner
 
 	@property({type: String})
-	["loading-message"] = "loading..."
+	["loading-message"] = ""
 
 	@property({type: String})
 	["error-message"] = "error"
+
+	@property({type: Boolean})
+	["show-error-text"] = true
+
+	@property({type: Boolean})
+	["start-loading"]: boolean
+
+	firstUpdated() {
+		if (this["start-loading"]) {
+			this.op = ops.loading()
+		}
+	}
 
 	render() {
 		return ops.select(this.op, {
@@ -45,13 +57,18 @@ export class XioOp<xPayload = any> extends Component {
 			loading: () => html`
 				<slot name=loading>
 					${this.loadingIcon}
-					<span>${this["loading-message"]}</span>
+					${this["loading-message"]
+						? html`<span>${this["loading-message"]}</span>`
+						: null}
 				</slot>
 			`,
 			error: reason => html`
 				<slot name=error>
 					${this.errorIcon}
-					<span>${reason ?? this["fallbackErrorMessage"]}</span>
+					${this["show-error-text"]
+						? html`<span>${reason ?? this["error-message"]}</span>`
+						: null}
+					
 				</slot>
 			`,
 			ready: () => html`

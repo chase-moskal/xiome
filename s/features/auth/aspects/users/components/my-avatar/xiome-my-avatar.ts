@@ -11,11 +11,16 @@ export class XiomeMyAvatar extends mixinRequireShare<{
 
 	render() {
 		const accessOp = this.share.accessModel.getAccessOp()
-		return renderOp(accessOp, access => html`
-			<xio-avatar
-				.spec=${access?.user?.profile.avatar}
-				part="xio-avatar"
-			></xio-avatar>
-		`)
+		return renderOp(
+			accessOp,
+			access => html`
+				<xio-avatar
+					.spec=${access?.user?.profile.avatar}
+					part="xio-avatar"
+				></xio-avatar>
+			`,
+			null,
+			{showErrorText: false},
+		)
 	}
 }

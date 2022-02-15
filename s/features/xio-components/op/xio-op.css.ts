@@ -2,13 +2,18 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
+slot {
+	vertical-align: middle;
+}
+
 svg, span {
+	display: inline-block;
 	vertical-align: middle;
 }
 
 svg {
-	width: 1.2em;
-	height: 1.2em;
+	width: var(--op-size, 1.2em);
+	height: var(--op-size, 1.2em);
 }
 
 slot[name=loading] svg {
