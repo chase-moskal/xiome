@@ -9,10 +9,10 @@ export default css`
 }
 
 :host([theme="concrete"]) [part="button"] {
+	display: block;
 	font-size: inherit;
 	color: inherit;
 	position: relative;
-	display: block;
 	padding: 0;
 	border: none;
 	background: transparent;
