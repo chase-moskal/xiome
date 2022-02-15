@@ -95,6 +95,7 @@ export class XioMenu extends Component {
 			this.#enforceOnePanelOpen(<XioMenuItem>target, menuItems)
 
 		this.active = !!menuItems.find(item => item.open)
+		this.#scrollListener()
 	}
 
 	render() {
