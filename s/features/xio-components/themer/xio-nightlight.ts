@@ -28,6 +28,12 @@ export class XioNightlight extends Component {
 	@property({type: Boolean, reflect: true})
 	["show-destination-state"] = false
 
+	@property({type: String, reflect: true})
+	["title-to-night"] = "turn down the lights"
+
+	@property({type: String, reflect: true})
+	["title-to-day"] = "turn up the lights"
+
 	sourceElement: HTMLElement = document.body
 
 	#storage = nightlightSettingStorage()
@@ -79,13 +85,15 @@ export class XioNightlight extends Component {
 	}
 
 	render() {
+		const {night} = this
 		const showNight = this["show-destination-state"]
-			? !this.night
-			: this.night
+			? !night
+			: night
 		return html`
 			<button
-				?data-nightlight=${this.night}
 				part=button
+				title="${night ? this["title-to-day"] : this["title-to-night"]}"
+				?data-nightlight=${night}
 				@click=${() => this.toggle()}>
 					${showNight
 						? html`
