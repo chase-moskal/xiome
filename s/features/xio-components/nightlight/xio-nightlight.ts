@@ -2,11 +2,13 @@
 import {NightlightChangeHandler} from "./details/nightlight-types.js"
 import {NightlightChangeEvent} from "./details/nightlight-change-event.js"
 import {Component, property, html, mixinStyles} from "../../../framework/component.js"
+import {nightlightSettingStorage} from "./details/nightlight-setting-storage.js"
 
 import xioThemerCss from "./xio-nightlight.css.js"
 import sunSvg from "../../../framework/icons/feather/sun.svg.js"
 import moonSvg from "../../../framework/icons/feather/moon.svg.js"
-import {nightlightSettingStorage} from "./details/nightlight-setting-storage.js"
+
+const nightlightDataAttributeName = "data-nightlight"
 
 /*
 
@@ -40,9 +42,9 @@ export class XioNightlight extends Component {
 
 	#setNightOnSourceElement(night: boolean) {
 		if (night)
-			this.sourceElement.setAttribute("data-nightlight", "")
+			this.sourceElement.setAttribute(nightlightDataAttributeName, "")
 		else
-			this.sourceElement.removeAttribute("data-nightlight")
+			this.sourceElement.removeAttribute(nightlightDataAttributeName)
 	}
 
 	firstUpdated() {
@@ -58,7 +60,7 @@ export class XioNightlight extends Component {
 	}
 
 	get night() {
-		return this.sourceElement.getAttribute("data-nightlight") !== null
+		return this.sourceElement.getAttribute(nightlightDataAttributeName) !== null
 	}
 
 	set night(value: boolean) {
