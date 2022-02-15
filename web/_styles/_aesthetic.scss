@@ -107,6 +107,7 @@ xio-menu {
 	color: #fffa;
 	&::part(list) {
 		background: #fff2;
+		border-radius: 0.3em;
 		box-shadow: 3px 4px 5px #0005;
 	}
 	xio-menu-item::part(panel) {
