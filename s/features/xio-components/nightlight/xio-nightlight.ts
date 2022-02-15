@@ -34,7 +34,7 @@ export class XioNightlight extends Component {
 	@property({type: String, reflect: true})
 	["title-to-day"] = "turn up the lights"
 
-	sourceElement: HTMLElement = document.body
+	sourceElement: HTMLElement = document.documentElement
 
 	#storage = nightlightSettingStorage()
 
