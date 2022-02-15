@@ -1,7 +1,7 @@
 
 import xioMenuItemCss from "./styles/xio-menu-item.css.js"
 import {getAssignedElements} from "./utils/get-assigned-elements.js"
-import {Component, property, html, mixinStyles} from "../../../framework/component.js"
+import {Component, property, html, mixinStyles, mixinFocusable} from "../../../framework/component.js"
 
 export class MenuPanelChangeEvent extends CustomEvent<{open: boolean}> {
 	constructor(detail: {open: boolean}) {
@@ -36,21 +36,25 @@ export class XioMenuItem extends Component {
 	updated(changedProperties: any) {
 		const panelSlot = this.shadowRoot.querySelector<HTMLSlotElement>(`slot[name="panel"]`)
 		const panelIsProvided = !!getAssignedElements(panelSlot).length
-		this.#hasPanel = panelIsProvided
-
-		if (changedProperties.has("open") && this.open)
-			this.shadowRoot.querySelector("button").focus()
+		if (this.#hasPanel !== panelIsProvided) {
+			this.#hasPanel = panelIsProvided
+			this.requestUpdate()
+		}
 	}
 
 	#handleButtonClick = () => {
 		if (this.#hasPanel)
 			this.toggle()
+		this.shadowRoot.querySelector("button").focus()
 	}
 
 	render() {
 		return html`
-			<button part=button @click=${this.#handleButtonClick}>
-				<slot></slot>
+			<button
+				part=button
+				tabindex=${this.#hasPanel ? 0 : -1}
+				@click=${this.#handleButtonClick}>
+					<slot part=buttoncontent></slot>
 			</button>
 			<slot name=panel part=panel></slot>
 		`

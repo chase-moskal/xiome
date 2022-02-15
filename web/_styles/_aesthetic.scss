@@ -111,8 +111,6 @@ xio-menu {
 	}
 	xio-menu-item::part(panel) {
 		background: #324a71cc;
-		backdrop-filter: blur(10px);
-		--webkit-backdrop-filter: blur(3px);
 	}
 }
 

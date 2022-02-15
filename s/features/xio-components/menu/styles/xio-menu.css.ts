@@ -2,10 +2,6 @@
 import {css} from "../../../../framework/component.js"
 export default css`
 
-*:focus {
-	outline: var(--focus-outline, 2px solid cyan);
-}
-
 .system {
 	position: static;
 	margin: var(--menu-margin, auto);
@@ -57,7 +53,7 @@ export default css`
 	display: flex;
 	align-items: flex-end;
 	justify-content: flex-end;
-	padding: var(--menu-gapsize, 0.15rem);
+	padding: var(--menu-padding, 0.15rem);
 	background: var(--menu-background, rgba(240, 240, 240, 0.5));
 	border-radius: var(--menu-border-radius, 0);
 }

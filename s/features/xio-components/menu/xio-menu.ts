@@ -1,8 +1,8 @@
 
 import {snapstate} from "@chasemoskal/snapstate"
 
-import {MenuPanelChangeEvent, XioMenuItem} from "./xio-menu-item.js"
 import {getAssignedElements} from "./utils/get-assigned-elements.js"
+import {MenuPanelChangeEvent, XioMenuItem} from "./xio-menu-item.js"
 import {Component, property, html, mixinStyles} from "../../../framework/component.js"
 
 import xioMenuCss from "./styles/xio-menu.css.js"
@@ -71,18 +71,27 @@ export class XioMenu extends Component {
 			.filter(element => element instanceof XioMenuItem)
 	}
 
+	updated() {
+		for (const item of this.getMenuItems())
+			item.theme = this.theme
+	}
+
 	#handleBlanketClick = () => {
 		const items = this.getMenuItems()
 		for (const item of items)
 			item.toggle(false)
 	}
 
-	#handleMenuPanelChange = ({target, detail}: MenuPanelChangeEvent) => {
+	#handleMenuPanelChange = ({detail}: MenuPanelChangeEvent) => {
+		const menuItems = this.getMenuItems()
+
+		const openMenuItem = menuItems.find(item => item.open)
+		this.active = !!openMenuItem
 
 		// coordinate menu panel mutual-exclusivity,
 		// only one panel can be open at a time
 		if (detail.open) {
-			const otherMenuItems = this.getMenuItems().filter(item => item !== target)
+			const otherMenuItems = menuItems.filter(item => item !== openMenuItem)
 			for (const item of otherMenuItems) {
 				if (item.open)
 					item.toggle(false)

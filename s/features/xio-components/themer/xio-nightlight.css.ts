@@ -2,8 +2,6 @@
 import {css} from "../../../framework/component.js"
 export default css`
 
-* { outline: 1px solid #f004; }
-
 :host {
 	display: inline-block;
 	width: 2em;
@@ -18,6 +16,13 @@ button {
 	border: none;
 	width: 100%;
 	height: 100%;
+
+	Xtransform: scale(1);
+	Xtransition: transform 200ms ease;
+}
+
+Xbutton:active {
+	transform: scale(0.8);
 }
 
 slot {
