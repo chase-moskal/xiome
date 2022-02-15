@@ -43,10 +43,6 @@ html {
 	}
 	xio-menu {
 		--menu-margin: 0.4em 0 0 0;
-		xio-menu-item {
-			width: 2em;
-			height: 2em;
-		}
 		xiome-login-panel::part(buttonbar) {
 			text-align: right;
 		}

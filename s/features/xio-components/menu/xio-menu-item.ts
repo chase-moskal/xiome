@@ -43,9 +43,10 @@ export class XioMenuItem extends Component {
 	}
 
 	#handleButtonClick = () => {
-		if (this.#hasPanel)
+		if (this.#hasPanel) {
 			this.toggle()
-		this.shadowRoot.querySelector("button").focus()
+			this.shadowRoot.querySelector("button").focus()
+		}
 	}
 
 	render() {

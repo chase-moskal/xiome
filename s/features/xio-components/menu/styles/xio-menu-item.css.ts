@@ -34,7 +34,7 @@ export default css`
 }
 
 :host([theme="concrete"]) [part="buttoncontent"]:active {
-	transform: scale(0.8);
+	transform: scale(1.1);
 }
 
 [part="panel"] {

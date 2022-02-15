@@ -6,6 +6,7 @@ export default css`
 	display: block;
 	width: var(--avatar-size, 2em);
 	height: var(--avatar-size, 2em);
+	--op-size: calc(var(--avatar-size, 2em) * 0.5);
 }
 
 xio-op {
