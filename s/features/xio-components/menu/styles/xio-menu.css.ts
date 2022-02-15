@@ -35,7 +35,7 @@ export default css`
 	justify-content: flex-start;
 }
 
-:host([theme="concrete"]) .blanket {
+:host([theme="concrete"]) [part="blanket"] {
 	z-index: 99;
 	display: none;
 	position: fixed;
@@ -48,29 +48,30 @@ export default css`
 	bottom: 0;
 }
 
-:host([theme="concrete"][active]) .blanket {
+:host([theme="concrete"][active]) [part="blanket"] {
 	display: block;
 }
 
-:host([theme="concrete"]) .list {
+:host([theme="concrete"]) [part="list"] {
 	z-index: 100;
 	display: flex;
 	align-items: flex-end;
 	justify-content: flex-end;
 	padding: var(--menu-gapsize, 0.15rem);
 	background: var(--menu-background, rgba(240, 240, 240, 0.5));
+	border-radius: var(--menu-border-radius, 0);
 }
 
-:host([theme="concrete"][sticky]) .list {
+:host([theme="concrete"][sticky]) [part="list"] {
 	margin-right: var(--menu-lanesize, 1rem);
 }
 
-:host([theme="concrete"][sticky][lefty]) .list {
+:host([theme="concrete"][sticky][lefty]) [part="list"] {
 	margin-right: unset;
 	margin-left: var(--menu-lanesize, 1rem);
 }
 
-:host([theme="concrete"]) .list slot::slotted(menu-display) {
+:host([theme="concrete"]) [part="list"] slot::slotted(menu-item) {
 	display: block;
 	flex: 0 0 auto;
 }

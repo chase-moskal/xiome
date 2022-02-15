@@ -105,9 +105,15 @@ code { background: #0002; }
 
 xio-menu {
 	color: #fffa;
-	--menu-background: #fff2;
-	--menu-panel-background: #324a71cc;
-	--menu-panel-box-shadow: 3px 4px 5px #0005;
+	&::part(list) {
+		background: #fff2;
+		box-shadow: 3px 4px 5px #0005;
+	}
+	xio-menu-item::part(panel) {
+		background: #324a71cc;
+		backdrop-filter: blur(10px);
+		--webkit-backdrop-filter: blur(3px);
+	}
 }
 
 main h2 {

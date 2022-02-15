@@ -43,11 +43,31 @@ html {
 	}
 	xio-menu {
 		--menu-margin: 0.4em 0 0 0;
+		xio-menu-item {
+			width: 2em;
+			height: 2em;
+		}
 		xiome-login-panel::part(buttonbar) {
 			text-align: right;
 		}
 		xiome-my-avatar::part(xio-avatar) {
 			display: block;
+		}
+		xio-themer {
+			width: 100%;
+			height: 100%;
+		}
+		xiome-my-avatar {
+			width: 100%;
+			height: 100%;
+			&::part(xio-avatar) {
+				width: 100%;
+				height: 100%;
+			}
+		}
+		xio-themer::part(button),
+		xiome-my-avatar {
+			padding: 0.2em;
 		}
 	}
 }

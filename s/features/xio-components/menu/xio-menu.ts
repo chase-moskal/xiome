@@ -1,7 +1,7 @@
 
 import {snapstate} from "@chasemoskal/snapstate"
 
-import {XioMenuItem} from "./xio-menu-item.js"
+import {MenuPanelChangeEvent, XioMenuItem} from "./xio-menu-item.js"
 import {getAssignedElements} from "./utils/get-assigned-elements.js"
 import {Component, property, html, mixinStyles} from "../../../framework/component.js"
 
@@ -65,40 +65,37 @@ export class XioMenu extends Component {
 			window.removeEventListener(event, this.#scrollListener)
 	}
 
-	toggleItem(index: number) {
-		this.#snap.state.activeIndex = index === this.#snap.state.activeIndex
-			? undefined
-			: index
-		this.active = this.#snap.state.activeIndex !== undefined
-		this.#scrollListener()
-	}
-
 	getMenuItems() {
 		const slot = this.shadowRoot.querySelector("slot")
 		return getAssignedElements<XioMenuItem>(slot)
 			.filter(element => element instanceof XioMenuItem)
 	}
 
-	updated() {
+	#handleBlanketClick = () => {
 		const items = this.getMenuItems()
-		items.forEach((item, index) => {
-			item.theme = this.theme
-			item.lefty = this.lefty
-			item.toggle = () => this.toggleItem(index)
-			item.open = index === this.#snap.state.activeIndex
-		})
+		for (const item of items)
+			item.toggle(false)
 	}
 
-	#handleBlanketClick = () => {
-		this.toggleItem(this.#snap.state.activeIndex)
+	#handleMenuPanelChange = ({target, detail}: MenuPanelChangeEvent) => {
+
+		// coordinate menu panel mutual-exclusivity,
+		// only one panel can be open at a time
+		if (detail.open) {
+			const otherMenuItems = this.getMenuItems().filter(item => item !== target)
+			for (const item of otherMenuItems) {
+				if (item.open)
+					item.toggle(false)
+			}
+		}
 	}
 
 	render() {
 		const {scrollTop, activeIndex} = this.#snap.state
 		return html`
 			<div class=system data-active-index=${activeIndex} style="${`top: ${scrollTop}px`}">
-				<div class=blanket @click=${this.#handleBlanketClick}></div>
-				<div class=list>
+				<div part=blanket @click=${this.#handleBlanketClick}></div>
+				<div part=list @menupanelchange=${this.#handleMenuPanelChange}>
 					<slot></slot>
 				</div>
 			</div>

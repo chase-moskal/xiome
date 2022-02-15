@@ -2,6 +2,7 @@
 import {XioId} from "./id/xio-id.js"
 import {XioOp} from "./op/xio-op.js"
 import {XioMenu} from "./menu/xio-menu.js"
+import {XioThemer} from "./themer/xio-themer.js"
 import {XioAvatar} from "./avatar/xio-avatar.js"
 import {XioButton} from "./button/xio-button.js"
 import {XioExample} from "./example/xio-example.js"
@@ -17,6 +18,7 @@ export function integrateXioComponents() {
 		XioMenu,
 		XioAvatar,
 		XioButton,
+		XioThemer,
 		XioExample,
 		XioCheckbox,
 		XioMenuItem,

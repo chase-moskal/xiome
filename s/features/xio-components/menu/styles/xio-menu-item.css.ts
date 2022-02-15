@@ -6,26 +6,34 @@ export default css`
 	outline: var(--focus-outline, 2px solid #0af);
 }
 
-:host([theme="concrete"]) button {
+:host {
+	display: block;
+	margin: var(--menu-gapsize, 0.15rem);
+	width: 2em;
+	height: 2em;
+}
+
+:host-context([theme="concrete"]) [part="button"] {
 	font-size: inherit;
 	color: inherit;
 	position: relative;
 	display: block;
-	margin: var(--menu-gapsize, 0.15rem);
 	padding: 0;
 	border: none;
 	background: transparent;
+	width: 100%;
+	height: 100%;
 }
 
-.panel {
+[part="panel"] {
 	display: none;
 }
 
-:host([open]) .panel {
+:host([open]) [part="panel"] {
 	display: block;
 }
 
-:host([theme="concrete"]) .panel {
+:host-context([theme="concrete"]) [part="panel"] {
 	position: absolute;
 	left: var(--menu-lanesize, 1rem);
 	right: var(--menu-lanesize, 1rem);
@@ -41,11 +49,11 @@ export default css`
 	--webkit-backdrop-filter: var(--menu-panel-backdrop-filter, none);
 }
 
-:host([theme="concrete"][sticky]) .panel {
+:host-context([theme="concrete"][sticky]) [part="panel"] {
 	top: 100%;
 }
 
-:host([theme="concrete"][lefty]) .panel {
+:host-context([theme="concrete"][lefty]) [part="panel"] {
 	margin-left: unset;
 	margin-right: auto;
 }
