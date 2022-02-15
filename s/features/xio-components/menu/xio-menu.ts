@@ -82,21 +82,19 @@ export class XioMenu extends Component {
 			item.toggle(false)
 	}
 
-	#handleMenuPanelChange = ({detail}: MenuPanelChangeEvent) => {
+	#enforceOnePanelOpen(target: XioMenuItem, menuItems: XioMenuItem[]) {
+		const otherMenuItems = menuItems.filter(item => item !== target)
+		for (const item of otherMenuItems)
+			item.open = false
+	}
+
+	#handleMenuPanelChange = ({target, detail: {open}}: MenuPanelChangeEvent) => {
 		const menuItems = this.getMenuItems()
 
-		const openMenuItem = menuItems.find(item => item.open)
-		this.active = !!openMenuItem
+		if (open)
+			this.#enforceOnePanelOpen(<XioMenuItem>target, menuItems)
 
-		// coordinate menu panel mutual-exclusivity,
-		// only one panel can be open at a time
-		if (detail.open) {
-			const otherMenuItems = menuItems.filter(item => item !== openMenuItem)
-			for (const item of otherMenuItems) {
-				if (item.open)
-					item.toggle(false)
-			}
-		}
+		this.active = !!menuItems.find(item => item.open)
 	}
 
 	render() {
