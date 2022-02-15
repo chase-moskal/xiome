@@ -104,7 +104,7 @@ export class XioMenu extends Component {
 		return html`
 			<div class=system data-active-index=${activeIndex} style="${`top: ${scrollTop}px`}">
 				<div part=blanket @click=${this.#handleBlanketClick}></div>
-				<div part=list @menupanelchange=${this.#handleMenuPanelChange}>
+				<div part=list @menuPanelChange=${this.#handleMenuPanelChange}>
 					<slot></slot>
 				</div>
 			</div>

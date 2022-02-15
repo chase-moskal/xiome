@@ -5,7 +5,7 @@ import {Component, property, html, mixinStyles, mixinFocusable} from "../../../f
 
 export class MenuPanelChangeEvent extends CustomEvent<{open: boolean}> {
 	constructor(detail: {open: boolean}) {
-		super("menupanelchange", {detail, bubbles: true})
+		super("menuPanelChange", {detail, bubbles: true})
 	}
 }
 
@@ -23,14 +23,14 @@ export class XioMenuItem extends Component {
 	@property({type: Boolean, reflect: true})
 	open = false
 
-	onmenupanelchange: (event: MenuPanelChangeEvent) => void
+	onMenuPanelChange: (event: MenuPanelChangeEvent) => void
 
 	toggle(open = !this.open) {
 		this.open = open
 		const event = new MenuPanelChangeEvent({open})
 		this.dispatchEvent(event)
-		if (this.onmenupanelchange)
-			this.onmenupanelchange(event)
+		if (this.onMenuPanelChange)
+			this.onMenuPanelChange(event)
 	}
 
 	updated(changedProperties: any) {
