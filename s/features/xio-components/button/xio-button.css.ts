@@ -4,6 +4,8 @@ export default css`
 
 :host {
 	display: inline-block;
+	width: max-content;
+	height: max-content;
 	--_padding: var(--xio-button-padding, 0.2em 0.5em);
 	--_background: var(--xio-button-background, transparent);
 	--_border: var(--xio-button-border, 1px solid);
@@ -17,6 +19,7 @@ export default css`
 }
 
 button {
+	width: 100%;
 	height: 100%;
 	cursor: pointer;
 	font: inherit;
