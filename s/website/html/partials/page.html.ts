@@ -1,12 +1,12 @@
 
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
-export default ({mode, base, pageName, pageSubtitle, bodyHtml, headHtml}: {
+export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	mode: string
 	base: string
 	pageName: string
-	pageSubtitle: string
-	bodyHtml: HtmlTemplate
+	mainHtml: HtmlTemplate
+	pageSubtitle?: string
 	headHtml?: HtmlTemplate
 }) => html`
 
@@ -67,7 +67,8 @@ export default ({mode, base, pageName, pageSubtitle, bodyHtml, headHtml}: {
 			<script defer="defer" src="${base}/xiome.bundle.min.js"></script>
 		`
 	})()}
-	${headHtml ? headHtml : ""}
+
+	${headHtml}
 </head>
 
 <body data-page="${pageName}">
@@ -105,7 +106,7 @@ export default ({mode, base, pageName, pageSubtitle, bodyHtml, headHtml}: {
 		</xio-menu>
 	</header>
 	<main>
-		${bodyHtml ? bodyHtml : ""}
+		${mainHtml}
 	</main>
 	<footer class="sitefooter">
 		<p>
