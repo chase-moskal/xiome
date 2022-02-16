@@ -1,7 +1,7 @@
 
-@use "styles/layout";
-@use "styles/aesthetic";
+@use "partials/layout";
+@use "partials/aesthetic";
 
-@use "styles/pages/home";
-@use "styles/pages/setup";
-@use "styles/pages/components";
+@use "pages/home";
+@use "pages/setup";
+@use "pages/components";

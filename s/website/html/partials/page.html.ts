@@ -17,7 +17,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<meta name="darkreader" content="dark"/>
 	<title>xiome.io — ${pageSubtitle && " – " + pageSubtitle}</title>
-	<link rel="stylesheet" href="${base}/styles.css"/>
+	<link rel="stylesheet" href="${base}/styles/styles.css"/>
 	<link rel="icon" type="image/png" href="${base}/favicon.png"/>
 
 	${(() => {
@@ -94,7 +94,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 				<a href="${base}/components">components</a>
 			</nav>
 		</div>
-		<xio-menu sticky="sticky" initially-hidden="initially-hidden">
+		<xio-menu sticky="sticky" initially-hidden>
 			<xio-menu-item>
 				<xiome-my-avatar></xiome-my-avatar>
 				<xiome-login-panel slot="panel" show-logout="show-logout">
