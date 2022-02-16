@@ -1,0 +1,181 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Play&family=Varela+Round&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+
+	// // DEBUG LINES
+	// outline: 1px solid #0f02;
+}
+
+html {
+	font-size: 21px;
+}
+
+[initially-hidden] {
+	display: none;
+}
+
+.stageplate {
+	display: none;
+	background: #666;
+	color: #fff;
+	width: 100%;
+	padding: 2em;
+	p {
+		max-width: 640px;
+		margin: auto;
+	}
+	.angry {
+		color: #f66;
+	}
+	html.stage & {
+		display: block;
+	}
+}
+
+.siteheader {
+	position: relative;
+	> div {
+		padding-right: 3rem;
+	}
+	xio-menu {
+		--menu-margin: 0.4em 0 0 0;
+		xiome-login-panel::part(buttonbar) {
+			text-align: right;
+		}
+		xiome-my-avatar::part(avatar) {
+			display: block;
+		}
+		xio-themer {
+			width: 100%;
+			height: 100%;
+		}
+		xiome-my-avatar {
+			width: 100%;
+			height: 100%;
+			&::part(avatar) {
+				width: 100%;
+				height: 100%;
+			}
+		}
+	}
+}
+
+.slice {
+	width: 90%;
+	max-width: 1600px;
+	margin: auto;
+	padding: 0 1rem;
+}
+
+.siteheader {
+	@extend .slice;
+	margin-top: 1em;
+	> div:nth-child(1) {
+		display: inline-flex;
+		flex-direction: column;
+	}
+	h1 {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		span {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		.title {
+			letter-spacing: 0.2em;
+		}
+		.prerelease {
+			font-size: 0.7rem;
+			text-transform: none;
+			.prerelease-tag {
+				padding: 0.2em 0.5em;
+				border-radius: 2em;
+				text-transform: uppercase;
+			}
+			.prerelease-note {
+				margin-left: 0.5em;
+			}
+		}
+	}
+	nav {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-top: 0.5em;
+		margin-left: -0.3em;
+		> a {
+			padding: 0.1em 0.3em;
+			:hover, :focus {
+				text-decoration: underline;
+			}
+		}
+	}
+}
+
+main {
+	@extend .slice;
+	margin-top: 2em;
+}
+
+code {
+	font-size: 0.7em;
+	padding: 0.2em;
+	border-radius: 0.3em;
+}
+
+* + .content {
+	margin-top: 1em;
+}
+
+.content {
+	* + p,
+	* + ol,
+	* + ul,
+	* + li {
+		margin-top: 0.6em;
+	}
+	* + h1,
+	* + h2,
+	* + h3,
+	* + h4,
+	* + h5,
+	* + h6 {
+		margin-top: 1.2rem;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: normal;
+	}
+	ol, ul {
+		margin-left: 1.5em;
+	}
+	h2 { font-size: 1.3em; }
+	h3 { font-size: 1.2em; }
+	h4 { font-size: 1.1em; }
+	h5 { font-size: 1.1em; font-weight: bold; }
+	h6 { font-size: 1.1em; font-weight: bold; font-size: italic; }
+}
+
+.codeblock {
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	font-size: 0.6em;
+}
+
+.sitefooter {
+	@extend .slice;
+	margin-top: 7rem;
+	margin-bottom: 7rem;
+	> p > span {
+		opacity: 0.25;
+	}
+	small {
+		display: block;
+		font-size: 0.7em;
+		opacity: 0.7;
+	}
+}
