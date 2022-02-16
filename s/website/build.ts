@@ -14,7 +14,9 @@ if (!mode)
 	console.error(`build requires argument "${mode}"`)
 
 const options = {mode, base: "."}
-await write("index.html", indexHtml(options))
-await write("setup.html", setupHtml(options))
-await write("components.html", componentsHtml(options))
-await write("legal.html", legalHtml(options))
+await Promise.all([
+	write("index.html", indexHtml(options)),
+	write("setup.html", setupHtml(options)),
+	write("components.html", componentsHtml(options)),
+	write("legal.html", legalHtml(options)),
+])

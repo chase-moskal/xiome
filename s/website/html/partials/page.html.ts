@@ -94,13 +94,11 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 				<a href="${base}/components">components</a>
 			</nav>
 		</div>
-		<xio-menu sticky="sticky" initially-hidden>
+		<xio-menu sticky initially-hidden>
 			<xio-menu-item>
 				<xiome-my-avatar></xiome-my-avatar>
-				<xiome-login-panel slot="panel" show-logout="show-logout">
-					<xiome-my-account>
-						<h3>your account</h3>
-					</xiome-my-account>
+				<xiome-login-panel slot="panel" show-logout>
+					<xiome-my-account></xiome-my-account>
 				</xiome-login-panel>
 			</xio-menu-item>
 		</xio-menu>
