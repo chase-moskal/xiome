@@ -4,6 +4,14 @@ import {html, HtmlTemplate, render} from "./html.js"
 import {prepareUrlVersioning} from "./versioning/prepare-url-versioning.js"
 
 export default <Suite>{
+	"ergonomics": {
+		async "null and undefined injections do nothing"() {
+			const expectedResult = "hello world"
+			expect(html`hello${null} world`.toString()).equals(expectedResult)
+			expect(html`hello${undefined} world`.toString()).equals(expectedResult)
+			expect(html`hello${""} world`.toString()).equals(expectedResult)
+		},
+	},
 	"sanitization": async() => {
 		const isSanitized = (t: HtmlTemplate) => !render(t).includes("<script>")
 		return {
