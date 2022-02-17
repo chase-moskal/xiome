@@ -1,0 +1,121 @@
+
+* {
+	--focus-outline: 2px solid #8ff8;
+	&:focus {
+		outline: var(--focus-outline)
+	}
+}
+
+html {
+	font-family: "Play", sans-serif;
+	color: #fff8;
+	min-height: 100%;
+	background: #151619;
+	background: fixed linear-gradient(to bottom right, #24252a, #000000);
+}
+
+xiome-app-manager {
+	&::part(appeditor-appform-xiotextinput) {
+		width: 100%;
+	}
+	&::part(xiotextinput-problems) {
+		font: 0.8em "Play", sans-serif;
+	}
+	&::part(xiotextinput-textinput) {
+		font-family: "Varela Round", sans-serif;
+		background: #00000008;
+		border: 1px solid #fff1;
+	}
+	&::part(xiotextinput-label) {
+		color: #fff6;
+		font-size: 0.8em;
+		font-family: "Play", sans-serif;
+	}
+}
+
+a,
+*::part(link) {
+	color: #adfa;
+	text-decoration: inherit;
+	&:hover, &:focus {
+		color: #fff;
+		text-decoration: underline;
+		text-shadow: 0 0 10px #fff4;
+	}
+}
+
+a[data-external],
+*::part(link-external) {
+	&::before {
+		content: "» ";
+		display: inline;
+	}
+	&::after {
+		content: " «";
+		display: inline;
+	}
+}
+
+.underline {
+	font-style: normal;
+	text-decoration: underline;
+}
+
+code { background: #0002; }
+.codeblock { display: block; }
+.htmlcode { color: #fff6; }
+.htmlcode [data-syntax=tag] { color: deepskyblue; }
+.htmlcode [data-syntax=attr] { color: skyblue; }
+.htmlcode [data-syntax=data] { color: #aaffa0; }
+.htmlcode [data-syntax=indent] {
+	display: block;
+}
+
+.prerelease {
+	font-family: Play, sans-serif;
+	color: #fffd78;
+	.prerelease-tag {
+		background: #797f3387;
+	}
+}
+
+.prerelease-notice {
+	color: #fc0c;
+}
+
+.siteheader {
+	h1 {
+		color: white;
+		font-family: "Varela Round", sans-serif;
+		font-weight: normal;
+		text-transform: uppercase;
+		span:first-child {
+			text-shadow: 0 0 20px #fff6;
+		}
+	}
+	.marked-link {
+		border-radius: 4px;
+		text-decoration: underline;
+		text-decoration-color: #adf4;
+	}
+	[data-page="learn"] & nav a[href$="/"] { @extend .marked-link }
+	[data-page="setup"] & nav a[href$="/setup"] { @extend .marked-link }
+	[data-page="components"] & nav a[href$="/components"] { @extend .marked-link }
+}
+
+xio-menu {
+	color: #fffa;
+	&::part(list) {
+		background: #fff2;
+		border-radius: 0.3em;
+		box-shadow: 3px 4px 5px #0005;
+	}
+	xio-menu-item::part(panel) {
+		background: #324a71cc;
+	}
+}
+
+main h2 {
+	color: #fffa;
+	font-weight: normal;
+}

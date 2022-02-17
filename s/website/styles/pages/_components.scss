@@ -1,0 +1,90 @@
+
+[data-page="components"] .page {
+
+	.explainer {
+		padding-bottom: 4em;
+		> * + * {
+			margin-top: 1em;
+		}
+		p {
+			max-width: 24em;
+		}
+	}
+
+	.componentgrid {
+		list-style: none;
+
+		> li {
+			display: flex;
+			flex-wrap: wrap;
+			border-top: 1px solid #fff1;
+			padding-top: 2em;
+
+			+ li {
+				margin-top: 2em;
+			}
+
+			&:last-of-type {
+				padding-bottom: 2em;
+				border-bottom: 1px solid #fff1;
+			}
+
+			> * {
+				padding: 1em;
+			}
+
+			> .summary {
+				flex: 0 1 32em;
+				max-width: 100%;
+				padding-top: 0;
+				padding-left: 0;
+				> * + * {
+					margin-top: 1rem;
+				}
+				> h3 {
+					font-size: 2rem;
+					> span:nth-child(2) {
+						opacity: 0.3;
+					}
+				}
+				code {
+					color: #0f0c;
+					padding: 1em;
+					white-space: pre-wrap;
+					tab-size: 2;
+					&::before {
+						content: "copy into website html <body>";
+						display: block;
+						color: #fff4;
+						font-family: sans-serif;
+						margin-bottom: 0.5em;
+					}
+				}
+			}
+			> .demo {
+				flex: 1 1 24em;
+				position: relative;
+				padding: 4em;
+				padding-top: 2em;
+				@media (max-width: 600px) { padding: 1em; padding-top: 2em; }
+				background: #0002;
+				&::before {
+					position: absolute;
+					font-size: 0.7em;
+					content: "interactive demo — play around!";
+					right: 0;
+					left: 0;
+					top: 0.2em;
+					text-align: center;
+					opacity: 0.6;
+				}
+			}
+		}
+	}
+
+	.note {
+		margin: 4em auto;
+		text-align: center;
+		opacity: 0.5;
+	}
+}

@@ -1,6 +1,7 @@
 
 /x
 /s/**/_*
+!/s/**/_*.scss
 /data.json
 /mock-database.json
 /node_modules
