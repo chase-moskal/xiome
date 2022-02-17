@@ -1,32 +1,33 @@
 
 import {makeFileWriter} from "./build/file-writer.js"
 
-import indexHtml from "./html/index.html.js"
-import setupHtml from "./html/setup.html.js"
-import componentsHtml from "./html/components.html.js"
-import legalHtml from "./html/legal.html.js"
-
-import chatHtml from "./html/mocksite/chat.html.js"
-import mocksiteHtml from "./html/mocksite/index.html.js"
-import notesHtml from "./html/mocksite/notes.html.js"
-import videosHtml from "./html/mocksite/videos.html.js"
+import {promisify} from "util"
+import globCallback from "glob"
+import {CommonBuildOptions} from "./build-types.js"
+const glob = promisify(globCallback)
 
 const root = "x"
-const mode = process.argv[2]
+const mode = <CommonBuildOptions["mode"]>process.argv[2]
 const {write} = makeFileWriter(root)
 
 if (!mode)
 	console.error(`build requires argument "${mode}"`)
 
-const options = {mode, base: "."}
-await Promise.all([
-	write("index.html", indexHtml(options)),
-	write("setup.html", setupHtml(options)),
-	write("components.html", componentsHtml(options)),
-	write("legal.html", legalHtml(options)),
+const htmlSources = await glob(
+	`s/website/html/**/*.html.ts`,
+	{ignore: `s/website/html/partials/**/*`},
+)
 
-	write("mocksite/index.html", mocksiteHtml(options)),
-	write("mocksite/chat.html", chatHtml(options)),
-	write("mocksite/notes.html", notesHtml(options)),
-	write("mocksite/videos.html", videosHtml(options)),
-])
+const options: CommonBuildOptions = {mode, base: "."}
+
+await Promise.all(htmlSources.map(async source => {
+	source = source
+		.replace(/^s\/website\//, "./")
+		.replace(/\.ts$/, ".js")
+	const renderer = (await import(source)).default
+	const destination = source
+		.replace(/^\.\/html\//, "")
+		.replace(/\.js$/, "")
+	console.log(destination)
+	await write(destination, await renderer(options))
+}))

@@ -1,11 +1,9 @@
 
+import {CommonBuildOptions} from "../../build-types.js"
 import {html} from "../../../toolbox/hamster-html/html.js"
 import mocksitePageHtml from "../partials/mocksite-page.html.js"
 
-export default ({mode, base}: {
-	mode: string
-	base: string
-}) =>
+export default ({mode, base}: CommonBuildOptions) =>
 
 mocksitePageHtml({
 mode,

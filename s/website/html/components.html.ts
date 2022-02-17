@@ -1,11 +1,9 @@
 
 import pageHtml from "./partials/page.html.js"
+import {CommonBuildOptions} from "../build-types.js"
 import {html, untab} from "../../toolbox/hamster-html/html.js"
 
-export default ({mode, base}: {
-	mode: string
-	base: string
-}) =>
+export default ({mode, base}: CommonBuildOptions) =>
 
 pageHtml({
 mode,
