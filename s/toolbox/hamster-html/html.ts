@@ -37,15 +37,14 @@ export class HtmlTemplate {
 	}
 
 	async render() {
-		let result = ""
-		await Promise.all(this.#strings.map(async(string, index) => {
+		const results = await Promise.all(this.#strings.map(async(string, index) => {
 			const value = await this.#values[index] ?? ""
 			const safeValue = Array.isArray(value)
 				? (await Promise.all(value.map(this.#processAsyncValue))).join("")
 				: await this.#processAsyncValue(value)
-			result += string + safeValue
+			return string + safeValue
 		}))
-		return result
+		return results.join("")
 	}
 }
 

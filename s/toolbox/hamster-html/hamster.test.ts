@@ -1,4 +1,5 @@
 
+import {nap} from "@chasemoskal/snapstate"
 import {Suite, assert, expect} from "cynic"
 import {html, HtmlTemplate, render, untab} from "./html.js"
 import {prepareHashVersioning} from "./versioning/prepare-hash-versioning.js"
@@ -27,6 +28,17 @@ export default <Suite>{
 		async "injected promises are sanitized"() {
 			const promise = Promise.resolve("<script>")
 			expect((await html`hello ${promise}`.render()).includes("<script>")).not.ok()
+		},
+		async "non-promise values can be rendered via async render"() {
+			expect(await html`hello ${"world!"}`.render()).equals("hello world!")
+		},
+		async "multiple injections are ordered correctly"() {
+			expect(await html`hello ${"world"}, ${"lmao"}`.render())
+				.equals("hello world, lmao")
+			const slowPromise = nap(10).then(() => "hello")
+			const fastPromise = Promise.resolve("world")
+			expect(await html`${slowPromise} ${fastPromise}!`.render())
+				.equals("hello world!")
 		},
 	},
 	"sanitization": async() => {
