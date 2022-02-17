@@ -1,7 +1,7 @@
 
-@use "partials/layout";
-@use "partials/aesthetic";
+@use "partials/_layout.scss";
+@use "partials/_aesthetic.scss";
 
-@use "pages/learn";
-@use "pages/setup";
-@use "pages/components";
+@use "pages/_learn.scss";
+@use "pages/_setup.scss";
+@use "pages/_components.scss";
