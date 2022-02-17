@@ -67,8 +67,8 @@
   - *note:* of course, when you're done, end each process by pressing `ctrl+c`
 - open vscode by running `code .`
 - open your web browser
-  - see the xiome website at http://localhost:8080/x/
-  - see the mocksite at http://localhost:8080/x/mocksite/
+  - see the xiome website at http://localhost:8080/
+  - see the mocksite at http://localhost:8080/mocksite/
   - disable your browser's caching
     - open chrome's developer tools
     - in the network tab, enable "disable cache" mode
@@ -86,8 +86,8 @@
   - this mock mode also provides a unified debugging experience within the browser (even for backend business logic)
   - the "database" state is actually saved in `localStorage`
   - in the browser dev console, you can wipe clean all the state by calling `localStorage.clear()` then refreshing the page
-- you can work on the xiome.io website itself at http://localhost:8080/x/
-- you can develop new features in the "mocksite" at http://localhost:8080/x/mocksite/
+- you can work on the xiome.io website itself at http://localhost:8080/
+- you can develop new features in the "mocksite" at http://localhost:8080/mocksite/
   - the mocksite is a crappy-looking site that mimics a website that had installed xiome
   - it's a "proving grounds" for developing new features
   - you can login with a special email address `creative@xiome.io`, which is a special fake account on the mocksite that has administrator privileges
