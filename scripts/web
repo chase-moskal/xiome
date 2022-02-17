@@ -3,7 +3,7 @@
 COMMAND=$1
 TAG="dev"
 IMAGE="xiome-web"
-DOCKERFILE="./web/dockerfile"
+DOCKERFILE="./s/website/dockerfile"
 COMMANDLIST="'build', 'run', or 'debug'"
 
 if [[ -z "$COMMAND" ]]; then
