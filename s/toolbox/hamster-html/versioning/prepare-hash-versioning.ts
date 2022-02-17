@@ -3,7 +3,7 @@ import {createHash} from "crypto"
 import {readFile} from "fs/promises"
 import {normalize, join} from "path"
 
-export function prepareUrlVersioning({root}: {root: string}) {
+export function prepareHashVersioning({root}: {root: string}) {
 
 	function getPathForUrl(url: string) {
 		[url] = url.split("#")

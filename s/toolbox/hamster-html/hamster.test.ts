@@ -1,7 +1,7 @@
 
 import {Suite, assert, expect} from "cynic"
 import {html, HtmlTemplate, render, untab} from "./html.js"
-import {prepareUrlVersioning} from "./versioning/prepare-url-versioning.js"
+import {prepareHashVersioning} from "./versioning/prepare-hash-versioning.js"
 
 export default <Suite>{
 	"ergonomics": {
@@ -10,6 +10,23 @@ export default <Suite>{
 			expect(html`hello${null} world`.toString()).equals(expectedResult)
 			expect(html`hello${undefined} world`.toString()).equals(expectedResult)
 			expect(html`hello${""} world`.toString()).equals(expectedResult)
+		},
+	},
+	"async": {
+		async "injected promises are resolved"() {
+			const expectedResult = "hello world!"
+			const promise = Promise.resolve("world!")
+			expect(await html`hello ${promise}`.render()).equals(expectedResult)
+		},
+		async "injected promises can be nested"() {
+			const expectedResult = "hello world!"
+			const promise1 = Promise.resolve("world!")
+			const promise2 = Promise.resolve(html`${promise1}`)
+			expect(await html`hello ${promise2}`.render()).equals(expectedResult)
+		},
+		async "injected promises are sanitized"() {
+			const promise = Promise.resolve("<script>")
+			expect((await html`hello ${promise}`.render()).includes("<script>")).not.ok()
 		},
 	},
 	"sanitization": async() => {
@@ -64,7 +81,7 @@ export default <Suite>{
 	},
 	"versioning": {
 		async "adds file hash to url"() {
-			const {v} = prepareUrlVersioning({root: "x"})
+			const {v} = prepareHashVersioning({root: "x"})
 			const url = "xiome.bundle.min.js"
 			const result = await v(url)
 			assert(
@@ -73,7 +90,7 @@ export default <Suite>{
 			)
 		},
 		async "adds file hash to url that already has a querystring"() {
-			const {v} = prepareUrlVersioning({root: "x"})
+			const {v} = prepareHashVersioning({root: "x"})
 			const url = "xiome.bundle.min.js?lol=rofl"
 			const result = await v(url)
 			assert(

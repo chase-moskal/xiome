@@ -11,7 +11,7 @@ export class HtmlTemplate {
 		this.#values = values
 	}
 
-	#processValue(value: any) {
+	#processValue(value: any): string {
 		return value instanceof HtmlTemplate
 			? value.toString()
 			: escapeHtml(value.toString())
@@ -28,6 +28,24 @@ export class HtmlTemplate {
 			},
 			""
 		)
+	}
+
+	async #processAsyncValue(value: any): Promise<string> {
+		return value instanceof HtmlTemplate
+			? await value.render()
+			: escapeHtml(value.toString())
+	}
+
+	async render() {
+		let result = ""
+		await Promise.all(this.#strings.map(async(string, index) => {
+			const value = await this.#values[index] ?? ""
+			const safeValue = Array.isArray(value)
+				? (await Promise.all(value.map(this.#processAsyncValue))).join("")
+				: await this.#processAsyncValue(value)
+			result += string + safeValue
+		}))
+		return result
 	}
 }
 
