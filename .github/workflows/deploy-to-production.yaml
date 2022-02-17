@@ -52,7 +52,7 @@ jobs:
     - name: 🐳 push image - web
       uses: docker/build-push-action@v2
       with:
-        file: ./web/dockerfile
+        file: ./s/website/dockerfile
         context: .
         push: true
         tags: ${{ env.REGISTRY }}/${{ github.repository }}/web:${{ github.sha }}
