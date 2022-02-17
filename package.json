@@ -11,7 +11,7 @@
 		"s"
 	],
 	"scripts": {
-		"build": "run-s clean && run-p importmap compile-tsc compile-sass && run-s links compile-html copy-website-files cleanup-devstuff compile-bundles stats test",
+		"build": "run-s clean && run-p importmap compile-tsc compile-sass && run-s compile-bundles links compile-html copy-website-files cleanup-devstuff stats test",
 		"clean": "rimraf x *.pem && mkdirp x",
 		"importmap": "importly --host=node_modules --production < package-lock.json > x/importmap.json",
 		"links": "ln -s $(realpath node_modules) x/node_modules && ln -s $(realpath s) x/s",
