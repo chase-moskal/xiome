@@ -1,5 +1,5 @@
 
-import {HashVersioner} from "../toolbox/hamster-html/versioning/prepare-hash-versioning.js"
+import {HashVersioner} from "../toolbox/hamster-html/versioning/hash-versioner.js"
 
 export interface BuildOptions {
 	base: string

@@ -7,7 +7,7 @@ export interface HashVersioner {
 	(url: string): Promise<string>
 }
 
-export function prepareHashVersioner({root}: {root: string}): HashVersioner {
+export function hashVersioner({root}: {root: string}): HashVersioner {
 
 	function getPathForUrl(url: string) {
 		[url] = url.split("#")

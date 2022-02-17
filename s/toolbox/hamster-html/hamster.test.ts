@@ -2,7 +2,7 @@
 import {nap} from "@chasemoskal/snapstate"
 import {Suite, assert, expect} from "cynic"
 import {html, HtmlTemplate, render, untab} from "./html.js"
-import {prepareHashVersioner} from "./versioning/prepare-hash-versioning.js"
+import {hashVersioner} from "./versioning/hash-versioner.js"
 
 export default <Suite>{
 	"ergonomics": {
@@ -93,7 +93,7 @@ export default <Suite>{
 	},
 	"versioning": {
 		async "adds file hash to url"() {
-			const v = prepareHashVersioner({root: "x"})
+			const v = hashVersioner({root: "x"})
 			const url = "xiome.bundle.min.js"
 			const result = await v(url)
 			assert(
@@ -102,7 +102,7 @@ export default <Suite>{
 			)
 		},
 		async "adds file hash to url that already has a querystring"() {
-			const v = prepareHashVersioner({root: "x"})
+			const v = hashVersioner({root: "x"})
 			const url = "xiome.bundle.min.js?lol=rofl"
 			const result = await v(url)
 			assert(
