@@ -1,12 +1,11 @@
 
+import {CommonBuildOptions} from "../../build-types.js"
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
 export default ({mode, base, mainHtml, headHtml}: {
-	mode: string
-	base: string
 	mainHtml: HtmlTemplate
 	headHtml?: HtmlTemplate
-}) => html`
+} & CommonBuildOptions) => html`
 
 <html>
 <head>

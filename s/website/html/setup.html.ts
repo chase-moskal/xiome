@@ -3,9 +3,10 @@ import pageHtml from "./partials/page.html.js"
 import {CommonBuildOptions} from "../build-types.js"
 import {html} from "../../toolbox/hamster-html/html.js"
 
-export default ({mode, base}: CommonBuildOptions) =>
+export default ({mode, base, ...options}: CommonBuildOptions) =>
 
 pageHtml({
+...options,
 mode,
 base,
 pageName: "setup",

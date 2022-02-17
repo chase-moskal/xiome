@@ -39,7 +39,8 @@ export async function buildWebsite<xOptions extends BuildOptions>({
 			.replace(/\.js$/, "")
 		let base = relative(dirname(source), inputDirectory)
 		base = base === "" ? "." : base
-		await write(destination, await renderer({...options, base}))
+		const resultHtml = await (await renderer({...options, base})).render()
+		await write(destination, resultHtml)
 		logWrittenFile(resolve(destination))
 	}))
 }

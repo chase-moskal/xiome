@@ -3,7 +3,11 @@ import {createHash} from "crypto"
 import {readFile} from "fs/promises"
 import {normalize, join} from "path"
 
-export function prepareHashVersioning({root}: {root: string}) {
+export interface HashVersioner {
+	(url: string): Promise<string>
+}
+
+export function prepareHashVersioner({root}: {root: string}): HashVersioner {
 
 	function getPathForUrl(url: string) {
 		[url] = url.split("#")
@@ -18,15 +22,13 @@ export function prepareHashVersioning({root}: {root: string}) {
 		return hasher.digest("hex")
 	}
 
-	return {
-		async v(url: string) {
-			const path = getPathForUrl(url)
-			const hash = await computeHash(path)
-			const query = url.match(/\?(.+)$/)
-			const tag = `v=${hash}`
-			return query
-				? url + "&" + tag
-				: url + "?" + tag
-		},
+	return async function v(url: string) {
+		const path = getPathForUrl(url)
+		const hash = await computeHash(path)
+		const query = url.match(/\?(.+)$/)
+		const tag = `v=${hash}`
+		return query
+			? url + "&" + tag
+			: url + "?" + tag
 	}
 }

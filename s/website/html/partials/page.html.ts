@@ -1,14 +1,13 @@
 
+import {CommonBuildOptions} from "../../build-types.js"
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
-export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
-	mode: string
-	base: string
+export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	pageName: string
 	mainHtml: HtmlTemplate
 	pageSubtitle?: string
 	headHtml?: HtmlTemplate
-}) => html`
+} & CommonBuildOptions) => html`
 
 <html>
 <head>
@@ -17,7 +16,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<meta name="darkreader" content="dark"/>
 	<title>xiome.io${pageSubtitle && " – " + pageSubtitle}</title>
-	<link rel="stylesheet" href="${base}/styles/styles.css"/>
+	<link rel="stylesheet" href="${v(`${base}/styles/styles.css`)}"/>
 	<link rel="icon" type="image/png" href="${base}/favicon.png"/>
 
 	${(() => {
@@ -64,7 +63,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 				}
 				document.head.appendChild(config)
 			</script>
-			<script defer="defer" src="${base}/xiome.bundle.min.js"></script>
+			<script defer="defer" src="${v(`${base}/xiome.bundle.min.js`)}"></script>
 		`
 	})()}
 
