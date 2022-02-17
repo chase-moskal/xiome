@@ -16,7 +16,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<meta name="darkreader" content="dark"/>
-	<title>xiome.io — ${pageSubtitle && " – " + pageSubtitle}</title>
+	<title>xiome.io${pageSubtitle && " – " + pageSubtitle}</title>
 	<link rel="stylesheet" href="${base}/styles/styles.css"/>
 	<link rel="icon" type="image/png" href="${base}/favicon.png"/>
 
@@ -79,7 +79,7 @@ export default ({mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 		<br/>
 		<p>go back to the real <a href="https://xiome.io/">xiome.io</a></p>
 	</div>
-	<header class="siteheader" data-page-subtitle="${pageSubtitle || "home"}">
+	<header class="siteheader">
 		<div>
 			<h1>
 				<span class="title">Xiome</span>

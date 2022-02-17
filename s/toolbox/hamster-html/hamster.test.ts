@@ -1,6 +1,6 @@
 
 import {Suite, assert, expect} from "cynic"
-import {html, HtmlTemplate, render} from "./html.js"
+import {html, HtmlTemplate, render, untab} from "./html.js"
 import {prepareUrlVersioning} from "./versioning/prepare-url-versioning.js"
 
 export default <Suite>{
@@ -80,6 +80,41 @@ export default <Suite>{
 				/(\S+)\?lol=rofl&v=\S{64}/.test(result),
 				"url is versioned with hash",
 			)
+		},
+	},
+	"untab": {
+		async "handles string without any tabbing"() {
+			expect(untab("lol")).equals("lol")
+		},
+		async "removes leading tabs from input"() {
+			const result1 = untab(`
+				lol
+			`)
+			const result2 = untab(`
+				lol
+				rofl
+			`)
+			expect(result1).equals("\nlol\n")
+			expect(result2).equals("\nlol\nrofl\n")
+		},
+		async "retains nested tabbing"() {
+			expect(
+				untab(`
+					lol
+						rofl
+							kek
+					lmao
+				`)
+			).equals("\nlol\n\trofl\n\t\tkek\nlmao\n")
+			expect(
+				untab(`
+					lol
+
+						rofl\n\t\t
+							kek
+					lmao
+				`)
+			).equals("\nlol\n\n\trofl\n\n\t\tkek\nlmao\n")
 		},
 	},
 }

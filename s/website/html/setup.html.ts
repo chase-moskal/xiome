@@ -10,7 +10,7 @@ export default ({mode, base}: {
 pageHtml({
 mode,
 base,
-pageName: "learn",
+pageName: "setup",
 mainHtml: html`
 
 <xiome-login-panel initially-hidden>
