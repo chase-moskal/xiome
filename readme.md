@@ -74,7 +74,7 @@
     - in the network tab, enable "disable cache" mode
     - or find the equivalent in your plebeian browser
 - now you are ready to code
-  - whenever you save a typescript or pug file, the watch routine will automatically rebuild it, then you can refresh the browser to see your changes
+  - whenever you save a source file, the watch routine will automatically rebuild it, then you can refresh the browser to see your changes
   - you can press vscode hotkey `ctrl+shift+b` to run the typescript build, which allows vscode to nicely highlight typescript errors for you to address
 
 &nbsp; **xiome's mock mode and the mocksite**
