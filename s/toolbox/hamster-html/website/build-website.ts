@@ -8,6 +8,7 @@ import {escapeRegex} from "../../escape-regex.js"
 import {makeFileWriter} from "./utils/file-writer.js"
 import {WebsiteContext} from "./build-website-types.js"
 import {hashVersioner} from "../versioning/hash-versioner.js"
+import {getWebsiteContext} from "./utils/get-website-context.js"
 
 export async function buildWebsite<xOptions extends WebsiteContext>({
 		inputDirectory,
@@ -30,25 +31,20 @@ export async function buildWebsite<xOptions extends WebsiteContext>({
 		{ignore: excludes.map(exclude => join(inputDirectory, exclude))},
 	)
 
-	await Promise.all(htmlSources.map(async source => {
+	await Promise.all(htmlSources.map(async sourcePath => {
 		const htmlDirectoryRegex = new RegExp("^" + escapeRegex(inputDirectory) + "/")
 		const buildDirectory = dirname(import.meta.url.replace(/^file:\/\/\//, "/"))
-		const targetModule = resolve(source)
-		const module = relative(buildDirectory, targetModule)
-		const renderer = (await import(module)).default
-		const destination = source
+		const targetModule = resolve(sourcePath)
+		const modulePath = relative(buildDirectory, targetModule)
+		const renderer = (await import(modulePath)).default
+		const destination = sourcePath
 			.replace(htmlDirectoryRegex, "./html/")
 			.replace(/^\.\/html\//, "")
 			.replace(/\.js$/, "")
-		let base = relative(dirname(source), inputDirectory)
-		base = base === "" ?"." :base
+
 		const providedContext: WebsiteContext = {
+			...getWebsiteContext({sourcePath, inputDirectory, outputDirectory}),
 			...context,
-			base,
-			v: hashVersioner({
-				root: outputDirectory,
-				origin: relative(resolve(inputDirectory), dirname(targetModule)),
-			}),
 		}
 		const resultHtml = await (await renderer(providedContext)).render()
 		await write(destination, resultHtml)
