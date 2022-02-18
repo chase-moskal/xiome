@@ -20,7 +20,7 @@
 		"compile-html": "node x/website/build.js production",
 		"compile-html-mock": "node x/website/build.js mock",
 		"compile-html-local": "node x/website/build.js local",
-		"compile-sass": "sass s/website/:x/",
+		"compile-sass": "sass s/website/styles/:x/",
 		"compile-bundles": "run-p compile-bundle-xiome compile-bundle-demos compile-bundle-mock",
 		"compile-bundle-xiome": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/xiome.js -o x/xiome.bundle.js && terser x/xiome.bundle.js -cm --source-map --comments false -o x/xiome.bundle.min.js",
 		"compile-bundle-demos": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/demos.js -o x/demos.bundle.js && terser x/demos.bundle.js -cm --source-map --comments false -o x/demos.bundle.min.js",

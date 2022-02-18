@@ -60,6 +60,10 @@ export function render(template: HtmlTemplate) {
 	return template.toString()
 }
 
+export function unsanitized(value: string) {
+	return new HtmlTemplate({strings: [value], values: []})
+}
+
 export function untab(code: string) {
 	const lines = code.split(/\r|\n/)
 

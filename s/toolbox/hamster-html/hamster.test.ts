@@ -1,7 +1,7 @@
 
 import {nap} from "@chasemoskal/snapstate"
 import {Suite, assert, expect} from "cynic"
-import {html, HtmlTemplate, render, untab} from "./html.js"
+import {html, HtmlTemplate, render, unsanitized, untab} from "./html.js"
 import {hashVersioner} from "./versioning/hash-versioner.js"
 
 export default <Suite>{
@@ -144,6 +144,13 @@ export default <Suite>{
 					lmao
 				`)
 			).equals("\nlol\n\n\trofl\n\n\t\tkek\nlmao\n")
+		},
+	},
+	"unsanitized": {
+		async "unsanitized values are not sanitized"() {
+			const value = "script"
+			const result = html`${unsanitized(value)}`
+			expect(result.toString()).equals(value)
 		},
 	},
 }

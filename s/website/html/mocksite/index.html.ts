@@ -1,9 +1,9 @@
 
-import {CommonBuildOptions} from "../../build-types.js"
+import {XiomeWebsiteContext} from "../../build-types.js"
 import {html} from "../../../toolbox/hamster-html/html.js"
 import mocksitePageHtml from "../partials/mocksite-page.html.js"
 
-export default ({...options}: CommonBuildOptions) =>
+export default ({...options}: XiomeWebsiteContext) =>
 
 mocksitePageHtml({
 ...options,

@@ -1,11 +1,11 @@
 
-import {CommonBuildOptions} from "../../build-types.js"
+import {XiomeWebsiteContext} from "../../build-types.js"
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
-export default ({mode, base, mainHtml, headHtml}: {
+export default ({v, mode, base, mainHtml, headHtml}: {
 	mainHtml: HtmlTemplate
 	headHtml?: HtmlTemplate
-} & CommonBuildOptions) => html`
+} & XiomeWebsiteContext) => html`
 
 <html>
 <head>

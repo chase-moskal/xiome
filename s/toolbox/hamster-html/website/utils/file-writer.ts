@@ -1,7 +1,8 @@
 
 import {join, dirname} from "path"
 import {writeFile, mkdir} from "fs/promises"
-import {HtmlTemplate} from "../../toolbox/hamster-html/html.js"
+
+import {HtmlTemplate} from "../../html.js"
 
 export function makeFileWriter(root: string) {
 	return {

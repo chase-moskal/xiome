@@ -1,11 +1,8 @@
 
 import {HashVersioner} from "../toolbox/hamster-html/versioning/hash-versioner.js"
+import {WebsiteContext} from "../toolbox/hamster-html/website/build-website-types.js"
 
-export interface BuildOptions {
-	base: string
-}
-
-export interface CommonBuildOptions extends BuildOptions {
+export interface XiomeWebsiteContext extends WebsiteContext {
 	mode: "mock" | "local" | "production"
 	v: HashVersioner
 }

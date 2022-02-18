@@ -1,5 +1,5 @@
 
-import {CommonBuildOptions} from "../../build-types.js"
+import {XiomeWebsiteContext} from "../../build-types.js"
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
 export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
@@ -7,7 +7,7 @@ export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	mainHtml: HtmlTemplate
 	pageSubtitle?: string
 	headHtml?: HtmlTemplate
-} & CommonBuildOptions) => html`
+} & XiomeWebsiteContext) => html`
 
 <html>
 <head>
@@ -16,7 +16,7 @@ export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<meta name="darkreader" content="dark"/>
 	<title>xiome.io${pageSubtitle && " – " + pageSubtitle}</title>
-	<link rel="stylesheet" href="${v(`${base}/styles/styles.css`)}"/>
+	<link rel="stylesheet" href="${v(`${base}/styles.css`)}"/>
 	<link rel="icon" type="image/png" href="${base}/favicon.png"/>
 
 	${(() => {
