@@ -10,13 +10,12 @@ export function assimilateDacast({
 		configureDacast,
 	}: AssimilatorOptions): Dacast.Sdk {
 
-	if (config.dacast === "mock-mode") {
+	if (config.dacast === "mock-mode")
 		return mockDacastSdk({goodApiKey})
-	}
-	else if (config.dacast === true) {
+
+	else if (config.dacast === true)
 		return configureDacast()
-	}
-	else {
+
+	else
 		throw new Error("unknown dacast config")
-	}
 }
