@@ -41,9 +41,11 @@ export function hashVersioner({root, origin}: {
 		const hash = await computeHash(path)
 		const query = url.match(/\?(.+)$/)
 		const tag = `v=${hash}`
-		return query
-			? url + "&" + tag
-			: url + "?" + tag
+		return normalize(
+			query
+				? url + "&" + tag
+				: url + "?" + tag
+		)
 	}
 }
 
