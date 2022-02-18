@@ -33,17 +33,17 @@ mainHtml: html`
 		<hr />
 		<xiome-video-views></xiome-video-views>
 		<hr />
-		<xiome-video-display initially-hidden="initially-hidden" mock-embed="mock-embed" show-title="show-title">
+		<xiome-video-display mock-embed show-title initially-hidden>
 			<p>video is on</p>
 			<p slot="unprivileged">you are not privileged to view this video</p>
 			<p slot="unavailable">this video is unavailable</p>
 		</xiome-video-display>
-		<xiome-video-companion initially-hidden="initially-hidden">
+		<xiome-video-companion initially-hidden>
 			<p>video companion</p>
 			<p slot="unprivileged">you are not privileged to view this video</p>
 			<p slot="unavailable">this video is unavailable</p>
 		</xiome-video-companion>
-		<xiome-video-display initially-hidden="initially-hidden" mock-embed="mock-embed" show-title="show-title" label="abc">
+		<xiome-video-display mock-embed label="abc" show-title initially-hidden>
 			<p slot="unprivileged">you are not privileged to view this video</p>
 			<p slot="unavailable">this video is unavailable</p>
 		</xiome-video-display>

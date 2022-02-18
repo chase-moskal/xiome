@@ -58,10 +58,10 @@ export function makeContentModel({
 
 	async function loadShow(label: string) {
 		initialized = true
+		activeShowLabels.add(label)
 		if (!getAccess() || currentlyLoadingShows.has(label))
 			return undefined
 		currentlyLoadingShows.add(label)
-		activeShowLabels.add(label)
 		const oldShows = ops.value(state.readable.showsOp) ?? []
 		let updatedShow: VideoShow
 		await ops.operation({
@@ -123,13 +123,9 @@ export function makeContentModel({
 		},
 	
 		async initializeForVideo(label: string) {
-			if (!initialized) {
-				await loadShow(label)
+			await loadShow(label)
+			if (!initialized)
 				await loadModerationData()
-			}
-			else {
-				activeShowLabels.add(label)
-			}
 		},
 
 		get allowance() {

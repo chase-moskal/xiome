@@ -28,7 +28,7 @@ export async function getVideoViews({
 		findAll(labels, label => ({label}))
 	)
 
-	return dacastRows.map(({label, type, dacastId}) => {
+	return labels.map(label => {
 		const privileges = privilegeRows
 			.filter(p => p.label === label)
 			.map(p => p.privilegeId.toString())
@@ -39,14 +39,17 @@ export async function getVideoViews({
 		const isPermitted = hasExplicitPrivilege
 			|| checker.hasPrivilege("view all videos")
 			|| checker.hasPrivilege("moderate videos")
+		const dacastRow = dacastRows.find(r => r.label === label)
 		return isPermitted
-			? {
-				type,
-				label,
-				privileges,
-				id: dacastId,
-				provider: "dacast",
-			}
+			? dacastRow
+				? {
+					type: dacastRow.type,
+					label,
+					privileges,
+					id: dacastRow.dacastId,
+					provider: "dacast",
+				}
+				: undefined
 			: undefined
 	})
 }
