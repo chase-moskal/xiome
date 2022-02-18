@@ -123,9 +123,9 @@ export function makeContentModel({
 		},
 	
 		async initializeForVideo(label: string) {
-			await loadShow(label)
 			if (!initialized)
 				await loadModerationData()
+			await loadShow(label)
 		},
 
 		get allowance() {
