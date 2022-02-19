@@ -27,7 +27,7 @@
 		"compile-bundle-mock": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/xiome-mock.js -o x/xiome-mock.bundle.js && terser x/xiome-mock.bundle.js -cm --source-map --comments false -o x/xiome-mock.bundle.min.js",
 		"cleanup-devstuff": "rimraf x/mocksite",
 		"watch-tsc": "npm run compile-tsc -s -- --watch",
-		"watch-html": "run-s copy-website-files && chokidar \"x/website/**/*.js\" -c \"npm run compile-html-mock\"",
+		"watch-html": "run-s copy-website-files && chokidar \"x/**/*.html.js\" \"x/**/*.css\" \"x/website/**/*\" -c \"npm run compile-html-mock\"",
 		"watch-sass": "npm run compile-sass -s -- --watch",
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
 		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
