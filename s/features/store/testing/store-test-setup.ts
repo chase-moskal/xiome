@@ -2,19 +2,17 @@
 import * as renraku from "renraku"
 
 import {storeApi} from "../api/store-api.js"
-import {ops} from "../../../framework/ops.js"
+import {storePrivileges} from "../store-privileges.js"
 import {makeStoreModel} from "../models/store-model.js"
-import {mockMeta} from "../../../common/testing/mock-meta.js"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {mockAccess} from "../../../common/testing/mock-access.js"
 import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
+import {authTestSetup} from "../../auth/testing/auth-test-setup.js"
 import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
-import {prepareMockAuth} from "../../../common/testing/prepare-mock-auth.js"
-import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
 export async function storeTestSetup() {
-	const {appId, rando, config, storage, appOrigin, authPolicies, databaseRaw}
-		= await prepareMockAuth()
+	const {
+		appId, rando, config, storage, appOrigin, authPolicies, databaseRaw,
+		makeClient: makeClientForAuth, createRole,
+	} = await authTestSetup()
 
 	const {stripeLiaison, mockStripeOperations} = await mockStripeCircuit({
 		rando,
@@ -38,19 +36,28 @@ export async function storeTestSetup() {
 		basePolicy: authPolicies.anonPolicy,
 	})
 
+	const clerkRoleId = await createRole("clerk", [
+		storePrivileges["manage store"],
+		storePrivileges["give away freebies"],
+	])
+
 	return {
 		api,
 		stripeLiaison,
 		mockStripeOperations,
-		async makeClient() {
-			let currentAccess: AccessPayload
+		clerkRoleId,
+		async makeClient(...roleIds: string[]) {
+			const {accessModel, authMediator, logBackIn} = await makeClientForAuth(...roleIds)
+
 			let stripeLinkWillSucceed = true
 			let stripeLoginResultsWillChange: undefined | "complete" | "incomplete" = undefined
 
 			let stripeLoginCount = 0
 
-			const getMeta = async() => mockMeta({access: currentAccess})
 			const getHeaders = async() => ({origin: appOrigin})
+			const getMeta = async() => ({
+				accessToken: await authMediator.getValidAccessToken(),
+			})
 
 			const remotes = {
 				connectService: renraku.mock()
@@ -71,6 +78,7 @@ export async function storeTestSetup() {
 				...remotes,
 				appId: appId.toString(),
 				storageForCache: storage,
+				reauthorize: accessModel.reauthorize,
 				triggerStripeConnectPopup: async({stripeAccountId}) => {
 					if (stripeLinkWillSucceed)
 						mockStripeOperations
@@ -98,42 +106,47 @@ export async function storeTestSetup() {
 				},
 			})
 
-			async function setAccess(access: AccessPayload) {
-				currentAccess = access
-				await storeModel.updateAccessOp(ops.ready(access))
-			}
+			accessModel.track(({accessOp}) => storeModel.updateAccessOp(accessOp))
 
-			async function setAccessWithPrivileges(...privileges: string[]) {
-				await setAccess(mockAccess({
-					rando,
-					appId,
-					appOrigin,
-					privileges: [
-						appPermissions.privileges["universal"],
-						...privileges,
-					],
-				}))
-			}
+			// async function setAccess(access: AccessPayload) {
+			// 	currentAccess = access
+			// 	await storeModel.updateAccessOp(ops.ready(access))
+			// }
 
-			async function setLoggedOut() {
-				await setAccess({
-					...mockAccess({
-						rando,
-						appId,
-						appOrigin,
-						privileges: [
-							appPermissions.privileges["universal"]
-						],
-					}),
-					user: undefined,
-				})
-			}
+			// async function setAccessWithPrivileges(...privileges: string[]) {
+			// 	await setAccess(mockAccess({
+			// 		rando,
+			// 		appId,
+			// 		appOrigin,
+			// 		privileges: [
+			// 			appPermissions.privileges["universal"],
+			// 			...privileges,
+			// 		],
+			// 	}))
+			// }
+
+			// async function setLoggedOut() {
+			// 	await setAccess({
+			// 		...mockAccess({
+			// 			rando,
+			// 			appId,
+			// 			appOrigin,
+			// 			privileges: [
+			// 				appPermissions.privileges["universal"]
+			// 			],
+			// 		}),
+			// 		user: undefined,
+			// 	})
+			// }
 
 			return {
+				logBackIn,
 				storeModel,
-				setAccess,
-				setLoggedOut,
-				setAccessWithPrivileges,
+				accessModel,
+				authMediator,
+				// setAccess,
+				// setLoggedOut,
+				// setAccessWithPrivileges,
 				getStripeLoginCount() { return stripeLoginCount },
 				rigStripeLinkToFail() { stripeLinkWillSucceed = false },
 				rigStripeLinkToSucceed() { stripeLinkWillSucceed = true },

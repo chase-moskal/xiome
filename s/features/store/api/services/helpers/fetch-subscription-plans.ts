@@ -48,12 +48,14 @@ export async function fetchSubscriptionPlans(
 			active: planCross.status === StripeResourceStatus.Active,
 			label: planCross.row.label,
 			planId: planCross.row.planId.string,
+			roleId: planCross.row.roleId.string,
 			time: planCross.row.time,
 			tiers: tiersCrossed
 				.filter(cross => cross.row.planId.equals(planCross.row.planId))
 				.map(cross => ({
 					tierId: cross.row.tierId.string,
 					label: cross.row.label,
+					roleId: cross.row.roleId.string,
 					price: cross.stripeResource.unit_amount,
 					time: cross.row.time,
 					active: cross.status === StripeResourceStatus.Active,

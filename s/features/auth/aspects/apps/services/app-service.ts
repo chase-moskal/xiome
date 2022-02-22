@@ -1,4 +1,5 @@
 
+import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 import {Id, find, and, or} from "dbmage"
 
@@ -11,6 +12,7 @@ import {validateAppDraft} from "../utils/validate-app-draft.js"
 import {originsToDatabase} from "../../../utils/origins-to-database.js"
 import {originsFromDatabase} from "../../../utils/origins-from-database.js"
 import {throwProblems} from "../../../../../toolbox/topic-validation/throw-problems.js"
+import {addApp} from "./helpers/app-actions.js"
 
 export const makeAppService = ({
 	rando, config, authPolicies,
@@ -49,37 +51,18 @@ export const makeAppService = ({
 		})))
 	},
 
-	async registerApp({appDraft, ownerUserId: ownerUserIdString}: {
+	async registerApp({appDraft, ownerUserId}: {
 			appDraft: AppDraft
 			ownerUserId: string
 		}): Promise<AppDisplay> {
 
 		throwProblems(validateAppDraft(appDraft))
 
-		const ownerUserId = Id.fromString(ownerUserIdString)
-		const appId = rando.randomId()
-
-		await Promise.all([
-			database.tables.apps.registrations.create({
-				appId,
-				label: appDraft.label,
-				home: appDraft.home,
-				origins: originsToDatabase(appDraft.origins),
-				archived: false,
-			}),
-			database.tables.apps.owners.create({
-				appId,
-				userId: ownerUserId,
-			}),
-		])
-		return {
-			...appDraft,
-			appId: appId.toString(),
-			stats: {
-				users: 1,
-				usersActiveDaily: 0,
-				usersActiveMonthly: 0,
-			},
-		}
+		return addApp({
+			rando,
+			appDraft,
+			ownerUserId,
+			appsDatabase: dbmage.subsection(database, tables => tables.apps),
+		})
 	},
 }))

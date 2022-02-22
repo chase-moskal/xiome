@@ -27,6 +27,7 @@ export function makeStoreModel(options: {
 			Service<typeof makeSubscriptionShoppingService>
 		billingService:
 			Service<typeof makeBillingService>
+		reauthorize: () => Promise<void>
 		triggerStripeLogin: TriggerStripeLogin
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 		triggerCheckoutPaymentMethodPopup: TriggerCheckoutPopup

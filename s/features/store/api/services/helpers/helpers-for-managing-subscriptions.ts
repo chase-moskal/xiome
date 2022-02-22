@@ -86,7 +86,7 @@ export const helpersForManagingSubscriptions = ({
 				stripeAccountId,
 			})
 
-			return {planId, tierId, time}
+			return {planId, tierId, planRoleId, tierRoleId, time}
 		},
 	}
 }

@@ -56,6 +56,7 @@ export interface StripeConnectDetails {
 export interface SubscriptionTier {
 	tierId: string
 	label: string
+	roleId: string
 	price: number
 	time: number
 	active: boolean
@@ -64,6 +65,7 @@ export interface SubscriptionTier {
 export interface SubscriptionPlan {
 	planId: string
 	label: string
+	roleId: string
 	tiers: SubscriptionTier[]
 	time: number
 	active: boolean

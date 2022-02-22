@@ -2,39 +2,62 @@
 import {Stripe} from "stripe"
 import * as dbmage from "dbmage"
 
+import {getCheckoutDetails, getTiersAndPlansForStripePrices, grantUserRoles, webhookHelpers} from "./helpers/webhook-helpers.js"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
-import {DatabaseRaw} from "../../../../assembly/backend/types/database.js"
+import {DatabaseRaw, DatabaseSchema} from "../../../../assembly/backend/types/database.js"
+import {UnconstrainedTable} from "../../../../framework/api/unconstrained-table.js"
 import {stripeClientReferenceId} from "../../api/utils/stripe-client-reference-id.js"
+import {dedupe} from "../../../../toolbox/dedupe.js"
 
-export function stripeWebhooks({logger, stripeLiaison, databaseRaw}: {
+export function stripeWebhooks({
+		logger, stripeLiaison, databaseRaw,
+	}: {
 		logger: Logger
 		databaseRaw: DatabaseRaw
 		stripeLiaison: ReturnType<typeof makeStripeLiaison>
 	}) {
 	return {
+
 		async "checkout.session.completed"(event: Stripe.Event) {
-			const session: any = event.data.object
-			logger.info("stripe-webhook checkout.session.completed:", session)
+			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
+
+			const {
+				userId,
+				session,
+				helpers,
+				database,
+			} = getCheckoutDetails({event, databaseRaw, stripeLiaison})
+
 			if (session.mode === "setup") {
-				const raw = stripeClientReferenceId.parse(session.client_reference_id)
-				const appId = dbmage.Id.fromString(raw.appId)
-				const userId = dbmage.Id.fromString(raw.userId)
-				const stripeAccount = event.account
-				const stripeLiaisonAccount = stripeLiaison.account(stripeAccount)
-				const setupIntent = await stripeLiaisonAccount.setupIntents
-					.retrieve(session.setup_intent)
+				const setupIntent = await helpers.getStripeSetupIntent(session.setup_intent)
 				const stripePaymentMethodId = typeof setupIntent.payment_method === "string"
 					? setupIntent.payment_method
 					: setupIntent.payment_method.id
-				const paymentMethodsTable = databaseRaw.tables.store.billing.paymentMethods
-					.constrainForApp(appId)
-				await paymentMethodsTable.update({
+				await database.tables.store.billing.paymentMethods.update({
 					...dbmage.find({userId}),
 					upsert: {
 						userId,
 						stripePaymentMethodId,
 					}
+				})
+			}
+			else if (session.mode === "subscription") {
+				const {
+					current_period_start, current_period_end, items,
+				} = await helpers.getStripeSubscription(session.subscription)
+				const priceIds = items.data.map(item => item.price.id)
+				const {tierRows, planRows} = await getTiersAndPlansForStripePrices({
+					priceIds,
+					database,
+				})
+				await grantUserRoles({
+					timeframeEnd: current_period_end,
+					timeframeStart: current_period_start,
+					tierRows,
+					planRows,
+					userId,
+					database,
 				})
 			}
 		},
@@ -44,8 +67,8 @@ export function stripeWebhooks({logger, stripeLiaison, databaseRaw}: {
 		async "invoice.payment_failed"(event: Stripe.Event) {
 			logger.info("stripe-webhook invoice.payment_failed:", event.data.object)
 		},
-		async "customer.subscription.updated"(event: Stripe.Event) {
-			logger.info("stripe-webhook customer.subscription.updated:", event.data.object)
-		},
+		// async "customer.subscription.updated"(event: Stripe.Event) {
+		// 	logger.info("stripe-webhook customer.subscription.updated:", event.data.object)
+		// },
 	}
 }

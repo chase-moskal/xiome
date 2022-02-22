@@ -1,25 +1,27 @@
 
 import {storeTestSetup} from "./store-test-setup.js"
-import {storePowerPrivileges, storePrivileges} from "../store-privileges.js"
+import {storePrivileges} from "../store-privileges.js"
+import {objectMap} from "../../../toolbox/object-map.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 
-type StorePrivilegeKey = keyof typeof storePrivileges
+const roleIds = objectMap(appPermissions.roles, role => <string>role.roleId)
 
-export async function setupSimpleStoreClient(...privileges: StorePrivilegeKey[]) {
+function getRoleIds(...roles: (keyof typeof appPermissions.roles)[]) {
+	return roles.map(role => appPermissions.roles[role].roleId)
+}
+
+export async function setupSimpleStoreClient(
+		...roles: (keyof typeof appPermissions.roles)[]
+	) {
 	const {makeClient} = await storeTestSetup()
-	const client = await makeClient()
-	await client.setAccessWithPrivileges(...privileges.map(p => storePrivileges[p]))
-	return client
+	return makeClient(...getRoleIds(...roles))
 }
 
 export async function setupLinkedStore() {
-	const {makeClient} = await storeTestSetup()
+	const {makeClient, clerkRoleId} = await storeTestSetup()
 
 	async function makeMerchantClient() {
-		const merchantClient = await makeClient()
-		await merchantClient.setAccessWithPrivileges(
-			...Object.values(storePowerPrivileges)
-		)
-		return merchantClient
+		return makeClient(...getRoleIds("everybody", "admin"))
 	}
 
 	const merchantClient = await makeMerchantClient()
@@ -31,17 +33,12 @@ export async function setupLinkedStore() {
 		merchantClient,
 		makeAnotherMerchantClient: makeMerchantClient,
 		async makeRegularClient() {
-			const client = await makeClient()
-			await client.setAccessWithPrivileges()
+			const client = await makeClient(...getRoleIds("everybody"))
 			await client.storeModel.connectSubmodel.initialize()
 			return client
 		},
 		async makeClerkClient() {
-			const client = await makeClient()
-			await client.setAccessWithPrivileges(
-				storePrivileges["manage store"],
-				storePrivileges["give away freebies"],
-			)
+			const client = await makeClient(clerkRoleId)
 			await client.storeModel.connectSubmodel.initialize()
 			return client
 		},

@@ -54,9 +54,11 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 				promise: authMediator.logout(),
 				setOp: op => state.writable.accessOp = op,
 			})
+			await state.wait()
 		},
 		async reauthorize() {
 			await accessOperation(authMediator.reauthorize())
+			await state.wait()
 		},
 	}
 

@@ -1,23 +1,37 @@
 
+import * as dbmage from "dbmage"
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
-import {getRando} from "dbmage"
 import {mockConfig} from "../../assembly/backend/config/mock-config.js"
 import {mockDatabase} from "../../assembly/backend/database/mock-database.js"
-import {memoryFlexStorage} from "dbmage"
+import {DatabaseSafe} from "../../assembly/backend/types/database.js"
+import {addApp} from "../../features/auth/aspects/apps/services/helpers/app-actions.js"
 import {prepareAuthPolicies} from "../../features/auth/policies/prepare-auth-policies.js"
+import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
 
 export async function prepareMockAuth() {
-	const rando = await getRando()
-	const appId = rando.randomId()
+	const rando = await dbmage.getRando()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
 	})
 
-	const storage = memoryFlexStorage()
+	const storage = dbmage.memoryFlexStorage()
 	const databaseRaw = mockDatabase(storage)
+
+	const {appId: appIdString} = await addApp({
+		rando,
+		appDraft: {
+			home: `https://${appOrigin}/`,
+			label: "Mock App",
+			origins: [appOrigin],
+		},
+		ownerUserId: rando.randomId().string,
+		appsDatabase: dbmage.subsection(databaseRaw, tables => tables.apps),
+	})
+
+	const appId = dbmage.Id.fromString(appIdString)
 
 	const authPolicies = prepareAuthPolicies({
 		config,
@@ -31,7 +45,11 @@ export async function prepareMockAuth() {
 		config,
 		storage,
 		appOrigin,
-		databaseRaw,
 		authPolicies,
+		databaseRaw,
+		database: <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
+			appId,
+			database: databaseRaw,
+		}),
 	}
 }

@@ -44,7 +44,9 @@ export const makeSubscriptionPlanningService = (
 			tierInterval: hardcodedInterval,
 		})
 
-		const {planId, tierId, time} = await helpers.createPlanAndTier({
+		const {
+			planId, tierId, planRoleId, tierRoleId, time,
+		} = await helpers.createPlanAndTier({
 			...stripeDetails,
 			...inputs,
 		})
@@ -52,12 +54,14 @@ export const makeSubscriptionPlanningService = (
 		return {
 			planId: planId.toString(),
 			label: inputs.planLabel,
+			roleId: planRoleId.string,
 			time,
 			active: true,
 			tiers: [
 				{
 					tierId: tierId.toString(),
 					label: inputs.tierLabel,
+					roleId: tierRoleId.string,
 					price: inputs.tierPrice,
 					time,
 					active: true,
