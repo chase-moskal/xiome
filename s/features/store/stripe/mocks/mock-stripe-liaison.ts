@@ -150,22 +150,38 @@ export function mockStripeLiaison({
 
 			return {
 
-				customers: mockResource<
-						Stripe.Customer,
-						Stripe.CustomerCreateParams,
-						Stripe.CustomerUpdateParams
-					>({
-					table: tables.customers,
-					createData: params => ({
-						email: params.email,
-						invoice_settings: <any>params.invoice_settings
-							?? {default_payment_method: undefined},
-					}),
-					updateData: params => ({
-						email: params.email,
-						invoice_settings: <any>params.invoice_settings,
-					}),
-				}),
+				customers: (() => {
+					return {
+						...mockResource<
+								Stripe.Customer,
+								Stripe.CustomerCreateParams,
+								Stripe.CustomerUpdateParams
+							>({
+							table: tables.customers,
+							createData: params => ({
+								email: params.email,
+								invoice_settings: <any>params.invoice_settings
+									?? {default_payment_method: undefined},
+							}),
+							updateData: params => ({
+								email: params.email,
+								invoice_settings: <any>params.invoice_settings,
+							}),
+						}),
+						async listPaymentMethods(
+								customer: string,
+								params?: Stripe.CustomerListPaymentMethodsParams,
+							) {
+							const paymentMethods = await tables.paymentMethods.read(
+								dbmage.find({customer})
+							)
+							respond({
+								object: "list",
+								data: [paymentMethods],
+							})
+						},
+					}
+				})(),
 	
 				products: mockResource<
 						Stripe.Product,
@@ -259,35 +275,53 @@ export function mockStripeLiaison({
 					}),
 				}),
 	
-				subscriptions: mockResource<
-						Stripe.Subscription,
-						Stripe.SubscriptionCreateParams,
-						Stripe.SubscriptionUpdateParams
-					>({
-					table: tables.subscriptions,
-					createData: params => ({
-						customer: params.customer,
-						default_payment_method: params.default_payment_method,
-						cancel_at_period_end: params.cancel_at_period_end,
-						items: {
-							url: "",
-							object: "list",
-							has_more: false,
-							data: <any>params.items.map(itemParams => ({
-								id: generateId().toString(),
-								billing_thresholds: itemParams.billing_thresholds,
-								price: itemParams.price,
-								price_data: itemParams.price_data,
-								quantity: itemParams.quantity,
-								tax_rates: itemParams.tax_rates,
-							})),
-						},
-					}),
-					updateData: params => ({
-						cancel_at_period_end: params.cancel_at_period_end,
-						default_payment_method: params.default_payment_method,
-					}),
-				}),
+				subscriptions: (() => {
+					const resource = mockResource<
+							Stripe.Subscription,
+							Stripe.SubscriptionCreateParams,
+							Stripe.SubscriptionUpdateParams
+						>({
+						table: tables.subscriptions,
+						createData: params => ({
+							customer: params.customer,
+							default_payment_method: params.default_payment_method,
+							cancel_at_period_end: params.cancel_at_period_end,
+							items: {
+								url: "",
+								object: "list",
+								has_more: false,
+								data: <any>params.items.map(itemParams => ({
+									id: generateId().toString(),
+									billing_thresholds: itemParams.billing_thresholds,
+									price: itemParams.price,
+									price_data: itemParams.price_data,
+									quantity: itemParams.quantity,
+									tax_rates: itemParams.tax_rates,
+								})),
+							},
+						}),
+						updateData: params => ({
+							cancel_at_period_end: params.cancel_at_period_end,
+							default_payment_method: params.default_payment_method,
+						}),
+					})
+					return {
+						...resource,
+						async list(params: Stripe.SubscriptionListParams) {
+							const subscriptions = await tables.subscriptions.read(
+								dbmage.find(
+									params.price
+										? <any>{customer: params.customer, price: params.price}
+										: {customer: params.customer}
+								)
+							)
+							respond({
+								object: "list",
+								data: [subscriptions],
+							})
+						}
+					}
+				})(),
 			}
 		}
 	}

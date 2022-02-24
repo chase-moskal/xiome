@@ -35,6 +35,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async update(id: string, params: Stripe.CustomerUpdateParams) {
 						return stripe.customers.update(id, params, connection)
 					},
+					async listPaymentMethods(customer: string, params?: Stripe.CustomerListPaymentMethodsParams) {
+						return stripe.customers.listPaymentMethods(customer, params, connection)
+					},
 				},
 				products: {
 					async create(params: Stripe.ProductCreateParams) {
@@ -78,6 +81,12 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					},
 				},
 				subscriptions: {
+					async list(params: Stripe.SubscriptionListParams) {
+						return stripe.subscriptions.list(params, connection)
+					},
+					async create(params: Stripe.SubscriptionCreateParams) {
+						return stripe.subscriptions.create(params, connection)
+					},
 					async retrieve(id: string) {
 						return stripe.subscriptions.retrieve(id, connection)
 					},

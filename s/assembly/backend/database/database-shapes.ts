@@ -38,7 +38,6 @@ export const databaseShapeRequiresAppIsolation:
 	store: {
 		billing: {
 			customers: true,
-			paymentMethods: true,
 		},
 		merchants: {
 			stripeAccounts: true,

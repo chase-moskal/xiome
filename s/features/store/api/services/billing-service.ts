@@ -5,6 +5,7 @@ import * as renraku from "renraku"
 import {CardClues} from "../../stripe/liaison/types/card-clues.js"
 import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
 import {PaymentMethod, StoreServiceOptions} from "../../types/store-concepts.js"
+import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 
 export const makeBillingService = (
 	options: StoreServiceOptions
@@ -12,16 +13,16 @@ export const makeBillingService = (
 
 .policy(options.storeLinkedPolicy)
 
-.expose(({access, database, stripeLiaisonAccount, stripeAccountId, stripeCustomerId}) => ({
+.expose(auth => ({
 
 	async checkoutPaymentMethod() {
-		const session = await stripeLiaisonAccount.checkout.sessions.create({
+		const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "setup",
-			customer: stripeCustomerId,
+			customer: auth.stripeCustomerId,
 			client_reference_id: stripeClientReferenceId.build({
-				appId: access.appId,
-				userId: access.user.userId,
+				appId: auth.access.appId,
+				userId: auth.access.user.userId,
 			}),
 
 			// TODO implement session urls
@@ -29,21 +30,16 @@ export const makeBillingService = (
 			cancel_url: "TODO",
 		})
 		return {
-			stripeAccountId,
+			stripeAccountId: auth.stripeAccountId,
 			stripeSessionId: session.id,
 			stripeSessionUrl: session.url,
 		}
 	},
 
 	async getPaymentMethodDetails(): Promise<PaymentMethod> {
-		const paymentMethod = await database.tables.store.billing.paymentMethods.readOne(dbmage.find({
-			userId: dbmage.Id.fromString(access.user.userId),
-		}))
-		if (paymentMethod) {
-			const stripePaymentMethod = await stripeLiaisonAccount.paymentMethods.retrieve(
-				paymentMethod.stripePaymentMethodId
-			)
-			return {
+		const stripePaymentMethod = await getStripePaymentMethod(auth)
+		return stripePaymentMethod
+			? {
 				cardClues: <CardClues>{
 					brand: stripePaymentMethod.card.brand,
 					country: stripePaymentMethod.card.country,
@@ -52,21 +48,15 @@ export const makeBillingService = (
 					last4: stripePaymentMethod.card.last4,
 				}
 			}
-		}
+			: undefined
 	},
 
 	async disconnectPaymentMethod() {
-		const userId = dbmage.Id.fromString(access.user.userId)
-		const paymentMethod = await database.tables.store.billing.paymentMethods.readOne(dbmage.find({
-			userId,
-		}))
-		if (paymentMethod) {
-			await stripeLiaisonAccount.paymentMethods.detach(
-				paymentMethod.stripePaymentMethodId
+		const stripePaymentMethod = await getStripePaymentMethod(auth)
+		if (stripePaymentMethod) {
+			await auth.stripeLiaisonAccount.paymentMethods.detach(
+				stripePaymentMethod.id
 			)
-			await database.tables.store.billing.paymentMethods.delete(dbmage.find({
-				userId,
-			}))
 		}
 	},
 }))

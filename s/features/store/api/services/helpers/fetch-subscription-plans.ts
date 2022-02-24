@@ -64,17 +64,17 @@ export async function fetchSubscriptionPlans(
 	})
 }
 
-function setupHelpers({database, stripeAccountId}: StoreLinkedAuth) {
+function setupHelpers({database}: StoreLinkedAuth) {
 	const storeTables = database.tables.store
 	return {
 
 		async fetchOurRecordsOfSubscriptionPlansAndTiers() {
-			const planRows = await storeTables.subscriptions.plans
-				.read(dbmage.find({stripeAccountId}))
+			const planRows = await storeTables.subscriptions
+				.plans.read({conditions: false})
 			const planIds = planRows.map(row => row.planId)
 			const tierRows = planIds.length
-				? await storeTables.subscriptions.tiers
-					.read(dbmage.findAll(planIds, planId => ({planId})))
+				? await storeTables.subscriptions
+					.tiers.read(dbmage.findAll(planIds, planId => ({planId})))
 				: []
 			return {planRows, tierRows}
 		},

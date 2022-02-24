@@ -11,7 +11,6 @@ export type StoreSchema = dbmage.AsSchema<{
 	}
 	billing: {
 		customers: CustomerRow
-		paymentMethods: PaymentMethodRow
 	}
 }>
 
@@ -35,21 +34,26 @@ export type CustomerRow = dbmage.AsRow<{
 	stripeCustomerId: string
 }>
 
-export type PaymentMethodRow = dbmage.AsRow<{
-	userId: dbmage.Id
-	stripePaymentMethodId: string
-}>
+// export type PaymentMethodRow = dbmage.AsRow<{
+// 	userId: dbmage.Id
+// 	stripePaymentMethodId: string
+// }>
 
 //
 // subscription tables
 //
+
+// export type SubscriptionPurchaseRow = dbmage.AsRow<{
+// 	userId: dbmage.Id
+// 	stripeSubscriptionId: string
+// 	time: number
+// }>
 
 export type SubscriptionPlanRow = dbmage.AsRow<{
 	label: string
 	planId: dbmage.Id
 	roleId: dbmage.Id
 	time: number
-	stripeAccountId: string
 	stripeProductId: string
 }>
 
@@ -60,9 +64,17 @@ export type SubscriptionTierRow = dbmage.AsRow<{
 	roleId: dbmage.Id
 	time: number
 	stripePriceId: string
-	stripeAccountId: string
 }>
 
+// //
+// // ownership tables
+// //
+
+// export type OwnedSubscriptionRow = dbmage.AsRow<{
+// 	tierId: dbmage.Id
+// 	planId: dbmage.Id
+// 	time: number
+// }>
 
 
 

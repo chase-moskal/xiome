@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
-import {FlexibleRow} from "./rows/custom-db/flexible-row.js"
 import * as dbmage from "dbmage"
+import {FlexibleRow} from "./rows/custom-db/flexible-row.js"
 
 export type MockStripeSchema = {
 	prices: Partial<Stripe.Price>

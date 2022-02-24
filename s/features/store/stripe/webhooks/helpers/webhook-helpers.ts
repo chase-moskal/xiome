@@ -2,13 +2,14 @@
 import {Stripe} from "stripe"
 import * as dbmage from "dbmage"
 
-import {makeStripeLiaison} from "../../liaison/stripe-liaison.js"
-import {stripeClientReferenceId} from "../../../api/utils/stripe-client-reference-id.js"
-import {DatabaseRaw, DatabaseSafe, DatabaseSchema} from "../../../../../assembly/backend/types/database.js"
-import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
-import {StripeLiaison} from "../../../types/store-concepts.js"
 import {dedupe} from "../../../../../toolbox/dedupe.js"
+import {StripeLiaison} from "../../../types/store-concepts.js"
+import {makeStripeLiaison} from "../../liaison/stripe-liaison.js"
+import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 import {SubscriptionPlanRow, SubscriptionTierRow} from "../../../types/store-schema.js"
+import {stripeClientReferenceId} from "../../../api/utils/stripe-client-reference-id.js"
+import {appConstraintKey, DatabaseRaw, DatabaseSafe} from "../../../../../assembly/backend/types/database.js"
+import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
 
 export function webhookHelpers(
 		stripeLiaisonAccount: ReturnType<ReturnType<typeof makeStripeLiaison>["account"]>
@@ -30,6 +31,24 @@ export function webhookHelpers(
 				? await stripeLiaisonAccount.setupIntents.retrieve(s)
 				: <Stripe.SetupIntent>s
 		},
+	}
+}
+
+export async function getFundamentalsAboutStripeCustomer(databaseRaw: DatabaseRaw, stripeCustomerId: string) {
+	const row = await databaseRaw.tables.store.billing.customers.unconstrained
+		.readOne(dbmage.find({stripeCustomerId}))
+	if (!row)
+		throw new Error(`stripe customer id not found in billing "${stripeCustomerId}"`)
+	const appId = row[appConstraintKey]
+	const {userId} = row
+	const database = <DatabaseSafe>UnconstrainedTable.constrainDatabaseForApp({
+		appId,
+		database: databaseRaw,
+	})
+	return {
+		appId,
+		userId,
+		database,
 	}
 }
 
@@ -56,6 +75,7 @@ export function getCheckoutDetails({
 	const stripeLiaisonAccount = stripeLiaison.account(stripeAccount)
 	const helpers = webhookHelpers(stripeLiaisonAccount)
 	return {
+		stripeCustomerId: getStripeId(session.customer),
 		session,
 		stripeAccount,
 		stripeLiaisonAccount,
@@ -97,6 +117,32 @@ export async function getTiersAndPlansForStripePrices({
 	}
 }
 
+export async function revokeUserRoles({
+		userId, database, tierRows, planRows,
+	}: {
+		userId: dbmage.Id
+		database: DatabaseSafe
+		tierRows: SubscriptionTierRow[]
+		planRows: SubscriptionPlanRow[]
+	}) {
+
+	const roleIds = [
+		...tierRows.map(row => row.roleId),
+		...planRows.map(row => row.roleId),
+	]
+
+	if (roleIds.length > 0) {
+		await database.tables.auth.permissions.userHasRole.delete({
+			conditions: dbmage.and(
+				{equal: {userId}},
+				dbmage.or(
+					...roleIds.map(roleId => ({equal: {roleId}}))
+				),
+			),
+		})
+	}
+}
+
 export async function grantUserRoles({
 		timeframeEnd,
 		timeframeStart,
@@ -116,7 +162,7 @@ export async function grantUserRoles({
 	await database.transaction(async({tables, abort}) => {
 		await Promise.all([
 			...planRows.map(async planRow => {
-				await database.tables.auth.permissions.userHasRole.update({
+				await tables.auth.permissions.userHasRole.update({
 					...dbmage.find({userId, roleId: planRow.roleId}),
 					upsert: {
 						userId,
@@ -130,7 +176,7 @@ export async function grantUserRoles({
 				})
 			}),
 			...tierRows.map(async tierRow => {
-				await database.tables.auth.permissions.userHasRole.update({
+				await tables.auth.permissions.userHasRole.update({
 					...dbmage.find({userId, roleId: tierRow.roleId}),
 					upsert: {
 						userId,

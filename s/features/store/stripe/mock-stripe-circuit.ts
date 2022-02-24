@@ -10,6 +10,7 @@ import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
+import {getStripeId} from "./liaison/helpers/get-stripe-id.js"
 
 export async function mockStripeCircuit({
 		rando, logger, tableStorage, databaseRaw,
@@ -111,12 +112,17 @@ export async function mockStripeCircuit({
 				})
 			},
 			async checkoutSubscriptionTier(stripeAccountId: string, stripeSessionId: string) {
-				const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
-				const session = await stripeTables.checkoutSessions
-					.readOne(find({id: stripeSessionId}))
-				const customer = <string>session.customer
+				// const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
+				const session = await stripeTables
+					.checkoutSessions.readOne(find({id: stripeSessionId}))
+				// const customer = <string>session.customer
 
 				console.log("CHECKOUT SESSION", session)
+				await webhookEvent("checkout.session.completed", stripeAccountId, {
+					mode: "setup",
+					setup_intent: getStripeId(session.setup_intent),
+					client_reference_id: session.client_reference_id,
+				})
 
 				// for (const item of session.line_items.data) {
 				// 	const lol = item.price

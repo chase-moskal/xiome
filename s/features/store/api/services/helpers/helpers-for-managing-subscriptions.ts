@@ -73,7 +73,7 @@ export const helpersForManagingSubscriptions = ({
 				roleId: planRoleId,
 				time,
 				stripeProductId,
-				stripeAccountId,
+				// stripeAccountId,
 			})
 
 			await storeTables.subscriptions.tiers.create({
@@ -83,7 +83,7 @@ export const helpersForManagingSubscriptions = ({
 				roleId: tierRoleId,
 				time,
 				stripePriceId,
-				stripeAccountId,
+				// stripeAccountId,
 			})
 
 			return {planId, tierId, planRoleId, tierRoleId, time}
