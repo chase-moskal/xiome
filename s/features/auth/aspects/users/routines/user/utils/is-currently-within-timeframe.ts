@@ -9,11 +9,11 @@ export function isCurrentlyWithinTimeframe({timeframeStart, timeframeEnd}: {
 	const time = Date.now()
 
 	const tooEarly = isDefined(timeframeStart)
-		? time > timeframeStart
+		? time < timeframeStart
 		: false
 
 	const tooLate = isDefined(timeframeEnd)
-		? time < timeframeEnd
+		? time > timeframeEnd
 		: false
 
 	return !tooEarly && !tooLate

@@ -448,20 +448,18 @@ export default <Suite>{
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier] = plan.tiers
 
-				debugger
+				function userHasRoleId(roleId: string) {
+					return !!accessModel.getAccess().user
+						.roles.find(role => role.roleId === roleId)
+				}
+
+				expect(userHasRoleId(plan.roleId)).not.ok()
+				expect(userHasRoleId(tier.roleId)).not.ok()
 
 				await subscriptionsSubmodel.createNewSubscriptionForTier(tier.tierId)
-				// await subscriptionsSubmodel.checkoutSubscriptionTier(tier.tierId)
 
-				debugger
-
-				expect(
-					accessModel.getAccess().permit.privileges.includes(plan.roleId)
-				).ok()
-
-				// expect(
-				// 	accessModel.getAccess().permit.privileges.includes(tier.roleId)
-				// ).ok()
+				expect(userHasRoleId(plan.roleId)).ok()
+				expect(userHasRoleId(tier.roleId)).ok()
 			},
 			async "can purchase a subscription, while providing a new payment method"() {},
 			async "can cancel a subscription"() {},

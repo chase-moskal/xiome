@@ -159,8 +159,6 @@ export async function grantUserRoles({
 		database: DatabaseSafe
 	}) {
 
-	debugger
-
 	await database.transaction(async({tables, abort}) => {
 		await Promise.all([
 			...planRows.map(async planRow => {
