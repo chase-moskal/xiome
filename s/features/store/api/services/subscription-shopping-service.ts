@@ -58,8 +58,6 @@ export const makeSubscriptionShoppingService = (
 
 		const {tierRow} = await getRowsForTierId({tierId, auth})
 
-		// debugger
-
 		const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
 			mode: "subscription",
 			line_items: [{

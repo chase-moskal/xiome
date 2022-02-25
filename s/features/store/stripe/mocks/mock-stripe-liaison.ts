@@ -7,12 +7,20 @@ import * as dbmage from "dbmage"
 import {makeStripeLiaison} from "../liaison/stripe-liaison.js"
 import {MockAccount} from "./tables/types/rows/mock-account.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-database.js"
+import {StripeWebhooks} from "../types/stripe-webhooks.js"
+import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
+import {day} from "../../../../toolbox/goodtimes/times.js"
 
 export function mockStripeLiaison({
-		rando, tables,
+		rando, tables, webhookEvent,
 	}: {
 		rando: Rando
 		tables: MockStripeTables
+		webhookEvent: <xObject extends {}>(
+			type: keyof StripeWebhooks,
+			stripeAccountId: string,
+			object: xObject
+		) => Promise<void>
 	}): ReturnType<typeof makeStripeLiaison> {
 
 	const generateId = () => rando.randomId()
@@ -60,11 +68,11 @@ export function mockStripeLiaison({
 			},
 		},
 
-		account(stripeAccount: string): any {
+		account(stripeAccountId: string): any {
 
 			const tables = dbmage.constrainTables({
 				tables: rawTables,
-				constraint: {"_connectedAccount": stripeAccount},
+				constraint: {"_connectedAccount": stripeAccountId},
 			})
 
 			function ignoreUndefined<X extends {}>(input: X): X {
@@ -210,6 +218,7 @@ export function mockStripeLiaison({
 						currency: params.currency,
 						unit_amount: params.unit_amount,
 						recurring: <any>params.recurring,
+						type: params.recurring ?"recurring" :"one_time",
 					}),
 					updateData: params => ({
 						active: params.active,
@@ -284,6 +293,8 @@ export function mockStripeLiaison({
 						table: tables.subscriptions,
 						createData: params => ({
 							customer: params.customer,
+							current_period_start: Date.now(),
+							current_period_end: Date.now() + (30 * day),
 							default_payment_method: params.default_payment_method,
 							cancel_at_period_end: params.cancel_at_period_end,
 							items: {
@@ -307,6 +318,28 @@ export function mockStripeLiaison({
 					})
 					return {
 						...resource,
+						async create(params: Stripe.SubscriptionCreateParams) {
+							const result = await resource.create(params)
+							const lineData = await Promise.all(
+								result.items.data.map(async item => {
+									const price = await tables.prices.readOne(
+										dbmage.find({id: getStripeId(item.price)})
+									)
+									return {price}
+								})
+							)
+							const invoice = <Partial<Stripe.Invoice>>{
+								customer: result.customer,
+								subscription: result.id,
+								lines: {data: <any>lineData},
+							}
+							await tables.invoices.create(<any>invoice)
+							await webhookEvent(
+								"invoice.paid",
+								stripeAccountId,
+								invoice,
+							)
+						},
 						async list(params: Stripe.SubscriptionListParams) {
 							const subscriptions = await tables.subscriptions.read(
 								dbmage.find(

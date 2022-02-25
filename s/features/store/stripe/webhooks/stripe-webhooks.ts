@@ -94,7 +94,7 @@ export function stripeWebhooks({
 
 			const invoice = <Stripe.Invoice>event.data.object
 			const customerId = getStripeId(invoice.customer)
-			const stripeLiaisonAccount = stripeLiaison.account(customerId)
+			const stripeLiaisonAccount = stripeLiaison.account(event.account)
 			const helpers = webhookHelpers(stripeLiaisonAccount)
 
 			// fulfill roles for subscription
@@ -138,6 +138,10 @@ export function stripeWebhooks({
 			// do nothing, because roles related to subscriptions will
 			// eventually expire automatically
 
+		},
+		async "customer.subscription.created"(event: Stripe.Event) {
+			logger.info("stripe-webhook customer.subscription.created:", event.data.object)
+			debugger
 		},
 		async "customer.subscription.updated"(event: Stripe.Event) {
 			logger.info("stripe-webhook customer.subscription.updated:", event.data.object)

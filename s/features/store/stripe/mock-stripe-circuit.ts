@@ -23,8 +23,28 @@ export async function mockStripeCircuit({
 
 	const stripeTables = await mockStripeTables({tableStorage})
 
+	let webhookCircularity: undefined | string
+
+	async function webhookEvent<xObject extends {}>(
+			type: keyof StripeWebhooks,
+			stripeAccountId: string,
+			object: xObject,
+		) {
+		if (webhookCircularity)
+			throw new Error(`webhook circularity error "${webhookCircularity}" -> "${type}"`)
+		webhookCircularity = type
+		const result = await webhooks[type](<Stripe.Event>{
+			type,
+			account: stripeAccountId,
+			data: <Stripe.Event.Data>{object},
+		})
+		webhookCircularity = undefined
+		return result
+	}
+
 	const stripeLiaison = mockStripeLiaison({
 		rando,
+		webhookEvent,
 		tables: stripeTables,
 	})
 
@@ -33,18 +53,6 @@ export async function mockStripeCircuit({
 		databaseRaw,
 		stripeLiaison,
 	})
-
-	async function webhookEvent<xObject extends {}>(
-			type: keyof StripeWebhooks,
-			stripeAccountId: string,
-			object: xObject,
-		) {
-		return webhooks[type](<Stripe.Event>{
-			type,
-			account: stripeAccountId,
-			data: <Stripe.Event.Data>{object},
-		})
-	}
 
 	return {
 		stripeLiaison,

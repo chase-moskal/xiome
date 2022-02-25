@@ -19,7 +19,7 @@ export function webhookHelpers(
 		async getStripeSubscription(
 				s: string | Stripe.Subscription
 			): Promise<Stripe.Subscription> {
-			return s === typeof "string"
+			return typeof s === "string"
 				? await stripeLiaisonAccount.subscriptions.retrieve(s)
 				: <Stripe.Subscription>s
 		},
@@ -158,6 +158,8 @@ export async function grantUserRoles({
 		userId: dbmage.Id
 		database: DatabaseSafe
 	}) {
+
+	debugger
 
 	await database.transaction(async({tables, abort}) => {
 		await Promise.all([

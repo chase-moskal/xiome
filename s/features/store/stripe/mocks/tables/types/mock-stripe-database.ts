@@ -6,6 +6,7 @@ import {FlexibleRow} from "./rows/custom-db/flexible-row.js"
 export type MockStripeSchema = {
 	prices: Partial<Stripe.Price>
 	accounts: Partial<Stripe.Account>
+	invoices: Partial<Stripe.Invoice>
 	products: Partial<Stripe.Product>
 	customers: Partial<Stripe.Customer>
 	setupIntents: Partial<Stripe.SetupIntent>
@@ -21,6 +22,7 @@ export type MockStripeTables = {
 export type MockStripeShape = dbmage.AsShape<{
 	prices: boolean
 	accounts: boolean
+	invoices: boolean
 	products: boolean
 	customers: boolean
 	setupIntents: boolean
@@ -32,6 +34,7 @@ export type MockStripeShape = dbmage.AsShape<{
 export const mockStripeShape: MockStripeShape = {
 	prices: true,
 	accounts: true,
+	invoices: true,
 	products: true,
 	customers: true,
 	setupIntents: true,
