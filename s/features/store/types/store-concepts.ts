@@ -71,6 +71,18 @@ export interface SubscriptionPlan {
 	active: boolean
 }
 
+export enum SubscriptionStatus {
+	Unsubscribed,
+	Active,
+	Limbo,
+	Inactive,
+}
+
+export interface SubscriptionDetails {
+	status: SubscriptionStatus
+	tierIds: string[]
+}
+
 export interface PaymentMethod {
 	cardClues: CardClues
 }

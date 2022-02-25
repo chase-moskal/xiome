@@ -1,6 +1,4 @@
 
-import {restricted} from "@chasemoskal/snapstate"
-
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
 import {makeStoreState} from "../state/make-store-state.js"
@@ -9,7 +7,8 @@ import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeBillingService} from "../../api/services/billing-service.js"
 
 export function makeBillingSubmodel({
-		snap, allowance, billingService, initializeConnectSubmodel, triggerCheckoutPaymentMethodPopup,
+		snap, allowance, billingService,
+		initializeConnectSubmodel, triggerCheckoutPaymentMethodPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>

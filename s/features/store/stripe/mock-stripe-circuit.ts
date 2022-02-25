@@ -7,10 +7,10 @@ import {FlexStorage} from "dbmage"
 import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
+import {getStripeId} from "./liaison/helpers/get-stripe-id.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
-import {getStripeId} from "./liaison/helpers/get-stripe-id.js"
 
 export async function mockStripeCircuit({
 		rando, logger, tableStorage, databaseRaw,
@@ -88,12 +88,13 @@ export async function mockStripeCircuit({
 			},
 			async updatePaymentMethod(stripeAccountId: string, stripeSessionId: string) {
 				const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
-				const session = await stripeTables.checkoutSessions
-					.readOne(find({id: stripeSessionId}))
+				const session = await stripeTables
+					.checkoutSessions.readOne(find({id: stripeSessionId}))
 				const customer = <string>session.customer
 				await stripeTables.paymentMethods.delete(find({customer}))
 				const paymentMethod = await stripeLiaisonAccount.paymentMethods.create({
 					customer,
+					type: "card",
 					card: <any>{
 						brand: "fakevisa",
 						country: "canada",
@@ -106,41 +107,21 @@ export async function mockStripeCircuit({
 					payment_method: paymentMethod.id,
 				})
 				await webhookEvent("checkout.session.completed", stripeAccountId, {
+					customer,
 					mode: "setup",
 					setup_intent: setupIntent.id,
 					client_reference_id: session.client_reference_id,
 				})
 			},
 			async checkoutSubscriptionTier(stripeAccountId: string, stripeSessionId: string) {
-				// const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 				const session = await stripeTables
 					.checkoutSessions.readOne(find({id: stripeSessionId}))
-				// const customer = <string>session.customer
-
-				console.log("CHECKOUT SESSION", session)
 				await webhookEvent("checkout.session.completed", stripeAccountId, {
+					customer: session.customer,
 					mode: "setup",
 					setup_intent: getStripeId(session.setup_intent),
 					client_reference_id: session.client_reference_id,
 				})
-
-				// for (const item of session.line_items.data) {
-				// 	const lol = item.price
-				// 	await stripeTables.subscriptions.create({
-				// 		customer,
-				// 		items: {
-				// 			object: "list",
-				// 			data: [
-				// 				{
-				// 					id: rando.randomId().toString(),
-				// 					object: "subscription_item",
-				// 					created: Date.now(),
-				// 					price: {},
-				// 				},
-				// 			],
-				// 		}
-				// 	})
-				// }
 			},
 		},
 	}

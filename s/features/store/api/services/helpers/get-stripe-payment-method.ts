@@ -13,5 +13,7 @@ export async function getStripePaymentMethod(auth: StoreLinkedAuth) {
 			getStripeId(stripeCustomer.invoice_settings.default_payment_method)
 		)
 
-	return stripePaymentMethod
+	return stripePaymentMethod.id
+		? stripePaymentMethod
+		: undefined
 }

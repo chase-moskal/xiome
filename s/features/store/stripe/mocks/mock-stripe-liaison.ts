@@ -170,14 +170,14 @@ export function mockStripeLiaison({
 						}),
 						async listPaymentMethods(
 								customer: string,
-								params?: Stripe.CustomerListPaymentMethodsParams,
+								params: Stripe.CustomerListPaymentMethodsParams,
 							) {
 							const paymentMethods = await tables.paymentMethods.read(
-								dbmage.find({customer})
+								dbmage.find({customer, type: params.type})
 							)
-							respond({
+							return respond({
 								object: "list",
-								data: [paymentMethods],
+								data: paymentMethods,
 							})
 						},
 					}
@@ -315,9 +315,9 @@ export function mockStripeLiaison({
 										: {customer: params.customer}
 								)
 							)
-							respond({
+							return respond({
 								object: "list",
-								data: [subscriptions],
+								data: subscriptions,
 							})
 						}
 					}

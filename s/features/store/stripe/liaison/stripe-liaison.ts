@@ -35,7 +35,7 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async update(id: string, params: Stripe.CustomerUpdateParams) {
 						return stripe.customers.update(id, params, connection)
 					},
-					async listPaymentMethods(customer: string, params?: Stripe.CustomerListPaymentMethodsParams) {
+					async listPaymentMethods(customer: string, params: Stripe.CustomerListPaymentMethodsParams) {
 						return stripe.customers.listPaymentMethods(customer, params, connection)
 					},
 				},

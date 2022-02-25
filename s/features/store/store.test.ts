@@ -447,7 +447,9 @@ export default <Suite>{
 				await subscriptionsSubmodel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier] = plan.tiers
-				await subscriptionsSubmodel.checkoutSubscriptionTier(tier.tierId)
+
+				await subscriptionsSubmodel.createNewSubscriptionForTier(tier.tierId)
+				// await subscriptionsSubmodel.checkoutSubscriptionTier(tier.tierId)
 
 				expect(
 					accessModel.getAccess().permit.privileges.includes(plan.roleId)

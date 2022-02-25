@@ -46,15 +46,15 @@ export const storeApi = ({
 			const stripeLiaisonAccount = stripeLiaison.account(connectDetails.stripeAccountId)
 
 			const userId = dbmage.Id.fromString(auth.access.user.userId)
-			let customerRow = await auth.database.tables.store.billing.customers
-				.readOne(dbmage.find({userId}))
+			let customerRow = await auth.database.tables.store.billing
+				.customers.readOne(dbmage.find({userId}))
 			if (!customerRow) {
 				const {id: stripeCustomerId} = await stripeLiaisonAccount.customers.create({})
 				customerRow = {
 					userId,
 					stripeCustomerId,
 				}
-				await auth.database.tables.store.billing.customers.create()
+				await auth.database.tables.store.billing.customers.create(customerRow)
 			}
 			const {stripeCustomerId} = customerRow
 

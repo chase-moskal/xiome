@@ -46,13 +46,14 @@ export function stripeWebhooks({
 				})
 
 				// detach all other payment methods (enforcing one-at-a-time)
-				const paymentMethods = await stripeLiaisonAccount.customers.listPaymentMethods(stripeCustomerId)
+				const paymentMethods = await stripeLiaisonAccount
+					.customers.listPaymentMethods(stripeCustomerId, {type: "card"})
 				for (const paymentMethod of paymentMethods.data) {
 					if (paymentMethod.id !== stripePaymentMethodId)
 						await stripeLiaisonAccount.paymentMethods.detach(paymentMethod.id)
 				}
 
-				// update all subscription to use this payment method
+				// update all subscriptions to use this payment method
 				const subscriptions = await stripeLiaisonAccount
 					.subscriptions.list({customer: stripeCustomerId})
 				for (const subscription of subscriptions.data) {
@@ -138,8 +139,9 @@ export function stripeWebhooks({
 			// eventually expire automatically
 
 		},
-		// async "customer.subscription.updated"(event: Stripe.Event) {
-		// 	logger.info("stripe-webhook customer.subscription.updated:", event.data.object)
-		// },
+		async "customer.subscription.updated"(event: Stripe.Event) {
+			logger.info("stripe-webhook customer.subscription.updated:", event.data.object)
+			debugger
+		},
 	}
 }

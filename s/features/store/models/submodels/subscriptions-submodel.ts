@@ -2,6 +2,7 @@
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
 import {makeStoreState} from "../state/make-store-state.js"
+import {objectMap} from "../../../../toolbox/object-map.js"
 import {TriggerCheckoutPopup} from "../../types/store-popups.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
@@ -34,29 +35,63 @@ export function makeSubscriptionsSubmodel({
 		})
 	}
 
+	async function loadMySubscriptionStatus() {
+		await ops.operation({
+			setOp: op => state.subscriptions.subscriptionDetails = op,
+			promise: subscriptionShoppingService.fetchMySubscriptionStatus(),
+		})
+	}
+
 	async function initialize() {
 		await initializeConnectSubmodel()
-		if (ops.isNone(snap.state.subscriptions.subscriptionPlansOp))
+		if (ops.isNone(snap.state.subscriptions.subscriptionPlansOp)) {
 			await loadSubscriptionPlans()
+			await loadMySubscriptionStatus()
+		}
 	}
 
 	async function refresh() {
-		if (!ops.isNone(snap.state.subscriptions.subscriptionPlansOp))
+		if (!ops.isNone(snap.state.subscriptions.subscriptionPlansOp)) {
 			await loadSubscriptionPlans()
+			await loadMySubscriptionStatus()
+		}
 	}
 
-	async function checkoutSubscriptionTier(tierId: string) {
-		const session = await subscriptionShoppingService.checkoutSubscriptionTier(tierId)
-		await triggerCheckoutSubscriptionPopup(session)
-		await refresh()
+	const reauthorizeAndRefreshAfter = objectMap({
+
+		async checkoutSubscriptionTier(tierId: string) {
+			state.subscriptions.subscriptionDetails = ops.loading()
+			await triggerCheckoutSubscriptionPopup(
+				await subscriptionShoppingService.checkoutSubscriptionTier(tierId)
+			)
+		},
+
+		async createNewSubscriptionForTier(tierId: string) {
+			state.subscriptions.subscriptionDetails = ops.loading()
+			await subscriptionShoppingService.createNewSubscriptionForTier(tierId)
+		},
+
+		async updateExistingSubscriptionWithNewTier(tierId: string) {
+			state.subscriptions.subscriptionDetails = ops.loading()
+			await subscriptionShoppingService.updateExistingSubscriptionWithNewTier(tierId)
+		},
+
+		async unsubscribeFromTier(tierId: string) {
+			state.subscriptions.subscriptionDetails = ops.loading()
+			await subscriptionShoppingService.unsubscribeFromTier(tierId)
+		},
+
+	}, fun => async(...args: any[]) => {
+		await fun(...args)
 		await reauthorize()
-	}
+		await refresh()
+	})
 
 	return {
 		initialize,
 		refresh,
 
-		checkoutSubscriptionTier,
+		...reauthorizeAndRefreshAfter,
 
 		async addPlan(options: {
 				planLabel: string
