@@ -12,6 +12,7 @@ import {StripeLiaisonAccount} from "../types/store-concepts.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
+import {MockStripeRecentDetails} from "./types/mock-stripe-listeners.js"
 
 export async function mockStripeCircuit({
 		rando, logger, tableStorage, databaseRaw,
@@ -43,10 +44,13 @@ export async function mockStripeCircuit({
 		return result
 	}
 
+	const recentDetails = <MockStripeRecentDetails>{}
+
 	const stripeLiaison = mockStripeLiaison({
 		rando,
-		webhookEvent,
+		recentDetails,
 		tables: stripeTables,
+		webhookEvent,
 	})
 
 	const webhooks = stripeWebhooks({
@@ -192,16 +196,6 @@ export async function mockStripeCircuit({
 					customer,
 					stripeLiaisonAccount,
 				})
-				const amount = session.line_items.data.reduce(
-					(previous, current) => previous + current.amount_total,
-					0,
-				)
-				const paymentIntent = await mockHelpers.createPaymentIntent({
-					amount,
-					customer,
-					paymentMethod,
-					stripeLiaisonAccount,
-				})
 				const subscription = await mockHelpers.createSubscription({
 					customer,
 					paymentMethod,
@@ -216,26 +210,12 @@ export async function mockStripeCircuit({
 					...find({id: stripeSessionId}),
 					write: {subscription: subscription.id},
 				})
-				await webhookEvent("invoice.paid", stripeAccountId, {
-					customer,
-					subscription: getStripeId(session.subscription),
-					payment_intent: paymentIntent.id,
-					lines: {
-						data: session.line_items.data.map(item => ({
-							quantity: item.quantity,
-							price: {
-								type: "recurring",
-								id: getStripeId(item.price),
-							},
-						}))
-					},
-				})
 				await webhookEvent("checkout.session.completed", stripeAccountId, {
 					customer,
 					mode: "subscription",
 					subscription,
 					client_reference_id: session.client_reference_id,
-					payment_intent: paymentIntent.id,
+					payment_intent: recentDetails.subscriptionCreation.paymentIntent,
 				})
 			},
 		},
