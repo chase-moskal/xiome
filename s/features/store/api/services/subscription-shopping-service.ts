@@ -8,10 +8,10 @@ import {fetchSubscriptionPlans} from "./helpers/fetch-subscription-plans.js"
 import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
 import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
+import {determineSubscriptionStatus} from "./helpers/utils/determine-subscription-status.js"
 import {updateExistingSubscriptionWithNewTier} from "./helpers/apply-tier-to-existing-subscription.js"
 import {StoreServiceOptions, SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
 import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
-import {determineSubscriptionStatus} from "./helpers/utils/determine-subscription-status.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
@@ -59,6 +59,7 @@ export const makeSubscriptionShoppingService = (
 		const {tierRow} = await getRowsForTierId({tierId, auth})
 
 		const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
+			customer: auth.stripeCustomerId,
 			mode: "subscription",
 			line_items: [{
 				price: tierRow.stripePriceId,

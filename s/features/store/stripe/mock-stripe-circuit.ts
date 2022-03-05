@@ -8,6 +8,7 @@ import {StripeWebhooks} from "./types/stripe-webhooks.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {getStripeId} from "./liaison/helpers/get-stripe-id.js"
+import {StripeLiaisonAccount} from "../types/store-concepts.js"
 import {mockStripeLiaison} from "./mocks/mock-stripe-liaison.js"
 import {mockStripeTables} from "./mocks/tables/mock-stripe-tables.js"
 import {DatabaseRaw} from "../../../assembly/backend/types/database.js"
@@ -54,6 +55,73 @@ export async function mockStripeCircuit({
 		stripeLiaison,
 	})
 
+	const mockHelpers = {
+
+		async setPaymentMethod({customer, stripeLiaisonAccount}: {
+				customer: string
+				stripeLiaisonAccount: StripeLiaisonAccount
+			}) {
+			await stripeTables.paymentMethods.delete(find({customer}))
+			const paymentMethod = await stripeLiaisonAccount.paymentMethods.create({
+				customer,
+				type: "card",
+				card: <any>{
+					brand: "fakevisa",
+					country: "canada",
+					exp_month: 1,
+					exp_year: 2032,
+					last4: rando.randomSequence(4, [..."0123456789"]),
+				},
+			})
+			return paymentMethod
+		},
+
+		async createSetupIntent({customer, paymentMethod, stripeLiaisonAccount}: {
+				customer: string
+				paymentMethod: Stripe.PaymentMethod
+				stripeLiaisonAccount: StripeLiaisonAccount
+			}) {
+			const setupIntent = await stripeLiaisonAccount.setupIntents.create({
+				customer,
+				payment_method: paymentMethod.id,
+			})
+			return setupIntent
+		},
+
+		async createPaymentIntent({
+				amount, customer, paymentMethod, stripeLiaisonAccount,
+			}: {
+				amount: number
+				customer: string
+				paymentMethod: Stripe.PaymentMethod
+				stripeLiaisonAccount: StripeLiaisonAccount
+			}) {
+			const paymentIntent = await stripeLiaisonAccount.paymentIntents.create({
+				amount,
+				customer,
+				currency: "usd",
+				payment_method: paymentMethod.id,
+			})
+			return paymentIntent
+		},
+
+		async createSubscription({
+				customer, paymentMethod, stripeLiaisonAccount, items,
+			}: {
+				customer: string
+				paymentMethod: Stripe.PaymentMethod
+				stripeLiaisonAccount: StripeLiaisonAccount
+				items: Stripe.SubscriptionCreateParams["items"]
+			}) {
+			const subscription = await stripeLiaisonAccount.subscriptions.create({
+				customer,
+				default_payment_method: paymentMethod.id,
+				items,
+			})
+			return subscription
+		}
+	}
+
 	return {
 		stripeLiaison,
 		mockStripeOperations: {
@@ -99,20 +167,14 @@ export async function mockStripeCircuit({
 				const session = await stripeTables
 					.checkoutSessions.readOne(find({id: stripeSessionId}))
 				const customer = <string>session.customer
-				await stripeTables.paymentMethods.delete(find({customer}))
-				const paymentMethod = await stripeLiaisonAccount.paymentMethods.create({
+				const paymentMethod = await mockHelpers.setPaymentMethod({
 					customer,
-					type: "card",
-					card: <any>{
-						brand: "fakevisa",
-						country: "canada",
-						exp_month: 1,
-						exp_year: 2032,
-						last4: rando.randomSequence(4, [..."0123456789"]),
-					},
+					stripeLiaisonAccount,
 				})
-				const setupIntent = await stripeLiaisonAccount.setupIntents.create({
-					payment_method: paymentMethod.id,
+				const setupIntent = await mockHelpers.createSetupIntent({
+					customer,
+					paymentMethod,
+					stripeLiaisonAccount,
 				})
 				await webhookEvent("checkout.session.completed", stripeAccountId, {
 					customer,
@@ -124,11 +186,56 @@ export async function mockStripeCircuit({
 			async checkoutSubscriptionTier(stripeAccountId: string, stripeSessionId: string) {
 				const session = await stripeTables
 					.checkoutSessions.readOne(find({id: stripeSessionId}))
+				const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
+				const customer = <string>session.customer
+				const paymentMethod = await mockHelpers.setPaymentMethod({
+					customer,
+					stripeLiaisonAccount,
+				})
+				const amount = session.line_items.data.reduce(
+					(previous, current) => previous + current.amount_total,
+					0,
+				)
+				const paymentIntent = await mockHelpers.createPaymentIntent({
+					amount,
+					customer,
+					paymentMethod,
+					stripeLiaisonAccount,
+				})
+				const subscription = await mockHelpers.createSubscription({
+					customer,
+					paymentMethod,
+					stripeLiaisonAccount,
+					items: session.line_items.data.map(item => ({
+						price: getStripeId(item.price),
+						quantity: item.quantity,
+					})),
+				})
+				session.subscription = subscription.id
+				await stripeTables.checkoutSessions.update({
+					...find({id: stripeSessionId}),
+					write: {subscription: subscription.id},
+				})
+				await webhookEvent("invoice.paid", stripeAccountId, {
+					customer,
+					subscription: getStripeId(session.subscription),
+					payment_intent: paymentIntent.id,
+					lines: {
+						data: session.line_items.data.map(item => ({
+							quantity: item.quantity,
+							price: {
+								type: "recurring",
+								id: getStripeId(item.price),
+							},
+						}))
+					},
+				})
 				await webhookEvent("checkout.session.completed", stripeAccountId, {
-					customer: session.customer,
-					mode: "setup",
-					setup_intent: getStripeId(session.setup_intent),
+					customer,
+					mode: "subscription",
+					subscription,
 					client_reference_id: session.client_reference_id,
+					payment_intent: paymentIntent.id,
 				})
 			},
 		},

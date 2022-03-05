@@ -72,7 +72,7 @@ export function stripeWebhooks({
 				const {
 					current_period_start, current_period_end, items,
 				} = await helpers.getStripeSubscription(session.subscription)
-				const priceIds = items.data.map(item => item.price.id)
+				const priceIds = items.data.map(item => getStripeId(item.price))
 				const {tierRows, planRows} = await getTiersAndPlansForStripePrices({
 					priceIds,
 					database,

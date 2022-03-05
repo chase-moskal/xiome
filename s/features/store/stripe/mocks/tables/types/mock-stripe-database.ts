@@ -12,6 +12,7 @@ export type MockStripeSchema = {
 	setupIntents: Partial<Stripe.SetupIntent>
 	subscriptions: Partial<Stripe.Subscription>
 	paymentMethods: Partial<Stripe.PaymentMethod>
+	paymentIntents: Partial<Stripe.PaymentIntent>
 	checkoutSessions: Partial<Stripe.Checkout.Session>
 }
 
@@ -28,6 +29,7 @@ export type MockStripeShape = dbmage.AsShape<{
 	setupIntents: boolean
 	subscriptions: boolean
 	paymentMethods: boolean
+	paymentIntents: boolean
 	checkoutSessions: boolean
 }>
 
@@ -40,5 +42,6 @@ export const mockStripeShape: MockStripeShape = {
 	setupIntents: true,
 	subscriptions: true,
 	paymentMethods: true,
+	paymentIntents: true,
 	checkoutSessions: true,
 }

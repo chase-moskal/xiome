@@ -83,7 +83,7 @@ export function mockStripeLiaison({
 				}
 				return <X>output
 			}
-	
+
 			function prepMockResource<xResource>(table: dbmage.Table<any>) {
 				return {
 					create<xParams>({makeData, hook = async() => {}}: {
@@ -127,7 +127,7 @@ export function mockStripeLiaison({
 					},
 				}
 			}
-	
+
 			function mockResource<xResource, xCreateParams, xUpdateParams>({
 					table,
 					createData,
@@ -190,7 +190,7 @@ export function mockStripeLiaison({
 						},
 					}
 				})(),
-	
+
 				products: mockResource<
 						Stripe.Product,
 						Stripe.ProductCreateParams,
@@ -206,7 +206,7 @@ export function mockStripeLiaison({
 						description: params.description,
 					}),
 				}),
-	
+
 				prices: mockResource<
 						Stripe.Price,
 						Stripe.PriceCreateParams,
@@ -224,7 +224,7 @@ export function mockStripeLiaison({
 						active: params.active,
 					}),
 				}),
-	
+
 				checkout: {
 					sessions: mockResource<
 							Stripe.Checkout.Session,
@@ -233,14 +233,27 @@ export function mockStripeLiaison({
 						>({
 						table: tables.checkoutSessions,
 						createData: params => ({
-							customer: params.customer,
 							mode: params.mode,
+							customer: params.customer,
 							client_reference_id: params.client_reference_id,
+							line_items: params.mode === "setup"
+								? undefined
+								: {
+									object: "list",
+									has_more: false,
+									url: undefined,
+									data: params.line_items.map(item => <any>({
+										id: rando.randomId().string,
+										object: "item",
+										quantity: item.quantity,
+										price: item.price,
+									})),
+								},
 						}),
 						updateData: params => ({}),
 					}),
 				},
-	
+
 				paymentMethods: (() => {
 					const resource = mockResource<
 							Stripe.PaymentMethod,
@@ -267,7 +280,7 @@ export function mockStripeLiaison({
 						}
 					}
 				})(),
-	
+
 				setupIntents: mockResource<
 						Stripe.SetupIntent,
 						Stripe.SetupIntentCreateParams,
@@ -283,7 +296,27 @@ export function mockStripeLiaison({
 						payment_method: params.payment_method,
 					}),
 				}),
-	
+
+				paymentIntents: mockResource<
+						Stripe.PaymentIntent,
+						Stripe.PaymentIntentCreateParams,
+						Stripe.PaymentIntentUpdateParams
+					>({
+					table: tables.setupIntents,
+					createData: params => ({
+						customer: params.customer,
+						payment_method: params.payment_method,
+						amount: params.amount,
+						currency: params.currency,
+					}),
+					updateData: params => ({
+						customer: params.customer,
+						payment_method: params.payment_method,
+						amount: params.amount,
+						currency: params.currency,
+					}),
+				}),
+
 				subscriptions: (() => {
 					const resource = mockResource<
 							Stripe.Subscription,
@@ -318,28 +351,28 @@ export function mockStripeLiaison({
 					})
 					return {
 						...resource,
-						async create(params: Stripe.SubscriptionCreateParams) {
-							const result = await resource.create(params)
-							const lineData = await Promise.all(
-								result.items.data.map(async item => {
-									const price = await tables.prices.readOne(
-										dbmage.find({id: getStripeId(item.price)})
-									)
-									return {price}
-								})
-							)
-							const invoice = <Partial<Stripe.Invoice>>{
-								customer: result.customer,
-								subscription: result.id,
-								lines: {data: <any>lineData},
-							}
-							await tables.invoices.create(<any>invoice)
-							await webhookEvent(
-								"invoice.paid",
-								stripeAccountId,
-								invoice,
-							)
-						},
+						// async create(params: Stripe.SubscriptionCreateParams) {
+						// 	const result = await resource.create(params)
+						// 	const lineData = await Promise.all(
+						// 		result.items.data.map(async item => {
+						// 			const price = await tables.prices.readOne(
+						// 				dbmage.find({id: getStripeId(item.price)})
+						// 			)
+						// 			return {price}
+						// 		})
+						// 	)
+						// 	const invoice = <Partial<Stripe.Invoice>>{
+						// 		customer: result.customer,
+						// 		subscription: result.id,
+						// 		lines: {data: <any>lineData},
+						// 	}
+						// 	await tables.invoices.create(<any>invoice)
+						// 	await webhookEvent(
+						// 		"invoice.paid",
+						// 		stripeAccountId,
+						// 		invoice,
+						// 	)
+						// },
 						async list(params: Stripe.SubscriptionListParams) {
 							const subscriptions = await tables.subscriptions.read(
 								dbmage.find(

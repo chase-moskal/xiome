@@ -80,6 +80,14 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 						return stripe.setupIntents.create(params, connection)
 					},
 				},
+				paymentIntents: {
+					async retrieve(id: string) {
+						return stripe.paymentIntents.retrieve(id, connection)
+					},
+					async create(params: Stripe.PaymentIntentCreateParams) {
+						return stripe.paymentIntents.create(params, connection)
+					},
+				},
 				subscriptions: {
 					async list(params: Stripe.SubscriptionListParams) {
 						return stripe.subscriptions.list(params, connection)
