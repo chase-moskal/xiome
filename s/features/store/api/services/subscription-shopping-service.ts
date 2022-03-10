@@ -12,6 +12,7 @@ import {determineSubscriptionStatus} from "./helpers/utils/determine-subscriptio
 import {updateExistingSubscriptionWithNewTier} from "./helpers/apply-tier-to-existing-subscription.js"
 import {StoreServiceOptions, SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
 import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
+import {getPlanRow} from "./helpers/get-plan-row.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
@@ -131,5 +132,18 @@ export const makeSubscriptionShoppingService = (
 		})
 		await auth.stripeLiaisonAccount
 			.subscriptions.update(stripeSubscription.id, {items: newItems})
+	},
+
+	async cancelSubscription(planId: string) {
+		const stripeSubscription = await getCurrentStripeSubscription(auth)
+		if (!stripeSubscription)
+			throw new Error("cannot find existing stripe subscription")
+		const planRow = await getPlanRow({planId, auth})
+		if (!planRow)
+			throw new Error("plan row not found")
+		await auth.stripeLiaisonAccount
+			.subscriptions.update(stripeSubscription.id, {
+				cancel_at_period_end: true,
+			})
 	},
 }))

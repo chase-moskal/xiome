@@ -11,7 +11,7 @@ export function determineSubscriptionStatus(subscription: Stripe.Subscription) {
 
 	return status === "active"
 		? SubscriptionStatus.Active
-		: (status === "canceled" || cancel_at_period_end)
-			? SubscriptionStatus.Inactive
-			: SubscriptionStatus.Limbo
+		: cancel_at_period_end
+			? SubscriptionStatus.Cancelled
+			: SubscriptionStatus.Unpaid
 }

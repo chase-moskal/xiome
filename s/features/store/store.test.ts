@@ -3,7 +3,7 @@ import {Suite, expect} from "cynic"
 
 import {ops} from "../../framework/ops.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
-import {StripeConnectStatus} from "./types/store-concepts.js"
+import {StripeConnectStatus, SubscriptionStatus} from "./types/store-concepts.js"
 import {appPermissions} from "../../assembly/backend/permissions/standard-permissions.js"
 import {setupSimpleStoreClient, setupLinkedStore, setupStoreWithSubscriptionsSetup} from "./testing/store-quick-setup.js"
 
@@ -486,7 +486,33 @@ export default <Suite>{
 				expect(userHasRoleId(plan.roleId)).ok()
 				expect(userHasRoleId(tier.roleId)).ok()
 			},
-			async "can cancel a subscription"() {},
+			async "can cancel a subscription"() {
+				const {makeRegularClient} = await setupStoreWithSubscriptionsSetup()
+				const client = await makeRegularClient()
+				const {
+					accessModel,
+					storeModel: {snap: {state}, billingSubmodel, subscriptionsSubmodel},
+				} = client
+				await billingSubmodel.initialize()
+				await subscriptionsSubmodel.initialize()
+				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
+				const [tier] = plan.tiers
+
+				function userHasRoleId(roleId: string) {
+					return !!accessModel.getAccess().user
+						.roles.find(role => role.roleId === roleId)
+				}
+
+				await subscriptionsSubmodel.checkoutSubscriptionTier(tier.tierId)
+				expect(userHasRoleId(tier.roleId)).ok()
+
+				await subscriptionsSubmodel.cancelSubscription(plan.planId)
+				const subscriptionDetails = ops.value(
+					state.subscriptions.subscriptionDetails
+				)
+				expect(subscriptionDetails.status)
+					.equals(SubscriptionStatus.Cancelled)
+			},
 			async "can upgrade a subscription to a higher tier"() {},
 			async "can downgrade a subscription to a lower tier"() {},
 

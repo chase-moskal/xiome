@@ -74,8 +74,8 @@ export interface SubscriptionPlan {
 export enum SubscriptionStatus {
 	Unsubscribed,
 	Active,
-	Limbo,
-	Inactive,
+	Unpaid,
+	Cancelled,
 }
 
 export interface SubscriptionDetails {

@@ -38,7 +38,7 @@ export function makeStoreModel(options: {
 	const allowance = makeStoreAllowance(snap)
 
 	const connectSubmodel = makeConnectSubmodel({
-		...options, snap, allowance
+		...options, snap, allowance,
 	})
 
 	async function initializeConnectSubmodel() {

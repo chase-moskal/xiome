@@ -60,28 +60,29 @@ export function makeSubscriptionsSubmodel({
 	const reauthorizeAndRefreshAfter = objectMap({
 
 		async checkoutSubscriptionTier(tierId: string) {
-			state.subscriptions.subscriptionDetails = ops.loading()
 			await triggerCheckoutSubscriptionPopup(
 				await subscriptionShoppingService.checkoutSubscriptionTier(tierId)
 			)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {
-			state.subscriptions.subscriptionDetails = ops.loading()
 			await subscriptionShoppingService.createNewSubscriptionForTier(tierId)
 		},
 
 		async updateExistingSubscriptionWithNewTier(tierId: string) {
-			state.subscriptions.subscriptionDetails = ops.loading()
 			await subscriptionShoppingService.updateExistingSubscriptionWithNewTier(tierId)
 		},
 
 		async unsubscribeFromTier(tierId: string) {
-			state.subscriptions.subscriptionDetails = ops.loading()
 			await subscriptionShoppingService.unsubscribeFromTier(tierId)
 		},
 
+		async cancelSubscription(planId: string) {
+			await subscriptionShoppingService.cancelSubscription(planId)
+		},
+
 	}, fun => async(...args: any[]) => {
+		state.subscriptions.subscriptionDetails = ops.loading()
 		await fun(...args)
 		await reauthorize()
 		await refresh()
