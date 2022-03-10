@@ -134,16 +134,25 @@ export const makeSubscriptionShoppingService = (
 			.subscriptions.update(stripeSubscription.id, {items: newItems})
 	},
 
-	async cancelSubscription(planId: string) {
+	async cancelSubscription() {
 		const stripeSubscription = await getCurrentStripeSubscription(auth)
 		if (!stripeSubscription)
 			throw new Error("cannot find existing stripe subscription")
-		const planRow = await getPlanRow({planId, auth})
-		if (!planRow)
-			throw new Error("plan row not found")
+
 		await auth.stripeLiaisonAccount
 			.subscriptions.update(stripeSubscription.id, {
 				cancel_at_period_end: true,
 			})
 	},
+
+	async uncancelSubscription() {
+		const stripeSubscription = await getCurrentStripeSubscription(auth)
+		if (!stripeSubscription)
+			throw new Error("cannot find existing stripe subscription")
+
+		await auth.stripeLiaisonAccount
+			.subscriptions.update(stripeSubscription.id, {
+				cancel_at_period_end: false,
+			})
+	}
 }))

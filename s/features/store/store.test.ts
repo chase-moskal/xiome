@@ -486,7 +486,7 @@ export default <Suite>{
 				expect(userHasRoleId(plan.roleId)).ok()
 				expect(userHasRoleId(tier.roleId)).ok()
 			},
-			async "can cancel a subscription"() {
+			async "can cancel and uncancel a subscription"() {
 				const {makeRegularClient} = await setupStoreWithSubscriptionsSetup()
 				const client = await makeRegularClient()
 				const {
@@ -506,12 +506,19 @@ export default <Suite>{
 				await subscriptionsSubmodel.checkoutSubscriptionTier(tier.tierId)
 				expect(userHasRoleId(tier.roleId)).ok()
 
-				await subscriptionsSubmodel.cancelSubscription(plan.planId)
-				const subscriptionDetails = ops.value(
-					state.subscriptions.subscriptionDetails
-				)
-				expect(subscriptionDetails.status)
+				function getSubscriptionStatus() {
+					return ops.value(
+						state.subscriptions.subscriptionDetails
+					)?.status
+				}
+
+				await subscriptionsSubmodel.cancelSubscription()
+				expect(getSubscriptionStatus())
 					.equals(SubscriptionStatus.Cancelled)
+
+				await subscriptionsSubmodel.uncancelSubscription()
+				expect(getSubscriptionStatus())
+					.equals(SubscriptionStatus.Active)
 			},
 			async "can upgrade a subscription to a higher tier"() {},
 			async "can downgrade a subscription to a lower tier"() {},

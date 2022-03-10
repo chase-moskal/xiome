@@ -9,9 +9,9 @@ export function determineSubscriptionStatus(subscription: Stripe.Subscription) {
 
 	const {status, cancel_at_period_end} = subscription
 
-	return status === "active"
-		? SubscriptionStatus.Active
-		: cancel_at_period_end
-			? SubscriptionStatus.Cancelled
+	return cancel_at_period_end
+		? SubscriptionStatus.Cancelled
+		: status === "active"
+			? SubscriptionStatus.Active
 			: SubscriptionStatus.Unpaid
 }

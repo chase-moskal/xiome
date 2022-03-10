@@ -24,7 +24,8 @@ export async function updateExistingSubscriptionWithNewTier({
 	})
 
 	await auth.stripeLiaisonAccount.subscriptions.update(stripeSubscription.id, {
-		default_payment_method: stripePaymentMethod.id,
 		items: newItems,
+		cancel_at_period_end: false,
+		default_payment_method: stripePaymentMethod.id,
 	})
 }

@@ -328,6 +328,7 @@ export function mockStripeLiaison({
 						table: tables.subscriptions,
 						createData: params => ({
 							customer: params.customer,
+							status: "active",
 							current_period_start: Date.now(),
 							current_period_end: Date.now() + (30 * day),
 							default_payment_method: params.default_payment_method,

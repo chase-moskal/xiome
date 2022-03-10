@@ -77,8 +77,12 @@ export function makeSubscriptionsSubmodel({
 			await subscriptionShoppingService.unsubscribeFromTier(tierId)
 		},
 
-		async cancelSubscription(planId: string) {
-			await subscriptionShoppingService.cancelSubscription(planId)
+		async cancelSubscription() {
+			await subscriptionShoppingService.cancelSubscription()
+		},
+
+		async uncancelSubscription() {
+			await subscriptionShoppingService.uncancelSubscription()
 		},
 
 	}, fun => async(...args: any[]) => {
