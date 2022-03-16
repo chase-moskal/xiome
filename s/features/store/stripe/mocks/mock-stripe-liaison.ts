@@ -11,6 +11,7 @@ import {MockAccount} from "./tables/types/rows/mock-account.js"
 import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 import {MockStripeTables} from "./tables/types/mock-stripe-database.js"
 import {MockStripeRecentDetails} from "../types/mock-stripe-listeners.js"
+import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
 
 export function mockStripeLiaison({
 		rando, tables, recentDetails, webhookEvent,
@@ -75,6 +76,11 @@ export function mockStripeLiaison({
 			const tables = dbmage.constrainTables({
 				tables: rawTables,
 				constraint: {"_connectedAccount": stripeAccountId},
+			})
+
+			const subscriptionMechanics = mockSubscriptionMechanics({
+				tables,
+				generateId,
 			})
 
 			function ignoreUndefined<X extends {}>(input: X): X {
@@ -355,42 +361,19 @@ export function mockStripeLiaison({
 					return {
 						...resource,
 						async create(params: Stripe.SubscriptionCreateParams) {
-							const result = await resource.create(params)
-							let amount = 0
-							const lineData = await Promise.all(
-								result.items.data.map(async item => {
-									const price = <Stripe.Price><any>await tables.prices.readOne(
-										dbmage.find({id: getStripeId(item.price)})
-									)
-									amount += price.unit_amount * item.quantity
-									return {
-										quantity: item.quantity,
-										price: {
-											type: "recurring",
-											id: price.id,
-										},
-									}
+							const subscription = await subscriptionMechanics
+								.subscriptionCreateToActual(params)
+							await tables.subscriptions.create(<any>subscription)
+							const {invoice, paymentIntent} = await subscriptionMechanics
+								.generateInvoiceForSubscriptionItems({
+									customer: <string>subscription.customer,
+									default_payment_method: <string>subscription
+										.default_payment_method,
+									subscriptionId: subscription.id,
+									items: subscription.items,
 								})
-							)
-							const paymentMethod = params.default_payment_method
-							const paymentIntent = <Partial<Stripe.PaymentIntent>>{
-								id: rando.randomId().string,
-								amount,
-								currency: "usd",
-								customer: params.customer,
-								payment_method: paymentMethod,
-							}
-							const invoice = <Partial<Stripe.Invoice>>{
-								id: rando.randomId().string,
-								customer: result.customer,
-								subscription: result.id,
-								lines: {data: <any>lineData},
-								payment_intent: paymentIntent.id,
-							}
-							await tables.paymentIntents.create(<any>paymentIntent)
-							await tables.invoices.create(<any>invoice)
 							recentDetails.subscriptionCreation = {
-								subscription: result,
+								subscription,
 								paymentIntent: <Stripe.PaymentIntent>paymentIntent,
 							}
 							await webhookEvent(
@@ -398,7 +381,46 @@ export function mockStripeLiaison({
 								stripeAccountId,
 								invoice,
 							)
-							return result
+							return subscription
+						},
+						async update(id: string, params: Stripe.SubscriptionUpdateParams) {
+							const existingSubscription = <Stripe.Subscription>await resource.retrieve(id)
+							const write: Partial<Stripe.Subscription> = {}
+							if (params.cancel_at_period_end !== undefined) {
+								write.cancel_at_period_end = params.cancel_at_period_end
+							}
+							if (params.default_payment_method !== undefined) {
+								write.default_payment_method = params.default_payment_method
+							}
+							if (params.items !== undefined) {
+								const newItems = params.items.filter(item => {
+									const foundExisting = existingSubscription.items.data
+										.find(existingItem =>
+											getStripeId(existingItem.price) === item.price
+										)
+									return !foundExisting
+								})
+								const items = await subscriptionMechanics
+									.subscriptionUpdateItemsToActualItems(newItems)
+								const {invoice} = await subscriptionMechanics.generateInvoiceForSubscriptionItems({
+									customer: <string>existingSubscription.customer,
+									default_payment_method: <string>existingSubscription
+										.default_payment_method,
+									subscriptionId: id,
+									items,
+								})
+								await webhookEvent(
+									"invoice.paid",
+									stripeAccountId,
+									invoice,
+								)
+								write.items = items
+							}
+							await tables.subscriptions.update({
+								...dbmage.find({id}),
+								write: <any>write,
+							})
+							return resource.retrieve(id)
 						},
 						async list(params: Stripe.SubscriptionListParams) {
 							const subscriptions = await tables.subscriptions.read(

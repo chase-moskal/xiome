@@ -104,7 +104,7 @@ export const makeSubscriptionShoppingService = (
 		})
 	},
 
-	async updateExistingSubscriptionWithNewTier(tierId: string) {
+	async updateSubscriptionTier(tierId: string) {
 		const stripePaymentMethod = await getStripePaymentMethod(auth)
 		if (!stripePaymentMethod)
 			throw new Error("no payment method found (required)")

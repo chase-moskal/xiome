@@ -1,6 +1,7 @@
 
-import {Id} from "dbmage"
+import * as dbmage from "dbmage"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
+import {SubscriptionTierRow} from "../../../types/store-schema.js"
 
 export const helpersForManagingSubscriptions = ({
 		database,
@@ -8,14 +9,14 @@ export const helpersForManagingSubscriptions = ({
 		stripeLiaisonAccount,
 		generateId,
 	}: StoreLinkedAuth & {
-		generateId: () => Id
+		generateId: () => dbmage.Id
 	}) => {
 
 	const authTables = database.tables.auth
 	const storeTables = database.tables.store
 	const time = Date.now()
 
-	function makeRoleRow(roleId: Id, label: string) {
+	function makeRoleRow(roleId: dbmage.Id, label: string) {
 		return {
 			label,
 			roleId,
@@ -46,6 +47,22 @@ export const helpersForManagingSubscriptions = ({
 			})
 
 			return {stripeProductId, stripePriceId}
+		},
+
+		async createStripePriceForProduct(options: {
+				stripeProductId: string
+				tierPrice: number
+				tierCurrency: "usd"
+				tierInterval: "month" | "year"
+			}) {
+
+			const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
+				currency: options.tierCurrency,
+				unit_amount: options.tierPrice,
+				recurring: {interval: options.tierInterval},
+			})
+
+			return {stripePriceId}
 		},
 
 		async createPlanAndTier({
@@ -87,6 +104,51 @@ export const helpersForManagingSubscriptions = ({
 			})
 
 			return {planId, tierId, planRoleId, tierRoleId, time}
+		},
+
+		async createTierForPlan({
+				price, planId, tierLabel, tierCurrency, tierInterval,
+			}: {
+				price: number
+				planId: string
+				tierLabel: string
+				tierCurrency: "usd"
+				tierInterval: "month" | "year"
+			}) {
+
+			const planRow = await storeTables.subscriptions.plans.readOne(
+				dbmage.find({planId: dbmage.Id.fromString(planId)})
+			)
+
+			if (!planRow)
+				throw new Error(`unknown subscription plan ${planId}`)
+
+			const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
+				unit_amount: price,
+				currency: tierCurrency,
+				recurring: {interval: tierInterval},
+			})
+
+			const roleId = generateId()
+			await authTables.permissions.role.create(
+				makeRoleRow(roleId, tierLabel),
+			)
+
+			const time = Date.now()
+			const tierId = generateId()
+
+			const tierRow: SubscriptionTierRow = {
+				time,
+				tierId,
+				roleId,
+				stripePriceId,
+				label: tierLabel,
+				planId: planRow.planId,
+			}
+
+			await storeTables.subscriptions.tiers.create(tierRow)
+
+			return {tierId, roleId, time}
 		},
 	}
 }

@@ -57,8 +57,7 @@ export function makeSubscriptionsSubmodel({
 		}
 	}
 
-	const reauthorizeAndRefreshAfter = objectMap({
-
+	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
 			await triggerCheckoutSubscriptionPopup(
 				await subscriptionShoppingService.checkoutSubscriptionTier(tierId)
@@ -70,7 +69,7 @@ export function makeSubscriptionsSubmodel({
 		},
 
 		async updateExistingSubscriptionWithNewTier(tierId: string) {
-			await subscriptionShoppingService.updateExistingSubscriptionWithNewTier(tierId)
+			await subscriptionShoppingService.updateSubscriptionTier(tierId)
 		},
 
 		async unsubscribeFromTier(tierId: string) {
@@ -84,8 +83,9 @@ export function makeSubscriptionsSubmodel({
 		async uncancelSubscription() {
 			await subscriptionShoppingService.uncancelSubscription()
 		},
+	}
 
-	}, fun => async(...args: any[]) => {
+	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(actions, fun => async(...args: any[]) => {
 		state.subscriptions.subscriptionDetails = ops.loading()
 		await fun(...args)
 		await reauthorize()
@@ -110,6 +110,21 @@ export function makeSubscriptionsSubmodel({
 				[...oldPlans, newPlan],
 			)
 			return newPlan
+		},
+
+		async addTier(options: {
+				label: string
+				price: number
+				planId: string
+				currency: "usd"
+				interval: "month" | "year"
+			}) {
+			const tier = await subscriptionPlanningService
+				.addTier(options)
+			const plans = ops.value(state.subscriptions.subscriptionPlansOp) ?? []
+			const plan = plans.find(plan => plan.planId === options.planId)
+			plan.tiers = [...plan.tiers, tier]
+			return tier
 		},
 	}
 }

@@ -1,11 +1,13 @@
 
+import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreMeta} from "../../types/store-metas-and-auths.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
-import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan} from "../../types/store-concepts.js"
+import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
+import {SubscriptionTierRow} from "../../types/store-schema.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -70,12 +72,35 @@ export const makeSubscriptionPlanningService = (
 		}
 	},
 
-	async addTier({}: {
+	async addTier({
+			label, price, planId, currency, interval
+		}: {
 			label: string
 			price: number
 			planId: string
+			currency: "usd"
+			interval: "month" | "year"
 		}) {
-		return undefined
+
+		const helpers = helpersForManagingSubscriptions({...options, ...auth})
+		const {tierId, roleId, time} = await helpers.createTierForPlan({
+			price,
+			planId,
+			tierLabel: label,
+			tierInterval: interval,
+			tierCurrency: currency,
+		})
+
+		const tier: SubscriptionTier = {
+			tierId: tierId.toString(),
+			roleId: roleId.toString(),
+			active: true,
+			label,
+			price,
+			time,
+		}
+
+		return tier
 	},
 
 	async editPlan() {},

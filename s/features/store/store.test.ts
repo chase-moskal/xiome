@@ -314,6 +314,43 @@ export default <Suite>{
 					expect(plans.length).equals(2)
 				}
 			},
+			async "can add a new tier to an existing plan"() {
+				const store = await setupLinkedStore()
+				const clerk = await store.makeClerkClient()
+				clerk.storeModel.subscriptionsSubmodel.initialize()
+				const {planId} = await clerk.storeModel.subscriptionsSubmodel
+					.addPlan({
+						planLabel: "membership",
+						tierLabel: "benevolent donor",
+						tierPrice: 5_00,
+					})
+				const {tierId} = await clerk.storeModel.subscriptionsSubmodel
+					.addTier({
+						currency: "usd",
+						interval: "month",
+						label: "deluxe",
+						planId,
+						price: 10_000,
+					})
+				const plans = ops.value(
+					clerk.storeModel.state.subscriptions.subscriptionPlansOp
+				)
+				const plan = plans.find(plan => plan.planId === planId)
+				const tier = plan.tiers.find(tier => tier.tierId === tierId)
+				expect(tier).ok()
+				expect(tier.price).equals(10_000)
+				const anotherClerk = await store.makeClerkClient()
+				anotherClerk.storeModel.subscriptionsSubmodel.initialize()
+				const anotherPlans = ops.value(
+					clerk.storeModel.state.subscriptions.subscriptionPlansOp
+				)
+				const anotherPlan = anotherPlans
+					.find(plan => plan.planId === planId)
+				const anotherTier = anotherPlan.tiers
+					.find(tier => tier.tierId === tierId)
+				expect(anotherTier).ok()
+				expect(anotherTier.price).equals(10_000)
+			},
 
 		},
 		"a user with regular permissions": {
@@ -520,7 +557,49 @@ export default <Suite>{
 				expect(getSubscriptionStatus())
 					.equals(SubscriptionStatus.Active)
 			},
-			async "can upgrade a subscription to a higher tier"() {},
+			async "can upgrade a subscription to a higher tier"() {
+				const store = await setupLinkedStore()
+				const clerk = await store.makeClerkClient()
+				clerk.storeModel.subscriptionsSubmodel.initialize()
+				const {planId} = await clerk.storeModel.subscriptionsSubmodel
+					.addPlan({
+						planLabel: "membership",
+						tierLabel: "benevolent donor",
+						tierPrice: 5_00,
+					})
+				await clerk.storeModel.subscriptionsSubmodel
+					.addTier({
+						currency: "usd",
+						interval: "month",
+						label: "deluxe",
+						planId,
+						price: 10_000,
+					})
+				const {
+					state, billingSubmodel, subscriptionsSubmodel,
+				} = clerk.storeModel
+				await billingSubmodel.initialize()
+				await billingSubmodel.checkoutPaymentMethod()
+				await subscriptionsSubmodel.initialize()
+				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
+				const [tier1, tier2] = plan.tiers
+
+				function userHasRoleId(roleId: string) {
+					return !!clerk.accessModel.getAccess().user
+						.roles.find(role => role.roleId === roleId)
+				}
+				expect(userHasRoleId(plan.roleId)).not.ok()
+				expect(userHasRoleId(tier1.roleId)).not.ok()
+
+				await subscriptionsSubmodel.createNewSubscriptionForTier(tier1.tierId)
+				expect(userHasRoleId(plan.roleId)).ok()
+				expect(userHasRoleId(tier1.roleId)).ok()
+
+				await subscriptionsSubmodel.updateExistingSubscriptionWithNewTier(tier2.tierId)
+				expect(userHasRoleId(plan.roleId)).ok()
+				expect(userHasRoleId(tier1.roleId)).ok()
+				expect(userHasRoleId(tier2.roleId)).ok()
+			},
 			async "can downgrade a subscription to a lower tier"() {},
 
 		},
