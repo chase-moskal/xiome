@@ -7,8 +7,15 @@
   - subscription-planning-service
   - subscription-shopping-service
 - frontend models
+  - store-model
   - connect-submodel
+  - billing-submodel
   - subscription-planning-submodel
+- components
+  - xiome-store-connect
+  - xiome-subscription-planning
+  - xiome-subscription-shopping
+  - xiome-billing
 - popups
   - bank
   - checkout
