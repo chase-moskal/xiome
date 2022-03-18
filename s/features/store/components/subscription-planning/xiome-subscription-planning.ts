@@ -6,12 +6,8 @@ import {select} from "../../../../toolbox/select/select.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {Component, html, mixinRequireShare, mixinStyles, property, query} from "../../../../framework/component.js"
-
-interface PlanDraft {
-	planLabel: string
-	tierLabel: string
-	tierPrice: number
-}
+import {SubscriptionPlanDraft} from "./types/planning-types.js"
+import {validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
 
 function priceInCents(value: string) {
 	const n = parseFloat(value)
@@ -44,21 +40,32 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 			tierlabel: select<XioTextInput>(`xio-text-input[data-field="tierlabel"]`, this.shadowRoot),
 			tierprice: select<XioTextInput>(`xio-text-input[data-field="tierprice"]`, this.shadowRoot),
 		}
-		const draft: PlanDraft = {
+		const draft: SubscriptionPlanDraft = {
 			planLabel: elements.planlabel.value,
 			tierLabel: elements.tierlabel.value,
 			tierPrice: priceInCents(elements.tierprice.value),
 		}
-		console.log("draft:", draft)
 		await this.#storeModel.subscriptionsSubmodel.addPlan(draft)
+		elements.planlabel.text = ""
+		elements.tierlabel.text = ""
+		elements.tierprice.text = ""
 	}
 
 	#renderPlanDraftPanel() {
 		return html`
 			<div class=plandraft>
-				<xio-text-input data-field=planlabel>plan label</xio-text-input>
-				<xio-text-input data-field=tierlabel>tier label</xio-text-input>
-				<xio-text-input data-field=tierprice>tier price</xio-text-input>
+				<xio-text-input
+					data-field=planlabel
+					.validator=${validateLabel}>
+						plan label</xio-text-input>
+				<xio-text-input
+					data-field=tierlabel
+					.validator=${validateLabel}>
+						tier label</xio-text-input>
+				<xio-text-input
+					data-field=tierprice
+					.validator=${validatePriceString}>
+						tier price</xio-text-input>
 				<xio-button @click=${this.#submitNewPlan}>submit</xio-button>
 			</div>
 		`

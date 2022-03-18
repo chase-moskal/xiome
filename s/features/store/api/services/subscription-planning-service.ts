@@ -8,6 +8,10 @@ import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.
 import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
 import {SubscriptionTierRow} from "../../types/store-schema.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
+import {validateCurrency, validateInterval, validateLabel, validatePriceNumber} from "./validators/planning-validators.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
+import {ApiError} from "renraku"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -38,10 +42,15 @@ export const makeSubscriptionPlanningService = (
 			tierPrice: number
 		}): Promise<SubscriptionPlan> {
 
+		const planLabel = runValidation(inputs.planLabel, validateLabel)
+		const tierLabel = runValidation(inputs.tierLabel, validateLabel)
+		const tierPrice = runValidation(inputs.tierPrice, validatePriceNumber)
+
 		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 
 		const stripeDetails = await helpers.createStripeProductAndPrice({
-			...inputs,
+			planLabel,
+			tierPrice,
 			tierCurrency: hardcodedCurrency,
 			tierInterval: hardcodedInterval,
 		})
@@ -50,7 +59,8 @@ export const makeSubscriptionPlanningService = (
 			planId, tierId, planRoleId, tierRoleId, time,
 		} = await helpers.createPlanAndTier({
 			...stripeDetails,
-			...inputs,
+			planLabel,
+			tierLabel,
 		})
 
 		return {
@@ -72,15 +82,19 @@ export const makeSubscriptionPlanningService = (
 		}
 	},
 
-	async addTier({
-			label, price, planId, currency, interval
-		}: {
+	async addTier(inputs: {
 			label: string
 			price: number
 			planId: string
 			currency: "usd"
 			interval: "month" | "year"
 		}) {
+
+		const planId = runValidation(inputs.planId, validateId)
+		const label = runValidation(inputs.label, validateLabel)
+		const price = runValidation(inputs.price, validatePriceNumber)
+		const currency = runValidation(inputs.currency, validateCurrency)
+		const interval = runValidation(inputs.interval, validateInterval)
 
 		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 		const {tierId, roleId, time} = await helpers.createTierForPlan({
