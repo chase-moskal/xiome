@@ -19,5 +19,11 @@ mainHtml: html`
 			<xiome-my-account></xiome-my-account>
 		</xiome-login-panel>
 	</section>
+	<section>
+		<h2>permissions</h2>
+		<xiome-permissions></xiome-permissions>
+		<h3>all privileges</h3>
+		<xiome-privileges></xiome-privileges>
+	</section>
 
 `})

@@ -45,14 +45,18 @@ export function makeConnectSubmodel({
 		}
 	}
 
+	function isAlreadyInitialized() {
+		return !ops.isNone(snap.state.stripeConnect.connectStatusOp)
+	}
+
 	async function initialize() {
-		if (ops.isNone(snap.state.stripeConnect.connectStatusOp)) {
+		if (allowance.connectStripeAccount && isAlreadyInitialized()) {
 			await loadConnectInfo()
 		}
 	}
 
 	async function refresh() {
-		if (!ops.isNone(snap.state.stripeConnect.connectStatusOp)) {
+		if (allowance.connectStripeAccount && !isAlreadyInitialized()) {
 			await loadConnectInfo()
 		}
 	}

@@ -72,7 +72,7 @@ export async function assembleModels({
 		reauthorize,
 		triggerCheckoutPaymentMethodPopup: async() => {throw new Error("trigger popup")},
 		triggerCheckoutSubscriptionPopup: async() => {throw new Error("trigger popup")},
-		triggerStripeConnectPopup: async() => {throw new Error("trigger popup")},
+		triggerStripeConnectPopup: popups.triggerStripeConnectPopup,
 		triggerStripeLogin: async() => {throw new Error("trigger popup")},
 	})
 
@@ -110,7 +110,7 @@ export async function assembleModels({
 			videoModels.contentModel.updateAccessOp(accessOp),
 			chatModel.updateAccessOp(accessOp),
 			notesModel.updateAccessOp(accessOp),
-			// storeModel.accessChange(access),
+			storeModel.updateAccessOp(accessOp),
 		])
 	})
 
