@@ -55,6 +55,12 @@ export function prepareApiShape({appId, storage}: {
 		notes: {
 			notesService: getStandardMeta,
 		},
+		store: {
+			billingService: getStandardMeta,
+			connectService: getStandardMeta,
+			subscriptionPlanningService: getStandardMeta,
+			subscriptionShoppingService: getStandardMeta,
+		},
 	}
 
 	function installAuthMediator({greenService}: {

@@ -77,7 +77,6 @@ export async function storeTestSetup() {
 			const storeModel = makeStoreModel({
 				...remotes,
 				appId: appId.toString(),
-				storageForCache: storage,
 				reauthorize: accessModel.reauthorize,
 				triggerStripeConnectPopup: async({stripeAccountId}) => {
 					if (stripeLinkWillSucceed)

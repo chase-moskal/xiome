@@ -1,5 +1,5 @@
 
-import Stripe from "stripe"
+import type Stripe from "stripe"
 
 export async function stripeAttempt<R extends Stripe.Response<any>>(
 		stripeCall: () => Promise<R>
@@ -11,8 +11,8 @@ export async function stripeAttempt<R extends Stripe.Response<any>>(
 	}
 	catch (error) {
 		const is404 = (
-			error instanceof Stripe.StripeError &&
-			error.statusCode === 404
+			error instanceof Error &&
+			(<any>error).statusCode === 404
 		)
 		if (is404)
 			return undefined

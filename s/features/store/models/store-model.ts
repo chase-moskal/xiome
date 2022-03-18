@@ -12,13 +12,12 @@ import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeBillingService} from "../api/services/billing-service.js"
 import {makeConnectService} from "../api/services/connect-service.js"
 import {makeSubscriptionsSubmodel} from "./submodels/subscriptions-submodel.js"
-import {TriggerStripeConnectPopup, TriggerCheckoutPopup, TriggerStripeLogin} from "../types/store-popups.js"
 import {makeSubscriptionPlanningService} from "../api/services/subscription-planning-service.js"
 import {makeSubscriptionShoppingService} from "../api/services/subscription-shopping-service.js"
+import {TriggerStripeConnectPopup, TriggerCheckoutPopup, TriggerStripeLogin} from "../types/store-popups.js"
 
 export function makeStoreModel(options: {
 		appId: string
-		storageForCache: FlexStorage
 		connectService:
 			Service<typeof makeConnectService>
 		subscriptionPlanningService:

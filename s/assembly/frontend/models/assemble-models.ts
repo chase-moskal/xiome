@@ -10,6 +10,7 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
+import {makeStoreModel} from "../../../features/store/models/store-model.js"
 
 export async function assembleModels({
 		appId,
@@ -62,6 +63,19 @@ export async function assembleModels({
 		notesService: remote.notes.notesService,
 	})
 
+	const storeModel = makeStoreModel({
+		appId,
+		billingService: remote.store.billingService,
+		connectService: remote.store.connectService,
+		subscriptionPlanningService: remote.store.subscriptionPlanningService,
+		subscriptionShoppingService: remote.store.subscriptionShoppingService,
+		reauthorize,
+		triggerCheckoutPaymentMethodPopup: async() => {throw new Error("trigger popup")},
+		triggerCheckoutSubscriptionPopup: async() => {throw new Error("trigger popup")},
+		triggerStripeConnectPopup: async() => {throw new Error("trigger popup")},
+		triggerStripeLogin: async() => {throw new Error("trigger popup")},
+	})
+
 	// // TODO reactivate store
 	// const storeModel = makeStoreModel({
 	// 	appId,
@@ -107,7 +121,7 @@ export async function assembleModels({
 		accessModel,
 		videoModels,
 		notesModel,
-		// storeModel,
+		storeModel,
 		personalModel,
 		questionsModel,
 		permissionsModel,
