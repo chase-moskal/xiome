@@ -12,18 +12,13 @@ mainHtml: html`
 	<section>
 		<h2>store</h2>
 		<xiome-store-connect></xiome-store-connect>
+		<xiome-subscription-planning></xiome-subscription-planning>
 	</section>
 	<section>
 		<h2>your account</h2>
 		<xiome-login-panel show-logout="show-logout">
 			<xiome-my-account></xiome-my-account>
 		</xiome-login-panel>
-	</section>
-	<section>
-		<h2>permissions</h2>
-		<xiome-permissions></xiome-permissions>
-		<h3>all privileges</h3>
-		<xiome-privileges></xiome-privileges>
 	</section>
 
 `})
