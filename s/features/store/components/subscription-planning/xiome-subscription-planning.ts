@@ -2,14 +2,14 @@
 import {makeStoreModel} from "../../models/store-model.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 
+import {ops} from "../../../../framework/ops.js"
 import {select} from "../../../../toolbox/select/select.js"
+import {SubscriptionPlanDraft} from "./types/planning-types.js"
+import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
-import {Component, html, mixinRequireShare, mixinStyles, property, query} from "../../../../framework/component.js"
-import {SubscriptionPlanDraft, SubscriptionTierDraft} from "./types/planning-types.js"
+import {Component, html, mixinRequireShare, property} from "../../../../framework/component.js"
 import {validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
-import {ops} from "../../../../framework/ops.js"
-import {StripeConnectStatus} from "../../types/store-concepts.js"
 
 function priceInCents(value: string) {
 	const n = parseFloat(value)
@@ -173,7 +173,6 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	}
 
 	render() {
-		console.log("plans", ops.value(this.#storeModel.state.subscriptions.subscriptionPlansOp))
 		const {allowance} = this.#storeModel
 		const connectStatus = ops.value(this.#storeModel.state.stripeConnect.connectStatusOp)
 		return html`

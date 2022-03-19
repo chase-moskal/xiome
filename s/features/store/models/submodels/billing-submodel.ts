@@ -29,17 +29,6 @@ export function makeBillingSubmodel({
 		}
 	}
 
-	// async function initialize() {
-	// 	await initializeConnectSubmodel()
-	// 	if (ops.isNone(snap.state.billing.paymentMethodOp))
-	// 		await loadPaymentMethodDetails()
-	// }
-
-	// async function refresh() {
-	// 	if (!ops.isNone(snap.state.billing.paymentMethodOp))
-	// 		await loadPaymentMethodDetails()
-	// }
-
 	async function checkoutPaymentMethod() {
 		const {stripeAccountId, stripeSessionId, stripeSessionUrl} =
 			await billingService.checkoutPaymentMethod()
@@ -59,8 +48,6 @@ export function makeBillingSubmodel({
 	}
 
 	return {
-		// initialize,
-		// refresh,
 		load,
 
 		allowance,
