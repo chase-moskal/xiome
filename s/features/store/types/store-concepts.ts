@@ -7,6 +7,7 @@ import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {StoreAuth, StoreCustomerAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
+import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
 export type StripeLiaisonAccount = ReturnType<
@@ -28,7 +29,7 @@ export interface StoreCommonOptions {
 
 export interface StoreApiOptions extends StoreCommonOptions {
 	stripeLiaison: StripeLiaison
-	basePolicy: renraku.Policy<AnonMeta, AnonAuth>
+	authPolicies: ReturnType<typeof prepareAuthPolicies>
 }
 
 export interface StoreServiceOptions extends StoreCommonOptions {

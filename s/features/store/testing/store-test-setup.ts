@@ -23,6 +23,7 @@ export async function storeTestSetup() {
 
 	const api = storeApi({
 		config,
+		authPolicies,
 		stripeLiaison,
 		accountReturningLinks: {
 			refresh: "https://api.xiome.io/store/stripe?x=refresh",
@@ -33,7 +34,6 @@ export async function storeTestSetup() {
 			success: "https://api.xiome.io/store/stripe?x=success",
 		},
 		generateId: () => rando.randomId(),
-		basePolicy: authPolicies.anonPolicy,
 	})
 
 	const clerkRoleId = await createRole("clerk", [

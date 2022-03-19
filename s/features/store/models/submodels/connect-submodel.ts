@@ -12,19 +12,20 @@ export function makeConnectSubmodel({
 		allowance,
 		connectService,
 		triggerStripeLogin,
+		handleConnectChange,
 		triggerStripeConnectPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		connectService: Service<typeof makeConnectService>
 		triggerStripeLogin: TriggerStripeLogin
+		handleConnectChange: () => Promise<void>
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
 	async function load() {
 		snap.state.stripeConnect.connectStatusOp = ops.none()
 		snap.state.stripeConnect.connectDetailsOp = ops.none()
-		console.log("connect load", allowance.connectStripeAccount, Date.now())
 		if (allowance.connectStripeAccount) {
 			await ops.operation({
 				promise: connectService.loadConnectDetails(),
@@ -46,6 +47,7 @@ export function makeConnectSubmodel({
 				setOp: op => snap.state.stripeConnect.connectStatusOp = op,
 			})
 		}
+		await handleConnectChange()
 	}
 
 	// function isAlreadyInitialized() {

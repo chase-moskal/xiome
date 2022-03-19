@@ -39,10 +39,6 @@ export function makeStoreModel(options: {
 	const snap = makeStoreState()
 	const allowance = makeStoreAllowance(snap)
 
-	const connectSubmodel = makeConnectSubmodel({
-		...options, snap, allowance,
-	})
-
 	function isStoreActive() {
 		return ops.value(snap.state.stripeConnect.connectStatusOp)
 			=== StripeConnectStatus.Ready
@@ -60,12 +56,21 @@ export function makeStoreModel(options: {
 		...options, snap, allowance, isStoreActive, isUserLoggedIn,
 	})
 
-	async function loadAll() {
-		await connectSubmodel.load()
+	async function loadResourcesDependentOnConnectInfo() {
 		await Promise.all([
 			billingSubmodel.load(),
 			subscriptionsSubmodel.load(),
 		])
+	}
+
+	const connectSubmodel = makeConnectSubmodel({
+		...options, snap, allowance,
+		handleConnectChange: loadResourcesDependentOnConnectInfo,
+	})
+
+	async function loadAll() {
+		await connectSubmodel.load()
+		await loadResourcesDependentOnConnectInfo()
 	}
 
 	let initialized = false

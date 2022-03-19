@@ -59,6 +59,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 			tierLabel: elements.tierlabel.value,
 			tierPrice: priceInCents(elements.tierprice.value),
 		}
+		this.isPlanDraftPanelOpen = false
 		await this.#storeModel.subscriptionsSubmodel.addPlan(draft)
 		elements.planlabel.text = ""
 		elements.tierlabel.text = ""
@@ -76,6 +77,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				this.shadowRoot
 			),
 		}
+		this.whichTierDraftPanelIsOpen = undefined
 		await this.#storeModel.subscriptionsSubmodel.addTier({
 			planId,
 			label: elements.tierlabel.value,
@@ -100,7 +102,8 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 					data-field=tierprice
 					.validator=${validatePriceString}>
 						tier price</xio-text-input>
-				<xio-button @click=${this.#submitNewPlan}>submit</xio-button>
+				<xio-button @click=${this.#submitNewPlan}>
+					Submit new plan</xio-button>
 			</div>
 		`
 	}

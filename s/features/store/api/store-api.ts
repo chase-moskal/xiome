@@ -14,7 +14,7 @@ import {StoreApiOptions, StoreServiceOptions, StripeConnectStatus} from "../type
 
 export const storeApi = ({
 		stripeLiaison,
-		basePolicy,
+		authPolicies,
 		...common
 	}: StoreApiOptions) => {
 
@@ -22,7 +22,7 @@ export const storeApi = ({
 			meta: StoreMeta,
 			headers: renraku.HttpHeaders
 		): Promise<StoreAuth> {
-		const auth = await basePolicy(meta, headers)
+		const auth = await authPolicies.anonPolicy(meta, headers)
 		return {
 			...auth,
 			stripeLiaison,

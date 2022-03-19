@@ -72,8 +72,8 @@ export async function assimilateApi({
 		}),
 		store: storeApi({
 			config,
+			authPolicies,
 			stripeLiaison,
-			basePolicy: authPolicies.userPolicy,
 			generateId: rando.randomId,
 			checkoutReturningLinks: {
 				cancel: "",
