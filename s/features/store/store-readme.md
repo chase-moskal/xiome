@@ -31,7 +31,8 @@
 
 subscription planning
 - [x] planning validation
-- [ ] add new tiers
+- [x] add new tiers
+- [ ] edit plans and tiers
 - [ ] decommission plans and tiers
 
 billing
