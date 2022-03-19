@@ -17,7 +17,7 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 	}
 
 	async init() {
-		await this.#storeModel.connectSubmodel.initialize()
+		await this.#storeModel.initialize()
 	}
 
 	private renderStripeConnectControls() {

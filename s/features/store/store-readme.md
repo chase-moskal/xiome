@@ -26,3 +26,21 @@
 - testing
   - store-test-setup
   - store-quick-setup
+
+## todos
+
+subscription planning
+- [x] planning validation
+- [ ] add new tiers
+- [ ] decommission plans and tiers
+
+billing
+- [ ] link card
+- [ ] unlink card
+- [ ] update card
+
+subscription shopping
+- [ ] list plans and tiers
+- [ ] purchase tiers
+- [ ] cancel plans
+

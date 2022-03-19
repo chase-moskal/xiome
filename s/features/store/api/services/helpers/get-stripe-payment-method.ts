@@ -1,9 +1,9 @@
 
 import {Stripe} from "stripe"
-import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
+import {StoreCustomerAuth} from "../../../types/store-metas-and-auths.js"
 import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 
-export async function getStripePaymentMethod(auth: StoreLinkedAuth) {
+export async function getStripePaymentMethod(auth: StoreCustomerAuth) {
 
 	const stripeCustomer = <Stripe.Customer>await auth.stripeLiaisonAccount
 		.customers.retrieve(auth.stripeCustomerId)

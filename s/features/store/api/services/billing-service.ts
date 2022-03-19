@@ -1,17 +1,16 @@
 
-import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {CardClues} from "../../stripe/liaison/types/card-clues.js"
+import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
 import {PaymentMethod, StoreServiceOptions} from "../../types/store-concepts.js"
-import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 
 export const makeBillingService = (
 	options: StoreServiceOptions
 ) => renraku.service()
 
-.policy(options.storeLinkedPolicy)
+.policy(options.storeCustomerPolicy)
 
 .expose(auth => ({
 

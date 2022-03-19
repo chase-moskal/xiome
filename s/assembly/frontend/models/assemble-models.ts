@@ -69,6 +69,7 @@ export async function assembleModels({
 		connectService: remote.store.connectService,
 		subscriptionPlanningService: remote.store.subscriptionPlanningService,
 		subscriptionShoppingService: remote.store.subscriptionShoppingService,
+		subscriptionObserverService: remote.store.subscriptionObserverService,
 		reauthorize,
 		triggerCheckoutPaymentMethodPopup: async() => {throw new Error("trigger popup")},
 		triggerCheckoutSubscriptionPopup: async() => {throw new Error("trigger popup")},

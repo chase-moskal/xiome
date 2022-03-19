@@ -1,11 +1,11 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeStoreState} from "../state/make-store-state.js"
+import {makeStoreState} from "../state/store-state.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
-import {TriggerStripeConnectPopup, TriggerStripeLogin} from "../../types/store-popups.js"
 import {makeConnectService} from "../../api/services/connect-service.js"
+import {TriggerStripeConnectPopup, TriggerStripeLogin} from "../../types/store-popups.js"
 
 export function makeConnectSubmodel({
 		snap,
@@ -21,7 +21,9 @@ export function makeConnectSubmodel({
 		triggerStripeConnectPopup: TriggerStripeConnectPopup
 	}) {
 
-	async function loadConnectInfo() {
+	async function load() {
+		snap.state.stripeConnect.connectStatusOp = ops.none()
+		snap.state.stripeConnect.connectDetailsOp = ops.none()
 		if (allowance.connectStripeAccount) {
 			await ops.operation({
 				promise: connectService.loadConnectDetails(),
@@ -45,31 +47,33 @@ export function makeConnectSubmodel({
 		}
 	}
 
-	function isAlreadyInitialized() {
-		return !ops.isNone(snap.state.stripeConnect.connectStatusOp)
-	}
+	// function isAlreadyInitialized() {
+	// 	return !ops.isNone(snap.state.stripeConnect.connectStatusOp)
+	// }
 
-	async function initialize() {
-		if (allowance.connectStripeAccount && isAlreadyInitialized()) {
-			await loadConnectInfo()
-		}
-	}
+	// async function initialize() {
+	// 	if (allowance.connectStripeAccount && isAlreadyInitialized()) {
+	// 		await loadConnectInfo()
+	// 	}
+	// }
 
-	async function refresh() {
-		if (allowance.connectStripeAccount && !isAlreadyInitialized()) {
-			await loadConnectInfo()
-		}
-	}
+	// async function refresh() {
+	// 	if (allowance.connectStripeAccount && !isAlreadyInitialized()) {
+	// 		await loadConnectInfo()
+	// 	}
+	// }
 
 	return {
-		initialize,
-		refresh,
+		// initialize,
+		// refresh,
+
+		load,
 
 		async connectStripeAccount() {
 			await triggerStripeConnectPopup(
 				await connectService.generateConnectSetupLink()
 			)
-			await loadConnectInfo()
+			await load()
 		},
 		async stripeLogin() {
 			const connectStatus = ops.value(snap.readable.stripeConnect.connectStatusOp)

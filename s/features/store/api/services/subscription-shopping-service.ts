@@ -4,7 +4,6 @@ import * as renraku from "renraku"
 
 import {getRowsForTierId} from "./helpers/get-rows-for-tier-id.js"
 import {getStripeId} from "../../stripe/liaison/helpers/get-stripe-id.js"
-import {fetchSubscriptionPlans} from "./helpers/fetch-subscription-plans.js"
 import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {stripeClientReferenceId} from "../utils/stripe-client-reference-id.js"
 import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
@@ -12,19 +11,14 @@ import {determineSubscriptionStatus} from "./helpers/utils/determine-subscriptio
 import {updateExistingSubscriptionWithNewTier} from "./helpers/apply-tier-to-existing-subscription.js"
 import {StoreServiceOptions, SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
 import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
-import {getPlanRow} from "./helpers/get-plan-row.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
 ) => renraku.service()
 
-.policy(options.storeLinkedPolicy)
+.policy(options.storeCustomerPolicy)
 
 .expose(auth => ({
-
-	async listSubscriptionPlans() {
-		return fetchSubscriptionPlans(auth)
-	},
 
 	async fetchMySubscriptionStatus(): Promise<SubscriptionDetails> {
 		const stripeSubscriptions = await auth.stripeLiaisonAccount

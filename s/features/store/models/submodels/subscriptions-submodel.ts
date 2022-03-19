@@ -1,61 +1,100 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeStoreState} from "../state/make-store-state.js"
+import {makeStoreState} from "../state/store-state.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {TriggerCheckoutPopup} from "../../types/store-popups.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
 import {makeSubscriptionShoppingService} from "../../api/services/subscription-shopping-service.js"
+import {makeSubscriptionObserverService} from "../../api/services/subscription-observer-service.js"
 
 export function makeSubscriptionsSubmodel({
 		snap,
 		allowance,
 		subscriptionPlanningService,
 		subscriptionShoppingService,
+		subscriptionObserverService,
+		isStoreActive,
+		isUserLoggedIn,
 		reauthorize,
-		initializeConnectSubmodel,
 		triggerCheckoutSubscriptionPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		subscriptionPlanningService: Service<typeof makeSubscriptionPlanningService>
 		subscriptionShoppingService: Service<typeof makeSubscriptionShoppingService>
+		subscriptionObserverService: Service<typeof makeSubscriptionObserverService>
+		isStoreActive: () => boolean
+		isUserLoggedIn: () => boolean
 		reauthorize: () => Promise<void>
-		initializeConnectSubmodel: () => Promise<void>
 		triggerCheckoutSubscriptionPopup: TriggerCheckoutPopup
 	}) {
 
 	const {state} = snap
 
-	async function loadSubscriptionPlans() {
-		await ops.operation({
-			setOp: op => state.subscriptions.subscriptionPlansOp = op,
-			promise: subscriptionShoppingService.listSubscriptionPlans(),
-		})
-	}
+	// function isStoreActive() {
+	// 	return ops.value(state.stripeConnect.connectStatusOp)
+	// 		=== StripeConnectStatus.Ready
+	// }
 
-	async function loadMySubscriptionStatus() {
-		await ops.operation({
-			setOp: op => state.subscriptions.subscriptionDetails = op,
-			promise: subscriptionShoppingService.fetchMySubscriptionStatus(),
-		})
-	}
+	// function wipeSubscriptionState() {
+	// 	state.subscriptions.subscriptionDetailsOp = ops.none()
+	// 	state.subscriptions.subscriptionPlansOp = ops.none()
+	// }
 
-	async function initialize() {
-		await initializeConnectSubmodel()
-		if (ops.isNone(snap.state.subscriptions.subscriptionPlansOp)) {
-			await loadSubscriptionPlans()
-			await loadMySubscriptionStatus()
+	// async function loadSubscriptionPlans() {
+	// 	await ops.operation({
+	// 		setOp: op => state.subscriptions.subscriptionPlansOp = op,
+	// 		promise: subscriptionShoppingService.listSubscriptionPlans(),
+	// 	})
+	// }
+
+	// async function loadMySubscriptionStatus() {
+	// 	await ops.operation({
+	// 		setOp: op => state.subscriptions.subscriptionDetailsOp = op,
+	// 		promise: subscriptionShoppingService.fetchMySubscriptionStatus(),
+	// 	})
+	// }
+
+	async function load() {
+		state.subscriptions.subscriptionPlansOp = ops.none()
+		state.subscriptions.subscriptionDetailsOp = ops.none()
+		if (isStoreActive()) {
+			await ops.operation({
+				setOp: op => state.subscriptions.subscriptionPlansOp = op,
+				promise: subscriptionObserverService.listSubscriptionPlans(),
+			})
+			if (isUserLoggedIn()) {
+				await ops.operation({
+					setOp: op => state.subscriptions.subscriptionDetailsOp = op,
+					promise: subscriptionShoppingService.fetchMySubscriptionStatus(),
+				})
+			}
 		}
 	}
 
-	async function refresh() {
-		if (!ops.isNone(snap.state.subscriptions.subscriptionPlansOp)) {
-			await loadSubscriptionPlans()
-			await loadMySubscriptionStatus()
-		}
-	}
+	// let initialized = true
+
+	// async function initialize() {
+	// 	await initializeConnectSubmodel()
+	// 	if (!initialized) {
+	// 		initialized = true
+	// 		wipeSubscriptionState()
+	// 		if (allowance.manageStore && isStoreActive()) {
+	// 			await loadSubscriptionPlans()
+	// 			await loadMySubscriptionStatus()
+	// 		}
+	// 	}
+	// }
+
+	// async function refresh() {
+	// 	wipeSubscriptionState()
+	// 	if (initialized && allowance.manageStore && isStoreActive()) {
+	// 		await loadSubscriptionPlans()
+	// 		await loadMySubscriptionStatus()
+	// 	}
+	// }
 
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
@@ -86,15 +125,16 @@ export function makeSubscriptionsSubmodel({
 	}
 
 	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(actions, fun => async(...args: any[]) => {
-		state.subscriptions.subscriptionDetails = ops.loading()
+		state.subscriptions.subscriptionDetailsOp = ops.loading()
 		await fun(...args)
 		await reauthorize()
-		await refresh()
+		// await refresh()
 	})
 
 	return {
-		initialize,
-		refresh,
+		// initialize,
+		// refresh,
+		load,
 
 		...reauthorizeAndRefreshAfter,
 

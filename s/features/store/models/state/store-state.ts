@@ -16,10 +16,19 @@ export function makeStoreState() {
 		},
 		subscriptions: {
 			subscriptionPlansOp: ops.none() as Op<SubscriptionPlan[]>,
-			subscriptionDetails: ops.none() as Op<SubscriptionDetails>,
+			subscriptionDetailsOp: ops.none() as Op<SubscriptionDetails>,
 		},
 		billing: {
 			paymentMethodOp: ops.none() as Op<undefined | PaymentMethod>,
 		},
 	})
 }
+
+// export function wipeStoreState(snap: ReturnType<typeof makeStoreState>) {
+// 	snap.state.user.accessOp = ops.none()
+// 	snap.state.stripeConnect.connectStatusOp = ops.none()
+// 	snap.state.stripeConnect.connectDetailsOp = ops.none()
+// 	snap.state.subscriptions.subscriptionPlansOp = ops.none()
+// 	snap.state.subscriptions.subscriptionDetailsOp = ops.none()
+// 	snap.state.billing.paymentMethodOp = ops.none()
+// }

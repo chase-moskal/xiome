@@ -1,7 +1,7 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {storePrivileges} from "../../store-privileges.js"
-import {makeStoreState} from "../state/make-store-state.js"
+import {makeStoreState} from "../state/store-state.js"
 
 export function makeStoreAllowance(state: ReturnType<typeof makeStoreState>) {
 	const has = (key: keyof typeof storePrivileges) => {

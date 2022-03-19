@@ -4,3 +4,8 @@ export interface SubscriptionPlanDraft {
 	tierLabel: string
 	tierPrice: number
 }
+
+export interface SubscriptionTierDraft {
+	tierLabel: string
+	tierPrice: number
+}

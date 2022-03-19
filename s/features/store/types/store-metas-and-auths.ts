@@ -10,6 +10,9 @@ export interface StoreAuth extends AnonAuth {
 
 export interface StoreLinkedAuth extends StoreAuth {
 	stripeAccountId: string
-	stripeCustomerId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
+}
+
+export interface StoreCustomerAuth extends StoreLinkedAuth {
+	stripeCustomerId: string
 }

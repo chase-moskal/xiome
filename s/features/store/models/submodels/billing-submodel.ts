@@ -1,39 +1,44 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {Service} from "../../../../types/service.js"
-import {makeStoreState} from "../state/make-store-state.js"
+import {makeStoreState} from "../state/store-state.js"
 import {TriggerCheckoutPopup} from "../../types/store-popups.js"
 import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeBillingService} from "../../api/services/billing-service.js"
 
 export function makeBillingSubmodel({
 		snap, allowance, billingService,
-		initializeConnectSubmodel, triggerCheckoutPaymentMethodPopup,
+		isStoreActive, isUserLoggedIn,
+		triggerCheckoutPaymentMethodPopup,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		billingService: Service<typeof makeBillingService>
-		initializeConnectSubmodel: () => Promise<void>
+		isStoreActive: () => boolean
+		isUserLoggedIn: () => boolean
 		triggerCheckoutPaymentMethodPopup: TriggerCheckoutPopup
 	}) {
 
-	async function loadPaymentMethodDetails() {
-		return ops.operation({
-			promise: billingService.getPaymentMethodDetails(),
-			setOp: op => snap.state.billing.paymentMethodOp = op,
-		})
+	async function load() {
+		snap.state.billing.paymentMethodOp = ops.none()
+		if (isStoreActive() && isUserLoggedIn()) {
+			await ops.operation({
+				promise: billingService.getPaymentMethodDetails(),
+				setOp: op => snap.state.billing.paymentMethodOp = op,
+			})
+		}
 	}
 
-	async function initialize() {
-		await initializeConnectSubmodel()
-		if (ops.isNone(snap.state.billing.paymentMethodOp))
-			await loadPaymentMethodDetails()
-	}
+	// async function initialize() {
+	// 	await initializeConnectSubmodel()
+	// 	if (ops.isNone(snap.state.billing.paymentMethodOp))
+	// 		await loadPaymentMethodDetails()
+	// }
 
-	async function refresh() {
-		if (!ops.isNone(snap.state.billing.paymentMethodOp))
-			await loadPaymentMethodDetails()
-	}
+	// async function refresh() {
+	// 	if (!ops.isNone(snap.state.billing.paymentMethodOp))
+	// 		await loadPaymentMethodDetails()
+	// }
 
 	async function checkoutPaymentMethod() {
 		const {stripeAccountId, stripeSessionId, stripeSessionUrl} =
@@ -43,7 +48,7 @@ export function makeBillingSubmodel({
 			stripeSessionId,
 			stripeSessionUrl,
 		})
-		await loadPaymentMethodDetails()
+		await load()
 	}
 
 	async function disconnectPaymentMethod() {
@@ -54,10 +59,11 @@ export function makeBillingSubmodel({
 	}
 
 	return {
-		initialize,
-		refresh,
+		// initialize,
+		// refresh,
+		load,
+
 		allowance,
-		loadPaymentMethodDetails,
 		checkoutPaymentMethod,
 		disconnectPaymentMethod,
 	}

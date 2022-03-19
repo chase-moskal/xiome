@@ -16,6 +16,7 @@ export default <Suite>{
 
 				async "can connect a stripe account"() {
 					const {storeModel, ...client} = await setupSimpleStoreClient("admin")
+					await storeModel.initialize()
 					const getConnectDetails = () => ops.value(
 						storeModel.state.stripeConnect.connectDetailsOp
 					)
@@ -29,6 +30,7 @@ export default <Suite>{
 				},
 				async "can link incomplete stripe account"() {
 					const {storeModel, ...client} = await setupSimpleStoreClient("admin")
+					await storeModel.initialize()
 					const getConnectDetails = () => ops.value(
 						storeModel.state.stripeConnect.connectDetailsOp
 					)
@@ -47,7 +49,7 @@ export default <Suite>{
 					expect(ops.value(merchantClient.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 		
 					const anotherMerchant = await makeAnotherMerchantClient()
-					await anotherMerchant.storeModel.connectSubmodel.initialize()
+					await anotherMerchant.storeModel.initialize()
 					expect(ops.value(anotherMerchant.storeModel.state.stripeConnect.connectDetailsOp)).ok()
 				},
 
@@ -57,7 +59,7 @@ export default <Suite>{
 				async "can see the connect status, but not the details"() {
 					const {makeClerkClient} = await setupLinkedStore()
 					const clerkClient = await makeClerkClient()
-					await clerkClient.storeModel.connectSubmodel.initialize()
+					await clerkClient.storeModel.initialize()
 					const {state} = clerkClient.storeModel
 					expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 					expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
@@ -75,7 +77,7 @@ export default <Suite>{
 				async "can see connect status, but not connect details"() {
 					const {makeRegularClient} = await setupLinkedStore()
 					const client = await makeRegularClient()
-					await client.storeModel.connectSubmodel.initialize()
+					await client.storeModel.initialize()
 					const {state} = client.storeModel
 					expect(ops.value(state.stripeConnect.connectStatusOp)).defined()
 					expect(ops.value(state.stripeConnect.connectDetailsOp)).not.defined()
@@ -125,11 +127,11 @@ export default <Suite>{
 					expectReady()
 					await connectSubmodel.pause()
 					expectPaused()
-					await connectSubmodel.refresh()
+					await clerkClient.storeModel.refresh()
 					expectPaused()
 					await connectSubmodel.resume()
 					expectReady()
-					await connectSubmodel.refresh()
+					await clerkClient.storeModel.refresh()
 					expectReady()
 				},
 
@@ -173,13 +175,14 @@ export default <Suite>{
 				async "can login to complete an incomplete account"() {
 					const setup = await storeTestSetup()
 					const client = await setup.makeClient(adminRoleId)
+					await client.storeModel.initialize()
 					client.rigStripeLinkToFail()
 					const {connectSubmodel} = client.storeModel
 					await connectSubmodel.connectStripeAccount()
 					client.rigStripeLoginToConfigureCompleteAccount()
 					await connectSubmodel.stripeLogin()
 					expect(client.getStripeLoginCount()).equals(1)
-					await connectSubmodel.refresh()
+					await client.storeModel.refresh()
 					const {state} = client.storeModel.snap
 					const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
 					expect(connectStatus).equals(StripeConnectStatus.Ready)
@@ -187,13 +190,14 @@ export default <Suite>{
 				async "can login to change an account to become incomplete"() {
 					const setup = await storeTestSetup()
 					const client = await setup.makeClient(adminRoleId)
+					await client.storeModel.initialize()
 					const {connectSubmodel} = client.storeModel
 					client.rigStripeLinkToSucceed()
 					await connectSubmodel.connectStripeAccount()
 					client.rigStripeLoginToConfigureIncompleteAccount()
 					await connectSubmodel.stripeLogin()
 					expect(client.getStripeLoginCount()).equals(1)
-					await connectSubmodel.refresh()
+					await client.storeModel.refresh()
 					const {state} = client.storeModel.snap
 					const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
 					expect(connectStatus).equals(StripeConnectStatus.Incomplete)
@@ -233,7 +237,7 @@ export default <Suite>{
 				const clerk = await makeClerkClient()
 				const {subscriptionsSubmodel} = clerk.storeModel
 
-				await subscriptionsSubmodel.initialize()
+				await clerk.storeModel.initialize()
 				const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans.length).equals(0)
 
@@ -245,7 +249,7 @@ export default <Suite>{
 				expect(newPlan.planId).ok()
 				expect(newPlan.tiers.length).equals(1)
 
-				await subscriptionsSubmodel.refresh()
+				await clerk.storeModel.refresh()
 				const plans2 = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 				expect(plans2.length).equals(1)
 				expect(plans2[0]).ok()
@@ -258,7 +262,7 @@ export default <Suite>{
 				const getPlans = () => ops.value(state.subscriptions.subscriptionPlansOp)
 				const getPlan = (id: string) => getPlans().find(p => p.planId === id)
 
-				await subscriptionsSubmodel.initialize()
+				await clerk.storeModel.initialize()
 				expect(getPlans().length).equals(0)
 
 				const newPlan1 = await subscriptionsSubmodel.addPlan({
@@ -281,7 +285,7 @@ export default <Suite>{
 				expect(getPlan(newPlan1.planId)).ok()
 				expect(getPlan(newPlan1.planId).tiers.length).equals(1)
 
-				await subscriptionsSubmodel.refresh()
+				await clerk.storeModel.refresh()
 				expect(getPlans().length).equals(2)
 				expect(getPlan(newPlan2.planId)).ok()
 				expect(getPlan(newPlan2.planId).tiers.length).equals(1)
@@ -309,7 +313,7 @@ export default <Suite>{
 				{
 					const clerk = await makeClerkClient()
 					const {subscriptionsSubmodel} = clerk.storeModel
-					await subscriptionsSubmodel.initialize()
+					await clerk.storeModel.initialize()
 					const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 					expect(plans.length).equals(2)
 				}
@@ -317,7 +321,7 @@ export default <Suite>{
 			async "can add a new tier to an existing plan"() {
 				const store = await setupLinkedStore()
 				const clerk = await store.makeClerkClient()
-				clerk.storeModel.subscriptionsSubmodel.initialize()
+				clerk.storeModel.initialize()
 				const {planId} = await clerk.storeModel.subscriptionsSubmodel
 					.addPlan({
 						planLabel: "membership",
@@ -340,7 +344,7 @@ export default <Suite>{
 				expect(tier).ok()
 				expect(tier.price).equals(10_000)
 				const anotherClerk = await store.makeClerkClient()
-				anotherClerk.storeModel.subscriptionsSubmodel.initialize()
+				anotherClerk.storeModel.initialize()
 				const anotherPlans = ops.value(
 					clerk.storeModel.state.subscriptions.subscriptionPlansOp
 				)
@@ -376,7 +380,7 @@ export default <Suite>{
 				{
 					const client = await makeRegularClient()
 					const {snap: {state}, subscriptionsSubmodel} = client.storeModel
-					await subscriptionsSubmodel.initialize()
+					await client.storeModel.initialize()
 					expect(ops.value(state.subscriptions.subscriptionPlansOp).length).equals(2)
 				}
 			},
@@ -385,7 +389,7 @@ export default <Suite>{
 				const client = await makeRegularClient()
 				const {subscriptionsSubmodel} = client.storeModel
 
-				await subscriptionsSubmodel.initialize()
+				await client.storeModel.initialize()
 				await expect(async() => {
 					await subscriptionsSubmodel.addPlan({
 						planLabel: "premium membership",
@@ -407,7 +411,7 @@ export default <Suite>{
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
 				)
-				await billingSubmodel.initialize()
+				await client.storeModel.initialize()
 				expect(getPaymentMethod()).not.defined()
 				await billingSubmodel.checkoutPaymentMethod()
 				expect(getPaymentMethod()).ok()
@@ -420,7 +424,7 @@ export default <Suite>{
 					const getPaymentMethod = () => ops.value(
 						snap.state.billing.paymentMethodOp
 					)
-					await billingSubmodel.initialize()
+					await clientFirstLogin.storeModel.initialize()
 					expect(getPaymentMethod()).not.defined()
 					await billingSubmodel.checkoutPaymentMethod()
 					expect(getPaymentMethod()).ok()
@@ -433,7 +437,7 @@ export default <Suite>{
 					const getPaymentMethod = () => ops.value(
 						snap.state.billing.paymentMethodOp
 					)
-					await billingSubmodel.initialize()
+					await clientFirstLogin.storeModel.initialize()
 					expect(getPaymentMethod()).ok()
 				}
 			},
@@ -444,7 +448,7 @@ export default <Suite>{
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
 				)
-				await billingSubmodel.initialize()
+				await client.storeModel.initialize()
 				await billingSubmodel.checkoutPaymentMethod()
 				expect(getPaymentMethod()).ok()
 				const previousLast4 = getPaymentMethod()?.cardClues.last4
@@ -460,7 +464,7 @@ export default <Suite>{
 				const getPaymentMethod = () => ops.value(
 					snap.state.billing.paymentMethodOp
 				)
-				await billingSubmodel.initialize()
+				await client.storeModel.initialize()
 				await billingSubmodel.checkoutPaymentMethod()
 				expect(getPaymentMethod()).ok()
 				await billingSubmodel.disconnectPaymentMethod()
@@ -480,9 +484,8 @@ export default <Suite>{
 					storeModel: {snap: {state}, billingSubmodel, subscriptionsSubmodel},
 				} = client
 
-				await billingSubmodel.initialize()
+				await client.storeModel.initialize()
 				await billingSubmodel.checkoutPaymentMethod()
-				await subscriptionsSubmodel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier] = plan.tiers
 
@@ -506,8 +509,7 @@ export default <Suite>{
 					accessModel,
 					storeModel: {snap: {state}, billingSubmodel, subscriptionsSubmodel},
 				} = client
-				await billingSubmodel.initialize()
-				await subscriptionsSubmodel.initialize()
+				await client.storeModel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier] = plan.tiers
 
@@ -530,8 +532,7 @@ export default <Suite>{
 					accessModel,
 					storeModel: {snap: {state}, billingSubmodel, subscriptionsSubmodel},
 				} = client
-				await billingSubmodel.initialize()
-				await subscriptionsSubmodel.initialize()
+				await client.storeModel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier] = plan.tiers
 
@@ -545,7 +546,7 @@ export default <Suite>{
 
 				function getSubscriptionStatus() {
 					return ops.value(
-						state.subscriptions.subscriptionDetails
+						state.subscriptions.subscriptionDetailsOp
 					)?.status
 				}
 
@@ -560,7 +561,7 @@ export default <Suite>{
 			async "can upgrade a subscription to a higher tier"() {
 				const store = await setupLinkedStore()
 				const clerk = await store.makeClerkClient()
-				clerk.storeModel.subscriptionsSubmodel.initialize()
+				await clerk.storeModel.initialize()
 				const {planId} = await clerk.storeModel.subscriptionsSubmodel
 					.addPlan({
 						planLabel: "membership",
@@ -578,9 +579,8 @@ export default <Suite>{
 				const {
 					state, billingSubmodel, subscriptionsSubmodel,
 				} = clerk.storeModel
-				await billingSubmodel.initialize()
+				await clerk.storeModel.initialize()
 				await billingSubmodel.checkoutPaymentMethod()
-				await subscriptionsSubmodel.initialize()
 				const [plan] = ops.value(state.subscriptions.subscriptionPlansOp)
 				const [tier1, tier2] = plan.tiers
 

@@ -1,7 +1,7 @@
 
-import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
+import {StoreCustomerAuth} from "../../../types/store-metas-and-auths.js"
 
-export async function getCurrentStripeSubscription(auth: StoreLinkedAuth) {
+export async function getCurrentStripeSubscription(auth: StoreCustomerAuth) {
 
 	const stripeSubscriptions = await auth.stripeLiaisonAccount
 		.subscriptions.list({customer: auth.stripeCustomerId})
