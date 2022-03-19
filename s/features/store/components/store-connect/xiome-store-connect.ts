@@ -24,25 +24,25 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 		const {connectStatusOp} = this.#storeModel.state.stripeConnect
 		const {connectDetailsOp} = this.#storeModel.state.stripeConnect
 		const {connectStripeAccount, stripeLogin, pause, resume} = this.#storeModel.connectSubmodel
-		return html`
-			${renderOp(connectStatusOp, status => {
-				switch (status) {
-					case StripeConnectStatus.Unlinked: return html`
-						<p>status: unlinked</p>
-						<xio-button @press=${connectStripeAccount}>Connect Stripe</xio-button>
-					`
-					case StripeConnectStatus.Incomplete: return html`
-						<p>status: incomplete</p>
-						<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
-					`
-					case StripeConnectStatus.Paused: return html`
-						<p>status: paused</p>
-						<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
-						<xio-button @press=${resume}>Resume Ecommerce</xio-button>
-					`
-					case StripeConnectStatus.Ready: {
-						const details = ops.value(connectDetailsOp)
-						return html`
+		return renderOp(connectStatusOp, status => {
+			switch (status) {
+				case StripeConnectStatus.Unlinked: return html`
+					<p>status: unlinked</p>
+					<xio-button @press=${connectStripeAccount}>Connect Stripe</xio-button>
+				`
+				case StripeConnectStatus.Incomplete: return html`
+					<p>status: incomplete</p>
+					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
+				`
+				case StripeConnectStatus.Paused: return html`
+					<p>status: paused</p>
+					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
+					<xio-button @press=${resume}>Resume Ecommerce</xio-button>
+				`
+				case StripeConnectStatus.Ready: {
+					const details = ops.value(connectDetailsOp)
+					return details
+						? html`
 							<p>status: ready</p>
 							<p>details:</p>
 							<ul>
@@ -57,10 +57,12 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 							<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
 							<xio-button @press=${pause}>Pause Ecommerce</xio-button>
 						`
-					}
+						: html`
+							<p>status: loading</p>
+						`
 				}
-			})}
-		`
+			}
+		})
 	}
 
 	render() {

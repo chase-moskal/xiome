@@ -24,6 +24,7 @@ export function makeConnectSubmodel({
 	async function load() {
 		snap.state.stripeConnect.connectStatusOp = ops.none()
 		snap.state.stripeConnect.connectDetailsOp = ops.none()
+		console.log("connect load", allowance.connectStripeAccount, Date.now())
 		if (allowance.connectStripeAccount) {
 			await ops.operation({
 				promise: connectService.loadConnectDetails(),
