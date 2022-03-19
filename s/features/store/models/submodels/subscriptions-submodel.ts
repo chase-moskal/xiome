@@ -8,6 +8,7 @@ import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 import {makeSubscriptionPlanningService} from "../../api/services/subscription-planning-service.js"
 import {makeSubscriptionShoppingService} from "../../api/services/subscription-shopping-service.js"
 import {makeSubscriptionObserverService} from "../../api/services/subscription-observer-service.js"
+import {unproxy} from "@chasemoskal/snapstate"
 
 export function makeSubscriptionsSubmodel({
 		snap,
@@ -161,9 +162,10 @@ export function makeSubscriptionsSubmodel({
 			}) {
 			const tier = await subscriptionPlanningService
 				.addTier(options)
-			const plans = ops.value(state.subscriptions.subscriptionPlansOp) ?? []
+			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
 			const plan = plans.find(plan => plan.planId === options.planId)
 			plan.tiers = [...plan.tiers, tier]
+			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 			return tier
 		},
 	}

@@ -173,6 +173,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	}
 
 	render() {
+		console.log("plans", ops.value(this.#storeModel.state.subscriptions.subscriptionPlansOp))
 		const {allowance} = this.#storeModel
 		const connectStatus = ops.value(this.#storeModel.state.stripeConnect.connectStatusOp)
 		return html`
