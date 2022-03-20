@@ -3,15 +3,13 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreMeta} from "../../types/store-metas-and-auths.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
-import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
-import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
-import {SubscriptionTierRow} from "../../types/store-schema.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
-import {validateCurrency, validateInterval, validateLabel, validatePriceNumber} from "./validators/planning-validators.js"
-import {validateId} from "../../../../common/validators/validate-id.js"
-import {ApiError} from "renraku"
+import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
+import {StoreServiceOptions, StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
+import {validateBoolean, validateCurrency, validateInterval, validateLabel, validatePriceNumber} from "./validators/planning-validators.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -117,6 +115,40 @@ export const makeSubscriptionPlanningService = (
 		return tier
 	},
 
-	async editPlan() {},
-	async editTier() {},
+	async editPlan(inputs: {
+			planId: string
+			label: string
+		}) {
+		const planId = runValidation(inputs.planId, validateId)
+		const label = runValidation(inputs.label, validateLabel)
+		const helpers = helpersForManagingSubscriptions({...options, ...auth})
+		await helpers.updatePlan({planId, label})
+	},
+
+	async editTier(inputs: {
+			label: string
+			price: number
+			tierId: string
+			active: boolean
+			currency: "usd"
+			interval: "month" | "year"
+		}) {
+
+		const label = runValidation(inputs.label, validateLabel)
+		const price = runValidation(inputs.price, validatePriceNumber)
+		const tierId = runValidation(inputs.tierId, validateId)
+		const currency = runValidation(inputs.currency, validateCurrency)
+		const interval = runValidation(inputs.interval, validateInterval)
+		const active = runValidation(inputs.active, validateBoolean)
+
+		const helpers = helpersForManagingSubscriptions({...options, ...auth})
+		await helpers.updateTier({
+			label,
+			price,
+			tierId,
+			currency,
+			interval,
+			active,
+		})
+	},
 }))

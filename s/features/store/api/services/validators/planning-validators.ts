@@ -1,5 +1,5 @@
 
-import {branch, is, max, maxLength, min, minLength, number, regex, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
+import {boolean, branch, is, max, maxLength, min, minLength, number, regex, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
 
 export const validatePriceString = validator<string>(
 	string(),
@@ -33,4 +33,8 @@ export const validateInterval = validator<"month" | "year">(
 		is("month"),
 		is("year"),
 	),
+)
+
+export const validateBoolean = validator<boolean>(
+	boolean(),
 )

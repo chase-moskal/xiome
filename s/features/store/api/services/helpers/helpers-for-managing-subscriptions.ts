@@ -1,7 +1,9 @@
 
 import * as dbmage from "dbmage"
-import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
+import * as renraku from "renraku"
+
 import {SubscriptionTierRow} from "../../../types/store-schema.js"
+import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForManagingSubscriptions = ({
 		database,
@@ -149,6 +151,69 @@ export const helpersForManagingSubscriptions = ({
 			await storeTables.subscriptions.tiers.create(tierRow)
 
 			return {tierId, roleId, time}
+		},
+
+		async updatePlan({label, planId: planIdString}: {
+				label: string
+				planId: string
+			}) {
+			await storeTables.subscriptions.plans.update({
+				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
+				write: {label},
+			})
+		},
+
+		async updateTier({
+				label, price, tierId: tierIdString, active, currency, interval,
+			}: {
+				label: string
+				price: number
+				tierId: string
+				active: boolean
+				currency: "usd"
+				interval: "month" | "year"
+			}) {
+			const tierId = dbmage.Id.fromString(tierIdString)
+			const tierRow = await storeTables.subscriptions.tiers.readOne(
+				dbmage.find({tierId})
+			)
+			if (tierRow)
+				throw new renraku.ApiError(400, `tier not found ${tierIdString}`)
+			const roleRow = await authTables.permissions.role.readOne(
+				dbmage.find({roleId: tierRow.roleId})
+			)
+			if (roleRow)
+				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
+
+			const {stripePriceId} = tierRow
+			let stripePrice = await stripeLiaisonAccount.prices.retrieve(stripePriceId)
+
+			const changesToImmutableProperties =
+				price !== stripePrice.unit_amount
+				|| currency !== stripePrice.currency
+				|| interval !== stripePrice.recurring.interval
+
+			if (changesToImmutableProperties) {
+				stripePrice = await stripeLiaisonAccount.prices.create({
+					unit_amount: price,
+					currency,
+					recurring: {interval},
+				})
+			}
+
+			if (active !== stripePrice.active) {
+				await stripeLiaisonAccount.prices.update(stripePrice.id, {active})
+			}
+
+			await storeTables.subscriptions.tiers.update({
+				...dbmage.find({tierId}),
+				write: {label, stripePriceId: stripePrice.id},
+			})
+
+			await authTables.permissions.role.update({
+				...dbmage.find({roleId: tierRow.roleId}),
+				write: {label},
+			})
 		},
 	}
 }
