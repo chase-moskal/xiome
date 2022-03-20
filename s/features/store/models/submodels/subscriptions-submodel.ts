@@ -112,13 +112,51 @@ export function makeSubscriptionsSubmodel({
 				currency: "usd"
 				interval: "month" | "year"
 			}) {
+			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
 			const tier = await subscriptionPlanningService
 				.addTier(options)
-			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
 			const plan = plans.find(plan => plan.planId === options.planId)
 			plan.tiers = [...plan.tiers, tier]
 			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 			return tier
+		},
+
+		async editPlan({planId, label}: {
+				planId: string
+				label: string
+			}) {
+			await subscriptionPlanningService.editPlan({planId, label})
+			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
+			const plan = plans.find(plan => plan.planId === planId)
+			plan.label = label
+			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
+		},
+
+		async editTier({
+				planId,
+				tierId,
+				label,
+				price,
+				active,
+				currency,
+				interval,
+			}: {
+				planId: string
+				tierId: string
+				label: string
+				price: number
+				active: boolean
+				currency: "usd"
+				interval: "month" | "year"
+			}) {
+			await subscriptionPlanningService.editPlan({planId, label})
+			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
+			const plan = plans.find(plan => plan.planId === planId)
+			const tier = plan.tiers.find(tier => tier.tierId === tierId)
+			tier.active = active
+			tier.label = label
+			tier.price = price
+			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 		},
 	}
 }
