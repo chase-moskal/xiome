@@ -39,10 +39,11 @@ export function makeSubscriptionsSubmodel({
 		state.subscriptions.subscriptionPlansOp = ops.none()
 		state.subscriptions.subscriptionDetailsOp = ops.none()
 		if (isStoreActive()) {
-			await ops.operation({
+			const plans = await ops.operation({
 				setOp: op => state.subscriptions.subscriptionPlansOp = op,
 				promise: subscriptionObserverService.listSubscriptionPlans(),
 			})
+			console.log("plans", plans)
 			if (isUserLoggedIn()) {
 				await ops.operation({
 					setOp: op => state.subscriptions.subscriptionDetailsOp = op,

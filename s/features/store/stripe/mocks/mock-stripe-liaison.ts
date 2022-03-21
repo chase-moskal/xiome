@@ -208,9 +208,11 @@ export function mockStripeLiaison({
 					createData: params => ({
 						name: params.name,
 						description: params.description,
+						active: true,
 					}),
 					updateData: params => ({
 						name: params.name,
+						active: params.active,
 						description: params.description,
 					}),
 				}),
@@ -222,6 +224,7 @@ export function mockStripeLiaison({
 					>({
 					table: tables.prices,
 					createData: params => ({
+						active: params.active,
 						product: params.product,
 						currency: params.currency,
 						unit_amount: params.unit_amount,

@@ -145,7 +145,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 									<p>role id: ${tier.roleId}</p>
 									<p>price: ${tier.price}</p>
 									<p>time created: ${tier.time}</p>
-									<p>active: ${tier.active ?"true" :"false"}</p>
+									<p>active: <input type="checkbox" ?checked=${tier.active}/></p>
 								</li>
 							`)}
 						</ul>
