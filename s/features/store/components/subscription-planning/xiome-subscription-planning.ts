@@ -11,6 +11,7 @@ import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-chan
 import {Component, html, mixinRequireShare, property} from "../../../../framework/component.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
 import {validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
+import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 
 function priceInCents(value: string) {
 	const n = parseFloat(value)
@@ -195,9 +196,9 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				<xio-button @press=${handleEditPress}>
 					edit
 				</xio-button>
-				<p>plan id: ${plan.planId}</p>
-				<p>role id: ${plan.roleId}</p>
-				<p>time created: ${plan.time}</p>
+				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
+				<p>role id: <xio-id id="${plan.roleId}"></xio-id></p>
+				<p>created: ${formatDate(plan.time).full}</p>
 				${isEditing
 					? html`
 						<xio-text-input
