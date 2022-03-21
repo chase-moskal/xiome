@@ -68,9 +68,10 @@ export function makeStoreModel(options: {
 		handleConnectChange: loadResourcesDependentOnConnectInfo,
 	})
 
-	async function loadAll() {
-		await connectSubmodel.load()
-		await loadResourcesDependentOnConnectInfo()
+	async function load() {
+		if (ops.isReady(snap.state.user.accessOp)) {
+			await connectSubmodel.load()
+		}
 	}
 
 	let initialized = false
@@ -78,13 +79,13 @@ export function makeStoreModel(options: {
 	async function initialize() {
 		if (!initialized) {
 			initialized = true
-			await loadAll()
+			await load()
 		}
 	}
 
 	async function refresh() {
 		if (initialized) {
-			await loadAll()
+			await load()
 		}
 	}
 
