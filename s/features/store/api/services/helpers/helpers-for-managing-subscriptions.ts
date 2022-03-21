@@ -190,12 +190,12 @@ export const helpersForManagingSubscriptions = ({
 			const tierRow = await storeTables.subscriptions.tiers.readOne(
 				dbmage.find({tierId})
 			)
-			if (tierRow)
+			if (!tierRow)
 				throw new renraku.ApiError(400, `tier not found ${tierIdString}`)
 			const roleRow = await authTables.permissions.role.readOne(
 				dbmage.find({roleId: tierRow.roleId})
 			)
-			if (roleRow)
+			if (!roleRow)
 				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
 
 			const {stripePriceId} = tierRow

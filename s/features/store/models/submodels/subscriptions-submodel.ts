@@ -140,17 +140,25 @@ export function makeSubscriptionsSubmodel({
 				label,
 				price,
 				active,
-				currency,
-				interval,
+				// currency,
+				// interval,
 			}: {
 				planId: string
 				tierId: string
 				label: string
 				price: number
 				active: boolean
-				currency: "usd"
-				interval: "month" | "year"
+				// currency: "usd"
+				// interval: "month" | "year"
 			}) {
+			await subscriptionPlanningService.editTier({
+				tierId,
+				active,
+				label,
+				price,
+				currency: "usd",
+				interval: "month",
+			})
 			await subscriptionPlanningService.editPlan({planId, label, active})
 			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
 			const plan = plans.find(plan => plan.planId === planId)

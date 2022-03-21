@@ -18,6 +18,10 @@ function priceInCents(value: string) {
 	return Math.round(n * 100)
 }
 
+function centsToPrice(cents: number) {
+	return (cents / 100).toFixed(2)
+}
+
 export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>
@@ -164,7 +168,12 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	}
 
 	@property()
-	private tierEditing = {}
+	private tierEditing: undefined | {
+		tierId: string
+		label: string
+		active: boolean
+		price: number
+	}
 
 	#renderEditablePlan(plan: SubscriptionPlan) {
 		const isEditing = this.planEditing?.planId === plan.planId
@@ -194,7 +203,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		return html`
 			<li>
 				<xio-button @press=${handleEditPress}>
-					edit
+					edit plan
 				</xio-button>
 				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
 				<p>role id: <xio-id id="${plan.roleId}"></xio-id></p>
@@ -238,24 +247,103 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 					`}
 				<p>tiers:</p>
 				<ul>
-					${plan.tiers.map(tier => html`
-						${this.#renderEditableTier(tier)}
-					`)}
+					${plan.tiers.map(
+						tier => this.#renderEditableTier(plan.planId, tier)
+					)}
 				</ul>
 			</li>
 		`
 	}
 
-	#renderEditableTier(tier: SubscriptionTier) {
+	#renderEditableTier(planId: string, tier: SubscriptionTier) {
+		const isEditing = this.tierEditing?.tierId === tier.tierId
+		const handleEditPress = () => {
+			this.tierEditing = isEditing
+				? undefined
+				: {
+					tierId: tier.tierId,
+					label: tier.label,
+					active: tier.active,
+					price: tier.price,
+				}
+		}
+		const hasEditingChanges = () => {
+			if (this.tierEditing.label !== tier.label)
+				return true
+			if (this.tierEditing.active !== tier.active)
+				return true
+			if (this.tierEditing.price !== tier.price)
+				return true
+			return false
+		}
+		const handleSave = async() => {
+			const {tierId, label, active, price} = this.tierEditing
+			this.tierEditing = undefined
+			await this.#storeModel.subscriptionsSubmodel.editTier({
+				planId,
+				tierId,
+				active,
+				label,
+				price,
+			})
+		}
 		return html`
 			<li>
-				<p>tier label: ${tier.label}</p>
-				<p>tier id: ${tier.tierId}</p>
-				<p>role id: ${tier.roleId}</p>
-				<p>price: ${tier.price}</p>
-				<p>active: ${tier.active ?"true" :"false"}</p>
-				<p>time created: ${tier.time}</p>
-				<p>active: <input type="checkbox" ?checked=${tier.active}/></p>
+				<xio-button @press=${handleEditPress}>
+					edit tier
+				</xio-button>
+				<p>tier id: <xio-id id="${tier.tierId}"></xio-id></p>
+				<p>role id: <xio-id id="${tier.roleId}"></xio-id></p>
+				<p>created: ${formatDate(tier.time).full}</p>
+				${isEditing
+					? html`
+						<xio-text-input
+							.text="${this.tierEditing.label}"
+							.validator=${validateLabel}
+							@valuechange=${(event: ValueChangeEvent<string>) => {
+								this.tierEditing = {
+									...this.tierEditing,
+									label: event.detail.value,
+								}
+							}}>
+								label
+						</xio-text-input>
+						<xio-text-input
+							.text="${centsToPrice(this.tierEditing.price)}"
+							.validator=${validatePriceString}
+							@valuechange=${(event: ValueChangeEvent<string>) => {
+								this.tierEditing = {
+									...this.tierEditing,
+									price: priceInCents(event.detail.value),
+								}
+							}}>
+								price
+						</xio-text-input>
+						<p>
+							active:
+							<input
+								type=checkbox
+								?checked=${!!this.tierEditing?.active}
+								@change=${(event: InputEvent) => {
+									this.tierEditing = {
+										...this.tierEditing,
+										active: (<HTMLInputElement>event.target).checked,
+									}
+								}}/>
+						</p>
+						${hasEditingChanges()
+							? html`
+								<xio-button @press=${handleSave}>
+									save plan
+								</xio-button>
+							`
+							: null}
+					`
+					: html`
+						<p>tier label: ${tier.label}</p>
+						<p>price: ${centsToPrice(tier.price)}</p>
+						<p>active: ${tier.active ?"true" :"false"}</p>
+					`}
 			</li>
 		`
 	}
