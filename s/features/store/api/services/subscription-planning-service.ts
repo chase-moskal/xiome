@@ -118,11 +118,13 @@ export const makeSubscriptionPlanningService = (
 	async editPlan(inputs: {
 			planId: string
 			label: string
+			active: boolean
 		}) {
 		const planId = runValidation(inputs.planId, validateId)
 		const label = runValidation(inputs.label, validateLabel)
+		const active = runValidation(inputs.active, validateBoolean)
 		const helpers = helpersForManagingSubscriptions({...options, ...auth})
-		await helpers.updatePlan({planId, label})
+		await helpers.updatePlan({planId, label, active})
 	},
 
 	async editTier(inputs: {

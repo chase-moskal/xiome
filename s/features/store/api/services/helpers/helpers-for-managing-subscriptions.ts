@@ -153,10 +153,23 @@ export const helpersForManagingSubscriptions = ({
 			return {tierId, roleId, time}
 		},
 
-		async updatePlan({label, planId: planIdString}: {
+		async updatePlan({label, active, planId: planIdString}: {
 				label: string
 				planId: string
+				active: boolean
 			}) {
+			const planId = dbmage.Id.fromString(planIdString)
+			const planRow = await storeTables.subscriptions.plans.readOne(
+				dbmage.find({planId})
+			)
+			if (!planRow)
+				throw new renraku.ApiError(400, `unable to find plan ${planIdString}`)
+			const stripeProduct = await stripeLiaisonAccount.products.retrieve(planRow.stripeProductId)
+			if (!stripeProduct)
+				throw new renraku.ApiError(400, `unable to find stripe product ${planRow.stripeProductId}`)
+			if (active !== stripeProduct.active) {
+				await stripeLiaisonAccount.products.update(planRow.stripeProductId, {active})
+			}
 			await storeTables.subscriptions.plans.update({
 				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
 				write: {label},

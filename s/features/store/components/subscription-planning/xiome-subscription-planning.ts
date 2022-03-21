@@ -5,10 +5,11 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 import {ops} from "../../../../framework/ops.js"
 import {select} from "../../../../toolbox/select/select.js"
 import {SubscriptionPlanDraft} from "./types/planning-types.js"
-import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
+import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {Component, html, mixinRequireShare, property} from "../../../../framework/component.js"
+import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
 import {validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
 
 function priceInCents(value: string) {
@@ -154,32 +155,116 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		`
 	}
 
+	@property()
+	private planEditing: undefined | {
+		planId: string
+		label: string
+		active: boolean
+	}
+
+	@property()
+	private tierEditing = {}
+
+	#renderEditablePlan(plan: SubscriptionPlan) {
+		const isEditing = this.planEditing?.planId === plan.planId
+		const handleEditPress = () => {
+			this.planEditing = isEditing
+				? undefined
+				: {
+					planId: plan.planId,
+					label: plan.label,
+					active: plan.active,
+				}
+		}
+		const hasEditingChanges = () => {
+			if (this.planEditing.label !== plan.label)
+				return true
+			if (this.planEditing.active !== plan.active)
+				return true
+			return false
+		}
+		const handleSave = async() => {
+			const {planId, label, active} = this.planEditing
+			this.planEditing = undefined
+			await this.#storeModel.subscriptionsSubmodel.editPlan({
+				planId, label, active
+			})
+		}
+		return html`
+			<li>
+				<xio-button @press=${handleEditPress}>
+					edit
+				</xio-button>
+				<p>plan id: ${plan.planId}</p>
+				<p>role id: ${plan.roleId}</p>
+				<p>time created: ${plan.time}</p>
+				${isEditing
+					? html`
+						<xio-text-input
+							.text="${this.planEditing.label}"
+							.validator=${validateLabel}
+							@valuechange=${(event: ValueChangeEvent<string>) => {
+								this.planEditing = {
+									...this.planEditing,
+									label: event.detail.value,
+								}
+							}}>
+								label
+						</xio-text-input>
+						<p>
+							active:
+							<input
+								type=checkbox
+								?checked=${!!this.planEditing?.active}
+								@change=${(event: InputEvent) => {
+									this.planEditing = {
+										...this.planEditing,
+										active: (<HTMLInputElement>event.target).checked,
+									}
+								}}/>
+						</p>
+						${hasEditingChanges()
+							? html`
+								<xio-button @press=${handleSave}>
+									save plan
+								</xio-button>
+							`
+							: null}
+					`
+					: html`
+						<p>label: ${plan.label}</p>
+						<p>active: ${plan.active ?"true" :"false"}</p>
+					`}
+				<p>tiers:</p>
+				<ul>
+					${plan.tiers.map(tier => html`
+						${this.#renderEditableTier(tier)}
+					`)}
+				</ul>
+			</li>
+		`
+	}
+
+	#renderEditableTier(tier: SubscriptionTier) {
+		return html`
+			<li>
+				<p>tier label: ${tier.label}</p>
+				<p>tier id: ${tier.tierId}</p>
+				<p>role id: ${tier.roleId}</p>
+				<p>price: ${tier.price}</p>
+				<p>active: ${tier.active ?"true" :"false"}</p>
+				<p>time created: ${tier.time}</p>
+				<p>active: <input type="checkbox" ?checked=${tier.active}/></p>
+			</li>
+		`
+	}
+
 	#renderPlanning() {
 		const {subscriptionPlansOp} = this.#storeModel.state.subscriptions
 		return renderOp(subscriptionPlansOp, plans => html`
 			<ul>
 				${plans.map((plan, index) => html`
-					<li>
-						<p>label: ${plan.label}</p>
-						<p>plan id: ${plan.planId}</p>
-						<p>role id: ${plan.roleId}</p>
-						<p>active: ${plan.active ?"true" :"false"}</p>
-						<p>time created: ${plan.time}</p>
-						<p>tiers:</p>
-						<ul>
-							${plan.tiers.map(tier => html`
-								<li>
-									<p>tier label: ${tier.label}</p>
-									<p>tier id: ${tier.tierId}</p>
-									<p>role id: ${tier.roleId}</p>
-									<p>price: ${tier.price}</p>
-									<p>active: ${tier.active ?"true" :"false"}</p>
-									<p>time created: ${tier.time}</p>
-									<p>active: <input type="checkbox" ?checked=${tier.active}/></p>
-								</li>
-							`)}
-						</ul>
-					</li>
+					${this.#renderEditablePlan(plan)}
 					<xio-button @click=${() => {
 							const isOpen = index === this.whichTierDraftPanelIsOpen
 							this.whichTierDraftPanelIsOpen = isOpen
