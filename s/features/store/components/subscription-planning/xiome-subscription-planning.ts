@@ -31,6 +31,12 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	@property()
 	private whichTierDraftPanelIsOpen: undefined | number = undefined
 
+	@property()
+	private planDraftLoading: boolean = false
+
+	@property()
+	private tierDraftLoading: boolean = false
+
 	#togglePlanDraftPanel = () => {
 		this.isPlanDraftPanelOpen = !this.isPlanDraftPanelOpen
 	}
@@ -59,8 +65,14 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 			tierLabel: elements.tierlabel.value,
 			tierPrice: priceInCents(elements.tierprice.value),
 		}
-		this.isPlanDraftPanelOpen = false
-		await this.#storeModel.subscriptionsSubmodel.addPlan(draft)
+		try {
+			this.planDraftLoading = true
+			await this.#storeModel.subscriptionsSubmodel.addPlan(draft)
+		}
+		finally {
+			this.isPlanDraftPanelOpen = false
+			this.planDraftLoading = false
+		}
 		elements.planlabel.text = ""
 		elements.tierlabel.text = ""
 		elements.tierprice.text = ""
@@ -77,52 +89,68 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				this.shadowRoot
 			),
 		}
-		this.whichTierDraftPanelIsOpen = undefined
-		await this.#storeModel.subscriptionsSubmodel.addTier({
-			planId,
-			label: elements.tierlabel.value,
-			price: priceInCents(elements.tierprice.value),
-			currency: "usd",
-			interval: "month",
-		})
+		try {
+			this.tierDraftLoading = true
+			await this.#storeModel.subscriptionsSubmodel.addTier({
+				planId,
+				label: elements.tierlabel.value,
+				price: priceInCents(elements.tierprice.value),
+				currency: "usd",
+				interval: "month",
+			})
+		}
+		finally {
+			this.whichTierDraftPanelIsOpen = undefined
+			this.tierDraftLoading = false
+		}
 	}
 
 	#renderPlanDraftPanel() {
+		const {planDraftLoading: loading} = this
 		return html`
 			<div class=plandraft>
 				<xio-text-input
 					data-field=planlabel
+					?disabled=${loading}
 					.validator=${validateLabel}>
 						plan label</xio-text-input>
 				<xio-text-input
 					data-field=tierlabel
+					?disabled=${loading}
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
 				<xio-text-input
 					data-field=tierprice
+					?disabled=${loading}
 					.validator=${validatePriceString}>
 						tier price</xio-text-input>
-				<xio-button @click=${this.#submitNewPlan}>
-					Submit new plan</xio-button>
+				<xio-button
+					?disabled=${loading}
+					@click=${this.#submitNewPlan}>
+						Submit new plan</xio-button>
 			</div>
 		`
 	}
 
 	#renderTierDraftPanel(planId: string) {
+		const {tierDraftLoading: loading} = this
 		return html`
 			<div class=tierdraft>
 				<xio-text-input
 					data-field=tierlabel
+					?disabled=${loading}
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
 				<xio-text-input
 					data-field=tierprice
+					?disabled=${loading}
 					.validator=${validatePriceString}>
 						tier price</xio-text-input>
 			</div>
-			<xio-button @click=${this.#submitNewTier(planId)}>
-				Submit new tier
-			</xio-button>
+			<xio-button
+				?disabled=${loading}
+				@click=${this.#submitNewTier(planId)}>
+					Submit new tier</xio-button>
 		`
 	}
 
@@ -135,6 +163,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 						<p>label: ${plan.label}</p>
 						<p>plan id: ${plan.planId}</p>
 						<p>role id: ${plan.roleId}</p>
+						<p>active: ${plan.active ?"true" :"false"}</p>
 						<p>time created: ${plan.time}</p>
 						<p>tiers:</p>
 						<ul>
@@ -144,6 +173,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 									<p>tier id: ${tier.tierId}</p>
 									<p>role id: ${tier.roleId}</p>
 									<p>price: ${tier.price}</p>
+									<p>active: ${tier.active ?"true" :"false"}</p>
 									<p>time created: ${tier.time}</p>
 									<p>active: <input type="checkbox" ?checked=${tier.active}/></p>
 								</li>
@@ -181,9 +211,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				? allowance.manageStore
 					? this.#renderPlanning()
 					: html`<p>your account does not have permissions to manage the store</p>`
-				: html`
-					<p>store is not active</p>
-				`}
+				: html`<p>store is not active</p>`}
 		`
 	}
 }

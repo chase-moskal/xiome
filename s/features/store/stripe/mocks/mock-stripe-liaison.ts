@@ -224,7 +224,7 @@ export function mockStripeLiaison({
 					>({
 					table: tables.prices,
 					createData: params => ({
-						active: params.active,
+						active: params.active === undefined ?true :params.active,
 						product: params.product,
 						currency: params.currency,
 						unit_amount: params.unit_amount,
