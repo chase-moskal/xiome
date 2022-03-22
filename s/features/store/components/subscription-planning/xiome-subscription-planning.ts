@@ -175,7 +175,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		price: number
 	}
 
-	#renderEditablePlan(plan: SubscriptionPlan) {
+	#renderEditablePlan(plan: SubscriptionPlan, index: number) {
 		const isEditing = this.planEditing?.planId === plan.planId
 		const handleEditPress = () => {
 			this.planEditing = isEditing
@@ -200,8 +200,16 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				planId, label, active
 			})
 		}
+		const activeTiers: SubscriptionTier[] = []
+		const inactiveTiers: SubscriptionTier[] = []
+		for (const tier of plan.tiers) {
+			if (tier.active)
+				activeTiers.push(tier)
+			else
+				inactiveTiers.push(tier)
+		}
 		return html`
-			<li>
+			<li data-plan="${plan.planId}">
 				<xio-button @press=${handleEditPress}>
 					edit plan
 				</xio-button>
@@ -245,12 +253,33 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 						<p>label: ${plan.label}</p>
 						<p>active: ${plan.active ?"true" :"false"}</p>
 					`}
+				<xio-button @click=${() => {
+						const isOpen = index === this.whichTierDraftPanelIsOpen
+						this.whichTierDraftPanelIsOpen = isOpen
+							? undefined
+							: index
+					}}>
+					+ Add Tier
+				</xio-button>
+				${index === this.whichTierDraftPanelIsOpen
+					? this.#renderTierDraftPanel(plan.planId)
+					: null}
 				<p>tiers:</p>
 				<ul>
-					${plan.tiers.map(
-						tier => this.#renderEditableTier(plan.planId, tier)
-					)}
+					${activeTiers.map(tier =>
+						this.#renderEditableTier(plan.planId, tier))}
 				</ul>
+				${inactiveTiers.length
+					? html`
+						<details>
+							<summary>inactive tiers</summary>
+							<ul>
+								${inactiveTiers.map(tier =>
+									this.#renderEditableTier(plan.planId, tier))}
+							</ul>
+						</details>
+					`
+					: null}
 			</li>
 		`
 	}
@@ -288,7 +317,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 			})
 		}
 		return html`
-			<li>
+			<li data-tier="${tier.tierId}">
 				<xio-button @press=${handleEditPress}>
 					edit tier
 				</xio-button>
@@ -350,30 +379,39 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 
 	#renderPlanning() {
 		const {subscriptionPlansOp} = this.#storeModel.state.subscriptions
-		return renderOp(subscriptionPlansOp, plans => html`
-			<ul>
-				${plans.map((plan, index) => html`
-					${this.#renderEditablePlan(plan)}
-					<xio-button @click=${() => {
-							const isOpen = index === this.whichTierDraftPanelIsOpen
-							this.whichTierDraftPanelIsOpen = isOpen
-								? undefined
-								: index
-						}}>
-						+ Add Tier
-					</xio-button>
-					${index === this.whichTierDraftPanelIsOpen
-						? this.#renderTierDraftPanel(plan.planId)
-						: null}
-				`)}
-			</ul>
-			<xio-button @click=${this.#togglePlanDraftPanel}>
-				+ Add Plan
-			</xio-button>
-			${this.isPlanDraftPanelOpen
-				? this.#renderPlanDraftPanel()
-				: null}
-		`)
+		return renderOp(subscriptionPlansOp, plans => {
+			const activePlans: SubscriptionPlan[] = []
+			const inactivePlans: SubscriptionPlan[] = []
+			for (const plan of plans) {
+				if (plan.active)
+					activePlans.push(plan)
+				else
+					inactivePlans.push(plan)
+			}
+			return html`
+				<xio-button @click=${this.#togglePlanDraftPanel}>
+					+ Add Plan
+				</xio-button>
+				${this.isPlanDraftPanelOpen
+					? this.#renderPlanDraftPanel()
+					: null}
+				<ul>
+					${activePlans.map((plan, index) =>
+						this.#renderEditablePlan(plan, index))}
+				</ul>
+				${inactivePlans.length
+					? html`
+						<details>
+							<summary>inactive plans</summary>
+							<ul>
+								${inactivePlans.map((plan, index) =>
+									this.#renderEditablePlan(plan, index))}
+							</ul>
+						</details>
+					`
+					: null}
+			`
+		})
 	}
 
 	render() {

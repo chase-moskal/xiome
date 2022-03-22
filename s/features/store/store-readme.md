@@ -32,8 +32,9 @@
 subscription planning
 - [x] planning validation
 - [x] add new tiers
-- [ ] edit plans and tiers
-- [ ] decommission plans and tiers
+- [x] edit plans and tiers
+- [x] decommission plans and tiers
+- [ ] cleanup, fix, and test subscription planning
 
 billing
 - [ ] link card
