@@ -4,13 +4,13 @@ import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-syste
 
 import {ops} from "../../../../framework/ops.js"
 import {select} from "../../../../toolbox/select/select.js"
-import {SubscriptionPlanDraft} from "./types/planning-types.js"
+import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft} from "./types/planning-types.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
 import {Component, html, mixinRequireShare, property} from "../../../../framework/component.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
-import {validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
+import {validateEditPlanDraft, validateEditTierDraft, validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
 import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 
 function priceInCents(value: string) {
@@ -161,30 +161,41 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	}
 
 	@property()
-	private planEditing: undefined | {
-		planId: string
-		label: string
-		active: boolean
-	}
+	private planEditing: undefined | EditPlanDraft
 
 	@property()
-	private tierEditing: undefined | {
-		tierId: string
-		label: string
-		active: boolean
-		price: number
+	private tierEditing: undefined | EditTierDraft
+
+	@property()
+	private planProblems: string[] = []
+
+	@property()
+	private tierProblems: string[] = []
+
+	#setPlanEditingDraft(draft: undefined | EditPlanDraft) {
+		this.planEditing = draft
+		if (draft)
+			this.planProblems = validateEditPlanDraft(draft)
+	}
+
+	#setTierEditingDraft(draft: undefined | EditTierDraft) {
+		this.tierEditing = draft
+		if (draft)
+			this.tierProblems = validateEditTierDraft(draft)
 	}
 
 	#renderEditablePlan(plan: SubscriptionPlan, index: number) {
 		const isEditing = this.planEditing?.planId === plan.planId
 		const handleEditPress = () => {
-			this.planEditing = isEditing
-				? undefined
-				: {
-					planId: plan.planId,
-					label: plan.label,
-					active: plan.active,
-				}
+			this.#setPlanEditingDraft(
+				isEditing
+					? undefined
+					: {
+						planId: plan.planId,
+						label: plan.label,
+						active: plan.active,
+					}
+			)
 		}
 		const hasEditingChanges = () => {
 			if (this.planEditing.label !== plan.label)
@@ -219,13 +230,13 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				${isEditing
 					? html`
 						<xio-text-input
-							.text="${this.planEditing.label}"
+							.text="${plan.label}"
 							.validator=${validateLabel}
 							@valuechange=${(event: ValueChangeEvent<string>) => {
-								this.planEditing = {
+								this.#setPlanEditingDraft({
 									...this.planEditing,
 									label: event.detail.value,
-								}
+								})
 							}}>
 								label
 						</xio-text-input>
@@ -233,17 +244,19 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 							active:
 							<input
 								type=checkbox
-								?checked=${!!this.planEditing?.active}
+								?checked=${plan.active}
 								@change=${(event: InputEvent) => {
-									this.planEditing = {
+									this.#setPlanEditingDraft({
 										...this.planEditing,
 										active: (<HTMLInputElement>event.target).checked,
-									}
+									})
 								}}/>
 						</p>
 						${hasEditingChanges()
 							? html`
-								<xio-button @press=${handleSave}>
+								<xio-button
+									?disabled=${!!this.planProblems.length}
+									@press=${handleSave}>
 									save plan
 								</xio-button>
 							`
@@ -287,14 +300,16 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	#renderEditableTier(planId: string, tier: SubscriptionTier) {
 		const isEditing = this.tierEditing?.tierId === tier.tierId
 		const handleEditPress = () => {
-			this.tierEditing = isEditing
-				? undefined
-				: {
-					tierId: tier.tierId,
-					label: tier.label,
-					active: tier.active,
-					price: tier.price,
-				}
+			this.#setTierEditingDraft(
+				isEditing
+					? undefined
+					: {
+						tierId: tier.tierId,
+						label: tier.label,
+						active: tier.active,
+						price: tier.price,
+					}
+			)
 		}
 		const hasEditingChanges = () => {
 			if (this.tierEditing.label !== tier.label)
@@ -327,23 +342,27 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 				${isEditing
 					? html`
 						<xio-text-input
-							.text="${this.tierEditing.label}"
+							.text="${tier.label}"
 							.validator=${validateLabel}
 							@valuechange=${(event: ValueChangeEvent<string>) => {
-								this.tierEditing = {
-									...this.tierEditing,
-									label: event.detail.value,
+								if (event.detail.value) {
+									this.#setTierEditingDraft({
+										...this.tierEditing,
+										label: event.detail.value,
+									})
 								}
 							}}>
 								label
 						</xio-text-input>
 						<xio-text-input
-							.text="${centsToPrice(this.tierEditing.price)}"
+							.text="${centsToPrice(tier.price)}"
 							.validator=${validatePriceString}
 							@valuechange=${(event: ValueChangeEvent<string>) => {
-								this.tierEditing = {
-									...this.tierEditing,
-									price: priceInCents(event.detail.value),
+								if (event.detail.value) {
+									this.#setTierEditingDraft({
+										...this.tierEditing,
+										price: priceInCents(event.detail.value),
+									})
 								}
 							}}>
 								price
@@ -352,7 +371,7 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 							active:
 							<input
 								type=checkbox
-								?checked=${!!this.tierEditing?.active}
+								?checked=${tier.active}
 								@change=${(event: InputEvent) => {
 									this.tierEditing = {
 										...this.tierEditing,
@@ -362,7 +381,9 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 						</p>
 						${hasEditingChanges()
 							? html`
-								<xio-button @press=${handleSave}>
+								<xio-button
+									?disabled=${!!this.tierProblems.length}
+									@press=${handleSave}>
 									save plan
 								</xio-button>
 							`

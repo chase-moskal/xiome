@@ -1,5 +1,7 @@
 
-import {boolean, branch, is, max, maxLength, min, minLength, number, regex, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
+import {validateId} from "../../../../../common/validators/validate-id.js"
+import {boolean, branch, is, max, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
+import {EditPlanDraft, EditTierDraft} from "../../../components/subscription-planning/types/planning-types.js"
 
 export const validatePriceString = validator<string>(
 	string(),
@@ -38,3 +40,16 @@ export const validateInterval = validator<"month" | "year">(
 export const validateBoolean = validator<boolean>(
 	boolean(),
 )
+
+export const validateEditPlanDraft = schema<EditPlanDraft>({
+	planId: validateId,
+	label: validateLabel,
+	active: validateBoolean,
+})
+
+export const validateEditTierDraft = schema<EditTierDraft>({
+	tierId: validateId,
+	label: validateLabel,
+	active: validateBoolean,
+	price: validatePriceNumber,
+})

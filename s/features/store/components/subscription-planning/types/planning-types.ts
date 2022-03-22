@@ -9,3 +9,16 @@ export interface SubscriptionTierDraft {
 	tierLabel: string
 	tierPrice: number
 }
+
+export interface EditPlanDraft {
+	planId: string
+	label: string
+	active: boolean
+}
+
+export interface EditTierDraft {
+	tierId: string
+	label: string
+	active: boolean
+	price: number
+}
