@@ -120,11 +120,11 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			const shadow = getShadowRoot()
 			const elements = {
 				label: select<XioTextInput>(
-					`[data-plan] [data-field="label"]`,
+					`.planediting [data-field="label"]`,
 					shadow,
 				),
 				active: select<HTMLInputElement>(
-					`[data-plan] [data-field="active"]`,
+					`.planediting [data-field="active"]`,
 					shadow,
 				),
 			}
@@ -187,6 +187,32 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				}
 			},
 		},
+		planEditing: {
+			handleEditButtonPress(plan: SubscriptionPlan) {
+				const isEditing = states.component.editingPlanDraft?.planId
+					=== plan.planId
+				states.component.editingPlanDraft = isEditing
+					? undefined
+					: {
+						isChanged: false,
+						loading: false,
+						planId: plan.planId,
+						problems: [],
+					}
+			},
+			async submit(plan: SubscriptionPlan) {
+				const {draft, problems} = formGathering.editedPlan(plan)
+				if (problems.length === 0) {
+					try {
+						states.component.editingPlanDraft.loading = true
+						await storeModel.subscriptionsSubmodel.editPlan(draft)
+					}
+					finally {
+						states.component.editingPlanDraft = undefined
+					}
+				}
+			},
+		},
 	}
 
 	const handlers = {
@@ -243,7 +269,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			<xio-button
 				?disabled=${loading || problems.length}
 				@click=${() => actions.newTier.submit(planId)}>
-					Submit new tier</xio-button>
+					submit new tier</xio-button>
 		`
 	}
 
@@ -261,7 +287,46 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 
 		return html`
 			<li data-plan="${plan.planId}">
-			
+				<xio-button
+					@press=${() => actions.planEditing.handleEditButtonPress(plan)}>
+						edit plan
+				</xio-button>
+				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
+				<p>role id: <xio-id id="${plan.roleId}"></xio-id></p>
+				<p>created: ${formatDate(plan.time).full}</p>
+				${isEditing
+					? html`
+						<div class=planediting
+							@change=${() => formGathering.editedPlan(plan)}
+							@valuechange=${() => formGathering.editedPlan(plan)}>
+								<xio-text-input
+									data-field="label"
+									.text="${plan.label}"
+									.validator=${validateLabel}>
+										label
+								</xio-text-input>
+								<label>
+									active:
+									<input
+										data-field="active"
+										type=checkbox
+										?checked=${plan.active}/>
+								</label>
+								${states.component.editingPlanDraft.isChanged
+									? html`
+										<xio-button
+											?disabled=${!!states.component.editingPlanDraft.problems.length}
+											@press=${() => actions.planEditing.submit(plan)}>
+												save plan
+										</xio-button>
+									`
+									: null}
+						</div>
+					`
+					: html`
+						<p>label: ${plan.label}</p>
+						<p>active: ${plan.active ?"true" :"false"}</p>
+					`}
 			</li>
 		`
 	}
