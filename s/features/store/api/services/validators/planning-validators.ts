@@ -3,17 +3,18 @@ import {validateId} from "../../../../../common/validators/validate-id.js"
 import {boolean, branch, is, max, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
 import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "../../../components/subscription-planning/types/planning-types.js"
 
-export const validatePriceString = validator<string>(
-	string(),
-	maxLength(8),
-	minLength(1),
-	zeroWhitespace(),
-	regex(/[\d\.]+/, "must be a number"),
-)
-
 export const validatePriceNumber = validator<number>(
 	number(),
 	min(0.01),
+)
+
+export const validatePriceString = validator<string>(
+	string(),
+	zeroWhitespace(),
+	regex(/[\d\.]+/, "must be a number"),
+	value => validatePriceNumber(
+		Math.round(parseFloat(value) * 100)
+	),
 )
 
 export const validateLabel = validator<string>(

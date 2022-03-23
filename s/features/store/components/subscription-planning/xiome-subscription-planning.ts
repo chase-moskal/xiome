@@ -113,7 +113,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				price: priceInCents(elements.label.value),
 			}
 			const problems = validateNewTierDraft(draft)
-			states.component.draftNewPlan.problems = problems
+			states.component.draftNewTier.problems = problems
 			return {draft, problems}
 		},
 		editedPlan(plan: SubscriptionPlan) {
@@ -252,7 +252,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 	}
 
 	function renderNewTierPanel(planId: string) {
-		const {loading, problems} = states.component.draftNewPlan
+		const {loading, problems} = states.component.draftNewTier
 		return html`
 			<div class=tierdraft @valuechange=${handlers.tierDraft.valuechange}>
 				<xio-text-input
@@ -270,6 +270,19 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				?disabled=${loading || problems.length}
 				@click=${() => actions.newTier.submit(planId)}>
 					submit new tier</xio-button>
+		`
+	}
+
+	function renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
+		return html`
+			<li data-tier="${tier.tierId}">
+				<p>tier id: <xio-id id="${tier.tierId}"></xio-id></p>
+				<p>role id: <xio-id id="${tier.roleId}"></xio-id></p>
+				<p>tier label: ${tier.label}</p>
+				<p>tier active: ${tier.active ?"true" :"false"}</p>
+				<p>tier price: ${centsToPrice(tier.price)}</p>
+				<p>created: ${formatDate(tier.time).full}</p>
+			</li>
 		`
 	}
 
@@ -327,6 +340,26 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 						<p>label: ${plan.label}</p>
 						<p>active: ${plan.active ?"true" :"false"}</p>
 					`}
+				<xio-button @click=${() => actions.newTier.toggleDraftPanel(plan.planId)}>
+					+ Add Tier
+				</xio-button>
+				${states.component.draftNewTier?.planId === plan.planId
+					? renderNewTierPanel(plan.planId)
+					: null}
+				<p>tiers:</p>
+				<ul>
+					${activeTiers.map(tier => renderTier(plan, tier))}
+				</ul>
+				${inactiveTiers.length
+					? html`
+						<details>
+							<summary>inactive tiers</summary>
+							<ul>
+								${inactiveTiers.map(tier => renderTier(plan, tier))}
+							</ul>
+						</details>
+					`
+					: null}
 			</li>
 		`
 	}
