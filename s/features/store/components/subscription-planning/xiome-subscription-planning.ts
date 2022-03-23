@@ -1,28 +1,346 @@
 
-import {makeStoreModel} from "../../models/store-model.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {snapstate} from "@chasemoskal/snapstate"
 
 import {ops} from "../../../../framework/ops.js"
+import {makeStoreModel} from "../../models/store-model.js"
 import {select} from "../../../../toolbox/select/select.js"
-import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft} from "./types/planning-types.js"
+import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../xio-components/inputs/xio-text-input.js"
+import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {ValueChangeEvent} from "../../../xio-components/inputs/events/value-change-event.js"
+import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "./types/planning-types.js"
 import {Component, html, mixinRequireShare, property} from "../../../../framework/component.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
-import {validateEditPlanDraft, validateEditTierDraft, validateLabel, validatePriceString} from "../../api/services/validators/planning-validators.js"
-import {formatDate} from "../../../../toolbox/goodtimes/format-date.js"
+import {validateEditPlanDraft, validateEditTierDraft, validateLabel, validateNewPlanDraft, validateNewTierDraft, validatePriceString} from "../../api/services/validators/planning-validators.js"
+
+/*
+
+- list subscription plans and tiers
+- forms to add new plans and tiers
+- editing plans and tiers
+
+*/
 
 function priceInCents(value: string) {
-	const n = parseFloat(value)
-	return Math.round(n * 100)
+	return value
+		? Math.round(parseFloat(value) * 100)
+		: undefined
 }
 
 function centsToPrice(cents: number) {
 	return (cents / 100).toFixed(2)
 }
 
+export function makePlanningComponentSnap() {
+	return snapstate({
+		draftNewPlan: undefined as undefined | {
+			loading: boolean
+			problems: string[]
+		},
+		draftNewTier: undefined as undefined | {
+			planId: string
+			loading: boolean
+			problems: string[]
+		},
+		editingPlanDraft: undefined as undefined | {
+			isChanged: boolean
+			planId: string
+			loading: boolean
+			problems: string[]
+		},
+		editingTierDraft: undefined as undefined | {
+			isChanged: boolean
+			planId: string
+			tierId: string
+			loading: boolean
+			problems: string[]
+		},
+	})
+}
+
+export function planningUi({storeModel, componentSnap, getShadowRoot}: {
+		storeModel: ReturnType<typeof makeStoreModel>
+		componentSnap: ReturnType<typeof makePlanningComponentSnap>
+		getShadowRoot: () => ShadowRoot
+	}) {
+
+	const states = {
+		store: storeModel.snap.readable,
+		component: componentSnap.state,
+	}
+
+	const formGathering = {
+		newPlan() {
+			const shadow = getShadowRoot()
+			const elements = {
+				planlabel: select<XioTextInput>(
+					`.plandraft xio-text-input[data-field="planlabel"]`,
+					shadow,
+				),
+				tierlabel: select<XioTextInput>(
+					`.plandraft xio-text-input[data-field="tierlabel"]`,
+					shadow,
+				),
+				tierprice: select<XioTextInput>(
+					`.plandraft xio-text-input[data-field="tierprice"]`,
+					shadow,
+				),
+			}
+			const draft: SubscriptionPlanDraft = {
+				planLabel: elements.planlabel.value,
+				tierLabel: elements.tierlabel.value,
+				tierPrice: priceInCents(elements.tierprice.value),
+			}
+			const problems = validateNewPlanDraft(draft)
+			states.component.draftNewPlan.problems = problems
+			return {draft, problems}
+		},
+		newTier() {
+			const shadow = getShadowRoot()
+			const elements = {
+				label: select<XioTextInput>(
+					`.tierdraft xio-text-input[data-field="tierlabel"]`,
+					shadow,
+				),
+				price: select<XioTextInput>(
+					`.tierdraft xio-text-input[data-field="tierprice"]`,
+					shadow,
+				),
+			}
+			const draft: SubscriptionTierDraft = {
+				label: elements.label.value,
+				price: priceInCents(elements.label.value),
+			}
+			const problems = validateNewTierDraft(draft)
+			states.component.draftNewPlan.problems = problems
+			return {draft, problems}
+		},
+		editedPlan(plan: SubscriptionPlan) {
+			const shadow = getShadowRoot()
+			const elements = {
+				label: select<XioTextInput>(
+					`[data-plan] [data-field="label"]`,
+					shadow,
+				),
+				active: select<HTMLInputElement>(
+					`[data-plan] [data-field="active"]`,
+					shadow,
+				),
+			}
+			const draft: EditPlanDraft = {
+				planId: plan.planId,
+				label: elements.label.value,
+				active: elements.active.checked,
+			}
+			const problems = validateEditPlanDraft(draft)
+			const isChanged =
+				draft.label !== plan.label ||
+				draft.active !== plan.active
+			states.component.editingPlanDraft.isChanged = isChanged
+			states.component.editingPlanDraft.problems = problems
+			return {draft, problems, isChanged}
+		},
+	}
+
+	const actions = {
+		newPlan: {
+			toggleDraftPanel() {
+				states.component.draftNewPlan = states.component.draftNewPlan
+					? undefined
+					: {loading: false, problems: []}
+			},
+			async submit() {
+				const {draft, problems} = formGathering.newPlan()
+				if (problems.length === 0) {
+					try {
+						states.component.draftNewPlan.loading = true
+						await storeModel.subscriptionsSubmodel.addPlan(draft)
+					}
+					finally {
+						states.component.draftNewPlan = undefined
+					}
+				}
+			},
+		},
+		newTier: {
+			toggleDraftPanel(planId: string) {
+				states.component.draftNewTier = states.component.draftNewTier
+					? undefined
+					: {planId, loading: false, problems: []}
+			},
+			async submit(planId: string) {
+				const {draft, problems} = formGathering.newTier()
+				if (problems.length === 0) {
+					try {
+						states.component.draftNewTier.loading = true
+						await storeModel.subscriptionsSubmodel.addTier({
+							...draft,
+							planId,
+							currency: "usd",
+							interval: "month",
+						})
+					}
+					finally {
+						states.component.draftNewTier = undefined
+					}
+				}
+			},
+		},
+	}
+
+	const handlers = {
+		planDraft: {
+			valuechange: formGathering.newPlan,
+		},
+		tierDraft: {
+			valuechange: formGathering.newTier,
+		},
+	}
+
+	function renderNewPlanPanel() {
+		const {loading, problems} = states.component.draftNewPlan
+		return html`
+			<div class=plandraft @valuechange=${handlers.planDraft.valuechange}>
+				<xio-text-input
+					data-field=planlabel
+					?disabled=${loading}
+					.validator=${validateLabel}>
+						plan label</xio-text-input>
+				<xio-text-input
+					data-field=tierlabel
+					?disabled=${loading}
+					.validator=${validateLabel}>
+						tier label</xio-text-input>
+				<xio-text-input
+					data-field=tierprice
+					?disabled=${loading}
+					.validator=${validatePriceString}>
+						tier price</xio-text-input>
+				<xio-button
+					?disabled=${loading || problems.length}
+					@click=${actions.newPlan.submit}>
+						Submit new plan</xio-button>
+			</div>
+		`
+	}
+
+	function renderNewTierPanel(planId: string) {
+		const {loading, problems} = states.component.draftNewPlan
+		return html`
+			<div class=tierdraft @valuechange=${handlers.tierDraft.valuechange}>
+				<xio-text-input
+					data-field=tierlabel
+					?disabled=${loading}
+					.validator=${validateLabel}>
+						tier label</xio-text-input>
+				<xio-text-input
+					data-field=tierprice
+					?disabled=${loading}
+					.validator=${validatePriceString}>
+						tier price</xio-text-input>
+			</div>
+			<xio-button
+				?disabled=${loading || problems.length}
+				@click=${() => actions.newTier.submit(planId)}>
+					Submit new tier</xio-button>
+		`
+	}
+
+	function renderPlan(plan: SubscriptionPlan, index: number) {
+		const isEditing = states.component.editingPlanDraft?.planId === plan.planId
+
+		const activeTiers: SubscriptionTier[] = []
+		const inactiveTiers: SubscriptionTier[] = []
+		for (const tier of plan.tiers) {
+			if (tier.active)
+				activeTiers.push(tier)
+			else
+				inactiveTiers.push(tier)
+		}
+
+		return html`
+			<li data-plan="${plan.planId}">
+			
+			</li>
+		`
+	}
+
+	function renderPlanning() {
+		const {subscriptionPlansOp} = states.store.subscriptions
+		return renderOp(subscriptionPlansOp, plans => {
+			const activePlans: SubscriptionPlan[] = []
+			const inactivePlans: SubscriptionPlan[] = []
+			for (const plan of plans) {
+				if (plan.active)
+					activePlans.push(plan)
+				else
+					inactivePlans.push(plan)
+			}
+			return html`
+				<xio-button @click=${actions.newPlan.toggleDraftPanel}>
+					+ Add Plan
+				</xio-button>
+				${states.component.draftNewPlan
+					? renderNewPlanPanel()
+					: null}
+				<ul>
+					${activePlans.map(renderPlan)}
+				</ul>
+				${inactivePlans.length
+					? html`
+						<details>
+							<summary>inactive plans</summary>
+							<ul>
+								${inactivePlans.map(renderPlan)}
+							</ul>
+						</details>
+					`
+					: null}
+			`
+		})
+	}
+
+	return {
+		renderPlanning,
+	}
+}
+
 export class XiomeSubscriptionPlanning extends mixinRequireShare<{
+		modals: ModalSystem
+		storeModel: ReturnType<typeof makeStoreModel>
+	}>()(Component) {
+
+	#componentSnap = makePlanningComponentSnap()
+	get #storeModel() { return this.share.storeModel }
+
+	#planningUi = planningUi({
+		storeModel: this.#storeModel,
+		componentSnap: this.#componentSnap,
+		getShadowRoot: () => this.shadowRoot,
+	})
+
+	async init() {
+		this.addSubscription(() =>
+			this.#componentSnap.subscribe(() => this.requestUpdate()))
+		await this.#storeModel.initialize()
+	}
+
+	render() {
+		const {allowance} = this.#storeModel
+		const connectStatus = ops.value(this.#storeModel.state.stripeConnect.connectStatusOp)
+		return html`
+			<h3>Subscription Planning</h3>
+			${connectStatus === StripeConnectStatus.Ready
+				? allowance.manageStore
+					? this.#planningUi.renderPlanning()
+					: html`<p>your account does not have permissions to manage the store</p>`
+				: html`<p>store is not active</p>`}
+		`
+	}
+}
+
+export class XiomeSubscriptionPlanning_Old extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>
 	}>()(Component) {

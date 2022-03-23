@@ -6,8 +6,8 @@ export interface SubscriptionPlanDraft {
 }
 
 export interface SubscriptionTierDraft {
-	tierLabel: string
-	tierPrice: number
+	label: string
+	price: number
 }
 
 export interface EditPlanDraft {
