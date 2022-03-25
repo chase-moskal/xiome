@@ -8,8 +8,8 @@ import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {SubscriptionPlan, SubscriptionTier} from "../../../types/store-concepts.js"
-import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft} from "../types/planning-types.js"
-import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validatePriceString} from "../../../api/services/validators/planning-validators.js"
+import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft} from "../types/planning-types.js"
+import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validatePriceString, validateEditTierDraft} from "../../../api/services/validators/planning-validators.js"
 
 export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 		storeModel: ReturnType<typeof makeStoreModel>
@@ -62,7 +62,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			}
 			const draft: SubscriptionTierDraft = {
 				label: elements.label.value,
-				price: priceInCents(elements.label.value),
+				price: priceInCents(elements.price.value),
 			}
 			const problems = validateNewTierDraft(draft)
 			states.component.draftNewTier.problems = problems
@@ -91,6 +91,37 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				draft.active !== plan.active
 			states.component.editingPlanDraft.isChanged = isChanged
 			states.component.editingPlanDraft.problems = problems
+			return {draft, problems, isChanged}
+		},
+		editedTier(tier: SubscriptionTier) {
+			const shadow = getShadowRoot()
+			const elements = {
+				label: select<XioTextInput>(
+					`.tierediting [data-field="label"]`,
+					shadow,
+				),
+				active: select<HTMLInputElement>(
+					`.tierediting [data-field="active"]`,
+					shadow,
+				),
+				price: select<XioTextInput>(
+					`.tierediting [data-field="price"]`,
+					shadow,
+				),
+			}
+			const draft: EditTierDraft = {
+				tierId: tier.tierId,
+				label: elements.label.value,
+				active: elements.active.checked,
+				price: priceInCents(elements.price.value),
+			}
+			const problems = validateEditTierDraft(draft)
+			const isChanged =
+				draft.label !== tier.label ||
+				draft.active !== tier.active ||
+				draft.price !== tier.price
+			states.component.editingTierDraft.isChanged = isChanged
+			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}
 		},
 	}
@@ -165,6 +196,39 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				}
 			},
 		},
+		tierEditing: {
+			handleEditButtonPress(plan: SubscriptionPlan, tier: SubscriptionTier) {
+				const isEditing = states.component.editingTierDraft?.tierId
+					=== tier.tierId
+				states.component.editingTierDraft = isEditing
+					? undefined
+					: {
+						isChanged: false,
+						loading: false,
+						planId: plan.planId,
+						tierId: tier.tierId,
+						problems: [],
+					}
+			},
+			async submit(plan: SubscriptionPlan, tier: SubscriptionTier) {
+				const {draft, problems} = formGathering.editedTier(tier)
+				if (problems.length === 0) {
+					try {
+						states.component.editingTierDraft.loading = true
+						await storeModel.subscriptionsSubmodel.editTier({
+							planId: plan.planId,
+							tierId: tier.tierId,
+							label: draft.label,
+							active: draft.active,
+							price: draft.price,
+						})
+					}
+					finally {
+						states.component.editingTierDraft = undefined
+					}
+				}
+			}
+		},
 	}
 
 	const handlers = {
@@ -226,20 +290,66 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 	}
 
 	function renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
+		const isEditing = states.component.editingTierDraft?.tierId === tier.tierId
+		const loading = states.component.editingTierDraft?.loading
 		return html`
 			<li data-tier="${tier.tierId}">
+				<xio-button
+					@press=${() => actions.tierEditing.handleEditButtonPress(plan, tier)}>
+						edit tier
+				</xio-button>
 				<p>tier id: <xio-id id="${tier.tierId}"></xio-id></p>
 				<p>role id: <xio-id id="${tier.roleId}"></xio-id></p>
-				<p>tier label: ${tier.label}</p>
-				<p>tier active: ${tier.active ?"true" :"false"}</p>
-				<p>tier price: ${centsToPrice(tier.price)}</p>
 				<p>created: ${formatDate(tier.time).full}</p>
+				${isEditing ?html`
+					<div
+						class=tierediting
+						@valuechange=${() => formGathering.editedTier(tier)}
+						@change=${() => formGathering.editedTier(tier)}>
+						<xio-text-input
+							data-field="label"
+							?disabled=${loading}
+							.text="${tier.label}"
+							.validator=${validateLabel}>
+								label
+						</xio-text-input>
+						<xio-text-input
+							data-field="price"
+							?disabled=${loading}
+							.text="${centsToPrice(tier.price)}"
+							.validator=${validatePriceString}>
+								price
+						</xio-text-input>
+						<label>
+							active:
+							<input
+								type=checkbox
+								data-field="active"
+								?disabled=${loading}
+								?checked=${tier.active}/>
+						</label>
+						${states.component.editingTierDraft.isChanged
+							? html`
+								<xio-button
+									?disabled=${loading || !!states.component.editingTierDraft.problems.length}
+									@press=${() => actions.tierEditing.submit(plan, tier)}>
+									save tier
+								</xio-button>
+							`
+							: null}
+					</div>
+				`: html`
+					<p>tier label: ${tier.label}</p>
+					<p>price: ${centsToPrice(tier.price)}</p>
+					<p>active: ${tier.active ?"true" :"false"}</p>
+				`}
 			</li>
 		`
 	}
 
 	function renderPlan(plan: SubscriptionPlan, index: number) {
 		const isEditing = states.component.editingPlanDraft?.planId === plan.planId
+		const loading = states.component.editingPlanDraft?.loading
 
 		const activeTiers: SubscriptionTier[] = []
 		const inactiveTiers: SubscriptionTier[] = []
@@ -266,6 +376,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 							@valuechange=${() => formGathering.editedPlan(plan)}>
 								<xio-text-input
 									data-field="label"
+									?disabled=${loading}
 									.text="${plan.label}"
 									.validator=${validateLabel}>
 										label
@@ -273,14 +384,15 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 								<label>
 									active:
 									<input
-										data-field="active"
 										type=checkbox
+										data-field="active"
+										?disabled=${loading}
 										?checked=${plan.active}/>
 								</label>
 								${states.component.editingPlanDraft.isChanged
 									? html`
 										<xio-button
-											?disabled=${!!states.component.editingPlanDraft.problems.length}
+											?disabled=${loading || !!states.component.editingPlanDraft.problems.length}
 											@press=${() => actions.planEditing.submit(plan)}>
 												save plan
 										</xio-button>
