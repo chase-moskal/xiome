@@ -6,6 +6,7 @@ import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus, SubscriptionStatus} from "./types/store-concepts.js"
 import {appPermissions} from "../../assembly/backend/permissions/standard-permissions.js"
 import {setupSimpleStoreClient, setupLinkedStore, setupStoreWithSubscriptionsSetup} from "./testing/store-quick-setup.js"
+import {unproxy} from "@chasemoskal/snapstate"
 
 const adminRoleId = appPermissions.roles.admin.roleId
 
@@ -312,7 +313,6 @@ export default <Suite>{
 				}
 				{
 					const clerk = await makeClerkClient()
-					const {subscriptionsSubmodel} = clerk.storeModel
 					await clerk.storeModel.initialize()
 					const plans = ops.value(clerk.storeModel.state.subscriptions.subscriptionPlansOp)
 					expect(plans.length).equals(2)
@@ -321,7 +321,7 @@ export default <Suite>{
 			async "can add a new tier to an existing plan"() {
 				const store = await setupLinkedStore()
 				const clerk = await store.makeClerkClient()
-				clerk.storeModel.initialize()
+				await clerk.storeModel.initialize()
 				const {planId} = await clerk.storeModel.subscriptionsSubmodel
 					.addPlan({
 						planLabel: "membership",
@@ -354,6 +354,94 @@ export default <Suite>{
 					.find(tier => tier.tierId === tierId)
 				expect(anotherTier).ok()
 				expect(anotherTier.price).equals(10_000)
+			},
+			async "can edit a plan"() {
+				const store = await setupLinkedStore()
+				const clerk = await store.makeClerkClient()
+				await clerk.storeModel.initialize()
+				const plan = await clerk.storeModel.subscriptionsSubmodel
+					.addPlan({
+						planLabel: "membership",
+						tierLabel: "benevolent donor",
+						tierPrice: 5_00,
+					})
+				function getPlan(planId: string) {
+					const {subscriptionPlansOp} = clerk.storeModel.state.subscriptions
+					const plans = ops.value(subscriptionPlansOp)
+					return plans.find(plan => plan.planId === planId)
+				}
+				expect(getPlan(plan.planId).label).equals("membership")
+				await clerk.storeModel.subscriptionsSubmodel.editPlan({
+					planId: plan.planId,
+					active: true,
+					label: "premium",
+				})
+				expect(getPlan(plan.planId).label).equals("premium")
+				await clerk.storeModel.subscriptionsSubmodel.editPlan({
+					planId: plan.planId,
+					active: false,
+					label: "premium",
+				})
+				expect(getPlan(plan.planId).active).equals(false)
+			},
+			async "can edit a tier"() {
+				const store = await setupLinkedStore()
+				const clerk = await store.makeClerkClient()
+				await clerk.storeModel.initialize()
+				const plan = await clerk.storeModel.subscriptionsSubmodel
+					.addPlan({
+						planLabel: "membership",
+						tierLabel: "benevolent donor",
+						tierPrice: 5_00,
+					})
+				function getFirstTier() {
+					const {subscriptionPlansOp} = clerk.storeModel.state.subscriptions
+					const plans = unproxy(ops.value(subscriptionPlansOp))
+					const [plan] = plans
+					const [tier] = plan.tiers
+					return tier
+				}
+				const tier1 = getFirstTier()
+				expect(tier1).ok()
+				expect(tier1.active).equals(true)
+				expect(tier1.label).equals("benevolent donor")
+				expect(tier1.price).equals(5_00)
+
+				await clerk.storeModel.subscriptionsSubmodel.editTier({
+					planId: plan.planId,
+					tierId: tier1.tierId,
+					active: tier1.active,
+					price: tier1.price,
+					label: "test",
+				})
+				const tier2 = getFirstTier()
+				expect(tier2.label).equals("test")
+				expect(tier2.active).equals(tier1.active)
+				expect(tier2.price).equals(tier1.price)
+
+				await clerk.storeModel.subscriptionsSubmodel.editTier({
+					planId: plan.planId,
+					tierId: tier2.tierId,
+					price: tier2.price,
+					label: tier2.label,
+					active: false,
+				})
+				const tier3 = getFirstTier()
+				expect(tier3.active).equals(false)
+				expect(tier3.label).equals(tier2.label)
+				expect(tier3.price).equals(tier2.price)
+
+				await clerk.storeModel.subscriptionsSubmodel.editTier({
+					planId: plan.planId,
+					tierId: tier3.tierId,
+					price: 9_00,
+					label: tier3.label,
+					active: tier3.active,
+				})
+				const tier4 = getFirstTier()
+				expect(tier4.active).equals(tier3.active)
+				expect(tier4.label).equals(tier3.label)
+				expect(tier4.price).equals(9_00)
 			},
 
 		},
