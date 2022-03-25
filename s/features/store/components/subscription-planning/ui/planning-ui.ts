@@ -1,7 +1,7 @@
 
-import {centsToPrice, priceInCents} from "./price-utils.js"
 import {select} from "../../../../../toolbox/selects.js"
 import {html} from "../../../../../framework/component.js"
+import {centsToPrice, priceInCents} from "./price-utils.js"
 import {makeStoreModel} from "../../../models/store-model.js"
 import {makePlanningComponentSnap} from "./planning-component-snap.js"
 import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
