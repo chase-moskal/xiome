@@ -6,7 +6,6 @@ import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus, SubscriptionStatus} from "./types/store-concepts.js"
 import {appPermissions} from "../../assembly/backend/permissions/standard-permissions.js"
 import {setupSimpleStoreClient, setupLinkedStore, setupStoreWithSubscriptionsSetup} from "./testing/store-quick-setup.js"
-import {unproxy} from "@chasemoskal/snapstate"
 
 const adminRoleId = appPermissions.roles.admin.roleId
 
@@ -396,7 +395,7 @@ export default <Suite>{
 					})
 				function getFirstTier() {
 					const {subscriptionPlansOp} = clerk.storeModel.state.subscriptions
-					const plans = unproxy(ops.value(subscriptionPlansOp))
+					const plans = ops.value(subscriptionPlansOp)
 					const [plan] = plans
 					const [tier] = plan.tiers
 					return tier
