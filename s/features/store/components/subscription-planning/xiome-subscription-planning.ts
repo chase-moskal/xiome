@@ -5,8 +5,11 @@ import {makeStoreModel} from "../../models/store-model.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {makePlanningComponentSnap} from "./ui/planning-component-snap.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {Component, html, mixinRequireShare} from "../../../../framework/component.js"
+import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
 
+import xiomeSubscriptionPlanningCss from "./xiome-subscription-planning.css.js"
+
+@mixinStyles(xiomeSubscriptionPlanningCss)
 export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>
@@ -31,7 +34,6 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 		const {allowance} = this.#storeModel
 		const connectStatus = ops.value(this.#storeModel.state.stripeConnect.connectStatusOp)
 		return html`
-			<h3>Subscription Planning</h3>
 			${connectStatus === StripeConnectStatus.Ready
 				? allowance.manageStore
 					? this.#planningUi.renderPlanning()

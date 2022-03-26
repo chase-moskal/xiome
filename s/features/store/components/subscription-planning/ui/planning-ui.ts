@@ -281,11 +281,11 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					?disabled=${loading}
 					.validator=${validatePriceString}>
 						tier price</xio-text-input>
+				<xio-button
+					?disabled=${loading || problems.length}
+					@click=${() => actions.newTier.submit(planId)}>
+						submit new tier</xio-button>
 			</div>
-			<xio-button
-				?disabled=${loading || problems.length}
-				@click=${() => actions.newTier.submit(planId)}>
-					submit new tier</xio-button>
 		`
 	}
 
@@ -298,51 +298,53 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					@press=${() => actions.tierEditing.handleEditButtonPress(plan, tier)}>
 						edit tier
 				</xio-button>
+				<div class=tierdetails>
+					${isEditing ?html`
+						<div
+							class=tierediting
+							@valuechange=${() => formGathering.editedTier(tier)}
+							@change=${() => formGathering.editedTier(tier)}>
+							<xio-text-input
+								data-field="label"
+								?disabled=${loading}
+								.text="${tier.label}"
+								.validator=${validateLabel}>
+									tier label
+							</xio-text-input>
+							<xio-text-input
+								data-field="price"
+								?disabled=${loading}
+								.text="${centsToPrice(tier.price)}"
+								.validator=${validatePriceString}>
+									price
+							</xio-text-input>
+							<label>
+								active:
+								<input
+									type=checkbox
+									data-field="active"
+									?disabled=${loading}
+									?checked=${tier.active}/>
+							</label>
+							${states.component.editingTierDraft.isChanged
+								? html`
+									<xio-button
+										?disabled=${loading || !!states.component.editingTierDraft.problems.length}
+										@press=${() => actions.tierEditing.submit(plan, tier)}>
+										save tier
+									</xio-button>
+								`
+								: null}
+						</div>
+					`: html`
+						<p class=label>tier label: ${tier.label}</p>
+						<p>price: ${centsToPrice(tier.price)}</p>
+						<p>active: ${tier.active ?"true" :"false"}</p>
+					`}
+				</div>
 				<p>tier id: <xio-id id="${tier.tierId}"></xio-id></p>
 				<p>role id: <xio-id id="${tier.roleId}"></xio-id></p>
 				<p>created: ${formatDate(tier.time).full}</p>
-				${isEditing ?html`
-					<div
-						class=tierediting
-						@valuechange=${() => formGathering.editedTier(tier)}
-						@change=${() => formGathering.editedTier(tier)}>
-						<xio-text-input
-							data-field="label"
-							?disabled=${loading}
-							.text="${tier.label}"
-							.validator=${validateLabel}>
-								label
-						</xio-text-input>
-						<xio-text-input
-							data-field="price"
-							?disabled=${loading}
-							.text="${centsToPrice(tier.price)}"
-							.validator=${validatePriceString}>
-								price
-						</xio-text-input>
-						<label>
-							active:
-							<input
-								type=checkbox
-								data-field="active"
-								?disabled=${loading}
-								?checked=${tier.active}/>
-						</label>
-						${states.component.editingTierDraft.isChanged
-							? html`
-								<xio-button
-									?disabled=${loading || !!states.component.editingTierDraft.problems.length}
-									@press=${() => actions.tierEditing.submit(plan, tier)}>
-									save tier
-								</xio-button>
-							`
-							: null}
-					</div>
-				`: html`
-					<p>tier label: ${tier.label}</p>
-					<p>price: ${centsToPrice(tier.price)}</p>
-					<p>active: ${tier.active ?"true" :"false"}</p>
-				`}
 			</li>
 		`
 	}
@@ -363,14 +365,12 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 		return html`
 			<li data-plan="${plan.planId}">
 				<xio-button
+					class=editplan
 					@press=${() => actions.planEditing.handleEditButtonPress(plan)}>
 						edit plan
 				</xio-button>
-				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
-				<p>role id: <xio-id id="${plan.roleId}"></xio-id></p>
-				<p>created: ${formatDate(plan.time).full}</p>
-				${isEditing
-					? html`
+				<div class=plandetails>
+					${isEditing ?html`
 						<div class=planediting
 							@change=${() => formGathering.editedPlan(plan)}
 							@valuechange=${() => formGathering.editedPlan(plan)}>
@@ -379,7 +379,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 									?disabled=${loading}
 									.text="${plan.label}"
 									.validator=${validateLabel}>
-										label
+										plan label
 								</xio-text-input>
 								<label>
 									active:
@@ -399,28 +399,31 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 									`
 									: null}
 						</div>
-					`
-					: html`
-						<p>label: ${plan.label}</p>
+					`: html`
+						<p class=label>plan label: ${plan.label}</p>
 						<p>active: ${plan.active ?"true" :"false"}</p>
 					`}
-				<xio-button @click=${() => actions.newTier.toggleDraftPanel(plan.planId)}>
-					+ Add Tier
+				</div>
+				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
+				<p>role id: <xio-id id="${plan.roleId}"></xio-id></p>
+				<p>created: ${formatDate(plan.time).full}</p>
+				<h3 class=tiersheading>tiers</h3>
+				<xio-button class=addtier @click=${() => actions.newTier.toggleDraftPanel(plan.planId)}>
+					+ add tier
 				</xio-button>
 				${states.component.draftNewTier?.planId === plan.planId
 					? renderNewTierPanel(plan.planId)
 					: null}
-				<p>tiers:</p>
-				<ul>
+				<ol>
 					${activeTiers.map(tier => renderTier(plan, tier))}
-				</ul>
+				</ol>
 				${inactiveTiers.length
 					? html`
 						<details>
 							<summary>inactive tiers</summary>
-							<ul>
+							<ol>
 								${inactiveTiers.map(tier => renderTier(plan, tier))}
-							</ul>
+							</ol>
 						</details>
 					`
 					: null}
@@ -440,22 +443,22 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					inactivePlans.push(plan)
 			}
 			return html`
-				<xio-button @click=${actions.newPlan.toggleDraftPanel}>
-					+ Add Plan
+				<xio-button class=addplan @click=${actions.newPlan.toggleDraftPanel}>
+					+ add plan
 				</xio-button>
 				${states.component.draftNewPlan
 					? renderNewPlanPanel()
 					: null}
-				<ul>
+				<ol>
 					${activePlans.map(renderPlan)}
-				</ul>
+				</ol>
 				${inactivePlans.length
 					? html`
 						<details>
 							<summary>inactive plans</summary>
-							<ul>
+							<ol>
 								${inactivePlans.map(renderPlan)}
-							</ul>
+							</ol>
 						</details>
 					`
 					: null}
