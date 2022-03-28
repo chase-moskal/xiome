@@ -1,4 +1,5 @@
 
+import {XiomeBilling} from "./billing/xiome-billing.js"
 import {XiomeStoreConnect} from "./store-connect/xiome-store-connect.js"
 import {mixinSnapstateSubscriptions, mixinShare} from "../../../framework/component.js"
 import {XiomeSubscriptionPlanning} from "./subscription-planning/xiome-subscription-planning.js"
@@ -21,6 +22,14 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 					modals,
 					storeModel,
 				})(XiomeSubscriptionPlanning)
+			)
+		),
+		XiomeBilling: (
+			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
+				mixinShare({
+					modals,
+					storeModel,
+				})(XiomeBilling)
 			)
 		),
 	}
