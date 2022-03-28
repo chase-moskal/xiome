@@ -14,8 +14,9 @@ mainHtml: html`
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
 		<br/>
-		<h3>billing</h3>
-		<xiome-billing></xiome-billing>
+		<xiome-billing>
+			<h3>billing panel</h3>
+		</xiome-billing>
 		<br/>
 		<br/>
 		<h3>subscription planning</h3>
