@@ -23,12 +23,3 @@ export function makeStoreState() {
 		},
 	})
 }
-
-// export function wipeStoreState(snap: ReturnType<typeof makeStoreState>) {
-// 	snap.state.user.accessOp = ops.none()
-// 	snap.state.stripeConnect.connectStatusOp = ops.none()
-// 	snap.state.stripeConnect.connectDetailsOp = ops.none()
-// 	snap.state.subscriptions.subscriptionPlansOp = ops.none()
-// 	snap.state.subscriptions.subscriptionDetailsOp = ops.none()
-// 	snap.state.billing.paymentMethodOp = ops.none()
-// }
