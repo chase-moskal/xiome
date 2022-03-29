@@ -19,6 +19,10 @@ mainHtml: html`
 		</xiome-billing>
 		<br/>
 		<br/>
+		<h3>subscriptions</h3>
+		<xiome-subscriptions></xiome-subscriptions>
+		<br/>
+		<br/>
 		<h3>subscription planning</h3>
 		<xiome-subscription-planning></xiome-subscription-planning>
 	</section>
