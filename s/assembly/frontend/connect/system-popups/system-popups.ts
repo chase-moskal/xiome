@@ -1,5 +1,5 @@
 
-import {TriggerStripeConnectPopup} from "../../../../features/store/types/store-popups.js"
+import {TriggerCheckoutPopup, TriggerStripeConnectPopup} from "../../../../features/store/types/store-popups.js"
 import {openBankPopup} from "../../../../features/store/popups/bank/open-bank-popup.js"
 
 export function systemPopups({popupsBase}: {popupsBase: string}) {
@@ -12,6 +12,10 @@ export function systemPopups({popupsBase}: {popupsBase: string}) {
 				stripeAccountSetupLink,
 			})
 			return result.promisedPayload
+		}),
+
+		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({stripeAccountId, stripeSessionId, stripeSessionUrl}) => {
+			throw new Error("todo checkout payment popup")
 		}),
 	}
 }
