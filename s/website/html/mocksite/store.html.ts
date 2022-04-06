@@ -20,7 +20,9 @@ mainHtml: html`
 		<br/>
 		<br/>
 		<h3>subscriptions</h3>
-		<xiome-subscriptions></xiome-subscriptions>
+		<xiome-subscriptions>
+			<p slot="b86de1934e3a9eacaae2606f9444d4fd579e36d5c6bb9f278eccb992f2469233">COOL</p>
+		</xiome-subscriptions>
 		<br/>
 		<br/>
 		<h3>subscription planning</h3>

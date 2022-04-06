@@ -34,9 +34,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 									data-tier=${tier.tierId}
 									?data-subscribed=${details.tierIds.includes(tier.tierId)}>
 									<button>
+										<slot name="${tier.tierId}"></slot>
 										<div class=details>
 											<div>${tier.label}</div>
-											<div>\$${centsToPrice(tier.price)}</div>
+											<div>$${centsToPrice(tier.price)}</div>
 											<div>monthly</div>
 										</div>
 										<div class=label>
