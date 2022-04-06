@@ -177,14 +177,11 @@ export const helpersForManagingSubscriptions = ({
 		},
 
 		async updateTier({
-				label, price, tierId: tierIdString, active, currency, interval,
+				label, active, tierId: tierIdString,
 			}: {
 				label: string
-				price: number
 				tierId: string
 				active: boolean
-				currency: "usd"
-				interval: "month" | "year"
 			}) {
 			const tierId = dbmage.Id.fromString(tierIdString)
 			const tierRow = await storeTables.subscriptions.tiers.readOne(
@@ -192,6 +189,7 @@ export const helpersForManagingSubscriptions = ({
 			)
 			if (!tierRow)
 				throw new renraku.ApiError(400, `tier not found ${tierIdString}`)
+
 			const roleRow = await authTables.permissions.role.readOne(
 				dbmage.find({roleId: tierRow.roleId})
 			)
@@ -199,20 +197,7 @@ export const helpersForManagingSubscriptions = ({
 				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
 
 			const {stripePriceId} = tierRow
-			let stripePrice = await stripeLiaisonAccount.prices.retrieve(stripePriceId)
-
-			const changesToImmutableProperties =
-				price !== stripePrice.unit_amount
-				|| currency !== stripePrice.currency
-				|| interval !== stripePrice.recurring.interval
-
-			if (changesToImmutableProperties) {
-				stripePrice = await stripeLiaisonAccount.prices.create({
-					unit_amount: price,
-					currency,
-					recurring: {interval},
-				})
-			}
+			const stripePrice = await stripeLiaisonAccount.prices.retrieve(stripePriceId)
 
 			if (active !== stripePrice.active) {
 				await stripeLiaisonAccount.prices.update(stripePrice.id, {active})
@@ -220,7 +205,7 @@ export const helpersForManagingSubscriptions = ({
 
 			await storeTables.subscriptions.tiers.update({
 				...dbmage.find({tierId}),
-				write: {label, stripePriceId: stripePrice.id},
+				write: {label},
 			})
 
 			await authTables.permissions.role.update({

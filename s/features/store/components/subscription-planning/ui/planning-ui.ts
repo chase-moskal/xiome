@@ -220,7 +220,6 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 							tierId: tier.tierId,
 							label: draft.label,
 							active: draft.active,
-							price: draft.price,
 						})
 					}
 					finally {
@@ -311,13 +310,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 								.validator=${validateLabel}>
 									tier label
 							</xio-text-input>
-							<xio-text-input
-								data-field="price"
-								?disabled=${loading}
-								.text="${centsToPrice(tier.price)}"
-								.validator=${validatePriceString}>
-									price
-							</xio-text-input>
+							<p>price: $${centsToPrice(tier.price)}</p>
 							<label>
 								active:
 								<input
@@ -338,7 +331,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 						</div>
 					`: html`
 						<p class=label>tier label: ${tier.label}</p>
-						<p>price: ${centsToPrice(tier.price)}</p>
+						<p>price: $${centsToPrice(tier.price)}</p>
 						<p>active: ${tier.active ?"true" :"false"}</p>
 					`}
 				</div>

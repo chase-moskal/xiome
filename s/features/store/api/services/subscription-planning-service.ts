@@ -129,27 +129,18 @@ export const makeSubscriptionPlanningService = (
 
 	async editTier(inputs: {
 			label: string
-			price: number
 			tierId: string
 			active: boolean
-			currency: "usd"
-			interval: "month" | "year"
 		}) {
 
 		const label = runValidation(inputs.label, validateLabel)
-		const price = runValidation(inputs.price, validatePriceNumber)
 		const tierId = runValidation(inputs.tierId, validateId)
-		const currency = runValidation(inputs.currency, validateCurrency)
-		const interval = runValidation(inputs.interval, validateInterval)
 		const active = runValidation(inputs.active, validateBoolean)
 
 		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 		await helpers.updateTier({
 			label,
-			price,
 			tierId,
-			currency,
-			interval,
 			active,
 		})
 	},

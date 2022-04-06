@@ -410,7 +410,6 @@ export default <Suite>{
 					planId: plan.planId,
 					tierId: tier1.tierId,
 					active: tier1.active,
-					price: tier1.price,
 					label: "test",
 				})
 				const tier2 = getFirstTier()
@@ -421,7 +420,6 @@ export default <Suite>{
 				await clerk.storeModel.subscriptionsSubmodel.editTier({
 					planId: plan.planId,
 					tierId: tier2.tierId,
-					price: tier2.price,
 					label: tier2.label,
 					active: false,
 				})
@@ -429,18 +427,6 @@ export default <Suite>{
 				expect(tier3.active).equals(false)
 				expect(tier3.label).equals(tier2.label)
 				expect(tier3.price).equals(tier2.price)
-
-				await clerk.storeModel.subscriptionsSubmodel.editTier({
-					planId: plan.planId,
-					tierId: tier3.tierId,
-					price: 9_00,
-					label: tier3.label,
-					active: tier3.active,
-				})
-				const tier4 = getFirstTier()
-				expect(tier4.active).equals(tier3.active)
-				expect(tier4.label).equals(tier3.label)
-				expect(tier4.price).equals(9_00)
 			},
 
 		},
