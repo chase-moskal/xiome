@@ -104,22 +104,16 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					`.tierediting [data-field="active"]`,
 					shadow,
 				),
-				price: select<XioTextInput>(
-					`.tierediting [data-field="price"]`,
-					shadow,
-				),
 			}
 			const draft: EditTierDraft = {
 				tierId: tier.tierId,
 				label: elements.label.value,
 				active: elements.active.checked,
-				price: priceInCents(elements.price.value),
 			}
 			const problems = validateEditTierDraft(draft)
 			const isChanged =
 				draft.label !== tier.label ||
-				draft.active !== tier.active ||
-				draft.price !== tier.price
+				draft.active !== tier.active
 			states.component.editingTierDraft.isChanged = isChanged
 			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}

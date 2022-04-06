@@ -20,5 +20,4 @@ export interface EditTierDraft {
 	tierId: string
 	label: string
 	active: boolean
-	price: number
 }

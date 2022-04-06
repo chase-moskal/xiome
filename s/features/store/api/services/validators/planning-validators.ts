@@ -63,5 +63,4 @@ export const validateEditTierDraft = schema<EditTierDraft>({
 	tierId: validateId,
 	label: validateLabel,
 	active: validateBoolean,
-	price: validatePriceNumber,
 })
