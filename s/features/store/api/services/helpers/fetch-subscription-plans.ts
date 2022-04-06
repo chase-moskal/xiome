@@ -43,8 +43,8 @@ export async function fetchSubscriptionPlans(
 		tierRows: tiersCrossed.map(cross => cross.row),
 	})
 
-	return plansCrossed.map(planCross => {
-		return {
+	return plansCrossed
+		.map(planCross => ({
 			active: planCross.status === StripeResourceStatus.Active,
 			label: planCross.row.label,
 			planId: planCross.row.planId.string,
@@ -59,9 +59,10 @@ export async function fetchSubscriptionPlans(
 					price: cross.stripeResource.unit_amount,
 					time: cross.row.time,
 					active: cross.status === StripeResourceStatus.Active,
-				})),
-		}
-	})
+				}))
+				.sort((tierA, tierB) => tierA.price - tierB.price),
+		}))
+		.sort((planA, planB) => planA.time - planB.time)
 }
 
 function setupHelpers({database}: StoreLinkedAuth) {
