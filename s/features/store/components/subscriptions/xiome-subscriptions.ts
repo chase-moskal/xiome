@@ -30,21 +30,19 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						<p>${plan.label}</p>
 						<div class=tiers>
 							${plan.tiers.filter(tier => tier.active).map(tier => html`
-								<div
+								<button
 									data-tier=${tier.tierId}
 									?data-subscribed=${details.tierIds.includes(tier.tierId)}>
-									<button>
-										<slot name="${tier.tierId}"></slot>
-										<div class=details>
-											<div>${tier.label}</div>
-											<div>$${centsToPrice(tier.price)}</div>
-											<div>monthly</div>
-										</div>
-										<div class=label>
-											choose
-										</div>
-									</button>
-								</div>
+									<slot name="${tier.tierId}"></slot>
+									<div class=details>
+										<div>${tier.label}</div>
+										<div>$${centsToPrice(tier.price)}</div>
+										<div>monthly</div>
+									</div>
+									<div class=label>
+										choose
+									</div>
+								</button>
 							`)}
 						</div>
 					</li>

@@ -14,9 +14,15 @@ ol, ul {
 	display: flex;
 	flex-direction: row;
 	gap: 0.5em;
+	align-items: stretch;
 }
 
 button {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: space-between;
+
 	border: none;
 	background: transparent;
 	font: inherit;
