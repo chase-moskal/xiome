@@ -80,11 +80,19 @@ export function makeSubscriptionsSubmodel({
 		},
 	}
 
-	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(actions, fun => async(...args: any[]) => {
-		state.subscriptions.subscriptionDetailsOp = ops.loading()
-		await fun(...args)
-		await reauthorize()
-	})
+	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(
+		actions,
+		fun => async(...args: any[]) => {
+			state.subscriptions.subscriptionDetailsOp = ops.loading()
+			await fun(...args)
+			await reauthorize()
+		},
+	)
+
+	function getPlans() {
+		return ops.value(unproxy(state.subscriptions.subscriptionPlansOp))
+			?? []
+	}
 
 	return {
 		load,
@@ -112,7 +120,7 @@ export function makeSubscriptionsSubmodel({
 				currency: "usd"
 				interval: "month" | "year"
 			}) {
-			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
+			const plans = getPlans()
 			const tier = await subscriptionPlanningService
 				.addTier(options)
 			const plan = plans.find(plan => plan.planId === options.planId)
@@ -127,7 +135,7 @@ export function makeSubscriptionsSubmodel({
 				active: boolean
 			}) {
 			await subscriptionPlanningService.editPlan({planId, label, active})
-			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
+			const plans = getPlans()
 			const plan = plans.find(plan => plan.planId === planId)
 			plan.label = label
 			plan.active = active
@@ -150,7 +158,7 @@ export function makeSubscriptionsSubmodel({
 				active,
 				label,
 			})
-			const plans = ops.value(unproxy(state.subscriptions.subscriptionPlansOp)) ?? []
+			const plans = getPlans()
 			const plan = plans.find(plan => plan.planId === planId)
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
 			tier.active = active

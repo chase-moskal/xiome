@@ -3,11 +3,10 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {CardClues} from "../stripe/liaison/types/card-clues.js"
-import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {makeStripeLiaison} from "../stripe/liaison/stripe-liaison.js"
 import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
-import {StoreAuth, StoreCustomerAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
+import {StoreAuth, StoreCustomerAuth, StoreLinkedAuth, StoreMeta} from "./store-metas-and-auths.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
 export type StripeLiaisonAccount = ReturnType<
