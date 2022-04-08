@@ -174,6 +174,10 @@ export const helpersForManagingSubscriptions = ({
 				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
 				write: {label},
 			})
+			await authTables.permissions.role.update({
+				...dbmage.find({roleId: planRow.roleId}),
+				write: {label},
+			})
 		},
 
 		async updateTier({
