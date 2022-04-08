@@ -7,12 +7,30 @@ export function mockPopups({mockStripeOperations}: {
 	}) {
 	return {
 
-		triggerStripeConnectPopup: <TriggerStripeConnectPopup>(async({stripeAccountId}) => {
+		triggerStripeConnectPopup: <TriggerStripeConnectPopup>(async({
+				stripeAccountId,
+			}) => {
 			await mockStripeOperations.linkStripeAccount(stripeAccountId)
 		}),
 
-		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({stripeAccountId, stripeSessionId}) => {
-			await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
+		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({
+				stripeAccountId,
+				stripeSessionId,
+			}) => {
+			await mockStripeOperations.updatePaymentMethod(
+				stripeAccountId,
+				stripeSessionId,
+			)
+		}),
+
+		triggerCheckoutSubscriptionPopup: <TriggerCheckoutPopup>(async({
+				stripeAccountId,
+				stripeSessionId,
+			}) => {
+			await mockStripeOperations.checkoutSubscriptionTier(
+				stripeAccountId,
+				stripeSessionId
+			)
 		}),
 	}
 }

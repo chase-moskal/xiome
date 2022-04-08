@@ -105,7 +105,7 @@ export function makeSubscriptionsSubmodel({
 				tierPrice: number
 			}) {
 			const newPlan = await subscriptionPlanningService.addPlan(options)
-			const oldPlans = ops.value(state.subscriptions.subscriptionPlansOp) ?? []
+			const oldPlans = getPlans()
 			state.subscriptions.subscriptionPlansOp = ops.replaceValue(
 				state.subscriptions.subscriptionPlansOp,
 				[...oldPlans, newPlan],

@@ -73,20 +73,9 @@ export async function assembleModels({
 		reauthorize,
 		triggerStripeConnectPopup: popups.triggerStripeConnectPopup,
 		triggerCheckoutPaymentMethodPopup: popups.triggerCheckoutPaymentMethodPopup,
-		triggerCheckoutSubscriptionPopup: async() => {throw new Error("trigger popup")},
+		triggerCheckoutSubscriptionPopup: popups.triggerCheckoutSubscriptionPopup,
 		triggerStripeLogin: async() => {throw new Error("trigger popup")},
 	})
-
-	// // TODO reactivate store
-	// const storeModel = makeStoreModel({
-	// 	appId,
-	// 	storage,
-	// 	shopkeepingService: remote.store.shopkeepingService,
-	// 	stripeAccountsService: remote.store.stripeConnectService,
-	// 	statusCheckerService: remote.store.ecommerce.statusCheckerService,
-	// 	statusTogglerService: remote.store.ecommerce.statusTogglerService,
-	// 	triggerBankPopup: popups.triggerBankPopup,
-	// })
 
 	const administrativeModel = makeAdministrativeModel({
 		roleAssignmentService: remote.administrative.roleAssignmentService,

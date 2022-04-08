@@ -5,7 +5,10 @@ import {openBankPopup} from "../../../../features/store/popups/bank/open-bank-po
 export function systemPopups({popupsBase}: {popupsBase: string}) {
 	return {
 
-		triggerStripeConnectPopup: <TriggerStripeConnectPopup>(async({stripeAccountId, stripeAccountSetupLink}) => {
+		triggerStripeConnectPopup: <TriggerStripeConnectPopup>(async({
+				stripeAccountId,
+				stripeAccountSetupLink,
+			}) => {
 			const result = openBankPopup({
 				popupLink: `${popupsBase}/bank`,
 				stripeAccountId,
@@ -14,8 +17,20 @@ export function systemPopups({popupsBase}: {popupsBase: string}) {
 			return result.promisedPayload
 		}),
 
-		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({stripeAccountId, stripeSessionId, stripeSessionUrl}) => {
+		triggerCheckoutPaymentMethodPopup: <TriggerCheckoutPopup>(async({
+				stripeAccountId,
+				stripeSessionId,
+				stripeSessionUrl,
+			}) => {
 			throw new Error("todo checkout payment popup")
+		}),
+
+		triggerCheckoutSubscriptionPopup: <TriggerCheckoutPopup>(async({
+				stripeAccountId,
+				stripeSessionId,
+				stripeSessionUrl,
+			}) => {
+			throw new Error("todo checkout subscription popup")
 		}),
 	}
 }
