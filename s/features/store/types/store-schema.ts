@@ -50,11 +50,9 @@ export type CustomerRow = dbmage.AsRow<{
 // }>
 
 export type SubscriptionPlanRow = dbmage.AsRow<{
-	label: string
 	planId: dbmage.Id
-	roleId: dbmage.Id
+	label: string
 	time: number
-	stripeProductId: string
 }>
 
 export type SubscriptionTierRow = dbmage.AsRow<{
@@ -63,6 +61,7 @@ export type SubscriptionTierRow = dbmage.AsRow<{
 	planId: dbmage.Id
 	roleId: dbmage.Id
 	time: number
+	stripeProductId: string
 	stripePriceId: string
 }>
 

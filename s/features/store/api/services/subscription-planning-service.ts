@@ -29,10 +29,11 @@ export const makeSubscriptionPlanningService = (
 	)
 	if (connectStatus !== StripeConnectStatus.Ready)
 		throw new renraku.ApiError(400, "stripe connect status not ready")
-	return auth
+	const helpers = helpersForManagingSubscriptions({...options, ...auth})
+	return {...auth, helpers}
 })
 
-.expose(auth => ({
+.expose(({helpers}) => ({
 
 	async addPlan(inputs: {
 			planLabel: string
@@ -43,8 +44,6 @@ export const makeSubscriptionPlanningService = (
 		const planLabel = runValidation(inputs.planLabel, validateLabel)
 		const tierLabel = runValidation(inputs.tierLabel, validateLabel)
 		const tierPrice = runValidation(inputs.tierPrice, validatePriceNumber)
-
-		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 
 		const stripeDetails = await helpers.createStripeProductAndPrice({
 			planLabel,
@@ -94,7 +93,6 @@ export const makeSubscriptionPlanningService = (
 		const currency = runValidation(inputs.currency, validateCurrency)
 		const interval = runValidation(inputs.interval, validateInterval)
 
-		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 		const {tierId, roleId, time} = await helpers.createTierForPlan({
 			price,
 			planId,
@@ -123,7 +121,6 @@ export const makeSubscriptionPlanningService = (
 		const planId = runValidation(inputs.planId, validateId)
 		const label = runValidation(inputs.label, validateLabel)
 		const active = runValidation(inputs.active, validateBoolean)
-		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 		await helpers.updatePlan({planId, label, active})
 	},
 
@@ -137,7 +134,6 @@ export const makeSubscriptionPlanningService = (
 		const tierId = runValidation(inputs.tierId, validateId)
 		const active = runValidation(inputs.active, validateBoolean)
 
-		const helpers = helpersForManagingSubscriptions({...options, ...auth})
 		await helpers.updateTier({
 			label,
 			tierId,

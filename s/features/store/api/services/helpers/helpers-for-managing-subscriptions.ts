@@ -2,12 +2,10 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {SubscriptionTierRow} from "../../../types/store-schema.js"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForManagingSubscriptions = ({
 		database,
-		stripeAccountId,
 		stripeLiaisonAccount,
 		generateId,
 	}: StoreLinkedAuth & {
@@ -16,7 +14,6 @@ export const helpersForManagingSubscriptions = ({
 
 	const authTables = database.tables.auth
 	const storeTables = database.tables.store
-	const time = Date.now()
 
 	function makeRoleRow(roleId: dbmage.Id, label: string) {
 		return {
@@ -25,97 +22,85 @@ export const helpersForManagingSubscriptions = ({
 			hard: true,
 			public: true,
 			assignable: true,
-			time,
+			time: Date.now(),
 		}
+	}
+
+	type Pricing = {
+		unitAmount: number
+		currency: "usd"
+		interval: "month" | "year"
+	}
+
+	async function createStripeProductAndPriceResources({productLabel, pricing}: {
+			productLabel: string
+			pricing: Pricing
+		}) {
+
+		const {id: stripeProductId} = await stripeLiaisonAccount.products.create({
+			name: productLabel,
+		})
+
+		const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
+			active: true,
+			product: stripeProductId,
+			currency: pricing.currency,
+			unit_amount: pricing.unitAmount,
+			recurring: {interval: pricing.interval},
+		})
+
+		return {stripeProductId, stripePriceId}
 	}
 
 	return {
 
-		async createStripeProductAndPrice(options: {
-				planLabel: string
-				tierPrice: number
-				tierCurrency: string
-				tierInterval: "month" | "year"
-			}) {
-
-			const {id: stripeProductId} = await stripeLiaisonAccount.products.create({
-				name: options.planLabel
-			})
-
-			const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
-				currency: options.tierCurrency,
-				unit_amount: options.tierPrice,
-				recurring: {interval: options.tierInterval},
-			})
-
-			return {stripeProductId, stripePriceId}
-		},
-
-		async createStripePriceForProduct(options: {
-				stripeProductId: string
-				tierPrice: number
-				tierCurrency: "usd"
-				tierInterval: "month" | "year"
-			}) {
-
-			const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
-				currency: options.tierCurrency,
-				unit_amount: options.tierPrice,
-				recurring: {interval: options.tierInterval},
-			})
-
-			return {stripePriceId}
-		},
-
 		async createPlanAndTier({
-				planLabel, tierLabel, stripePriceId, stripeProductId,
+				planLabel, tierLabel, pricing,
 			}: {
 				planLabel: string
 				tierLabel: string
-				stripePriceId: string
-				stripeProductId: string
+				pricing: Pricing
 			}) {
 
 			const planId = generateId()
-			const planRoleId = generateId()
 			const tierId = generateId()
 			const tierRoleId = generateId()
 
 			await authTables.permissions.role.create(
-				makeRoleRow(planRoleId, planLabel),
 				makeRoleRow(tierRoleId, tierLabel),
 			)
 
 			await storeTables.subscriptions.plans.create({
 				planId,
 				label: planLabel,
-				roleId: planRoleId,
-				time,
-				stripeProductId,
-				// stripeAccountId,
+				time: Date.now(),
 			})
+
+			const {stripeProductId, stripePriceId} =
+				await createStripeProductAndPriceResources({
+					productLabel: tierLabel,
+					pricing,
+				})
 
 			await storeTables.subscriptions.tiers.create({
 				tierId,
 				planId,
 				label: tierLabel,
 				roleId: tierRoleId,
-				time,
+				time: Date.now(),
 				stripePriceId,
-				// stripeAccountId,
+				stripeProductId,
 			})
 
-			return {planId, tierId, planRoleId, tierRoleId, time}
+			return {planId, tierId, tierRoleId, time: Date.now()}
 		},
 
 		async createTierForPlan({
-				price, planId, tierLabel, tierCurrency, tierInterval,
+				planId, label, pricing,
 			}: {
-				price: number
 				planId: string
-				tierLabel: string
-				tierCurrency: "usd"
-				tierInterval: "month" | "year"
+				label: string
+				pricing: Pricing
 			}) {
 
 			const planRow = await storeTables.subscriptions.plans.readOne(
@@ -125,38 +110,36 @@ export const helpersForManagingSubscriptions = ({
 			if (!planRow)
 				throw new Error(`unknown subscription plan ${planId}`)
 
-			const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
-				unit_amount: price,
-				currency: tierCurrency,
-				recurring: {interval: tierInterval},
-			})
+			const {stripeProductId, stripePriceId} =
+				await createStripeProductAndPriceResources({
+					productLabel: label,
+					pricing,
+				})
 
 			const roleId = generateId()
 			await authTables.permissions.role.create(
-				makeRoleRow(roleId, tierLabel),
+				makeRoleRow(roleId, label),
 			)
 
 			const time = Date.now()
 			const tierId = generateId()
 
-			const tierRow: SubscriptionTierRow = {
+			await storeTables.subscriptions.tiers.create({
 				time,
+				label,
 				tierId,
 				roleId,
 				stripePriceId,
-				label: tierLabel,
+				stripeProductId,
 				planId: planRow.planId,
-			}
-
-			await storeTables.subscriptions.tiers.create(tierRow)
+			})
 
 			return {tierId, roleId, time}
 		},
 
-		async updatePlan({label, active, planId: planIdString}: {
-				label: string
+		async updatePlan({planId: planIdString, label}: {
 				planId: string
-				active: boolean
+				label: string
 			}) {
 			const planId = dbmage.Id.fromString(planIdString)
 			const planRow = await storeTables.subscriptions.plans.readOne(
@@ -166,33 +149,19 @@ export const helpersForManagingSubscriptions = ({
 			if (!planRow)
 				throw new renraku.ApiError(400, `unable to find plan ${planIdString}`)
 
-			const stripeProduct = await stripeLiaisonAccount.products
-				.retrieve(planRow.stripeProductId)
-
-			if (!stripeProduct)
-				throw new renraku.ApiError(400, `unable to find stripe product ${planRow.stripeProductId}`)
-
-			if (active !== stripeProduct.active) {
-				await stripeLiaisonAccount.products.update(planRow.stripeProductId, {active})
-			}
-
 			await storeTables.subscriptions.plans.update({
 				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
-				write: {label},
-			})
-
-			await authTables.permissions.role.update({
-				...dbmage.find({roleId: planRow.roleId}),
 				write: {label},
 			})
 		},
 
 		async updateTier({
-				label, active, tierId: tierIdString,
+				tierId: tierIdString, label, active, pricing,
 			}: {
-				label: string
 				tierId: string
+				label: string
 				active: boolean
+				pricing: Pricing
 			}) {
 			const tierId = dbmage.Id.fromString(tierIdString)
 			const tierRow = await storeTables.subscriptions.tiers.readOne(
@@ -207,16 +176,37 @@ export const helpersForManagingSubscriptions = ({
 			if (!roleRow)
 				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
 
-			const {stripePriceId} = tierRow
+			let {stripePriceId, stripeProductId} = tierRow
 			const stripePrice = await stripeLiaisonAccount.prices.retrieve(stripePriceId)
+			const stripeProduct = await stripeLiaisonAccount.products.retrieve(stripeProductId)
 
-			if (active !== stripePrice.active) {
-				await stripeLiaisonAccount.prices.update(stripePrice.id, {active})
+			if (!stripePrice) throw new renraku.ApiError(500, `stripe price not found ${stripePriceId}`)
+			if (!stripeProduct) throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
+
+			const isPricingDifferent =
+				pricing.unitAmount !== stripePrice.unit_amount ||
+				pricing.currency !== stripePrice.currency ||
+				pricing.interval !== stripePrice.recurring.interval
+
+			if (isPricingDifferent) {
+				const newStripePrice = await stripeLiaisonAccount.prices.create({
+					active,
+					product: stripeProductId,
+					currency: pricing.currency,
+					unit_amount: pricing.unitAmount,
+					recurring: {interval: pricing.interval},
+				})
+				stripePriceId = newStripePrice.id
+			}
+			else {
+				if (active !== stripePrice.active) {
+					await stripeLiaisonAccount.prices.update(stripePrice.id, {active})
+				}
 			}
 
 			await storeTables.subscriptions.tiers.update({
 				...dbmage.find({tierId}),
-				write: {label},
+				write: {label, stripePriceId},
 			})
 
 			await authTables.permissions.role.update({
