@@ -31,41 +31,82 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return ops.value(this.#state.subscriptions.subscriptionDetailsOp)
 	}
 
-	#handleTierClick = ({tierId}: SubscriptionTier) => async() => {
-		const state = this.#state
+	#prepareTierManager({tierId}: SubscriptionTier) {
+		const isSubscribedToThisTier = this.#subscription.tierIds.includes(tierId)
+		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
+		const subscriptionStatus = this.#subscription?.status
+		const subscriptionIsActive = subscriptionStatus === SubscriptionStatus.Active
+
 		const {subscriptionsSubmodel, billingSubmodel} = this.share.storeModel
 
-		const paymentMethod = !!ops.value(state.billing.paymentMethodOp)
-		const subscriptionStatus =
-			ops.value(state.subscriptions.subscriptionDetailsOp)?.status
-		const subscriptionIsActive =
-			subscriptionStatus === SubscriptionStatus.Active
-
-		if (paymentMethod) {
-			if (subscriptionIsActive)
-				await subscriptionsSubmodel
-					.updateExistingSubscriptionWithNewTier(tierId)
-			else
-				await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
-		}
-		else {
-			if (subscriptionIsActive) {
-				await billingSubmodel.checkoutPaymentMethod()
-				await subscriptionsSubmodel
-					.updateExistingSubscriptionWithNewTier(tierId)
-			}
-			else
-				await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+		return {
+			isSubscribedToThisTier,
+			handleTierClick: async() => {
+				debugger
+				if (isSubscribedToThisTier) {
+					await subscriptionsSubmodel.cancelSubscription()
+				}
+				else {
+					if (subscriptionIsActive) {
+						if (paymentMethod) {
+							await subscriptionsSubmodel
+								.updateExistingSubscriptionWithNewTier(tierId)
+						}
+						else {
+							await billingSubmodel.checkoutPaymentMethod()
+							await subscriptionsSubmodel
+								.updateExistingSubscriptionWithNewTier(tierId)
+						}
+					}
+					else {
+						if (paymentMethod) {
+							await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+						}
+						else {
+							await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+						}
+					}
+				}
+			},
 		}
 	}
 
+	// #handleTierClick = ({tierId}: SubscriptionTier) => async() => {
+	// 	const state = this.#state
+	// 	const {subscriptionsSubmodel, billingSubmodel} = this.share.storeModel
+
+	// 	const paymentMethod = !!ops.value(state.billing.paymentMethodOp)
+	// 	const subscriptionStatus =
+	// 		ops.value(state.subscriptions.subscriptionDetailsOp)?.status
+	// 	const subscriptionIsActive =
+	// 		subscriptionStatus === SubscriptionStatus.Active
+
+	// 	if (paymentMethod) {
+	// 		if (subscriptionIsActive)
+	// 			await subscriptionsSubmodel
+	// 				.updateExistingSubscriptionWithNewTier(tierId)
+	// 		else
+	// 			await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+	// 	}
+	// 	else {
+	// 		if (subscriptionIsActive) {
+	// 			await billingSubmodel.checkoutPaymentMethod()
+	// 			await subscriptionsSubmodel
+	// 				.updateExistingSubscriptionWithNewTier(tierId)
+	// 		}
+	// 		else
+	// 			await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+	// 	}
+	// }
+
 	#renderTier = (tier: SubscriptionTier) => {
-		const isSubscribed = this.#subscription.tierIds.includes(tier.tierId)
+		// const isSubscribed = this.#subscription.tierIds.includes(tier.tierId)
+		const manager = this.#prepareTierManager(tier)
 		return html`
 			<button
 				data-tier=${tier.tierId}
-				?data-subscribed=${isSubscribed}
-				@click=${this.#handleTierClick(tier)}>
+				?data-subscribed=${manager.isSubscribedToThisTier}
+				@click=${manager.handleTierClick}>
 					<slot name="${tier.tierId}"></slot>
 					<div class=details>
 						<div>${tier.label}</div>
@@ -73,8 +114,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						<div>monthly</div>
 					</div>
 					<div class=label>
-						${isSubscribed
-							? "edit"
+						${manager.isSubscribedToThisTier
+							? "cancel"
 							: "buy"}
 					</div>
 			</button>
