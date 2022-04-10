@@ -54,19 +54,24 @@ export interface StripeConnectDetails {
 	paused: boolean
 }
 
+export interface SubscriptionPricing {
+	price: number
+	currency: "usd"
+	interval: "month" | "year"
+}
+
 export interface SubscriptionTier {
 	tierId: string
 	label: string
 	roleId: string
-	price: number
 	time: number
 	active: boolean
+	pricing: SubscriptionPricing
 }
 
 export interface SubscriptionPlan {
 	planId: string
 	label: string
-	roleId: string
 	tiers: SubscriptionTier[]
 	time: number
 	active: boolean

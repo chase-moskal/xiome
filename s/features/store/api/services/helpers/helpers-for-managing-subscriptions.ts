@@ -2,6 +2,7 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
+import {SubscriptionPricing} from "../../../types/store-concepts.js"
 import {StoreLinkedAuth} from "../../../types/store-metas-and-auths.js"
 
 export const helpersForManagingSubscriptions = ({
@@ -26,15 +27,9 @@ export const helpersForManagingSubscriptions = ({
 		}
 	}
 
-	type Pricing = {
-		unitAmount: number
-		currency: "usd"
-		interval: "month" | "year"
-	}
-
 	async function createStripeProductAndPriceResources({productLabel, pricing}: {
 			productLabel: string
-			pricing: Pricing
+			pricing: SubscriptionPricing
 		}) {
 
 		const {id: stripeProductId} = await stripeLiaisonAccount.products.create({
@@ -45,7 +40,7 @@ export const helpersForManagingSubscriptions = ({
 			active: true,
 			product: stripeProductId,
 			currency: pricing.currency,
-			unit_amount: pricing.unitAmount,
+			unit_amount: pricing.price,
 			recurring: {interval: pricing.interval},
 		})
 
@@ -59,7 +54,7 @@ export const helpersForManagingSubscriptions = ({
 			}: {
 				planLabel: string
 				tierLabel: string
-				pricing: Pricing
+				pricing: SubscriptionPricing
 			}) {
 
 			const planId = generateId()
@@ -100,7 +95,7 @@ export const helpersForManagingSubscriptions = ({
 			}: {
 				planId: string
 				label: string
-				pricing: Pricing
+				pricing: SubscriptionPricing
 			}) {
 
 			const planRow = await storeTables.subscriptions.plans.readOne(
@@ -161,7 +156,7 @@ export const helpersForManagingSubscriptions = ({
 				tierId: string
 				label: string
 				active: boolean
-				pricing: Pricing
+				pricing: SubscriptionPricing
 			}) {
 			const tierId = dbmage.Id.fromString(tierIdString)
 			const tierRow = await storeTables.subscriptions.tiers.readOne(
@@ -184,7 +179,7 @@ export const helpersForManagingSubscriptions = ({
 			if (!stripeProduct) throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
 			const isPricingDifferent =
-				pricing.unitAmount !== stripePrice.unit_amount ||
+				pricing.price !== stripePrice.unit_amount ||
 				pricing.currency !== stripePrice.currency ||
 				pricing.interval !== stripePrice.recurring.interval
 
@@ -193,7 +188,7 @@ export const helpersForManagingSubscriptions = ({
 					active,
 					product: stripeProductId,
 					currency: pricing.currency,
-					unit_amount: pricing.unitAmount,
+					unit_amount: pricing.price,
 					recurring: {interval: pricing.interval},
 				})
 				stripePriceId = newStripePrice.id
