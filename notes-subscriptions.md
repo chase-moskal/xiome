@@ -1,13 +1,23 @@
 
 ## Todo
 
-- [ ] remodel each subscription tier to be a new stripe product
+- [x] remodel each subscription tier to be a new stripe product
+- [ ] further remodeling
+  - each plan is a different subscription
+  - plans define the currency being used
+  - tiers can have different pricepoints
+- [ ] adapt existing ui for new pricing modeling
+  - price editing is back, ui needs to provide for it
+  - tier pricing can now be monthly or yearly, make this editable
+  - plans no longer have roles, only tiers. ui shouldn't display this anymore
 - [ ] rework fulfillment in stripe webhooks, based on stripe subscription updates
 - [ ] add customer portal integration
+- [ ] stripe timestamps are in *seconds*, make sure we're not treating them as *milliseconds*
 
 ## Stripe Questions
 
 - what happens when a subscription is updated so that it has zero items? does it remain active?
+- does the billing customer portal support multiple subscriptions?
 
 ## Customer portal
 

@@ -10,6 +10,7 @@ import {runValidation} from "../../../../toolbox/topic-validation/run-validation
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
 import {SubscriptionPricing, StoreServiceOptions, StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../types/store-concepts.js"
 import {validateBoolean, validateCurrency, validateInterval, validateLabel, validatePriceNumber, validateSubscriptionPricing} from "./validators/planning-validators.js"
+import {SubscriptionCurrency} from "../../types/store-schema.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -39,11 +40,13 @@ export const makeSubscriptionPlanningService = (
 			planLabel: string
 			tierLabel: string
 			pricing: SubscriptionPricing
+			currency: SubscriptionCurrency
 		}): Promise<SubscriptionPlan> {
 
 		const planLabel = runValidation(inputs.planLabel, validateLabel)
 		const tierLabel = runValidation(inputs.tierLabel, validateLabel)
 		const pricing = runValidation(inputs.pricing, validateSubscriptionPricing)
+		const currency = runValidation(inputs.currency, validateCurrency)
 
 		const {planId, tierId, tierRoleId, time} =
 			await helpers.createPlanAndTier({

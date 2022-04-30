@@ -69,6 +69,7 @@ export const helpersForManagingSubscriptions = ({
 				planId,
 				label: planLabel,
 				time: Date.now(),
+				currency
 			})
 
 			const {stripeProductId, stripePriceId} =

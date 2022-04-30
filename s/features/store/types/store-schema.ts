@@ -49,10 +49,15 @@ export type CustomerRow = dbmage.AsRow<{
 // 	time: number
 // }>
 
+export type SubscriptionCurrency =
+	| "usd"
+	| "cad"
+
 export type SubscriptionPlanRow = dbmage.AsRow<{
 	planId: dbmage.Id
 	label: string
 	time: number
+	currency: SubscriptionCurrency
 }>
 
 export type SubscriptionTierRow = dbmage.AsRow<{
@@ -62,6 +67,13 @@ export type SubscriptionTierRow = dbmage.AsRow<{
 	roleId: dbmage.Id
 	time: number
 	stripeProductId: string
+	stripePriceId: string
+}>
+
+export type SubscriptionPriceRow = dbmage.AsRow<{
+	label: string
+	tierId: dbmage.Id
+	time: number
 	stripePriceId: string
 }>
 
