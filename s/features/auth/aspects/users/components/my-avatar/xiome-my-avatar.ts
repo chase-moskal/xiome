@@ -20,7 +20,7 @@ export class XiomeMyAvatar extends mixinRequireShare<{
 				></xio-avatar>
 			`,
 			null,
-			{showErrorText: false},
+			{hideErrorText: true},
 		)
 	}
 }

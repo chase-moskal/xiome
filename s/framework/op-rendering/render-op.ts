@@ -7,10 +7,10 @@ export function renderOp<xValue, xResult>(
 		op: Op<xValue>,
 		render: (value: xValue) => xResult,
 		more: any = null,
-		{loadingMessage, errorMessage, showErrorText}: {
+		{loadingMessage = "", errorMessage = "", hideErrorText = false}: {
 			loadingMessage?: string
 			errorMessage?: string
-			showErrorText?: boolean
+			hideErrorText?: boolean
 		} = {},
 	) {
 
@@ -19,7 +19,7 @@ export function renderOp<xValue, xResult>(
 			.op=${op}
 			loading-message="${loadingMessage}"
 			error-message="${errorMessage}"
-			show-error-text="${showErrorText}">
+			?hide-error-text=${hideErrorText}>
 				${whenOpReady(op, render)}
 				${more}
 		</xio-op>

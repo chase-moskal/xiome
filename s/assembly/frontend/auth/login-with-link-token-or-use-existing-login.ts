@@ -24,5 +24,10 @@ export async function loginWithLinkTokenOrUseExistingLogin({
 		onDone()
 	}
 	else
-		await accessModel.useExistingLogin()
+		try {
+			await accessModel.useExistingLogin()
+		}
+		catch (error) {
+			console.error("error with xiome login:", error)
+		}
 }

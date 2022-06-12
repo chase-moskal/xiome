@@ -38,7 +38,7 @@ export class XioOp<xPayload = any> extends Component {
 	["error-message"] = "error"
 
 	@property({type: Boolean})
-	["show-error-text"] = true
+	["hide-error-text"]: boolean = false
 
 	@property({type: Boolean})
 	["start-loading"]: boolean
@@ -65,9 +65,9 @@ export class XioOp<xPayload = any> extends Component {
 			error: reason => html`
 				<slot name=error>
 					${this.errorIcon}
-					${this["show-error-text"]
-						? html`<span>${reason ?? this["error-message"]}</span>`
-						: null}
+					${this["hide-error-text"]
+						? null
+						: html`<span>${reason ?? this["error-message"]}</span>`}
 					
 				</slot>
 			`,
