@@ -72,7 +72,9 @@ spec:
       name: tls-secret-privatekey-staging
     {{- end }}
     solvers:
-    - http01:
-        ingress:
-          class: {{ .Values.ingress.class }}
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
 {{ end }}
