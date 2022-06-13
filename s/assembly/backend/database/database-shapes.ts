@@ -35,18 +35,18 @@ export const databaseShapeRequiresAppIsolation:
 		answerPosts: true,
 		questionPosts: true,
 	},
-	store: {
-		billing: {
-			customers: true,
-		},
-		merchants: {
-			stripeAccounts: true,
-		},
-		subscriptions: {
-			plans: true,
-			tiers: true,
-		},
-	},
+	// store: {
+	// 	billing: {
+	// 		customers: true,
+	// 	},
+	// 	merchants: {
+	// 		stripeAccounts: true,
+	// 	},
+	// 	subscriptions: {
+	// 		plans: true,
+	// 		tiers: true,
+	// 	},
+	// },
 	videos: {
 		dacastAccountLinks: true,
 		viewDacast: true,

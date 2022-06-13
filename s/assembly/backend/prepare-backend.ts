@@ -10,7 +10,7 @@ import {assimilateApi} from "./assimilators/assimilate-api.js"
 import {AssimilatorOptions} from "./types/assilimator-options.js"
 import {assimilateEmails} from "./assimilators/assimilate-emails.js"
 import {assimilateCrypto} from "./assimilators/assimilate-crypto.js"
-import {assimilateStripe} from "./assimilators/assimilate-stripe.js"
+// import {assimilateStripe} from "./assimilators/assimilate-stripe.js"
 import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
@@ -25,11 +25,11 @@ export function prepareBackend(configurators: Configurators) {
 		const {databaseRaw, mockStorage} = await assimilateDatabase(options)
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
-		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
-			...options,
-			databaseRaw,
-			mockStorage,
-		})
+		// const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
+		// 	...options,
+		// 	databaseRaw,
+		// 	mockStorage,
+		// })
 
 		const dacastSdk = assimilateDacast(options)
 
@@ -37,7 +37,7 @@ export function prepareBackend(configurators: Configurators) {
 			...options,
 			dacastSdk,
 			databaseRaw,
-			stripeLiaison,
+			// stripeLiaison,
 			signToken,
 			verifyToken,
 			sendLoginEmail: emails.sendLoginEmail,
@@ -49,8 +49,8 @@ export function prepareBackend(configurators: Configurators) {
 			config,
 			emails,
 			databaseRaw,
-			stripeLiaison,
-			mockStripeOperations,
+			// stripeLiaison,
+			// mockStripeOperations,
 			platformAppId: config.platform.appDetails.appId,
 			prepareNotesDepositBox: (appId: dbmage.Id) => makeNotesDepositBox({
 				rando,
@@ -62,7 +62,7 @@ export function prepareBackend(configurators: Configurators) {
 			mockBrowser: async({appOrigin}: {appOrigin: string}) => mockBrowser({
 				api,
 				appOrigin,
-				mockStripeOperations,
+				// mockStripeOperations,
 			}),
 		}
 	}

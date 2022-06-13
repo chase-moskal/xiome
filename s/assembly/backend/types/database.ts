@@ -3,7 +3,7 @@ import * as dbmage from "dbmage"
 
 import {RemoveIndex} from "../../../toolbox/types/remove-index.js"
 import {AuthSchema} from "../../../features/auth/types/auth-schema.js"
-import {StoreSchema} from "../../../features/store/types/store-schema.js"
+// import {StoreSchema} from "../../../features/store/types/store-schema.js"
 import {VideoSchema} from "../../../features/videos/types/video-schema.js"
 import {NotesSchema} from "../../../features/notes/api/tables/notes-schema.js"
 import {AppSchema} from "../../../features/auth/aspects/apps/types/app-tables.js"
@@ -29,7 +29,7 @@ export type DatabaseSchemaRequiresAppIsolation = dbmage.UnconstrainSchema<
 	dbmage.AsSchema<{
 		auth: AuthSchema
 		notes: NotesSchema
-		store: StoreSchema
+		// store: StoreSchema
 		videos: VideoSchema
 		example: ExampleSchema
 		questions: QuestionsSchema

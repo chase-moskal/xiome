@@ -1,7 +1,7 @@
 
 import {FlexStorage} from "dbmage"
 
-import {mockPopups} from "./common/mock-popups.js"
+// import {mockPopups} from "./common/mock-popups.js"
 import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
@@ -47,12 +47,12 @@ export async function mockConnectApp({
 		appOrigin,
 	})
 
-	const popups = mockPopups({
-		mockStripeOperations: backend.mockStripeOperations,
-	})
+	// const popups = mockPopups({
+	// 	mockStripeOperations: backend.mockStripeOperations,
+	// })
 
 	const chatConnect = await chatMockClientEntirely(storage)
 	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
-	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
+	return {appId, remote, storage, authMediator, backend, /*popups,*/ setMockLatency, chatConnect}
 }

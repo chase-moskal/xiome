@@ -1,6 +1,6 @@
 
 import {makeRemote} from "./remote/make-remote.js"
-import {systemPopups} from "./system-popups/system-popups.js"
+// import {systemPopups} from "./system-popups/system-popups.js"
 import {XiomeConfig} from "../types/xiome-config-connected.js"
 import {simpleFlexStorage} from "dbmage"
 import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
@@ -28,7 +28,7 @@ export async function connect({
 		apiLink: apiServer,
 	})
 	wireMediatorBroadcastChannel({appId, authMediator})
-	const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
+	// const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 	const chatConnect = chatSocketClient(chatServer)
-	return {appId, remote, storage, authMediator, popups, chatConnect}
+	return {appId, remote, storage, authMediator, /*popups,*/ chatConnect}
 }
