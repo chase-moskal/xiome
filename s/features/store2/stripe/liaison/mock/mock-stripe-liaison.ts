@@ -163,38 +163,36 @@ export function mockStripeLiaison({
 
 			return {
 
-				customers: (() => {
-					return {
-						...mockResource<
-								Stripe.Customer,
-								Stripe.CustomerCreateParams,
-								Stripe.CustomerUpdateParams
-							>({
-							table: tables.customers,
-							createData: params => ({
-								email: params.email,
-								invoice_settings: <any>params.invoice_settings
-									?? {default_payment_method: undefined},
-							}),
-							updateData: params => ({
-								email: params.email,
-								invoice_settings: <any>params.invoice_settings,
-							}),
+				customers: {
+					...mockResource<
+							Stripe.Customer,
+							Stripe.CustomerCreateParams,
+							Stripe.CustomerUpdateParams
+						>({
+						table: tables.customers,
+						createData: params => ({
+							email: params.email,
+							invoice_settings: <any>params.invoice_settings
+								?? {default_payment_method: undefined},
 						}),
-						async listPaymentMethods(
-								customer: string,
-								params: Stripe.CustomerListPaymentMethodsParams,
-							) {
-							const paymentMethods = await tables.paymentMethods.read(
-								dbmage.find({customer, type: params.type})
-							)
-							return respond({
-								object: "list",
-								data: paymentMethods,
-							})
-						},
-					}
-				})(),
+						updateData: params => ({
+							email: params.email,
+							invoice_settings: <any>params.invoice_settings,
+						}),
+					}),
+					async listPaymentMethods(
+							customer: string,
+							params: Stripe.CustomerListPaymentMethodsParams,
+						) {
+						const paymentMethods = await tables.paymentMethods.read(
+							dbmage.find({customer, type: params.type})
+						)
+						return respond({
+							object: "list",
+							data: paymentMethods,
+						})
+					},
+				},
 
 				products: mockResource<
 						Stripe.Product,
