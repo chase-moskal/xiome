@@ -25,7 +25,7 @@ export function mockStripeLiaison({
 		) => Promise<void>
 	}): ReturnType<typeof makeStripeLiaison> {
 
-	const generateId = () => rando.randomId()
+	const generateId = () => rando.randomId().string
 	const makeStandardRestResource = prepareStandardRestResource({generateId})
 
 	return {

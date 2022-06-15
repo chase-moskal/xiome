@@ -13,7 +13,7 @@ function ignoreUndefined<X extends {}>(input: X): X {
 }
 
 export function prepareStandardRestResource({generateId}: {
-		generateId: () => dbmage.Id
+		generateId: () => string
 	}) {
 
 	return function makeStandardRestResource<xResource>() {

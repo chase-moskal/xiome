@@ -9,7 +9,7 @@ export function mockSubscriptionMechanics({
 		generateId,
 	}: {
 		tables: MockStripeTables
-		generateId: () => dbmage.Id
+		generateId: () => string
 	}) {
 
 	async function subscriptionCreateItemsToActualItems(
@@ -22,7 +22,7 @@ export function mockSubscriptionMechanics({
 			has_more: false,
 			data: await Promise.all(
 				createItems.map(async item => (<Stripe.SubscriptionItem>{
-					id: generateId().string,
+					id: generateId(),
 					created,
 					price: <Stripe.Price>await tables.prices
 						.readOne(dbmage.find({id: item.price})),
@@ -42,7 +42,7 @@ export function mockSubscriptionMechanics({
 			has_more: false,
 			data: await Promise.all(
 				updateItems.map(async item => (<Stripe.SubscriptionItem>{
-					id: generateId().string,
+					id: generateId(),
 					created,
 					price: <Stripe.Price>await tables.prices
 						.readOne(dbmage.find({id: item.price})),
@@ -56,7 +56,7 @@ export function mockSubscriptionMechanics({
 			createSubscription: Stripe.SubscriptionCreateParams
 		) {
 		return <Stripe.Subscription>{
-			id: generateId().string,
+			id: generateId(),
 			customer: createSubscription.customer,
 			created: Date.now(),
 			default_payment_method: createSubscription.default_payment_method,
@@ -94,14 +94,14 @@ export function mockSubscriptionMechanics({
 		)
 		const paymentMethod = default_payment_method
 		const paymentIntent = <Stripe.PaymentIntent>{
-			id: generateId().string,
+			id: generateId(),
 			amount,
 			currency: "usd",
 			customer: customer,
 			payment_method: paymentMethod,
 		}
 		const invoice = <Stripe.Invoice>{
-			id: generateId().string,
+			id: generateId(),
 			customer: customer,
 			subscription: subscriptionId,
 			lines: {data: <any>lineData},
