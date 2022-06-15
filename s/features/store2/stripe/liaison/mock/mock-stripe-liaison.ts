@@ -11,7 +11,7 @@ import {MockStripeRecentDetails, StripeWebhooks} from "../../types.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
 
 export function mockStripeLiaison({
-		rando, tables, recentDetails, webhookEvent,
+		rando, tables: rawTables, recentDetails, webhookEvent,
 	}: {
 		rando: Rando
 		tables: MockStripeTables
@@ -24,6 +24,7 @@ export function mockStripeLiaison({
 	}): ReturnType<typeof makeStripeLiaison> {
 
 	const generateId = () => rando.randomId()
+
 	function respond<xResource>(resource: xResource): Stripe.Response<xResource> {
 		return {
 			headers: {},
@@ -31,8 +32,6 @@ export function mockStripeLiaison({
 			...resource,
 		}
 	}
-
-	const rawTables = tables
 
 	return {
 
@@ -43,11 +42,11 @@ export function mockStripeLiaison({
 					type: params.type,
 					email: params.email,
 				}
-				await tables.accounts.create(<MockAccount>account)
+				await rawTables.accounts.create(<MockAccount>account)
 				return respond(<Stripe.Account>account)
 			},
 			async retrieve(id) {
-				const account = await tables.accounts.readOne(find({id}))
+				const account = await rawTables.accounts.readOne(find({id}))
 				return respond(<Stripe.Account>account)
 			},
 			async createLoginLink(id) {
@@ -90,18 +89,21 @@ export function mockStripeLiaison({
 			}
 
 			function makeStandardRestResource<xResource>() {
+				const throwAnError = () => { throw new Error("not implemented") }
 				return function<xCreateParams, xUpdateParams>({
-						table, handleCreate, handleUpdate,
+						table,
+						handleCreate = throwAnError,
+						handleUpdate = throwAnError,
 					}: {
 						table: dbmage.Table<any>
-						handleCreate: (params: xCreateParams) => Partial<xResource>
-						handleUpdate: (params: xUpdateParams) => Partial<xResource>
+						handleCreate?: (params: xCreateParams) => Promise<Partial<xResource>>
+						handleUpdate?: (id: string, params: xUpdateParams) => Promise<Partial<xResource>>
 					}) {
 					return {
 						async create(params: xCreateParams) {
 							const resource = <Partial<xResource>>{
 								id: generateId().toString(),
-								...handleCreate(params),
+								...await handleCreate(params),
 							}
 							await table.create(resource)
 							return respond(<xResource>resource)
@@ -109,7 +111,7 @@ export function mockStripeLiaison({
 						async update(id: string, params: xUpdateParams) {
 							await table.update({
 								...find({id}),
-								write: ignoreUndefined(handleUpdate(params)),
+								write: ignoreUndefined(handleUpdate(id, params)),
 							})
 							const resource = await table.readOne(find({id}))
 							return respond(<xResource>resource)
@@ -131,12 +133,12 @@ export function mockStripeLiaison({
 				customers: {
 					...makeStandardRestResource<Stripe.Customer>()({
 						table: tables.customers,
-						handleCreate: (params: Stripe.CustomerCreateParams) => ({
+						handleCreate: async(params: Stripe.CustomerCreateParams) => ({
 							email: params.email,
 							invoice_settings: <any>params.invoice_settings
 								?? {default_payment_method: undefined},
 						}),
-						handleUpdate: (params: Stripe.CustomerUpdateParams) => ({
+						handleUpdate: async(id, params: Stripe.CustomerUpdateParams) => ({
 							email: params.email,
 							invoice_settings: <any>params.invoice_settings,
 						}),
@@ -157,12 +159,12 @@ export function mockStripeLiaison({
 
 				products: makeStandardRestResource<Stripe.Product>()({
 					table: tables.products,
-					handleCreate: (params: Stripe.ProductCreateParams) => ({
+					handleCreate: async(params: Stripe.ProductCreateParams) => ({
 						name: params.name,
 						description: params.description,
 						active: true,
 					}),
-					handleUpdate: (params: Stripe.ProductUpdateParams) => ({
+					handleUpdate: async(id, params: Stripe.ProductUpdateParams) => ({
 						name: params.name,
 						active: params.active,
 						description: params.description,
@@ -171,7 +173,7 @@ export function mockStripeLiaison({
 
 				prices: makeStandardRestResource<Stripe.Price>()({
 					table: tables.prices,
-					handleCreate: (params: Stripe.PriceCreateParams) => ({
+					handleCreate: async(params: Stripe.PriceCreateParams) => ({
 						active: params.active === undefined ?true :params.active,
 						product: params.product,
 						currency: params.currency,
@@ -179,7 +181,7 @@ export function mockStripeLiaison({
 						recurring: <any>params.recurring,
 						type: params.recurring ?"recurring" :"one_time",
 					}),
-					handleUpdate: (params: Stripe.PriceUpdateParams) => ({
+					handleUpdate: async(id, params: Stripe.PriceUpdateParams) => ({
 						active: params.active,
 					}),
 				}),
@@ -187,7 +189,7 @@ export function mockStripeLiaison({
 				checkout: {
 					sessions: makeStandardRestResource<Stripe.Checkout.Session>()({
 						table: tables.checkoutSessions,
-						handleCreate: (params: Stripe.Checkout.SessionCreateParams) => ({
+						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
 							mode: params.mode,
 							customer: params.customer,
 							client_reference_id: params.client_reference_id,
@@ -205,19 +207,19 @@ export function mockStripeLiaison({
 									})),
 								},
 						}),
-						handleUpdate: (params: Stripe.Checkout.Session) => ({}),
+						handleUpdate: async(id, params: Stripe.Checkout.Session) => ({}),
 					}),
 				},
 
 				paymentMethods: (() => {
 					const resource = makeStandardRestResource<Stripe.PaymentMethod>()({
 						table: tables.paymentMethods,
-						handleCreate: (params: Stripe.PaymentMethodCreateParams) => ({
+						handleCreate: async(params: Stripe.PaymentMethodCreateParams) => ({
 							type: params.type,
 							customer: params.customer,
 							card: <any>params.card,
 						}),
-						handleUpdate: (params: Stripe.PaymentMethodUpdateParams) => ({
+						handleUpdate: async(id, params: Stripe.PaymentMethodUpdateParams) => ({
 							card: <any>params.card,
 						}),
 					})
@@ -234,25 +236,25 @@ export function mockStripeLiaison({
 
 				setupIntents: makeStandardRestResource<Stripe.SetupIntent>()({
 					table: tables.setupIntents,
-					handleCreate: (params: Stripe.SetupIntentCreateParams) => ({
+					handleCreate: async(params: Stripe.SetupIntentCreateParams) => ({
 						customer: params.customer,
 						payment_method: params.payment_method,
 						usage: params.usage,
 					}),
-					handleUpdate: (params: Stripe.SetupIntentUpdateParams) => ({
+					handleUpdate: async(id, params: Stripe.SetupIntentUpdateParams) => ({
 						payment_method: params.payment_method,
 					}),
 				}),
 
 				paymentIntents: makeStandardRestResource<Stripe.PaymentIntent>()({
 					table: tables.setupIntents,
-					handleCreate: (params: Stripe.PaymentIntentCreateParams) => ({
+					handleCreate: async(params: Stripe.PaymentIntentCreateParams) => ({
 						customer: params.customer,
 						payment_method: params.payment_method,
 						amount: params.amount,
 						currency: params.currency,
 					}),
-					handleUpdate: (params: Stripe.PaymentIntentUpdateParams) => ({
+					handleUpdate: async(id, params: Stripe.PaymentIntentUpdateParams) => ({
 						customer: params.customer,
 						payment_method: params.payment_method,
 						amount: params.amount,
@@ -263,35 +265,7 @@ export function mockStripeLiaison({
 				subscriptions: (() => {
 					const resource = makeStandardRestResource<Stripe.Subscription>()({
 						table: tables.subscriptions,
-						handleCreate: (params: Stripe.SubscriptionCreateParams) => ({
-							customer: params.customer,
-							status: "active",
-							current_period_start: Date.now(),
-							current_period_end: Date.now() + (30 * day),
-							default_payment_method: params.default_payment_method,
-							cancel_at_period_end: params.cancel_at_period_end,
-							items: {
-								url: "",
-								object: "list",
-								has_more: false,
-								data: <any>params.items.map(itemParams => ({
-									id: generateId().toString(),
-									billing_thresholds: itemParams.billing_thresholds,
-									price: itemParams.price,
-									price_data: itemParams.price_data,
-									quantity: itemParams.quantity,
-									tax_rates: itemParams.tax_rates,
-								})),
-							},
-						}),
-						handleUpdate: (params: Stripe.SubscriptionUpdateParams) => ({
-							cancel_at_period_end: params.cancel_at_period_end,
-							default_payment_method: params.default_payment_method,
-						}),
-					})
-					return {
-						...resource,
-						async create(params: Stripe.SubscriptionCreateParams) {
+						handleCreate: async(params: Stripe.SubscriptionCreateParams) => {
 							const subscription = await subscriptionMechanics
 								.subscriptionCreateToActual(params)
 							await tables.subscriptions.create(<any>subscription)
@@ -314,6 +288,9 @@ export function mockStripeLiaison({
 							)
 							return subscription
 						},
+					})
+					return {
+						...resource,
 						async update(id: string, params: Stripe.SubscriptionUpdateParams) {
 							const existingSubscription = <Stripe.Subscription>await resource.retrieve(id)
 							const write: Partial<Stripe.Subscription> = {}
@@ -365,7 +342,7 @@ export function mockStripeLiaison({
 								object: "list",
 								data: subscriptions,
 							})
-						}
+						},
 					}
 				})(),
 			}
