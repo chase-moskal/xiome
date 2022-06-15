@@ -9,6 +9,8 @@ import {day} from "../../../../../toolbox/goodtimes/times.js"
 import {MockStripeTables, MockAccount} from "./tables/types.js"
 import {MockStripeRecentDetails, StripeWebhooks} from "../../types.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
+import {stripeResponse} from "./utils/stripe-response.js"
+import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"
 
 export function mockStripeLiaison({
 		rando, tables: rawTables, recentDetails, webhookEvent,
@@ -24,14 +26,7 @@ export function mockStripeLiaison({
 	}): ReturnType<typeof makeStripeLiaison> {
 
 	const generateId = () => rando.randomId()
-
-	function respond<xResource>(resource: xResource): Stripe.Response<xResource> {
-		return {
-			headers: {},
-			lastResponse: undefined,
-			...resource,
-		}
-	}
+	const makeStandardRestResource = prepareStandardRestResource({generateId})
 
 	return {
 
@@ -43,18 +38,18 @@ export function mockStripeLiaison({
 					email: params.email,
 				}
 				await rawTables.accounts.create(<MockAccount>account)
-				return respond(<Stripe.Account>account)
+				return stripeResponse(<Stripe.Account>account)
 			},
 			async retrieve(id) {
 				const account = await rawTables.accounts.readOne(find({id}))
-				return respond(<Stripe.Account>account)
+				return stripeResponse(<Stripe.Account>account)
 			},
 			async createLoginLink(id) {
 				const loginLink: Partial<Stripe.LoginLink> = {
 					created: Date.now(),
 					url: `https://fake.xiome.io/stripe-account-login-link`,
 				}
-				return respond(<Stripe.LoginLink>loginLink)
+				return stripeResponse(<Stripe.LoginLink>loginLink)
 			},
 		},
 
@@ -63,7 +58,7 @@ export function mockStripeLiaison({
 				const accountLink: Partial<Stripe.AccountLink> = {
 					url: `https://fake.xiome.io/stripe-account-setup`,
 				}
-				return respond(<Stripe.AccountLink>accountLink)
+				return stripeResponse(<Stripe.AccountLink>accountLink)
 			},
 		},
 
@@ -78,55 +73,6 @@ export function mockStripeLiaison({
 				tables,
 				generateId,
 			})
-
-			function ignoreUndefined<X extends {}>(input: X): X {
-				const output = {}
-				for (const [key, value] of Object.entries(input)) {
-					if (value !== undefined)
-						output[key] = value
-				}
-				return <X>output
-			}
-
-			function makeStandardRestResource<xResource>() {
-				const throwAnError = () => { throw new Error("not implemented") }
-				return function<xCreateParams, xUpdateParams>({
-						table,
-						handleCreate = throwAnError,
-						handleUpdate = throwAnError,
-					}: {
-						table: dbmage.Table<any>
-						handleCreate?: (params: xCreateParams) => Promise<Partial<xResource>>
-						handleUpdate?: (id: string, params: xUpdateParams) => Promise<Partial<xResource>>
-					}) {
-					return {
-						async create(params: xCreateParams) {
-							const resource = <Partial<xResource>>{
-								id: generateId().toString(),
-								...await handleCreate(params),
-							}
-							await table.create(resource)
-							return respond(<xResource>resource)
-						},
-						async update(id: string, params: xUpdateParams) {
-							await table.update({
-								...find({id}),
-								write: ignoreUndefined(handleUpdate(id, params)),
-							})
-							const resource = await table.readOne(find({id}))
-							return respond(<xResource>resource)
-						},
-						async retrieve(id: string) {
-							const resource = await table.readOne(find({id}))
-							return respond<xResource>(resource)
-						},
-						async delete(id: string) {
-							await table.delete(find({id}))
-							return respond({})
-						},
-					}
-				}
-			}
 
 			return {
 
@@ -150,7 +96,7 @@ export function mockStripeLiaison({
 						const paymentMethods = await tables.paymentMethods.read(
 							dbmage.find({customer, type: params.type})
 						)
-						return respond({
+						return stripeResponse({
 							object: "list",
 							data: paymentMethods,
 						})
@@ -229,7 +175,7 @@ export function mockStripeLiaison({
 						async detach(id: string) {
 							const paymentMethod = resource.retrieve(id)
 							await resource.delete(id)
-							return respond(paymentMethod)
+							return stripeResponse(paymentMethod)
 						}
 					}
 				})(),
@@ -338,7 +284,7 @@ export function mockStripeLiaison({
 										: {customer: params.customer}
 								)
 							)
-							return respond({
+							return stripeResponse({
 								object: "list",
 								data: subscriptions,
 							})
