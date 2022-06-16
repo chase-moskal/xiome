@@ -1,5 +1,9 @@
 
 import {Stripe} from "stripe"
+import {makeStripeLiaison} from "./stripe-liaison.js"
+
+export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
+export type StripeLiaisonAccount = ReturnType<StripeLiaison["account"]>
 
 export type CardClues = {
 	brand: string

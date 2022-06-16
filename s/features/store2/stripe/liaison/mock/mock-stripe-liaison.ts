@@ -3,7 +3,7 @@ import Stripe from "stripe"
 import * as dbmage from "dbmage"
 import {find, Rando} from "dbmage"
 
-import {makeStripeLiaison} from "../stripe-liaison.js"
+import {StripeLiaison} from "../types.js"
 import {getStripeId} from "../helpers/get-stripe-id.js"
 import {stripeResponse} from "./utils/stripe-response.js"
 import {MockStripeTables, MockAccount} from "./tables/types.js"
@@ -22,7 +22,7 @@ export function mockStripeLiaison({
 			stripeAccountId: string,
 			object: xObject
 		) => Promise<void>
-	}): ReturnType<typeof makeStripeLiaison> {
+	}): StripeLiaison {
 
 	const generateId = () => rando.randomId().string
 	const makeStandardRestResource = prepareStandardRestResource({generateId})
