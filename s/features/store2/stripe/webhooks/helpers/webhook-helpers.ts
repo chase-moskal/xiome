@@ -61,3 +61,15 @@ export async function getPaymentMethodId(
 		session.setup_intent)
 	return getStripeId(intent.payment_method)
 }
+
+export async function updateCustomerDefaultPaymentMethod (
+		stripePaymentMethodId,
+		stripeLiaisonAccount,
+		stripeCustomerId
+	) {
+		await stripeLiaisonAccount.customers.update(stripeCustomerId, {
+			invoice_settings: {
+				default_payment_method: stripePaymentMethodId,
+			},
+		})
+}

@@ -45,7 +45,7 @@ export function stripeWebhooks({
 					},
 				})
 
-				// detach all other payment methods (enforcing one-at-a-time)
+				// detach all other payment methods (enforcing one-at-a-time)e
 				const paymentMethods = await stripeLiaisonAccount
 					.customers.listPaymentMethods(stripeCustomerId, {type: "card"})
 				for (const paymentMethod of paymentMethods.data) {
