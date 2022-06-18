@@ -2,7 +2,7 @@
 import Stripe from "stripe"
 import * as dbmage from "dbmage"
 
-import {StripeLiaisonAccount} from "../../liaison/types.js"
+import {StripeLiaison, StripeLiaisonAccount} from "../../liaison/types.js"
 import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
 import {StoreDatabase, StoreDatabaseRaw} from "../../../types/store-schema.js"
 import {PermissionsInteractions} from "../../../interactions/interactions.js"
@@ -14,6 +14,49 @@ type PaymentDetails = {
 	stripeCustomerId: string
 	stripePaymentMethodId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
+}
+
+type OptionsForDetails = {
+	event: Stripe.Event
+	stripeLiaison: StripeLiaison
+	storeDatabaseRaw: StoreDatabaseRaw
+}
+
+export async function getSessionDetails({
+		event, stripeLiaison, storeDatabaseRaw
+	}: OptionsForDetails) {
+	const session = <Stripe.Checkout.Session>event.data.object
+	const stripeCustomerId = getStripeId(session.customer)
+	const {appId, userId} = getReferencedClient(session)
+	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
+	const stripeLiaisonAccount = stripeLiaison.account(event.account)
+	return {
+		appId,
+		userId,
+		session,
+		storeDatabase,
+		stripeCustomerId,
+		stripeLiaisonAccount,
+	}
+}
+
+export async function getInvoiceDetails({
+		event, stripeLiaison, storeDatabaseRaw
+	}: OptionsForDetails) {
+	const invoice = <Stripe.Invoice>event.data.object
+	const stripeCustomerId = getStripeId(invoice.customer)
+	const stripeLiaisonAccount = stripeLiaison.account(event.account)
+	const {storeDatabase, userId} = await getStripeCustomerDetails(
+		storeDatabaseRaw,
+		stripeCustomerId,
+	)
+	return {
+		userId,
+		invoice,
+		storeDatabase,
+		stripeCustomerId,
+		stripeLiaisonAccount,
+	}
 }
 
 export function getReferencedClient(session: Stripe.Checkout.Session) {
@@ -55,30 +98,20 @@ export async function getTiersForStripePrices({
 		priceIds: string[]
 		storeDatabase: StoreDatabase
 	}) {
-
 	if (priceIds.length === 0)
 		throw new Error("prices not found in subscription from stripe")
-
-	const tierRows = await storeDatabase.tables.subscriptions.tiers
-		.read(dbmage.findAll(priceIds, id => ({stripePriceId: id})))
-
-	// const planIds = dedupeIds(tierRows.map(row => row.planId))
-	// if (planIds.length === 0)
-	// 	throw new Error("subscription plans not found")
-
-	// const planRows = await storeDatabase.tables.subscriptions.plans
-	// 	.read(dbmage.findAll(planIds, planId => ({planId})))
-
 	return {
-		tierRows,
-		// planRows,
+		tierRows: await storeDatabase.tables.subscriptions.tiers
+			.read(dbmage.findAll(priceIds, id => ({stripePriceId: id}))),
 	}
 }
 
-export async function getPaymentMethodId(
+export async function getPaymentMethodId({
+		stripeLiaisonAccount, session,
+	}: {
 		stripeLiaisonAccount: StripeLiaisonAccount,
 		session: Stripe.Checkout.Session,
-	): Promise<string> {
+	}): Promise<string> {
 	const intent = await getStripeSetupIntent(
 		stripeLiaisonAccount,
 		session.setup_intent)
@@ -112,11 +145,10 @@ export async function updateAllSubscriptionsToUseThisPaymentMethod ({
 	const subscriptions = await stripeLiaisonAccount
 		.subscriptions.list({customer: stripeCustomerId})
 	for (const subscription of subscriptions.data) {
-		if (subscription.status !== "canceled") {
+		if (subscription.status !== "canceled")
 			await stripeLiaisonAccount.subscriptions.update(subscription.id, {
 				default_payment_method: stripePaymentMethodId,
 			})
-		}
 	}
 }
 
@@ -144,10 +176,12 @@ export async function getStripeCustomerDetails(
 	}
 }
 
-export async function getSubscriptionAndPriceIds(
+export async function getSubscriptionAndPriceIds({
+		stripeLiaisonAccount, session,
+	}: {
 		stripeLiaisonAccount: StripeLiaisonAccount,
 		session: Stripe.Checkout.Session
-	) {
+	}) {
 	const subscription = await getStripeSubscription(
 		stripeLiaisonAccount,
 		session.subscription,
@@ -163,9 +197,8 @@ export function getPriceIdsFromInvoice(invoice: Stripe.Invoice) {
 	const recurringItems = invoice.lines.data
 		.filter(line => line.price.type === "recurring")
 	const setOfPriceIds = new Set<string>()
-	for (const {price} of recurringItems) {
+	for (const {price} of recurringItems)
 		setOfPriceIds.add(price.id)
-	}
 	return [...setOfPriceIds]
 }
 
