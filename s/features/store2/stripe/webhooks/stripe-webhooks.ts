@@ -6,7 +6,7 @@ import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 import {PermissionsInteractions} from "../../interactions/interactions.js"
-import {fulfillRolesRelatedToSubscription, getCheckoutSessionForEvent, getDatabaseForApp, getPaymentMethodId, getPriceIdsFromInvoice, getReferencedClient, getStripeCustomerDetails, getStripeSubscription, handleRolesFufilment, updateCustomerPaymentMethod, userIsPurchasingASubscription, userIsUpdatingTheirPaymentMethod} from "./helpers/webhook-helpers.js"
+import {getDatabaseForApp, getPaymentMethodId, getPriceIdsFromInvoice, getReferencedClient, getStripeCustomerDetails, getStripeSubscription, getSubscriptionAndPriceIds, fulfillUserRolesForSubscription, updateCustomerPaymentMethod} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks({
 		logger, stripeLiaison, storeDatabaseRaw, permissionsInteractions,
@@ -21,12 +21,14 @@ export function stripeWebhooks({
 
 		async "checkout.session.completed"(event: Stripe.Event) {
 			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
-			const session = getCheckoutSessionForEvent(event)
+			const session = <Stripe.Checkout.Session>event.data.object
+			const userIsUpdatingTheirPaymentMethod = session.mode === "setup"
+			const userIsPurchasingASubscription = session.mode === "subscription"
+			const stripeCustomerId = getStripeId(session.customer)
 			const {appId, userId} = getReferencedClient(session)
 			const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
 			const stripeLiaisonAccount = stripeLiaison.account(event.account)
-			const stripeCustomerId = getStripeId(session.customer)
-			if (userIsUpdatingTheirPaymentMethod(session))
+			if (userIsUpdatingTheirPaymentMethod)
 				await updateCustomerPaymentMethod({
 					stripeCustomerId,
 					stripeLiaisonAccount,
@@ -35,38 +37,40 @@ export function stripeWebhooks({
 						session,
 					),
 				})
-			else if (userIsPurchasingASubscription(session))
-				await fulfillRolesRelatedToSubscription({
+			else if (userIsPurchasingASubscription)
+				await fulfillUserRolesForSubscription({
 					userId,
-					session,
 					storeDatabase,
 					permissionsInteractions,
-					subscription: await getStripeSubscription(
-						stripeLiaisonAccount, session.subscription
-					)
+					...await getSubscriptionAndPriceIds(stripeLiaisonAccount, session),
 				})
 			else
-				logger.error("unknown 'checkout.session.completed' event subtype")
+				logger.error(`unknown 'checkout.session.completed' mode "${session.mode}"`)
 		},
 
 		async "invoice.paid"(event: Stripe.Event) {
 			logger.info("stripe-webhook invoice.paid:", event.data.object)
 			const invoice = <Stripe.Invoice>event.data.object
-			const customerId = getStripeId(invoice.customer)
+			const invoiceIsForSubscription = !!invoice.subscription
+			const stripeCustomerId = getStripeId(invoice.customer)
 			const stripeLiaisonAccount = stripeLiaison.account(event.account)
 			const {storeDatabase, userId} = await getStripeCustomerDetails(
-				storeDatabaseRaw, customerId
+				storeDatabaseRaw,
+				stripeCustomerId,
 			)
-			if (invoice.subscription)
-				handleRolesFufilment({
+			if (invoiceIsForSubscription)
+				await fulfillUserRolesForSubscription({
 					userId,
 					storeDatabase,
 					permissionsInteractions,
 					priceIds: getPriceIdsFromInvoice(invoice),
 					subscription: await getStripeSubscription(
-						stripeLiaisonAccount, invoice.subscription
+						stripeLiaisonAccount,
+						invoice.subscription,
 					),
 				})
+			else
+				logger.error(`unknown 'invoice.paid' hook (not for a subscription)`)
 		},
 
 		async "invoice.payment_failed"(event: Stripe.Event) {},
