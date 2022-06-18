@@ -1,11 +1,21 @@
 
 import {Suite, expect} from "cynic"
+import {StripeConnectStatus} from "./types/store-concepts.js"
 
 export default <Suite>{
 	"managing the store": {
 		"connect a stripe account": {
 			"a user with merchant permissions": {
-				async "can connect a stripe account"() {},
+				async "can connect a stripe account"() {
+					// const {storeModel, get} = await storeTestSetup()
+					// 	.then(x => x.api())
+					// 	.then(x => x.client(role.merchant))
+					// 	.then(x => x.browserTab())
+					// expect(get.connectDetails).not.ok()
+					// await storeModel.connectSubmodel.connectStripeAccount()
+					// expect(get.connectDetails).ok()
+					// expect(get.connectStatus).equals(StripeConnectStatus.Ready)
+				},
 				async "can connect an incomplete stripe account"() {},
 				async "can see the connect details set by another merchant"() {},
 			},
