@@ -6,6 +6,7 @@ import {AssimilatorOptions} from "../types/assilimator-options.js"
 import {mockDatabaseUnwrapped} from "../database/mock-database.js"
 import {applyDatabaseWrapping} from "../database/apply-database-wrapping.js"
 import {originsToDatabase} from "../../../features/auth/utils/origins-to-database.js"
+import {appConstraintKey} from "../types/database.js"
 
 export async function assimilateDatabase({
 		config,

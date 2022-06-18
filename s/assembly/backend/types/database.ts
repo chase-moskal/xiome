@@ -17,36 +17,30 @@ export type AppConstraint = dbmage.AsRow<{
 	[appConstraintKey]: dbmage.Id
 }>
 
-export type DatabaseSchemaUnisolated = dbmage.UnconstrainSchema<
-	AppConstraint,
-	dbmage.AsSchema<{
-		apps: AppSchema
-	}>
->
+export type DatabaseSchemaUnisolated = dbmage.AsSchema<{
+	apps: AppSchema
+}>
 
-export type DatabaseSchemaRequiresAppIsolation = dbmage.UnconstrainSchema<
-	AppConstraint,
-	dbmage.AsSchema<{
-		auth: AuthSchema
-		notes: NotesSchema
-		// store: StoreSchema
-		videos: VideoSchema
-		example: ExampleSchema
-		questions: QuestionsSchema
-	}>
->
+export type DatabaseSchemaRequiresAppIsolation = dbmage.AsSchema<{
+	auth: AuthSchema
+	notes: NotesSchema
+	// store: StoreSchema
+	videos: VideoSchema
+	example: ExampleSchema
+	questions: QuestionsSchema
+}>
 
 export type DatabaseSchema =
 	DatabaseSchemaUnisolated &
 	DatabaseSchemaRequiresAppIsolation
 
-export type DatabaseTables = RemoveIndex<
+export type DatabaseRawTables = RemoveIndex<
 	dbmage.SchemaToTables<DatabaseSchemaUnisolated> &
 	SchemaToUnconstrainedTables<DatabaseSchemaRequiresAppIsolation>
 >
 
-export type DatabaseRaw = dbmage.DatabaseLike<DatabaseTables>
+export type DatabaseRaw = dbmage.DatabaseLike<DatabaseRawTables>
 export type DatabaseSafe = dbmage.Database<DatabaseSchema>
 
-export type DatabaseSelect<K extends keyof DatabaseTables> =
-	dbmage.DatabaseLike<Pick<DatabaseTables, K>>
+export type DatabaseSelect<K extends keyof DatabaseRawTables> =
+	dbmage.DatabaseLike<Pick<DatabaseRawTables, K>>
