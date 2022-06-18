@@ -8,6 +8,8 @@ import {PermissionsInteractions} from "../../../interactions/interactions.js"
 import {stripeClientReferenceId} from "../../utils/stripe-client-reference-id.js"
 import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
+import {appConstraintKey} from "../../../../../assembly/backend/types/database.js"
+import {dedupeIds} from "../../../../../toolbox/dedupe.js"
 
 type PaymentDetails = {
 	stripeCustomerId: string
@@ -135,29 +137,48 @@ export function userIsPurchasingASubscription(
 	return session.mode === "subscription"
 }
 
+// export async function handleRolesFufilment({
+// 		userId,
+// 		priceIds,
+// 		subscription,
+// 		storeDatabase,
+// 		permissionsInteractions,
+// 	}:{
+// 		userId: dbmage.Id
+// 		priceIds: string[]
+// 		storeDatabase: StoreDatabase
+// 		subscription: Stripe.Subscription
+// 		permissionsInteractions: PermissionsInteractions
+// 	}) {
+// 	const {tierRows} = await getTiersForStripePrices({
+// 		priceIds,
+// 		storeDatabase,
+// 	})
+// 	const roleIds = tierRows.map(tierRow => tierRow.roleId)
+// 	await permissionsInteractions.grantUserRoles({
+// 		timeframeEnd: subscription.current_period_end,
+// 		timeframeStart: subscription.current_period_start,
+// 		roleIds,
+// 		userId,
+// 	})
+// }
+
 export async function fulfillRolesRelatedToSubscription({
-		userId, storeDatabase, session, stripeLiaisonAccount, permissionsInteractions
+		userId, storeDatabase, session, subscription, permissionsInteractions
 	}: {
 		userId: dbmage.Id
 		storeDatabase: StoreDatabase
 		session: Stripe.Checkout.Session
-		stripeLiaisonAccount: StripeLiaisonAccount
+		subscription: Stripe.Subscription
 		permissionsInteractions: PermissionsInteractions
 	}) {
-	const {
-		current_period_start, current_period_end, items,
-	} = await getStripeSubscription(stripeLiaisonAccount, session.subscription)
-	const priceIds = items.data.map(item => getStripeId(item.price))
-	const {tierRows} = await getTiersForStripePrices({
+	const priceIds = subscription.items.data.map(item => getStripeId(item.price))
+	handleRolesFufilment({
+		userId,
 		priceIds,
 		storeDatabase,
-	})
-	const roleIds = tierRows.map(tierRow => tierRow.roleId)
-	await permissionsInteractions.grantUserRoles({
-		timeframeEnd: current_period_end,
-		timeframeStart: current_period_start,
-		roleIds,
-		userId,
+		subscription,
+		permissionsInteractions
 	})
 }
 
@@ -165,4 +186,72 @@ export async function updateCustomerPaymentMethod(details: PaymentDetails) {
 	await updateCustomerDefaultPaymentMethod(details)
 	await detachAllOtherPaymentMethods(details)
 	await updateAllSubscriptionsToUseThisPaymentMethod(details)
+}
+
+export async function getStripeCustomerDetails(
+		storeDatabaseRaw: StoreDatabaseRaw, stripeCustomerId: string
+	) {
+	const row = await storeDatabaseRaw.tables.billing.customers.unconstrained
+		.readOne(dbmage.find({stripeCustomerId}))
+	if (!row)
+		throw new Error(`stripe customer id not found in billing "${stripeCustomerId}"`)
+	const appId = row[appConstraintKey]
+	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
+	const {userId} = row
+	return {
+		appId,
+		userId,
+		storeDatabase,
+	}
+}
+
+// export function getPriceIdsFromSubscription(subscription: Stripe.Subscription) {
+// 	return subscription.items.data.map(item => getStripeId(item.price))
+// }
+
+export async function getPriceIdsFromSubscription(
+		session: Stripe.Checkout.Session,
+		stripeLiaisonAccount: StripeLiaisonAccount
+	) {
+	const subscription = await getStripeSubscription(
+		stripeLiaisonAccount, session.subscription
+	)
+	return subscription.items.data.map(item => getStripeId(item.price))
+}
+
+export function getPriceIdsFromInvoice(invoice: Stripe.Invoice) {
+	const recurringItems = invoice.lines.data
+		.filter(line => line.price.type === "recurring")
+
+	const setOfPriceIds = new Set<string>()
+	for (const {price} of recurringItems) {
+		setOfPriceIds.add(price.id)
+	}
+	return [...setOfPriceIds]
+}
+
+export async function handleRolesFufilment({
+		userId,
+		priceIds,
+		subscription,
+		storeDatabase,
+		permissionsInteractions,
+	}:{
+		userId: dbmage.Id
+		priceIds: string[]
+		storeDatabase: StoreDatabase
+		subscription: Stripe.Subscription
+		permissionsInteractions: PermissionsInteractions
+	}) {
+	const {tierRows} = await getTiersForStripePrices({
+		priceIds,
+		storeDatabase,
+	})
+	const roleIds = tierRows.map(tierRow => tierRow.roleId)
+	await permissionsInteractions.grantUserRoles({
+		timeframeEnd: subscription.current_period_end,
+		timeframeStart: subscription.current_period_start,
+		roleIds,
+		userId,
+	})
 }
