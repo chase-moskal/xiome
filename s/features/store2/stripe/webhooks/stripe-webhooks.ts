@@ -20,12 +20,12 @@ export function stripeWebhooks({
 	return {
 
 		async "checkout.session.completed"(event: Stripe.Event) {
+			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
 			const session = getCheckoutSessionForEvent(event)
 			const {appId, userId} = getReferencedClient(session)
 			const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
 			const stripeLiaisonAccount = stripeLiaison.account(event.account)
 			const stripeCustomerId = getStripeId(session.customer)
-
 			if (userIsUpdatingTheirPaymentMethod(session))
 				await updateCustomerPaymentMethod({
 					stripeCustomerId,
@@ -50,16 +50,13 @@ export function stripeWebhooks({
 		},
 
 		async "invoice.paid"(event: Stripe.Event) {
-
 			logger.info("stripe-webhook invoice.paid:", event.data.object)
-
 			const invoice = <Stripe.Invoice>event.data.object
 			const customerId = getStripeId(invoice.customer)
 			const stripeLiaisonAccount = stripeLiaison.account(event.account)
 			const {storeDatabase, userId} = await getStripeCustomerDetails(
 				storeDatabaseRaw, customerId
 			)
-
 			if (invoice.subscription)
 				handleRolesFufilment({
 					userId,
