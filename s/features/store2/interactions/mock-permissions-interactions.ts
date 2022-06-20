@@ -6,14 +6,14 @@ import {UserHasRoleRow} from "../../auth/aspects/permissions/types/permissions-t
 
 export function mockPermissionsInteractions(): {
 		permissionsInteractions: PermissionsInteractions
-		getRecord(userId: Id): {
+		getUserPermissions(userId: Id): {
 			userHasRoles: UserHasRoleRow[]
 		}
 	} {
 
 	const map = new Map<string, UserHasRoleRow[]>()
 
-	function getRecord(userId: Id) {
+	function getUserPermissions(userId: Id) {
 		const id = userId.string
 		if (!map.has(id))
 			map.set(id, [])
@@ -28,10 +28,10 @@ export function mockPermissionsInteractions(): {
 	}
 
 	return {
-		getRecord,
+		getUserPermissions,
 		permissionsInteractions: {
 			async grantUserRoles({userId, timeframeStart, timeframeEnd, roleIds}) {
-				const record = getRecord(userId)
+				const record = getUserPermissions(userId)
 				const rows = record.userHasRoles
 				const time = Date.now()
 				for (const roleId of roleIds)
@@ -46,7 +46,7 @@ export function mockPermissionsInteractions(): {
 					})
 			},
 			async revokeUserRoles({userId, roleIds}) {
-				const record = getRecord(userId)
+				const record = getUserPermissions(userId)
 				const stringRoleIdsToRemove = roleIds.map(roleId => roleId.string)
 				record.userHasRoles = record.userHasRoles
 					.filter(row => stringRoleIdsToRemove.includes(row.roleId.string))

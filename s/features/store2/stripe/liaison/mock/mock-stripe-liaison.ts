@@ -7,21 +7,17 @@ import {StripeLiaison} from "../types.js"
 import {getStripeId} from "../helpers/get-stripe-id.js"
 import {stripeResponse} from "./utils/stripe-response.js"
 import {MockStripeTables, MockAccount} from "./tables/types.js"
-import {MockStripeRecentDetails, StripeWebhooks} from "../../types.js"
+import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
 import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
 
 export function mockStripeLiaison({
-		rando, tables: rawTables, recentDetails, webhookEvent,
+		rando, tables: rawTables, recentDetails, dispatchWebhook,
 	}: {
 		rando: Rando
 		tables: MockStripeTables
 		recentDetails: MockStripeRecentDetails
-		webhookEvent: <xObject extends {}>(
-			type: keyof StripeWebhooks,
-			stripeAccountId: string,
-			object: xObject
-		) => Promise<void>
+		dispatchWebhook: DispatchWebhook
 	}): StripeLiaison {
 
 	const generateId = () => rando.randomId().string
@@ -226,7 +222,7 @@ export function mockStripeLiaison({
 								subscription,
 								paymentIntent: <Stripe.PaymentIntent>paymentIntent,
 							}
-							await webhookEvent(
+							await dispatchWebhook(
 								"invoice.paid",
 								stripeAccountId,
 								invoice,
@@ -262,7 +258,7 @@ export function mockStripeLiaison({
 									subscriptionId: id,
 									items,
 								})
-								await webhookEvent(
+								await dispatchWebhook(
 									"invoice.paid",
 									stripeAccountId,
 									invoice,
