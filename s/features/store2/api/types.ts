@@ -7,6 +7,7 @@ import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../stripe/liaison/types.js"
 import {StoreDatabase} from "../types/store-schema.js"
 import {makeStorePolicies} from "./policies/store-policies.js"
+import {PermissionsInteractions} from "../interactions/interactions-types.js"
 
 export interface StoreApiOptions {
 	config: SecretConfig
@@ -21,6 +22,7 @@ export interface StoreApiOptions {
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
 	anonPolicy: renraku.Policy<AnonMeta, AnonAuth>
+	permissionsInteractions: PermissionsInteractions
 }
 
 export interface StoreServiceOptions extends StoreApiOptions {

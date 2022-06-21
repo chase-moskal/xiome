@@ -1,8 +1,8 @@
 
-import {validateId} from "../../../../../common/validators/validate-id.js"
-import {boolean, branch, is, max, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
-import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "../../../components/subscription-planning/types/planning-types.js"
 import {SubscriptionPricing} from "../../../types/store-concepts.js"
+import {validateId} from "../../../../../common/validators/validate-id.js"
+import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "../planning/planning-types.js"
+import {boolean, branch, is, max, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
 
 export const validatePriceNumber = validator<number>(
 	number(),
