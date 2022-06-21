@@ -9,8 +9,7 @@ import {makeBillingSubmodel} from "./submodels/billing-submodel.js"
 import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
 import {makeSubscriptionsSubmodel} from "./submodels/subscriptions-submodel.js"
 
-export function makeStoreModel({appId, services, popups, reauthorize}: {
-		appId: string
+export function makeStoreModel({services, popups, reauthorize}: {
 		services: StoreServices
 		popups: StorePopups
 		reauthorize: () => Promise<void>
@@ -87,5 +86,4 @@ export function makeStoreModel({appId, services, popups, reauthorize}: {
 			await refresh()
 		},
 	}
-
 }
