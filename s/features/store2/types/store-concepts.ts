@@ -2,6 +2,8 @@
 // StripeLiaison
 // StripeLiaisonAccount
 
+import {CardClues} from "../stripe/liaison/types.js"
+
 // CardClues
 
 export enum StripeConnectStatus {
@@ -54,4 +56,8 @@ export enum SubscriptionStatus {
 export interface SubscriptionDetails {
 	status: SubscriptionStatus
 	tierIds: string[]
+}
+
+export interface PaymentMethod {
+	cardClues: CardClues
 }
