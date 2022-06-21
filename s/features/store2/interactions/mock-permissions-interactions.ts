@@ -1,56 +1,26 @@
 
-import {Id} from "dbmage"
+import * as dbmage from "dbmage"
 
-import {PermissionsInteractions} from "./interactions.js"
+import {makePermissionsInteractions} from "./permissions-interactions.js"
+import {PermissionsInteractions, PermissionsInteractionsSchema} from "./interactions-types.js"
 import {UserHasRoleRow} from "../../auth/aspects/permissions/types/permissions-tables.js"
 
-export function mockPermissionsInteractions(): {
-		permissionsInteractions: PermissionsInteractions
-		getUserPermissions(userId: Id): {
-			userHasRoles: UserHasRoleRow[]
-		}
-	} {
+export function mockPermissionsInteractions({generateId}: {
+		generateId: () => dbmage.Id
+	}) {
 
-	const map = new Map<string, UserHasRoleRow[]>()
-
-	function getUserPermissions(userId: Id) {
-		const id = userId.string
-		if (!map.has(id))
-			map.set(id, [])
-		return {
-			get userHasRoles() {
-				return map.get(id)
-			},
-			set userHasRoles(rows: UserHasRoleRow[]) {
-				map.set(id, rows)
-			},
+	const database = dbmage.memory<PermissionsInteractionsSchema>({
+		shape: {
+			role: true,
+			userHasRole: true,
 		}
-	}
+	})
 
 	return {
-		getUserPermissions,
-		permissionsInteractions: {
-			async grantUserRoles({userId, timeframeStart, timeframeEnd, roleIds}) {
-				const record = getUserPermissions(userId)
-				const rows = record.userHasRoles
-				const time = Date.now()
-				for (const roleId of roleIds)
-					rows.push({
-						userId,
-						roleId,
-						hard: true,
-						public: true,
-						time,
-						timeframeEnd,
-						timeframeStart,
-					})
-			},
-			async revokeUserRoles({userId, roleIds}) {
-				const record = getUserPermissions(userId)
-				const stringRoleIdsToRemove = roleIds.map(roleId => roleId.string)
-				record.userHasRoles = record.userHasRoles
-					.filter(row => stringRoleIdsToRemove.includes(row.roleId.string))
-			},
-		}
+		database,
+		permissions: makePermissionsInteractions({
+			generateId,
+			database,
+		}),
 	}
 }

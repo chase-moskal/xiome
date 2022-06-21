@@ -20,7 +20,7 @@ export const makeConnectService = (
 	async loadConnectStatus() {
 		const connectDetails = await fetchStripeConnectDetails({
 			stripeLiaison,
-			storeTables: database.tables.store,
+			storeTables: storeDatabase.tables,
 		})
 		return determineConnectStatus(connectDetails)
 	},
@@ -30,14 +30,14 @@ export const makeConnectService = (
 		async pause() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: database.tables.store,
+				storeTables: storeDatabase.tables,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Ready)
 				throw new renraku.ApiError(400, "cannot pause non-ready stripe account")
 			else {
-				await database.tables.store.merchants.stripeAccounts.update({
-					...find({stripeAccountId: connectDetails.stripeAccountId}),
+				await storeDatabase.tables.merchants.stripeAccounts.update({
+					...dbmage.find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: true},
 				})
 			}
@@ -46,14 +46,14 @@ export const makeConnectService = (
 		async resume() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: database.tables.store,
+				storeTables: storeDatabase.tables,
 			})
 			const connectStatus = determineConnectStatus(connectDetails)
 			if (connectStatus !== StripeConnectStatus.Paused)
 				throw new renraku.ApiError(400, "cannot resume non-paused stripe account")
 			else {
-				await database.tables.store.merchants.stripeAccounts.update({
-					...find({stripeAccountId: connectDetails.stripeAccountId}),
+				await storeDatabase.tables.merchants.stripeAccounts.update({
+					...dbmage.find({stripeAccountId: connectDetails.stripeAccountId}),
 					write: {paused: false},
 				})
 			}
@@ -65,7 +65,7 @@ export const makeConnectService = (
 		async loadConnectDetails() {
 			const connectDetails = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: database.tables.store,
+				storeTables: storeDatabase.tables,
 			})
 			return {
 				connectDetails,
@@ -75,7 +75,7 @@ export const makeConnectService = (
 
 		async generateConnectSetupLink() {
 			const connectDetails = await fetchStripeConnectDetails({
-				storeTables: database.tables.store,
+				storeTables: storeDatabase.tables,
 				stripeLiaison,
 			})
 			let stripeAccountId = connectDetails?.stripeAccountId
@@ -86,10 +86,10 @@ export const makeConnectService = (
 				const row: MerchantRow = {
 					stripeAccountId,
 					time: Date.now(),
-					userId: Id.fromString(access.user.userId),
+					userId: dbmage.Id.fromString(access.user.userId),
 					paused: false,
 				}
-				await database.tables.store.merchants.stripeAccounts.create(row)
+				await storeDatabase.tables.merchants.stripeAccounts.create(row)
 			}
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
@@ -104,7 +104,7 @@ export const makeConnectService = (
 
 		async generateStripeLoginLink() {
 			const connectDetails = await fetchStripeConnectDetails({
-				storeTables: database.tables.store,
+				storeTables: storeDatabase.tables,
 				stripeLiaison,
 			})
 			let stripeAccountId = connectDetails?.stripeAccountId

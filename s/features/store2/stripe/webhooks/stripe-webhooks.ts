@@ -4,7 +4,7 @@ import {Stripe} from "stripe"
 import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
-import {PermissionsInteractions} from "../../interactions/interactions.js"
+import {PermissionsInteractions} from "../../interactions/interactions-types.js"
 import {getPaymentMethodId, getPriceIdsFromInvoice, getStripeSubscription, getSubscriptionAndPriceIds, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getSessionDetails, getInvoiceDetails} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks(options: {
