@@ -7,16 +7,29 @@ export default <Suite>{
 		"connect a stripe account": {
 			"a user with merchant permissions": {
 				async "can connect a stripe account"() {
-					// const {storeModel, get} = await storeTestSetup()
+					// const {store} = await storeTestSetup()
 					// 	.then(x => x.api())
-					// 	.then(x => x.client(role.merchant))
+					// 	.then(x => x.client(x.roles.merchant))
 					// 	.then(x => x.browserTab())
-					// expect(get.connectDetails).not.ok()
-					// await storeModel.connectSubmodel.connectStripeAccount()
-					// expect(get.connectDetails).ok()
-					// expect(get.connectStatus).equals(StripeConnectStatus.Ready)
+					// expect(store.get.connect.details).not.ok()
+					// await store.connect.connectStripeAccount()
+					// expect(store.get.connect.details).ok()
+					// expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
-				async "can connect an incomplete stripe account"() {},
+				async "can connect an incomplete stripe account"() {
+					// const {store, rig, access} = await storeTestSetup()
+					// 	.then(x => x.api())
+					// 	.then(x => x.client(x.roles.merchant))
+					// 	.then(x => x.browserTab())
+					// expect(store.get.connect.details).not.ok()
+					// rig.stripeLinkToFail()
+					// await store.connect.connectStripeAccount()
+					// expect(store.get.connect.details).ok()
+					// expect(store.get.connect.status)
+					// 	.equals(StripeConnectStatus.Incomplete)
+					// await access.logout()
+					// expect(store.get.connect.details).not.ok()
+				},
 				async "can see the connect details set by another merchant"() {},
 			},
 			"a user with clerk permissions": {
