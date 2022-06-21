@@ -18,7 +18,7 @@ export function mockPermissionsInteractions({generateId}: {
 
 	return {
 		database,
-		permissions: makePermissionsInteractions({
+		permissionsInteractions: makePermissionsInteractions({
 			generateId,
 			database,
 		}),
