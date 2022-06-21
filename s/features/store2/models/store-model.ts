@@ -1,8 +1,13 @@
-import {ops} from "../../../framework/ops.js"
-import {StripeConnectStatus} from "../types/store-concepts.js"
-import {makeStoreState} from "./state/store-state.js"
+import {Op, ops} from "../../../framework/ops.js"
+import {restricted} from "@chasemoskal/snapstate"
 import {StorePopups, StoreServices} from "./types.js"
+import {makeStoreState} from "./state/store-state.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {StripeConnectStatus} from "../types/store-concepts.js"
 import {makeStoreAllowance} from "./utils/make-store-allowance.js"
+import {makeBillingSubmodel} from "./submodels/billing-submodel.js"
+import {makeConnectSubmodel} from "./submodels/connect-submodel.js"
+import {makeSubscriptionsSubmodel} from "./submodels/subscriptions-submodel.js"
 
 export function makeStoreModel({appId, services, popups, reauthorize}: {
 		appId: string
@@ -24,11 +29,11 @@ export function makeStoreModel({appId, services, popups, reauthorize}: {
 	}
 
 	const subscriptionsSubmodel = makeSubscriptionsSubmodel({
-		...options, snap, allowance, isStoreActive, isUserLoggedIn,
+		snap, isStoreActive, isUserLoggedIn, reauthorize, popups, services
 	})
 
 	const billingSubmodel = makeBillingSubmodel({
-		...options, snap, allowance, isStoreActive, isUserLoggedIn,
+		snap, allowance, isStoreActive, isUserLoggedIn, popups, services
 	})
 
 	async function loadResourcesDependentOnConnectInfo() {
@@ -39,8 +44,9 @@ export function makeStoreModel({appId, services, popups, reauthorize}: {
 	}
 
 	const connectSubmodel = makeConnectSubmodel({
-		...options, snap, allowance,
+		snap, allowance,
 		handleConnectChange: loadResourcesDependentOnConnectInfo,
+		popups, services
 	})
 
 	async function load() {
