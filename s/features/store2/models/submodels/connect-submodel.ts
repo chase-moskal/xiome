@@ -10,13 +10,13 @@ export function makeConnectSubmodel({
 		allowance,
 		services,
 		popups,
-		reloadEverythingInTheStore,
+		reloadStore,
 	}: {
 		snap: ReturnType<typeof makeStoreState>
 		allowance: ReturnType<typeof makeStoreAllowance>
 		services: StoreServices
 		popups: StorePopups
-		reloadEverythingInTheStore: () => Promise<void>
+		reloadStore: () => Promise<void>
 	}) {
 
 	async function load() {
@@ -52,7 +52,7 @@ export function makeConnectSubmodel({
 			await popups.stripeConnect(
 				await services.connect.generateConnectSetupLink()
 			)
-			await reloadEverythingInTheStore()
+			await reloadStore()
 		},
 		async stripeLogin() {
 			const connectStatus = ops.value(snap.readable.stripeConnect.connectStatusOp)
