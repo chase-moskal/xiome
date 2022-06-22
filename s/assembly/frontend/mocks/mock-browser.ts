@@ -1,17 +1,18 @@
 
+import {memoryFlexStorage} from "dbmage"
+
 import {mockRemote} from "./mock-remote.js"
 import {SystemApi} from "../../backend/types/system-api.js"
 import {assembleModels} from "../models/assemble-models.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
-// import {mockPopups} from "../connect/mock/common/mock-popups.js"
-import {memoryFlexStorage} from "dbmage"
-// import {MockStripeOperations} from "../../../features/store/stripe/types/mock-stripe-operations.js"
+import {MockStripeOperations} from "../../../features/store2/stripe/types.js"
+import {mockStorePopups} from "../../../features/store2/popups/mock-store-popups.js"
 import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
-export async function mockBrowser({api, appOrigin/*, mockStripeOperations*/}: {
+export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
 		appOrigin: string
-		// mockStripeOperations: MockStripeOperations
+		mockStripeOperations: MockStripeOperations
 	}) {
 
 	async function mockAppWindow({appId}: {appId: string}) {
@@ -30,7 +31,7 @@ export async function mockBrowser({api, appOrigin/*, mockStripeOperations*/}: {
 			remote,
 			storage,
 			authMediator,
-			// popups: mockPopups({mockStripeOperations}),
+			storePopups: mockStorePopups({mockStripeOperations}),
 			chatConnect: await chatMockClientEntirely(storage),
 		})
 

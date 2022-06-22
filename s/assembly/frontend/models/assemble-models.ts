@@ -15,7 +15,7 @@ import {makePermissionsModel} from "../../../features/auth/aspects/permissions/m
 export async function assembleModels({
 		appId,
 		remote,
-		// popups,
+		storePopups,
 		storage,
 		authMediator,
 		chatConnect,
@@ -72,12 +72,7 @@ export async function assembleModels({
 			subscriptionPlanning: remote.store.subscriptionPlanningService,
 			subscriptionShopping: remote.store.subscriptionShoppingService,
 		},
-		popups: {
-			checkoutPaymentMethod: () => { throw new Error("todo implement popup") },
-			checkoutSubscription: () => { throw new Error("todo implement popup") },
-			stripeConnect: () => { throw new Error("todo implement popup") },
-			stripeLogin: () => { throw new Error("todo implement popup") },
-		},
+		popups: storePopups,
 	})
 
 	const administrativeModel = makeAdministrativeModel({

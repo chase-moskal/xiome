@@ -62,7 +62,7 @@ export function prepareBackend(configurators: Configurators) {
 			mockBrowser: async({appOrigin}: {appOrigin: string}) => mockBrowser({
 				api,
 				appOrigin,
-				// mockStripeOperations,
+				mockStripeOperations,
 			}),
 		}
 	}

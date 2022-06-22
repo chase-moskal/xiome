@@ -14,9 +14,23 @@ export interface StoreServices {
 	subscriptionObserver: Service<typeof makeSubscriptionObserverService>
 }
 
+export type StoreCheckoutPopup = ({}: {
+	stripeAccountId: string
+	stripeSessionId: string
+	stripeSessionUrl: string
+}) => Promise<void>
+
 export interface StorePopups {
-	stripeLogin: any
-	stripeConnect: any
-	checkoutPaymentMethod: any
-	checkoutSubscription: any
+	stripeLogin: ({}: {
+		url: string
+		stripeAccountId: string
+	}) => Promise<void>
+
+	stripeConnect: ({}: {
+		stripeAccountId: string
+		stripeAccountSetupLink: string
+	}) => Promise<void>
+
+	checkoutPaymentMethod: StoreCheckoutPopup
+	checkoutSubscription: StoreCheckoutPopup
 }

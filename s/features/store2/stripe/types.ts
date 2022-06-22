@@ -1,5 +1,6 @@
 
 import {Stripe} from "stripe"
+import {prepareMockStripeOperations} from "./utils/prepare-mock-stripe-operations.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 
 export type StripeWebhooks = ReturnType<typeof stripeWebhooks>
@@ -16,3 +17,5 @@ export type DispatchWebhook = <xObject extends {}>(
 	stripeAccountId: string,
 	object: xObject,
 ) => Promise<void>
+
+export type MockStripeOperations = ReturnType<typeof prepareMockStripeOperations>
