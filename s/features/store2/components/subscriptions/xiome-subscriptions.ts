@@ -16,7 +16,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	}>()(Component) {
 
 	get #state() {
-		return this.share.storeModel.state
+		return this.share.storeModel.snap.readable
 	}
 
 	get #plans() {
@@ -37,33 +37,33 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		const subscriptionStatus = this.#subscription?.status
 		const subscriptionIsActive = subscriptionStatus === SubscriptionStatus.Active
 
-		const {subscriptionsSubmodel, billingSubmodel} = this.share.storeModel
+		const {subscriptions, billing} = this.share.storeModel
 
 		return {
 			isSubscribedToThisTier,
 			handleTierClick: async() => {
 				debugger
 				if (isSubscribedToThisTier) {
-					await subscriptionsSubmodel.cancelSubscription()
+					await subscriptions.cancelSubscription()
 				}
 				else {
 					if (subscriptionIsActive) {
 						if (paymentMethod) {
-							await subscriptionsSubmodel
+							await subscriptions
 								.updateExistingSubscriptionWithNewTier(tierId)
 						}
 						else {
-							await billingSubmodel.checkoutPaymentMethod()
-							await subscriptionsSubmodel
+							await billing.checkoutPaymentMethod()
+							await subscriptions
 								.updateExistingSubscriptionWithNewTier(tierId)
 						}
 					}
 					else {
 						if (paymentMethod) {
-							await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+							await subscriptions.checkoutSubscriptionTier(tierId)
 						}
 						else {
-							await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
+							await subscriptions.checkoutSubscriptionTier(tierId)
 						}
 					}
 				}
