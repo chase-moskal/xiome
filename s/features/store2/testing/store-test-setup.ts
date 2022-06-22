@@ -29,7 +29,6 @@ export const storeTestSetup = async() => ({
 			},
 			config: <any>{},
 			stripeLiaison: circuit.stripeLiaison,
-			permissionsInteractions: permissions.permissionsInteractions,
 			generateId,
 			anonPolicy: async(meta) => (<any>{
 				// access: {

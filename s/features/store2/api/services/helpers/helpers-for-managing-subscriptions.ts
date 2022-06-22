@@ -5,6 +5,7 @@ import * as renraku from "renraku"
 import {StoreLinkedAuth} from "../../types.js"
 import {SubscriptionPricing} from "../../../types/store-concepts.js"
 import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
+import {SubscriptionPlanDraft} from "../planning/planning-types.js"
 
 export const helpersForManagingSubscriptions = ({
 		storeDatabase,
@@ -41,19 +42,15 @@ export const helpersForManagingSubscriptions = ({
 	return {
 
 		async createPlanAndTier({
-				planLabel, tierLabel, pricing,
-			}: {
-				planLabel: string
-				tierLabel: string
-				pricing: SubscriptionPricing
-			}) {
+				planLabel, tier,
+			}: SubscriptionPlanDraft) {
 
 			const planId = generateId()
 			const tierId = generateId()
 			const tierRoleId = generateId()
 
 			await permissionsInteractions.createRoleForNewSubscriptionTier({
-				label: tierLabel,
+				label: tier.label,
 			})
 
 			await storeTables.subscriptions.plans.create({
@@ -64,14 +61,14 @@ export const helpersForManagingSubscriptions = ({
 
 			const {stripeProductId, stripePriceId} =
 				await createStripeProductAndPriceResources({
-					productLabel: tierLabel,
-					pricing,
+					productLabel: tier.label,
+					pricing: tier.pricing,
 				})
 
 			await storeTables.subscriptions.tiers.create({
 				tierId,
 				planId,
-				label: tierLabel,
+				label: tier.label,
 				roleId: tierRoleId,
 				time: Date.now(),
 				stripePriceId,

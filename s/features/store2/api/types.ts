@@ -22,7 +22,6 @@ export interface StoreApiOptions {
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
 	anonPolicy: renraku.Policy<AnonMeta, AnonAuth>
-	permissionsInteractions: PermissionsInteractions
 }
 
 export interface StoreServiceOptions extends StoreApiOptions {
@@ -34,6 +33,7 @@ export interface StoreMeta extends AnonMeta {}
 export interface StoreAuth extends Omit<AnonAuth, "database"> {
 	stripeLiaison: StripeLiaison
 	storeDatabase: StoreDatabase
+	permissionsInteractions: PermissionsInteractions
 }
 
 export interface StoreLinkedAuth extends StoreAuth {

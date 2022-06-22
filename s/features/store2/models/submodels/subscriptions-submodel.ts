@@ -6,6 +6,7 @@ import {StorePopups, StoreServices} from "../types.js"
 import {makeStoreState} from "../state/store-state.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {SubscriptionPricing} from "../../types/store-concepts.js"
+import {SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
 
 export function makeSubscriptionsSubmodel({
 		snap,
@@ -91,8 +92,7 @@ export function makeSubscriptionsSubmodel({
 
 		async addPlan(options: {
 				planLabel: string
-				tierLabel: string
-				pricing: SubscriptionPricing
+				tier: SubscriptionTierDraft
 			}) {
 			const newPlan = await services.subscriptionPlanning.addPlan(options)
 			const oldPlans = getPlans()

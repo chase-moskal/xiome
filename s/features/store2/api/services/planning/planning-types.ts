@@ -1,13 +1,14 @@
 
-export interface SubscriptionPlanDraft {
-	planLabel: string
-	tierLabel: string
-	tierPrice: number
-}
+import {SubscriptionPricing} from "../../../types/store-concepts.js"
 
 export interface SubscriptionTierDraft {
 	label: string
-	price: number
+	pricing: SubscriptionPricing
+}
+
+export interface SubscriptionPlanDraft {
+	planLabel: string
+	tier: SubscriptionTierDraft
 }
 
 export interface EditPlanDraft {
@@ -20,4 +21,5 @@ export interface EditTierDraft {
 	tierId: string
 	label: string
 	active: boolean
+	pricing: SubscriptionPricing
 }

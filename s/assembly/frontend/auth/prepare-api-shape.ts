@@ -1,8 +1,8 @@
 
 import * as renraku from "renraku"
+import {FlexStorage} from "dbmage"
 
 import {SystemApi} from "../../backend/types/system-api.js"
-import {FlexStorage} from "dbmage"
 import {makeAuthMediator} from "../../../features/auth/mediator/auth-mediator.js"
 import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 import {makeGreenService} from "../../../features/auth/aspects/users/services/green-service.js"
@@ -55,13 +55,13 @@ export function prepareApiShape({appId, storage}: {
 		notes: {
 			notesService: getStandardMeta,
 		},
-		// store: {
-		// 	billingService: getStandardMeta,
-		// 	connectService: getStandardMeta,
-		// 	subscriptionPlanningService: getStandardMeta,
-		// 	subscriptionShoppingService: getStandardMeta,
-		// 	subscriptionObserverService: getStandardMeta,
-		// },
+		store: {
+			billingService: getStandardMeta,
+			connectService: getStandardMeta,
+			subscriptionPlanningService: getStandardMeta,
+			subscriptionShoppingService: getStandardMeta,
+			subscriptionObserverService: getStandardMeta,
+		},
 	}
 
 	function installAuthMediator({greenService}: {

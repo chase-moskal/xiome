@@ -49,15 +49,20 @@ export const validateBoolean = validator<boolean>(
 	boolean(),
 )
 
-export const validateNewPlanDraft = schema<SubscriptionPlanDraft>({
-	planLabel: validateLabel,
-	tierLabel: validateLabel,
-	tierPrice: validatePriceNumber,
+export const validatePricing = schema<SubscriptionPricing>({
+	currency: validator(string(), branch(is("usd"))),
+	interval: validator(string(), branch(is("month"), is("year"))),
+	price: validator(number(), min(0)),
 })
 
 export const validateNewTierDraft = schema<SubscriptionTierDraft>({
 	label: validateLabel,
-	price: validatePriceNumber,
+	pricing: validatePricing,
+})
+
+export const validateNewPlanDraft = schema<SubscriptionPlanDraft>({
+	planLabel: validateLabel,
+	tier: validateNewTierDraft,
 })
 
 export const validateEditPlanDraft = schema<EditPlanDraft>({
@@ -70,4 +75,5 @@ export const validateEditTierDraft = schema<EditTierDraft>({
 	tierId: validateId,
 	label: validateLabel,
 	active: validateBoolean,
+	pricing: validatePricing,
 })

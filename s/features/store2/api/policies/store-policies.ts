@@ -4,6 +4,9 @@ import * as renraku from "renraku"
 
 import {StoreApiOptions, StoreAuth, StoreMeta} from "../types.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
+import {makePermissionsInteractions} from "../../interactions/permissions-interactions.js"
+import {determineConnectStatus} from "../services/helpers/utils/determine-connect-status.js"
+import {fetchStripeConnectDetails} from "../services/helpers/fetch-stripe-connect-details.js"
 
 export function makeStorePolicies(options: StoreApiOptions) {
 
@@ -14,8 +17,15 @@ export function makeStorePolicies(options: StoreApiOptions) {
 		const auth = await options.anonPolicy(meta, headers)
 		return {
 			...auth,
-			storeDatabase: dbmage.subsection(auth.database, db => db.store),
 			stripeLiaison: options.stripeLiaison,
+			storeDatabase: dbmage.subsection(auth.database, tables => tables.store),
+			permissionsInteractions: makePermissionsInteractions({
+				generateId: options.generateId,
+				database: dbmage.subsection(auth.database, tables => ({
+					role: tables.auth.permissions.role,
+					userHasRole: tables.auth.permissions.userHasRole,
+				})),
+			}),
 		}
 	}
 

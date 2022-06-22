@@ -20,9 +20,10 @@ export async function mockStripeCircuit({
 		storeDatabaseRaw: StoreDatabaseRaw
 	}) {
 
+	const generateId = () => rando.randomId()
 	const stripeTables = await mockStripeTables({tableStorage})
 	const recentDetails = <MockStripeRecentDetails>{}
-	const mockPermissions = mockPermissionsInteractions()
+	const mockPermissions = mockPermissionsInteractions({generateId})
 
 	const pointer = {webhooks: undefined as StripeWebhooks | undefined}
 	const dispatchWebhook = prepareWebhookDispatcherWithAntiCircularity(pointer)

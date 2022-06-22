@@ -2,6 +2,7 @@
 import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
 import {makeNotesModel} from "../../../features/notes/models/notes-model.js"
+import {makeStoreModel} from "../../../features/store2/models/store-model.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
@@ -10,7 +11,6 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
-// import {makeStoreModel} from "../../../features/store/models/store-model.js"
 
 export async function assembleModels({
 		appId,
@@ -63,19 +63,22 @@ export async function assembleModels({
 		notesService: remote.notes.notesService,
 	})
 
-	// const storeModel = makeStoreModel({
-	// 	appId,
-	// 	billingService: remote.store.billingService,
-	// 	connectService: remote.store.connectService,
-	// 	subscriptionPlanningService: remote.store.subscriptionPlanningService,
-	// 	subscriptionShoppingService: remote.store.subscriptionShoppingService,
-	// 	subscriptionObserverService: remote.store.subscriptionObserverService,
-	// 	reauthorize,
-	// 	triggerStripeConnectPopup: popups.triggerStripeConnectPopup,
-	// 	triggerCheckoutPaymentMethodPopup: popups.triggerCheckoutPaymentMethodPopup,
-	// 	triggerCheckoutSubscriptionPopup: popups.triggerCheckoutSubscriptionPopup,
-	// 	triggerStripeLogin: async() => {throw new Error("trigger popup")},
-	// })
+	const storeModel = makeStoreModel({
+		reauthorize,
+		services: {
+			billing: remote.store.billingService,
+			connect: remote.store.connectService,
+			subscriptionObserver: remote.store.subscriptionObserverService,
+			subscriptionPlanning: remote.store.subscriptionPlanningService,
+			subscriptionShopping: remote.store.subscriptionShoppingService,
+		},
+		popups: {
+			checkoutPaymentMethod: () => { throw new Error("todo implement popup") },
+			checkoutSubscription: () => { throw new Error("todo implement popup") },
+			stripeConnect: () => { throw new Error("todo implement popup") },
+			stripeLogin: () => { throw new Error("todo implement popup") },
+		},
+	})
 
 	const administrativeModel = makeAdministrativeModel({
 		roleAssignmentService: remote.administrative.roleAssignmentService,
@@ -100,7 +103,7 @@ export async function assembleModels({
 			videoModels.contentModel.updateAccessOp(accessOp),
 			chatModel.updateAccessOp(accessOp),
 			notesModel.updateAccessOp(accessOp),
-			// storeModel.updateAccessOp(accessOp),
+			storeModel.updateAccessOp(accessOp),
 		])
 	})
 
@@ -111,7 +114,7 @@ export async function assembleModels({
 		accessModel,
 		videoModels,
 		notesModel,
-		// storeModel,
+		storeModel,
 		personalModel,
 		questionsModel,
 		permissionsModel,

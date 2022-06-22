@@ -7,8 +7,9 @@ import {determineConnectStatus} from "./helpers/utils/determine-connect-status.j
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
-import {validateBoolean, validateLabel, validateSubscriptionPricing} from "./validators/planning-validators.js"
+import {validateBoolean, validateLabel, validateNewPlanDraft, validateSubscriptionPricing} from "./validators/planning-validators.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../types/store-concepts.js"
+import {SubscriptionTierDraft} from "./planning/planning-types.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -36,20 +37,13 @@ export const makeSubscriptionPlanningService = (
 
 	async addPlan(inputs: {
 			planLabel: string
-			tierLabel: string
-			pricing: SubscriptionPricing
+			tier: SubscriptionTierDraft
 		}): Promise<SubscriptionPlan> {
 
-		const planLabel = runValidation(inputs.planLabel, validateLabel)
-		const tierLabel = runValidation(inputs.tierLabel, validateLabel)
-		const pricing = runValidation(inputs.pricing, validateSubscriptionPricing)
+		const {planLabel, tier} = runValidation(inputs, validateNewPlanDraft)
 
 		const {planId, tierId, tierRoleId, time} =
-			await helpers.createPlanAndTier({
-				planLabel,
-				tierLabel,
-				pricing,
-			})
+			await helpers.createPlanAndTier({planLabel, tier})
 
 		return {
 			planId: planId.toString(),
@@ -59,9 +53,9 @@ export const makeSubscriptionPlanningService = (
 			tiers: [
 				{
 					tierId: tierId.toString(),
-					label: tierLabel,
+					label: tier.label,
 					roleId: tierRoleId.string,
-					pricing,
+					pricing: tier.pricing,
 					time,
 					active: true,
 				}
