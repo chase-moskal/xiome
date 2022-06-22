@@ -13,7 +13,8 @@ export class XiomeBilling extends mixinRequireShare<{
 	}>()(Component) {
 
 	render() {
-		const {state, billingSubmodel} = this.share.storeModel
+		const {snap, billing} = this.share.storeModel
+		const state = snap.readable
 		return html`
 			<slot><h3>billing</h3></slot>
 			${renderOp(state.billing.paymentMethodOp, method => method ?html`
@@ -26,17 +27,17 @@ export class XiomeBilling extends mixinRequireShare<{
 				</p>
 				<p>last 4 digits: ${method.cardClues.last4}</p>
 				<div class=buttons>
-					<xio-button @click=${billingSubmodel.disconnectPaymentMethod}>
+					<xio-button @click=${billing.disconnectPaymentMethod}>
 						unlink card
 					</xio-button>
-					<xio-button @click=${billingSubmodel.checkoutPaymentMethod}>
+					<xio-button @click=${billing.checkoutPaymentMethod}>
 						update card
 					</xio-button>
 				</div>
 			`: html`
 				<p>no credit card linked</p>
 				<div class=buttons>
-					<xio-button @click=${billingSubmodel.checkoutPaymentMethod}>
+					<xio-button @click=${billing.checkoutPaymentMethod}>
 						link credit card
 					</xio-button>
 				</div>

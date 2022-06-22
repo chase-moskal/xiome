@@ -21,9 +21,10 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 	}
 
 	private renderStripeConnectControls() {
-		const {connectStatusOp} = this.#storeModel.state.stripeConnect
-		const {connectDetailsOp} = this.#storeModel.state.stripeConnect
-		const {connectStripeAccount, stripeLogin, pause, resume} = this.#storeModel.connectSubmodel
+		const state = this.#storeModel.snap.readable
+		const {connectStatusOp} = state.stripeConnect
+		const {connectDetailsOp} = state.stripeConnect
+		const {connectStripeAccount, stripeLogin, pause, resume} = this.#storeModel.connect
 		return renderOp(connectStatusOp, status => {
 			switch (status) {
 				case StripeConnectStatus.Unlinked: return html`

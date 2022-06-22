@@ -147,7 +147,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				if (problems.length === 0) {
 					try {
 						states.component.draftNewPlan.loading = true
-						await storeModel.subscriptionsSubmodel.addPlan(draft)
+						await storeModel.subscriptions.addPlan(draft)
 					}
 					finally {
 						states.component.draftNewPlan = undefined
@@ -166,7 +166,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				if (problems.length === 0) {
 					try {
 						states.component.draftNewTier.loading = true
-						await storeModel.subscriptionsSubmodel.addTier({
+						await storeModel.subscriptions.addTier({
 							...draft,
 							planId,
 						})
@@ -195,7 +195,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				if (problems.length === 0) {
 					try {
 						states.component.editingPlanDraft.loading = true
-						await storeModel.subscriptionsSubmodel.editPlan(draft)
+						await storeModel.subscriptions.editPlan(draft)
 					}
 					finally {
 						states.component.editingPlanDraft = undefined
@@ -222,7 +222,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 				if (problems.length === 0) {
 					try {
 						states.component.editingTierDraft.loading = true
-						await storeModel.subscriptionsSubmodel.editTier({
+						await storeModel.subscriptions.editTier({
 							planId: plan.planId,
 							tierId: tier.tierId,
 							label: draft.label,

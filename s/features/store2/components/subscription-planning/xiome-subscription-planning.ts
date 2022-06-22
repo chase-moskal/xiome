@@ -31,8 +31,9 @@ export class XiomeSubscriptionPlanning extends mixinRequireShare<{
 	}
 
 	render() {
-		const {allowance} = this.#storeModel
-		const connectStatus = ops.value(this.#storeModel.state.stripeConnect.connectStatusOp)
+		const {snap, allowance} = this.#storeModel
+		const state = snap.readable
+		const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
 		return html`
 			${connectStatus === StripeConnectStatus.Ready
 				? allowance.manageStore
