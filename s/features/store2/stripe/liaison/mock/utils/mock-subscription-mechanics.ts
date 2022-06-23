@@ -12,7 +12,7 @@ export function mockSubscriptionMechanics({
 		generateId: () => string
 	}) {
 
-	async function subscriptionCreateItemsToActualItems(
+	async function interpretCreateItemsParam(
 			createItems: Stripe.SubscriptionCreateParams["items"]
 		): Promise<Stripe.Subscription["items"]> {
 		const created = Date.now()
@@ -21,18 +21,17 @@ export function mockSubscriptionMechanics({
 			url: "",
 			has_more: false,
 			data: await Promise.all(
-				createItems.map(async item => (<Stripe.SubscriptionItem>{
+				createItems.map(async item => (<any>{
 					id: generateId(),
 					created,
-					price: <Stripe.Price>await tables.prices
-						.readOne(dbmage.find({id: item.price})),
+					price: item.price,
 					quantity: item.quantity,
 				}))
 			),
 		}
 	}
 
-	async function subscriptionUpdateItemsToActualItems(
+	async function interpretUpdateItemsParam(
 			updateItems: Stripe.SubscriptionUpdateParams["items"]
 		): Promise<Stripe.Subscription["items"]> {
 		const created = Date.now()
@@ -41,18 +40,17 @@ export function mockSubscriptionMechanics({
 			url: "",
 			has_more: false,
 			data: await Promise.all(
-				updateItems.map(async item => (<Stripe.SubscriptionItem>{
+				updateItems.map(async item => (<any>{
 					id: generateId(),
 					created,
-					price: <Stripe.Price>await tables.prices
-						.readOne(dbmage.find({id: item.price})),
+					price: item.price,
 					quantity: item.quantity,
 				}))
 			),
 		}
 	}
 
-	async function subscriptionCreateToActual(
+	async function interpretCreateParams(
 			createSubscription: Stripe.SubscriptionCreateParams
 		) {
 		return <Stripe.Subscription>{
@@ -61,7 +59,7 @@ export function mockSubscriptionMechanics({
 			created: Date.now(),
 			default_payment_method: createSubscription.default_payment_method,
 			status: "active",
-			items: await subscriptionCreateItemsToActualItems(createSubscription.items),
+			items: await interpretCreateItemsParam(createSubscription.items),
 		}
 	}
 
@@ -113,9 +111,9 @@ export function mockSubscriptionMechanics({
 	}
 
 	return {
-		subscriptionCreateItemsToActualItems,
-		subscriptionUpdateItemsToActualItems,
-		subscriptionCreateToActual,
+		interpretCreateItemsParam,
+		interpretUpdateItemsParam,
+		interpretCreateParams,
 		generateInvoiceForSubscriptionItems,
 	}
 }

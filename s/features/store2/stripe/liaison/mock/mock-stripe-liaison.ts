@@ -75,9 +75,11 @@ export function mockStripeLiaison({
 					...makeStandardRestResource<Stripe.Customer>()({
 						table: tables.customers,
 						handleCreate: async(params: Stripe.CustomerCreateParams) => ({
-							email: params.email,
-							invoice_settings: <any>params.invoice_settings
-								?? {default_payment_method: undefined},
+							resource: {
+								email: params.email,
+								invoice_settings: <any>params.invoice_settings
+									?? {default_payment_method: undefined},
+							}
 						}),
 						handleUpdate: async(id, params: Stripe.CustomerUpdateParams) => ({
 							email: params.email,
@@ -101,9 +103,11 @@ export function mockStripeLiaison({
 				products: makeStandardRestResource<Stripe.Product>()({
 					table: tables.products,
 					handleCreate: async(params: Stripe.ProductCreateParams) => ({
-						name: params.name,
-						description: params.description,
-						active: true,
+						resource: {
+							name: params.name,
+							description: params.description,
+							active: true,
+						}
 					}),
 					handleUpdate: async(id, params: Stripe.ProductUpdateParams) => ({
 						name: params.name,
@@ -115,12 +119,14 @@ export function mockStripeLiaison({
 				prices: makeStandardRestResource<Stripe.Price>()({
 					table: tables.prices,
 					handleCreate: async(params: Stripe.PriceCreateParams) => ({
-						active: params.active === undefined ?true :params.active,
-						product: params.product,
-						currency: params.currency,
-						unit_amount: params.unit_amount,
-						recurring: <any>params.recurring,
-						type: params.recurring ?"recurring" :"one_time",
+						resource: {
+							active: params.active === undefined ?true :params.active,
+							product: params.product,
+							currency: params.currency,
+							unit_amount: params.unit_amount,
+							recurring: <any>params.recurring,
+							type: params.recurring ?"recurring" :"one_time",
+						}
 					}),
 					handleUpdate: async(id, params: Stripe.PriceUpdateParams) => ({
 						active: params.active,
@@ -131,22 +137,24 @@ export function mockStripeLiaison({
 					sessions: makeStandardRestResource<Stripe.Checkout.Session>()({
 						table: tables.checkoutSessions,
 						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
-							mode: params.mode,
-							customer: params.customer,
-							client_reference_id: params.client_reference_id,
-							line_items: params.mode === "setup"
-								? undefined
-								: {
-									object: "list",
-									has_more: false,
-									url: undefined,
-									data: params.line_items.map(item => <any>({
-										id: rando.randomId().string,
-										object: "item",
-										quantity: item.quantity,
-										price: item.price,
-									})),
-								},
+							resource: {
+								mode: params.mode,
+								customer: params.customer,
+								client_reference_id: params.client_reference_id,
+								line_items: params.mode === "setup"
+									? undefined
+									: {
+										object: "list",
+										has_more: false,
+										url: undefined,
+										data: params.line_items.map(item => <any>({
+											id: rando.randomId().string,
+											object: "item",
+											quantity: item.quantity,
+											price: item.price,
+										})),
+									},
+							}
 						}),
 						handleUpdate: async(id, params: Stripe.Checkout.Session) => ({}),
 					}),
@@ -156,9 +164,11 @@ export function mockStripeLiaison({
 					const resource = makeStandardRestResource<Stripe.PaymentMethod>()({
 						table: tables.paymentMethods,
 						handleCreate: async(params: Stripe.PaymentMethodCreateParams) => ({
-							type: params.type,
-							customer: params.customer,
-							card: <any>params.card,
+							resource: {
+								type: params.type,
+								customer: params.customer,
+								card: <any>params.card,
+							}
 						}),
 						handleUpdate: async(id, params: Stripe.PaymentMethodUpdateParams) => ({
 							card: <any>params.card,
@@ -178,9 +188,11 @@ export function mockStripeLiaison({
 				setupIntents: makeStandardRestResource<Stripe.SetupIntent>()({
 					table: tables.setupIntents,
 					handleCreate: async(params: Stripe.SetupIntentCreateParams) => ({
-						customer: params.customer,
-						payment_method: params.payment_method,
-						usage: params.usage,
+						resource: {
+							customer: params.customer,
+							payment_method: params.payment_method,
+							usage: params.usage,
+						}
 					}),
 					handleUpdate: async(id, params: Stripe.SetupIntentUpdateParams) => ({
 						payment_method: params.payment_method,
@@ -190,10 +202,12 @@ export function mockStripeLiaison({
 				paymentIntents: makeStandardRestResource<Stripe.PaymentIntent>()({
 					table: tables.setupIntents,
 					handleCreate: async(params: Stripe.PaymentIntentCreateParams) => ({
-						customer: params.customer,
-						payment_method: params.payment_method,
-						amount: params.amount,
-						currency: params.currency,
+						resource: {
+							customer: params.customer,
+							payment_method: params.payment_method,
+							amount: params.amount,
+							currency: params.currency,
+						}
 					}),
 					handleUpdate: async(id, params: Stripe.PaymentIntentUpdateParams) => ({
 						customer: params.customer,
@@ -207,9 +221,9 @@ export function mockStripeLiaison({
 					const resource = makeStandardRestResource<Stripe.Subscription>()({
 						table: tables.subscriptions,
 						handleCreate: async(params: Stripe.SubscriptionCreateParams) => {
+							debugger
 							const subscription = await subscriptionMechanics
-								.subscriptionCreateToActual(params)
-							await tables.subscriptions.create(<any>subscription)
+								.interpretCreateParams(params)
 							const {invoice, paymentIntent} = await subscriptionMechanics
 								.generateInvoiceForSubscriptionItems({
 									customer: <string>subscription.customer,
@@ -222,12 +236,16 @@ export function mockStripeLiaison({
 								subscription,
 								paymentIntent: <Stripe.PaymentIntent>paymentIntent,
 							}
-							await dispatchWebhook(
-								"invoice.paid",
-								stripeAccountId,
-								invoice,
-							)
-							return subscription
+							return {
+								resource: subscription,
+								afterResourceIsAddedToTable: async () => {
+									await dispatchWebhook(
+										"invoice.paid",
+										stripeAccountId,
+										invoice,
+									)
+								}
+							}
 						},
 					})
 					return {
@@ -250,7 +268,7 @@ export function mockStripeLiaison({
 									return !foundExisting
 								})
 								const items = await subscriptionMechanics
-									.subscriptionUpdateItemsToActualItems(newItems)
+									.interpretUpdateItemsParam(newItems)
 								const {invoice} = await subscriptionMechanics.generateInvoiceForSubscriptionItems({
 									customer: <string>existingSubscription.customer,
 									default_payment_method: <string>existingSubscription
