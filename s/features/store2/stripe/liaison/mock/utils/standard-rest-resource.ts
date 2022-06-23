@@ -11,7 +11,6 @@ function ignoreUndefined<X extends {}>(input: X): X {
 	}
 	return <X>output
 }
-
 export function prepareStandardRestResource({generateId}: {
 		generateId: () => string
 	}) {
@@ -24,17 +23,23 @@ export function prepareStandardRestResource({generateId}: {
 				handleUpdate = throwAnError,
 			}: {
 				table: dbmage.Table<any>
-				handleCreate?: (params: xCreateParams) => Promise<Partial<xResource>>
+				handleCreate?: (params: xCreateParams) => Promise<{
+					resource: Partial<xResource>
+					afterResourceIsAddedToTable?: () => Promise<void>
+				}>
 				handleUpdate?: (id: string, params: xUpdateParams) => Promise<Partial<xResource>>
 			}) {
 			return {
 				async create(params: xCreateParams) {
-					const resource = <Partial<xResource>>{
-						id: generateId().toString(),
-						...await handleCreate(params),
+					const {resource, afterResourceIsAddedToTable} = await handleCreate(params)
+					const finalResource = <Partial<xResource>>{
+						id: generateId(),
+						...resource,
 					}
-					await table.create(resource)
-					return stripeResponse(<xResource>resource)
+					await table.create(finalResource)
+					if (afterResourceIsAddedToTable)
+						await afterResourceIsAddedToTable()
+					return stripeResponse(<xResource>finalResource)
 				},
 				async update(id: string, params: xUpdateParams) {
 					await table.update({

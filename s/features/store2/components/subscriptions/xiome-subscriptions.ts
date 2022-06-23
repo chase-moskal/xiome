@@ -42,7 +42,6 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return {
 			isSubscribedToThisTier,
 			handleTierClick: async() => {
-				debugger
 				if (isSubscribedToThisTier) {
 					await subscriptions.cancelSubscription()
 				}
