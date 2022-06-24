@@ -17,7 +17,7 @@ export default <Suite>{
 					// expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 				async "can connect an incomplete stripe account"() {
-					// const {store, rig, access} = await storeTestSetup()
+					// const {store, rig, logout} = await storeTestSetup()
 					// 	.then(x => x.api())
 					// 	.then(x => x.client(x.roles.merchant))
 					// 	.then(x => x.browserTab())
@@ -27,7 +27,7 @@ export default <Suite>{
 					// expect(store.get.connect.details).ok()
 					// expect(store.get.connect.status)
 					// 	.equals(StripeConnectStatus.Incomplete)
-					// await access.logout()
+					// await logout()
 					// expect(store.get.connect.details).not.ok()
 				},
 				async "can see the connect details set by another merchant"() {},

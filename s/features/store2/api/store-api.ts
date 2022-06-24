@@ -9,8 +9,13 @@ import {makeSubscriptionPlanningService} from "./services/subscription-planning-
 import {makeSubscriptionShoppingService} from "./services/subscription-shopping-service.js"
 import {makeSubscriptionObserverService} from "./services/subscription-observer-service.js"
 
-export function makeStoreApi(options: StoreApiOptions) {
-	const serviceOptions = {...options, storePolicies: makeStorePolicies(options)}
+export function makeStoreApi<xMeta>(options: StoreApiOptions<xMeta>) {
+
+	const serviceOptions = {
+		...options,
+		storePolicies: makeStorePolicies<xMeta>(options),
+	}
+
 	return renraku.api({
 		connectService: makeConnectService(serviceOptions),
 		billingService: makeBillingService(serviceOptions),

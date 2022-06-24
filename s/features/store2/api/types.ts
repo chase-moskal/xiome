@@ -2,15 +2,14 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
-import {SecretConfig} from "../../../assembly/backend/types/secret-config.js"
-import {StripeLiaison, StripeLiaisonAccount} from "../stripe/liaison/types.js"
+// import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 import {StoreDatabase} from "../types/store-schema.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStorePolicies} from "./policies/store-policies.js"
 import {PermissionsInteractions} from "../interactions/interactions-types.js"
+import {StripeLiaison, StripeLiaisonAccount} from "../stripe/liaison/types.js"
 
-export interface StoreApiOptions {
-	config: SecretConfig
+export interface StoreApiOptions<xStoreMeta> {
 	accountReturningLinks: {
 		refresh: string
 		return: string
@@ -21,16 +20,15 @@ export interface StoreApiOptions {
 	}
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
-	anonPolicy: renraku.Policy<AnonMeta, AnonAuth>
+	storePolicy: renraku.Policy<xStoreMeta, StoreAuth>
 }
 
-export interface StoreServiceOptions extends StoreApiOptions {
+export interface StoreServiceOptions<xStoreMeta> extends StoreApiOptions<xStoreMeta> {
 	storePolicies: ReturnType<typeof makeStorePolicies>
 }
 
-export interface StoreMeta extends AnonMeta {}
-
-export interface StoreAuth extends Omit<AnonAuth, "database"> {
+export interface StoreAuth {
+	access: AccessPayload
 	stripeLiaison: StripeLiaison
 	storeDatabase: StoreDatabase
 	permissionsInteractions: PermissionsInteractions
