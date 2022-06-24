@@ -28,7 +28,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	}
 
 	get #subscription() {
-		return ops.value(this.#state.subscriptions.subscriptionDetailsOp)
+		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
 
 	#prepareTierManager({tierId}: SubscriptionTier) {
@@ -138,7 +138,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return renderOp(
 			ops.combine(
 				this.#state.subscriptions.subscriptionPlansOp,
-				this.#state.subscriptions.subscriptionDetailsOp,
+				this.#state.subscriptions.mySubscriptionDetailsOp,
 			),
 			() => html`
 				<ol class=plans>

@@ -28,7 +28,7 @@ export function makeSubscriptionsSubmodel({
 
 	async function load() {
 		state.subscriptions.subscriptionPlansOp = ops.none()
-		state.subscriptions.subscriptionDetailsOp = ops.none()
+		state.subscriptions.mySubscriptionDetailsOp = ops.none()
 		if (isStoreActive()) {
 			await ops.operation({
 				setOp: op => state.subscriptions.subscriptionPlansOp = op,
@@ -36,8 +36,8 @@ export function makeSubscriptionsSubmodel({
 			})
 			if (isUserLoggedIn()) {
 				await ops.operation({
-					setOp: op => state.subscriptions.subscriptionDetailsOp = op,
-					promise: services.subscriptionShopping.fetchMySubscriptionStatus(),
+					setOp: op => state.subscriptions.mySubscriptionDetailsOp = op,
+					promise: services.subscriptionShopping.fetchMySubscriptionDetails(),
 				})
 			}
 		}
@@ -74,7 +74,7 @@ export function makeSubscriptionsSubmodel({
 	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(
 		actions,
 		fun => async(...args: any[]) => {
-			state.subscriptions.subscriptionDetailsOp = ops.loading()
+			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
 			await fun(...args)
 			await reauthorize()
 		},
