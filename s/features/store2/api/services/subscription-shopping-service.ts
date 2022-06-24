@@ -7,7 +7,7 @@ import {getStripeId} from "../../stripe/liaison/helpers/get-stripe-id.js"
 import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
 import {determineSubscriptionStatus} from "./helpers/utils/determine-subscription-status.js"
-import {updateExistingSubscriptionWithNewTier} from "./helpers/apply-tier-to-existing-subscription.js"
+import {updateExistingSubscriptionWithNewTier} from "./helpers/update-existing-subscription-with-new-tier.js"
 import {SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
 import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
 import {StoreServiceOptions} from "../types.js"
@@ -21,7 +21,7 @@ export const makeSubscriptionShoppingService = (
 
 .expose(auth => ({
 
-	async fetchMySubscriptionStatus(): Promise<SubscriptionDetails> {
+	async fetchMySubscriptionDetails(): Promise<SubscriptionDetails> {
 		const stripeSubscriptions = await auth.stripeLiaisonAccount
 			.subscriptions.list({customer: auth.stripeCustomerId})
 		const [stripeSubscription] = stripeSubscriptions?.data ?? []
