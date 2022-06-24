@@ -21,7 +21,11 @@ export const makeSubscriptionShoppingService = (
 
 .expose(auth => ({
 
-	async fetchMySubscriptionDetails(): Promise<SubscriptionDetails> {
+	async fetchMySubscriptionDetails(): Promise<SubscriptionDetails[]> {
+
+		// TODO multisub: refactor into details for multiple subscriptions
+		// instead of just one
+
 		const stripeSubscriptions = await auth.stripeLiaisonAccount
 			.subscriptions.list({customer: auth.stripeCustomerId})
 		const [stripeSubscription] = stripeSubscriptions?.data ?? []

@@ -55,7 +55,8 @@ export enum SubscriptionStatus {
 
 export interface SubscriptionDetails {
 	status: SubscriptionStatus
-	tierIds: string[]
+	planId: string
+	tierId: string
 }
 
 export interface PaymentMethod {

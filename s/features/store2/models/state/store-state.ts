@@ -16,7 +16,7 @@ export function makeStoreState() {
 		},
 		subscriptions: {
 			subscriptionPlansOp: ops.none() as Op<SubscriptionPlan[]>,
-			mySubscriptionDetailsOp: ops.none() as Op<SubscriptionDetails>,
+			mySubscriptionDetailsOp: ops.none() as Op<SubscriptionDetails[]>,
 		},
 		billing: {
 			paymentMethodOp: ops.none() as Op<undefined | PaymentMethod>,
