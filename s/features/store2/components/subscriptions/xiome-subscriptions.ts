@@ -9,6 +9,9 @@ import {Component, html, mixinRequireShare, mixinStyles} from "../../../../frame
 
 import xiomeSubscriptionsCss from "./xiome-subscriptions.css.js"
 
+// // TODO multisub: maybe use a magical view somewhere if you want?
+// import {view} from "@chasemoskal/magical/x/view/view.js"
+
 @mixinStyles(xiomeSubscriptionsCss)
 export class XiomeSubscriptions extends mixinRequireShare<{
 		modals: ModalSystem
