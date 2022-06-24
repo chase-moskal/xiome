@@ -1,5 +1,8 @@
 
-import {css} from "../../../../framework/component.js"
+// TODO multisub: maybe use camel if you want?
+import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
+// import {css} from "../../../../framework/component.js"
+
 export default css`
 
 ol, ul {
