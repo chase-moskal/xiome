@@ -32,6 +32,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	}
 
 	#prepareTierManager({tierId}: SubscriptionTier) {
+
+		// TODO multisub: refactor so this component can render the status of
+		// multiple subscription plans
+
 		const isSubscribedToThisTier = this.#subscription.tierIds.includes(tierId)
 		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
 		const subscriptionStatus = this.#subscription?.status
