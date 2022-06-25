@@ -36,7 +36,7 @@ export function makeStoreModel(options: {
 		...submodels,
 		...initLogic,
 		async updateAccessOp(op: Op<AccessPayload>) {
-			stateSystem.state.user.accessOp = op
+			stateSystem.snap.state.user.accessOp = op
 			await initLogic.refresh()
 		},
 	}

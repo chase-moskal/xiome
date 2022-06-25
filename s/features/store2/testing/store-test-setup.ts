@@ -81,7 +81,7 @@ export const storeTestSetup = async() => ({
 					})
 				return {
 					browserTab: async() => {
-						function login(newPrivileges: string[]) {
+						async function login(newPrivileges: string[]) {
 							privileges = newPrivileges
 							access = {
 								appId,
@@ -99,9 +99,9 @@ export const storeTestSetup = async() => ({
 									},
 								},
 							}
-							store.updateAccessOp(ops.ready(access))
+							await store.updateAccessOp(ops.ready(access))
 						}
-						function logout() {
+						async function logout() {
 							access = {
 								appId,
 								origins: [],
@@ -109,7 +109,7 @@ export const storeTestSetup = async() => ({
 								scope: {core: true},
 								user: undefined,
 							}
-							store.updateAccessOp(ops.ready(access))
+							await store.updateAccessOp(ops.ready(access))
 						}
 						const store = makeStoreModel({
 							services: {
@@ -123,11 +123,11 @@ export const storeTestSetup = async() => ({
 								mockStripeOperations: circuit.mockStripeOperations,
 							}),
 							async reauthorize() {
-								logout()
-								login(privileges)
+								await logout()
+								await login(privileges)
 							},
 						})
-						login(privileges)
+						await login(privileges)
 						await store.initialize()
 						return {
 							store,
