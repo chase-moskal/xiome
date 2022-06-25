@@ -8,6 +8,7 @@ export function setupStoreState() {
 
 	const snap = makeStoreState()
 	const allowance = makeStoreAllowance(snap)
+	const state = snap.readable
 
 	function isStoreActive() {
 		return ops.value(snap.state.stripeConnect.connectStatusOp)
@@ -18,5 +19,5 @@ export function setupStoreState() {
 		return !!ops.value(snap.state.user.accessOp)?.user
 	}
 
-	return {snap, allowance, isStoreActive, isUserLoggedIn}
+	return {snap, state, allowance, isStoreActive, isUserLoggedIn}
 }

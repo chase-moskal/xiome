@@ -28,34 +28,28 @@ export const makeSubscriptionShoppingService = (
 
 		const stripeSubscriptions = await auth.stripeLiaisonAccount
 			.subscriptions.list({customer: auth.stripeCustomerId})
-		const [stripeSubscription] = stripeSubscriptions?.data ?? []
-		if (stripeSubscription) {
-			const stripePriceIds = stripeSubscription
-				.items.data.map(item => getStripeId(item.price))
-			const tierRows = stripePriceIds.length > 0
-				? await auth.storeDatabase.tables.subscriptions.tiers.read(
-					dbmage.findAll(stripePriceIds, stripePriceId => ({
-						stripePriceId: <string>stripePriceId,
-					}))
-				)
-				: []
-			return {
-				status: determineSubscriptionStatus(stripeSubscription),
-				tierIds: tierRows.map(row => row.tierId.string),
+		if(stripeSubscriptions) {
+			const test = <SubscriptionDetails[]>[]
+			for (const stripeSubscription of stripeSubscriptions.data) {
+				const [stripePriceId] = stripeSubscription
+					.items.data.map(item => getStripeId(item.price))
+				const tierRow = await auth.storeDatabase.tables.subscriptions
+					.tiers.readOne(dbmage.find({stripePriceId}))
+				test.push({
+					status: determineSubscriptionStatus(stripeSubscription),
+					planId: tierRow.planId.string,
+					tierId: tierRow.tierId.string,
+				})
 			}
+			return test
 		}
-		else {
-			return {
-				status: SubscriptionStatus.Unsubscribed,
-				tierIds: [],
-			}
-		}
+		else return []
 	},
 
 	async checkoutSubscriptionTier(tierId: string) {
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
-		if (stripeSubscription)
-			throw new Error("stripe subscription already exists, cannot create a new one")
+		// const stripeSubscription = await getCurrentStripeSubscription(auth)
+		// if (stripeSubscription)
+		// 	throw new Error("stripe subscription already exists, cannot create a new one")
 
 		const {tierRow} = await getRowsForTierId({tierId, auth})
 

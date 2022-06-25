@@ -14,7 +14,6 @@ export function mockStorePopups({mockStripeOperations}: {
 		stripeConnect: <StorePopups["stripeConnect"]>(async({
 				stripeAccountId,
 			}) => {
-			debugger
 			await mockStripeOperations.linkStripeAccount(stripeAccountId)
 		}),
 
