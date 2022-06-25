@@ -13,7 +13,7 @@ export function makeStoreApi<xMeta>(options: StoreApiOptions<xMeta>) {
 
 	const serviceOptions = {
 		...options,
-		storePolicies: makeStorePolicies<xMeta>(options),
+		storePolicies: makeStorePolicies(options),
 	}
 
 	return renraku.api({

@@ -1,19 +1,26 @@
 
-import {getRando, memoryFlexStorage} from "dbmage"
+import * as dbmage from "dbmage"
+import * as renraku from "renraku"
 
+import {StoreAuth} from "../api/types.js"
 import {makeStoreApi} from "../api/store-api.js"
 import {storePrivileges} from "../store-privileges.js"
+import {StoreDatabase} from "../types/store-schema.js"
+import {makeStoreModel} from "../models/store-model.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {mockStorePopups} from "../popups/mock-store-popups.js"
 import {mockStripeCircuit} from "../stripe/mock-stripe-circuit.js"
 import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
 import {mockStoreDatabaseRaw} from "../api/mocks/mock-store-database-raw.js"
-import {mockPermissionsInteractions} from "../interactions/mock-permissions-interactions.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
+import {mockPermissionsInteractions} from "../interactions/mock-permissions-interactions.js"
+import {makePrivilegeChecker} from "../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
 export const storeTestSetup = async() => ({
 
 	async api() {
-		const rando = await getRando()
+		const rando = await dbmage.getRando()
 		const generateId = () => rando.randomId()
 		const storeDatabaseRaw = mockStoreDatabaseRaw()
 		const permissions = mockPermissionsInteractions({generateId})
@@ -21,10 +28,10 @@ export const storeTestSetup = async() => ({
 			rando,
 			storeDatabaseRaw,
 			logger: new DisabledLogger(),
-			tableStorage: memoryFlexStorage(),
+			tableStorage: dbmage.memoryFlexStorage(),
 		})
 		const appId = generateId().string
-		const storeApi = makeStoreApi({
+		const storeApi = makeStoreApi<AccessPayload>({
 			accountReturningLinks: {
 				refresh: "",
 				return: "",
@@ -35,13 +42,15 @@ export const storeTestSetup = async() => ({
 			},
 			stripeLiaison: circuit.stripeLiaison,
 			generateId,
-			storePolicy: async(meta: AccessPayload) => ({
+			storePolicy: async(access) => (<StoreAuth>{
 				access,
-				storeDatabase: UnconstrainedTable.constrainDatabaseForApp({
-					appId: ,
+				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
+				stripeLiaison: circuit.stripeLiaison,
+				permissionsInteractions: permissions.permissionsInteractions,
+				storeDatabase: <StoreDatabase>UnconstrainedTable.constrainDatabaseForApp({
+					appId: dbmage.Id.fromString(access.appId),
 					database: storeDatabaseRaw,
 				}),
-				permissionsInteractions: permissions.permissionsInteractions,
 			})
 		})
 		return {
@@ -59,7 +68,18 @@ export const storeTestSetup = async() => ({
 			},
 			client: async(privileges: string[]) => {
 				let access: AccessPayload = undefined
-				function login(privileges: string[]) {
+				const getMeta = async() => access
+				const remote = renraku.mock()
+					.forApi(storeApi)
+					.withMetaMap({
+						connectService: getMeta,
+						billingService: getMeta,
+						subscriptionObserverService: getMeta,
+						subscriptionPlanningService: getMeta,
+						subscriptionShoppingService: getMeta,
+					})
+				function login(newPrivileges: string[]) {
+					privileges = newPrivileges
 					access = {
 						appId,
 						origins: [],
@@ -89,8 +109,25 @@ export const storeTestSetup = async() => ({
 				login(privileges)
 				return {
 					browserTab: async() => {
+						const store = makeStoreModel({
+							services: {
+								billing: remote.billingService,
+								connect: remote.connectService,
+								subscriptionObserver: remote.subscriptionObserverService,
+								subscriptionPlanning: remote.subscriptionPlanningService,
+								subscriptionShopping: remote.subscriptionShoppingService,
+							},
+							popups: mockStorePopups({
+								mockStripeOperations: circuit.mockStripeOperations,
+							}),
+							async reauthorize() {
+								logout()
+								login(privileges)
+							},
+						})
+						await store.initialize()
 						return {
-							store: makeStoreModel(),
+							store,
 							rig: {
 								stripeLinkToFail() {},
 							},
@@ -101,5 +138,5 @@ export const storeTestSetup = async() => ({
 				}
 			},
 		}
-	},
+	}
 })

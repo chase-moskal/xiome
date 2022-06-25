@@ -29,10 +29,11 @@ export const makeSubscriptionShoppingService = (
 			const stripePriceIds = stripeSubscription
 				.items.data.map(item => getStripeId(item.price))
 			const tierRows = stripePriceIds.length > 0
-				? await auth.storeDatabase.tables.subscriptions
-					.tiers.read(
-						dbmage.findAll(stripePriceIds, stripePriceId => ({stripePriceId}))
-					)
+				? await auth.storeDatabase.tables.subscriptions.tiers.read(
+					dbmage.findAll(stripePriceIds, stripePriceId => ({
+						stripePriceId: <string>stripePriceId,
+					}))
+				)
 				: []
 			return {
 				status: determineSubscriptionStatus(stripeSubscription),

@@ -8,8 +8,11 @@ import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStorePolicies} from "./policies/store-policies.js"
 import {PermissionsInteractions} from "../interactions/interactions-types.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../stripe/liaison/types.js"
+import {PrivilegeChecker} from "../../auth/aspects/permissions/types/privilege-checker.js"
+import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
+import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 
-export interface StoreApiOptions<xStoreMeta> {
+export interface StoreApiOptions<xMeta = any> {
 	accountReturningLinks: {
 		refresh: string
 		return: string
@@ -20,15 +23,14 @@ export interface StoreApiOptions<xStoreMeta> {
 	}
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
-	storePolicy: renraku.Policy<xStoreMeta, StoreAuth>
+	storePolicy: renraku.Policy<xMeta, StoreAuth>
 }
 
-export interface StoreServiceOptions<xStoreMeta = any> extends StoreApiOptions<xStoreMeta> {
+export interface StoreServiceOptions<xMeta = any> extends StoreApiOptions<xMeta> {
 	storePolicies: ReturnType<typeof makeStorePolicies>
 }
 
-export interface StoreAuth {
-	access: AccessPayload
+export interface StoreAuth extends Omit<AnonAuth, "database"> {
 	stripeLiaison: StripeLiaison
 	storeDatabase: StoreDatabase
 	permissionsInteractions: PermissionsInteractions

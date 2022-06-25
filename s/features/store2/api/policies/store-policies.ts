@@ -10,7 +10,7 @@ import {fetchStripeConnectDetails} from "../services/helpers/fetch-stripe-connec
 export function makeStorePolicies<xMeta>({
 		stripeLiaison,
 		storePolicy,
-	}: StoreApiOptions<xMeta>) {
+	}: StoreApiOptions) {
 
 	// async function storePolicy(
 	// 		meta: StoreMeta,

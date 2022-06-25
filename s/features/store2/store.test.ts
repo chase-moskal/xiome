@@ -1,5 +1,6 @@
 
 import {Suite, expect} from "cynic"
+import {ops} from "../../framework/ops.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 
@@ -12,10 +13,20 @@ export default <Suite>{
 						.then(x => x.api())
 						.then(x => x.client(x.roles.merchant))
 						.then(x => x.browserTab())
-					expect(store.get.connect.details).not.ok()
-					await store.connect.connectStripeAccount()
-					expect(store.get.connect.details).ok()
-					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					const get = {
+						connect: {
+							get details() {
+								return ops.value(store.state.stripeConnect.connectDetailsOp)
+							},
+							get status() {
+								return ops.value(store.state.stripeConnect.connectStatusOp)
+							},
+						},
+					}
+					expect(get.connect.details).not.ok()
+					await store.connectSubmodel.connectStripeAccount()
+					expect(get.connect.details).ok()
+					expect(get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 				async "can connect an incomplete stripe account"() {
 					// const {store, rig, logout} = await storeTestSetup()

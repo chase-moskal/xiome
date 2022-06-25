@@ -1,15 +1,15 @@
 
 import * as renraku from "renraku"
 
-import {StoreMeta, StoreServiceOptions} from "../types.js"
+import {StoreServiceOptions} from "../types.js"
+import {SubscriptionTierDraft} from "./planning/planning-types.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
-import {validateBoolean, validateLabel, validateNewPlanDraft, validateSubscriptionPricing} from "./validators/planning-validators.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../types/store-concepts.js"
-import {SubscriptionTierDraft} from "./planning/planning-types.js"
+import {validateBoolean, validateLabel, validateNewPlanDraft, validateSubscriptionPricing} from "./validators/planning-validators.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -18,7 +18,7 @@ export const makeSubscriptionPlanningService = (
 	options: StoreServiceOptions
 ) => renraku.service()
 
-.policy(async(meta: StoreMeta, headers) => {
+.policy(async(meta, headers) => {
 	const auth = await options.storePolicies.storeLinkedPolicy(meta, headers)
 	auth.checker.requirePrivilege("manage store")
 	const connectStatus = determineConnectStatus(

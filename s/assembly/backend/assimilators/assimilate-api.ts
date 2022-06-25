@@ -77,9 +77,9 @@ export async function assimilateApi({
 		store: makeStoreApi<AnonMeta>({
 			async storePolicy(meta, headers) {
 				const auth = await authPolicies.anonPolicy(meta, headers)
+				delete auth.database
 				return {
 					...auth,
-					database: undefined,
 					stripeLiaison,
 					permissionsInteractions: makePermissionsInteractions({
 						generateId: () => rando.randomId(),
