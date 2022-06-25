@@ -12,6 +12,7 @@ import {SubscriptionDetails, SubscriptionStatus} from "../../types/store-concept
 import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
 import {StoreServiceOptions} from "../types.js"
 import {stripeClientReferenceId} from "../../stripe/utils/stripe-client-reference-id.js"
+import Stripe from "stripe"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
@@ -83,7 +84,7 @@ export const makeSubscriptionShoppingService = (
 		if (!stripePaymentMethod)
 			throw new Error("no payment method found (required)")
 
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
+		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (stripeSubscription)
 			throw new Error("a subscription already exists for this user (must not)")
 
@@ -103,7 +104,15 @@ export const makeSubscriptionShoppingService = (
 		if (!stripePaymentMethod)
 			throw new Error("no payment method found (required)")
 
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
+		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
+		// let sub = undefined as Stripe.Subscription
+		// for (const x of stripeSubscription) {
+		// 	const [stripePriceId] = x
+		// 		.items.data.map(item => getStripeId(item.price))
+		// 	const tierRow = await auth.storeDatabase.tables.subscriptions
+		// 		.tiers.readOne(dbmage.find({stripePriceId}))
+		// 	if (tierRow.tierId.string === tierId) sub = x
+		// }
 		if (!stripeSubscription)
 			throw new Error("user must already have a subscription")
 
@@ -116,7 +125,7 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async unsubscribeFromTier(tierId: string) {
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
+		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		const {tierRow, planRow} = await getRowsForTierId({tierId, auth})
 		const newItems = await reconstructStripeSubscriptionItems({
 			auth,
@@ -128,8 +137,8 @@ export const makeSubscriptionShoppingService = (
 			.subscriptions.update(stripeSubscription.id, {items: newItems})
 	},
 
-	async cancelSubscription() {
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
+	async cancelSubscription(tierId: string) {
+		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (!stripeSubscription)
 			throw new Error("cannot find existing stripe subscription")
 
@@ -139,8 +148,8 @@ export const makeSubscriptionShoppingService = (
 			})
 	},
 
-	async uncancelSubscription() {
-		const stripeSubscription = await getCurrentStripeSubscription(auth)
+	async uncancelSubscription(tierId: string) {
+		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (!stripeSubscription)
 			throw new Error("cannot find existing stripe subscription")
 

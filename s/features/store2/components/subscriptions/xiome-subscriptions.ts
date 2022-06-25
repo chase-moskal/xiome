@@ -56,8 +56,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 				console.log(this.#subscriptions)
 				if (isSubscribedToThisTier) {
 					!isCanceled
-						? await subscriptions.cancelSubscription()
-						: await subscriptions.uncancelSubscription()
+						? await subscriptions.cancelSubscription(tierId)
+						: await subscriptions.uncancelSubscription(tierId)
 				}
 				else {
 					if (subscriptionIsActive) {
