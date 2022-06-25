@@ -1,17 +1,17 @@
+
 import {ops} from "../../../../framework/ops.js"
-import {setupStoreState} from "./setup-store-state.js"
+import {StoreState} from "../state/store-state-system.js"
 
 export function setupLogicForInitAndLoading({
-		loadStore, stateDetails,
+		state, loadStore,
 	}: {
+		state: StoreState
 		loadStore: () => Promise<void>
-		stateDetails: ReturnType <typeof setupStoreState>
 	}) {
 
 	async function load() {
-		if (ops.isReady(stateDetails.snap.state.user.accessOp)) {
+		if (ops.isReady(state.user.accessOp))
 			await loadStore()
-		}
 	}
 
 	let initialized = false

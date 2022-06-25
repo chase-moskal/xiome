@@ -1,27 +1,27 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {StorePopups, StoreServices} from "../types.js"
-import {makeStoreState} from "../state/store-state.js"
-import {makeStoreAllowance} from "../utils/make-store-allowance.js"
+import {StoreStateSystem} from "../state/store-state-system.js"
 
 export function makeBillingSubmodel({
-		snap, allowance, services,popups,
-		isStoreActive, isUserLoggedIn,
+		popups,
+		services,
+		stateSystem,
 	}: {
-		snap: ReturnType<typeof makeStoreState>
-		allowance: ReturnType<typeof makeStoreAllowance>
-		services: StoreServices
 		popups: StorePopups
-		isStoreActive: () => boolean
-		isUserLoggedIn: () => boolean
+		services: StoreServices
+		stateSystem: StoreStateSystem
 	}) {
 
+	const state = stateSystem.snap.writable
+	const {get, allowance} = stateSystem
+
 	async function load() {
-		snap.state.billing.paymentMethodOp = ops.none()
-		if (isStoreActive() && isUserLoggedIn()) {
+		state.billing.paymentMethodOp = ops.none()
+		if (get.is.storeActive && get.is.userLoggedIn) {
 			await ops.operation({
 				promise: services.billing.getPaymentMethodDetails(),
-				setOp: op => snap.state.billing.paymentMethodOp = op,
+				setOp: op => state.billing.paymentMethodOp = op,
 			})
 		}
 	}
@@ -40,7 +40,7 @@ export function makeBillingSubmodel({
 	async function disconnectPaymentMethod() {
 		return ops.operation({
 			promise: services.billing.disconnectPaymentMethod(),
-			setOp: op => snap.state.billing.paymentMethodOp = ops.replaceValue(op, undefined),
+			setOp: op => state.billing.paymentMethodOp = ops.replaceValue(op, undefined),
 		})
 	}
 

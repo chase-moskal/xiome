@@ -1,27 +1,27 @@
 
+import {Op} from "../../../framework/ops.js"
 import {StorePopups, StoreServices} from "./types.js"
-import {setupStoreState} from "./utils/setup-store-state.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {makeStoreStateSystem} from "./state/store-state-system.js"
 import {setupStoreSubmodels} from "./utils/setup-store-submodels.js"
 import {setupLogicForInitAndLoading} from "./utils/setup-logic-for-init-and-loading.js"
-import {Op} from "../../../framework/ops.js"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
 
 export function makeStoreModel(options: {
-		services: StoreServices
 		popups: StorePopups
+		services: StoreServices
 		reauthorize: () => Promise<void>
 	}) {
 
-	const stateDetails = setupStoreState()
+	const stateSystem = makeStoreStateSystem()
 
 	const submodels = setupStoreSubmodels({
 		...options,
-		stateDetails,
+		stateSystem,
 		reloadStore: async() => initLogic.load(),
 	})
 
 	const initLogic = setupLogicForInitAndLoading({
-		stateDetails,
+		state: stateSystem.state,
 		loadStore: async() => {
 			await submodels.connect.load()
 			await Promise.all([
@@ -32,11 +32,11 @@ export function makeStoreModel(options: {
 	})
 
 	return {
-		...stateDetails,
+		...stateSystem,
 		...submodels,
 		...initLogic,
 		async updateAccessOp(op: Op<AccessPayload>) {
-			stateDetails.snap.state.user.accessOp = op
+			stateSystem.state.user.accessOp = op
 			await initLogic.refresh()
 		},
 	}

@@ -3,38 +3,35 @@ import {unproxy} from "@chasemoskal/snapstate"
 
 import {ops} from "../../../../framework/ops.js"
 import {StorePopups, StoreServices} from "../types.js"
-import {makeStoreState} from "../state/store-state.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
+import {StoreStateSystem} from "../state/store-state-system.js"
 import {SubscriptionPricing} from "../../types/store-concepts.js"
 import {SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
 
 export function makeSubscriptionsSubmodel({
-		snap,
-		services,
-		isStoreActive,
-		isUserLoggedIn,
-		reauthorize,
 		popups,
+		services,
+		stateSystem,
+		reauthorize,
 	}: {
-		snap: ReturnType<typeof makeStoreState>
-		services: StoreServices
-		isStoreActive: () => boolean
-		isUserLoggedIn: () => boolean
-		reauthorize: () => Promise<void>
 		popups: StorePopups
+		services: StoreServices
+		stateSystem: StoreStateSystem
+		reauthorize: () => Promise<void>
 	}) {
 
-	const {state} = snap
+	const state = stateSystem.snap.writable
+	const {get} = stateSystem
 
 	async function load() {
 		state.subscriptions.subscriptionPlansOp = ops.none()
 		state.subscriptions.mySubscriptionDetailsOp = ops.none()
-		if (isStoreActive()) {
+		if (get.is.storeActive) {
 			await ops.operation({
 				setOp: op => state.subscriptions.subscriptionPlansOp = op,
 				promise: services.subscriptionObserver.listSubscriptionPlans(),
 			})
-			if (isUserLoggedIn()) {
+			if (get.is.userLoggedIn) {
 				await ops.operation({
 					setOp: op => state.subscriptions.mySubscriptionDetailsOp = op,
 					promise: services.subscriptionShopping.fetchMySubscriptionDetails(),

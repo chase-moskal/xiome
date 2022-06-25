@@ -1,36 +1,36 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {StorePopups, StoreServices} from "../types.js"
-import {makeStoreState} from "../state/store-state.js"
+import {StoreStateSystem} from "../state/store-state-system.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
-import {makeStoreAllowance} from "../utils/make-store-allowance.js"
 
 export function makeConnectSubmodel({
-		snap,
-		allowance,
-		services,
 		popups,
+		services,
+		stateSystem,
 		reloadStore,
 	}: {
-		snap: ReturnType<typeof makeStoreState>
-		allowance: ReturnType<typeof makeStoreAllowance>
-		services: StoreServices
 		popups: StorePopups
+		services: StoreServices
+		stateSystem: StoreStateSystem
 		reloadStore: () => Promise<void>
 	}) {
 
+	const state = stateSystem.snap.writable
+	const {allowance} = stateSystem
+
 	async function load() {
-		snap.state.stripeConnect.connectStatusOp = ops.none()
-		snap.state.stripeConnect.connectDetailsOp = ops.none()
+		state.stripeConnect.connectStatusOp = ops.none()
+		state.stripeConnect.connectDetailsOp = ops.none()
 		if (allowance.connectStripeAccount) {
 			await ops.operation({
 				promise: services.connect.loadConnectDetails(),
 				setOp: op => {
-					snap.state.stripeConnect.connectStatusOp = ops.replaceValue(
+					state.stripeConnect.connectStatusOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectStatus
 					)
-					snap.state.stripeConnect.connectDetailsOp = ops.replaceValue(
+					state.stripeConnect.connectDetailsOp = ops.replaceValue(
 						op,
 						ops.value(op)?.connectDetails
 					)
@@ -40,7 +40,7 @@ export function makeConnectSubmodel({
 		else {
 			await ops.operation({
 				promise: services.connect.loadConnectStatus(),
-				setOp: op => snap.state.stripeConnect.connectStatusOp = op,
+				setOp: op => state.stripeConnect.connectStatusOp = op,
 			})
 		}
 	}
@@ -55,8 +55,8 @@ export function makeConnectSubmodel({
 			await reloadStore()
 		},
 		async stripeLogin() {
-			const connectStatus = ops.value(snap.readable.stripeConnect.connectStatusOp)
-			const connectDetails = ops.value(snap.state.stripeConnect.connectDetailsOp)
+			const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
+			const connectDetails = ops.value(state.stripeConnect.connectDetailsOp)
 			if (connectStatus === StripeConnectStatus.Unlinked)
 				throw new Error("no stripe account to generate login link for")
 			if (!connectDetails)
@@ -67,19 +67,19 @@ export function makeConnectSubmodel({
 		},
 		async pause() {
 			await services.connect.pause()
-			snap.writable.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Paused)
+			state.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Paused)
 			if (allowance.manageStore)
-				snap.writable.stripeConnect.connectDetailsOp = ops.ready({
-					...ops.value(snap.readable.stripeConnect.connectDetailsOp),
+			state.stripeConnect.connectDetailsOp = ops.ready({
+					...ops.value(state.stripeConnect.connectDetailsOp),
 					paused: true,
 				})
 		},
 		async resume() {
 			await services.connect.resume()
-			snap.writable.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Ready)
+			state.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Ready)
 			if (allowance.manageStore)
-				snap.writable.stripeConnect.connectDetailsOp = ops.ready({
-					...ops.value(snap.readable.stripeConnect.connectDetailsOp),
+				state.stripeConnect.connectDetailsOp = ops.ready({
+					...ops.value(state.stripeConnect.connectDetailsOp),
 					paused: false,
 				})
 		},
