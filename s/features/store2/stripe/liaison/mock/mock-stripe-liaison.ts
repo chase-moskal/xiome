@@ -221,7 +221,6 @@ export function mockStripeLiaison({
 					const resource = makeStandardRestResource<Stripe.Subscription>()({
 						table: tables.subscriptions,
 						handleCreate: async(params: Stripe.SubscriptionCreateParams) => {
-							debugger
 							const subscription = await subscriptionMechanics
 								.interpretCreateParams(params)
 							const {invoice, paymentIntent} = await subscriptionMechanics
