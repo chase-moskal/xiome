@@ -1,5 +1,6 @@
 
 import {Suite, expect} from "cynic"
+import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 
 export default <Suite>{
@@ -7,17 +8,17 @@ export default <Suite>{
 		"connect a stripe account": {
 			"a user with merchant permissions": {
 				async "can connect a stripe account"() {
-					// const {store} = await storeTestSetup()
-					// 	.then(x => x.api())
-					// 	.then(x => x.client(x.roles.merchant))
-					// 	.then(x => x.browserTab())
-					// expect(store.get.connect.details).not.ok()
-					// await store.connect.connectStripeAccount()
-					// expect(store.get.connect.details).ok()
-					// expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					const {store} = await storeTestSetup()
+						.then(x => x.api())
+						.then(x => x.client(x.roles.merchant))
+						.then(x => x.browserTab())
+					expect(store.get.connect.details).not.ok()
+					await store.connect.connectStripeAccount()
+					expect(store.get.connect.details).ok()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 				async "can connect an incomplete stripe account"() {
-					// const {store, rig, access} = await storeTestSetup()
+					// const {store, rig, logout} = await storeTestSetup()
 					// 	.then(x => x.api())
 					// 	.then(x => x.client(x.roles.merchant))
 					// 	.then(x => x.browserTab())
@@ -27,7 +28,7 @@ export default <Suite>{
 					// expect(store.get.connect.details).ok()
 					// expect(store.get.connect.status)
 					// 	.equals(StripeConnectStatus.Incomplete)
-					// await access.logout()
+					// await logout()
 					// expect(store.get.connect.details).not.ok()
 				},
 				async "can see the connect details set by another merchant"() {},

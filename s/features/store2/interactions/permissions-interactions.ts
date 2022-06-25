@@ -2,7 +2,6 @@
 import * as dbmage from "dbmage"
 
 import {PermissionsInteractions, PermissionsInteractionsDatabase} from "./interactions-types.js"
-import {RoleRow, UserHasRoleRow} from "../../auth/aspects/permissions/types/permissions-tables.js"
 
 export function makePermissionsInteractions({database, generateId}: {
 		database: PermissionsInteractionsDatabase

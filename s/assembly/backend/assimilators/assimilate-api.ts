@@ -18,6 +18,8 @@ import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/
 import {StripeLiaison} from "../../../features/store2/stripe/liaison/types.js"
 import {makeStoreApi} from "../../../features/store2/api/store-api.js"
 import {makePermissionsInteractions} from "../../../features/store2/interactions/permissions-interactions.js"
+import {AnonMeta} from "../../../features/auth/types/auth-metas.js"
+import {makePrivilegeChecker} from "../../../features/auth/aspects/permissions/tools/make-privilege-checker.js"
 
 export async function assimilateApi({
 		config, rando, databaseRaw, dacastSdk, stripeLiaison,
@@ -72,9 +74,26 @@ export async function assimilateApi({
 			config,
 			authPolicies,
 		}),
-		store: makeStoreApi({
-			config,
-			anonPolicy: authPolicies.anonPolicy,
+		store: makeStoreApi<AnonMeta>({
+			async storePolicy(meta, headers) {
+				const auth = await authPolicies.anonPolicy(meta, headers)
+				return {
+					...auth,
+					database: undefined,
+					stripeLiaison,
+					permissionsInteractions: makePermissionsInteractions({
+						generateId: () => rando.randomId(),
+						database: dbmage.subsection(auth.database, tables => ({
+							role: tables.auth.permissions.role,
+							userHasRole: tables.auth.permissions.userHasRole,
+						})),
+					}),
+					storeDatabase: dbmage.subsection(
+						auth.database,
+						tables => tables.store,
+					),
+				}
+			},
 			stripeLiaison,
 			generateId: rando.randomId,
 			checkoutReturningLinks: {
