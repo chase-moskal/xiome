@@ -16,6 +16,7 @@ import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
 import {mockPermissionsInteractions} from "../interactions/mock-permissions-interactions.js"
 import {makePrivilegeChecker} from "../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {ops} from "../../../framework/ops.js"
 
 export const storeTestSetup = async() => ({
 
@@ -78,37 +79,38 @@ export const storeTestSetup = async() => ({
 						subscriptionPlanningService: getMeta,
 						subscriptionShoppingService: getMeta,
 					})
-				function login(newPrivileges: string[]) {
-					privileges = newPrivileges
-					access = {
-						appId,
-						origins: [],
-						permit: {privileges},
-						scope: {core: true},
-						user: {
-							userId: generateId().string,
-							roles: [],
-							stats: {joined: Date.now()},
-							profile: {
-								nickname: "Jimmy",
-								tagline: "",
-								avatar: {type: "simple", value: 1},
-							},
-						},
-					}
-				}
-				function logout() {
-					access = {
-						appId,
-						origins: [],
-						permit: {privileges: []},
-						scope: {core: true},
-						user: undefined,
-					}
-				}
-				login(privileges)
 				return {
 					browserTab: async() => {
+						function login(newPrivileges: string[]) {
+							privileges = newPrivileges
+							access = {
+								appId,
+								origins: [],
+								permit: {privileges},
+								scope: {core: true},
+								user: {
+									userId: generateId().string,
+									roles: [],
+									stats: {joined: Date.now()},
+									profile: {
+										nickname: "Jimmy",
+										tagline: "",
+										avatar: {type: "simple", value: 1},
+									},
+								},
+							}
+							store.updateAccessOp(ops.ready(access))
+						}
+						function logout() {
+							access = {
+								appId,
+								origins: [],
+								permit: {privileges: []},
+								scope: {core: true},
+								user: undefined,
+							}
+							store.updateAccessOp(ops.ready(access))
+						}
 						const store = makeStoreModel({
 							services: {
 								billing: remote.billingService,
@@ -125,6 +127,7 @@ export const storeTestSetup = async() => ({
 								login(privileges)
 							},
 						})
+						login(privileges)
 						await store.initialize()
 						return {
 							store,
