@@ -30,7 +30,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			.filter(plan => plan.tiers.length)
 	}
 
-	get #subscription() {
+	get #subscriptions() {
 		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
 
@@ -39,18 +39,25 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		// TODO multisub: refactor so this component can render the status of
 		// multiple subscription plans
 
-		const isSubscribedToThisTier = this.#subscription.tierIds.includes(tierId)
+		const presentTierSubscriptionDetails = this.#subscriptions.find(
+			subscription => subscription.tierId === tierId)
+		const isSubscribedToThisTier = !!presentTierSubscriptionDetails
 		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
-		const subscriptionStatus = this.#subscription?.status
+		const subscriptionStatus = presentTierSubscriptionDetails?.status
 		const subscriptionIsActive = subscriptionStatus === SubscriptionStatus.Active
+		const isCanceled = subscriptionStatus === SubscriptionStatus.Cancelled
 
 		const {subscriptions, billing} = this.share.storeModel
 
 		return {
 			isSubscribedToThisTier,
+			isCanceled,
 			handleTierClick: async() => {
+				console.log(this.#subscriptions)
 				if (isSubscribedToThisTier) {
-					await subscriptions.cancelSubscription()
+					!isCanceled
+						? await subscriptions.cancelSubscription()
+						: await subscriptions.uncancelSubscription()
 				}
 				else {
 					if (subscriptionIsActive) {
@@ -105,14 +112,24 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	// 	}
 	// }
 
-	#renderTier = (tier: SubscriptionTier) => {
-		// const isSubscribed = this.#subscription.tierIds.includes(tier.tierId)
-		const manager = this.#prepareTierManager(tier)
+	#renderTier = ({tier, currentIndex, indexOfSubscribed}: {
+		tier: SubscriptionTier
+		currentIndex: number
+		indexOfSubscribed: number | undefined
+	}) => {
+		const {
+			handleTierClick,
+			isSubscribedToThisTier,
+			isCanceled
+		} = this.#prepareTierManager(tier)
+		const textToDisplay = indexOfSubscribed === undefined
+			? "buy"
+			: indexOfSubscribed > currentIndex ? "downgrade" : "upgrade"
 		return html`
 			<button
 				data-tier=${tier.tierId}
-				?data-subscribed=${manager.isSubscribedToThisTier}
-				@click=${manager.handleTierClick}>
+				?data-subscribed=${isSubscribedToThisTier}
+				@click=${handleTierClick}>
 					<slot name="${tier.tierId}"></slot>
 					<div class=details>
 						<div>${tier.label}</div>
@@ -120,22 +137,34 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						<div>monthly</div>
 					</div>
 					<div class=label>
-						${manager.isSubscribedToThisTier
-							? "cancel"
-							: "buy"}
+						${isSubscribedToThisTier
+							? isCanceled
+								? "re-activate"
+								: "cancel"
+							: textToDisplay}
 					</div>
 			</button>
 		`
 	}
 
 	#renderPlan = (plan: SubscriptionPlan) => {
+		const tiers = plan.tiers.filter(tier => tier.active)
+		let indexOfSubscribed = undefined as number
+		for (const [index, tier] of tiers.entries()) {
+			const details = this.#subscriptions.find(
+				subscription => subscription.tierId === tier.tierId
+			)
+			if (details) indexOfSubscribed = index
+		}
 		return html`
 			<li data-plan=${plan.planId}>
 				<p>${plan.label}</p>
 				<div class=tiers>
 					${plan.tiers
 						.filter(tier => tier.active)
-						.map(this.#renderTier)}
+						.map((tier, currentIndex) => this.#renderTier({
+							tier, currentIndex, indexOfSubscribed
+						}))}
 				</div>
 			</li>
 		`
