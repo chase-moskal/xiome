@@ -77,21 +77,19 @@ export async function assimilateApi({
 		store: makeStoreApi<AnonMeta>({
 			async storePolicy(meta, headers) {
 				const auth = await authPolicies.anonPolicy(meta, headers)
+				const {database} = auth
 				delete auth.database
 				return {
 					...auth,
 					stripeLiaison,
 					permissionsInteractions: makePermissionsInteractions({
 						generateId: () => rando.randomId(),
-						database: dbmage.subsection(auth.database, tables => ({
+						database: dbmage.subsection(database, tables => ({
 							role: tables.auth.permissions.role,
 							userHasRole: tables.auth.permissions.userHasRole,
 						})),
 					}),
-					storeDatabase: dbmage.subsection(
-						auth.database,
-						tables => tables.store,
-					),
+					storeDatabase: dbmage.subsection(database, tables => tables.store),
 				}
 			},
 			stripeLiaison,
