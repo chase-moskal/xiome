@@ -20,34 +20,52 @@ ol, ul {
 	align-items: stretch;
 }
 
-button {
+.tier {
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
 	justify-content: space-between;
 
-	border: none;
-	background: transparent;
 	font: inherit;
 	color: inherit;
 
 	border: 1px solid;
 	border-radius: 3px;
+}
 
+.tier > div {
+	padding: 0.5em;
+}
+
+.details {
+	text-align: center;
+	flex-basis: 50%;
+}
+
+.label {
+	display: flex;
+	flex-basis: 50%;
+	align-items: center;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	gap: 0.2rem;
+	background: #fff2;
+}
+
+button {
+	padding: 0.3rem 1rem;
+	border: 1px solid;
+	border-radius: 5px;
+	
 	cursor: pointer;
+	color: inherit;
+
+	background: transparent;
 	opacity: 0.7;
 }
 
 button:is(:hover, :focus) {
 	opacity: 1;
-}
-
-button > div {
-	padding: 0.5em;
-}
-
-.label {
-	background: #fff2;
 }
 
 `

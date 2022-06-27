@@ -84,34 +84,6 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		}
 	}
 
-	// #handleTierClick = ({tierId}: SubscriptionTier) => async() => {
-	// 	const state = this.#state
-	// 	const {subscriptionsSubmodel, billingSubmodel} = this.share.storeModel
-
-	// 	const paymentMethod = !!ops.value(state.billing.paymentMethodOp)
-	// 	const subscriptionStatus =
-	// 		ops.value(state.subscriptions.subscriptionDetailsOp)?.status
-	// 	const subscriptionIsActive =
-	// 		subscriptionStatus === SubscriptionStatus.Active
-
-	// 	if (paymentMethod) {
-	// 		if (subscriptionIsActive)
-	// 			await subscriptionsSubmodel
-	// 				.updateExistingSubscriptionWithNewTier(tierId)
-	// 		else
-	// 			await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
-	// 	}
-	// 	else {
-	// 		if (subscriptionIsActive) {
-	// 			await billingSubmodel.checkoutPaymentMethod()
-	// 			await subscriptionsSubmodel
-	// 				.updateExistingSubscriptionWithNewTier(tierId)
-	// 		}
-	// 		else
-	// 			await subscriptionsSubmodel.checkoutSubscriptionTier(tierId)
-	// 	}
-	// }
-
 	#renderTier = ({tier, currentIndex, indexOfSubscribed}: {
 		tier: SubscriptionTier
 		currentIndex: number
@@ -126,24 +98,33 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			? "buy"
 			: indexOfSubscribed > currentIndex ? "downgrade" : "upgrade"
 		return html`
-			<button
+			<div
+				class="tier"
 				data-tier=${tier.tierId}
-				?data-subscribed=${isSubscribedToThisTier}
-				@click=${handleTierClick}>
-					<slot name="${tier.tierId}"></slot>
-					<div class=details>
-						<div>${tier.label}</div>
-						<div>$${centsToDollars(tier.pricing.price)}</div>
-						<div>monthly</div>
-					</div>
-					<div class=label>
+				?data-subscribed=${isSubscribedToThisTier}>
+				<slot name="${tier.tierId}"></slot>
+				<div class=details>
+					<div>${tier.label}</div>
+					<div>$${centsToDollars(tier.pricing.price)}</div>
+					<div>monthly</div>
+				</div>
+				<div class=label>
+					${isSubscribedToThisTier
+						? isCanceled
+							? "Cancelled"
+							: "Purchased"
+						: null
+					}
+					<button
+						@click=${handleTierClick}>
 						${isSubscribedToThisTier
 							? isCanceled
 								? "re-activate"
 								: "cancel"
 							: textToDisplay}
-					</div>
-			</button>
+					</button>
+				</div>
+			</div>
 		`
 	}
 
