@@ -44,7 +44,7 @@ export function prepareStandardRestResource({generateId}: {
 				async update(id: string, params: xUpdateParams) {
 					await table.update({
 						...find({id}),
-						write: ignoreUndefined(handleUpdate(id, params)),
+						write: ignoreUndefined(await handleUpdate(id, params)),
 					})
 					const resource = await table.readOne(find({id}))
 					return stripeResponse(<xResource>resource)

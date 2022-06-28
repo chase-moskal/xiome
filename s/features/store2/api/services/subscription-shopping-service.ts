@@ -105,14 +105,6 @@ export const makeSubscriptionShoppingService = (
 			throw new Error("no payment method found (required)")
 
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
-		// let sub = undefined as Stripe.Subscription
-		// for (const x of stripeSubscription) {
-		// 	const [stripePriceId] = x
-		// 		.items.data.map(item => getStripeId(item.price))
-		// 	const tierRow = await auth.storeDatabase.tables.subscriptions
-		// 		.tiers.readOne(dbmage.find({stripePriceId}))
-		// 	if (tierRow.tierId.string === tierId) sub = x
-		// }
 		if (!stripeSubscription)
 			throw new Error("user must already have a subscription")
 

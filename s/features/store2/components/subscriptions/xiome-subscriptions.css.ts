@@ -25,6 +25,7 @@ ol, ul {
 	flex-direction: column;
 	justify-content: space-between;
 
+	heigth: 8rem;
 	font: inherit;
 	color: inherit;
 
@@ -53,7 +54,7 @@ ol, ul {
 }
 
 button {
-	padding: 0.3rem 1rem;
+	padding: 0.3rem;
 	border: 1px solid;
 	border-radius: 5px;
 	

@@ -34,14 +34,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
 
-	#prepareTierManager({tierId}: SubscriptionTier) {
-
-		// TODO multisub: refactor so this component can render the status of
-		// multiple subscription plans
+	#prepareTierManager({tierId}: SubscriptionTier, isSubscribedToThisTier: boolean) {
 
 		const presentTierSubscriptionDetails = this.#subscriptions.find(
 			subscription => subscription.tierId === tierId)
-		const isSubscribedToThisTier = !!presentTierSubscriptionDetails
 		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
 		const subscriptionStatus = presentTierSubscriptionDetails?.status
 		const subscriptionIsActive = subscriptionStatus === SubscriptionStatus.Active
@@ -89,11 +85,12 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		currentIndex: number
 		indexOfSubscribed: number | undefined
 	}) => {
+		const isSubscribed = currentIndex === indexOfSubscribed
 		const {
 			handleTierClick,
 			isSubscribedToThisTier,
 			isCanceled
-		} = this.#prepareTierManager(tier)
+		} = this.#prepareTierManager(tier, isSubscribed)
 		const textToDisplay = indexOfSubscribed === undefined
 			? "buy"
 			: indexOfSubscribed > currentIndex ? "downgrade" : "upgrade"
