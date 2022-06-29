@@ -8,6 +8,7 @@ import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {MockStripeOperations} from "../../../features/store2/stripe/types.js"
 import {mockStorePopups} from "../../../features/store2/popups/mock-store-popups.js"
 import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
+import {mockStoreRig} from "../../../features/store2/testing/parts/mock-rig.js"
 
 export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
@@ -31,7 +32,10 @@ export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 			remote,
 			storage,
 			authMediator,
-			storePopups: mockStorePopups({mockStripeOperations}),
+			storePopups: mockStorePopups({
+				rig: mockStoreRig(),
+				mockStripeOperations,
+			}),
 			chatConnect: await chatMockClientEntirely(storage),
 		})
 

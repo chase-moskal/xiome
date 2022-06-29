@@ -1,12 +1,12 @@
 
 import {FlexStorage} from "dbmage"
 
-// import {mockPopups} from "./common/mock-popups.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {mockStorePopups} from "../../../../features/store2/popups/mock-store-popups.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
+import {mockStoreRig} from "../../../../features/store2/testing/parts/mock-rig.js"
 
 export async function mockConnectPlatform({
 		platformHome, storage,
@@ -32,6 +32,7 @@ export async function mockConnectPlatform({
 	})
 
 	const storePopups = mockStorePopups({
+		rig: mockStoreRig(),
 		mockStripeOperations: backend.mockStripeOperations,
 	})
 

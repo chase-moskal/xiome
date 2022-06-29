@@ -1,6 +1,5 @@
 
 import {Suite, expect} from "cynic"
-import {ops} from "../../framework/ops.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 
@@ -19,18 +18,18 @@ export default <Suite>{
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 				async "can connect an incomplete stripe account"() {
-					// const {store, rig, logout} = await storeTestSetup()
-					// 	.then(x => x.api())
-					// 	.then(x => x.client(x.roles.merchant))
-					// 	.then(x => x.browserTab())
-					// expect(store.get.connect.details).not.ok()
-					// rig.stripeLinkToFail()
-					// await store.connect.connectStripeAccount()
-					// expect(store.get.connect.details).ok()
-					// expect(store.get.connect.status)
-					// 	.equals(StripeConnectStatus.Incomplete)
-					// await logout()
-					// expect(store.get.connect.details).not.ok()
+					const {store, rig, logout} = await storeTestSetup()
+						.then(x => x.api())
+						.then(x => x.client(x.roles.merchant))
+						.then(x => x.browserTab())
+					expect(store.get.connect.details).not.ok()
+					rig.stripeAccountFate = "incomplete"
+					await store.connect.connectStripeAccount()
+					expect(store.get.connect.details).ok()
+					expect(store.get.connect.status)
+						.equals(StripeConnectStatus.Incomplete)
+					await logout()
+					expect(store.get.connect.details).not.ok()
 				},
 				async "can see the connect details set by another merchant"() {},
 			},
