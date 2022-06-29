@@ -3,6 +3,16 @@ import {Suite, expect} from "cynic"
 import {storeTestSetup} from "./testing/store-test-setup.js"
 import {StripeConnectStatus} from "./types/store-concepts.js"
 
+const setups = {
+	async linkedStore() {
+		const api = await storeTestSetup()
+			.then(x => x.api())
+		const merchant = await api.client(api.roles.merchant)
+			.then(x => x.browserTab())
+		return {api, merchant}
+	},
+}
+
 export default <Suite>{
 	"managing the store": {
 		"connect a stripe account": {
@@ -31,15 +41,50 @@ export default <Suite>{
 					await logout()
 					expect(store.get.connect.details).not.ok()
 				},
-				async "can see the connect details set by another merchant"() {},
+				async "can see the connect details set by another merchant"() {
+					const api = await storeTestSetup()
+						.then(x => x.api())
+					const merchant1 = await api.client(api.roles.merchant)
+						.then(x => x.browserTab())
+					await merchant1.store.connect.connectStripeAccount()
+					const merchant2 = await api.client(api.roles.merchant)
+						.then(x => x.browserTab())
+					expect(merchant2.store.get.connect.details).ok()
+				},
 			},
 			"a user with clerk permissions": {
-				async "can see connect status, but not details"() {},
-				async "cannot connect a stripe account"() {},
+				async "can see connect status, but not details"() {
+					const {api} = await setups.linkedStore()
+					const {store} = await api.client(api.roles.clerk)
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).defined()
+					expect(store.get.connect.details).not.defined()
+				},
+				async "cannot connect a stripe account"() {
+					const {store} = await storeTestSetup()
+						.then(x => x.api())
+						.then(x => x.client(x.roles.clerk))
+						.then(x => x.browserTab())
+					expect(async() => store.connect.connectStripeAccount())
+						.throws()
+				},
 			},
-			"a user with regular permissions": {
-				async "cannot connect a stripe account"() {},
-				async "can see connect status, but not details"() {},
+			"a user with customer permissions": {
+				async "cannot connect a stripe account"() {
+					const {store} = await storeTestSetup()
+						.then(x => x.api())
+						.then(x => x.client(x.roles.customer))
+						.then(x => x.browserTab())
+					expect(async() => store.connect.connectStripeAccount())
+						.throws()
+				},
+				async "can see connect status, but not details"() {
+					const {api} = await setups.linkedStore()
+					const {store} = await api.client(api.roles.customer)
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).defined()
+					expect(store.get.connect.details).not.defined()
+				},
 			},
 		},
 		"login to stripe account": {
