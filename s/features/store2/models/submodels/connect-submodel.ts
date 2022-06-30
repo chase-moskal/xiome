@@ -64,6 +64,7 @@ export function makeConnectSubmodel({
 			const url = await services.connect.generateStripeLoginLink()
 			const {stripeAccountId} = connectDetails
 			await popups.stripeLogin({stripeAccountId, url})
+			await load()
 		},
 		async pause() {
 			await services.connect.pause()

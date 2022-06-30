@@ -9,6 +9,7 @@ const setups = {
 			.then(x => x.api())
 		const merchant = await api.client(api.roles.merchant)
 			.then(x => x.browserTab())
+		await merchant.store.connect.connectStripeAccount()
 		return {api, merchant}
 	},
 }
@@ -65,7 +66,7 @@ export default <Suite>{
 						.then(x => x.api())
 						.then(x => x.client(x.roles.clerk))
 						.then(x => x.browserTab())
-					expect(async() => store.connect.connectStripeAccount())
+					await expect(async() => store.connect.connectStripeAccount())
 						.throws()
 				},
 			},
@@ -75,7 +76,7 @@ export default <Suite>{
 						.then(x => x.api())
 						.then(x => x.client(x.roles.customer))
 						.then(x => x.browserTab())
-					expect(async() => store.connect.connectStripeAccount())
+					await expect(async() => store.connect.connectStripeAccount())
 						.throws()
 				},
 				async "can see connect status, but not details"() {
@@ -89,28 +90,92 @@ export default <Suite>{
 		},
 		"login to stripe account": {
 			"a user with merchant permissions": {
-				async "can login to connected stripe account"() {},
-				async "cannot login to unconnected stripe account"() {},
-				async "can login to incomplete stripe account (missing banking info)"() {},
-				async "can login to stripe account and complete it (add banking info)"() {},
-				async "can login to stripe account and make it incomplete (delete banking info)"() {},
+				async "can login to stripe account and toggle between complete/incomplete"() {
+					const {store, rig} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.merchant))
+						.then(x => x.browserTab())
+					rig.stripeAccountFate = "incomplete"
+					await store.connect.stripeLogin()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Incomplete)
+					rig.stripeAccountFate = "complete"
+					await store.connect.stripeLogin()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+				},
+				async "cannot login to unconnected stripe account"() {
+					const {store} = await storeTestSetup()
+						.then(x => x.api())
+						.then(x => x.client(x.roles.merchant))
+						.then(x => x.browserTab())
+					await expect(async() => store.connect.stripeLogin())
+						.throws()
+				},
 			},
 			"a user with clerk permissions": {
-				async "cannot login to stripe account"() {},
+				async "cannot login to stripe account"() {
+					const {store} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.clerk))
+						.then(x => x.browserTab())
+					await expect(async() => store.connect.stripeLogin())
+						.throws()
+				},
 			},
-			"a user with regular permissions": {
-				async "cannot login to stripe account"() {},
+			"a user with customer permissions": {
+				async "cannot login to stripe account"() {
+					const {store} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.customer))
+						.then(x => x.browserTab())
+					await expect(async() => store.connect.stripeLogin())
+						.throws()
+				},
 			},
 		},
 		"pause and resume the store": {
 			"a user with merchant permissions": {
-				async "can pause and resume a store"() {},
+				async "can pause and resume a store"() {
+					const {store} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.merchant))
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					await store.connect.pause()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+					await store.connect.resume()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+				},
 			},
 			"a user with clerk permissions": {
-				async "can pause and resume a store"() {},
+				async "can pause and resume a store"() {
+					const {store} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.clerk))
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					await store.connect.pause()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+					await store.connect.resume()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+				},
 			},
 			"a user with regular permissions": {
-				async "cannot pause or resume the store"() {},
+				async "cannot pause or resume the store"() {
+					{
+						const {store} = await setups.linkedStore()
+							.then(x => x.api.client(x.api.roles.clerk))
+							.then(x => x.browserTab())
+						expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+						expect(async() => store.connect.pause()).throws()
+						expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					}
+					{
+						const {store} = await setups.linkedStore()
+							.then(async x => {
+								await x.merchant.store.connect.pause()
+								return x.api.client(x.api.roles.clerk)
+							})
+							.then(x => x.browserTab())
+						expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+						expect(async() => store.connect.resume()).throws()
+						expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+					}
+				},
 			},
 		},
 	},
