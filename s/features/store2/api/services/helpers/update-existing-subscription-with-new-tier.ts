@@ -3,7 +3,6 @@ import {Stripe} from "stripe"
 import {StoreLinkedAuth} from "../../types.js"
 
 import {getRowsForTierId} from "./get-rows-for-tier-id.js"
-import {reconstructStripeSubscriptionItems} from "./utils/reconstruct-stripe-subscription-items.js"
 
 export async function updateExistingSubscriptionWithNewTier({
 		tierId, auth, stripePaymentMethod, stripeSubscription,
@@ -14,14 +13,13 @@ export async function updateExistingSubscriptionWithNewTier({
 		stripeSubscription: Stripe.Subscription
 	}) {
 
-	const {tierRow, planRow} = await getRowsForTierId({tierId, auth})
-
-	const newItems = await reconstructStripeSubscriptionItems({
-		auth,
-		tierRow,
-		planRow,
-		stripeSubscription,
-	})
+	const {tierRow} = await getRowsForTierId({tierId, auth})
+	const newItems = [
+		{
+			price: tierRow.stripePriceId,
+			quantity: 1,
+		}
+	]
 
 	await auth.stripeLiaisonAccount.subscriptions.update(stripeSubscription.id, {
 		items: newItems,

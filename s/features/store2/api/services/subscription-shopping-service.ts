@@ -2,17 +2,15 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
+import {StoreServiceOptions} from "../types.js"
 import {getRowsForTierId} from "./helpers/get-rows-for-tier-id.js"
 import {getStripeId} from "../../stripe/liaison/helpers/get-stripe-id.js"
 import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
-import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
 import {determineSubscriptionStatus} from "./helpers/utils/determine-subscription-status.js"
 import {updateExistingSubscriptionWithNewTier} from "./helpers/update-existing-subscription-with-new-tier.js"
 import {SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
-import {reconstructStripeSubscriptionItems} from "./helpers/utils/reconstruct-stripe-subscription-items.js"
-import {StoreServiceOptions} from "../types.js"
 import {stripeClientReferenceId} from "../../stripe/utils/stripe-client-reference-id.js"
-import Stripe from "stripe"
+import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
@@ -48,11 +46,32 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async checkoutSubscriptionTier(tierId: string) {
-		// const stripeSubscription = await getCurrentStripeSubscription(auth)
-		// if (stripeSubscription)
-		// 	throw new Error("stripe subscription already exists, cannot create a new one")
-
 		const {tierRow} = await getRowsForTierId({tierId, auth})
+		const allTiers = await auth.storeDatabase.tables.subscriptions.tiers.read(
+			dbmage.find({planId: tierRow.planId})
+		)
+		const stripeSubscriptions = await auth.stripeLiaisonAccount
+			.subscriptions.list({customer: auth.stripeCustomerId})
+		const test = <SubscriptionDetails[]>[]
+		if(stripeSubscriptions) {
+			for (const stripeSubscription of stripeSubscriptions.data) {
+				const [stripePriceId] = stripeSubscription
+					.items.data.map(item => getStripeId(item.price))
+				const tierRow = await auth.storeDatabase.tables.subscriptions
+					.tiers.readOne(dbmage.find({stripePriceId}))
+				test.push({
+					status: determineSubscriptionStatus(stripeSubscription),
+					planId: tierRow.planId.string,
+					tierId: tierRow.tierId.string,
+				})
+			}
+		}
+		const subcribedTier = allTiers.find(tier =>
+			test.some(item => item.planId === tier.planId.string)
+		)
+		if(subcribedTier)
+		throw new Error("stripe subscription already exists for this plan, cannot create a new one")
+
 
 		const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
 			customer: auth.stripeCustomerId,
@@ -118,13 +137,13 @@ export const makeSubscriptionShoppingService = (
 
 	async unsubscribeFromTier(tierId: string) {
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
-		const {tierRow, planRow} = await getRowsForTierId({tierId, auth})
-		const newItems = await reconstructStripeSubscriptionItems({
-			auth,
-			tierRow,
-			planRow,
-			stripeSubscription,
-		})
+		const {tierRow} = await getRowsForTierId({tierId, auth})
+		const newItems = [
+			{
+				price: tierRow.stripePriceId,
+				quantity: 1,
+			}
+		]
 		await auth.stripeLiaisonAccount
 			.subscriptions.update(stripeSubscription.id, {items: newItems})
 	},

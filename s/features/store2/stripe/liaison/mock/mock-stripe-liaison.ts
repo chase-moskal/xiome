@@ -259,13 +259,7 @@ export function mockStripeLiaison({
 								write.default_payment_method = params.default_payment_method
 							}
 							if (params.items !== undefined) {
-								const newItems = params.items.filter(item => {
-									const foundExisting = existingSubscription.items.data
-										.find(existingItem =>
-											getStripeId(existingItem.price) === item.price
-										)
-									return !foundExisting
-								})
+								const newItems = params.items
 								const items = await subscriptionMechanics
 									.interpretUpdateItemsParam(newItems)
 								const {invoice} = await subscriptionMechanics.generateInvoiceForSubscriptionItems({
