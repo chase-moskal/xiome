@@ -91,6 +91,15 @@ export async function getStripeSetupIntent(
 		: <Stripe.SetupIntent>s
 }
 
+export async function getStripePaymentIntent(
+		stripeLiaisonAccount: StripeLiaisonAccount,
+		s: string | Stripe.PaymentIntent,
+	): Promise<Stripe.PaymentIntent> {
+	return typeof s === "string"
+		? await stripeLiaisonAccount.paymentIntents.retrieve(s)
+		: <Stripe.PaymentIntent>s
+}
+
 export async function getTiersForStripePrices({
 		priceIds,
 		storeDatabase,
@@ -106,7 +115,7 @@ export async function getTiersForStripePrices({
 	}
 }
 
-export async function getPaymentMethodId({
+export async function getPaymentMethodIdFromSetupIntent({
 		stripeLiaisonAccount, session,
 	}: {
 		stripeLiaisonAccount: StripeLiaisonAccount,
@@ -115,6 +124,18 @@ export async function getPaymentMethodId({
 	const intent = await getStripeSetupIntent(
 		stripeLiaisonAccount,
 		session.setup_intent)
+	return getStripeId(intent.payment_method)
+}
+
+export async function getPaymentMethodIdFromPaymentIntent({
+		stripeLiaisonAccount, session,
+	}: {
+		stripeLiaisonAccount: StripeLiaisonAccount,
+		session: Stripe.Checkout.Session,
+	}): Promise<string> {
+	const intent = await getStripePaymentIntent(
+		stripeLiaisonAccount,
+		session.payment_intent)
 	return getStripeId(intent.payment_method)
 }
 

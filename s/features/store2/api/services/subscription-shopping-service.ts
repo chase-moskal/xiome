@@ -84,6 +84,9 @@ export const makeSubscriptionShoppingService = (
 				appId: auth.access.appId,
 				userId: auth.access.user.userId,
 			}),
+			payment_intent_data: {
+				setup_future_usage: "on_session"
+			},
 
 			// TODO store callback links
 			success_url: "",

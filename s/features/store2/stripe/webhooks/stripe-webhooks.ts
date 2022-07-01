@@ -5,7 +5,7 @@ import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {PermissionsInteractions} from "../../interactions/interactions-types.js"
-import {getPaymentMethodId, getPriceIdsFromInvoice, getStripeSubscription, getSubscriptionAndPriceIds, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getSessionDetails, getInvoiceDetails} from "./helpers/webhook-helpers.js"
+import {getPaymentMethodIdFromSetupIntent, getPriceIdsFromInvoice, getStripeSubscription, getSubscriptionAndPriceIds, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getSessionDetails, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -26,15 +26,20 @@ export function stripeWebhooks(options: {
 			if (userIsUpdatingTheirPaymentMethod)
 				await updateCustomerPaymentMethod({
 					...details,
-					stripePaymentMethodId: await getPaymentMethodId(details),
+					stripePaymentMethodId: await getPaymentMethodIdFromSetupIntent(details),
 				})
 
-			else if (userIsPurchasingASubscription)
+			else if (userIsPurchasingASubscription) {
 				await fulfillUserRolesForSubscription({
 					...details,
 					...await getSubscriptionAndPriceIds(details),
 					permissionsInteractions,
 				})
+				await updateCustomerPaymentMethod({
+					...details,
+					stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
+				})
+			}
 
 			else
 				logger.error(`unknown 'checkout.session.completed' mode "${details.session.mode}"`)
