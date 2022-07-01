@@ -54,7 +54,7 @@ export function makeStoreStateSystem() {
 			is: {
 				get storeActive() {
 					return ops.value(snap.state.stripeConnect.connectStatusOp)
-					=== StripeConnectStatus.Ready
+						=== StripeConnectStatus.Ready
 				},
 				get userLoggedIn() {
 					return !!ops.value(snap.state.user.accessOp)?.user
