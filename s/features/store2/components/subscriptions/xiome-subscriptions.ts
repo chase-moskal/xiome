@@ -1,8 +1,8 @@
 
 import {ops} from "../../../../framework/ops.js"
 import {makeStoreModel} from "../../models/store-model.js"
-import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
+import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
@@ -34,13 +34,16 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
 
-	#prepareTierManager({tierId}: SubscriptionTier, isSubscribedToThisTier: boolean) {
+	#prepareTierManager(
+			{tierId}: SubscriptionTier,
+			isSubscribedToThisTier: boolean,
+			planHasSubScription: boolean
+		) {
 
-		const presentTierSubscriptionDetails = this.#subscriptions.find(
+		const tierSubscriptionDetails = this.#subscriptions.find(
 			subscription => subscription.tierId === tierId)
 		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
-		const subscriptionStatus = presentTierSubscriptionDetails?.status
-		const subscriptionIsActive = subscriptionStatus === SubscriptionStatus.Active
+		const subscriptionStatus = tierSubscriptionDetails?.status
 		const isCanceled = subscriptionStatus === SubscriptionStatus.Cancelled
 
 		const {subscriptions, billing} = this.share.storeModel
@@ -49,14 +52,13 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			isSubscribedToThisTier,
 			isCanceled,
 			handleTierClick: async() => {
-				console.log(this.#subscriptions)
 				if (isSubscribedToThisTier) {
 					!isCanceled
 						? await subscriptions.cancelSubscription(tierId)
 						: await subscriptions.uncancelSubscription(tierId)
 				}
 				else {
-					if (subscriptionIsActive) {
+					if (planHasSubScription) {
 						if (paymentMethod) {
 							await subscriptions
 								.updateExistingSubscriptionWithNewTier(tierId)
@@ -80,20 +82,21 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		}
 	}
 
-	#renderTier = ({tier, currentIndex, indexOfSubscribed}: {
+	#renderTier = ({tier, tierIndex, subscribedTierIndex, planHasSubScription}: {
 		tier: SubscriptionTier
-		currentIndex: number
-		indexOfSubscribed: number | undefined
+		tierIndex: number
+		subscribedTierIndex: number | undefined
+		planHasSubScription: boolean
 	}) => {
-		const isSubscribed = currentIndex === indexOfSubscribed
+		const isSubscribed = tierIndex === subscribedTierIndex
 		const {
 			handleTierClick,
 			isSubscribedToThisTier,
-			isCanceled
-		} = this.#prepareTierManager(tier, isSubscribed)
-		const textToDisplay = indexOfSubscribed === undefined
+			isCanceled,
+		} = this.#prepareTierManager(tier, isSubscribed, planHasSubScription)
+		const textToDisplay = subscribedTierIndex === undefined
 			? "buy"
-			: indexOfSubscribed > currentIndex ? "downgrade" : "upgrade"
+			: subscribedTierIndex > tierIndex ? "downgrade" : "upgrade"
 		return html`
 			<div
 				class="tier"
@@ -127,12 +130,15 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 
 	#renderPlan = (plan: SubscriptionPlan) => {
 		const tiers = plan.tiers.filter(tier => tier.active)
-		let indexOfSubscribed = undefined as number
+		const planHasSubScription = tiers.some(tier =>
+			this.#subscriptions.some(item => item.tierId === tier.tierId)
+		)
+		let subscribedTierIndex = undefined as number
 		for (const [index, tier] of tiers.entries()) {
 			const details = this.#subscriptions.find(
 				subscription => subscription.tierId === tier.tierId
 			)
-			if (details) indexOfSubscribed = index
+			if (details) subscribedTierIndex = index
 		}
 		return html`
 			<li data-plan=${plan.planId}>
@@ -140,8 +146,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 				<div class=tiers>
 					${plan.tiers
 						.filter(tier => tier.active)
-						.map((tier, currentIndex) => this.#renderTier({
-							tier, currentIndex, indexOfSubscribed
+						.map((tier, tierIndex) => this.#renderTier({
+							tier, tierIndex, subscribedTierIndex, planHasSubScription
 						}))}
 				</div>
 			</li>
