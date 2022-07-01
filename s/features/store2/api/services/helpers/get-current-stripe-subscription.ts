@@ -1,26 +1,29 @@
+
 import {find} from "dbmage"
 import Stripe from "stripe"
-import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 import {StoreCustomerAuth} from "../../types.js"
-
-//getStripeSubscriptionForTier
+import {getRowsForTierId} from "./get-rows-for-tier-id.js"
+import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 
 export async function getCurrentStripeSubscription(
 		auth: StoreCustomerAuth, tierId: string
 	) {
 
+	const {tierRow} = await getRowsForTierId({tierId, auth})
+
 	const stripeSubscriptions = await auth.stripeLiaisonAccount
 		.subscriptions.list({customer: auth.stripeCustomerId})
 
 	let stripeSubscription = undefined as Stripe.Subscription
-
-	if(stripeSubscriptions){
-		for (const sub of stripeSubscriptions.data) {
-			const [stripePriceId] = sub
+	if(stripeSubscriptions) {
+		for (const subcription of stripeSubscriptions.data) {
+			const [stripePriceId] = subcription
 				.items.data.map(item => getStripeId(item.price))
-			const tierRow = await auth.storeDatabase.tables.subscriptions
+			const subscribedTierRow = await auth.storeDatabase.tables.subscriptions
 				.tiers.readOne(find({stripePriceId}))
-			if (tierRow.tierId.string === tierId) stripeSubscription = sub
+			if (tierRow.planId.string === subscribedTierRow.planId.string) {
+				stripeSubscription = subcription
+			}
 		}
 	}
 
