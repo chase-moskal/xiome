@@ -154,28 +154,26 @@ export default <Suite>{
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 			},
-			"a user with regular permissions": {
-				// async "cannot pause or resume the store"() {
-				// 	{
-				// 		const {store} = await setups.linkedStore()
-				// 			.then(x => x.api.client(x.api.roles.clerk))
-				// 			.then(x => x.browserTab())
-				// 		expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
-				// 		await expect(async() => store.connect.pause()).throws()
-				// 		expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
-				// 	}
-				// 	{
-				// 		const {store} = await setups.linkedStore()
-				// 			.then(async x => {
-				// 				await x.merchant.store.connect.pause()
-				// 				return x.api.client(x.api.roles.clerk)
-				// 			})
-				// 			.then(x => x.browserTab())
-				// 		expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
-				// 		await expect(async() => store.connect.resume()).throws()
-				// 		expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
-				// 	}
-				// },
+			"a user with customer permissions": {
+				async "cannot pause the store"() {
+					const {store} = await setups.linkedStore()
+						.then(x => x.api.client(x.api.roles.customer))
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+					await expect(async() => store.connect.pause()).throws()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
+				},
+				async "cannot resume the store"() {
+					const {store} = await setups.linkedStore()
+						.then(async x => {
+							await x.merchant.store.connect.pause()
+							return x.api.client(x.api.roles.customer)
+						})
+						.then(x => x.browserTab())
+					expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+					await expect(async() => store.connect.resume()).throws()
+					expect(store.get.connect.status).equals(StripeConnectStatus.Paused)
+				},
 			},
 		},
 	},
