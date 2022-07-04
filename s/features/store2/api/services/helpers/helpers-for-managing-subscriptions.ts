@@ -47,9 +47,8 @@ export const helpersForManagingSubscriptions = ({
 
 			const planId = generateId()
 			const tierId = generateId()
-			const tierRoleId = generateId()
 
-			await permissionsInteractions.createRoleForNewSubscriptionTier({
+			const {roleId} = await permissionsInteractions.createRoleForNewSubscriptionTier({
 				label: tier.label,
 			})
 
@@ -69,13 +68,13 @@ export const helpersForManagingSubscriptions = ({
 				tierId,
 				planId,
 				label: tier.label,
-				roleId: tierRoleId,
+				roleId,
 				time: Date.now(),
 				stripePriceId,
 				stripeProductId,
 			})
 
-			return {planId, tierId, tierRoleId, time: Date.now()}
+			return {planId, tierId, tierRoleId: roleId, time: Date.now()}
 		},
 
 		async createTierForPlan({
@@ -99,8 +98,7 @@ export const helpersForManagingSubscriptions = ({
 					pricing,
 				})
 
-			const roleId = generateId()
-			await permissionsInteractions.createRoleForNewSubscriptionTier({label})
+			const {roleId} = await permissionsInteractions.createRoleForNewSubscriptionTier({label})
 
 			const time = Date.now()
 			const tierId = generateId()

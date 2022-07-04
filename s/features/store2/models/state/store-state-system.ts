@@ -67,6 +67,10 @@ export function makeStoreStateSystem() {
 				get status() { return ops.value(state.stripeConnect.connectStatusOp) },
 				get details() { return ops.value(state.stripeConnect.connectDetailsOp) },
 			},
+			subscriptions: {
+				get plans() { return ops.value(state.subscriptions.subscriptionPlansOp) },
+				get mySubscriptionDetails() { return ops.value(state.subscriptions.mySubscriptionDetailsOp) },
+			},
 		},
 	}
 }
