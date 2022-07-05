@@ -9,6 +9,7 @@ export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	headHtml?: HtmlTemplate
 } & XiomeWebsiteContext) => html`
 
+<!doctype html>
 <html>
 <head>
 
