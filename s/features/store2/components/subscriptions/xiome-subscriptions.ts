@@ -37,7 +37,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	#prepareTierManager(
 			{tierId}: SubscriptionTier,
 			isSubscribedToThisTier: boolean,
-			planHasSubScription: boolean
+			planHasSubscription: boolean
 		) {
 
 		const tierSubscriptionDetails = this.#subscriptions.find(
@@ -58,7 +58,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						: await subscriptions.uncancelSubscription(tierId)
 				}
 				else {
-					if (planHasSubScription) {
+					if (planHasSubscription) {
 						if (paymentMethod) {
 							await subscriptions
 								.updateExistingSubscriptionWithNewTier(tierId)
@@ -71,7 +71,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					}
 					else {
 						if (paymentMethod) {
-							await subscriptions.checkoutSubscriptionTier(tierId)
+							await subscriptions.createNewSubscriptionForTier(tierId)
 						}
 						else {
 							await subscriptions.checkoutSubscriptionTier(tierId)
@@ -82,11 +82,11 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		}
 	}
 
-	#renderTier = ({tier, tierIndex, subscribedTierIndex, planHasSubScription}: {
+	#renderTier = ({tier, tierIndex, subscribedTierIndex, planHasSubscription: planHasSubScription}: {
 		tier: SubscriptionTier
 		tierIndex: number
 		subscribedTierIndex: number | undefined
-		planHasSubScription: boolean
+		planHasSubscription: boolean
 	}) => {
 		const isSubscribed = tierIndex === subscribedTierIndex
 		const {
@@ -147,7 +147,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					${plan.tiers
 						.filter(tier => tier.active)
 						.map((tier, tierIndex) => this.#renderTier({
-							tier, tierIndex, subscribedTierIndex, planHasSubScription
+							tier, tierIndex, subscribedTierIndex, planHasSubscription: planHasSubScription
 						}))}
 				</div>
 			</li>
