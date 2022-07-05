@@ -7,7 +7,8 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 	headHtml?: HtmlTemplate
 } & XiomeWebsiteContext) => html`
 
-<!DOCTYPE html>
+<!doctype html>
+<html>
 <head>
 
 	<meta charset="utf-8"/>
@@ -74,5 +75,6 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 		${mainHtml}
 	</main>
 </body>
+</html>
 
 `
