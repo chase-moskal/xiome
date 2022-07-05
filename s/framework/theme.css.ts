@@ -8,8 +8,12 @@ export default css`
 	box-sizing: border-box;
 }
 
-*:focus {
-	outline: var(--focus-outline, 3px solid cyan);
+:focus {
+	outline: var(--focus-outline, 2px solid cyan);
+}
+
+:host-context(:focus) {
+	outline: 0 !important;
 }
 
 `
