@@ -43,12 +43,12 @@ export function makeSubscriptionsSubmodel({
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
 			await popups.checkoutSubscription(
-				await services.subscriptionShopping.checkoutSubscriptionTier(tierId)
+				await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
 			)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {
-			await services.subscriptionShopping.createNewSubscriptionForTier(tierId)
+			await services.subscriptionShopping.buySubscriptionViaExistingPaymentMethod(tierId)
 		},
 
 		async updateExistingSubscriptionWithNewTier(tierId: string) {

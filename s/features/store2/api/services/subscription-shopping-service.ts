@@ -3,15 +3,16 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreServiceOptions} from "../types.js"
+import {SubscriptionDetails} from "../../types/store-concepts.js"
 import {getRowsForTierId} from "./helpers/get-rows-for-tier-id.js"
+import {createCheckoutSession} from "./shopping/create-checkout-session.js"
 import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
-import {SubscriptionDetails, SubscriptionStatus} from "../../types/store-concepts.js"
-import {stripeClientReferenceId} from "../../stripe/utils/stripe-client-reference-id.js"
 import {fetchAllSubscriptionDetails} from "./shopping/fetch-all-subscription-details.js"
 import {getCurrentStripeSubscription} from "./helpers/get-current-stripe-subscription.js"
 import {updateExistingSubscriptionWithNewTier} from "./helpers/update-existing-subscription-with-new-tier.js"
-import {createCheckoutSession} from "./shopping/create-checkout-session.js"
 
+
+//TODO: Implement functions
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
 ) => renraku.service()
@@ -25,7 +26,8 @@ export const makeSubscriptionShoppingService = (
 		return subscriptionDetails
 	},
 
-	async checkoutSubscriptionTier(tierId: string) {
+	async buySubscriptionViaCheckoutSession(tierId: string) {
+		//verifyPlanHasNoExistingStripeSubscription()
 		const {tierRow} = await getRowsForTierId({tierId, auth})
 		const allTiers = await auth.storeDatabase.tables.subscriptions.tiers.read(
 			dbmage.find({planId: tierRow.planId})
@@ -37,6 +39,7 @@ export const makeSubscriptionShoppingService = (
 		if(planHasExistingSubscription)
 			throw new Error("stripe subscription already exists for this plan, cannot create a new one")
 
+		// createSubscriptionViaCheckoutSession
 		const session = await createCheckoutSession(auth, tierRow)
 		return {
 			stripeAccountId: auth.stripeAccountId,
@@ -45,17 +48,20 @@ export const makeSubscriptionShoppingService = (
 		}
 	},
 
-	async createNewSubscriptionForTier(tierId: string) {
+	async buySubscriptionViaExistingPaymentMethod(tierId: string) {
+		//verifyStripePaymentMethodExists()
 		const stripePaymentMethod = await getStripePaymentMethod(auth)
 		if (!stripePaymentMethod)
 			throw new Error("no payment method found (required)")
 
+		
+		//verifyPlanHasNoExistingStripeSubscription()
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (stripeSubscription)
 			throw new Error("a subscription already exists for this user (must not)")
 
+		// createStripeSubscriptionForPlanRelatingToTier()
 		const {tierRow} = await getRowsForTierId({tierId, auth})
-
 		await auth.stripeLiaisonAccount.subscriptions.create({
 			customer: auth.stripeCustomerId,
 			items: [{
@@ -66,10 +72,12 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async updateSubscriptionTier(tierId: string) {
+		// verifyStripePaymentMethodExists
 		const stripePaymentMethod = await getStripePaymentMethod(auth)
 		if (!stripePaymentMethod)
 			throw new Error("no payment method found (required)")
 
+		// verifyPlanHasExistingStripeSubscription
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (!stripeSubscription)
 			throw new Error("user must already have a subscription")
@@ -83,6 +91,8 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async unsubscribeFromTier(tierId: string) {
+		// verifyPlanHasExistingStripeSubscription()
+		// unsubscribeFromStripeSubscription()
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		const {tierRow} = await getRowsForTierId({tierId, auth})
 		const newItems = [
@@ -96,10 +106,12 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async cancelSubscription(tierId: string) {
+		// verifyPlanHasExistingStripeSubscription()
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (!stripeSubscription)
 			throw new Error("cannot find existing stripe subscription")
 
+		// cancelStripeSubscription()
 		await auth.stripeLiaisonAccount
 			.subscriptions.update(stripeSubscription.id, {
 				cancel_at_period_end: true,
@@ -107,10 +119,12 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async uncancelSubscription(tierId: string) {
+		// verifyNoStripeSubscriptionExistForPlan()
 		const stripeSubscription = await getCurrentStripeSubscription(auth, tierId)
 		if (!stripeSubscription)
 			throw new Error("cannot find existing stripe subscription")
 
+		// uncancelStripeSubscription
 		await auth.stripeLiaisonAccount
 			.subscriptions.update(stripeSubscription.id, {
 				cancel_at_period_end: false,
