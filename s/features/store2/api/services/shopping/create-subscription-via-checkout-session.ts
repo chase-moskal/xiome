@@ -1,11 +1,13 @@
 import {StoreCustomerAuth} from "../../types.js"
-import {SubscriptionTierRow} from "../../../types/store-schema.js"
+import {getRowsForTierId} from "../helpers/get-rows-for-tier-id.js"
 import {stripeClientReferenceId} from "../../../stripe/utils/stripe-client-reference-id.js"
 
-export async function createCheckoutSession(
+export async function createSubscriptionViaCheckoutSession(
 		auth: StoreCustomerAuth,
-		tierRow: SubscriptionTierRow
+		tierId: string
 	) {
+
+	const {tierRow} = await getRowsForTierId({tierId, auth})
 	const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
 		customer: auth.stripeCustomerId,
 		mode: "subscription",

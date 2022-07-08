@@ -5,8 +5,7 @@ import {StoreCustomerAuth} from "../../types.js"
 import {getRowsForTierId} from "./get-rows-for-tier-id.js"
 import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 
-//TODO rename: findSubscriptionforPlanRelatingToTier
-export async function getCurrentStripeSubscription(
+export async function findSubscriptionforPlanRelatingToTier(
 		auth: StoreCustomerAuth, tierId: string
 	) {
 
