@@ -10,7 +10,11 @@ mocksitePageHtml({
 mainHtml: html`
 
 	<section>
-		<xio-price-input></xio-price-input>
+		<xio-price-input
+			min = 8
+			max = 100
+			currency = "cad"
+		>Price</xio-price-input>
 		<h2>store</h2>
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
