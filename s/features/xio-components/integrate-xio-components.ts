@@ -11,6 +11,7 @@ import {XioTextInput} from "./inputs/xio-text-input.js"
 import {XioPriceInput} from "./inputs/xio-price-input.js"
 import {XioNightlight} from "./nightlight/xio-nightlight.js"
 import {XioProfileCard} from "./profile-card/xio-profile-card.js"
+import {XioPriceDisplay} from "./price-display/xio-price-display.js"
 
 export function integrateXioComponents() {
 	return {
@@ -26,5 +27,6 @@ export function integrateXioComponents() {
 		XioPriceInput,
 		XioNightlight,
 		XioProfileCard,
+		XioPriceDisplay
 	}
 }

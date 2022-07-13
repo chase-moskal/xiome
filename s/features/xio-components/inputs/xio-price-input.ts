@@ -1,7 +1,7 @@
 
 import styles from "./xio-price-input.css.js"
-import {Component, html, property, mixinStyles} from "../../../framework/component.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
+import {Component, html, property, mixinStyles} from "../../../framework/component.js"
 
 @mixinStyles(styles)
 export class XioPriceInput extends Component {

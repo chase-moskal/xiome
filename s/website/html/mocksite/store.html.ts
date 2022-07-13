@@ -15,6 +15,7 @@ mainHtml: html`
 			max = 100
 			currency = "cad"
 		>Price</xio-price-input>
+		<xio-price-display></xio-price-display>
 		<h2>store</h2>
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
