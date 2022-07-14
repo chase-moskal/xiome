@@ -1,9 +1,15 @@
 
-# store ui development
-- refactor and understand the store model
-- fix store bugs (can't link card, can't upgrade/downgrade plans?)
+# anatomy of xiome's store
 
-# xiome entanglement
-- further break off dependencies on outside systems (access model?)
-- disentangle store api auth policies from whole xiome database/systems
-- ugh, popups
+- store components
+- store model
+- store api
+
+- stripe liaison
+- stripe popups
+
+## work to test against real actual stripe
+
+- [ ] store api should emit urls to our own stripe popup pages
+- [ ] make stripe popup pages
+- [ ] run store against stripe, locally (dev-config.json?)
