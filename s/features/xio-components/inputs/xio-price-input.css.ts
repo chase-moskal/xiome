@@ -17,6 +17,10 @@ export default css`
 	border: 1px solid;
 }
 
+.focussed {
+	outline: 2px solid cyan;
+}
+
 span {
 	font-size: 1rem;
 	opacity: 0.4;
@@ -31,7 +35,7 @@ div {
 }
 
 input {
-	text-align: center;
+	text-align: right;
 	font-size: 1.5rem;
 	border: none;
 	background: transparent;

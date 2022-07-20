@@ -42,6 +42,20 @@ export class XioPriceInput extends Component {
 			: undefined
 	}
 
+	private get inputParent(): HTMLInputElement {
+		return this.shadowRoot
+			? this.shadowRoot.querySelector('.price-input')
+			: undefined
+	}
+
+	#focusInputParent = () => {
+		this.inputParent.classList.add('focussed')
+	}
+
+	#unfocusInputParent = () => {
+		this.inputParent.classList.remove('focussed')
+	}
+
 	#resizeInput = () => {
 		const size = this.input.value.length > 2 ? this.input.value.length : 3
 		this.input.style.width = size + "ch"
@@ -87,9 +101,11 @@ export class XioPriceInput extends Component {
 			<label for="price" part="label"><slot></slot></label>
 			<div>
 				<button @click=${this.#decrement}>-</button>
-				<div class="price-input">
+				<div class="price-input" tabindex="-1">
 					<span class="symbol">${symbol}</span>
 					<input
+						@focus=${this.#focusInputParent}
+						@blur=${this.#unfocusInputParent}
 						@input=${this.#handleInputChange}
 						.value=${inputValue}
 						type="number"
