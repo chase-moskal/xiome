@@ -12,7 +12,7 @@ export const validatePriceNumber = validator<number>(
 export const validatePriceString = validator<string>(
 	string(),
 	zeroWhitespace(),
-	regex(/[\d\.]+/, "must be a number"),
+	regex(/^(\d+\.?\d+)$/, "must be a number"),
 	value => validatePriceNumber(
 		Math.round(parseFloat(value) * 100)
 	),
