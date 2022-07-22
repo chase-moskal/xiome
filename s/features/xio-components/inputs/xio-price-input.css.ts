@@ -8,9 +8,24 @@ export default css`
 	display: block;
 	width: 100%;
 	max-width: 48rem;
+	--valid-color: var(--xio-price-input-valid-color, #00ff8c);
+	--invalid-color: var(--xio-price-input-invalid-color, #ff6100);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.inner__container{
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .price-input {
+	display: flex;
+	align-items: center;
 	gap: 0.2rem;
 	padding: 0.1rem 0.7rem;
 	border-radius: 5px;
@@ -26,12 +41,6 @@ span {
 	opacity: 0.4;
 	user-select: none;
 	text-transform: uppercase;
-}
-
-div {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
 }
 
 input {
@@ -51,6 +60,20 @@ input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 }
 
+svg {
+	width: 1.2em;
+	height: 1.2em;
+	pointer-events: none;
+}
+
+.container[data-valid] svg {
+	color: var(--valid-color);
+}
+
+.container:not([data-valid]) svg {
+	color: var(--invalid-color);
+}
+
 button {
 	font-size: 2.5rem;
 	color: inherit;
@@ -60,6 +83,7 @@ button {
 	transition: all 0.2s ease-in 0s;
 	padding: 0 0.2rem;
 	border: none;
+	user-select: none;
 }
 
 button:is(:hover, :focus) {
@@ -73,7 +97,7 @@ button:active {
 
 ul {
 	list-style-type: none;
-	color: red;
+	color: var(--invalid-color);
 }
 
 `

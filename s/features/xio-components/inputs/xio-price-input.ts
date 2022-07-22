@@ -2,6 +2,10 @@
 import styles from "./xio-price-input.css.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {Component, html, property, mixinStyles} from "../../../framework/component.js"
+import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import svgWarning from "../../../framework/icons/warning.svg.js"
+import {max, min, notWhitespace, validator} from "../../../toolbox/darkvalley.js"
+import {debounce} from "@chasemoskal/snapstate"
 
 @mixinStyles(styles)
 export class XioPriceInput extends Component {
@@ -16,7 +20,7 @@ export class XioPriceInput extends Component {
 	step = "0.5"
 
 	@property({type: String})
-	["initial-value"] = "9.00"
+	["initial-value"] = ""
 
 	@property({type: String})
 	currency = "USD"
@@ -24,17 +28,17 @@ export class XioPriceInput extends Component {
 	@property({type: String})
 	symbol = "$"
 
-	@property({type: Boolean})
-	valid = true
-
 	@property({type: String})
 	private inputValue = this["initial-value"]
 
 	@property({type: Object})
-	problems: string[] = []
+	private problems: string[] = []
 
-	@property({type: Function})
-	validator: () => string[]
+	@property({type: Boolean})
+	private valid = true
+
+	@property({type: Boolean})
+	private showValidation = false
 
 	private get input(): HTMLInputElement {
 		return this.shadowRoot
@@ -56,23 +60,33 @@ export class XioPriceInput extends Component {
 		this.inputParent.classList.remove('focussed')
 	}
 
+
 	#resizeInput = () => {
-		const size = this.input.value.length > 2 ? this.input.value.length : 3
-		this.input.style.width = size + "ch"
+		const {input} = this
+		const size = input.value.length > 2 ? input.value.length : 3
+		input.style.width = `${size+0.4}ch`
 	}
 
-	#validateInput = (value: number) => {
-		const {min, max} = this
-		this.valid = value >= min && value <= max
+	#validatePrice = validator(
+		min(Number(this.min)),
+		max(Number(this.max))
+	)
+
+	#validateInput = (value: string) => {
+		this.showValidation = true
+		this.problems = this.#validatePrice(Number(value))
+		this.valid = this.problems.length < 1
 		if(this.valid) {
 			this.dispatchEvent(new ValueChangeEvent(this.inputValue))
 		}
 	}
 
+	#validateInputDebounced = debounce(250, this.#validateInput)
+
 	#increment = () => {
 		const {step, inputValue} = this
 		const newValue = (Number(inputValue) + Number(step)).toFixed(2)
-		this.#validateInput(Number(newValue))
+		this.#validateInputDebounced(newValue)
 		this.inputValue = newValue
 		this.#resizeInput()
 	}
@@ -80,7 +94,7 @@ export class XioPriceInput extends Component {
 	#decrement = () => {
 		const {step, inputValue} = this
 		const newValue = (Number(inputValue) - Number(step)).toFixed(2)
-		this.#validateInput(Number(newValue))
+		this.#validateInputDebounced(newValue)
 		this.inputValue = newValue
 		this.#resizeInput()
 	}
@@ -88,39 +102,54 @@ export class XioPriceInput extends Component {
 	#handleInputChange = (event: Event) => {
 		const input = event.target as HTMLInputElement
 		this.inputValue = input.value
-		this.#validateInput(Number(this.inputValue))
+		this.#validateInputDebounced(this.inputValue)
 		this.#resizeInput()
 	}
 
 	render() {
-		const {symbol, currency, inputValue, valid} = this
+		const {
+			symbol, currency, inputValue, valid, showValidation, problems
+		} = this
+		console.log(valid, problems)
 		const inputWidth = this["initial-value"]
 			? this["initial-value"].length
 			: 4
+		const icon = showValidation
+			? valid
+				? svgCircleCheck
+				: svgWarning
+			: null
 		return html`
-			<label for="price" part="label"><slot></slot></label>
-			<div>
-				<button @click=${this.#decrement}>-</button>
-				<div class="price-input" tabindex="-1">
-					<span class="symbol">${symbol}</span>
-					<input
-						@focus=${this.#focusInputParent}
-						@blur=${this.#unfocusInputParent}
-						@input=${this.#handleInputChange}
-						.value=${inputValue}
-						type="number"
-						id="price"
-						style="width: ${inputWidth}ch"
-					/>
-					<span>${currency}</span>
+			<div class="container" ?data-valid=${valid}>
+				<label for="price" part="label"><slot></slot></label>
+				<div class="inner__container">
+					<button @click=${this.#decrement}>-</button>
+					<div class="price-input" tabindex="-1">
+						<span class="symbol">${symbol}</span>
+						<input
+							@focus=${this.#focusInputParent}
+							@blur=${this.#unfocusInputParent}
+							@input=${this.#handleInputChange}
+							.value=${inputValue}
+							type="number"
+							id="price"
+							style="width: ${inputWidth}ch"
+							placeholder="0.00"
+						/>
+						<span>${currency}</span>
+						${icon}
+					</div>
+					<button @click=${this.#increment}>+</button>
 				</div>
-				<button @click=${this.#increment}>+</button>
+				<ul part=problems>
+					${!valid
+						? problems.map(problem => html`
+							<li>${problem}</li>
+						`)
+						: null
+					}
+				</ul>
 			</div>
-			${!valid 
-				? html
-					`<ul><li>invalid input</li></ul>`
-				: null
-			}
 		`
 	}
 }
