@@ -52,6 +52,10 @@ export class XioPriceInput extends Component {
 			: undefined
 	}
 
+	get value() {
+		return this.valid ? this.inputValue : undefined
+	}
+
 	#focusInputParent = () => {
 		this.inputParent.classList.add('focussed')
 	}
@@ -110,7 +114,6 @@ export class XioPriceInput extends Component {
 		const {
 			symbol, currency, inputValue, valid, showValidation, problems
 		} = this
-		console.log(valid, problems)
 		const inputWidth = this["initial-value"]
 			? this["initial-value"].length
 			: 4

@@ -10,6 +10,7 @@ import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../../types/store-concepts.js"
 import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft} from "../../../api/services/planning/planning-types.js"
 import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validatePriceString, validateEditTierDraft} from "../../../api/services/validators/planning-validators.js"
+import {XioPriceInput} from "../../../../xio-components/inputs/xio-price-input.js"
 
 function preparePricing(dollars: string): SubscriptionPricing {
 	return {
@@ -42,8 +43,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					`.plandraft xio-text-input[data-field="tierlabel"]`,
 					shadow,
 				),
-				tierprice: select<XioTextInput>(
-					`.plandraft xio-text-input[data-field="tierprice"]`,
+				tierprice: select<XioPriceInput>(
+					`.plandraft xio-price-input[data-field="tierprice"]`,
 					shadow,
 				),
 			}
@@ -261,11 +262,9 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					?disabled=${loading}
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
-				<xio-text-input
-					data-field=tierprice
-					?disabled=${loading}
-					.validator=${validatePriceString}>
-						tier price</xio-text-input>
+				<xio-price-input
+					data-field=tierprice>
+						tier price</xio-price-input>
 				<xio-button
 					?disabled=${loading || problems.length}
 					@click=${actions.newPlan.submit}>
