@@ -11,7 +11,7 @@ mainHtml: html`
 
 	<section>
 		<xio-price-input
-			min = 8
+			min = -1
 			max = 100
 			currency = "cad"
 		>Price</xio-price-input>

@@ -1,11 +1,14 @@
 
-import styles from "./xio-price-input.css.js"
+import {debounce} from "@chasemoskal/snapstate"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {Component, html, property, mixinStyles} from "../../../framework/component.js"
-import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import {max, min, number, Validator, validator, greaterThan} from "../../../toolbox/darkvalley.js"
+
+import styles from "./xio-price-input.css.js"
 import svgWarning from "../../../framework/icons/warning.svg.js"
-import {max, min, notWhitespace, validator} from "../../../toolbox/darkvalley.js"
-import {debounce} from "@chasemoskal/snapstate"
+import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
+import chevronUpSvg from "../../../framework/icons/feather/chevron-up.svg.js"
+import chevronDownSvg from "../../../framework/icons/feather/chevron-down.svg.js"
 
 @mixinStyles(styles)
 export class XioPriceInput extends Component {
@@ -48,7 +51,7 @@ export class XioPriceInput extends Component {
 
 	private get inputParent(): HTMLInputElement {
 		return this.shadowRoot
-			? this.shadowRoot.querySelector('.price-input')
+			? this.shadowRoot.querySelector('.price__input__parent')
 			: undefined
 	}
 
@@ -67,14 +70,20 @@ export class XioPriceInput extends Component {
 
 	#resizeInput = () => {
 		const {input} = this
-		const size = input.value.length > 2 ? input.value.length : 3
+		const size = input.value.length > 1 ? input.value.length : 3
 		input.style.width = `${size+0.4}ch`
 	}
 
-	#validatePrice = validator(
-		min(Number(this.min)),
-		max(Number(this.max))
-	)
+	#validatePrice: Validator<number>
+
+	init(): void {
+		this.#validatePrice = validator(
+			number(),
+			greaterThan(0),
+			min(Number(this.min)),
+			max(Number(this.max))
+		)
+	}
 
 	#validateInput = (value: string) => {
 		this.showValidation = true
@@ -123,11 +132,13 @@ export class XioPriceInput extends Component {
 				: svgWarning
 			: null
 		return html`
-			<div class="container" ?data-valid=${valid}>
+			<div class="container">
 				<label for="price" part="label"><slot></slot></label>
 				<div class="inner__container">
-					<button @click=${this.#decrement}>-</button>
-					<div class="price-input" tabindex="-1">
+					<button @click=${this.#decrement} class="decrement">
+						${chevronDownSvg}
+					</button>
+					<div class="price__input__parent" tabindex="-1" ?data-valid=${valid}>
 						<span class="symbol">${symbol}</span>
 						<input
 							@focus=${this.#focusInputParent}
@@ -139,10 +150,12 @@ export class XioPriceInput extends Component {
 							style="width: ${inputWidth}ch"
 							placeholder="0.00"
 						/>
-						<span>${currency}</span>
 						${icon}
+						<span class="currency">${currency}</span>
 					</div>
-					<button @click=${this.#increment}>+</button>
+					<button @click=${this.#increment} class="increment">
+						${chevronUpSvg}
+					</button>
 				</div>
 				<ul part=problems>
 					${!valid

@@ -8,8 +8,31 @@ export default css`
 	display: block;
 	width: 100%;
 	max-width: 48rem;
+	--pad: var(--xio-price-input-pad, 0.2em);
+	--font: var(--xio-price-input-font, inherit);
+	--color: var(--xio-price-input-color, inherit);
+	--font-size: var(--xio-price-input-button-font-size, 1.5rem);
+	--svg-height: var(--xio-price-input-height, 1.2em);
+	--label-font: var(--xio-price-input-label-font, inherit);
+	--label-color: var(--xio-price-input-label-color, inherit);
+	--pad-problems: var(--xio-price-input-problems-padding, 1.7em);
+	--problems-font: var(--xio-price-input-problems-font, inherit);
+	--problems-color: var(--xio-price-input-problems-color);
+	--background: var(--xio-price-input-background, transparent);
 	--valid-color: var(--xio-price-input-valid-color, #00ff8c);
 	--invalid-color: var(--xio-price-input-invalid-color, #ff6100);
+	--border: var(--xio-price-input-border, 1px solid);
+	--border-radius: var(--xio-price-input-border-radius, 0.3em);
+}
+
+label {
+	font: var(--label-font);
+	color: var(--label-color);
+}
+
+slot {
+	display: block;
+	padding: 0 var(--pad);
 }
 
 .container {
@@ -23,33 +46,38 @@ export default css`
 	gap: 0.5rem;
 }
 
-.price-input {
+.price__input__parent {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
-	padding: 0.1rem 0.7rem;
-	border-radius: 5px;
-	border: 1px solid;
+	padding: var(--pad) calc(2 * var(--pad));
+	border-radius: var(--border-radius);
+	border: var(--border);
 }
 
 .focussed {
 	outline: 2px solid cyan;
 }
 
-span {
+.symbol, .currency {
 	font-size: 1rem;
 	opacity: 0.4;
 	user-select: none;
 	text-transform: uppercase;
 }
 
+.currency {
+	margin-left: 0.5em;
+}
+
 input {
-	text-align: right;
+	font: var(--font);
 	font-size: 1.5rem;
+	text-align: right;
 	border: none;
-	background: transparent;
 	padding: 0;
-	color: inherit;
+	background: var(--background);
+	color: var(--color);
 	}
 
 input:is(:focus, :active) {
@@ -61,29 +89,29 @@ input::-webkit-inner-spin-button {
 }
 
 svg {
-	width: 1.2em;
-	height: 1.2em;
+	width: var(--svg-height);
+	height: var(--svg-height);
 	pointer-events: none;
 }
 
-.container[data-valid] svg {
+.price__input__parent[data-valid] svg {
 	color: var(--valid-color);
 }
 
-.container:not([data-valid]) svg {
+.price__input__parent:not([data-valid]) svg {
 	color: var(--invalid-color);
 }
 
 button {
-	font-size: 2.5rem;
-	color: inherit;
+	display: flex;
+	font-size: var(--font-size);
+	color: var(--color);
 	opacity: 0.4;
-	background: transparent;
+	background: var(--background);
 	cursor: pointer;
-	transition: all 0.2s ease-in 0s;
-	padding: 0 0.2rem;
 	border: none;
 	user-select: none;
+	transition: all 0.2s ease-in 0s;
 }
 
 button:is(:hover, :focus) {
@@ -91,13 +119,21 @@ button:is(:hover, :focus) {
 	outline: none;
 }
 
-button:active {
+.decrement:active {
 	opacity: 0.6;
+	transform: translateY(2px);
+}
+
+.increment:active {
+	opacity: 0.6;
+	transform: translateY(-2px);
 }
 
 ul {
+	font: var(--problems-font);
 	list-style-type: none;
-	color: var(--invalid-color);
+	padding-left: var(--pad-problems);
+	color: var(--problems-color, var(--invalid-color));
 }
 
 `

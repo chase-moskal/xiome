@@ -116,6 +116,11 @@ export const boolean = (): Validator<boolean> => value =>
 		? ["must be a boolean"]
 		: []
 
+export const greaterThan = (threshold: number): Validator<number> => value =>
+	value > threshold
+		? []
+		: ["too small"]
+
 export const min = (threshold: number): Validator<number> => value =>
 	value < threshold
 		? ["too small"]
