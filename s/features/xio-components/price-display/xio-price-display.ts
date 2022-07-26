@@ -5,33 +5,55 @@ import {Component, html, property, mixinStyles} from "../../../framework/compone
 @mixinStyles(styles)
 export class XioPriceDisplay extends Component {
 
-	@property({type: String})
+	@property({type: String, reflect: true})
 	symbol: string = "$"
 
-	@property({type: String})
+	@property({type: String, reflect: true})
 	currency: string = "USD"
+
+	@property({type: Boolean, reflect: true})
+	["unit-superscript"]: boolean = true
 
 	@property({type: String})
 	value: string = "9.50"
 
 	private splitValue = this.value.split(".")[0]
 	private unit = this.value.split(".")[1]
+	private unitIsGreaterThanZero = this.unit && Number(this.unit) > 0
+
+	#renderWhenSuperscriptIsDisabled = () => {
+		const {unit, splitValue, unitIsGreaterThanZero} = this
+		return html`
+			<strong>
+				${`${splitValue}${unitIsGreaterThanZero ? `.${unit}` : null}`}
+			</strong>
+		`
+	}
+
+	#renderWhenSupercriptIsEnabled = () => {
+		const {unit, splitValue, unitIsGreaterThanZero} = this
+		return html`
+			<div class="superscript">
+				<strong>${splitValue}</strong>
+				${unitIsGreaterThanZero
+						? (html`<span>${unit}</span>`)
+						: null
+					}
+			</div>
+		`
+	}
 
 	render() {
-		const {unit, symbol, currency, splitValue} = this
+		const enableSuperscript = this["unit-superscript"]
+		const {symbol, currency} = this
 		return html`
 			<div class="card2">
 				<div class="display">
-					<div>
-						<strong>
-							<span class="symbol">${symbol}</span>
-							${splitValue}
-						</strong>
-						${unit && Number(unit) > 0
-								? (html`<span class="superscript">${unit}</span>`)
-								: null
-							}
-					</div>
+					<span class="symbol">${symbol}</span>
+					${enableSuperscript
+						? this.#renderWhenSupercriptIsEnabled()
+						: this.#renderWhenSuperscriptIsDisabled()
+					}
 					<span class="currency">${currency}</span>
 				</div>
 			</div>

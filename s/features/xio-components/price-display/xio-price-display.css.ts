@@ -17,21 +17,28 @@ export default css`
 }
 
 .display {
+	font-size: 2rem;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	gap: 0.2em;
 }
 
-.display > div {
-	position: relative;
-	font-size: 3rem;
-}
-
-strong {
-	display: inline-block;
+.symbol, strong {
 	transform: scale(1, 1.4);
-	margin-right: 0.7em;
 }
 
 .superscript {
+	position: relative;
+	font-size: 1em;
+}
+
+.superscript > strong {
+	display: inline-block;
+	margin-right: 0.7em;
+}
+
+.superscript > span {
 	position: absolute;
 	right: 0px;
 	font-size: 0.7em;
@@ -42,8 +49,11 @@ strong {
 	opacity: 0.4;
 	user-select: none;
 }
+
 .currency {
-	font-size: 2em;
-	letter-spacing: 5px;
+	font-size: 0.6em;
+	line-height: 1;
+	margin-left: -0.5rem;
+	transform: rotate(90deg);
 }
 `
