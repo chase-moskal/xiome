@@ -1,5 +1,5 @@
 
-import {css} from "../../../framework/component.js"
+import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 export default css`
 
 :host {
@@ -12,48 +12,44 @@ export default css`
 	display: flex;
 	width: fit-content;
 	align-self: flex-start;
-	border: 1px dashed;
-	padding: 2rem 1rem;
 }
 
 .display {
 	font-size: 2rem;
 	text-align: center;
 	display: flex;
-	align-items: center;
 	gap: 0.2em;
-}
 
-.symbol, strong {
-	transform: scale(1, 1.4);
+	.symbol, strong {
+		transform: scale(1, 1.4);
+	}
+
+	.currency, .symbol {
+		opacity: 0.4;
+		user-select: none;
+	}
+
+	.currency {
+		font-size: 0.6em;
+		line-height: 1;
+		margin-left: -1.2rem;
+		transform: rotate(90deg);
+	}
 }
 
 .superscript {
 	position: relative;
 	font-size: 1em;
-}
 
-.superscript > strong {
-	display: inline-block;
-	margin-right: 0.7em;
-}
+	strong{
+		display: inline-block;
+		margin-right: 0.7em;
+	}
 
-.superscript > span {
-	position: absolute;
-	right: 0px;
-	font-size: 0.7em;
-}
-
-.currency,
-.symbol {
-	opacity: 0.4;
-	user-select: none;
-}
-
-.currency {
-	font-size: 0.6em;
-	line-height: 1;
-	margin-left: -0.5rem;
-	transform: rotate(90deg);
+	span {
+		position: absolute;
+		right: 0px;
+		font-size: 0.7em;
+	}
 }
 `

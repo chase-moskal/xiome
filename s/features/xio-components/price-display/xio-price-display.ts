@@ -14,8 +14,15 @@ export class XioPriceDisplay extends Component {
 	@property({type: Boolean, reflect: true})
 	["unit-superscript"]: boolean = true
 
+	// @property({type: String})
+	// initial: string = "9.50"
+
 	@property({type: String})
 	value: string = "9.50"
+
+	// init(): void {
+	// 	this.value = this.initial
+	// }
 
 	private splitValue = this.value.split(".")[0]
 	private unit = this.value.split(".")[1]

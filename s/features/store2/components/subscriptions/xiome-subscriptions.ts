@@ -82,12 +82,16 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		}
 	}
 
-	#renderTier = ({tier, tierIndex, subscribedTierIndex, planHasSubscription: planHasSubScription}: {
-		tier: SubscriptionTier
-		tierIndex: number
-		subscribedTierIndex: number | undefined
-		planHasSubscription: boolean
-	}) => {
+	#renderTier = ({
+			tier, tierIndex,
+			subscribedTierIndex,
+			planHasSubscription: planHasSubScription
+		}: {
+			tier: SubscriptionTier
+			tierIndex: number
+			subscribedTierIndex: number | undefined
+			planHasSubscription: boolean
+		}) => {
 		const isSubscribed = tierIndex === subscribedTierIndex
 		const {
 			handleTierClick,
@@ -104,9 +108,11 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 				?data-subscribed=${isSubscribedToThisTier}>
 				<slot name="${tier.tierId}"></slot>
 				<div class=details>
-					<div>${tier.label}</div>
-					<div>$${centsToDollars(tier.pricing.price)}</div>
-					<div>monthly</div>
+					<h2>${tier.label}</h2>
+					<xio-price-display value=${centsToDollars(tier.pricing.price)}>
+						${tier.label}
+					</xio-price-display>
+					<p>monthly</p>
 				</div>
 				<div class=label>
 					${isSubscribedToThisTier

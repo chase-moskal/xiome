@@ -66,8 +66,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					`.tierdraft xio-text-input[data-field="tierlabel"]`,
 					shadow,
 				),
-				price: select<XioTextInput>(
-					`.tierdraft xio-text-input[data-field="tierprice"]`,
+				price: select<XioPriceInput>(
+					`.tierdraft xio-price-input[data-field="tierprice"]`,
 					shadow,
 				),
 			}
@@ -282,11 +282,9 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					?disabled=${loading}
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
-				<xio-text-input
-					data-field=tierprice
-					?disabled=${loading}
-					.validator=${validatePriceString}>
-						tier price</xio-text-input>
+				<xio-price-input
+					data-field=tierprice>
+						tier price</xio-price-input>
 				<xio-button
 					?disabled=${loading || problems.length}
 					@click=${() => actions.newTier.submit(planId)}>
