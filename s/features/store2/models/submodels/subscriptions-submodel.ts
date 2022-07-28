@@ -6,6 +6,7 @@ import {StorePopups, StoreServices} from "../types.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {SubscriptionPricing} from "../../types/store-concepts.js"
+import {popupCoordinator} from "../../popups/popup-coordinator.js"
 import {SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
 
 export function makeSubscriptionsSubmodel({
@@ -42,9 +43,16 @@ export function makeSubscriptionsSubmodel({
 
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
-			await popups.checkoutSubscription(
-				await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			)
+			const {
+				stripeAccountId,
+				stripeSessionId,
+				stripeSessionUrl,
+			} = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
+			const result = await popupCoordinator.stripeCheckout.openPopupAndWaitForResult({
+				url: stripeSessionUrl,
+				width: 260,
+				height: 260,
+			})
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {

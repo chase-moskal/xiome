@@ -7,7 +7,7 @@ import {stripeClientReferenceId} from "../../../stripe/utils/stripe-client-refer
 export async function createSubscriptionViaCheckoutSession(
 		auth: StoreCustomerAuth,
 		tierId: string,
-		returnUrl = "http://localhost:8080/popups/stripe"
+		returnUrl = "http://localhost:8080/popups/return"
 	) {
 
 	const makeUrl = (success: boolean) => (

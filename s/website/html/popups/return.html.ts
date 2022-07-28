@@ -13,7 +13,7 @@ export default ({v}: XiomeWebsiteContext) => html`
 		const searchParams = new URLSearchParams(window.location.search)
 		const result = Object.fromEntries(searchParams.entries())
 		if (window.opener) {
-			window.opener.postMessage(result)
+			window.opener.postMessage(result, "*")
 			window.close()
 		}
 		else {
