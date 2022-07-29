@@ -52,45 +52,4 @@ export default css`
 		letter-spacing: -0.2em;
 	}
 }
-
-/*
-.display {
-	font-size: 2rem;
-	text-align: center;
-	display: flex;
-	gap: 0.2em;
-
-	.symbol, strong {
-		transform: scale(1, 1.4);
-	}
-
-	.currency, .symbol {
-		opacity: 0.4;
-		user-select: none;
-	}
-
-	.currency {
-		font-size: 0.6em;
-		line-height: 1;
-		margin-left: -1.2rem;
-		transform: rotate(90deg);
-	}
-}
-
-.superscript {
-	position: relative;
-	font-size: 1em;
-
-	strong{
-		display: inline-block;
-		margin-right: 0.7em;
-	}
-
-	span {
-		position: absolute;
-		right: 0px;
-		font-size: 0.7em;
-	}
-}
-*/
 `
