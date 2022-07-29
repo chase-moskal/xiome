@@ -109,7 +109,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 				<slot name="${tier.tierId}"></slot>
 				<div class=details>
 					<h2>${tier.label}</h2>
-					<xio-price-display value=${centsToDollars(tier.pricing.price)}>
+					<xio-price-display
+						unit-superscript
+						vertical-currency
+						value=${centsToDollars(tier.pricing.price)}>
 						${tier.label}
 					</xio-price-display>
 					<p>monthly</p>

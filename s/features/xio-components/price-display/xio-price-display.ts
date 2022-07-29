@@ -12,56 +12,61 @@ export class XioPriceDisplay extends Component {
 	currency: string = "USD"
 
 	@property({type: Boolean, reflect: true})
-	["unit-superscript"]: boolean = true
+	["unit-superscript"]: boolean
 
-	// @property({type: String})
-	// initial: string = "9.50"
+	@property({type: Boolean, reflect: true})
+	["vertical-currency"]: boolean
 
 	@property({type: String})
 	value: string = "9.50"
 
-	// init(): void {
-	// 	this.value = this.initial
-	// }
+	#leftPadCents(cents: string) {
+		return cents.length > 1 ? cents : `0${cents}`
+	}
 
-	private splitValue = this.value.split(".")[0]
-	private unit = this.value.split(".")[1]
-	private unitIsGreaterThanZero = this.unit && Number(this.unit) > 0
+	#getPriceDetails() {
+		const {value} = this
+		const numerical = parseFloat(value)
+		const dollars = Math.floor(numerical)
+		const cents = Math.round((numerical % 1.0) * 100)
+		const strings = {
+			dollars: dollars.toString(),
+			cents: this.#leftPadCents(cents.toString()),
+		}
+		return strings
+	}
 
 	#renderWhenSuperscriptIsDisabled = () => {
-		const {unit, splitValue, unitIsGreaterThanZero} = this
+		const {cents, dollars} = this.#getPriceDetails()
 		return html`
 			<strong>
-				${`${splitValue}${unitIsGreaterThanZero ? `.${unit}` : null}`}
+				${`${dollars}.${cents}`}
 			</strong>
 		`
 	}
 
 	#renderWhenSupercriptIsEnabled = () => {
-		const {unit, splitValue, unitIsGreaterThanZero} = this
+		const {cents, dollars} = this.#getPriceDetails()
 		return html`
-			<div class="superscript">
-				<strong>${splitValue}</strong>
-				${unitIsGreaterThanZero
-						? (html`<span>${unit}</span>`)
-						: null
-					}
-			</div>
+			<strong>${dollars}</strong>
+			<span class="superscript">${cents}</span>
 		`
 	}
 
 	render() {
 		const enableSuperscript = this["unit-superscript"]
+		const enableVerticalCurrency = this["vertical-currency"]
 		const {symbol, currency} = this
 		return html`
-			<div class="card2">
+			<div class="card">
 				<div class="display">
 					<span class="symbol">${symbol}</span>
 					${enableSuperscript
 						? this.#renderWhenSupercriptIsEnabled()
-						: this.#renderWhenSuperscriptIsDisabled()
-					}
-					<span class="currency">${currency}</span>
+						: this.#renderWhenSuperscriptIsDisabled()}
+					<span class=${`currency ${enableVerticalCurrency ? 'vertical' : ''}`}>
+						${currency}
+					</span>
 				</div>
 			</div>
 		`
