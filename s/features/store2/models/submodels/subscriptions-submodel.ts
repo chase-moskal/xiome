@@ -53,6 +53,8 @@ export function makeSubscriptionsSubmodel({
 				width: 260,
 				height: 260,
 			})
+			console.log("RESULT", result)
+			debugger
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {

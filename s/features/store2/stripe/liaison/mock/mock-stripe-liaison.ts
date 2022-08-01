@@ -139,7 +139,10 @@ export function mockStripeLiaison({
 						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
 							resource: {
 								mode: params.mode,
-								url: params.success_url,
+								url: `/mocksite/fakestripe/checkout${
+									`?success_url=${encodeURIComponent(params.success_url)}` +
+									`&cancel_url=${encodeURIComponent(params.cancel_url)}`
+								}`,
 								customer: params.customer,
 								client_reference_id: params.client_reference_id,
 								line_items: params.mode === "setup"
