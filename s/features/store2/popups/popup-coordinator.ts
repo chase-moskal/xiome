@@ -4,19 +4,19 @@ import {centeredPopupFeatures} from "../../../toolbox/popups/centered-popup-feat
 
 export interface PopupParameters {
 	url: string
-	popupResultIdentifier: string
+	popupId: string
 	width?: number
 	height?: number
 }
 
 export interface CheckoutPopupInfo {
-	popupResultIdentifier: string
+	popupId: string
 	success_url: string
 	cancel_url: string
 }
 
 export interface CheckoutPopupResult {
-	popupResultIdentifier: string
+	popupId: string
 	status: "success" | "cancel"
 }
 
@@ -32,7 +32,7 @@ export namespace popupCoordinator {
 
 		function makeUrl(id: string, success: boolean) {
 			return `${returnUrl}?${encodeQuerystring({
-				popupResultIdentifier: id,
+				popupId: id,
 				status: success
 					? "success"
 					: "cancel"
@@ -42,7 +42,7 @@ export namespace popupCoordinator {
 		export function generatePopupInfo(generateId: () => Id): CheckoutPopupInfo {
 			const id = generateId().string
 			return {
-				popupResultIdentifier: id,
+				popupId: id,
 				success_url: makeUrl(id, true),
 				cancel_url: makeUrl(id, false),
 			}
@@ -53,7 +53,7 @@ export namespace popupCoordinator {
 			url,
 			width = 260,
 			height = 260,
-			popupResultIdentifier,
+			popupId,
 		}: PopupParameters) {
 
 		// TODO
@@ -66,8 +66,8 @@ export namespace popupCoordinator {
 			window.addEventListener("message", event => {
 				const data = <CheckoutPopupResult>event.data
 				const isFromSafeOrigin = event.origin === window.origin
-				const isMatchingPopupResultIdentifier = data?.popupResultIdentifier === popupResultIdentifier
-				if (isFromSafeOrigin && isMatchingPopupResultIdentifier)
+				const isMatchingPopupId = data?.popupId === popupId
+				if (isFromSafeOrigin && isMatchingPopupId)
 					resolve(data)
 				else
 					console.error(`ignoring message from origin "${event.origin}" (${data})`)
