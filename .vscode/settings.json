@@ -33,6 +33,8 @@
 		"editor.insertSpaces": true,
 	},
 
+	"lit-plugin.rules.no-invalid-css": "off",
+
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"javascript.format.semicolons": "remove",
 	"typescript.format.semicolons": "remove",
@@ -41,5 +43,5 @@
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
 	"javascript.preferences.importModuleSpecifierEnding": "js",
-	"typescript.preferences.importModuleSpecifierEnding": "js",
+	"typescript.preferences.importModuleSpecifierEnding": "js"
 }
