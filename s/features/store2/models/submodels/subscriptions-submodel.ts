@@ -47,11 +47,13 @@ export function makeSubscriptionsSubmodel({
 				stripeAccountId,
 				stripeSessionId,
 				stripeSessionUrl,
+				popupInfo: {popupResultIdentifier},
 			} = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			const result = await popupCoordinator.stripeCheckout.openPopupAndWaitForResult({
+			const result = await popupCoordinator.openPopupAndWaitForResult({
 				url: stripeSessionUrl,
 				width: 260,
 				height: 260,
+				popupResultIdentifier,
 			})
 			console.log("RESULT", result)
 			debugger
