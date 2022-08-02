@@ -58,7 +58,6 @@ export namespace popupCoordinator {
 
 		// TODO
 		// - message origin checking should work properly
-		// - popups should have unique identifiers, results must specify them
 
 		const popup = window.open(url, "_blank", centeredPopupFeatures(width, height))
 
