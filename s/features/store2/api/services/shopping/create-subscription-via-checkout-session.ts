@@ -1,13 +1,12 @@
 
 import {StoreCustomerAuth} from "../../types.js"
 import {getRowsForTierId} from "../helpers/get-rows-for-tier-id.js"
-import {CheckoutPopupInfo} from "../../../popups/popup-coordinator.js"
 import {stripeClientReferenceId} from "../../../stripe/utils/stripe-client-reference-id.js"
 
 export async function createSubscriptionViaCheckoutSession(
 		auth: StoreCustomerAuth,
 		tierId: string,
-		{success_url, cancel_url}: CheckoutPopupInfo,
+		{success_url, cancel_url}: {success_url: string, cancel_url: string},
 	) {
 
 	const {tierRow} = await getRowsForTierId({tierId, auth})

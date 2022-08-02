@@ -55,8 +55,7 @@ export function makeSubscriptionsSubmodel({
 				height: 260,
 				popupId,
 			})
-			console.log("RESULT", result)
-			debugger
+			console.log("checkout result:", result)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {

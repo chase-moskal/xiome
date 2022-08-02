@@ -9,6 +9,7 @@ export default ({v}: XiomeWebsiteContext) => html`
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
+	<title>Fake Stripe Checkout</title>
 </head>
 <body>
 	<h1>Fake Stripe Checkout</h1>

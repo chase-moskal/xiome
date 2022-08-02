@@ -8,6 +8,7 @@ import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
+import {popupCoordinator} from "../../popups/popup-coordinator.js"
 
 export const makeConnectService = (
 	options: StoreServiceOptions
@@ -91,15 +92,15 @@ export const makeConnectService = (
 				}
 				await storeDatabase.tables.merchants.stripeAccounts.create(row)
 			}
+			const {popupId, ...info} = popupCoordinator.makePopupInfoForStripeConnect(options)
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
 					account: stripeAccountId,
 					collect: "currently_due",
 					type: "account_onboarding",
-					return_url: options.accountReturningLinks.return,
-					refresh_url: options.accountReturningLinks.refresh,
+					...info,
 				})
-			return {stripeAccountId, stripeAccountSetupLink}
+			return {popupId, stripeAccountId, stripeAccountSetupLink}
 		},
 
 		async generateStripeLoginLink() {

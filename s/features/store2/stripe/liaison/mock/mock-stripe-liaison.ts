@@ -51,7 +51,9 @@ export function mockStripeLiaison({
 		accountLinks: {
 			async create(params) {
 				const accountLink: Partial<Stripe.AccountLink> = {
-					url: `https://fake.xiome.io/stripe-account-setup`,
+					url: `/mocksite/fakestripe/connect`
+						+ `?return_url=${encodeURIComponent(params.return_url)}`
+						+ `&refresh_url=${encodeURIComponent(params.refresh_url)}`
 				}
 				return stripeResponse(<Stripe.AccountLink>accountLink)
 			},
@@ -139,10 +141,9 @@ export function mockStripeLiaison({
 						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
 							resource: {
 								mode: params.mode,
-								url: `/mocksite/fakestripe/checkout${
-									`?success_url=${encodeURIComponent(params.success_url)}` +
-									`&cancel_url=${encodeURIComponent(params.cancel_url)}`
-								}`,
+								url: `/mocksite/fakestripe/checkout`
+									+ `?success_url=${encodeURIComponent(params.success_url)}`
+									+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`,
 								customer: params.customer,
 								client_reference_id: params.client_reference_id,
 								line_items: params.mode === "setup"

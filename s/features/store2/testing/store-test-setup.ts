@@ -33,14 +33,7 @@ export const storeTestSetup = async() => ({
 		const appId = generateId().string
 
 		const storeApi = makeStoreApi<AccessPayload>({
-			accountReturningLinks: {
-				refresh: "",
-				return: "",
-			},
-			checkoutReturningLinks: {
-				cancel: "",
-				success: "",
-			},
+			popupReturnUrl: "fake-popup-return-url",
 			stripeLiaison: circuit.stripeLiaison,
 			generateId,
 			storePolicy: async(access) => (<StoreAuth>{

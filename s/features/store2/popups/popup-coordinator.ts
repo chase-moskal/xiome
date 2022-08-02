@@ -9,68 +9,90 @@ export interface PopupParameters {
 	height?: number
 }
 
-export interface CheckoutPopupInfo {
+export interface PopupResult {
 	popupId: string
-	success_url: string
-	cancel_url: string
 }
-
-export interface CheckoutPopupResult {
-	popupId: string
-	status: "success" | "cancel"
-}
-
-const returnUrl = "http://localhost:8080/popups/return"
 
 export namespace popupCoordinator {
-	export namespace stripeCheckout {
 
-		function encodeQuerystring(result: CheckoutPopupResult) {
-			const searchParams = new URLSearchParams({...result})
-			return searchParams.toString()
-		}
-
-		function makeUrl(id: string, success: boolean) {
-			return `${returnUrl}?${encodeQuerystring({
-				popupId: id,
-				status: success
-					? "success"
-					: "cancel"
-			})}`
-		}
-
-		export function generatePopupInfo(generateId: () => Id): CheckoutPopupInfo {
-			const id = generateId().string
-			return {
-				popupId: id,
-				success_url: makeUrl(id, true),
-				cancel_url: makeUrl(id, false),
-			}
-		}
-	}
-
-	export async function openPopupAndWaitForResult({
+	export async function openPopupAndWaitForResult<xResult extends PopupResult>({
 			url,
 			width = 260,
 			height = 260,
 			popupId,
-		}: PopupParameters) {
+		}: PopupParameters): Promise<xResult> {
 
 		// TODO
 		// - message origin checking should work properly
 
 		const popup = window.open(url, "_blank", centeredPopupFeatures(width, height))
 
-		return new Promise<CheckoutPopupResult>(resolve => {
-			window.addEventListener("message", event => {
-				const data = <CheckoutPopupResult>event.data
+		return new Promise<xResult | undefined>(resolve => {
+			function finish(result: xResult | undefined) {
+				clearInterval(interval)
+				window.removeEventListener("message", handleMessage)
+				resolve(result)
+			}
+			function handleMessage(event: MessageEvent<xResult>) {
 				const isFromSafeOrigin = event.origin === window.origin
-				const isMatchingPopupId = data?.popupId === popupId
+				const isMatchingPopupId = event.data?.popupId === popupId
 				if (isFromSafeOrigin && isMatchingPopupId)
-					resolve(data)
+					finish(event.data)
 				else
-					console.error(`ignoring message from origin "${event.origin}" (${data})`)
-			})
+					console.error(`ignoring message from origin "${event.origin}":`, event.data)
+			}
+			window.addEventListener("message", handleMessage)
+			const interval = setInterval(() => {
+				if (popup.closed)
+					finish(undefined)
+			}, 100)
 		})
+	}
+
+	function encodeQuerystring(result: any) {
+		const searchParams = new URLSearchParams({...result})
+		return searchParams.toString()
+	}
+
+	interface PopupInfoParams {
+		popupReturnUrl: string
+		generateId: () => Id
+	}
+
+	export function makePopupInfoForStripeConnect({
+			popupReturnUrl,
+			generateId,
+		}: PopupInfoParams) {
+		const popupId = generateId().string
+		console.log("POPUPID", popupId)
+		return {
+			popupId,
+			return_url: `${popupReturnUrl}?${encodeQuerystring({
+				popupId,
+				status: "return",
+			})}`,
+			refresh_url: `${popupReturnUrl}?${encodeQuerystring({
+				popupId,
+				status: "refresh",
+			})}`,
+		}
+	}
+
+	export function makePopupInfoForStripeCheckout({
+			popupReturnUrl,
+			generateId,
+		}: PopupInfoParams) {
+		const popupId = generateId().string
+		return {
+			popupId,
+			success_url: `${popupReturnUrl}?${encodeQuerystring({
+				popupId,
+				status: "success",
+			})}`,
+			cancel_url: `${popupReturnUrl}?${encodeQuerystring({
+				popupId,
+				status: "cancel",
+			})}`,
+		}
 	}
 }

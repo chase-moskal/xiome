@@ -94,14 +94,9 @@ export async function assimilateApi({
 			},
 			stripeLiaison,
 			generateId: rando.randomId,
-			checkoutReturningLinks: {
-				cancel: "",
-				success: "",
-			},
-			accountReturningLinks: {
-				refresh: "",
-				return: "",
-			},
+			
+			// TODO make this json configurable
+			popupReturnUrl: "http://localhost:8080/popups/return",
 		}),
 	})
 }

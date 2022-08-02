@@ -30,7 +30,7 @@ export const makeSubscriptionShoppingService = (
 
 	async buySubscriptionViaCheckoutSession(tierId: string) {
 		await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
-		const popupInfo = popupCoordinator.stripeCheckout.generatePopupInfo(options.generateId)
+		const popupInfo = popupCoordinator.makePopupInfoForStripeCheckout(options)
 		const session = await createSubscriptionViaCheckoutSession(
 			auth,
 			tierId,

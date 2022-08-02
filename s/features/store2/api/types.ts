@@ -13,14 +13,15 @@ import {appPermissions} from "../../../assembly/backend/permissions/standard-per
 import {AnonAuth, AnonMeta} from "../../auth/types/auth-metas.js"
 
 export interface StoreApiOptions<xMeta = any> {
-	accountReturningLinks: {
-		refresh: string
-		return: string
-	}
-	checkoutReturningLinks: {
-		cancel: string
-		success: string
-	}
+	popupReturnUrl: string
+	// accountReturningLinks: {
+	// 	refresh: string
+	// 	return: string
+	// }
+	// checkoutReturningLinks: {
+	// 	cancel: string
+	// 	success: string
+	// }
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
 	storePolicy: renraku.Policy<xMeta, StoreAuth>

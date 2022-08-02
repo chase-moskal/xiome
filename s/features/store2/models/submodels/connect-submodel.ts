@@ -3,6 +3,7 @@ import {ops} from "../../../../framework/ops.js"
 import {StorePopups, StoreServices} from "../types.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
+import {popupCoordinator, PopupResult} from "../../popups/popup-coordinator.js"
 
 export function makeConnectSubmodel({
 		popups,
@@ -49,10 +50,17 @@ export function makeConnectSubmodel({
 		load,
 
 		async connectStripeAccount() {
-			await popups.stripeConnect(
-				await services.connect.generateConnectSetupLink()
-			)
-			await reloadStore()
+			const {popupId, stripeAccountSetupLink} = await services.connect.generateConnectSetupLink()
+			type Result = PopupResult & {status: "return" | "refresh"}
+			const result = await popupCoordinator.openPopupAndWaitForResult<Result>({
+				popupId,
+				url: stripeAccountSetupLink,
+			})
+			if (result?.status === "return")
+				await reloadStore()
+			// await popups.stripeConnect(
+			// 	await services.connect.generateConnectSetupLink()
+			// )
 		},
 		async stripeLogin() {
 			const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
