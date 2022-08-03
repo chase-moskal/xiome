@@ -36,6 +36,7 @@ export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 				rig: mockStoreRig(),
 				mockStripeOperations,
 			}),
+			mockStripeOperations,
 			chatConnect: await chatMockClientEntirely(storage),
 		})
 

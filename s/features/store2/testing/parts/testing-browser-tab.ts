@@ -71,6 +71,7 @@ export const testingBrowserTab = ({
 			rig,
 			mockStripeOperations: circuit.mockStripeOperations,
 		}),
+		mockStripeOperations: circuit.mockStripeOperations,
 		async reauthorize() {
 			await logout()
 			await login(session.privileges)

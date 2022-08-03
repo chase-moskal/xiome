@@ -1,6 +1,7 @@
 
 import {Op} from "../../../framework/ops.js"
 import {StorePopups, StoreServices} from "./types.js"
+import {MockStripeOperations} from "../stripe/types.js"
 import {AccessPayload} from "../../auth/types/auth-tokens.js"
 import {makeStoreStateSystem} from "./state/store-state-system.js"
 import {setupStoreSubmodels} from "./utils/setup-store-submodels.js"
@@ -9,6 +10,7 @@ import {setupLogicForInitAndLoading} from "./utils/setup-logic-for-init-and-load
 export function makeStoreModel(options: {
 		popups: StorePopups
 		services: StoreServices
+		mockStripeOperations: MockStripeOperations
 		reauthorize: () => Promise<void>
 	}) {
 

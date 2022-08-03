@@ -18,6 +18,7 @@ export async function assembleModels({
 		storePopups,
 		storage,
 		authMediator,
+		mockStripeOperations,
 		chatConnect,
 	}: AssembleModelsOptions) {
 
@@ -73,6 +74,7 @@ export async function assembleModels({
 			subscriptionShopping: remote.store.subscriptionShoppingService,
 		},
 		popups: storePopups,
+		mockStripeOperations,
 	})
 
 	const administrativeModel = makeAdministrativeModel({

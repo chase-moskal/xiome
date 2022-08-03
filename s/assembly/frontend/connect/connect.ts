@@ -6,6 +6,7 @@ import {simpleFlexStorage} from "dbmage"
 import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
 import {makeStorePopups} from "../../../features/store2/popups/make-store-popups.js"
+import {prepareNoopStripeOperations} from "../../../features/store2/stripe/utils/prepare-noop-stripe-operations.js"
 
 function url(platformOrigin: string) {
 	return new URL(platformOrigin)
@@ -32,5 +33,6 @@ export async function connect({
 	// const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
 	const storePopups = makeStorePopups()
 	const chatConnect = chatSocketClient(chatServer)
-	return {appId, remote, storage, authMediator, storePopups, chatConnect}
+	const mockStripeOperations = prepareNoopStripeOperations()
+	return {appId, remote, storage, authMediator, storePopups, mockStripeOperations, chatConnect}
 }

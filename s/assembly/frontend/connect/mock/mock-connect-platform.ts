@@ -31,13 +31,15 @@ export async function mockConnectPlatform({
 		appOrigin,
 	})
 
+	const {mockStripeOperations} = backend
+
 	const storePopups = mockStorePopups({
 		rig: mockStoreRig(),
-		mockStripeOperations: backend.mockStripeOperations,
+		mockStripeOperations,
 	})
 
 	const chatConnect = await chatMockClientEntirely(storage)
 	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
-	return {appId, remote, storage, authMediator, backend, storePopups, setMockLatency, chatConnect}
+	return {appId, remote, storage, authMediator, backend, storePopups, mockStripeOperations, setMockLatency, chatConnect}
 }

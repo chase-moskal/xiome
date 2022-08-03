@@ -2,11 +2,23 @@
 import {Id} from "dbmage"
 import {centeredPopupFeatures} from "../../../toolbox/popups/centered-popup-features.js"
 
+export interface SecretMockCommand {
+	secretMockCommand: true
+	commandId: number
+	type: string
+}
+
+export interface SecretMockResponse {
+	secretMockCommand: true
+	commandId: number
+}
+
 export interface PopupParameters {
 	url: string
 	popupId: string
 	width?: number
 	height?: number
+	handleSecretMockCommand?(command: SecretMockCommand): Promise<void>,
 }
 
 export interface PopupResult {
@@ -20,6 +32,7 @@ export namespace popupCoordinator {
 			width = 260,
 			height = 260,
 			popupId,
+			handleSecretMockCommand = async() => {},
 		}: PopupParameters): Promise<xResult> {
 
 		// TODO
@@ -33,11 +46,24 @@ export namespace popupCoordinator {
 				window.removeEventListener("message", handleMessage)
 				resolve(result)
 			}
-			function handleMessage(event: MessageEvent<xResult>) {
+			function handleMessage(event: MessageEvent<any>) {
 				const isFromSafeOrigin = event.origin === window.origin
 				const isMatchingPopupId = event.data?.popupId === popupId
-				if (isFromSafeOrigin && isMatchingPopupId)
-					finish(event.data)
+				const isSecretMockCommand = event.data.secretMockCommand === true
+
+				if (isFromSafeOrigin) {
+					if (isSecretMockCommand)
+						handleSecretMockCommand(event.data).then(() => {
+							popup.postMessage(<SecretMockResponse>{
+								secretMockCommand: true,
+								commandId: event.data.commandId,
+							}, "*")
+						})
+					else if (isMatchingPopupId)
+						finish(event.data)
+					else
+						console.error(`ignoring message for other popup "${event.data.popupId}":`, event.data)
+				}
 				else
 					console.error(`ignoring message from origin "${event.origin}":`, event.data)
 			}
