@@ -1,12 +1,11 @@
 
-import {makeRemote} from "./remote/make-remote.js"
-// import {systemPopups} from "./system-popups/system-popups.js"
-import {XiomeConfig} from "../types/xiome-config-connected.js"
 import {simpleFlexStorage} from "dbmage"
+
+import {makeRemote} from "./remote/make-remote.js"
+import {XiomeConfig} from "../types/xiome-config-connected.js"
+import {makeStripePopups} from "../../../features/store2/popups/make-stripe-popups.js"
 import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
-import {makeStorePopups} from "../../../features/store2/popups/make-store-popups.js"
-import {prepareNoopStripeOperations} from "../../../features/store2/stripe/utils/prepare-noop-stripe-operations.js"
 
 function url(platformOrigin: string) {
 	return new URL(platformOrigin)
@@ -30,9 +29,9 @@ export async function connect({
 		apiLink: apiServer,
 	})
 	wireMediatorBroadcastChannel({appId, authMediator})
-	// const popups = systemPopups({popupsBase: `${platformOrigin}/popups`})
-	const storePopups = makeStorePopups()
+
+	const stripePopups = makeStripePopups()
+
 	const chatConnect = chatSocketClient(chatServer)
-	const mockStripeOperations = prepareNoopStripeOperations()
-	return {appId, remote, storage, authMediator, storePopups, mockStripeOperations, chatConnect}
+	return {appId, remote, storage, authMediator, stripePopups, chatConnect}
 }

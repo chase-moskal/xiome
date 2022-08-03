@@ -15,10 +15,9 @@ import {makePermissionsModel} from "../../../features/auth/aspects/permissions/m
 export async function assembleModels({
 		appId,
 		remote,
-		storePopups,
 		storage,
 		authMediator,
-		mockStripeOperations,
+		stripePopups,
 		chatConnect,
 	}: AssembleModelsOptions) {
 
@@ -73,8 +72,7 @@ export async function assembleModels({
 			subscriptionPlanning: remote.store.subscriptionPlanningService,
 			subscriptionShopping: remote.store.subscriptionShoppingService,
 		},
-		popups: storePopups,
-		mockStripeOperations,
+		stripePopups,
 	})
 
 	const administrativeModel = makeAdministrativeModel({

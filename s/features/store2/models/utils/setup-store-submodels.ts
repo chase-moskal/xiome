@@ -1,33 +1,22 @@
 
-import {StorePopups, StoreServices} from "../types.js"
-import {MockStripeOperations} from "../../stripe/types.js"
+import {StoreServices} from "../types.js"
+import {StripePopups} from "../../popups/types.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {makeBillingSubmodel} from "../submodels/billing-submodel.js"
 import {makeConnectSubmodel} from "../submodels/connect-submodel.js"
 import {makeSubscriptionsSubmodel} from "../submodels/subscriptions-submodel.js"
 
-export function setupStoreSubmodels({
-		services, popups, stateSystem, mockStripeOperations, reauthorize, reloadStore,
-	}: {
-		popups: StorePopups
+export function setupStoreSubmodels(options: {
 		services: StoreServices
 		stateSystem: StoreStateSystem
-		mockStripeOperations: MockStripeOperations
+		stripePopups: StripePopups
 		reauthorize: () => Promise<void>
 		reloadStore: () => Promise<void>
 	}) {
-	
-	const subscriptions = makeSubscriptionsSubmodel({
-		stateSystem, reauthorize, popups, services,
-	})
 
-	const billing = makeBillingSubmodel({
-		stateSystem, popups, services,
-	})
-
-	const connect = makeConnectSubmodel({
-		stateSystem, services, mockStripeOperations, reloadStore,
-	})
+	const subscriptions = makeSubscriptionsSubmodel(options)
+	const billing = makeBillingSubmodel(options)
+	const connect = makeConnectSubmodel(options)
 
 	return {subscriptions, billing, connect}
 }

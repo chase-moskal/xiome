@@ -1,23 +1,23 @@
 
 import {unproxy} from "@chasemoskal/snapstate"
 
+import {StoreServices} from "../types.js"
 import {ops} from "../../../../framework/ops.js"
-import {StorePopups, StoreServices} from "../types.js"
+import {StripePopups} from "../../popups/types.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {SubscriptionPricing} from "../../types/store-concepts.js"
-import {popupCoordinator} from "../../popups/popup-coordinator.js"
 import {SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
 
 export function makeSubscriptionsSubmodel({
-		popups,
 		services,
 		stateSystem,
+		stripePopups,
 		reauthorize,
 	}: {
-		popups: StorePopups
 		services: StoreServices
 		stateSystem: StoreStateSystem
+		stripePopups: StripePopups
 		reauthorize: () => Promise<void>
 	}) {
 
@@ -43,19 +43,11 @@ export function makeSubscriptionsSubmodel({
 
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
-			const {
-				stripeAccountId,
-				stripeSessionId,
-				stripeSessionUrl,
-				popupInfo: {popupId},
-			} = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			const result = await popupCoordinator.openPopupAndWaitForResult({
-				url: stripeSessionUrl,
-				width: 260,
-				height: 260,
-				popupId,
-			})
-			console.log("checkout result:", result)
+			const details = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
+			const result = stripePopups.checkout(details)
+
+			// TODO what should we do with the checkout result?
+			console.log("TODO checkout result:", result)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {

@@ -5,9 +5,8 @@ import {mockRegisterApp} from "./common/mock-register-app.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
+import {mockStripePopups} from "../../../../features/store2/popups/mock-stripe-popups.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
-import {mockStorePopups} from "../../../../features/store2/popups/mock-store-popups.js"
-import {mockStoreRig} from "../../../../features/store2/testing/parts/mock-rig.js"
 
 export async function mockConnectApp({
 		appOrigin, origins, storage, appWindowLink,
@@ -49,14 +48,10 @@ export async function mockConnectApp({
 	})
 
 	const {mockStripeOperations} = backend
-
-	const storePopups = mockStorePopups({
-		rig: mockStoreRig(),
-		mockStripeOperations,
-	})
+	const stripePopups = mockStripePopups({mockStripeOperations})
 
 	const chatConnect = await chatMockClientEntirely(storage)
 	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
-	return {appId, remote, storage, authMediator, backend, storePopups, mockStripeOperations, setMockLatency, chatConnect}
+	return {appId, remote, storage, authMediator, backend, stripePopups, setMockLatency, chatConnect}
 }

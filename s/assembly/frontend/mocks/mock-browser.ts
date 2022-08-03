@@ -6,9 +6,9 @@ import {SystemApi} from "../../backend/types/system-api.js"
 import {assembleModels} from "../models/assemble-models.js"
 import {mockModalSystem} from "../modal/mock-modal-system.js"
 import {MockStripeOperations} from "../../../features/store2/stripe/types.js"
-import {mockStorePopups} from "../../../features/store2/popups/mock-store-popups.js"
-import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 import {mockStoreRig} from "../../../features/store2/testing/parts/mock-rig.js"
+import {riggedStripePopups} from "../../../features/store2/popups/rigged-stripe-popups.js"
+import {chatMockClientEntirely} from "../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 		api: SystemApi
@@ -32,11 +32,10 @@ export async function mockBrowser({api, appOrigin, mockStripeOperations}: {
 			remote,
 			storage,
 			authMediator,
-			storePopups: mockStorePopups({
+			stripePopups: riggedStripePopups({
 				rig: mockStoreRig(),
 				mockStripeOperations,
 			}),
-			mockStripeOperations,
 			chatConnect: await chatMockClientEntirely(storage),
 		})
 

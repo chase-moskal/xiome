@@ -1,14 +1,15 @@
 
+import {StoreServices} from "../types.js"
 import {ops} from "../../../../framework/ops.js"
-import {StorePopups, StoreServices} from "../types.js"
+import {StripePopups} from "../../popups/types.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 
 export function makeBillingSubmodel({
-		popups,
+		stripePopups,
 		services,
 		stateSystem,
 	}: {
-		popups: StorePopups
+		stripePopups: StripePopups
 		services: StoreServices
 		stateSystem: StoreStateSystem
 	}) {
@@ -29,11 +30,15 @@ export function makeBillingSubmodel({
 	async function checkoutPaymentMethod() {
 		const {stripeAccountId, stripeSessionId, stripeSessionUrl} =
 			await services.billing.checkoutPaymentMethod()
-		await popups.checkoutPaymentMethod({
-			stripeAccountId,
-			stripeSessionId,
-			stripeSessionUrl,
-		})
+
+		// TODO billing popup
+		console.log("TODO billing checkout payment method popup")
+		// await popups.checkoutPaymentMethod({
+		// 	stripeAccountId,
+		// 	stripeSessionId,
+		// 	stripeSessionUrl,
+		// })
+
 		await load()
 	}
 

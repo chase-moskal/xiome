@@ -8,8 +8,8 @@ import {ops} from "../../../../framework/ops.js"
 import {Await} from "../../../../types/await.js"
 import {makeStoreApi} from "../../api/store-api.js"
 import {makeStoreModel} from "../../models/store-model.js"
-import {mockStorePopups} from "../../popups/mock-store-popups.js"
 import {mockStripeCircuit} from "../../stripe/mock-stripe-circuit.js"
+import {riggedStripePopups} from "../../popups/rigged-stripe-popups.js"
 
 export const testingBrowserTab = ({
 		appId,
@@ -67,11 +67,10 @@ export const testingBrowserTab = ({
 			subscriptionPlanning: remote.subscriptionPlanningService,
 			subscriptionShopping: remote.subscriptionShoppingService,
 		},
-		popups: mockStorePopups({
+		stripePopups: riggedStripePopups({
 			rig,
 			mockStripeOperations: circuit.mockStripeOperations,
 		}),
-		mockStripeOperations: circuit.mockStripeOperations,
 		async reauthorize() {
 			await logout()
 			await login(session.privileges)

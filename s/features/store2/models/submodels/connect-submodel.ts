@@ -1,18 +1,17 @@
 
 import {ops} from "../../../../framework/ops.js"
-import {StorePopups, StoreServices} from "../types.js"
+import {StoreServices} from "../types.js"
+import {StripePopups} from "../../popups/types.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
-import {popupCoordinator, PopupResult, SecretMockCommand} from "../../popups/popup-coordinator.js"
-import {MockStripeOperations} from "../../stripe/types.js"
 
 export function makeConnectSubmodel({
-		mockStripeOperations,
+		stripePopups,
 		services,
 		stateSystem,
 		reloadStore,
 	}: {
-		mockStripeOperations: MockStripeOperations
+		stripePopups: StripePopups,
 		services: StoreServices
 		stateSystem: StoreStateSystem
 		reloadStore: () => Promise<void>
@@ -51,18 +50,8 @@ export function makeConnectSubmodel({
 		load,
 
 		async connectStripeAccount() {
-			const {popupId, stripeAccountSetupLink, stripeAccountId} = await services.connect.generateConnectSetupLink()
-			type Result = PopupResult & {status: "return" | "refresh"}
-			const result = await popupCoordinator.openPopupAndWaitForResult<Result>({
-				popupId,
-				url: stripeAccountSetupLink,
-				async handleSecretMockCommand(command: SecretMockCommand) {
-					if (command.type === "incomplete")
-						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
-					else if (command.type === "complete")
-						await mockStripeOperations.linkStripeAccount(stripeAccountId)
-				},
-			})
+			const details = await services.connect.generateConnectSetupLink()
+			const result = await stripePopups.connect(details)
 			if (result?.status === "return")
 				await reloadStore()
 		},
