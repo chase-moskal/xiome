@@ -64,9 +64,8 @@ export function makeConnectSubmodel({
 				throw new Error("stripe connect details missing for login")
 			const url = await services.connect.generateStripeLoginLink()
 			const {stripeAccountId} = connectDetails
-			console.log("TODO implement login popup")
-			// await popups.stripeLogin({stripeAccountId, url})
-			// await load()
+			await stripePopups.login({stripeAccountId, url})
+			await load()
 		},
 		async pause() {
 			await services.connect.pause()

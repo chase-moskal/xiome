@@ -1,7 +1,7 @@
 
+import {StripePopups} from "./types.js"
 import {MockStripeOperations} from "../stripe/types.js"
 import {MockStoreRig} from "../testing/parts/mock-rig.js"
-import {StripePopups} from "./types.js"
 
 export function riggedStripePopups({rig, mockStripeOperations}: {
 		rig: MockStoreRig
@@ -92,4 +92,3 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 // 		}),
 // 	}
 // }
-

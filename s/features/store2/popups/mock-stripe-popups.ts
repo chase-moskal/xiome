@@ -24,7 +24,10 @@ export function mockStripePopups({mockStripeOperations}: {
 				},
 			})
 		},
-		async login({stripeAccountId}: {stripeAccountId: string}): Promise<void> {
+		async login({url, stripeAccountId}: {
+				url: string
+				stripeAccountId: string
+			}): Promise<void> {
 			// TODO login popup
 			throw new Error("TODO login popup")
 			// await openPopupAndWaitForResult()
