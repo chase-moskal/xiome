@@ -7,6 +7,7 @@ export function mockStripePopups({mockStripeOperations}: {
 		mockStripeOperations: MockStripeOperations
 	}) {
 	return {
+
 		async connect({popupId, stripeAccountId, stripeAccountSetupLink}: {
 				popupId: string
 				stripeAccountId: string
@@ -24,6 +25,7 @@ export function mockStripePopups({mockStripeOperations}: {
 				},
 			})
 		},
+
 		async login({url, stripeAccountId}: {
 				url: string
 				stripeAccountId: string
@@ -32,7 +34,8 @@ export function mockStripePopups({mockStripeOperations}: {
 			throw new Error("TODO login popup")
 			// await openPopupAndWaitForResult()
 		},
-		async checkout({popupId, stripeSessionUrl}: {
+
+		async checkout({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
 				popupId: string
 				stripeSessionId: string
 				stripeAccountId: string
@@ -41,8 +44,10 @@ export function mockStripePopups({mockStripeOperations}: {
 			return openPopupAndWaitForResult({
 				popupId,
 				url: stripeSessionUrl,
-				width: 260,
-				height: 260,
+				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
+					if (command.type === "success")
+						await mockStripeOperations.checkoutSubscriptionTier(stripeAccountId, stripeSessionId)
+				},
 			})
 		},
 	}

@@ -44,10 +44,7 @@ export function makeSubscriptionsSubmodel({
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
 			const details = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			const result = stripePopups.checkout(details)
-
-			// TODO what should we do with the checkout result?
-			console.log("TODO checkout result:", result)
+			const result = await stripePopups.checkout(details)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {
