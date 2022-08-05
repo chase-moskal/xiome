@@ -42,7 +42,7 @@ export function mockStripeLiaison({
 			async createLoginLink(id) {
 				const loginLink: Partial<Stripe.LoginLink> = {
 					created: Date.now(),
-					url: `https://fake.xiome.io/stripe-account-login-link`,
+					url: `/mocksite/fakestripe/login`,
 				}
 				return stripeResponse(<Stripe.LoginLink>loginLink)
 			},

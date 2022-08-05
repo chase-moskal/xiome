@@ -20,12 +20,13 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 			}
 		},
 
-		async login({stripeAccountId}) {
+		async login({popupId, stripeAccountId}) {
 			rig.stripeLoginCount += 1
 			await mockStripeOperations.configureStripeAccount(
 				stripeAccountId,
 				rig.stripeAccountFate === "complete",
 			)
+			return {popupId}
 		},
 
 		async checkout({popupId, stripeAccountId, stripeSessionId}) {

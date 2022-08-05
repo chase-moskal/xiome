@@ -50,9 +50,9 @@ export function makeConnectSubmodel({
 		load,
 
 		async connectStripeAccount() {
-			const details = await services.connect.generateConnectSetupLink()
-			const result = await stripePopups.connect(details)
-			if (result?.status === "return")
+			const popupInfo = await services.connect.generateConnectSetupLink()
+			const {details} = await stripePopups.connect(popupInfo)
+			if (details?.status === "return")
 				await reloadStore()
 		},
 		async stripeLogin() {
@@ -62,10 +62,10 @@ export function makeConnectSubmodel({
 				throw new Error("no stripe account to generate login link for")
 			if (!connectDetails)
 				throw new Error("stripe connect details missing for login")
-			const url = await services.connect.generateStripeLoginLink()
+			const {stripeLoginLink, popupId} = await services.connect.generateStripeLoginLink()
 			const {stripeAccountId} = connectDetails
-			await stripePopups.login({stripeAccountId, url})
-			await load()
+			await stripePopups.login({stripeAccountId, stripeLoginLink, popupId})
+			await reloadStore()
 		},
 		async pause() {
 			await services.connect.pause()

@@ -6,7 +6,7 @@ import {makeSecretMockCommandSystem} from "./secret-command-system.js"
 const routines = {
 
 	async "connect"() {
-		const {popupId, return_url, refresh_url} = parseSearchParams()
+		const {return_url, refresh_url} = parseSearchParams()
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
 			async "button.complete"() {
@@ -23,7 +23,22 @@ const routines = {
 		})
 	},
 
-	async "login"() {},
+	async "login"() {
+		const commandSystem = makeSecretMockCommandSystem()
+		assignClickHandlers({
+			async "button.complete"() {
+				await commandSystem.postCommand("complete")
+				window.close()
+			},
+			async "button.incomplete"() {
+				await commandSystem.postCommand("incomplete")
+				window.close()
+			},
+			async "button.cancel"() {
+				window.close()
+			},
+		})
+	},
 
 	async "checkout"() {
 		const {success_url, cancel_url} = parseSearchParams()

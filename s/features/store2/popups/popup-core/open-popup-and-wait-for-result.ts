@@ -2,21 +2,21 @@
 import {Popups} from "../types.js"
 import {centeredPopupFeatures} from "../../../../toolbox/popups/centered-popup-features.js"
 
-export async function openPopupAndWaitForResult<xResult extends Popups.Result>({
+export async function openPopupAndWaitForResult<xDetails = void>({
 		url,
 		width = 260,
 		height = 260,
 		popupId,
 		handleSecretMockCommand = async() => {},
-	}: Popups.Parameters): Promise<xResult> {
+	}: Popups.Parameters) {
 
 	// TODO
 	// - message origin checking should work properly
 
 	const popup = window.open(url, "_blank", centeredPopupFeatures(width, height))
 
-	return new Promise<xResult | undefined>(resolve => {
-		function finish(result: xResult | undefined) {
+	return new Promise<Popups.Result<xDetails>>(resolve => {
+		function finish(result: Popups.Result<xDetails>) {
 			clearInterval(interval)
 			window.removeEventListener("message", handleMessage)
 			resolve(result)
@@ -45,7 +45,7 @@ export async function openPopupAndWaitForResult<xResult extends Popups.Result>({
 		window.addEventListener("message", handleMessage)
 		const interval = setInterval(() => {
 			if (popup.closed)
-				finish(undefined)
+				finish({popupId})
 		}, 100)
 	})
 }

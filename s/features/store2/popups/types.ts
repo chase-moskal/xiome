@@ -37,7 +37,8 @@ export namespace Popups {
 		handleSecretMockCommand?(command: SecretMockCommand): Promise<void>,
 	}
 
-	export interface Result {
+	export interface Result<xDetails = void> {
 		popupId: string
+		details?: xDetails
 	}
 }

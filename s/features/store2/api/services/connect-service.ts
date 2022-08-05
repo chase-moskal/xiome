@@ -111,8 +111,9 @@ export const makeConnectService = (
 			let stripeAccountId = connectDetails?.stripeAccountId
 			if (!stripeAccountId)
 				throw new renraku.ApiError(404, "no such connected stripe account")
+			const {popupId} = makeStripePopupSpecFor.login(options)
 			const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
-			return url
+			return {popupId, stripeLoginLink: url}
 		},
 	}),
 }))

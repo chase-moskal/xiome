@@ -13,26 +13,33 @@ export function mockStripePopups({mockStripeOperations}: {
 				stripeAccountId: string
 				stripeAccountSetupLink: string
 			}) {
-			type Result = Popups.Result & {status: "return" | "refresh"}
-			return openPopupAndWaitForResult<Result>({
+			return openPopupAndWaitForResult<{status: "return" | "refresh"}>({
 				popupId,
 				url: stripeAccountSetupLink,
 				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "incomplete")
-						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
-					else if (command.type === "complete")
+					if (command.type === "complete")
 						await mockStripeOperations.linkStripeAccount(stripeAccountId)
+					else if (command.type === "incomplete")
+						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
 				},
 			})
 		},
 
-		async login({url, stripeAccountId}: {
-				url: string
+		async login({popupId, stripeAccountId, stripeLoginLink}: {
+				popupId: string
 				stripeAccountId: string
-			}): Promise<void> {
-			// TODO login popup
-			throw new Error("TODO login popup")
-			// await openPopupAndWaitForResult()
+				stripeLoginLink: string
+			}) {
+			return openPopupAndWaitForResult<void>({
+				popupId,
+				url: stripeLoginLink,
+				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
+					if (command.type === "complete")
+						await mockStripeOperations.linkStripeAccount(stripeAccountId)
+					else if (command.type === "incomplete")
+						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
+				},
+			})
 		},
 
 		async checkout({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
@@ -41,7 +48,7 @@ export function mockStripePopups({mockStripeOperations}: {
 				stripeAccountId: string
 				stripeSessionUrl: string
 			}) {
-			return openPopupAndWaitForResult({
+			return openPopupAndWaitForResult<{status: "success" | "cancel"}>({
 				popupId,
 				url: stripeSessionUrl,
 				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
