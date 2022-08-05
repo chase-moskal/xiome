@@ -53,6 +53,20 @@ const routines = {
 			},
 		})
 	},
+
+	async "checkout-payment-method"() {
+		const {success_url, cancel_url} = parseSearchParams()
+		const commandSystem = makeSecretMockCommandSystem()
+		assignClickHandlers({
+			async "button.success"() {
+				await commandSystem.postCommand("success")
+				window.location.href = success_url
+			},
+			async "button.cancel"() {
+				window.location.href = cancel_url
+			},
+		})
+	},
 }
 
 const type = window.location.pathname.split("/").pop()

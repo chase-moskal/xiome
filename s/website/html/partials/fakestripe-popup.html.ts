@@ -17,6 +17,16 @@ export default ({name, contentHtml}: {
 		type=module
 		src="/features/store2/popups/inside-actual-popups/run-popup.js"
 	></script>
+	<style>
+		html, body {
+			background: #444;
+			color: #aaa;
+			height: 100%;
+		}
+		h1 {
+			font-size: 1.1em;
+		}
+	</style>
 </head>
 <body>
 	<h1>fake stripe ${name}</h1>

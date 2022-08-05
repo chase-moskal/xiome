@@ -28,16 +28,15 @@ export function makeBillingSubmodel({
 	}
 
 	async function checkoutPaymentMethod() {
-		const {stripeAccountId, stripeSessionId, stripeSessionUrl} =
+		const {popupId, stripeAccountId, stripeSessionId, stripeSessionUrl} =
 			await services.billing.checkoutPaymentMethod()
 
-		// TODO billing popup
-		console.log("TODO billing checkout payment method popup")
-		// await popups.checkoutPaymentMethod({
-		// 	stripeAccountId,
-		// 	stripeSessionId,
-		// 	stripeSessionUrl,
-		// })
+		await stripePopups.checkoutPaymentMethod({
+			popupId,
+			stripeAccountId,
+			stripeSessionId,
+			stripeSessionUrl,
+		})
 
 		await load()
 	}

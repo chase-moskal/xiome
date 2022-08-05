@@ -44,7 +44,7 @@ export function makeSubscriptionsSubmodel({
 	const actions = {
 		async checkoutSubscriptionTier(tierId: string) {
 			const details = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			const result = await stripePopups.checkout(details)
+			await stripePopups.checkout(details)
 		},
 
 		async createNewSubscriptionForTier(tierId: string) {

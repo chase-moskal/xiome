@@ -1,5 +1,6 @@
 
 import * as renraku from "renraku"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {CardClues} from "../../stripe/liaison/types.js"
 import {stripeClientReferenceId} from "../../stripe/utils/stripe-client-reference-id.js"
 import {PaymentMethod} from "../../types/store-concepts.js"
@@ -17,6 +18,7 @@ export const makeBillingService = (
 .expose(auth => ({
 
 	async checkoutPaymentMethod() {
+		const {popupId, ...urls} = makeStripePopupSpec.checkout(options)
 		const session = await auth.stripeLiaisonAccount.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "setup",
@@ -25,12 +27,10 @@ export const makeBillingService = (
 				appId: auth.access.appId,
 				userId: auth.access.user.userId,
 			}),
-
-			// TODO implement session urls
-			success_url: "TODO",
-			cancel_url: "TODO",
+			...urls,
 		})
 		return {
+			popupId,
 			stripeAccountId: auth.stripeAccountId,
 			stripeSessionId: session.id,
 			stripeSessionUrl: session.url,

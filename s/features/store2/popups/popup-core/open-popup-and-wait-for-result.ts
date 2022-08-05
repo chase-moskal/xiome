@@ -4,8 +4,8 @@ import {centeredPopupFeatures} from "../../../../toolbox/popups/centered-popup-f
 
 export async function openPopupAndWaitForResult<xDetails = void>({
 		url,
-		width = 260,
-		height = 260,
+		width = 360,
+		height = 360,
 		popupId,
 		handleSecretMockCommand = async() => {},
 	}: Popups.Parameters) {

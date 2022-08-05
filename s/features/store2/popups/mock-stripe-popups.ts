@@ -57,5 +57,21 @@ export function mockStripePopups({mockStripeOperations}: {
 				},
 			})
 		},
+
+		async checkoutPaymentMethod({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
+				popupId: string
+				stripeSessionId: string
+				stripeAccountId: string
+				stripeSessionUrl: string
+			}) {
+			return openPopupAndWaitForResult<{status: "success" | "cancel"}>({
+				popupId,
+				url: stripeSessionUrl,
+				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
+					if (command.type === "success")
+						await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
+				},
+			})
+		},
 	}
 }

@@ -22,4 +22,13 @@ export namespace makeFakestripePopupUrl {
 			+ `?success_url=${encodeURIComponent(params.success_url)}`
 			+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`
 	}
+
+	export function checkoutPaymentMethod(params: {
+			success_url: string
+			cancel_url: string
+		}) {
+		return `/mocksite/fakestripe/checkout-payment-method`
+			+ `?success_url=${encodeURIComponent(params.success_url)}`
+			+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`
+	}
 }

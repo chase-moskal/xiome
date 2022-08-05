@@ -143,10 +143,15 @@ export function mockStripeLiaison({
 						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
 							resource: {
 								mode: params.mode,
-								url: makeFakestripePopupUrl.checkout({
-									cancel_url: params.cancel_url!,
-									success_url: params.success_url!,
-								}),
+								url: params.mode === "setup"
+									? makeFakestripePopupUrl.checkoutPaymentMethod({
+										cancel_url: params.cancel_url!,
+										success_url: params.success_url!,
+									})
+									: makeFakestripePopupUrl.checkout({
+										cancel_url: params.cancel_url!,
+										success_url: params.success_url!,
+									}),
 								customer: params.customer,
 								client_reference_id: params.client_reference_id,
 								line_items: params.mode === "setup"
