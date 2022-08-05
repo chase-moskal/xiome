@@ -1,7 +1,7 @@
 
 import {Popups} from "./types.js"
 
-export namespace makeStripePopupSpecFor {
+export namespace makeStripePopupSpec {
 
 	export function connect({popupReturnUrl, generateId}: Popups.SpecParams) {
 		const popupId = generateId().string

@@ -34,8 +34,10 @@ export async function openPopupAndWaitForResult<xDetails = void>({
 							commandId: event.data.commandId,
 						}, "*")
 					})
-				else if (isMatchingPopupId)
-					finish(event.data)
+				else if (isMatchingPopupId) {
+					const {popupId, ...details} = event.data
+					finish({popupId, details})
+				}
 				else
 					console.error(`ignoring message for other popup "${event.data.popupId}":`, event.data)
 			}

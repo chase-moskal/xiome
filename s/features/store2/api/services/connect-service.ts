@@ -6,7 +6,7 @@ import {StoreServiceOptions} from "../types.js"
 import {MerchantRow} from "../../types/store-schema.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"
-import {makeStripePopupSpecFor} from "../../popups/make-stripe-popup-spec-for.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 
@@ -92,7 +92,7 @@ export const makeConnectService = (
 				}
 				await storeDatabase.tables.merchants.stripeAccounts.create(row)
 			}
-			const {popupId, ...urls} = makeStripePopupSpecFor.connect(options)
+			const {popupId, ...urls} = makeStripePopupSpec.connect(options)
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
 					account: stripeAccountId,
@@ -111,7 +111,7 @@ export const makeConnectService = (
 			let stripeAccountId = connectDetails?.stripeAccountId
 			if (!stripeAccountId)
 				throw new renraku.ApiError(404, "no such connected stripe account")
-			const {popupId} = makeStripePopupSpecFor.login(options)
+			const {popupId} = makeStripePopupSpec.login(options)
 			const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
 			return {popupId, stripeLoginLink: url}
 		},

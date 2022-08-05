@@ -10,6 +10,7 @@ import {MockStripeTables, MockAccount} from "./tables/types.js"
 import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
 import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
+import {makeFakestripePopupUrl} from "../../../popups/make-fakestripe-popup-urls.js"
 
 export function mockStripeLiaison({
 		rando, tables: rawTables, recentDetails, dispatchWebhook,
@@ -42,7 +43,7 @@ export function mockStripeLiaison({
 			async createLoginLink(id) {
 				const loginLink: Partial<Stripe.LoginLink> = {
 					created: Date.now(),
-					url: `/mocksite/fakestripe/login`,
+					url: makeFakestripePopupUrl.login(),
 				}
 				return stripeResponse(<Stripe.LoginLink>loginLink)
 			},
@@ -51,9 +52,10 @@ export function mockStripeLiaison({
 		accountLinks: {
 			async create(params) {
 				const accountLink: Partial<Stripe.AccountLink> = {
-					url: `/mocksite/fakestripe/connect`
-						+ `?return_url=${encodeURIComponent(params.return_url)}`
-						+ `&refresh_url=${encodeURIComponent(params.refresh_url)}`
+					url: makeFakestripePopupUrl.connect({
+						return_url: params.return_url!,
+						refresh_url: params.refresh_url!,
+					}),
 				}
 				return stripeResponse(<Stripe.AccountLink>accountLink)
 			},
@@ -141,9 +143,10 @@ export function mockStripeLiaison({
 						handleCreate: async(params: Stripe.Checkout.SessionCreateParams) => ({
 							resource: {
 								mode: params.mode,
-								url: `/mocksite/fakestripe/checkout`
-									+ `?success_url=${encodeURIComponent(params.success_url)}`
-									+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`,
+								url: makeFakestripePopupUrl.checkout({
+									cancel_url: params.cancel_url!,
+									success_url: params.success_url!,
+								}),
 								customer: params.customer,
 								client_reference_id: params.client_reference_id,
 								line_items: params.mode === "setup"

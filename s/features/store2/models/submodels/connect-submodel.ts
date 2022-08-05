@@ -51,8 +51,8 @@ export function makeConnectSubmodel({
 
 		async connectStripeAccount() {
 			const popupInfo = await services.connect.generateConnectSetupLink()
-			const {details} = await stripePopups.connect(popupInfo)
-			if (details?.status === "return")
+			const result = await stripePopups.connect(popupInfo)
+			if (result.details?.status === "return")
 				await reloadStore()
 		},
 		async stripeLogin() {

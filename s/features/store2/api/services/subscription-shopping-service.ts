@@ -3,7 +3,7 @@ import * as renraku from "renraku"
 
 import {StoreServiceOptions} from "../types.js"
 import {SubscriptionDetails} from "../../types/store-concepts.js"
-import {makeStripePopupSpecFor} from "../../popups/make-stripe-popup-spec-for.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {cancelStripeSubscription} from "./shopping/cancel-stripe-subscription.js"
 import {uncancelStripeSubscription} from "./shopping/uncancel-stripe-subscription.js"
 import {fetchAllSubscriptionDetails} from "./shopping/fetch-all-subscription-details.js"
@@ -30,7 +30,7 @@ export const makeSubscriptionShoppingService = (
 
 	async buySubscriptionViaCheckoutSession(tierId: string) {
 		await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
-		const {popupId, ...urls} = makeStripePopupSpecFor.checkout(options)
+		const {popupId, ...urls} = makeStripePopupSpec.checkout(options)
 		const session = await createSubscriptionViaCheckoutSession(
 			auth,
 			tierId,
