@@ -12,11 +12,11 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 		async connect({popupId, stripeAccountId}) {
 			if (rig.stripeAccountFate === "complete") {
 				await mockStripeOperations.linkStripeAccount(stripeAccountId)
-				return {popupId, status: "return"}
+				return {popupId, details: {status: "return"}}
 			}
 			else {
 				await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
-				return {popupId, status: "return"}
+				return {popupId, details: {status: "return"}}
 			}
 		},
 
