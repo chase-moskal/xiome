@@ -22,6 +22,9 @@ export class XioPriceInput extends Component {
 	@property({type: String, reflect: true})
 	step = "0.5"
 
+	@property({type: Boolean, reflect: true})
+	readonly: boolean
+
 	@property({type: String})
 	["initial-value"] = ""
 
@@ -32,7 +35,7 @@ export class XioPriceInput extends Component {
 	symbol = "$"
 
 	@property({type: String})
-	private inputValue = this["initial-value"]
+	private inputValue: string
 
 	@property({type: Object})
 	private problems: string[] = []
@@ -83,6 +86,7 @@ export class XioPriceInput extends Component {
 			min(Number(this.min)),
 			max(Number(this.max))
 		)
+		this.inputValue = this["initial-value"]
 	}
 
 	#validateInput = (value: string) => {
@@ -121,7 +125,8 @@ export class XioPriceInput extends Component {
 
 	render() {
 		const {
-			symbol, currency, inputValue, valid, showValidation, problems
+			symbol, currency, inputValue,
+			readonly, valid, showValidation, problems
 		} = this
 		const inputWidth = this["initial-value"]
 			? this["initial-value"].length
@@ -135,12 +140,16 @@ export class XioPriceInput extends Component {
 			<div class="container">
 				<label for="price" part="label"><slot></slot></label>
 				<div class="inner__container">
-					<button @click=${this.#decrement} class="decrement">
+					<button
+						?disabled=${readonly}
+						@click=${this.#decrement}
+						class="decrement">
 						${chevronDownSvg}
 					</button>
 					<div class="price__input__parent" tabindex="-1" ?data-valid=${valid}>
 						<span class="symbol">${symbol}</span>
 						<input
+							?readonly=${readonly}
 							@focus=${this.#focusInputParent}
 							@blur=${this.#unfocusInputParent}
 							@input=${this.#handleInputChange}
@@ -153,7 +162,10 @@ export class XioPriceInput extends Component {
 						${icon}
 						<span class="currency">${currency}</span>
 					</div>
-					<button @click=${this.#increment} class="increment">
+					<button
+						?disabled=${readonly}
+						@click=${this.#increment}
+						class="increment">
 						${chevronUpSvg}
 					</button>
 				</div>

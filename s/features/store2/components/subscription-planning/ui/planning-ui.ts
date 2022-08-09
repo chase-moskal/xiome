@@ -115,7 +115,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					`.tierediting [data-field="active"]`,
 					shadow,
 				),
-				price: select<HTMLInputElement>(
+				price: select<XioPriceInput>(
 					`.tierediting [data-field="price"]`,
 					shadow,
 				),
@@ -315,7 +315,11 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 								.validator=${validateLabel}>
 									tier label
 							</xio-text-input>
-							<p>price: $${centsToDollars(tier.pricing.price)}</p>
+							<xio-price-input
+								data-field="price"
+								initial-value=${centsToDollars(tier.pricing.price)}
+								readonly>
+									Price</xio-price-input>
 							<label>
 								active:
 								<input
