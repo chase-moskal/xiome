@@ -1,8 +1,7 @@
 
-import {debounce} from "@chasemoskal/snapstate"
+import {Validator} from "../../../toolbox/darkvalley.js"
 import {ValueChangeEvent} from "./events/value-change-event.js"
 import {Component, html, property, mixinStyles} from "../../../framework/component.js"
-import {max, min, number, Validator, validator, greaterThan} from "../../../toolbox/darkvalley.js"
 
 import styles from "./xio-price-input.css.js"
 import svgWarning from "../../../framework/icons/warning.svg.js"
@@ -84,15 +83,7 @@ export class XioPriceInput extends Component {
 		input.style.width = `${size+0.4}ch`
 	}
 
-	// #validatePrice: Validator<number>
-
 	init(): void {
-		// this.#validatePrice = validator(
-		// 	number(),
-		// 	greaterThan(0),
-		// 	min(Number(this.min)),
-		// 	max(Number(this.max))
-		// )
 		this.inputValue = this["initial-value"]
 	}
 

@@ -151,6 +151,7 @@ export function makeSubscriptionsSubmodel({
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
 			tier.active = active
 			tier.label = label
+			tier.pricing.price = pricing.price
 			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 		},
 	}
