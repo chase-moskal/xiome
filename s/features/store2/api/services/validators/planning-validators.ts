@@ -2,20 +2,11 @@
 import {SubscriptionPricing} from "../../../types/store-concepts.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
 import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "../planning/planning-types.js"
-import {boolean, branch, is, max, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
+import {boolean, branch, is, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
 
 export const validatePriceNumber = validator<number>(
 	number(),
 	min(0.01),
-)
-
-export const validatePriceString = validator<string>(
-	string(),
-	zeroWhitespace(),
-	regex(/^(\d+\.?\d+)$/, "must be a number"),
-	value => validatePriceNumber(
-		Math.round(parseFloat(value) * 100)
-	),
 )
 
 export const validateLabel = validator<string>(
@@ -50,9 +41,9 @@ export const validateBoolean = validator<boolean>(
 )
 
 export const validatePricing = schema<SubscriptionPricing>({
-	currency: validator(string(), branch(is("usd"))),
-	interval: validator(string(), branch(is("month"), is("year"))),
-	price: validator(number(), min(0)),
+	currency: validateCurrency,
+	interval: validateInterval,
+	price: validatePriceNumber,
 })
 
 export const validateNewTierDraft = schema<SubscriptionTierDraft>({

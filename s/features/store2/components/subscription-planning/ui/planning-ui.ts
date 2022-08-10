@@ -7,10 +7,10 @@ import {makePlanningComponentSnap} from "./planning-component-snap.js"
 import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
+import {XioPriceInput} from "../../../../xio-components/inputs/xio-price-input.js"
 import {SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../../types/store-concepts.js"
 import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft} from "../../../api/services/planning/planning-types.js"
-import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validatePriceString, validateEditTierDraft} from "../../../api/services/validators/planning-validators.js"
-import {XioPriceInput} from "../../../../xio-components/inputs/xio-price-input.js"
+import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validateEditTierDraft, validatePriceNumber} from "../../../api/services/validators/planning-validators.js"
 
 function preparePricing(dollars: string): SubscriptionPricing {
 	return {
@@ -129,7 +129,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			const problems = validateEditTierDraft(draft)
 			const isChanged =
 				draft.label !== tier.label ||
-				draft.active !== tier.active
+				draft.active !== tier.active ||
+				draft.pricing !== tier.pricing
 			states.component.editingTierDraft.isChanged = isChanged
 			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}
@@ -141,7 +142,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			toggleDraftPanel() {
 				states.component.draftNewPlan = states.component.draftNewPlan
 					? undefined
-					: {loading: false, problems: []}
+					: {loading: false, problems: ["cannot be empty"]}
 			},
 			async submit() {
 				const {draft, problems} = formGathering.newPlan()
@@ -263,7 +264,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
 				<xio-price-input
-					data-field=tierprice>
+					data-field=tierprice
+					.validator=${validatePriceNumber}>
 						tier price</xio-price-input>
 				<xio-button
 					?disabled=${loading || problems.length}
@@ -283,7 +285,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					.validator=${validateLabel}>
 						tier label</xio-text-input>
 				<xio-price-input
-					data-field=tierprice>
+					data-field=tierprice
+					.validator=${validatePriceNumber}>
 						tier price</xio-price-input>
 				<xio-button
 					?disabled=${loading || problems.length}
@@ -317,8 +320,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 							</xio-text-input>
 							<xio-price-input
 								data-field="price"
-								initial-value=${centsToDollars(tier.pricing.price)}
-								readonly>
+								.validator=${validatePriceNumber}
+								initial-value=${centsToDollars(tier.pricing.price)}>
 									Price</xio-price-input>
 							<label>
 								active:

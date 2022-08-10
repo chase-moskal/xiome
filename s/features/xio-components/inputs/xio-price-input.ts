@@ -10,6 +10,11 @@ import svgCircleCheck from "../../../framework/icons/circle-check.svg.js"
 import chevronUpSvg from "../../../framework/icons/feather/chevron-up.svg.js"
 import chevronDownSvg from "../../../framework/icons/feather/chevron-down.svg.js"
 
+enum Operation {
+	INCREMENT,
+	DECREMENT
+}
+
 @mixinStyles(styles)
 export class XioPriceInput extends Component {
 
@@ -38,13 +43,16 @@ export class XioPriceInput extends Component {
 	private inputValue: string
 
 	@property({type: Object})
-	private problems: string[] = []
+	problems: string[] = []
 
 	@property({type: Boolean})
 	private valid = true
 
 	@property({type: Boolean})
 	private showValidation = false
+
+	@property({type: Function})
+	validator: undefined | Validator<number>
 
 	private get input(): HTMLInputElement {
 		return this.shadowRoot
@@ -70,57 +78,47 @@ export class XioPriceInput extends Component {
 		this.inputParent.classList.remove('focussed')
 	}
 
-
 	#resizeInput = () => {
 		const {input} = this
 		const size = input.value.length > 1 ? input.value.length : 3
 		input.style.width = `${size+0.4}ch`
 	}
 
-	#validatePrice: Validator<number>
+	// #validatePrice: Validator<number>
 
 	init(): void {
-		this.#validatePrice = validator(
-			number(),
-			greaterThan(0),
-			min(Number(this.min)),
-			max(Number(this.max))
-		)
+		// this.#validatePrice = validator(
+		// 	number(),
+		// 	greaterThan(0),
+		// 	min(Number(this.min)),
+		// 	max(Number(this.max))
+		// )
 		this.inputValue = this["initial-value"]
 	}
 
 	#validateInput = (value: string) => {
 		this.showValidation = true
-		this.problems = this.#validatePrice(Number(value))
+		this.problems = this.validator ? this.validator(Number(value)) : []
 		this.valid = this.problems.length < 1
-		if(this.valid) {
-			this.dispatchEvent(new ValueChangeEvent(this.inputValue))
-		}
 	}
 
-	#validateInputDebounced = debounce(250, this.#validateInput)
-
-	#increment = () => {
+	#handleButtonClick(type: Operation) {
 		const {step, inputValue} = this
-		const newValue = (Number(inputValue) + Number(step)).toFixed(2)
-		this.#validateInputDebounced(newValue)
-		this.inputValue = newValue
+		if(type === Operation.INCREMENT)
+			this.inputValue = (Number(inputValue) + Number(step)).toFixed(2)
+		else if(type === Operation.DECREMENT)
+			this.inputValue = (Number(inputValue) - Number(step)).toFixed(2)
+		this.#validateInput(this.inputValue)
 		this.#resizeInput()
-	}
-
-	#decrement = () => {
-		const {step, inputValue} = this
-		const newValue = (Number(inputValue) - Number(step)).toFixed(2)
-		this.#validateInputDebounced(newValue)
-		this.inputValue = newValue
-		this.#resizeInput()
+		this.dispatchEvent(new ValueChangeEvent(this.inputValue))
 	}
 
 	#handleInputChange = (event: Event) => {
 		const input = event.target as HTMLInputElement
 		this.inputValue = input.value
-		this.#validateInputDebounced(this.inputValue)
+		this.#validateInput(this.inputValue)
 		this.#resizeInput()
+		this.dispatchEvent(new ValueChangeEvent(this.inputValue))
 	}
 
 	render() {
@@ -142,7 +140,7 @@ export class XioPriceInput extends Component {
 				<div class="inner__container">
 					<button
 						?disabled=${readonly}
-						@click=${this.#decrement}
+						@click=${() => this.#handleButtonClick(Operation.DECREMENT)}
 						class="decrement">
 						${chevronDownSvg}
 					</button>
@@ -164,7 +162,7 @@ export class XioPriceInput extends Component {
 					</div>
 					<button
 						?disabled=${readonly}
-						@click=${this.#increment}
+						@click=${() => this.#handleButtonClick(Operation.INCREMENT)}
 						class="increment">
 						${chevronUpSvg}
 					</button>
