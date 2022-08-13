@@ -4,7 +4,6 @@ import * as dbmage from "dbmage"
 import {find, Rando} from "dbmage"
 
 import {StripeLiaison} from "../types.js"
-import {getStripeId} from "../helpers/get-stripe-id.js"
 import {stripeResponse} from "./utils/stripe-response.js"
 import {MockStripeTables, MockAccount} from "./tables/types.js"
 import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
@@ -296,13 +295,30 @@ export function mockStripeLiaison({
 							return resource.retrieve(id)
 						},
 						async list(params: Stripe.SubscriptionListParams) {
-							const subscriptions = await tables.subscriptions.read(
-								dbmage.find(
-									params.price
-										? <any>{customer: params.customer, price: params.price}
-										: {customer: params.customer}
-								)
-							)
+							let equalityQuery: any = {equal: {customer: params.customer}}
+							let statusQuery: any = {notEqual: {status: "canceled"}}
+
+							if (params.price)
+								equalityQuery.equal.price = params.price
+
+							if (params.status)
+								statusQuery = params.status === "all"
+									? {isSet: {status: true}}
+									: params.status === "ended"
+										? [
+											"and",
+											{notEqual: {status: "canceled"}},
+											{notEqual: {status: "incomplete_expired"}},
+										]
+										: {equal: {status: params.status}}
+
+							const subscriptions = await tables.subscriptions.read({
+								conditions: [
+									"and",
+									equalityQuery,
+									statusQuery,
+								],
+							})
 							return stripeResponse({
 								object: "list",
 								data: subscriptions,

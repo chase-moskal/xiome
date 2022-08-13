@@ -2,13 +2,13 @@
 import Stripe from "stripe"
 import * as dbmage from "dbmage"
 
-import {StripeLiaison, StripeLiaisonAccount} from "../../liaison/types.js"
 import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
+import {StripeLiaison, StripeLiaisonAccount} from "../../liaison/types.js"
 import {StoreDatabase, StoreDatabaseRaw} from "../../../types/store-schema.js"
-import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
 import {stripeClientReferenceId} from "../../utils/stripe-client-reference-id.js"
-import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 import {appConstraintKey} from "../../../../../assembly/backend/types/database.js"
+import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
+import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 
 type PaymentDetails = {
 	stripeCustomerId: string
@@ -163,13 +163,18 @@ export async function detachAllOtherPaymentMethods ({
 export async function updateAllSubscriptionsToUseThisPaymentMethod ({
 		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
 	}: PaymentDetails) {
+
 	const subscriptions = await stripeLiaisonAccount
-		.subscriptions.list({customer: stripeCustomerId})
-	for (const subscription of subscriptions.data) {
-		if (subscription.status !== "canceled")
-			await stripeLiaisonAccount.subscriptions.update(subscription.id, {
-				default_payment_method: stripePaymentMethodId,
-			})
+		.subscriptions
+		.list({customer: stripeCustomerId, status: "all"})
+
+	for (const {id, status} of subscriptions.data) {
+		if (status !== "incomplete_expired")
+			await stripeLiaisonAccount
+				.subscriptions
+				.update(id, {
+					default_payment_method: stripePaymentMethodId
+				})
 	}
 }
 
