@@ -3,16 +3,18 @@ import Stripe from "stripe"
 import * as dbmage from "dbmage"
 
 import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
-import {MockStripeTables} from "../liaison/mock/tables/types.js"
+import {MetaDataTables, MockStripeTables} from "../liaison/mock/tables/types.js"
 import {DispatchWebhook, MockStripeRecentDetails} from "../types.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../liaison/types.js"
 
 export function prepareMockStripeOperations({
-		rando, stripeTables, stripeLiaison, recentDetails, dispatchWebhook,
+		rando, stripeTables, metaDataTables,
+		stripeLiaison, recentDetails, dispatchWebhook,
 	}: {
 		rando: dbmage.Rando
 		stripeLiaison: StripeLiaison
 		stripeTables: MockStripeTables
+		metaDataTables: MetaDataTables
 		recentDetails: MockStripeRecentDetails
 		dispatchWebhook: DispatchWebhook
 	}) {

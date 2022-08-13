@@ -8,6 +8,7 @@ import {mockStripePopups} from "../popups/mock-stripe-popups.js"
 import {MockStripeRecentDetails, StripeWebhooks} from "./types.js"
 import {mockStripeLiaison} from "./liaison/mock/mock-stripe-liaison.js"
 import {mockStripeTables} from "./liaison/mock/tables/mock-stripe-tables.js"
+import {makeMetaDataTables} from "./liaison/mock/tables/make-meta-data-tables.js"
 import {PreparePermissionsInteractions} from "../interactions/interactions-types.js"
 import {prepareMockStripeOperations} from "./utils/prepare-mock-stripe-operations.js"
 import {prepareWebhookDispatcherWithAntiCircularity} from "./utils/prepare-webhook-dispatcher-with-anti-circularity.js"
@@ -24,6 +25,7 @@ export async function mockStripeCircuit({
 	}) {
 
 	const stripeTables = await mockStripeTables({tableStorage})
+	const metaDataTables = await makeMetaDataTables({tableStorage})
 	const recentDetails = <MockStripeRecentDetails>{}
 
 	const pointer = {webhooks: undefined as StripeWebhooks | undefined}
@@ -32,6 +34,7 @@ export async function mockStripeCircuit({
 	const stripeLiaison = mockStripeLiaison({
 		rando,
 		recentDetails,
+		metaDataTables,
 		tables: stripeTables,
 		dispatchWebhook,
 	})
@@ -46,6 +49,7 @@ export async function mockStripeCircuit({
 	const mockStripeOperations = prepareMockStripeOperations({
 		rando,
 		stripeTables,
+		metaDataTables,
 		stripeLiaison,
 		recentDetails,
 		dispatchWebhook,

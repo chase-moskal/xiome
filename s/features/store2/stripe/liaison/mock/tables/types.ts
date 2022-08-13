@@ -72,6 +72,13 @@ export type MockStripeTables = {
 	[P in keyof MockStripeSchema]: dbmage.Table<FlexibleRow<MockStripeSchema[P]>>
 }
 
+export type MetaDataTables = dbmage.SchemaToTables<{
+	paymentMethodMetaData: {
+			id: string;
+			isFailing: boolean;
+	};
+}>
+
 export type MockStripeShape = dbmage.AsShape<{
 	prices: boolean
 	accounts: boolean

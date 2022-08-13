@@ -48,6 +48,10 @@ const routines = {
 				await commandSystem.postCommand("success")
 				window.location.href = success_url
 			},
+			async "button.failure"() {
+				await commandSystem.postCommand("success")
+				window.location.href = success_url
+			},
 			async "button.cancel"() {
 				window.location.href = cancel_url
 			},
@@ -59,6 +63,10 @@ const routines = {
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
 			async "button.success"() {
+				await commandSystem.postCommand("success")
+				window.location.href = success_url
+			},
+			async "button.failure"() {
 				await commandSystem.postCommand("success")
 				window.location.href = success_url
 			},

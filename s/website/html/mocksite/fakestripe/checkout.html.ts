@@ -7,6 +7,7 @@ export default ({v}: XiomeWebsiteContext) => fakestripePopupHtml({
 	name: "checkout",
 	contentHtml: html`
 		<button class=success>Succeed with Purchase</button>
+		<button class=failure>fail purchase</button>
 		<button class=cancel>Cancel Purchase</button>
 	`,
 })
