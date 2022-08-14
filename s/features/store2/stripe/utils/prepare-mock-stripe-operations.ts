@@ -124,7 +124,9 @@ export function prepareMockStripeOperations({
 					},
 			})
 		},
-		async updatePaymentMethod(stripeAccountId: string, stripeSessionId: string) {
+		async updatePaymentMethod(
+				stripeAccountId: string, stripeSessionId: string, isFailing: boolean
+			) {
 			const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 			const session = await stripeTables
 				.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
@@ -132,6 +134,10 @@ export function prepareMockStripeOperations({
 			const paymentMethod = await mockHelpers.setPaymentMethod({
 				customer,
 				stripeLiaisonAccount,
+			})
+			await metaDataTables.paymentMethodMetaData.create({
+				id: paymentMethod.id,
+				isFailing
 			})
 			const setupIntent = await mockHelpers.createSetupIntent({
 				customer,

@@ -68,8 +68,18 @@ export function mockStripePopups({mockStripeOperations}: {
 				popupId,
 				url: stripeSessionUrl,
 				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "success")
-						await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
+					if (command.type === "success"){
+						const isFailing = false
+						await mockStripeOperations.updatePaymentMethod(
+							stripeAccountId, stripeSessionId, isFailing
+						)
+					}
+					else if (command.type === "failure"){
+						const isFailing = true
+						await mockStripeOperations.updatePaymentMethod(
+							stripeAccountId, stripeSessionId, isFailing
+						)
+					}
 				},
 			})
 		},
