@@ -45,9 +45,9 @@ export const makeSubscriptionShoppingService = (
 	},
 
 	async buySubscriptionViaExistingPaymentMethod(tierId: string) {
-		await verifyStripePaymentMethodExists(auth)
+		const stripePaymentMethod = await verifyStripePaymentMethodExists(auth)
 		await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
-		await createStripeSubscriptionViaExistingPaymentMethod(auth, tierId)
+		await createStripeSubscriptionViaExistingPaymentMethod(auth, tierId, stripePaymentMethod)
 	},
 
 	async updateSubscriptionTier(tierId: string) {

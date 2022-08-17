@@ -45,14 +45,16 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
 		const subscriptionStatus = tierSubscriptionDetails?.status
 		const isCanceled = subscriptionStatus === SubscriptionStatus.Cancelled
+		const isUnpaid = subscriptionStatus === SubscriptionStatus.Unpaid
 
 		const {subscriptions, billing} = this.share.storeModel
 
 		return {
 			isSubscribedToThisTier,
 			isCanceled,
+			isUnpaid,
 			handleTierClick: async() => {
-				if (isSubscribedToThisTier) {
+				if (isSubscribedToThisTier && !isUnpaid) {
 					!isCanceled
 						? await subscriptions.cancelSubscription(tierId)
 						: await subscriptions.uncancelSubscription(tierId)
@@ -97,8 +99,9 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			handleTierClick,
 			isSubscribedToThisTier,
 			isCanceled,
+			isUnpaid,
 		} = this.#prepareTierManager(tier, isSubscribed, planHasSubScription)
-		const textToDisplay = subscribedTierIndex === undefined
+		const textToDisplay = subscribedTierIndex === undefined && isUnpaid
 			? "buy"
 			: subscribedTierIndex > tierIndex ? "downgrade" : "upgrade"
 		return html`
@@ -118,7 +121,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					<p>monthly</p>
 				</div>
 				<div class=label>
-					${isSubscribedToThisTier
+					${isSubscribedToThisTier && !isUnpaid
 						? isCanceled
 							? "Cancelled"
 							: "Purchased"
@@ -126,7 +129,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					}
 					<button
 						@click=${handleTierClick}>
-						${isSubscribedToThisTier
+						${isSubscribedToThisTier && !isUnpaid
 							? isCanceled
 								? "re-activate"
 								: "cancel"
@@ -139,7 +142,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 
 	#renderPlan = (plan: SubscriptionPlan) => {
 		const tiers = plan.tiers.filter(tier => tier.active)
-		const planHasSubScription = tiers.some(tier =>
+		const planHasSubscription = tiers.some(tier =>
 			this.#subscriptions.some(item => item.tierId === tier.tierId)
 		)
 		let subscribedTierIndex = undefined as number
@@ -156,7 +159,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					${plan.tiers
 						.filter(tier => tier.active)
 						.map((tier, tierIndex) => this.#renderTier({
-							tier, tierIndex, subscribedTierIndex, planHasSubscription: planHasSubScription
+							tier, tierIndex, subscribedTierIndex, planHasSubscription
 						}))}
 				</div>
 			</li>

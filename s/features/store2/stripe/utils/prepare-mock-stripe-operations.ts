@@ -124,8 +124,9 @@ export function prepareMockStripeOperations({
 					},
 			})
 		},
+		// TODO: completePaymentMethodCheckout
 		async updatePaymentMethod(
-				stripeAccountId: string, stripeSessionId: string, isFailing: boolean
+				stripeAccountId: string, stripeSessionId: string, isFailing?: boolean
 			) {
 			const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 			const session = await stripeTables

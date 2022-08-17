@@ -42,6 +42,7 @@ export function mockStripePopups({mockStripeOperations}: {
 			})
 		},
 
+		// TODO: checkoutSubscription
 		async checkout({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
 				popupId: string
 				stripeSessionId: string

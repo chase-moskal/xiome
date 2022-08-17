@@ -18,6 +18,7 @@ export function stripeWebhooks(options: {
 
 	return {
 
+		// TODO: perherps this webhook handler should not exist (or not do anything)
 		async "checkout.session.completed"(event: Stripe.Event) {
 			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
 			const details = await getSessionDetails({...options, event})
@@ -68,7 +69,9 @@ export function stripeWebhooks(options: {
 				logger.error(`unknown 'invoice.paid' hook (not for a subscription)`)
 		},
 
-		async "invoice.payment_failed"(event: Stripe.Event) {},
+		async "invoice.payment_failed"(event: Stripe.Event) {
+			logger.info("stripe-webhook invoice.payment_failed", event.data.object)
+		},
 		async "customer.subscription.created"(event: Stripe.Event) {},
 		async "customer.subscription.updated"(event: Stripe.Event) {},
 	}

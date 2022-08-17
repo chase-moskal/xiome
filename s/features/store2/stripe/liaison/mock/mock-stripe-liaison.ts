@@ -244,33 +244,52 @@ export function mockStripeLiaison({
 									subscriptionId: subscription.id,
 									items: subscription.items,
 								})
+							const paymentMethodId = getStripeId(paymentIntent.payment_method)
+							const paymentMethodMetaData = await metaDataTables.
+								paymentMethodMetaData.readOne(find({id: paymentMethodId}))
 							recentDetails.subscriptionCreation = {
 								subscription,
 								paymentIntent: <Stripe.PaymentIntent>paymentIntent,
 							}
+							subscription.status = paymentMethodMetaData?.isFailing
+								? "incomplete"
+								: "active"
 							return {
 								resource: subscription,
 								afterResourceIsAddedToTable: async () => {
-									await dispatchWebhook(
-										"invoice.paid",
-										stripeAccountId,
-										invoice,
-									)
+									if(!paymentMethodMetaData?.isFailing) {
+										await dispatchWebhook(
+											"invoice.paid",
+											stripeAccountId,
+											invoice,
+										)}
+									else {
+										await dispatchWebhook(
+											"invoice.payment_failed",
+											stripeAccountId,
+											invoice,
+										)}
 								}
 							}
 						},
 					})
 					return {
 						...resource,
+						// TODO: also update subscription status
 						async update(id: string, params: Stripe.SubscriptionUpdateParams) {
 							const existingSubscription = <Stripe.Subscription>await resource.retrieve(id)
 							const write: Partial<Stripe.Subscription> = {}
+							const paymentMethodMetaData = await metaDataTables.
+								paymentMethodMetaData.readOne(find({id: params.default_payment_method}))
 							if (params.cancel_at_period_end !== undefined) {
 								write.cancel_at_period_end = params.cancel_at_period_end
 							}
 							if (params.default_payment_method !== undefined) {
 								write.default_payment_method = params.default_payment_method
 							}
+							write.status = paymentMethodMetaData?.isFailing
+								? "incomplete"
+								: "active"
 							if (params.items !== undefined) {
 								const newItems = params.items
 								const items = await subscriptionMechanics
@@ -282,11 +301,20 @@ export function mockStripeLiaison({
 									subscriptionId: id,
 									items,
 								})
-								await dispatchWebhook(
-									"invoice.paid",
-									stripeAccountId,
-									invoice,
-								)
+								if(paymentMethodMetaData?.isFailing){
+									await dispatchWebhook(
+										"invoice.payment_failed",
+										stripeAccountId,
+										invoice,
+									)
+								}
+								else {
+									await dispatchWebhook(
+										"invoice.paid",
+										stripeAccountId,
+										invoice,
+									)
+								}
 								write.items = items
 							}
 							await tables.subscriptions.update({
