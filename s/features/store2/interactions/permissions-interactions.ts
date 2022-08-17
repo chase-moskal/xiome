@@ -1,7 +1,38 @@
 
 import * as dbmage from "dbmage"
 
-import {PermissionsInteractions, PermissionsInteractionsDatabase} from "./interactions-types.js"
+import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
+import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
+import {PermissionsInteractions, PermissionsInteractionsDatabase, PermissionsInteractionsSchema} from "./interactions-types.js"
+
+export function mockPermissionsDatabaseRaw(tableStorage: dbmage.FlexStorage) {
+	const database = dbmage.flex<PermissionsInteractionsSchema>({
+		flexStorage: tableStorage,
+		shape: {
+			role: true,
+			userHasRole: true,
+		},
+		makeTableName: path => ["permissions", ...path].join("-"),
+	})
+	return UnconstrainedTable.wrapDatabase(database)
+}
+
+export function buildFunctionToPreparePermissionsInteractions({
+		rando, permissionsDatabaseRaw,
+	}: {
+		rando: dbmage.Rando
+		permissionsDatabaseRaw: dbmage.DatabaseLike<
+			SchemaToUnconstrainedTables<PermissionsInteractionsSchema>
+		>
+	}) {
+	return (appId: dbmage.Id) => makePermissionsInteractions({
+		generateId: () => rando.randomId(),
+		database: <PermissionsInteractionsDatabase>UnconstrainedTable.constrainDatabaseForApp({
+			appId,
+			database: permissionsDatabaseRaw,
+		})
+	})
+}
 
 export function makePermissionsInteractions({database, generateId}: {
 		database: PermissionsInteractionsDatabase

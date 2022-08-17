@@ -25,11 +25,13 @@ export function prepareBackend(configurators: Configurators) {
 		const {databaseRaw, mockStorage} = await assimilateDatabase(options)
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
-		const {stripeLiaison, mockStripeOperations} = await assimilateStripe({
-			...options,
-			databaseRaw,
-			mockStorage,
-		})
+		const {stripeLiaison, stripePopups, mockStripeOperations} = (
+			await assimilateStripe({
+				...options,
+				databaseRaw,
+				mockStorage,
+			})
+		)
 
 		const dacastSdk = assimilateDacast(options)
 
@@ -50,7 +52,7 @@ export function prepareBackend(configurators: Configurators) {
 			emails,
 			databaseRaw,
 			stripeLiaison,
-			mockStripeOperations,
+			stripePopups,
 			platformAppId: config.platform.appDetails.appId,
 			prepareNotesDepositBox: (appId: dbmage.Id) => makeNotesDepositBox({
 				rando,

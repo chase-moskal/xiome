@@ -1,5 +1,6 @@
 
 import {Stripe} from "stripe"
+import * as dbmage from "dbmage"
 
 import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
@@ -11,9 +12,9 @@ export function stripeWebhooks(options: {
 		logger: Logger
 		stripeLiaison: StripeLiaison
 		storeDatabaseRaw: StoreDatabaseRaw
-		permissionsInteractions: PermissionsInteractions
+		preparePermissionsInteractions: (appId: dbmage.Id) => PermissionsInteractions
 	}) {
-	const {logger, permissionsInteractions} = options
+	const {logger, preparePermissionsInteractions} = options
 
 	return {
 
@@ -22,6 +23,7 @@ export function stripeWebhooks(options: {
 			const details = await getSessionDetails({...options, event})
 			const userIsUpdatingTheirPaymentMethod = details.session.mode === "setup"
 			const userIsPurchasingASubscription = details.session.mode === "subscription"
+			const permissionsInteractions = preparePermissionsInteractions(details.appId)
 
 			if (userIsUpdatingTheirPaymentMethod)
 				await updateCustomerPaymentMethod({
@@ -49,6 +51,7 @@ export function stripeWebhooks(options: {
 			logger.info("stripe-webhook invoice.paid:", event.data.object)
 			const details = await getInvoiceDetails({...options, event})
 			const invoiceIsForSubscription = !!details.invoice.subscription
+			const permissionsInteractions = preparePermissionsInteractions(details.appId)
 
 			if (invoiceIsForSubscription)
 				await fulfillUserRolesForSubscription({

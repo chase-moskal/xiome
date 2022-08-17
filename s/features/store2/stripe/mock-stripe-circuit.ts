@@ -4,26 +4,27 @@ import * as dbmage from "dbmage"
 import {StoreDatabaseRaw} from "../types/store-schema.js"
 import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {Logger} from "../../../toolbox/logger/interfaces.js"
+import {mockStripePopups} from "../popups/mock-stripe-popups.js"
 import {MockStripeRecentDetails, StripeWebhooks} from "./types.js"
 import {mockStripeLiaison} from "./liaison/mock/mock-stripe-liaison.js"
 import {mockStripeTables} from "./liaison/mock/tables/mock-stripe-tables.js"
+import {PreparePermissionsInteractions} from "../interactions/interactions-types.js"
 import {prepareMockStripeOperations} from "./utils/prepare-mock-stripe-operations.js"
-import {mockPermissionsInteractions} from "../interactions/mock-permissions-interactions.js"
 import {prepareWebhookDispatcherWithAntiCircularity} from "./utils/prepare-webhook-dispatcher-with-anti-circularity.js"
 
 export async function mockStripeCircuit({
-		rando, logger, tableStorage, storeDatabaseRaw,
+		logger, rando, tableStorage, storeDatabaseRaw,
+		preparePermissionsInteractions,
 	}: {
-		rando: dbmage.Rando
 		logger: Logger
+		rando: dbmage.Rando
 		tableStorage: dbmage.FlexStorage
 		storeDatabaseRaw: StoreDatabaseRaw
+		preparePermissionsInteractions: PreparePermissionsInteractions
 	}) {
 
-	const generateId = () => rando.randomId()
 	const stripeTables = await mockStripeTables({tableStorage})
 	const recentDetails = <MockStripeRecentDetails>{}
-	const mockPermissions = mockPermissionsInteractions({generateId})
 
 	const pointer = {webhooks: undefined as StripeWebhooks | undefined}
 	const dispatchWebhook = prepareWebhookDispatcherWithAntiCircularity(pointer)
@@ -39,18 +40,21 @@ export async function mockStripeCircuit({
 		logger,
 		stripeLiaison,
 		storeDatabaseRaw,
-		permissionsInteractions: mockPermissions.permissionsInteractions,
+		preparePermissionsInteractions,
+	})
+
+	const mockStripeOperations = prepareMockStripeOperations({
+		rando,
+		stripeTables,
+		stripeLiaison,
+		recentDetails,
+		dispatchWebhook,
 	})
 
 	return {
 		stripeLiaison,
-		mockPermissions,
-		mockStripeOperations: prepareMockStripeOperations({
-			rando,
-			stripeTables,
-			stripeLiaison,
-			recentDetails,
-			dispatchWebhook,
-		}),
+		stripePopups: mockStripePopups({mockStripeOperations}),
+		stripeWebhooks: pointer.webhooks,
+		mockStripeOperations,
 	}
 }

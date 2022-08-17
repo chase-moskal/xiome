@@ -46,11 +46,12 @@ export async function getInvoiceDetails({
 	const invoice = <Stripe.Invoice>event.data.object
 	const stripeCustomerId = getStripeId(invoice.customer)
 	const stripeLiaisonAccount = stripeLiaison.account(event.account)
-	const {storeDatabase, userId} = await getStripeCustomerDetails(
+	const {storeDatabase, userId, appId} = await getStripeCustomerDetails(
 		storeDatabaseRaw,
 		stripeCustomerId,
 	)
 	return {
+		appId,
 		userId,
 		invoice,
 		storeDatabase,

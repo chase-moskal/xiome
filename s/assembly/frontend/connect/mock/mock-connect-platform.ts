@@ -30,8 +30,7 @@ export async function mockConnectPlatform({
 		appOrigin,
 	})
 
-	const {mockStripeOperations} = backend
-	const stripePopups = mockStripePopups({mockStripeOperations})
+	const {stripePopups} = backend
 
 	const chatConnect = await chatMockClientEntirely(storage)
 	// const chatConnect = chatSocketClient("ws://localhost:8001/")

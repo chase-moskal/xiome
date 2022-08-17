@@ -1,6 +1,7 @@
 
 import {Stripe} from "stripe"
 import {makeStripeLiaison} from "./stripe-liaison.js"
+import {prepareMockStripeOperations} from "../utils/prepare-mock-stripe-operations.js"
 
 export type StripeLiaison = ReturnType<typeof makeStripeLiaison>
 export type StripeLiaisonAccount = ReturnType<StripeLiaison["account"]>

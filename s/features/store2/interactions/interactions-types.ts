@@ -4,6 +4,8 @@ import * as dbmage from "dbmage"
 
 import {RoleRow, UserHasRoleRow} from "../../auth/aspects/permissions/types/permissions-tables.js"
 
+export type PreparePermissionsInteractions = (appId: dbmage.Id) => PermissionsInteractions
+
 export type PermissionsInteractionsSchema = dbmage.AsSchema<{
 	role: RoleRow
 	userHasRole: UserHasRoleRow

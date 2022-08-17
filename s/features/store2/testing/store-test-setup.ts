@@ -12,25 +12,31 @@ import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
 import {mockStoreDatabaseRaw} from "../api/mocks/mock-store-database-raw.js"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {mockPermissionsInteractions} from "../interactions/mock-permissions-interactions.js"
 import {makePrivilegeChecker} from "../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {buildFunctionToPreparePermissionsInteractions, mockPermissionsDatabaseRaw} from "../interactions/permissions-interactions.js"
 
 export const storeTestSetup = async() => ({
 
 	async api() {
 		const rando = await dbmage.getRando()
 		const generateId = () => rando.randomId()
+		const appId = generateId()
+
+		const tableStorage = dbmage.memoryFlexStorage()
 		const storeDatabaseRaw = mockStoreDatabaseRaw()
-		const permissions = mockPermissionsInteractions({generateId})
+		const permissionsDatabaseRaw = mockPermissionsDatabaseRaw(tableStorage)
+		const preparePermissionsInteractions = buildFunctionToPreparePermissionsInteractions({
+			rando,
+			permissionsDatabaseRaw,
+		})
 
 		const circuit = await mockStripeCircuit({
 			rando,
+			tableStorage,
 			storeDatabaseRaw,
 			logger: new DisabledLogger(),
-			tableStorage: dbmage.memoryFlexStorage(),
+			preparePermissionsInteractions,
 		})
-
-		const appId = generateId().string
 
 		const storeApi = makeStoreApi<AccessPayload>({
 			popupReturnUrl: "fake-popup-return-url",
@@ -38,9 +44,9 @@ export const storeTestSetup = async() => ({
 			generateId,
 			storePolicy: async(access) => (<StoreAuth>{
 				access,
-				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 				stripeLiaison: circuit.stripeLiaison,
-				permissionsInteractions: permissions.permissionsInteractions,
+				permissionsInteractions: preparePermissionsInteractions(appId),
+				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 				storeDatabase: <StoreDatabase>UnconstrainedTable.constrainDatabaseForApp({
 					appId: dbmage.Id.fromString(access.appId),
 					database: storeDatabaseRaw,
@@ -62,7 +68,7 @@ export const storeTestSetup = async() => ({
 				customer: [],
 			},
 			client: testingClient({
-				appId,
+				appId: appId.string,
 				circuit,
 				storeApi,
 				generateId,
