@@ -124,8 +124,7 @@ export function prepareMockStripeOperations({
 					},
 			})
 		},
-		// TODO: completePaymentMethodCheckout
-		async updatePaymentMethod(
+		async completePaymentMethodCheckout(
 				stripeAccountId: string, stripeSessionId: string, isFailing?: boolean
 			) {
 			const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)

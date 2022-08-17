@@ -29,7 +29,7 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 			return {popupId}
 		},
 
-		async checkout({popupId, stripeAccountId, stripeSessionId}) {
+		async checkoutSubscription({popupId, stripeAccountId, stripeSessionId}) {
 			await mockStripeOperations.checkoutSubscriptionTier(
 				stripeAccountId,
 				stripeSessionId
@@ -38,7 +38,7 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 		},
 
 		async checkoutPaymentMethod({popupId, stripeAccountId, stripeSessionId}) {
-			await mockStripeOperations.updatePaymentMethod(stripeAccountId, stripeSessionId)
+			await mockStripeOperations.completePaymentMethodCheckout(stripeAccountId, stripeSessionId)
 			return {popupId}
 		},
 	}

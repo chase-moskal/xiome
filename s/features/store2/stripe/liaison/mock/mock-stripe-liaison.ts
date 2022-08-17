@@ -275,7 +275,6 @@ export function mockStripeLiaison({
 					})
 					return {
 						...resource,
-						// TODO: also update subscription status
 						async update(id: string, params: Stripe.SubscriptionUpdateParams) {
 							const existingSubscription = <Stripe.Subscription>await resource.retrieve(id)
 							const write: Partial<Stripe.Subscription> = {}

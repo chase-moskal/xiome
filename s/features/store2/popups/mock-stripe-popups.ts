@@ -42,8 +42,7 @@ export function mockStripePopups({mockStripeOperations}: {
 			})
 		},
 
-		// TODO: checkoutSubscription
-		async checkout({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
+		async checkoutSubscription({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
 				popupId: string
 				stripeSessionId: string
 				stripeAccountId: string
@@ -71,13 +70,13 @@ export function mockStripePopups({mockStripeOperations}: {
 				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
 					if (command.type === "success"){
 						const isFailing = false
-						await mockStripeOperations.updatePaymentMethod(
+						await mockStripeOperations.completePaymentMethodCheckout(
 							stripeAccountId, stripeSessionId, isFailing
 						)
 					}
 					else if (command.type === "failure"){
 						const isFailing = true
-						await mockStripeOperations.updatePaymentMethod(
+						await mockStripeOperations.completePaymentMethodCheckout(
 							stripeAccountId, stripeSessionId, isFailing
 						)
 					}
