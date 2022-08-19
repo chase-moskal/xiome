@@ -3,13 +3,14 @@ import * as dbmage from "dbmage"
 
 import {DatabaseRaw} from "../types/database.js"
 import {AssimilatorOptions} from "../types/assilimator-options.js"
-import {realStripeCircuit} from "../../../features/store2/stripe/real-stripe-circuit.js"
 import {mockStripeCircuit} from "../../../features/store2/stripe/mock-stripe-circuit.js"
 import {buildFunctionToPreparePermissionsInteractions} from "../../../features/store2/interactions/permissions-interactions.js"
+import type {configureStripe} from "../configurators/configure-stripe.js"
 
 export async function assimilateStripe({
 		databaseRaw, mockStorage,
 		config, rando,
+		configureStripe,
 	}: {
 		databaseRaw: DatabaseRaw
 		mockStorage: dbmage.FlexStorage
@@ -37,10 +38,9 @@ export async function assimilateStripe({
 		})
 	}
 	else {
-		return realStripeCircuit({
-			logger,
+		return configureStripe({
+			config,
 			storeDatabaseRaw,
-			stripeConfig: config.stripe,
 			preparePermissionsInteractions,
 		})
 	}

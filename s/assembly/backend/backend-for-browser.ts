@@ -15,6 +15,7 @@ function nope(message: string) {
 }
 
 export const backendForBrowser = (storage: FlexStorage) => prepareBackend({
+	configureStripe: nope("config.stripe not supported in browser"),
 	configureMongo: nope("config.database.mongo not supported in browser"),
 	configureMailgun: nope("config.email.mailgun not supported in browser"),
 	configureTokenFunctions: nope("config.crypto.keys must be 'mock-mode' in browser"),
