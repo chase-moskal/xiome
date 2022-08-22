@@ -1,4 +1,5 @@
 
+import {Stripe} from "stripe"
 import * as dbmage from "dbmage"
 
 import {StoreDatabaseRaw} from "../types/store-schema.js"
@@ -52,6 +53,7 @@ export async function mockStripeCircuit({
 	})
 
 	return {
+		stripe: <Stripe>undefined,
 		stripeLiaison,
 		stripePopups: mockStripePopups({mockStripeOperations}),
 		stripeWebhooks: pointer.webhooks,

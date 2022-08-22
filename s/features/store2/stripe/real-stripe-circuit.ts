@@ -28,6 +28,7 @@ export function realStripeCircuit({
 	const stripeLiaison = makeStripeLiaison({stripe})
 
 	return {
+		stripe,
 		stripeLiaison,
 		stripePopups: makeStripePopups(),
 		stripeWebhooks: stripeWebhooks({
