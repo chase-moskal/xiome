@@ -42,6 +42,8 @@ export function mockStripePopups({mockStripeOperations}: {
 			})
 		},
 
+
+		// TODO - should we checkout a subscription at all when the payment method fails??
 		async checkoutSubscription({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
 				popupId: string
 				stripeSessionId: string

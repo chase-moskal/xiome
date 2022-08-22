@@ -49,8 +49,8 @@ const routines = {
 				window.location.href = success_url
 			},
 			async "button.failure"() {
-				await commandSystem.postCommand("success")
-				window.location.href = success_url
+				await commandSystem.postCommand("failure")
+				window.location.href = cancel_url
 			},
 			async "button.cancel"() {
 				window.location.href = cancel_url

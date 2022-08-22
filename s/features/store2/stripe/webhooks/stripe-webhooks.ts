@@ -19,6 +19,7 @@ export function stripeWebhooks(options: {
 	return {
 
 		// TODO: perherps this webhook handler should not exist (or not do anything)
+		// maybe invoice paid should handle all that checkout session completed does
 		async "checkout.session.completed"(event: Stripe.Event) {
 			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
 			const details = await getSessionDetails({...options, event})

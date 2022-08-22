@@ -101,9 +101,16 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			isCanceled,
 			isUnpaid,
 		} = this.#prepareTierManager(tier, isSubscribed, planHasSubScription)
-		const textToDisplay = subscribedTierIndex === undefined && isUnpaid
+		const noSubscribedTier = subscribedTierIndex === undefined
+		const buttonLabel = noSubscribedTier
 			? "buy"
-			: subscribedTierIndex > tierIndex ? "downgrade" : "upgrade"
+			: isSubscribedToThisTier
+				? isUnpaid
+					? "subcribed not paid"
+					: isCanceled ? "re-activate" : "cancel"
+				: subscribedTierIndex > tierIndex ? "downgrade" : "upgrade"
+
+
 		return html`
 			<div
 				class="tier"
@@ -129,11 +136,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					}
 					<button
 						@click=${handleTierClick}>
-						${isSubscribedToThisTier && !isUnpaid
-							? isCanceled
-								? "re-activate"
-								: "cancel"
-							: textToDisplay}
+						${buttonLabel}
 					</button>
 				</div>
 			</div>

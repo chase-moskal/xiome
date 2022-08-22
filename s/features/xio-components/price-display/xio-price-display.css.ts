@@ -11,7 +11,7 @@ export default css`
 .card {
 	display: flex;
 	width: fit-content;
-	align-self: flex-start;
+	margin: 0 auto;
 }
 
 .display {
