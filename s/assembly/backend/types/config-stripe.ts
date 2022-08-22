@@ -1,8 +1,11 @@
 
 export interface ConfigStripe {
+	webhookServer: {
+		port: number
+	}
 	keys: {
 		publishable: string
 		secret: string
-		webhookSecret: string
+		webhookEndpointSecret: string
 	}
 }
