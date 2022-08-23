@@ -85,5 +85,12 @@ export function mockStripePopups({mockStripeOperations}: {
 				},
 			})
 		},
+
+		async openStoreCustomerPortal(popupId: string, url: string) {
+			return openPopupAndWaitForResult({
+				popupId,
+				url,
+			})
+		}
 	}
 }

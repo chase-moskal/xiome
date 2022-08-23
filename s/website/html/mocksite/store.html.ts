@@ -17,6 +17,8 @@ mainHtml: html`
 		<xiome-billing>
 			<h3>billing panel</h3>
 		</xiome-billing>
+		<br>
+		<xiome-store-customer-portal></xiome-store-customer-portal>
 		<br/>
 		<br/>
 		<h3>subscriptions</h3>

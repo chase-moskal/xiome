@@ -1,6 +1,6 @@
 
-import {ops} from "../../../../framework/ops.js"
 import {StoreServices} from "../types.js"
+import {ops} from "../../../../framework/ops.js"
 import {StripePopups} from "../../popups/types.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
@@ -85,5 +85,9 @@ export function makeConnectSubmodel({
 					paused: false,
 				})
 		},
+		async customerPortal() {
+			const {popupId, customerPortalLink} = await services.connect.generateCustomerPortalLink()
+			await stripePopups.openStoreCustomerPortal(popupId, customerPortalLink)
+		}
 	}
 }

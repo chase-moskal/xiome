@@ -41,6 +41,10 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 			await mockStripeOperations.completePaymentMethodCheckout(stripeAccountId, stripeSessionId)
 			return {popupId}
 		},
+
+		async openStoreCustomerPortal(popupId) {
+			return {popupId}
+		},
 	}
 }
 

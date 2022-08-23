@@ -21,5 +21,8 @@ export function makeStripePopups(): StripePopups {
 		async checkoutPaymentMethod() {
 			throw err()
 		},
+		async openStoreCustomerPortal() {
+			throw err()
+		},
 	}
 }
