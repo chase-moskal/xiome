@@ -7,6 +7,7 @@ import {MerchantRow} from "../../types/store-schema.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {requiredPrivilege} from "./helpers/required-privilege.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
+import {makeFakestripePopupUrl} from "../../popups/make-fakestripe-popup-urls.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 
@@ -113,6 +114,12 @@ export const makeConnectService = (
 			const {popupId} = makeStripePopupSpec.login(options)
 			const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
 			return {popupId, stripeLoginLink: url}
+		},
+
+		async generateCustomerPortalLink() {
+			const {popupId} = makeStripePopupSpec.openCustomerPortal(options)
+			const url = makeFakestripePopupUrl.customerPortal()
+			return {popupId, customerPortalLink: url}
 		},
 	}),
 }))

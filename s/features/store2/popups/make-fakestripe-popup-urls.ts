@@ -14,6 +14,10 @@ export namespace makeFakestripePopupUrl {
 		return `/mocksite/fakestripe/login`
 	}
 
+	export function customerPortal() {
+		return `/mocksite/fakestripe/login`
+	}
+
 	export function checkout(params: {
 			success_url: string
 			cancel_url: string

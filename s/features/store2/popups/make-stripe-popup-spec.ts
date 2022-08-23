@@ -22,6 +22,10 @@ export namespace makeStripePopupSpec {
 		return {popupId: generateId().string}
 	}
 
+	export function openCustomerPortal({generateId}: Popups.SpecParams) {
+		return {popupId: generateId().string}
+	}
+
 	export function checkout({popupReturnUrl, generateId}: Popups.SpecParams) {
 		const popupId = generateId().string
 		return {
