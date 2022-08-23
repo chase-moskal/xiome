@@ -4,8 +4,8 @@ import {MockStripeOperations} from "../stripe/types.js"
 import {openPopupAndWaitForResult} from "./popup-core/open-popup-and-wait-for-result.js"
 
 export function mockStripePopups({mockStripeOperations}: {
-		mockStripeOperations: MockStripeOperations
-	}) {
+		mockStripeOperations?: MockStripeOperations
+	} = {}) {
 	return {
 
 		async connect({popupId, stripeAccountId, stripeAccountSetupLink}: {
@@ -16,12 +16,14 @@ export function mockStripePopups({mockStripeOperations}: {
 			return openPopupAndWaitForResult<{status: "return" | "refresh"}>({
 				popupId,
 				url: stripeAccountSetupLink,
-				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "complete")
-						await mockStripeOperations.linkStripeAccount(stripeAccountId)
-					else if (command.type === "incomplete")
-						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
-				},
+				handleSecretMockCommand: mockStripeOperations
+					? async(command: Popups.SecretMockCommand) => {
+						if (command.type === "complete")
+							await mockStripeOperations.linkStripeAccount(stripeAccountId)
+						else if (command.type === "incomplete")
+							await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
+					}
+					: async() => {},
 			})
 		},
 
@@ -33,15 +35,16 @@ export function mockStripePopups({mockStripeOperations}: {
 			return openPopupAndWaitForResult<void>({
 				popupId,
 				url: stripeLoginLink,
-				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "complete")
-						await mockStripeOperations.linkStripeAccount(stripeAccountId)
-					else if (command.type === "incomplete")
-						await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
-				},
+				handleSecretMockCommand: mockStripeOperations
+					? async(command: Popups.SecretMockCommand) => {
+						if (command.type === "complete")
+							await mockStripeOperations.linkStripeAccount(stripeAccountId)
+						else if (command.type === "incomplete")
+							await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
+					}
+					: async() => {},
 			})
 		},
-
 
 		// TODO - should we checkout a subscription at all when the payment method fails??
 		async checkoutSubscription({popupId, stripeSessionUrl, stripeSessionId, stripeAccountId}: {
@@ -53,10 +56,12 @@ export function mockStripePopups({mockStripeOperations}: {
 			return openPopupAndWaitForResult<{status: "success" | "cancel"}>({
 				popupId,
 				url: stripeSessionUrl,
-				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "success")
-						await mockStripeOperations.checkoutSubscriptionTier(stripeAccountId, stripeSessionId)
-				},
+				handleSecretMockCommand: mockStripeOperations
+					? async(command: Popups.SecretMockCommand) => {
+						if (command.type === "success")
+							await mockStripeOperations.checkoutSubscriptionTier(stripeAccountId, stripeSessionId)
+					}
+					: async() => {},
 			})
 		},
 
@@ -69,20 +74,22 @@ export function mockStripePopups({mockStripeOperations}: {
 			return openPopupAndWaitForResult<{status: "success" | "cancel"}>({
 				popupId,
 				url: stripeSessionUrl,
-				async handleSecretMockCommand(command: Popups.SecretMockCommand) {
-					if (command.type === "success"){
-						const isFailing = false
-						await mockStripeOperations.completePaymentMethodCheckout(
-							stripeAccountId, stripeSessionId, isFailing
-						)
+				handleSecretMockCommand: mockStripeOperations
+					? async(command: Popups.SecretMockCommand) => {
+						if (command.type === "success"){
+							const isFailing = false
+							await mockStripeOperations.completePaymentMethodCheckout(
+								stripeAccountId, stripeSessionId, isFailing
+							)
+						}
+						else if (command.type === "failure"){
+							const isFailing = true
+							await mockStripeOperations.completePaymentMethodCheckout(
+								stripeAccountId, stripeSessionId, isFailing
+							)
+						}
 					}
-					else if (command.type === "failure"){
-						const isFailing = true
-						await mockStripeOperations.completePaymentMethodCheckout(
-							stripeAccountId, stripeSessionId, isFailing
-						)
-					}
-				},
+					: async() => {},
 			})
 		},
 	}

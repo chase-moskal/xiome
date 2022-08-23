@@ -96,7 +96,6 @@ export const makeConnectService = (
 			const {url: stripeAccountSetupLink} = await stripeLiaison
 				.accountLinks.create({
 					account: stripeAccountId,
-					collect: "currently_due",
 					type: "account_onboarding",
 					...urls,
 				})

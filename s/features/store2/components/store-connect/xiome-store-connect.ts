@@ -34,10 +34,12 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 				case StripeConnectStatus.Incomplete: return html`
 					<p>status: incomplete</p>
 					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
+					<xio-button @press=${connectStripeAccount}>CONNECT STRIPE ACCOUNT</xio-button>
 				`
 				case StripeConnectStatus.Paused: return html`
 					<p>status: paused</p>
 					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
+					<xio-button @press=${connectStripeAccount}>CONNECT STRIPE ACCOUNT</xio-button>
 					<xio-button @press=${resume}>Resume Ecommerce</xio-button>
 				`
 				case StripeConnectStatus.Ready: {
