@@ -11,13 +11,11 @@ export async function getStripePaymentMethod(auth: StoreCustomerAuth) {
 		.retrieve(auth.stripeCustomerId)
 
 	const {default_payment_method} = stripeCustomer.invoice_settings
+	const defaultPaymentMethodId = getStripeId(default_payment_method)
 
-	const stripePaymentMethod = await auth
-		.stripeLiaisonAccount
-		.paymentMethods
-		.retrieve(getStripeId(default_payment_method))
-
-	return stripePaymentMethod.id
-		? stripePaymentMethod
-		: undefined
+	return defaultPaymentMethodId
+		&& await auth
+			.stripeLiaisonAccount
+			.paymentMethods
+			.retrieve(getStripeId(default_payment_method))
 }

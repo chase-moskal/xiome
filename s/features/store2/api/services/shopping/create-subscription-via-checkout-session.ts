@@ -21,9 +21,10 @@ export async function createSubscriptionViaCheckoutSession(
 			appId: auth.access.appId,
 			userId: auth.access.user.userId,
 		}),
-		payment_intent_data: {
-			setup_future_usage: "on_session"
-		},
+		// // TODO this isn't valid for "subscription" mode sessions
+		// payment_intent_data: {
+		// 	setup_future_usage: "on_session"
+		// },
 		success_url,
 		cancel_url,
 	})
