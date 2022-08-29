@@ -27,7 +27,7 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 		`
 		: html`
 			<xiome-config
-				app="721f607fe8b42fea81aa1941817a9878e793acfaf13f910b4746869aa29a1a53"
+				app="49aef0eb9bdb853dc3b45d1556a5229f313894125cf65a948d1a6f6d85d66ca4"
 				platform="http://localhost:8080"
 				api-server="http://localhost:8000/"
 				chat-server="ws://localhost:8001/"
