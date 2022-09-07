@@ -129,14 +129,14 @@ export async function getPaymentMethodIdFromSetupIntent({
 }
 
 export async function getPaymentMethodIdFromPaymentIntent({
-		stripeLiaisonAccount, session,
+		stripeLiaisonAccount, invoice,
 	}: {
 		stripeLiaisonAccount: StripeLiaisonAccount,
-		session: Stripe.Checkout.Session,
+		invoice: Stripe.Invoice,
 	}): Promise<string> {
 	const intent = await getStripePaymentIntent(
 		stripeLiaisonAccount,
-		session.payment_intent)
+		invoice.payment_intent)
 	return getStripeId(intent.payment_method)
 }
 
@@ -232,14 +232,14 @@ export function getPriceIdsFromInvoice(invoice: Stripe.Invoice) {
 export async function fulfillUserRolesForSubscription({
 		userId,
 		priceIds,
-		subscription,
+		invoice,
 		storeDatabase,
 		permissionsInteractions,
 	}:{
 		userId: dbmage.Id
 		priceIds: string[]
 		storeDatabase: StoreDatabase
-		subscription: Stripe.Subscription
+		invoice: Stripe.Invoice
 		permissionsInteractions: PermissionsInteractions
 	}) {
 	const {tierRows} = await getTiersForStripePrices({
@@ -248,8 +248,8 @@ export async function fulfillUserRolesForSubscription({
 	})
 	const roleIds = tierRows.map(tierRow => tierRow.roleId)
 	await permissionsInteractions.grantUserRoles({
-		timeframeEnd: subscription.current_period_end,
-		timeframeStart: subscription.current_period_start,
+		timeframeEnd: invoice.lines.data[0].period.end,
+		timeframeStart: invoice.lines.data[0].period.start,
 		roleIds,
 		userId,
 	})

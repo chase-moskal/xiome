@@ -6,7 +6,7 @@ import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {PermissionsInteractions} from "../../interactions/interactions-types.js"
-import {getPaymentMethodIdFromSetupIntent, getPriceIdsFromInvoice, getStripeSubscription, getSubscriptionAndPriceIds, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getSessionDetails, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent} from "./helpers/webhook-helpers.js"
+import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -18,35 +18,8 @@ export function stripeWebhooks(options: {
 
 	return {
 
-		// TODO: perherps this webhook handler should not exist (or not do anything)
-		// maybe invoice paid should handle all that checkout session completed does
 		async "checkout.session.completed"(event: Stripe.Event) {
 			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
-			const details = await getSessionDetails({...options, event})
-			const userIsUpdatingTheirPaymentMethod = details.session.mode === "setup"
-			const userIsPurchasingASubscription = details.session.mode === "subscription"
-			const permissionsInteractions = preparePermissionsInteractions(details.appId)
-
-			if (userIsUpdatingTheirPaymentMethod)
-				await updateCustomerPaymentMethod({
-					...details,
-					stripePaymentMethodId: await getPaymentMethodIdFromSetupIntent(details),
-				})
-
-			else if (userIsPurchasingASubscription) {
-				await fulfillUserRolesForSubscription({
-					...details,
-					...await getSubscriptionAndPriceIds(details),
-					permissionsInteractions,
-				})
-				await updateCustomerPaymentMethod({
-					...details,
-					stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
-				})
-			}
-
-			else
-				logger.error(`unknown 'checkout.session.completed' mode "${details.session.mode}"`)
 		},
 
 		async "invoice.paid"(event: Stripe.Event) {
@@ -55,16 +28,17 @@ export function stripeWebhooks(options: {
 			const invoiceIsForSubscription = !!details.invoice.subscription
 			const permissionsInteractions = preparePermissionsInteractions(details.appId)
 
-			if (invoiceIsForSubscription)
+			if (invoiceIsForSubscription){
 				await fulfillUserRolesForSubscription({
 					...details,
 					permissionsInteractions,
 					priceIds: getPriceIdsFromInvoice(details.invoice),
-					subscription: await getStripeSubscription(
-						details.stripeLiaisonAccount,
-						details.invoice.subscription,
-					),
 				})
+				await updateCustomerPaymentMethod({
+					...details,
+					stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
+				})
+			}
 
 			else
 				logger.error(`unknown 'invoice.paid' hook (not for a subscription)`)
@@ -74,6 +48,15 @@ export function stripeWebhooks(options: {
 			logger.info("stripe-webhook invoice.payment_failed", event.data.object)
 		},
 		async "customer.subscription.created"(event: Stripe.Event) {},
-		async "customer.subscription.updated"(event: Stripe.Event) {},
+		async "customer.subscription.updated"(event: Stripe.Event) {
+			logger.info(
+				"stripe-webhook customer.subscription.updated", event.data.object
+			)
+		},
+		async "customer.subscription.deleted"(event: Stripe.Event) {
+			logger.info(
+				"stripe-webhook customer.subscription.deleted", event.data.object
+			)
+		},
 	}
 }
