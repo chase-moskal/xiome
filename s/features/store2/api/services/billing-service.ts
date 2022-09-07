@@ -55,4 +55,20 @@ export const makeBillingService = (
 				.detach(stripePaymentMethod.id)
 		}
 	},
+
+	async generateCustomerPortalLink() {
+		const {popupId, return_url} = makeStripePopupSpec.openCustomerPortal(options)
+		const session = await auth
+			.stripeLiaison
+			.billingPortal
+			.create({
+				customer: auth.stripeCustomerId,
+				return_url
+			}, auth.stripeAccountId)
+
+		return {
+			popupId,
+			customerPortalLink: session.url
+		}
+	},
 }))

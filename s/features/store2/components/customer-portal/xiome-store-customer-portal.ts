@@ -15,7 +15,7 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 	}
 
 	#openPopup = async () => {
-		const {customerPortal} = this.#storeModel.connect
+		const {customerPortal} = this.#storeModel.billing
 		await customerPortal()
 	}
 

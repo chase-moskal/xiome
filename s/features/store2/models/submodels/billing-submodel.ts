@@ -48,10 +48,19 @@ export function makeBillingSubmodel({
 		})
 	}
 
+	async function customerPortal() {
+		const {popupId, customerPortalLink} =
+			await services.billing.generateCustomerPortalLink()
+		await stripePopups.openStoreCustomerPortal(popupId, customerPortalLink)
+
+		await load()
+	}
+
 	return {
 		load,
 
 		allowance,
+		customerPortal,
 		checkoutPaymentMethod,
 		disconnectPaymentMethod,
 	}

@@ -62,6 +62,13 @@ export function mockStripeLiaison({
 			},
 		},
 
+		// TODO implement
+		billingPortal: {
+			async create(params: Stripe.BillingPortal.SessionCreateParams) {
+				return stripeResponse(<Stripe.BillingPortal.Session>{})
+			}
+		},
+
 		account(stripeAccountId: string): any {
 
 			const tables = <MockStripeTables>dbmage.constrainTables({
