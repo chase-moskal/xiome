@@ -229,6 +229,10 @@ export function getPriceIdsFromInvoice(invoice: Stripe.Invoice) {
 	return [...setOfPriceIds]
 }
 
+export function secondsToMilliseconds(seconds: number) {
+	return seconds * 1000
+}
+
 export async function fulfillUserRolesForSubscription({
 		userId,
 		priceIds,
@@ -248,8 +252,8 @@ export async function fulfillUserRolesForSubscription({
 	})
 	const roleIds = tierRows.map(tierRow => tierRow.roleId)
 	await permissionsInteractions.grantUserRoles({
-		timeframeEnd: invoice.lines.data[0].period.end,
-		timeframeStart: invoice.lines.data[0].period.start,
+		timeframeEnd: secondsToMilliseconds(invoice.lines.data[0].period.end),
+		timeframeStart: secondsToMilliseconds(invoice.lines.data[0].period.start),
 		roleIds,
 		userId,
 	})

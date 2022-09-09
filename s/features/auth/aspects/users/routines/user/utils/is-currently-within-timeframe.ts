@@ -6,7 +6,7 @@ export function isCurrentlyWithinTimeframe({timeframeStart, timeframeEnd}: {
 		timeframeEnd: number
 	}) {
 
-	const time = Number(Date.now().toString().substring(0,10))
+	const time = Date.now()
 
 	const tooEarly = isDefined(timeframeStart)
 		? time < timeframeStart
