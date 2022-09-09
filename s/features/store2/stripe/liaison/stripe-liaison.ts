@@ -22,18 +22,14 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 			},
 		},
 
-		billingPortal: {
-			async create(
-					params: Stripe.BillingPortal.SessionCreateParams,
-					stripeAccount: string
-				) {
-				return stripe.billingPortal.sessions.create(params, {stripeAccount})
-			}
-		},
-
 		account(stripeAccount: string) {
 			const connection = {stripeAccount}
 			return {
+				billingPortal: {
+					async create(params: Stripe.BillingPortal.SessionCreateParams) {
+						return stripe.billingPortal.sessions.create(params, connection)
+					}
+				},
 				customers: {
 					async create(params: Stripe.CustomerCreateParams) {
 						return stripe.customers.create(params, connection)

@@ -59,13 +59,12 @@ export const makeBillingService = (
 	async generateCustomerPortalLink() {
 		const {popupId, return_url} = makeStripePopupSpec.openCustomerPortal(options)
 		const session = await auth
-			.stripeLiaison
+			.stripeLiaisonAccount
 			.billingPortal
 			.create({
 				customer: auth.stripeCustomerId,
 				return_url
-			}, auth.stripeAccountId)
-
+			})
 		return {
 			popupId,
 			customerPortalLink: session.url
