@@ -15,7 +15,7 @@ export namespace makeFakestripePopupUrl {
 	}
 
 	export function customerPortal() {
-		return `/mocksite/fakestripe/login`
+		return `/mocksite/fakestripe/store-customer-portal`
 	}
 
 	export function checkout(params: {

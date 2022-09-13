@@ -80,8 +80,7 @@ export function mockStripeLiaison({
 				billingPortal: {
 					async create(params: Stripe.BillingPortal.SessionCreateParams) {
 						return stripeResponse(<Stripe.BillingPortal.Session>{
-							url: "",
-							return_url: "",
+							url: makeFakestripePopupUrl.customerPortal(),
 						})
 					}
 				},
