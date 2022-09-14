@@ -14,9 +14,6 @@ mainHtml: html`
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
 		<br/>
-		<xiome-billing>
-			<h3>billing panel</h3>
-		</xiome-billing>
 		<br>
 		<xiome-store-customer-portal>
 			<p slot="logged-out">you must be logged in to access the customer portal.</p>

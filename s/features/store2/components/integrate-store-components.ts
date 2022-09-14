@@ -26,14 +26,6 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 				})(XiomeSubscriptionPlanning)
 			)
 		),
-		XiomeBilling: (
-			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
-				mixinShare({
-					modals,
-					storeModel,
-				})(XiomeBilling)
-			)
-		),
 		XiomeSubscriptions: (
 			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
 				mixinShare({
