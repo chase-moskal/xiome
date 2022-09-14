@@ -32,6 +32,8 @@
 		"watch-bundle": "npm run compile-bundle -s -- --watch",
 		"watch-tests": "chokidar \"x/**/*.js\" -c \"npm run test -s\"",
 		"watch": "run-p watch-tsc watch-html watch-sass",
+		"stripe-forward-webhooks": "stripe listen --forward-to http://localhost:8050/",
+		"localservers": "run-p server chat-server stripe-webhook-server stripe-forward-webhooks",
 		"server": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node x/server.js'",
 		"server-debug": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node --inspect-brk x/server.js'",
 		"chat-server": "XIOME_CONFIG=`cat dev-config.json` bash -c 'node x/features/chat/api/chat-server.js'",
