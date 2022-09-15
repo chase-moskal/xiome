@@ -39,47 +39,68 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			isSubscribedToThisTier: boolean,
 			planHasSubscription: boolean
 		) {
-
 		const tierSubscriptionDetails = this.#subscriptions.find(
-			subscription => subscription.tierId === tierId)
-		const paymentMethod = ops.value(this.#state.billing.paymentMethodOp)
+			subscription => subscription.tierId === tierId
+		)
 		const subscriptionStatus = tierSubscriptionDetails?.status
-		const isCanceled = subscriptionStatus === SubscriptionStatus.Cancelled
-		const isUnpaid = subscriptionStatus === SubscriptionStatus.Unpaid
-
-		const {subscriptions, billing} = this.share.storeModel
-
+			?? SubscriptionStatus.Unsubscribed
+		const {subscriptions} = this.share.storeModel
 		return {
 			isSubscribedToThisTier,
-			isCanceled,
-			isUnpaid,
+			isCanceled: subscriptionStatus === SubscriptionStatus.Cancelled,
+			isUnpaid: subscriptionStatus === SubscriptionStatus.Unpaid,
 			handleTierClick: async() => {
-				if (isSubscribedToThisTier && !isUnpaid) {
-					!isCanceled
-						? await subscriptions.cancelSubscription(tierId)
-						: await subscriptions.uncancelSubscription(tierId)
-				}
-				else {
-					if (planHasSubscription) {
-						if (paymentMethod) {
-							await subscriptions
-								.updateExistingSubscriptionWithNewTier(tierId)
-						}
-						else {
-							await billing.checkoutPaymentMethod()
-							await subscriptions
-								.updateExistingSubscriptionWithNewTier(tierId)
-						}
+				switch (subscriptionStatus) {
+					case SubscriptionStatus.Unsubscribed: {
+						// "buy" button
+						return subscriptions.checkoutSubscriptionTier(tierId)
 					}
-					else {
-						if (paymentMethod) {
-							await subscriptions.createNewSubscriptionForTier(tierId)
-						}
-						else {
-							await subscriptions.checkoutSubscriptionTier(tierId)
-						}
+					case SubscriptionStatus.Active: {
+						// "cancel" button
+						return subscriptions.cancelSubscription(tierId)
 					}
+					case SubscriptionStatus.Unpaid: {
+						// "pay invoice" button
+						return subscriptions.checkoutSubscriptionTier(tierId)
+					}
+					case SubscriptionStatus.Cancelled: {
+						// "renew" button
+						return subscriptions.uncancelSubscription(tierId)
+					}
+					default:
+						throw new Error("unknown subscription status")
 				}
+				// // unsubscribed -> "buy"
+				// // unpaid -> "pay invoice" (subscribe not paid)
+				// // active -> "cancel"
+				// // cancelled -> "renew"
+
+				// if (isSubscribedToThisTier && !isUnpaid) {
+				// 	!isCanceled
+				// 		? await subscriptions.cancelSubscription(tierId)
+				// 		: await subscriptions.uncancelSubscription(tierId)
+				// }
+				// else {
+				// 	if (planHasSubscription) {
+				// 		if (paymentMethod) {
+				// 			await subscriptions
+				// 				.updateExistingSubscriptionWithNewTier(tierId)
+				// 		}
+				// 		else {
+				// 			await billing.checkoutPaymentMethod()
+				// 			await subscriptions
+				// 				.updateExistingSubscriptionWithNewTier(tierId)
+				// 		}
+				// 	}
+				// 	else {
+				// 		if (paymentMethod) {
+				// 			await subscriptions.createNewSubscriptionForTier(tierId)
+				// 		}
+				// 		else {
+				// 			await subscriptions.checkoutSubscriptionTier(tierId)
+				// 		}
+				// 	}
+				// }
 			},
 		}
 	}

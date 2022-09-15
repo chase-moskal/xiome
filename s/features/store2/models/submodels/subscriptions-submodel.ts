@@ -51,9 +51,9 @@ export function makeSubscriptionsSubmodel({
 			await services.subscriptionShopping.buySubscriptionViaExistingPaymentMethod(tierId)
 		},
 
-		async updateExistingSubscriptionWithNewTier(tierId: string) {
-			await services.subscriptionShopping.updateSubscriptionTier(tierId)
-		},
+		// async updateExistingSubscriptionWithNewTier(tierId: string) {
+		// 	await services.subscriptionShopping.updateSubscriptionTier(tierId)
+		// },
 
 		async unsubscribeFromTier(tierId: string) {
 			await services.subscriptionShopping.unsubscribeFromTier(tierId)
