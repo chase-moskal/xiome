@@ -25,25 +25,29 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 	}
 
 	#renderControls = () => {
-		const state = this.#storeModel.snap.readable
-		const {connectStatusOp} = state.stripeConnect
+		const {connectStatusOp} = this.#storeModel.state.stripeConnect
 		return renderOp(connectStatusOp, status => {
 			return status === StripeConnectStatus.Ready
 				? html`
 					<xio-button @press=${this.#openPopup}>
 						open customer portal </xio-button>
 				`
-				: html`<slot name="not-ready"></slot>`
+				: html`<slot name="not-ready">
+						the merchant's stripe account must be ready, to access the customer portal
+						</slot>
+					`
 		})
 	}
 
 	render() {
-		const {allowance} = this.#storeModel
+		const {userLoggedIn} = this.#storeModel.get.is
 		return html`
 			<h3>Customer Portal</h3>
-			${allowance.connectStripeAccount
+			${userLoggedIn
 				?	this.#renderControls()
-				: html`<slot name="logged-out"></slot>`}
+				: html`<slot name="logged-out">
+						you must be logged in to access the customer portal.</slot>
+					`}
 		`
 	}
 }

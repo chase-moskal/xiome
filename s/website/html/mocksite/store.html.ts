@@ -15,10 +15,7 @@ mainHtml: html`
 		<br/>
 		<br/>
 		<br>
-		<xiome-store-customer-portal>
-			<p slot="logged-out">you must be logged in to access the customer portal.</p>
-			<p slot="not-ready">the merchant's stripe account must be ready, to access the customer portal</p>
-		</xiome-store-customer-portal>
+		<xiome-store-customer-portal />
 		<br/>
 		<br/>
 		<h3>subscriptions</h3>
