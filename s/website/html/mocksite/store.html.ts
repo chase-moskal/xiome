@@ -15,7 +15,7 @@ mainHtml: html`
 		<br/>
 		<br/>
 		<br>
-		<xiome-store-customer-portal />
+		<xiome-store-customer-portal></xiome-store-customer-portal>
 		<br/>
 		<br/>
 		<h3>subscriptions</h3>

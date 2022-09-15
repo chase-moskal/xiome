@@ -5,6 +5,7 @@ import {makeStoreModel} from "../../models/store-model.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
+import {ops} from "../../../../framework/ops.js"
 
 @mixinStyles(xiomeStoreCustomerPortalCss)
 export class XiomeStoreCustomerPortal extends mixinRequireShare<{
@@ -39,15 +40,44 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 		})
 	}
 
+	#renderButton() {
+		return html`
+			<xio-button @press=${this.#openPopup}>
+				open customer portal
+			</xio-button>
+		`
+	}
+
+	#renderMessageWhenStoreInactive() {
+		return html`
+			<slot name="not-ready">
+				the merchant's stripe account must be ready, to access the customer portal
+			</slot>
+		`
+	}
+
+	#renderMessageWhenLoggedOut() {
+		return html`
+			<slot name="logged-out">
+				you must be logged in to access the customer portal.
+			</slot>
+		`
+	}
+
 	render() {
-		const {userLoggedIn} = this.#storeModel.get.is
+		const {accessOp} = this.#storeModel.state.user
+		const {connectStatusOp} = this.#storeModel.state.stripeConnect
+		const combinedOp = ops.combine(accessOp, connectStatusOp)
 		return html`
 			<h3>Customer Portal</h3>
-			${userLoggedIn
-				?	this.#renderControls()
-				: html`<slot name="logged-out">
-						you must be logged in to access the customer portal.</slot>
-					`}
+			${renderOp(combinedOp, () => {
+				const {userLoggedIn, storeActive} = this.#storeModel.get.is
+				if (userLoggedIn) {
+					if (storeActive) return this.#renderButton()
+					else return this.#renderMessageWhenStoreInactive()
+				}
+				else return this.#renderMessageWhenLoggedOut()
+			})}
 		`
 	}
 }
