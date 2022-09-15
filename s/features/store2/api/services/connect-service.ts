@@ -108,12 +108,16 @@ export const makeConnectService = (
 				storeTables: storeDatabase.tables,
 				stripeLiaison,
 			})
-			let stripeAccountId = connectDetails?.stripeAccountId
+			const stripeAccountId = connectDetails?.stripeAccountId
+		
 			if (!stripeAccountId)
-				throw new renraku.ApiError(404, "no such connected stripe account")
+				return undefined
+
 			const {popupId} = makeStripePopupSpec.login(options)
-			const {url} = await stripeLiaison.accounts.createLoginLink(stripeAccountId)
-			return {popupId, stripeLoginLink: url}
+			return {
+				popupId,
+				stripeLoginLink: `https://dashboard.stripe.com/b/${stripeAccountId}`,
+			}
 		},
 
 		async generateCustomerPortalLink() {
