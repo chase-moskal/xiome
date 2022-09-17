@@ -306,14 +306,10 @@ export async function fulfillSubscriptionRoles({
 
 	const roleIds = tierRows.map(tierRow => tierRow.roleId)
 
-	debugger
-
 	await permissionsInteractions.grantUserRoles({
 		timeframeEnd: secondsToMilliseconds(end),
 		timeframeStart: secondsToMilliseconds(start),
 		roleIds,
 		userId,
 	})
-
-	debugger
 }

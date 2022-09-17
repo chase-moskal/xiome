@@ -58,9 +58,20 @@ export const makeSubscriptionShoppingService = (
 		else {
 			const stripeDefaultPaymentMethod = await getStripeDefaultPaymentMethod(auth)
 			if (stripeDefaultPaymentMethod) {
-				await createStripeSubscriptionViaExistingPaymentMethod(
+				const newSubscription = await createStripeSubscriptionViaExistingPaymentMethod(
 					auth, tierId, stripeDefaultPaymentMethod
 				)
+				if (newSubscription.status === "active")
+					await fulfillSubscriptionRoles({
+						userId: dbmage.Id.fromString(auth.access.user.userId),
+						periodInEpochSeconds: {
+							start: newSubscription.current_period_start,
+							end: newSubscription.current_period_end,
+						},
+						priceIds: getPriceIdsFromSubscription(newSubscription),
+						permissionsInteractions: auth.permissionsInteractions,
+						storeDatabase: auth.storeDatabase,
+					})
 			}
 			else {
 				const {popupId, ...urls} = makeStripePopupSpec.checkout(options)

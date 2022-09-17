@@ -9,7 +9,7 @@ export async function createStripeSubscriptionViaExistingPaymentMethod(
 	) {
 
 	const {tierRow} = await getRowsForTierId({tierId, auth})
-	await auth.stripeLiaisonAccount.subscriptions.create({
+	return auth.stripeLiaisonAccount.subscriptions.create({
 		customer: auth.stripeCustomerId,
 		default_payment_method: stripePaymentMethod.id,
 		items: [{

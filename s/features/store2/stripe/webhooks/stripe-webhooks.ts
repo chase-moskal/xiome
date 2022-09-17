@@ -25,7 +25,6 @@ export function stripeWebhooks(options: {
 				"stripe-webhook customer.subscription.updated",
 				event.data.object
 			)
-			debugger
 			const {appId, subscription, userId, storeDatabase} = (
 				await getSubscriptionDetails({...options, event})
 			)
