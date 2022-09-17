@@ -3,7 +3,7 @@ import {Stripe} from "stripe"
 import {StoreCustomerAuth} from "../../types.js"
 import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 
-export async function getStripePaymentMethod(auth: StoreCustomerAuth) {
+export async function getStripeDefaultPaymentMethod(auth: StoreCustomerAuth) {
 
 	const stripeCustomer = <Stripe.Customer>await auth
 		.stripeLiaisonAccount

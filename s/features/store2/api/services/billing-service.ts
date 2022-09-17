@@ -5,8 +5,8 @@ import {StoreServiceOptions} from "../types.js"
 import {PaymentMethod} from "../../types/store-concepts.js"
 import {derivePaymentMethod} from "./helpers/derive-payment-method.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
-import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {stripeClientReferenceId} from "../../stripe/utils/stripe-client-reference-id.js"
+import {getStripeDefaultPaymentMethod} from "./helpers/get-stripe-default-payment-method.js"
 
 export const makeBillingService = (
 	options: StoreServiceOptions
@@ -43,11 +43,11 @@ export const makeBillingService = (
 	},
 
 	async getPaymentMethodDetails(): Promise<PaymentMethod> {
-		return derivePaymentMethod(await getStripePaymentMethod(auth))
+		return derivePaymentMethod(await getStripeDefaultPaymentMethod(auth))
 	},
 
 	async disconnectPaymentMethod() {
-		const stripePaymentMethod = await getStripePaymentMethod(auth)
+		const stripePaymentMethod = await getStripeDefaultPaymentMethod(auth)
 		if (stripePaymentMethod) {
 			await auth
 				.stripeLiaisonAccount

@@ -6,7 +6,9 @@ import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {PermissionsInteractions} from "../../interactions/interactions-types.js"
-import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent, fulfillSubscriptionRoles, getSubscriptionDetails, getPriceIdsFromSubscription} from "./helpers/webhook-helpers.js"
+import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent, fulfillSubscriptionRoles, getSubscriptionDetails, getPriceIdsFromSubscription, getSessionDetails, getTiersForStripePrices} from "./helpers/webhook-helpers.js"
+import {findSubscriptionforPlanRelatingToTier} from "../../api/services/helpers/get-current-stripe-subscription.js"
+import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -23,6 +25,7 @@ export function stripeWebhooks(options: {
 				"stripe-webhook customer.subscription.updated",
 				event.data.object
 			)
+			debugger
 			const {appId, subscription, userId, storeDatabase} = (
 				await getSubscriptionDetails({...options, event})
 			)
@@ -41,7 +44,35 @@ export function stripeWebhooks(options: {
 		},
 
 		async "checkout.session.completed"(event: Stripe.Event) {
-			// logger.info("stripe-webhook checkout.session.completed:", event.data.object)
+			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
+
+			// const {session, storeDatabase, stripeLiaisonAccount}
+			// 	= await getSessionDetails({...options, event})
+
+			// debugger
+
+			// if (session.mode === "subscription") {
+			// 	// const priceIds = session.line_items.data
+			// 	// 	.map(item => getStripeId(item.price))
+			// 	// // const {tierRows} = await getTiersForStripePrices({priceIds, storeDatabase})
+
+			// 	const subscription = await stripeLiaisonAccount.subscriptions
+			// 		.retrieve(getStripeId(session.subscription))
+
+			// 	subscription;
+
+			// 	debugger
+
+			// 	// const unwantedSubscriptionItems = subscription.items.data
+			// 	// 	.filter(item => !priceIds.includes(getStripeId(item.price)))
+
+			// 	// for (const item of unwantedSubscriptionItems) {
+			// 	// 	await stripeLiaisonAccount.subscriptionItems.del(
+			// 	// 		item.id,
+			// 	// 		{proration_behavior: "create_prorations"}
+			// 	// 	)
+			// 	// }
+			// }
 		},
 
 		async "invoice.paid"(event: Stripe.Event) {

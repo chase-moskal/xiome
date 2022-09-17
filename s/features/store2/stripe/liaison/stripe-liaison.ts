@@ -107,6 +107,11 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 						return stripe.subscriptions.update(id, params, connection)
 					},
 				},
+				subscriptionItems: {
+					async del(id: string, params: Stripe.SubscriptionItemDeleteParams) {
+						return stripe.subscriptionItems.del(id, params, connection)
+					},
+				},
 				checkout: {
 					sessions: {
 						async create(params: Stripe.Checkout.SessionCreateParams) {

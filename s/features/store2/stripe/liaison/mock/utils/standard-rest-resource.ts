@@ -53,7 +53,7 @@ export function prepareStandardRestResource({generateId}: {
 					const resource = await table.readOne(find({id}))
 					return stripeResponse<xResource>(resource)
 				},
-				async delete(id: string) {
+				async del(id: string) {
 					await table.delete(find({id}))
 					return stripeResponse({})
 				},

@@ -202,7 +202,7 @@ export function mockStripeLiaison({
 						delete: undefined,
 						async detach(id: string) {
 							const paymentMethod = resource.retrieve(id)
-							await resource.delete(id)
+							await resource.del(id)
 							return stripeResponse(paymentMethod)
 						}
 					}
@@ -239,6 +239,9 @@ export function mockStripeLiaison({
 						currency: params.currency,
 					}),
 				}),
+
+				// TODO implement items
+				subscriptionItems: makeStandardRestResource<Stripe.Subscription>(),
 
 				subscriptions: (() => {
 					const resource = makeStandardRestResource<Stripe.Subscription>()({
