@@ -1,13 +1,15 @@
 
 import * as renraku from "renraku"
 
-import {StoreServiceOptions} from "../types.js"
 import {SubscriptionDetails} from "../../types/store-concepts.js"
+import {CheckoutPopupDetails, StoreServiceOptions} from "../types.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
+import {getStripePaymentMethod} from "./helpers/get-stripe-payment-method.js"
 import {cancelStripeSubscription} from "./shopping/cancel-stripe-subscription.js"
 import {uncancelStripeSubscription} from "./shopping/uncancel-stripe-subscription.js"
 import {fetchAllSubscriptionDetails} from "./shopping/fetch-all-subscription-details.js"
 import {verifyStripePaymentMethodExists} from "./shopping/verify-stripe-payment-method-exists.js"
+import {findSubscriptionforPlanRelatingToTier} from "./helpers/get-current-stripe-subscription.js"
 import {unsubscribeFromStripeSubscription} from "./shopping/unsubscribe-from-stripe-subscription.js"
 import {createSubscriptionViaCheckoutSession} from "./shopping/create-subscription-via-checkout-session.js"
 import {updateExistingSubscriptionWithNewTier} from "./helpers/update-existing-subscription-with-new-tier.js"
@@ -28,47 +30,72 @@ export const makeSubscriptionShoppingService = (
 		return subscriptionDetails
 	},
 
-	async buySubscriptionViaCheckoutSession(tierId: string) {
-		await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
-		const {popupId, ...urls} = makeStripePopupSpec.checkout(options)
-		const session = await createSubscriptionViaCheckoutSession(
-			auth,
-			tierId,
-			urls,
-		)
-		return {
-			stripeAccountId: auth.stripeAccountId,
-			stripeSessionUrl: session.url,
-			stripeSessionId: session.id,
-			popupId,
+	async buy(tierId: string): Promise<{checkoutDetails?: CheckoutPopupDetails}> {
+		let checkoutDetails: CheckoutPopupDetails
+
+		////////
+		////////
+
+		const stripePaymentMethod = await getStripePaymentMethod(auth)
+		const stripeSubscription = await findSubscriptionforPlanRelatingToTier(auth, tierId)
+
+		if (stripePaymentMethod) {
+			if (stripeSubscription) {
+				// updateSubscriptionTier
+			}
+			else {
+				// purchaseSubscriptionWithExistingPaymentMethod
+			}
 		}
+		else {
+			// checkoutSubscription
+			checkoutDetails = undefined
+		}
+
+		return {checkoutDetails}
 	},
 
-	async buySubscriptionViaExistingPaymentMethod(tierId: string) {
-		const stripePaymentMethod = await verifyStripePaymentMethodExists(auth)
-		await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
-		await createStripeSubscriptionViaExistingPaymentMethod(auth, tierId, stripePaymentMethod)
-	},
+	// async buySubscriptionViaCheckoutSession(tierId: string) {
+	// 	await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
+	// 	const {popupId, ...urls} = makeStripePopupSpec.checkout(options)
+	// 	const session = await createSubscriptionViaCheckoutSession(
+	// 		auth,
+	// 		tierId,
+	// 		urls,
+	// 	)
+	// 	return {
+	// 		stripeAccountId: auth.stripeAccountId,
+	// 		stripeSessionUrl: session.url,
+	// 		stripeSessionId: session.id,
+	// 		popupId,
+	// 	}
+	// },
 
-	async updateSubscriptionTier(tierId: string) {
-		const stripePaymentMethod = await verifyStripePaymentMethodExists(auth)
-		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
-		await updateExistingSubscriptionWithNewTier({
-			auth,
-			tierId,
-			stripePaymentMethod,
-			stripeSubscription,
-		})
-	},
+	// async buySubscriptionViaExistingPaymentMethod(tierId: string) {
+	// 	const stripePaymentMethod = await verifyStripePaymentMethodExists(auth)
+	// 	await verifyPlanHasNoExistingStripeSubscription(auth, tierId)
+	// 	await createStripeSubscriptionViaExistingPaymentMethod(auth, tierId, stripePaymentMethod)
+	// },
 
-	async unsubscribeFromTier(tierId: string) {
-		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
-		await unsubscribeFromStripeSubscription({
-			auth,
-			tierId,
-			stripeSubscriptionId: stripeSubscription.id
-		})
-	},
+	// async updateSubscriptionTier(tierId: string) {
+	// 	const stripePaymentMethod = await verifyStripePaymentMethodExists(auth)
+	// 	const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
+	// 	await updateExistingSubscriptionWithNewTier({
+	// 		auth,
+	// 		tierId,
+	// 		stripePaymentMethod,
+	// 		stripeSubscription,
+	// 	})
+	// },
+
+	// async unsubscribeFromTier(tierId: string) {
+	// 	const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
+	// 	await unsubscribeFromStripeSubscription({
+	// 		auth,
+	// 		tierId,
+	// 		stripeSubscriptionId: stripeSubscription.id
+	// 	})
+	// },
 
 	async cancelSubscription(tierId: string) {
 		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)

@@ -46,3 +46,9 @@ export interface StoreCustomerAuth extends StoreLinkedAuth {
 	stripeCustomerId: string
 }
 
+export interface CheckoutPopupDetails {
+	popupId: string
+	stripeAccountId: string
+	stripeSessionUrl: string
+	stripeSessionId: string
+}

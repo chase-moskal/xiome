@@ -51,22 +51,23 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			isUnpaid: subscriptionStatus === SubscriptionStatus.Unpaid,
 			handleTierClick: async() => {
 				switch (subscriptionStatus) {
-					case SubscriptionStatus.Unsubscribed: {
-						// "buy" button
-						return subscriptions.checkoutSubscriptionTier(tierId)
-					}
-					case SubscriptionStatus.Active: {
-						// "cancel" button
+
+					case SubscriptionStatus.Unsubscribed: // "buy" button
+						return subscriptions.purchase(tierId)
+						// return planHasSubscription
+						// 	? subscriptions.updateExistingSubscriptionWithNewTier(tierId)
+						// 	: subscriptions.checkoutSubscriptionTier(tierId)
+
+					case SubscriptionStatus.Active: // "cancel" button
 						return subscriptions.cancelSubscription(tierId)
-					}
-					case SubscriptionStatus.Unpaid: {
-						// "pay invoice" button
-						return subscriptions.checkoutSubscriptionTier(tierId)
-					}
-					case SubscriptionStatus.Cancelled: {
-						// "renew" button
+
+					case SubscriptionStatus.Unpaid: // "pay invoice" button
+						return subscriptions.purchase(tierId)
+						// return subscriptions.checkoutSubscriptionTier(tierId)
+
+					case SubscriptionStatus.Cancelled: // "renew" button
 						return subscriptions.uncancelSubscription(tierId)
-					}
+
 					default:
 						throw new Error("unknown subscription status")
 				}

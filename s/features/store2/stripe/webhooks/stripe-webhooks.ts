@@ -6,7 +6,7 @@ import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {PermissionsInteractions} from "../../interactions/interactions-types.js"
-import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent} from "./helpers/webhook-helpers.js"
+import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent, fulfillSubscriptionRoles, getSubscriptionDetails, getPriceIdsFromSubscription} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -18,8 +18,30 @@ export function stripeWebhooks(options: {
 
 	return {
 
+		async "customer.subscription.updated"(event: Stripe.Event) {
+			logger.info(
+				"stripe-webhook customer.subscription.updated",
+				event.data.object
+			)
+			const {appId, subscription, userId, storeDatabase} = (
+				await getSubscriptionDetails({...options, event})
+			)
+			const permissionsInteractions = preparePermissionsInteractions(appId)
+			const priceIds = getPriceIdsFromSubscription(subscription)
+			await fulfillSubscriptionRoles({
+				userId,
+				priceIds,
+				storeDatabase,
+				permissionsInteractions,
+				periodInEpochSeconds: {
+					start: subscription.current_period_start,
+					end: subscription.current_period_end,
+				},
+			})
+		},
+
 		async "checkout.session.completed"(event: Stripe.Event) {
-			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
+			// logger.info("stripe-webhook checkout.session.completed:", event.data.object)
 		},
 
 		async "invoice.paid"(event: Stripe.Event) {
@@ -34,10 +56,10 @@ export function stripeWebhooks(options: {
 					permissionsInteractions,
 					priceIds: getPriceIdsFromInvoice(details.invoice),
 				})
-				await updateCustomerPaymentMethod({
-					...details,
-					stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
-				})
+				// await updateCustomerPaymentMethod({
+				// 	...details,
+				// 	stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
+				// })
 			}
 
 			else
@@ -45,18 +67,13 @@ export function stripeWebhooks(options: {
 		},
 
 		async "invoice.payment_failed"(event: Stripe.Event) {
-			logger.info("stripe-webhook invoice.payment_failed", event.data.object)
+			// logger.info("stripe-webhook invoice.payment_failed", event.data.object)
 		},
 		async "customer.subscription.created"(event: Stripe.Event) {},
-		async "customer.subscription.updated"(event: Stripe.Event) {
-			logger.info(
-				"stripe-webhook customer.subscription.updated", event.data.object
-			)
-		},
 		async "customer.subscription.deleted"(event: Stripe.Event) {
-			logger.info(
-				"stripe-webhook customer.subscription.deleted", event.data.object
-			)
+			// logger.info(
+			// 	"stripe-webhook customer.subscription.deleted", event.data.object
+			// )
 		},
 	}
 }

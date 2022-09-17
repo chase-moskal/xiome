@@ -42,21 +42,11 @@ export function makeSubscriptionsSubmodel({
 	}
 
 	const actions = {
-		async checkoutSubscriptionTier(tierId: string) {
-			const details = await services.subscriptionShopping.buySubscriptionViaCheckoutSession(tierId)
-			await stripePopups.checkoutSubscription(details)
-		},
 
-		async createNewSubscriptionForTier(tierId: string) {
-			await services.subscriptionShopping.buySubscriptionViaExistingPaymentMethod(tierId)
-		},
-
-		// async updateExistingSubscriptionWithNewTier(tierId: string) {
-		// 	await services.subscriptionShopping.updateSubscriptionTier(tierId)
-		// },
-
-		async unsubscribeFromTier(tierId: string) {
-			await services.subscriptionShopping.unsubscribeFromTier(tierId)
+		async purchase(tierId: string) {
+			const {checkoutDetails} = await services.subscriptionShopping.buy(tierId)
+			if (checkoutDetails)
+				await stripePopups.checkoutSubscription(checkoutDetails)
 		},
 
 		async cancelSubscription(tierId: string) {

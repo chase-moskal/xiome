@@ -60,6 +60,26 @@ export async function getInvoiceDetails({
 	}
 }
 
+export async function getSubscriptionDetails({
+		event, stripeLiaison, storeDatabaseRaw
+	}: OptionsForDetails) {
+	const subscription = <Stripe.Subscription>event.data.object
+	const stripeCustomerId = getStripeId(subscription.customer)
+	const stripeLiaisonAccount = stripeLiaison.account(event.account)
+	const {storeDatabase, userId, appId} = await getStripeCustomerDetails(
+		storeDatabaseRaw,
+		stripeCustomerId,
+	)
+	return {
+		appId,
+		userId,
+		subscription,
+		storeDatabase,
+		stripeCustomerId,
+		stripeLiaisonAccount,
+	}
+}
+
 export function getReferencedClient(session: Stripe.Checkout.Session) {
 	const raw = stripeClientReferenceId.parse(session.client_reference_id)
 	const appId = dbmage.Id.fromString(raw.appId)
@@ -246,14 +266,49 @@ export async function fulfillUserRolesForSubscription({
 		invoice: Stripe.Invoice
 		permissionsInteractions: PermissionsInteractions
 	}) {
+
 	const {tierRows} = await getTiersForStripePrices({
 		priceIds,
 		storeDatabase,
 	})
+
 	const roleIds = tierRows.map(tierRow => tierRow.roleId)
+
 	await permissionsInteractions.grantUserRoles({
 		timeframeEnd: secondsToMilliseconds(invoice.lines.data[0].period.end),
 		timeframeStart: secondsToMilliseconds(invoice.lines.data[0].period.start),
+		roleIds,
+		userId,
+	})
+}
+
+export async function fulfillSubscriptionRoles({
+		userId,
+		priceIds,
+		storeDatabase,
+		permissionsInteractions,
+		periodInEpochSeconds: {start, end},
+	}:{
+		userId: dbmage.Id
+		priceIds: string[]
+		storeDatabase: StoreDatabase
+		permissionsInteractions: PermissionsInteractions
+		periodInEpochSeconds: {
+			start: number
+			end: number
+		}
+	}) {
+
+	const {tierRows} = await getTiersForStripePrices({
+		priceIds,
+		storeDatabase,
+	})
+
+	const roleIds = tierRows.map(tierRow => tierRow.roleId)
+
+	await permissionsInteractions.grantUserRoles({
+		timeframeEnd: secondsToMilliseconds(end),
+		timeframeStart: secondsToMilliseconds(start),
 		roleIds,
 		userId,
 	})
