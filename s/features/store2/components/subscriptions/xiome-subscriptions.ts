@@ -4,13 +4,10 @@ import {makeStoreModel} from "../../models/store-model.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
+import {SubscriptionDetails, SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 
 import xiomeSubscriptionsCss from "./xiome-subscriptions.css.js"
-
-// // TODO multisub: maybe use a magical view somewhere if you want?
-// import {view} from "@chasemoskal/magical/x/view/view.js"
 
 @mixinStyles(xiomeSubscriptionsCss)
 export class XiomeSubscriptions extends mixinRequireShare<{
@@ -34,110 +31,78 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
 
-	#prepareTierManager(
-			{tierId}: SubscriptionTier,
-			isSubscribedToThisTier: boolean,
-			planHasSubscription: boolean
-		) {
-		const tierSubscriptionDetails = this.#subscriptions.find(
-			subscription => subscription.tierId === tierId
-		)
-		const subscriptionStatus = tierSubscriptionDetails?.status
-			?? SubscriptionStatus.Unsubscribed
-		const {subscriptions} = this.share.storeModel
-		return {
-			isSubscribedToThisTier,
-			isCanceled: subscriptionStatus === SubscriptionStatus.Cancelled,
-			isUnpaid: subscriptionStatus === SubscriptionStatus.Unpaid,
-			handleTierClick: async() => {
-				switch (subscriptionStatus) {
-
-					case SubscriptionStatus.Unsubscribed: // "buy" button
-						return subscriptions.purchase(tierId)
-						// return planHasSubscription
-						// 	? subscriptions.updateExistingSubscriptionWithNewTier(tierId)
-						// 	: subscriptions.checkoutSubscriptionTier(tierId)
-
-					case SubscriptionStatus.Active: // "cancel" button
-						return subscriptions.cancelSubscription(tierId)
-
-					case SubscriptionStatus.Unpaid: // "pay invoice" button
-						return subscriptions.purchase(tierId)
-						// return subscriptions.checkoutSubscriptionTier(tierId)
-
-					case SubscriptionStatus.Cancelled: // "renew" button
-						return subscriptions.uncancelSubscription(tierId)
-
-					default:
-						throw new Error("unknown subscription status")
-				}
-				// // unsubscribed -> "buy"
-				// // unpaid -> "pay invoice" (subscribe not paid)
-				// // active -> "cancel"
-				// // cancelled -> "renew"
-
-				// if (isSubscribedToThisTier && !isUnpaid) {
-				// 	!isCanceled
-				// 		? await subscriptions.cancelSubscription(tierId)
-				// 		: await subscriptions.uncancelSubscription(tierId)
-				// }
-				// else {
-				// 	if (planHasSubscription) {
-				// 		if (paymentMethod) {
-				// 			await subscriptions
-				// 				.updateExistingSubscriptionWithNewTier(tierId)
-				// 		}
-				// 		else {
-				// 			await billing.checkoutPaymentMethod()
-				// 			await subscriptions
-				// 				.updateExistingSubscriptionWithNewTier(tierId)
-				// 		}
-				// 	}
-				// 	else {
-				// 		if (paymentMethod) {
-				// 			await subscriptions.createNewSubscriptionForTier(tierId)
-				// 		}
-				// 		else {
-				// 			await subscriptions.checkoutSubscriptionTier(tierId)
-				// 		}
-				// 	}
-				// }
-			},
-		}
-	}
-
 	#renderTier = ({
 			tier, tierIndex,
 			subscribedTierIndex,
-			planHasSubscription: planHasSubScription
+			subscription,
 		}: {
 			tier: SubscriptionTier
 			tierIndex: number
+			subscription: SubscriptionDetails
 			subscribedTierIndex: number | undefined
-			planHasSubscription: boolean
 		}) => {
-		const isSubscribed = tierIndex === subscribedTierIndex
-		const {
-			handleTierClick,
-			isSubscribedToThisTier,
-			isCanceled,
-			isUnpaid,
-		} = this.#prepareTierManager(tier, isSubscribed, planHasSubScription)
+		const {tierId} = tier
+		const isSubscribedToThisTier = tierIndex === subscribedTierIndex
+		const noExistingSubscriptionForPlan = subscribedTierIndex === undefined
+		const tierSubscription = this.#subscriptions.find(
+			subscription => subscription.tierId === tierId
+		)
+		const subscriptionStatus = tierSubscription?.status
+			?? SubscriptionStatus.Unsubscribed
+		const {subscriptions, billing} = this.share.storeModel
+		const isAnotherTierInPlanUnpaid = (
+			subscription
+			&& !isSubscribedToThisTier
+			&& subscription.status === SubscriptionStatus.Unpaid
+		)
 
-		const planIsUnsubscribed = subscribedTierIndex === undefined
+		type Info = {
+			state: string
+			button: string
+			action: () => Promise<void>
+		}
 
-		const [state, action]: [string | null, string] =
-			planIsUnsubscribed
-				? [null, "buy"]
-				: isSubscribedToThisTier
-					? isUnpaid
-						? ["payment failed", "pay now"]
-						: isCanceled
-							? ["cancelled", "renew"]
-							: ["purchased", "cancel"]
-					: (subscribedTierIndex > tierIndex)
-						? [null, "downgrade"]
-						: [null, "upgrade"]
+		const info = ((): Info | undefined => {
+			switch (subscriptionStatus) {
+
+				case SubscriptionStatus.Unsubscribed:
+					return isAnotherTierInPlanUnpaid
+						? undefined
+						: {
+							state: "",
+							button: noExistingSubscriptionForPlan
+								? "buy"
+								: (subscribedTierIndex > tierIndex)
+									? "downgrade"
+									: "upgrade",
+							action: () => subscriptions.purchase(tierId),
+						}
+
+				case SubscriptionStatus.Active:
+					return {
+						state: "purchased",
+						button: "cancel",
+						action: () => subscriptions.cancelSubscription(tierId),
+					}
+
+				case SubscriptionStatus.Unpaid:
+					return {
+						state: "payment failed",
+						button: "update now",
+						action: () => billing.customerPortal(),
+					}
+
+				case SubscriptionStatus.Cancelled:
+					return {
+						state: "cancelled",
+						button: "renew",
+						action: () => subscriptions.uncancelSubscription(tierId),
+					}
+
+				default:
+					throw new Error("unknown subscription status")
+			}
+		})()
 
 		return html`
 			<div
@@ -155,29 +120,37 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					</xio-price-display>
 					<p>monthly</p>
 				</div>
-				<div class=label>
-					${state}
-					<button
-						@click=${handleTierClick}>
-						${action}
-					</button>
-				</div>
+				${info
+					? html`
+						<div class=label>
+							${info.state}
+							<button @click=${info.action}>
+								${info.button}
+							</button>
+						</div>
+					`
+					: null}
 			</div>
 		`
 	}
 
 	#renderPlan = (plan: SubscriptionPlan) => {
 		const tiers = plan.tiers.filter(tier => tier.active)
-		const planHasSubscription = tiers.some(tier =>
-			this.#subscriptions.some(item => item.tierId === tier.tierId)
-		)
+
+		let subscription: SubscriptionDetails
 		let subscribedTierIndex = undefined as number
+
 		for (const [index, tier] of tiers.entries()) {
-			const details = this.#subscriptions.find(
-				subscription => subscription.tierId === tier.tierId
+			const foundSubscription = this.#subscriptions.find(
+				sub => sub.tierId === tier.tierId
 			)
-			if (details) subscribedTierIndex = index
+			if (foundSubscription) {
+				subscription = foundSubscription
+				subscribedTierIndex = index
+				break
+			}
 		}
+
 		return html`
 			<li data-plan=${plan.planId}>
 				<p>${plan.label}</p>
@@ -185,7 +158,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					${plan.tiers
 						.filter(tier => tier.active)
 						.map((tier, tierIndex) => this.#renderTier({
-							tier, tierIndex, subscribedTierIndex, planHasSubscription
+							tier, tierIndex, subscribedTierIndex, subscription,
 						}))}
 				</div>
 			</li>

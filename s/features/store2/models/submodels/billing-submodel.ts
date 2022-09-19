@@ -8,10 +8,12 @@ export function makeBillingSubmodel({
 		stripePopups,
 		services,
 		stateSystem,
+		reloadStore,
 	}: {
 		stripePopups: StripePopups
 		services: StoreServices
 		stateSystem: StoreStateSystem
+		reloadStore: () => Promise<void>
 	}) {
 
 	const state = stateSystem.snap.writable
@@ -52,8 +54,7 @@ export function makeBillingSubmodel({
 		const {popupId, customerPortalLink} =
 			await services.billing.generateCustomerPortalLink()
 		await stripePopups.openStoreCustomerPortal(popupId, customerPortalLink)
-
-		await load()
+		await reloadStore()
 	}
 
 	return {

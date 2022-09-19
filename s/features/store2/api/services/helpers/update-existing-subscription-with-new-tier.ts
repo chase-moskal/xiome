@@ -30,6 +30,5 @@ export async function updateExistingSubscriptionWithNewTier({
 		items: newItems,
 		cancel_at_period_end: false,
 		proration_behavior: "always_invoice",
-		// default_payment_method: stripePaymentMethod.id,
 	})
 }
