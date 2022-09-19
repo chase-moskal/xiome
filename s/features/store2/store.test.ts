@@ -352,16 +352,16 @@ export default <Suite>{
 				expect(getPlan(plan.planId).label).equals("membership")
 				await store.subscriptions.editPlan({
 					planId: plan.planId,
-					active: true,
+					archived: false,
 					label: "premium",
 				})
 				expect(getPlan(plan.planId).label).equals("premium")
 				await store.subscriptions.editPlan({
 					planId: plan.planId,
-					active: false,
+					archived: true,
 					label: "premium",
 				})
-				expect(getPlan(plan.planId).active).equals(false)
+				expect(getPlan(plan.planId).archived).equals(true)
 			},
 			async "can edit a tier"() {
 				const {store} = await setups.linkedStore()

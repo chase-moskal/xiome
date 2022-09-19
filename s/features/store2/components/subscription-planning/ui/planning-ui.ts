@@ -86,20 +86,20 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					`.planediting [data-field="label"]`,
 					shadow,
 				),
-				active: select<HTMLInputElement>(
-					`.planediting [data-field="active"]`,
+				archived: select<HTMLInputElement>(
+					`.planediting [data-field="archived"]`,
 					shadow,
 				),
 			}
 			const draft: EditPlanDraft = {
 				planId: plan.planId,
 				label: elements.label.value,
-				active: elements.active.checked,
+				archived: elements.archived.checked,
 			}
 			const problems = validateEditPlanDraft(draft)
 			const isChanged =
 				draft.label !== plan.label ||
-				draft.active !== plan.active
+				draft.archived !== plan.archived
 			states.component.editingPlanDraft.isChanged = isChanged
 			states.component.editingPlanDraft.problems = problems
 			return {draft, problems, isChanged}
@@ -387,12 +387,12 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 										plan label
 								</xio-text-input>
 								<label>
-									active:
+									archived:
 									<input
 										type=checkbox
-										data-field="active"
+										data-field="archived"
 										?disabled=${loading}
-										?checked=${plan.active}/>
+										?checked=${plan.archived}/>
 								</label>
 								${states.component.editingPlanDraft.isChanged
 									? html`
@@ -406,7 +406,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 						</div>
 					`: html`
 						<p class=label>plan label: ${plan.label}</p>
-						<p>active: ${plan.active ?"true" :"false"}</p>
+						<p>archived: ${plan.archived ?"true" :"false"}</p>
 					`}
 				</div>
 				<p>plan id: <xio-id id="${plan.planId}"></xio-id></p>
@@ -438,13 +438,13 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 	function renderPlanning() {
 		const {subscriptionPlansOp} = states.store.subscriptions
 		return renderOp(subscriptionPlansOp, plans => {
-			const activePlans: SubscriptionPlan[] = []
-			const inactivePlans: SubscriptionPlan[] = []
+			const availablePlans: SubscriptionPlan[] = []
+			const archivedPlans: SubscriptionPlan[] = []
 			for (const plan of plans) {
-				if (plan.active)
-					activePlans.push(plan)
+				if (plan.archived)
+					archivedPlans.push(plan)
 				else
-					inactivePlans.push(plan)
+					availablePlans.push(plan)
 			}
 			return html`
 				<xio-button class=addplan @click=${actions.newPlan.toggleDraftPanel}>
@@ -454,14 +454,14 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 					? renderNewPlanPanel()
 					: null}
 				<ol>
-					${activePlans.map(renderPlan)}
+					${availablePlans.map(renderPlan)}
 				</ol>
-				${inactivePlans.length
+				${archivedPlans.length
 					? html`
 						<details>
-							<summary>inactive plans</summary>
+							<summary>archived plans</summary>
 							<ol>
-								${inactivePlans.map(renderPlan)}
+								${archivedPlans.map(renderPlan)}
 							</ol>
 						</details>
 					`

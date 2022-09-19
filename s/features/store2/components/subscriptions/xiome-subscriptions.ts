@@ -23,7 +23,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		const plans = ops.value(this.#state.subscriptions.subscriptionPlansOp)
 			?? []
 		return plans
-			.filter(plan => plan.active)
+			.filter(plan => !plan.archived)
 			.filter(plan => plan.tiers.length)
 	}
 

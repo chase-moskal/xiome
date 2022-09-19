@@ -34,7 +34,7 @@ export async function fetchSubscriptionPlans(
 
 	return planRows
 		.map(row => ({
-			active: true,
+			archived: row.archived ?? false,
 			label: row.label,
 			planId: row.planId.string,
 			time: row.time,

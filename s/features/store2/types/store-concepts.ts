@@ -43,7 +43,7 @@ export interface SubscriptionPlan {
 	label: string
 	tiers: SubscriptionTier[]
 	time: number
-	active: boolean
+	archived: boolean
 }
 
 export enum SubscriptionStatus {

@@ -59,7 +59,7 @@ export const validateNewPlanDraft = schema<SubscriptionPlanDraft>({
 export const validateEditPlanDraft = schema<EditPlanDraft>({
 	planId: validateId,
 	label: validateLabel,
-	active: validateBoolean,
+	archived: validateBoolean,
 })
 
 export const validateEditTierDraft = schema<EditTierDraft>({

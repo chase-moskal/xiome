@@ -104,16 +104,16 @@ export function makeSubscriptionsSubmodel({
 			return tier
 		},
 
-		async editPlan({planId, label, active}: {
+		async editPlan({planId, label, archived}: {
 				planId: string
 				label: string
-				active: boolean
+				archived: boolean
 			}) {
-			await services.subscriptionPlanning.editPlan({planId, label})
+			await services.subscriptionPlanning.editPlan({planId, label, archived})
 			const plans = getPlans()
 			const plan = plans.find(plan => plan.planId === planId)
 			plan.label = label
-			plan.active = active
+			plan.archived = archived
 			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 		},
 

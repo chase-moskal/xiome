@@ -56,6 +56,7 @@ export const helpersForManagingSubscriptions = ({
 				planId,
 				label: planLabel,
 				time: Date.now(),
+				archived: false,
 			})
 
 			const {stripeProductId, stripePriceId} =
@@ -116,9 +117,10 @@ export const helpersForManagingSubscriptions = ({
 			return {tierId, roleId, time}
 		},
 
-		async updatePlan({planId: planIdString, label}: {
+		async updatePlan({planId: planIdString, label, archived}: {
 				planId: string
 				label: string
+				archived: boolean
 			}) {
 			const planId = dbmage.Id.fromString(planIdString)
 			const planRow = await storeTables.subscriptions.plans.readOne(
@@ -130,7 +132,7 @@ export const helpersForManagingSubscriptions = ({
 
 			await storeTables.subscriptions.plans.update({
 				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
-				write: {label},
+				write: {label, archived},
 			})
 		},
 

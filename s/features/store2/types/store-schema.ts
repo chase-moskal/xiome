@@ -46,6 +46,7 @@ export type SubscriptionPlanRow = dbmage.AsRow<{
 	planId: dbmage.Id
 	label: string
 	time: number
+	archived: boolean
 }>
 
 export type SubscriptionTierRow = dbmage.AsRow<{

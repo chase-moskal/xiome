@@ -14,7 +14,7 @@ export interface SubscriptionPlanDraft {
 export interface EditPlanDraft {
 	planId: string
 	label: string
-	active: boolean
+	archived: boolean
 }
 
 export interface EditTierDraft {

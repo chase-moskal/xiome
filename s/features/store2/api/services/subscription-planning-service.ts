@@ -49,7 +49,7 @@ export const makeSubscriptionPlanningService = (
 			planId: planId.toString(),
 			label: planLabel,
 			time,
-			active: true,
+			archived: false,
 			tiers: [
 				{
 					tierId: tierId.toString(),
@@ -94,10 +94,12 @@ export const makeSubscriptionPlanningService = (
 	async editPlan(inputs: {
 			planId: string
 			label: string
+			archived: boolean
 		}) {
 		const planId = runValidation(inputs.planId, validateId)
 		const label = runValidation(inputs.label, validateLabel)
-		await helpers.updatePlan({planId, label})
+		const archived = runValidation(inputs.archived, validateBoolean)
+		await helpers.updatePlan({planId, label, archived})
 	},
 
 	async editTier(inputs: {
