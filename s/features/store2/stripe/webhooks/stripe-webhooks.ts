@@ -5,10 +5,10 @@ import * as dbmage from "dbmage"
 import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../types/store-schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
+import {fulfillSubscriptionRoles} from "../../interactions/fulfillment.js"
 import {PermissionsInteractions} from "../../interactions/interactions-types.js"
-import {getPriceIdsFromInvoice, fulfillUserRolesForSubscription, updateCustomerPaymentMethod, getInvoiceDetails, getPaymentMethodIdFromPaymentIntent, fulfillSubscriptionRoles, getSubscriptionDetails, getPriceIdsFromSubscription, getSessionDetails, getTiersForStripePrices} from "./helpers/webhook-helpers.js"
-import {findSubscriptionforPlanRelatingToTier} from "../../api/services/helpers/get-current-stripe-subscription.js"
-import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
+import {timerangeFromStripePeriod} from "../utils/seconds-to-millisecond-timerange.js"
+import {getPriceIdsFromInvoice, getInvoiceDetails, getSubscriptionDetails, getPriceIdsFromSubscription} from "./helpers/webhook-helpers.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -35,10 +35,10 @@ export function stripeWebhooks(options: {
 				priceIds,
 				storeDatabase,
 				permissionsInteractions,
-				periodInEpochSeconds: {
+				timerange: timerangeFromStripePeriod({
 					start: subscription.current_period_start,
 					end: subscription.current_period_end,
-				},
+				}),
 			})
 		},
 
@@ -76,21 +76,21 @@ export function stripeWebhooks(options: {
 
 		async "invoice.paid"(event: Stripe.Event) {
 			logger.info("stripe-webhook invoice.paid:", event.data.object)
-			const details = await getInvoiceDetails({...options, event})
-			const invoiceIsForSubscription = !!details.invoice.subscription
-			const permissionsInteractions = preparePermissionsInteractions(details.appId)
 
-			if (invoiceIsForSubscription){
-				await fulfillUserRolesForSubscription({
-					...details,
+			const {invoice, appId, userId, storeDatabase}
+				= await getInvoiceDetails({...options, event})
+
+			const invoiceIsForSubscription = !!invoice.subscription
+			const permissionsInteractions = preparePermissionsInteractions(appId)
+
+			if (invoiceIsForSubscription)
+				await fulfillSubscriptionRoles({
+					userId,
+					storeDatabase,
 					permissionsInteractions,
-					priceIds: getPriceIdsFromInvoice(details.invoice),
+					priceIds: getPriceIdsFromInvoice(invoice),
+					timerange: timerangeFromStripePeriod(invoice.lines.data[0].period),
 				})
-				// await updateCustomerPaymentMethod({
-				// 	...details,
-				// 	stripePaymentMethodId: await getPaymentMethodIdFromPaymentIntent(details),
-				// })
-			}
 
 			else
 				logger.error(`unknown 'invoice.paid' hook (not for a subscription)`)

@@ -4,12 +4,14 @@ import * as dbmage from "dbmage"
 
 import {concurrent} from "../../../../../toolbox/concurrent.js"
 import {makeStripePopupSpec} from "../../../popups/make-stripe-popup-spec.js"
+import {fulfillSubscriptionRoles} from "../../../interactions/fulfillment.js"
 import {CheckoutPopupDetails, StoreCustomerAuth, StoreServiceOptions} from "../../types.js"
 import {getStripeDefaultPaymentMethod} from "../helpers/get-stripe-default-payment-method.js"
+import {getPriceIdsFromSubscription} from "../../../stripe/webhooks/helpers/webhook-helpers.js"
 import {createSubscriptionViaCheckoutSession} from "./create-subscription-via-checkout-session.js"
 import {findSubscriptionforPlanRelatingToTier} from "../helpers/get-current-stripe-subscription.js"
+import {timerangeFromStripePeriod} from "../../../stripe/utils/seconds-to-millisecond-timerange.js"
 import {updateExistingSubscriptionWithNewTier} from "../helpers/update-existing-subscription-with-new-tier.js"
-import {fulfillSubscriptionRoles, getPriceIdsFromSubscription} from "../../../stripe/webhooks/helpers/webhook-helpers.js"
 import {createStripeSubscriptionViaExistingPaymentMethod} from "./create-stripe-subscription-via-existing-payment-method.js"
 
 export async function prepareToBuyStripeSubscription(
@@ -19,6 +21,7 @@ export async function prepareToBuyStripeSubscription(
 	) {
 
 	type BuyResult = Promise<{checkoutDetails?: CheckoutPopupDetails}>
+	const userId = dbmage.Id.fromString(auth.access.user.userId)
 
 	const actions = {
 
@@ -39,14 +42,14 @@ export async function prepareToBuyStripeSubscription(
 
 			if (updatedSubscription.status === "active")
 				await fulfillSubscriptionRoles({
+					userId,
 					storeDatabase: auth.storeDatabase,
 					permissionsInteractions: auth.permissionsInteractions,
-					userId: dbmage.Id.fromString(auth.access.user.userId),
 					priceIds: getPriceIdsFromSubscription(updatedSubscription),
-					periodInEpochSeconds: {
+					timerange: timerangeFromStripePeriod({
 						start: updatedSubscription.current_period_start,
 						end: updatedSubscription.current_period_end,
-					},
+					})
 				})
 
 			return {}
@@ -65,14 +68,14 @@ export async function prepareToBuyStripeSubscription(
 
 			if (newSubscription.status === "active")
 				await fulfillSubscriptionRoles({
-					userId: dbmage.Id.fromString(auth.access.user.userId),
-					periodInEpochSeconds: {
-						start: newSubscription.current_period_start,
-						end: newSubscription.current_period_end,
-					},
+					userId,
 					priceIds: getPriceIdsFromSubscription(newSubscription),
 					permissionsInteractions: auth.permissionsInteractions,
 					storeDatabase: auth.storeDatabase,
+					timerange: timerangeFromStripePeriod({
+						start: newSubscription.current_period_start,
+						end: newSubscription.current_period_end,
+					})
 				})
 
 			return {}

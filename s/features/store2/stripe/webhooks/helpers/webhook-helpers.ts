@@ -7,7 +7,6 @@ import {StripeLiaison, StripeLiaisonAccount} from "../../liaison/types.js"
 import {StoreDatabase, StoreDatabaseRaw} from "../../../types/store-schema.js"
 import {stripeClientReferenceId} from "../../utils/stripe-client-reference-id.js"
 import {appConstraintKey} from "../../../../../assembly/backend/types/database.js"
-import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
 import {UnconstrainedTable} from "../../../../../framework/api/unconstrained-table.js"
 
 type PaymentDetails = {
@@ -121,21 +120,6 @@ export async function getStripePaymentIntent(
 		: <Stripe.PaymentIntent>s
 }
 
-export async function getTiersForStripePrices({
-		priceIds,
-		storeDatabase,
-	}: {
-		priceIds: string[]
-		storeDatabase: StoreDatabase
-	}) {
-	if (priceIds.length === 0)
-		throw new Error("prices not found in subscription from stripe")
-	return {
-		tierRows: await storeDatabase.tables.subscriptions.tiers
-			.read(dbmage.findAll(priceIds, id => ({stripePriceId: id}))),
-	}
-}
-
 export async function getPaymentMethodIdFromSetupIntent({
 		stripeLiaisonAccount, session,
 	}: {
@@ -247,69 +231,4 @@ export function getPriceIdsFromInvoice(invoice: Stripe.Invoice) {
 	for (const {price} of recurringItems)
 		setOfPriceIds.add(price.id)
 	return [...setOfPriceIds]
-}
-
-export function secondsToMilliseconds(seconds: number) {
-	return seconds * 1000
-}
-
-export async function fulfillUserRolesForSubscription({
-		userId,
-		priceIds,
-		invoice,
-		storeDatabase,
-		permissionsInteractions,
-	}:{
-		userId: dbmage.Id
-		priceIds: string[]
-		storeDatabase: StoreDatabase
-		invoice: Stripe.Invoice
-		permissionsInteractions: PermissionsInteractions
-	}) {
-
-	const {tierRows} = await getTiersForStripePrices({
-		priceIds,
-		storeDatabase,
-	})
-
-	const roleIds = tierRows.map(tierRow => tierRow.roleId)
-
-	await permissionsInteractions.grantUserRoles({
-		timeframeEnd: secondsToMilliseconds(invoice.lines.data[0].period.end),
-		timeframeStart: secondsToMilliseconds(invoice.lines.data[0].period.start),
-		roleIds,
-		userId,
-	})
-}
-
-export async function fulfillSubscriptionRoles({
-		userId,
-		priceIds,
-		storeDatabase,
-		permissionsInteractions,
-		periodInEpochSeconds: {start, end},
-	}:{
-		userId: dbmage.Id
-		priceIds: string[]
-		storeDatabase: StoreDatabase
-		permissionsInteractions: PermissionsInteractions
-		periodInEpochSeconds: {
-			start: number
-			end: number
-		}
-	}) {
-
-	const {tierRows} = await getTiersForStripePrices({
-		priceIds,
-		storeDatabase,
-	})
-
-	const roleIds = tierRows.map(tierRow => tierRow.roleId)
-
-	await permissionsInteractions.grantUserRoles({
-		timeframeEnd: secondsToMilliseconds(end),
-		timeframeStart: secondsToMilliseconds(start),
-		roleIds,
-		userId,
-	})
 }
