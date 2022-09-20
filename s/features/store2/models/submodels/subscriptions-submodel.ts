@@ -50,10 +50,12 @@ export function makeSubscriptionsSubmodel({
 		},
 
 		async cancelSubscription(tierId: string) {
+			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
 			await services.subscriptionShopping.cancelSubscription(tierId)
 		},
 
 		async uncancelSubscription(tierId: string) {
+			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
 			await services.subscriptionShopping.uncancelSubscription(tierId)
 		},
 	}
@@ -61,7 +63,6 @@ export function makeSubscriptionsSubmodel({
 	const reauthorizeAndRefreshAfter = <typeof actions>objectMap(
 		actions,
 		fun => async(...args: any[]) => {
-			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
 			await fun(...args)
 			await reauthorize()
 		},
