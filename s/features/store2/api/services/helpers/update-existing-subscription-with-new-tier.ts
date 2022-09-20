@@ -6,13 +6,11 @@ import {getRowsForTierId} from "./get-rows-for-tier-id.js"
 
 export async function updateExistingSubscriptionWithNewTier({
 		tierId, auth, stripeSubscription,
-		// stripePaymentMethod,
 	}: {
 		tierId: string
 		auth: StoreLinkedAuth
 		stripeSubscription: Stripe.Subscription
-		// stripePaymentMethod: Stripe.PaymentMethod
-	}) {
+	}): Promise<Stripe.Subscription> {
 
 	const {stripeLiaisonAccount} = auth
 	const previousItemId = stripeSubscription.items.data[0].id
@@ -26,7 +24,7 @@ export async function updateExistingSubscriptionWithNewTier({
 		}
 	]
 
-	await stripeLiaisonAccount.subscriptions.update(stripeSubscription.id, {
+	return stripeLiaisonAccount.subscriptions.update(stripeSubscription.id, {
 		items: newItems,
 		cancel_at_period_end: false,
 		proration_behavior: "always_invoice",
