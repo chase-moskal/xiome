@@ -1,15 +1,20 @@
 
 import * as dbmage from "dbmage"
-import {StoreLinkedAuth} from "../../types.js"
+import {StoreDatabase} from "../../../types/store-schema.js"
 
-
-export async function getPlanRow({planId, auth}: {
-		planId: string
-		auth: StoreLinkedAuth
+export async function getPlanRow({
+		planId,
+		storeDatabase,
+	}: {
+		planId: dbmage.Id
+		storeDatabase: StoreDatabase
 	}) {
 
-	const planRow = await auth.storeDatabase.tables.subscriptions
-		.plans.readOne(dbmage.find({planId: dbmage.Id.fromString(planId)}))
+	const planRow = await storeDatabase
+		.tables
+		.subscriptions
+		.plans
+		.readOne(dbmage.find({planId}))
 
 	if (!planRow)
 		throw new Error(`subscription plan not found "${planId.toString()}"`)

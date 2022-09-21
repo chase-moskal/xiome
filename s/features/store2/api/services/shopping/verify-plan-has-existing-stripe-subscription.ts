@@ -1,16 +1,14 @@
 
-import * as dbmage from "dbmage"
-
 import {StoreCustomerAuth} from "../../types.js"
-import {SubscriptionTierRow} from "../../../types/store-schema.js"
-import {findSubscriptionforPlanRelatingToTier} from "../helpers/get-current-stripe-subscription.js"
+import {findStripeSubscriptionForTier} from "../helpers/find-stripe-subscription-for-tier.js"
 
 export async function verifyPlanHasExistingStripeSubscription(
 		auth: StoreCustomerAuth,
 		tierId: string
 	) {
 
-	const stripeSubscription = await findSubscriptionforPlanRelatingToTier(auth, tierId)
+	const stripeSubscription = await findStripeSubscriptionForTier(auth, tierId)
+
 	if (!stripeSubscription)
 		throw new Error("user must already have a subscription")
 	else
