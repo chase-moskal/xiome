@@ -29,16 +29,11 @@ export async function prepareToBuyStripeSubscription(
 				subscription: Stripe.Subscription
 			): BuyResult {
 
-			await updateExistingSubscriptionWithNewTier({
+			const updatedSubscription = await updateExistingSubscriptionWithNewTier({
 				auth,
 				tierId,
 				stripeSubscription: subscription,
 			})
-
-			const updatedSubscription = await auth
-				.stripeLiaisonAccount
-				.subscriptions
-				.retrieve(subscription.id)
 
 			if (updatedSubscription.status === "active")
 				await fulfillSubscriptionRoles({
