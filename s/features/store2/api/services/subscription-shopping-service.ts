@@ -27,7 +27,7 @@ export const makeSubscriptionShoppingService = (
 		async buy(tierId: string) {
 			const {
 				subscription,
-				paymentMethod,
+				defaultPaymentMethod,
 				actions,
 			} = await prepareToBuyStripeSubscription(options, auth, tierId)
 
@@ -35,8 +35,8 @@ export const makeSubscriptionShoppingService = (
 				return actions.updateAndFulfillSubscription(subscription)
 
 			else {
-				if (paymentMethod)
-					return actions.createNewSubscriptionUsingExistingPaymentMethod(paymentMethod)
+				if (defaultPaymentMethod)
+					return actions.createNewSubscriptionUsingExistingPaymentMethod(defaultPaymentMethod)
 
 				else
 					return actions.createCheckoutPopupToBuyNewSubscription()

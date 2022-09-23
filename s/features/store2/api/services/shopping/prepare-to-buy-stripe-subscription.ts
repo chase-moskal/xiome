@@ -99,7 +99,7 @@ export async function prepareToBuyStripeSubscription(
 	return {
 		actions,
 		...await concurrent({
-			paymentMethod: getStripeDefaultPaymentMethod(auth),
+			defaultPaymentMethod: getStripeDefaultPaymentMethod(auth),
 			subscription: findStripeSubscriptionForTier(auth, tierId),
 		}),
 	}
