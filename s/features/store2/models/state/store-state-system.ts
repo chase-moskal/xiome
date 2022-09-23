@@ -71,6 +71,9 @@ export function makeStoreStateSystem() {
 				get plans() { return ops.value(state.subscriptions.subscriptionPlansOp) },
 				get mySubscriptionDetails() { return ops.value(state.subscriptions.mySubscriptionDetailsOp) },
 			},
+			billing: {
+				get paymentMethod() { return ops.value(state.billing.paymentMethodOp) },
+			}
 		},
 	}
 }

@@ -19,6 +19,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return this.share.storeModel.snap.readable
 	}
 
+	get #storeModel() {
+		return this.share.storeModel
+	}
+
 	get #plans() {
 		const plans = ops.value(this.#state.subscriptions.subscriptionPlansOp)
 			?? []
@@ -66,23 +70,53 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			switch (subscriptionStatus) {
 
 				case SubscriptionStatus.Unsubscribed:
+					const buttonLabel = noExistingSubscriptionForPlan
+						? "buy"
+						: (subscribedTierIndex > tierIndex)
+							? "downgrade"
+							: "upgrade"
+
 					return isAnotherTierInPlanUnpaid
 						? undefined
 						: {
 							state: "",
-							button: noExistingSubscriptionForPlan
-								? "buy"
-								: (subscribedTierIndex > tierIndex)
-									? "downgrade"
-									: "upgrade",
-							action: () => subscriptions.purchase(tierId),
+							button: buttonLabel,
+							action: async () => {
+								const hasDefaultPaymentMethod = !!this.#storeModel.
+									get.billing.paymentMethod
+								const willNeedCheckoutPopup =
+									!isSubscribedToThisTier && !hasDefaultPaymentMethod
+								if(!willNeedCheckoutPopup) {
+									const proceedWithPurchase = await this.share.modals.confirm({
+										title: `${buttonLabel} subscription`,
+										body: html`are you sure you want to ${buttonLabel} ${buttonLabel === "buy" ? "": `your subscription to`} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
+									})
+									if(!proceedWithPurchase) return
+								}
+								await subscriptions.purchase(tierId)
+								if (buttonLabel !== "buy")
+									this.share.modals.alert({
+										title: html`your subscription ${buttonLabel} to <strong>${tier.label}</strong> was successfull`
+									})
+							}
 						}
 
 				case SubscriptionStatus.Active:
 					return {
 						state: "purchased",
 						button: "cancel",
-						action: () => subscriptions.cancelSubscription(tierId),
+						action: async () => {
+							const isCanceled = await this.share.modals.confirm({
+								title: `Cancel subscription`,
+								body: html`are you sure you want to cancel your <strong>${tier.label}</strong> subscription`
+							})
+							if(isCanceled) {
+								subscriptions.cancelSubscription(tierId)
+								this.share.modals.alert({
+									title: `ssndsndkndknsknsknkddsnkdnksnd`
+								})
+							}
+						},
 					}
 
 				case SubscriptionStatus.Unpaid:
@@ -96,7 +130,13 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					return {
 						state: "cancelled",
 						button: "renew",
-						action: () => subscriptions.uncancelSubscription(tierId),
+						action: async () => {
+							const isRenewed = await this.share.modals.confirm({
+								title: `Renew subscription`,
+								body: html`are you sure you want to renew your <strong>${tier.label}</strong> subscription for $${centsToDollars(tier.pricing.price)}/month?`
+							})
+							if(isRenewed) subscriptions.uncancelSubscription(tierId)
+						},
 					}
 
 				default:
