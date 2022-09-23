@@ -27,6 +27,6 @@ export async function updateExistingSubscriptionWithNewTier({
 	return stripeLiaisonAccount.subscriptions.update(stripeSubscription.id, {
 		items: newItems,
 		cancel_at_period_end: false,
-		proration_behavior: "always_invoice",
+		proration_behavior: "create_prorations",
 	})
 }
