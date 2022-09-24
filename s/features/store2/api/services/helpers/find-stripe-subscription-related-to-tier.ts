@@ -6,7 +6,7 @@ import {StoreCustomerAuth} from "../../types.js"
 import {getRowsForTierId} from "./get-rows-for-tier-id.js"
 import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 
-export async function findStripeSubscriptionForTier(
+export async function findStripeSubscriptionRelatedToTier(
 		auth: StoreCustomerAuth,
 		tierId: string
 	): Promise<undefined | Stripe.Subscription> {

@@ -7,7 +7,7 @@ import {makeStripePopupSpec} from "../../../popups/make-stripe-popup-spec.js"
 import {fulfillSubscriptionRoles} from "../../../stripe/fulfillment/fulfillment.js"
 import {CheckoutPopupDetails, StoreCustomerAuth, StoreServiceOptions} from "../../types.js"
 import {getStripeDefaultPaymentMethod} from "../helpers/get-stripe-default-payment-method.js"
-import {findStripeSubscriptionForTier} from "../helpers/find-stripe-subscription-for-tier.js"
+import {findStripeSubscriptionRelatedToTier} from "../helpers/find-stripe-subscription-related-to-tier.js"
 import {getPriceIdsFromSubscription} from "../../../stripe/webhooks/helpers/webhook-helpers.js"
 import {createSubscriptionViaCheckoutSession} from "./create-subscription-via-checkout-session.js"
 import {timerangeFromStripePeriod} from "../../../stripe/utils/seconds-to-millisecond-timerange.js"
@@ -100,7 +100,7 @@ export async function prepareToBuyStripeSubscription(
 		actions,
 		...await concurrent({
 			defaultPaymentMethod: getStripeDefaultPaymentMethod(auth),
-			subscription: findStripeSubscriptionForTier(auth, tierId),
+			subscription: findStripeSubscriptionRelatedToTier(auth, tierId),
 		}),
 	}
 }

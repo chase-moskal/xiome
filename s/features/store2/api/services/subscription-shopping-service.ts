@@ -9,6 +9,7 @@ import {fetchAllSubscriptionDetails} from "./shopping/fetch-all-subscription-det
 import {prepareToBuyStripeSubscription} from "./shopping/prepare-to-buy-stripe-subscription.js"
 import {automateArgumentValidationForTierId} from "./shopping/automate-argument-validation-for-tier-id.js"
 import {verifyPlanHasExistingStripeSubscription} from "./shopping/verify-plan-has-existing-stripe-subscription.js"
+import {determinePurchaseScenerio, PurchaseScenario} from "../../components/subscriptions/utils/subscription-actions.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions
@@ -31,15 +32,24 @@ export const makeSubscriptionShoppingService = (
 				actions,
 			} = await prepareToBuyStripeSubscription(options, auth, tierId)
 
-			if (subscription)
-				return actions.updateAndFulfillSubscription(subscription)
+			const scenerio = determinePurchaseScenerio({
+				hasDefaultPaymentMethod: !!defaultPaymentMethod,
+				hasExistingSubscription: !!subscription,
+			})
 
-			else {
-				if (defaultPaymentMethod)
+			switch (scenerio) {
+
+				case PurchaseScenario.Update:
+					return actions.updateAndFulfillSubscription(subscription)
+
+				case PurchaseScenario.UsePaymentMethod:
 					return actions.createNewSubscriptionUsingExistingPaymentMethod(defaultPaymentMethod)
 
-				else
+				case PurchaseScenario.CheckoutPopup:
 					return actions.createCheckoutPopupToBuyNewSubscription()
+
+				default:
+					throw new Error("unknown purchase scenerio") ;
 			}
 		},
 

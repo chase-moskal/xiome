@@ -5,6 +5,7 @@ import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
+import {determinePurchaseScenerio, preparePurchaseActions, PurchaseScenario} from "./utils/subscription-actions.js"
 import {SubscriptionDetails, SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 
 import xiomeSubscriptionsCss from "./xiome-subscriptions.css.js"
@@ -19,8 +20,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		return this.share.storeModel.snap.readable
 	}
 
-	get #storeModel() {
-		return this.share.storeModel
+	get #modals() {
+		return this.share.modals
 	}
 
 	get #plans() {
@@ -61,8 +62,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		)
 
 		type Info = {
-			state: string
-			button: string
+			stateLabel: string
+			buttonLabel: string
 			action: () => Promise<void>
 		}
 
@@ -75,63 +76,71 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						: (subscribedTierIndex > tierIndex)
 							? "downgrade"
 							: "upgrade"
-
 					return isAnotherTierInPlanUnpaid
 						? undefined
 						: {
-							state: "",
-							button: buttonLabel,
+							stateLabel: "",
+							buttonLabel,
 							action: async () => {
-								const hasDefaultPaymentMethod = !!this.#storeModel.
-									get.billing.paymentMethod
-								const willNeedCheckoutPopup =
-									!isSubscribedToThisTier && !hasDefaultPaymentMethod
-								if(!willNeedCheckoutPopup) {
-									const proceedWithPurchase = await this.share.modals.confirm({
-										title: `${buttonLabel} subscription`,
-										body: html`are you sure you want to ${buttonLabel} ${buttonLabel === "buy" ? "": `your subscription to`} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
-									})
-									if(!proceedWithPurchase) return
+								const {
+									upgradeOrDowngrade,
+									buySubscriptionWithCheckoutPopup,
+									buySubscriptionWithExistingPaymentMethod,
+								} = preparePurchaseActions({
+									modals: this.#modals,
+									subscriptions,
+									buttonLabel,
+									tier
+								})
+								const scenerio = determinePurchaseScenerio({
+									hasDefaultPaymentMethod: !!this.share.storeModel
+										.get.billing.paymentMethod,
+									hasExistingSubscription: !noExistingSubscriptionForPlan
+								})
+
+								switch (scenerio) {
+									case PurchaseScenario.Update:
+										return await upgradeOrDowngrade()
+
+									case PurchaseScenario.UsePaymentMethod:
+										return await buySubscriptionWithExistingPaymentMethod()
+
+									case PurchaseScenario.CheckoutPopup:
+										return await buySubscriptionWithCheckoutPopup()
+
+									default:
+										throw new Error("unknown purchase scenerio");
 								}
-								await subscriptions.purchase(tierId)
-								if (buttonLabel !== "buy")
-									this.share.modals.alert({
-										title: html`your subscription ${buttonLabel} to <strong>${tier.label}</strong> was successfull`
-									})
 							}
 						}
 
 				case SubscriptionStatus.Active:
 					return {
-						state: "purchased",
-						button: "cancel",
+						stateLabel: "purchased",
+						buttonLabel: "cancel",
 						action: async () => {
-							const isCanceled = await this.share.modals.confirm({
+							const isCanceled = await this.#modals.confirm({
 								title: `Cancel subscription`,
 								body: html`are you sure you want to cancel your <strong>${tier.label}</strong> subscription`
 							})
-							if(isCanceled) {
+							if(isCanceled)
 								subscriptions.cancelSubscription(tierId)
-								this.share.modals.alert({
-									title: `ssndsndkndknsknsknkddsnkdnksnd`
-								})
-							}
 						},
 					}
 
 				case SubscriptionStatus.Unpaid:
 					return {
-						state: "payment failed",
-						button: "update now",
+						stateLabel: "payment failed",
+						buttonLabel: "update now",
 						action: () => billing.customerPortal(),
 					}
 
 				case SubscriptionStatus.Cancelled:
 					return {
-						state: "cancelled",
-						button: "renew",
+						stateLabel: "cancelled",
+						buttonLabel: "renew",
 						action: async () => {
-							const isRenewed = await this.share.modals.confirm({
+							const isRenewed = await this.#modals.confirm({
 								title: `Renew subscription`,
 								body: html`are you sure you want to renew your <strong>${tier.label}</strong> subscription for $${centsToDollars(tier.pricing.price)}/month?`
 							})
@@ -163,9 +172,9 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 				${info
 					? html`
 						<div class=label>
-							${info.state}
+							${info.stateLabel}
 							<button @click=${info.action}>
-								${info.button}
+								${info.buttonLabel}
 							</button>
 						</div>
 					`
