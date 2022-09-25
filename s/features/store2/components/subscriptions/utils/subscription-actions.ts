@@ -13,30 +13,32 @@ export function preparePurchaseActions({
 		storeModel: ReturnType<typeof makeStoreModel>
 	}) {
 
-	const {tierId} = tier
 	const {subscriptions} = storeModel
+	const {stripePriceId} = tier.pricing[0]
 
 	return {
+
 		upgradeOrDowngrade: async () => {
 			await modals.confirmAction({
 				title: buttonLabel,
-				message: `are you sure you want to ${buttonLabel} your subscription to ${tier.label} for $${centsToDollars(tier.pricing.price)}/month?`,
+				message: `are you sure you want to ${buttonLabel} your subscription to ${tier.label} for $${centsToDollars(tier.pricing[0].price)}/month?`,
 				actionWhenConfirmed: () => subscriptions.purchase({
-					tierId, showLoadingSpinner: true
+					stripePriceId,
+					showLoadingSpinner: true,
 				}),
 				loadingMessage: `switching to ${tier.label}`
 			})
 		},
 
 		buySubscriptionWithCheckoutPopup: async () => {
-			await subscriptions.purchase({tierId})
+			await subscriptions.purchase({stripePriceId})
 		},
 
 		buySubscriptionWithExistingPaymentMethod: async () => {
 			await modals.confirmAction({
 				title: `${buttonLabel} subscription`,
-				message: `are you sure you want to ${buttonLabel} ${tier.label} for $${centsToDollars(tier.pricing.price)}/month?`,
-				actionWhenConfirmed: () => subscriptions.purchase({tierId}),
+				message: `are you sure you want to ${buttonLabel} ${tier.label} for $${centsToDollars(tier.pricing[0].price)}/month?`,
+				actionWhenConfirmed: () => subscriptions.purchase({stripePriceId}),
 				loadingMessage: `purchasing subscription`
 			})
 		}

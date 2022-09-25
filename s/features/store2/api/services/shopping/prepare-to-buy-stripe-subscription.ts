@@ -7,17 +7,18 @@ import {makeStripePopupSpec} from "../../../popups/make-stripe-popup-spec.js"
 import {fulfillSubscriptionRoles} from "../../../stripe/fulfillment/fulfillment.js"
 import {CheckoutPopupDetails, StoreCustomerAuth, StoreServiceOptions} from "../../types.js"
 import {getStripeDefaultPaymentMethod} from "../helpers/get-stripe-default-payment-method.js"
-import {findStripeSubscriptionRelatedToTier} from "../helpers/find-stripe-subscription-related-to-tier.js"
 import {getPriceIdsFromSubscription} from "../../../stripe/webhooks/helpers/webhook-helpers.js"
 import {createSubscriptionViaCheckoutSession} from "./create-subscription-via-checkout-session.js"
 import {timerangeFromStripePeriod} from "../../../stripe/utils/seconds-to-millisecond-timerange.js"
+import {getTierRowByQueryingStripePriceId} from "../helpers/get-tier-row-by-querying-stripe-price-id.js"
+import {findStripeSubscriptionRelatedToTier} from "../helpers/find-stripe-subscription-related-to-tier.js"
 import {updateExistingSubscriptionWithNewTier} from "../helpers/update-existing-subscription-with-new-tier.js"
 import {createStripeSubscriptionViaExistingPaymentMethod} from "./create-stripe-subscription-via-existing-payment-method.js"
 
 export async function prepareToBuyStripeSubscription(
 		options: StoreServiceOptions,
 		auth: StoreCustomerAuth,
-		tierId: string,
+		stripePriceId: string,
 	) {
 
 	type BuyResult = Promise<{checkoutDetails?: CheckoutPopupDetails}>
@@ -31,7 +32,7 @@ export async function prepareToBuyStripeSubscription(
 
 			const updatedSubscription = await updateExistingSubscriptionWithNewTier({
 				auth,
-				tierId,
+				stripePriceId,
 				stripeSubscription: subscription,
 			})
 
@@ -39,6 +40,7 @@ export async function prepareToBuyStripeSubscription(
 				await fulfillSubscriptionRoles({
 					userId,
 					storeDatabase: auth.storeDatabase,
+					stripeLiaisonAccount: auth.stripeLiaisonAccount,
 					permissionsInteractions: auth.permissionsInteractions,
 					priceIds: getPriceIdsFromSubscription(updatedSubscription),
 					timerange: timerangeFromStripePeriod({
@@ -57,16 +59,17 @@ export async function prepareToBuyStripeSubscription(
 			const newSubscription =
 				await createStripeSubscriptionViaExistingPaymentMethod(
 					auth,
-					tierId,
+					stripePriceId,
 					paymentMethod,
 				)
 
 			if (newSubscription.status === "active")
 				await fulfillSubscriptionRoles({
 					userId,
-					priceIds: getPriceIdsFromSubscription(newSubscription),
-					permissionsInteractions: auth.permissionsInteractions,
 					storeDatabase: auth.storeDatabase,
+					stripeLiaisonAccount: auth.stripeLiaisonAccount,
+					permissionsInteractions: auth.permissionsInteractions,
+					priceIds: getPriceIdsFromSubscription(newSubscription),
 					timerange: timerangeFromStripePeriod({
 						start: newSubscription.current_period_start,
 						end: newSubscription.current_period_end,
@@ -81,7 +84,7 @@ export async function prepareToBuyStripeSubscription(
 
 			const session = await createSubscriptionViaCheckoutSession(
 				auth,
-				tierId,
+				stripePriceId,
 				urls,
 			)
 
@@ -96,11 +99,16 @@ export async function prepareToBuyStripeSubscription(
 		},
 	}
 
+	const {tierId} = await getTierRowByQueryingStripePriceId({
+		...auth,
+		stripePriceId,
+	})
+
 	return {
 		actions,
 		...await concurrent({
 			defaultPaymentMethod: getStripeDefaultPaymentMethod(auth),
-			subscription: findStripeSubscriptionRelatedToTier(auth, tierId),
+			subscription: findStripeSubscriptionRelatedToTier(auth, tierId.string),
 		}),
 	}
 }
