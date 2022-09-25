@@ -40,8 +40,8 @@ export async function fetchAllSubscriptionDetails({
 
 			return <SubscriptionDetails>{
 				status: determineSubscriptionStatus(subscription),
-				planId: tierRow.planId.string,
-				tierId: tierRow.tierId.string,
+				planId: tierRow?.planId.string,
+				tierId: tierRow?.tierId.string,
 			}
 		})
 	)

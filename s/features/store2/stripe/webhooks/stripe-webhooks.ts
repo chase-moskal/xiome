@@ -25,7 +25,7 @@ export function stripeWebhooks(options: {
 				"stripe-webhook customer.subscription.updated",
 				event.data.object
 			)
-			const {appId, subscription, userId, storeDatabase} = (
+			const {appId, subscription, userId, storeDatabase, stripeLiaisonAccount} = (
 				await getSubscriptionDetails({...options, event})
 			)
 			const permissionsInteractions = preparePermissionsInteractions(appId)
@@ -34,6 +34,7 @@ export function stripeWebhooks(options: {
 				userId,
 				priceIds,
 				storeDatabase,
+				stripeLiaisonAccount,
 				permissionsInteractions,
 				timerange: timerangeFromStripePeriod({
 					start: subscription.current_period_start,
@@ -77,7 +78,7 @@ export function stripeWebhooks(options: {
 		async "invoice.paid"(event: Stripe.Event) {
 			logger.info("stripe-webhook invoice.paid:", event.data.object)
 
-			const {invoice, appId, userId, storeDatabase}
+			const {invoice, appId, userId, storeDatabase, stripeLiaisonAccount}
 				= await getInvoiceDetails({...options, event})
 
 			const invoiceIsForSubscription = !!invoice.subscription
@@ -87,6 +88,7 @@ export function stripeWebhooks(options: {
 				await fulfillSubscriptionRoles({
 					userId,
 					storeDatabase,
+					stripeLiaisonAccount,
 					permissionsInteractions,
 					priceIds: getPriceIdsFromInvoice(invoice),
 					timerange: timerangeFromStripePeriod(invoice.lines.data[0].period),

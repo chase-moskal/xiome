@@ -3,9 +3,10 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreLinkedAuth} from "../../types.js"
-import {SubscriptionPricing} from "../../../types/store-concepts.js"
-import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
 import {SubscriptionPlanDraft} from "../planning/planning-types.js"
+import {SubscriptionPricing} from "../../../types/store-concepts.js"
+import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
+import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
 
 export const helpersForManagingSubscriptions = ({
 		storeDatabase,
@@ -24,17 +25,23 @@ export const helpersForManagingSubscriptions = ({
 			pricing: SubscriptionPricing
 		}) {
 
-		const {id: stripeProductId} = await stripeLiaisonAccount.products.create({
-			name: productLabel,
-		})
+		const {id: stripeProductId} = await stripeLiaisonAccount
+			.products
+			.create({name: productLabel})
 
-		const {id: stripePriceId} = await stripeLiaisonAccount.prices.create({
-			active: true,
-			product: stripeProductId,
-			currency: pricing.currency,
-			unit_amount: pricing.price,
-			recurring: {interval: pricing.interval},
-		})
+		const {id: stripePriceId} = await stripeLiaisonAccount
+			.prices
+			.create({
+				active: true,
+				product: stripeProductId,
+				currency: pricing.currency,
+				unit_amount: pricing.price,
+				recurring: {interval: pricing.interval},
+			})
+
+		await stripeLiaisonAccount
+			.products
+			.update(stripeProductId, {default_price: stripePriceId})
 
 		return {stripeProductId, stripePriceId}
 	}
@@ -59,7 +66,7 @@ export const helpersForManagingSubscriptions = ({
 				archived: false,
 			})
 
-			const {stripeProductId, stripePriceId} =
+			const {stripeProductId} =
 				await createStripeProductAndPriceResources({
 					productLabel: tier.label,
 					pricing: tier.pricing,
@@ -71,7 +78,6 @@ export const helpersForManagingSubscriptions = ({
 				label: tier.label,
 				roleId,
 				time: Date.now(),
-				stripePriceId,
 				stripeProductId,
 			})
 
@@ -93,7 +99,7 @@ export const helpersForManagingSubscriptions = ({
 			if (!planRow)
 				throw new Error(`unknown subscription plan ${planId}`)
 
-			const {stripeProductId, stripePriceId} =
+			const {stripeProductId} =
 				await createStripeProductAndPriceResources({
 					productLabel: label,
 					pricing,
@@ -109,7 +115,6 @@ export const helpersForManagingSubscriptions = ({
 				label,
 				tierId,
 				roleId,
-				stripePriceId,
 				stripeProductId,
 				planId: planRow.planId,
 			})
@@ -144,10 +149,13 @@ export const helpersForManagingSubscriptions = ({
 				active: boolean
 				pricing: SubscriptionPricing
 			}) {
+
 			const tierId = dbmage.Id.fromString(tierIdString)
-			const tierRow = await storeTables.subscriptions.tiers.readOne(
-				dbmage.find({tierId})
-			)
+			const tierRow = await storeTables
+				.subscriptions
+				.tiers
+				.readOne(dbmage.find({tierId}))
+
 			if (!tierRow)
 				throw new renraku.ApiError(400, `tier not found ${tierIdString}`)
 
@@ -155,12 +163,22 @@ export const helpersForManagingSubscriptions = ({
 			if (!roleRow)
 				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
 
-			let {stripePriceId, stripeProductId} = tierRow
-			const stripePrice = await stripeLiaisonAccount.prices.retrieve(stripePriceId)
-			const stripeProduct = await stripeLiaisonAccount.products.retrieve(stripeProductId)
+			let {stripeProductId} = tierRow
+			const stripeProduct = await stripeLiaisonAccount
+				.products
+				.retrieve(stripeProductId)
 
-			if (!stripePrice) throw new renraku.ApiError(500, `stripe price not found ${stripePriceId}`)
-			if (!stripeProduct) throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
+			let stripePriceId = getStripeId(stripeProduct.default_price)
+
+			const stripePrice = await stripeLiaisonAccount
+				.prices
+				.retrieve(stripePriceId)
+
+			if (!stripePrice)
+				throw new renraku.ApiError(500, `stripe price not found ${stripePriceId}`)
+
+			if (!stripeProduct)
+				throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
 			const isPricingDifferent =
 				pricing.price !== stripePrice.unit_amount ||
@@ -168,27 +186,29 @@ export const helpersForManagingSubscriptions = ({
 				pricing.interval !== stripePrice.recurring.interval
 
 			if (isPricingDifferent) {
-				const newStripePrice = await stripeLiaisonAccount.prices.create({
-					active,
-					product: stripeProductId,
-					currency: pricing.currency,
-					unit_amount: pricing.price,
-					recurring: {interval: pricing.interval},
-				})
+				const newStripePrice = await stripeLiaisonAccount
+					.prices
+					.create({
+						active,
+						product: stripeProductId,
+						currency: pricing.currency,
+						unit_amount: pricing.price,
+						recurring: {interval: pricing.interval},
+					})
 				stripePriceId = newStripePrice.id
+				await stripeLiaisonAccount
+					.products
+					.update(stripeProductId, {default_price: stripePriceId})
 			}
-			else {
-				if (active !== stripePrice.active) {
-					await stripeLiaisonAccount.prices.update(stripePrice.id, {active})
-				}
-			}
+			else if (active !== stripePrice.active)
+				await stripeLiaisonAccount
+					.prices
+					.update(stripePrice.id, {active})
 
-			await storeTables.subscriptions.tiers.update({
-				...dbmage.find({tierId}),
-				write: {label, stripePriceId},
+			await permissionsInteractions.updateRole({
+				label,
+				roleId: tierRow.roleId,
 			})
-
-			await permissionsInteractions.updateRole({label, roleId: tierRow.roleId})
 		},
 	}
 }

@@ -4,16 +4,15 @@ import {getRowsForTierId} from "../helpers/get-rows-for-tier-id.js"
 
 export async function createStripeSubscriptionViaExistingPaymentMethod(
 		auth: StoreCustomerAuth,
-		tierId: string,
+		stripePriceId: string,
 		stripePaymentMethod: Stripe.PaymentMethod
 	) {
 
-	const {tierRow} = await getRowsForTierId({tierId, auth})
 	return auth.stripeLiaisonAccount.subscriptions.create({
 		customer: auth.stripeCustomerId,
 		default_payment_method: stripePaymentMethod.id,
 		items: [{
-			price: tierRow.stripePriceId,
+			price: stripePriceId,
 			quantity: 1,
 		}],
 	})
