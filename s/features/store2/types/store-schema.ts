@@ -56,5 +56,4 @@ export type SubscriptionTierRow = dbmage.AsRow<{
 	roleId: dbmage.Id
 	time: number
 	stripeProductId: string
-	stripePriceId: string
 }>

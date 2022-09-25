@@ -2,24 +2,21 @@
 import {Stripe} from "stripe"
 import {StoreLinkedAuth} from "../../types.js"
 
-import {getRowsForTierId} from "./get-rows-for-tier-id.js"
-
 export async function updateExistingSubscriptionWithNewTier({
-		tierId, auth, stripeSubscription,
+		stripePriceId, auth, stripeSubscription,
 	}: {
-		tierId: string
+		stripePriceId: string
 		auth: StoreLinkedAuth
 		stripeSubscription: Stripe.Subscription
 	}): Promise<Stripe.Subscription> {
 
 	const {stripeLiaisonAccount} = auth
 	const previousItemId = stripeSubscription.items.data[0].id
-	const {tierRow} = await getRowsForTierId({tierId, auth})
 
 	const newItems = [
 		{
 			id: previousItemId,
-			price: tierRow.stripePriceId,
+			price: stripePriceId,
 			quantity: 1,
 		}
 	]

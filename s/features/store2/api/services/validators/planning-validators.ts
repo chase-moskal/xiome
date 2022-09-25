@@ -1,8 +1,7 @@
 
-import {SubscriptionPricing} from "../../../types/store-concepts.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
-import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionTierDraft} from "../planning/planning-types.js"
-import {boolean, branch, is, maxLength, min, minLength, number, regex, schema, string, validator, zeroWhitespace} from "../../../../../toolbox/darkvalley.js"
+import {boolean, branch, is, maxLength, min, minLength, number, schema, string, validator} from "../../../../../toolbox/darkvalley.js"
+import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionPricingDraft, SubscriptionTierDraft} from "../planning/planning-types.js"
 
 export const validatePriceNumber = validator<number>(
 	number(),
@@ -30,7 +29,7 @@ export const validateInterval = validator<"month" | "year">(
 	),
 )
 
-export const validateSubscriptionPricing = schema<SubscriptionPricing>({
+export const validateSubscriptionPricingDraft = schema<SubscriptionPricingDraft>({
 	price: validatePriceNumber,
 	currency: validateCurrency,
 	interval: validateInterval,
@@ -40,7 +39,7 @@ export const validateBoolean = validator<boolean>(
 	boolean(),
 )
 
-export const validatePricing = schema<SubscriptionPricing>({
+export const validatePricing = schema<SubscriptionPricingDraft>({
 	currency: validateCurrency,
 	interval: validateInterval,
 	price: validatePriceNumber,

@@ -9,15 +9,27 @@ import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {XioPriceInput} from "../../../../xio-components/inputs/xio-price-input.js"
 import {SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../../types/store-concepts.js"
-import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft} from "../../../api/services/planning/planning-types.js"
+import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft, SubscriptionPricingDraft} from "../../../api/services/planning/planning-types.js"
 import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validateEditTierDraft, validatePriceNumber} from "../../../api/services/validators/planning-validators.js"
 
-function preparePricing(dollars: string): SubscriptionPricing {
+function preparePricing(dollars: string): SubscriptionPricingDraft {
 	return {
 		currency: "usd",
 		interval: "month",
-		price: dollarsToCents(dollars)
+		price: dollarsToCents(dollars),
 	}
+}
+
+function isPricingChanged(pricing: SubscriptionPricing, draft: SubscriptionPricingDraft) {
+	for (const changed of [
+			draft.price !== pricing.price,
+			draft.currency !== pricing.currency,
+			draft.interval !== pricing.interval,
+		]) {
+		if (changed)
+			return true
+	}
+	return false
 }
 
 export function planningUi({storeModel, componentSnap, getShadowRoot}: {
@@ -130,7 +142,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			const isChanged =
 				draft.label !== tier.label ||
 				draft.active !== tier.active ||
-				draft.pricing !== tier.pricing
+				isPricingChanged(tier.pricing[0], draft.pricing)
 			states.component.editingTierDraft.isChanged = isChanged
 			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}
@@ -321,7 +333,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 							<xio-price-input
 								data-field="price"
 								.validator=${validatePriceNumber}
-								initial-value=${centsToDollars(tier.pricing.price)}>
+								initial-value=${centsToDollars(tier.pricing[0].price)}>
 									Price</xio-price-input>
 							<label>
 								active:
@@ -343,7 +355,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 						</div>
 					`: html`
 						<p class=label>tier label: ${tier.label}</p>
-						<p>price: $${centsToDollars(tier.pricing.price)}</p>
+						<p>price: $${centsToDollars(tier.pricing[0].price)}</p>
 						<p>active: ${tier.active ?"true" :"false"}</p>
 					`}
 				</div>
