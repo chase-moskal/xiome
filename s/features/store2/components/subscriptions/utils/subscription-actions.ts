@@ -41,14 +41,13 @@ export function preparePurchaseActions({
 	}
 }
 
-
 export enum PurchaseScenario {
-  Update,
-  UsePaymentMethod,
-  CheckoutPopup,
+	Update,
+	UsePaymentMethod,
+	CheckoutPopup,
 }
 
-export function determinePurchaseScenerio({
+export function determinePurchaseScenario({
 		hasDefaultPaymentMethod, hasExistingSubscription
 	}: {
 		hasDefaultPaymentMethod: boolean

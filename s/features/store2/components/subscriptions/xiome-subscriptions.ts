@@ -5,7 +5,7 @@ import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
-import {determinePurchaseScenerio, preparePurchaseActions, PurchaseScenario} from "./utils/subscription-actions.js"
+import {determinePurchaseScenario, preparePurchaseActions, PurchaseScenario} from "./utils/subscription-actions.js"
 import {SubscriptionDetails, SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 
 import xiomeSubscriptionsCss from "./xiome-subscriptions.css.js"
@@ -46,6 +46,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 			subscription: SubscriptionDetails
 			subscribedTierIndex: number | undefined
 		}) => {
+		const {storeModel} = this.share
 		const {tierId} = tier
 		const isSubscribedToThisTier = tierIndex === subscribedTierIndex
 		const noExistingSubscriptionForPlan = subscribedTierIndex === undefined
@@ -54,7 +55,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 		)
 		const subscriptionStatus = tierSubscription?.status
 			?? SubscriptionStatus.Unsubscribed
-		const {subscriptions, billing} = this.share.storeModel
+		const {subscriptions, billing} = storeModel
 		const isAnotherTierInPlanUnpaid = (
 			subscription
 			&& !isSubscribedToThisTier
@@ -92,13 +93,13 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 									buttonLabel,
 									tier
 								})
-								const scenerio = determinePurchaseScenerio({
-									hasDefaultPaymentMethod: !!this.share.storeModel
-										.get.billing.paymentMethod,
+
+								const scenario = determinePurchaseScenario({
+									hasDefaultPaymentMethod: !!storeModel.get.billing.paymentMethod,
 									hasExistingSubscription: !noExistingSubscriptionForPlan
 								})
 
-								switch (scenerio) {
+								switch (scenario) {
 									case PurchaseScenario.Update:
 										return await upgradeOrDowngrade()
 
@@ -109,7 +110,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 										return await buySubscriptionWithCheckoutPopup()
 
 									default:
-										throw new Error("unknown purchase scenerio");
+										throw new Error("unknown purchase scenario");
 								}
 							}
 						}
