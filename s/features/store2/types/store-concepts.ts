@@ -62,3 +62,9 @@ export interface SubscriptionDetails {
 export interface PaymentMethod {
 	cardClues: CardClues
 }
+
+export enum PurchaseScenario {
+	Update,
+	UsePaymentMethod,
+	CheckoutPopup,
+}
