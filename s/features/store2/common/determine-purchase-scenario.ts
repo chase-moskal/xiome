@@ -8,15 +8,14 @@ export function determinePurchaseScenario({
 		hasExistingSubscription: boolean
 	}): PurchaseScenario {
 
-		if (hasExistingSubscription) {
-			return PurchaseScenario.Update
-		}
-		else {
-			if (hasDefaultPaymentMethod) {
-				return PurchaseScenario.UsePaymentMethod
-			}
-			else {
-				return PurchaseScenario.CheckoutPopup
-			}
-		}
+	if (hasExistingSubscription)
+		return PurchaseScenario.Update
+
+	else {
+		if (hasDefaultPaymentMethod)
+			return PurchaseScenario.UsePaymentMethod
+
+		else
+			return PurchaseScenario.CheckoutPopup
+	}
 }
