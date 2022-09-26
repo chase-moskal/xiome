@@ -43,7 +43,15 @@ export function makeSubscriptionsSubmodel({
 
 	const actions = {
 
-		async purchase(tierId: string) {
+		async purchase({
+				tierId, showLoadingSpinner
+			}: {
+				tierId: string
+				showLoadingSpinner?: boolean
+			}) {
+
+			if (showLoadingSpinner)
+				state.subscriptions.mySubscriptionDetailsOp = ops.loading()
 			const {checkoutDetails} = await services.subscriptionShopping.buy(tierId)
 			if (checkoutDetails)
 				await stripePopups.checkoutSubscription(checkoutDetails)

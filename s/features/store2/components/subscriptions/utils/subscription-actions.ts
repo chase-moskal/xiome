@@ -22,21 +22,23 @@ export function preparePurchaseActions({
 				body: html`are you sure you want to ${buttonLabel} your subscription to <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
 			})
 			if(proceedWithPurchase) {
-				await subscriptions.purchase(tierId)
+				await subscriptions.purchase({
+					tierId, showLoadingSpinner: true
+				})
 				modals.alert({
 					title: html`your subscription ${buttonLabel} to <strong>${tier.label}</strong> was successfull`
 				})
 			}
 		},
 		buySubscriptionWithCheckoutPopup: async () => {
-			await subscriptions.purchase(tierId)
+			await subscriptions.purchase({tierId})
 		},
 		buySubscriptionWithExistingPaymentMethod: async () => {
 			const proceedWithPurchase = await modals.confirm({
 				title: `${buttonLabel} subscription`,
 				body: html`are you sure you want to ${buttonLabel} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
 			})
-			if(proceedWithPurchase) await subscriptions.purchase(tierId)
+			if(proceedWithPurchase) await subscriptions.purchase({tierId})
 		}
 	}
 }
