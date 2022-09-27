@@ -33,8 +33,8 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 				customers: {
 					async create(params: Stripe.CustomerCreateParams) {
 						return stripe.customers.create(params, connection)
-						// // for testing timelines with stripe test clocks
-						// return stripe.customers.create({...params, test_clock: "clock_1LjolS2YVuzotcM1leAT2BWN"}, connection)
+						// for testing timelines with stripe test clocks
+						// return stripe.customers.create({...params, test_clock: "clock_1LmnQM2ePX2ph7RQrmN5ZCC9"}, connection)
 					},
 					async retrieve(id: string) {
 						return stripe.customers.retrieve(id, connection)
