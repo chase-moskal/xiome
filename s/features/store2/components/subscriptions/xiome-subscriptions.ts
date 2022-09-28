@@ -89,8 +89,8 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 									buySubscriptionWithCheckoutPopup,
 									buySubscriptionWithExistingPaymentMethod,
 								} = preparePurchaseActions({
+									storeModel: this.share.storeModel,
 									modals: this.#modals,
-									subscriptions,
 									buttonLabel,
 									tier
 								})
