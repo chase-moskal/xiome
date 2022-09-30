@@ -127,6 +127,7 @@ export function mockStripeLiaison({
 						name: params.name,
 						active: params.active,
 						description: params.description,
+						default_price: params.default_price,
 					}),
 				}),
 

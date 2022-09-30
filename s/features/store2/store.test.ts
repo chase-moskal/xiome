@@ -1,7 +1,8 @@
 
 import {Suite, expect} from "cynic"
+import {SubscriptionPricingDraft} from "./api/services/planning/planning-types.js"
 import {storeTestSetup} from "./testing/store-test-setup.js"
-import {StripeConnectStatus} from "./types/store-concepts.js"
+import {StripeConnectStatus, SubscriptionPricing} from "./types/store-concepts.js"
 
 const setups = {
 	async linkedStore() {
@@ -391,12 +392,20 @@ export default <Suite>{
 				expect(tier1.label).equals("benevolent donor")
 				expect(tier1.pricing[0].price).equals(5_00)
 
+				function pricingToDraft(pricing: SubscriptionPricing): SubscriptionPricingDraft {
+					return {
+						price: pricing.price,
+						currency: pricing.currency,
+						interval: pricing.interval,
+					}
+				}
+
 				await store.subscriptions.editTier({
 					planId: plan.planId,
 					tierId: tier1.tierId,
 					active: tier1.active,
 					label: "test",
-					pricing: tier1.pricing[0],
+					pricing: pricingToDraft(tier1.pricing[0]),
 				})
 				const tier2 = getFirstTier()
 				expect(tier2.label).equals("test")
@@ -408,7 +417,7 @@ export default <Suite>{
 					tierId: tier2.tierId,
 					label: tier2.label,
 					active: false,
-					pricing: tier2.pricing[0],
+					pricing: pricingToDraft(tier2.pricing[0]),
 				})
 				const tier3 = getFirstTier()
 				expect(tier3.active).equals(false)

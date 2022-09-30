@@ -80,7 +80,13 @@ export const helpersForManagingSubscriptions = ({
 				stripeProductId,
 			})
 
-			return {planId, tierId, stripePriceId, tierRoleId: roleId, time: Date.now()}
+			return {
+				planId,
+				tierId,
+				stripePriceId,
+				tierRoleId: roleId,
+				time: Date.now(),
+			}
 		},
 
 		async createTierForPlan({
