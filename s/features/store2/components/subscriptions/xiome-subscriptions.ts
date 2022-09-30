@@ -121,12 +121,12 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						stateLabel: "purchased",
 						buttonLabel: "cancel",
 						action: async () => {
-							const isCanceled = await this.#modals.confirm({
-								title: `Cancel subscription`,
-								body: html`are you sure you want to cancel your <strong>${tier.label}</strong> subscription`
+							await this.#modals.confirmAction({
+								title: "Cancel subscription",
+								message: `are you sure you want to cancel your ${tier.label} subscription`,
+								loadingMessage: "cancelling subscription",
+								actionWhenConfirmed: () => subscriptions.cancelSubscription(tierId)
 							})
-							if(isCanceled)
-								subscriptions.cancelSubscription(tierId)
 						},
 					}
 
@@ -142,11 +142,12 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						stateLabel: "cancelled",
 						buttonLabel: "renew",
 						action: async () => {
-							const isRenewed = await this.#modals.confirm({
-								title: `Renew subscription`,
-								body: html`are you sure you want to renew your <strong>${tier.label}</strong> subscription for $${centsToDollars(tier.pricing.price)}/month?`
+							await this.#modals.confirmAction({
+								title: "Renew subscription",
+								message: `are you sure you want to renew your ${tier.label} subscription for $${centsToDollars(tier.pricing.price)}/month?`,
+								loadingMessage: "renewing subscription",
+								actionWhenConfirmed: () => subscriptions.uncancelSubscription(tierId),
 							})
-							if(isRenewed) subscriptions.uncancelSubscription(tierId)
 						},
 					}
 
