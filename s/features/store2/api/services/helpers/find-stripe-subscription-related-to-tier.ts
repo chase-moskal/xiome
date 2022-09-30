@@ -21,7 +21,7 @@ export async function findStripeSubscriptionRelatedToTier(
 
 	if (stripeSubscriptions) {
 		for (const subscription of stripeSubscriptions.data) {
-			const stripePriceId = getStripeId(subscription.items.data[0])
+			const stripePriceId = getStripeId(subscription.items.data[0].price)
 			const subscribedTierRow = await getTierRowByQueryingStripePriceId({
 				stripePriceId,
 				storeDatabase,
