@@ -8,7 +8,7 @@ import {formatDate} from "../../../../../toolbox/goodtimes/format-date.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {XioTextInput} from "../../../../xio-components/inputs/xio-text-input.js"
 import {XioPriceInput} from "../../../../xio-components/inputs/xio-price-input.js"
-import {SubscriptionPlan, SubscriptionTier} from "../../../types/store-concepts.js"
+import {SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../../types/store-concepts.js"
 import {SubscriptionPlanDraft, SubscriptionTierDraft, EditPlanDraft, EditTierDraft, SubscriptionPricingDraft} from "../../../api/services/planning/planning-types.js"
 import {validateNewPlanDraft, validateNewTierDraft, validateEditPlanDraft, validateLabel, validateEditTierDraft, validatePriceNumber} from "../../../api/services/validators/planning-validators.js"
 
@@ -18,6 +18,18 @@ function preparePricing(dollars: string): SubscriptionPricingDraft {
 		interval: "month",
 		price: dollarsToCents(dollars),
 	}
+}
+
+function isPricingChanged(pricing: SubscriptionPricing, draft: SubscriptionPricingDraft) {
+	for (const changed of [
+			draft.price !== pricing.price,
+			draft.currency !== pricing.currency,
+			draft.interval !== pricing.interval,
+		]) {
+		if (changed)
+			return true
+	}
+	return false
 }
 
 export function planningUi({storeModel, componentSnap, getShadowRoot}: {
@@ -130,8 +142,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			const isChanged =
 				draft.label !== tier.label ||
 				draft.active !== tier.active ||
-				// TODO doesn't this pricing need to be deep-compared?
-				draft.pricing !== tier.pricing[0]
+				isPricingChanged(tier.pricing[0], draft.pricing)
 			states.component.editingTierDraft.isChanged = isChanged
 			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}
