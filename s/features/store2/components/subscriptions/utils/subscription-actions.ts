@@ -14,29 +14,34 @@ export function preparePurchaseActions({
 		subscriptions: ReturnType<typeof makeSubscriptionsSubmodel>
 	}) {
 
-	const {tierId} = tier
+	const {stripePriceId} = tier.pricing[0]
+
 	return {
+
 		upgradeOrDowngrade: async () => {
 			const proceedWithPurchase = await modals.confirm({
 				title: `${buttonLabel} subscription`,
 				body: html`are you sure you want to ${buttonLabel} your subscription to <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing[0].price)}/month?`
 			})
 			if(proceedWithPurchase) {
-				await subscriptions.purchase(tierId)
+				await subscriptions.purchase(stripePriceId)
 				modals.alert({
 					title: html`your subscription ${buttonLabel} to <strong>${tier.label}</strong> was successfull`
 				})
 			}
 		},
+
 		buySubscriptionWithCheckoutPopup: async () => {
-			await subscriptions.purchase(tierId)
+			await subscriptions.purchase(stripePriceId)
 		},
+
 		buySubscriptionWithExistingPaymentMethod: async () => {
 			const proceedWithPurchase = await modals.confirm({
 				title: `${buttonLabel} subscription`,
 				body: html`are you sure you want to ${buttonLabel} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing[0].price)}/month?`
 			})
-			if(proceedWithPurchase) await subscriptions.purchase(tierId)
+			if (proceedWithPurchase)
+				await subscriptions.purchase(stripePriceId)
 		}
 	}
 }

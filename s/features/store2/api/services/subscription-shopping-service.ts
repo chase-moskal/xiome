@@ -2,13 +2,15 @@
 import * as renraku from "renraku"
 
 import {StoreServiceOptions} from "../types.js"
+import {string, validator} from "../../../../toolbox/darkvalley.js"
+import {validateId} from "../../../../common/validators/validate-id.js"
 import {cancelStripeSubscription} from "./shopping/cancel-stripe-subscription.js"
 import {PurchaseScenario, SubscriptionDetails} from "../../types/store-concepts.js"
+import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {determinePurchaseScenario} from "../../common/determine-purchase-scenario.js"
 import {uncancelStripeSubscription} from "./shopping/uncancel-stripe-subscription.js"
 import {fetchAllSubscriptionDetails} from "./shopping/fetch-all-subscription-details.js"
 import {prepareToBuyStripeSubscription} from "./shopping/prepare-to-buy-stripe-subscription.js"
-import {automateArgumentValidationForTierId} from "./shopping/automate-argument-validation-for-tier-id.js"
 import {verifyPlanHasExistingStripeSubscription} from "./shopping/verify-plan-has-existing-stripe-subscription.js"
 
 export const makeSubscriptionShoppingService = (
@@ -23,43 +25,44 @@ export const makeSubscriptionShoppingService = (
 		return fetchAllSubscriptionDetails(auth)
 	},
 
-	...automateArgumentValidationForTierId({
+	async buy(stripePriceId: string) {
+		const {
+			subscription,
+			defaultPaymentMethod,
+			actions,
+		} = await prepareToBuyStripeSubscription(options, auth, stripePriceId)
 
-		async buy(stripePriceId: string) {
-			const {
-				subscription,
-				defaultPaymentMethod,
-				actions,
-			} = await prepareToBuyStripeSubscription(options, auth, stripePriceId)
+		stripePriceId = runValidation(stripePriceId, validator<string>(string()))
 
-			const scenario = determinePurchaseScenario({
-				hasDefaultPaymentMethod: !!defaultPaymentMethod,
-				hasExistingSubscription: !!subscription,
-			})
+		const scenario = determinePurchaseScenario({
+			hasDefaultPaymentMethod: !!defaultPaymentMethod,
+			hasExistingSubscription: !!subscription,
+		})
 
-			switch (scenario) {
-				case PurchaseScenario.Update:
-					return actions.updateAndFulfillSubscription(subscription)
+		switch (scenario) {
+			case PurchaseScenario.Update:
+				return actions.updateAndFulfillSubscription(subscription)
 
-				case PurchaseScenario.UsePaymentMethod:
-					return actions.createNewSubscriptionUsingExistingPaymentMethod(defaultPaymentMethod)
+			case PurchaseScenario.UsePaymentMethod:
+				return actions.createNewSubscriptionUsingExistingPaymentMethod(defaultPaymentMethod)
 
-				case PurchaseScenario.CheckoutPopup:
-					return actions.createCheckoutPopupToBuyNewSubscription()
+			case PurchaseScenario.CheckoutPopup:
+				return actions.createCheckoutPopupToBuyNewSubscription()
 
-				default:
-					throw new Error("unknown purchase scenario")
-			}
-		},
+			default:
+				throw new Error("unknown purchase scenario")
+		}
+	},
 
-		async cancelSubscription(tierId: string) {
-			const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
-			await cancelStripeSubscription(auth, stripeSubscription.id)
-		},
+	async cancelSubscription(tierId: string) {
+		tierId = runValidation(tierId, validateId)
+		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
+		await cancelStripeSubscription(auth, stripeSubscription.id)
+	},
 
-		async uncancelSubscription(tierId: string) {
-			const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
-			await uncancelStripeSubscription(auth, stripeSubscription.id)
-		},
-	}),
+	async uncancelSubscription(tierId: string) {
+		tierId = runValidation(tierId, validateId)
+		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
+		await uncancelStripeSubscription(auth, stripeSubscription.id)
+	},
 }))
