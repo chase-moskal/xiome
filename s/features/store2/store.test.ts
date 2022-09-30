@@ -316,7 +316,7 @@ export default <Suite>{
 				const plan = plans.find(plan => plan.planId === planId)
 				const tier = plan.tiers.find(tier => tier.tierId === tierId)
 				expect(tier).ok()
-				expect(tier.pricing.price).equals(10_000)
+				expect(tier.pricing[0].price).equals(10_000)
 				{
 					const {store} = await api.client(api.roles.clerk)
 						.then(x => x.browserTab())
@@ -326,7 +326,7 @@ export default <Suite>{
 					const anotherTier = anotherPlan.tiers
 						.find(tier => tier.tierId === tierId)
 					expect(anotherTier).ok()
-					expect(anotherTier.pricing.price).equals(10_000)
+					expect(anotherTier.pricing[0].price).equals(10_000)
 				}
 			},
 			async "can edit a plan"() {
@@ -389,31 +389,31 @@ export default <Suite>{
 				expect(tier1).ok()
 				expect(tier1.active).equals(true)
 				expect(tier1.label).equals("benevolent donor")
-				expect(tier1.pricing.price).equals(5_00)
+				expect(tier1.pricing[0].price).equals(5_00)
 
 				await store.subscriptions.editTier({
 					planId: plan.planId,
 					tierId: tier1.tierId,
 					active: tier1.active,
 					label: "test",
-					pricing: tier1.pricing,
+					pricing: tier1.pricing[0],
 				})
 				const tier2 = getFirstTier()
 				expect(tier2.label).equals("test")
 				expect(tier2.active).equals(tier1.active)
-				expect(tier2.pricing.price).equals(tier1.pricing.price)
+				expect(tier2.pricing[0].price).equals(tier1.pricing[0].price)
 
 				await store.subscriptions.editTier({
 					planId: plan.planId,
 					tierId: tier2.tierId,
 					label: tier2.label,
 					active: false,
-					pricing: tier2.pricing,
+					pricing: tier2.pricing[0],
 				})
 				const tier3 = getFirstTier()
 				expect(tier3.active).equals(false)
 				expect(tier3.label).equals(tier2.label)
-				expect(tier3.pricing.price).equals(tier2.pricing.price)
+				expect(tier3.pricing[0].price).equals(tier2.pricing[0].price)
 			},
 		},
 		"a user with regular permissions": {

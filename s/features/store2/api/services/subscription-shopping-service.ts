@@ -25,12 +25,12 @@ export const makeSubscriptionShoppingService = (
 
 	...automateArgumentValidationForTierId({
 
-		async buy(tierId: string) {
+		async buy(stripePriceId: string) {
 			const {
 				subscription,
 				defaultPaymentMethod,
 				actions,
-			} = await prepareToBuyStripeSubscription(options, auth, tierId)
+			} = await prepareToBuyStripeSubscription(options, auth, stripePriceId)
 
 			const scenario = determinePurchaseScenario({
 				hasDefaultPaymentMethod: !!defaultPaymentMethod,

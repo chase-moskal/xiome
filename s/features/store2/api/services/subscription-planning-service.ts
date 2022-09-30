@@ -2,14 +2,14 @@
 import * as renraku from "renraku"
 
 import {StoreServiceOptions} from "../types.js"
-import {SubscriptionTierDraft} from "./planning/planning-types.js"
+import {SubscriptionPricingDraft, SubscriptionTierDraft} from "./planning/planning-types.js"
 import {validateId} from "../../../../common/validators/validate-id.js"
 import {determineConnectStatus} from "./helpers/utils/determine-connect-status.js"
 import {fetchStripeConnectDetails} from "./helpers/fetch-stripe-connect-details.js"
 import {runValidation} from "../../../../toolbox/topic-validation/run-validation.js"
 import {helpersForManagingSubscriptions} from "./helpers/helpers-for-managing-subscriptions.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionPricing, SubscriptionTier} from "../../types/store-concepts.js"
-import {validateBoolean, validateLabel, validateNewPlanDraft, validateSubscriptionPricing} from "./validators/planning-validators.js"
+import {validateBoolean, validateLabel, validateNewPlanDraft, validateSubscriptionPricingDraft} from "./validators/planning-validators.js"
 
 const hardcodedCurrency = "usd"
 const hardcodedInterval = "month"
@@ -42,7 +42,7 @@ export const makeSubscriptionPlanningService = (
 
 		const {planLabel, tier} = runValidation(inputs, validateNewPlanDraft)
 
-		const {planId, tierId, tierRoleId, time} =
+		const {planId, tierId, tierRoleId, time, stripePriceId} =
 			await helpers.createPlanAndTier({planLabel, tier})
 
 		return {
@@ -55,7 +55,10 @@ export const makeSubscriptionPlanningService = (
 					tierId: tierId.toString(),
 					label: tier.label,
 					roleId: tierRoleId.string,
-					pricing: tier.pricing,
+					pricing: [{
+						...tier.pricing,
+						stripePriceId,
+					}],
 					time,
 					active: true,
 				}
@@ -66,17 +69,17 @@ export const makeSubscriptionPlanningService = (
 	async addTier(inputs: {
 			label: string
 			planId: string
-			pricing: SubscriptionPricing
+			pricing: SubscriptionPricingDraft
 		}) {
 
 		const planId = runValidation(inputs.planId, validateId)
 		const label = runValidation(inputs.label, validateLabel)
-		const pricing = runValidation(inputs.pricing, validateSubscriptionPricing)
+		const pricing = runValidation(inputs.pricing, validateSubscriptionPricingDraft)
 
-		const {tierId, roleId, time} = await helpers.createTierForPlan({
+		const {tierId, roleId, time, stripePriceId} = await helpers.createTierForPlan({
 			label,
 			planId,
-			pricing: pricing,
+			pricing,
 		})
 
 		const tier: SubscriptionTier = {
@@ -84,7 +87,7 @@ export const makeSubscriptionPlanningService = (
 			roleId: roleId.toString(),
 			active: true,
 			label,
-			pricing,
+			pricing: [{...pricing, stripePriceId}],
 			time,
 		}
 
@@ -106,13 +109,13 @@ export const makeSubscriptionPlanningService = (
 			label: string
 			tierId: string
 			active: boolean
-			pricing: SubscriptionPricing
+			pricing: SubscriptionPricingDraft
 		}) {
 
 		const label = runValidation(inputs.label, validateLabel)
 		const tierId = runValidation(inputs.tierId, validateId)
 		const active = runValidation(inputs.active, validateBoolean)
-		const pricing = runValidation(inputs.pricing, validateSubscriptionPricing)
+		const pricing = runValidation(inputs.pricing, validateSubscriptionPricingDraft)
 
 		await helpers.updateTier({
 			label,

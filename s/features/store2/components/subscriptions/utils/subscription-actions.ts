@@ -19,7 +19,7 @@ export function preparePurchaseActions({
 		upgradeOrDowngrade: async () => {
 			const proceedWithPurchase = await modals.confirm({
 				title: `${buttonLabel} subscription`,
-				body: html`are you sure you want to ${buttonLabel} your subscription to <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
+				body: html`are you sure you want to ${buttonLabel} your subscription to <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing[0].price)}/month?`
 			})
 			if(proceedWithPurchase) {
 				await subscriptions.purchase(tierId)
@@ -34,7 +34,7 @@ export function preparePurchaseActions({
 		buySubscriptionWithExistingPaymentMethod: async () => {
 			const proceedWithPurchase = await modals.confirm({
 				title: `${buttonLabel} subscription`,
-				body: html`are you sure you want to ${buttonLabel} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing.price)}/month?`
+				body: html`are you sure you want to ${buttonLabel} <strong>${tier.label}</strong> for $${centsToDollars(tier.pricing[0].price)}/month?`
 			})
 			if(proceedWithPurchase) await subscriptions.purchase(tierId)
 		}

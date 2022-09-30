@@ -58,6 +58,9 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					},
 				},
 				prices: {
+					async list(params: Stripe.PriceListParams) {
+						return stripe.prices.list(params, connection)
+					},
 					async create(params: Stripe.PriceCreateParams) {
 						return stripe.prices.create(params, connection)
 					},

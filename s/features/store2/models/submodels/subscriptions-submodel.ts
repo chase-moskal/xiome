@@ -7,7 +7,7 @@ import {StripePopups} from "../../popups/types.js"
 import {objectMap} from "../../../../toolbox/object-map.js"
 import {StoreStateSystem} from "../state/store-state-system.js"
 import {SubscriptionPricing} from "../../types/store-concepts.js"
-import {SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
+import {SubscriptionPricingDraft, SubscriptionTierDraft} from "../../api/services/planning/planning-types.js"
 
 export function makeSubscriptionsSubmodel({
 		services,
@@ -43,8 +43,8 @@ export function makeSubscriptionsSubmodel({
 
 	const actions = {
 
-		async purchase(tierId: string) {
-			const {checkoutDetails} = await services.subscriptionShopping.buy(tierId)
+		async purchase(stripePriceId: string) {
+			const {checkoutDetails} = await services.subscriptionShopping.buy(stripePriceId)
 			if (checkoutDetails)
 				await stripePopups.checkoutSubscription(checkoutDetails)
 		},
@@ -94,7 +94,7 @@ export function makeSubscriptionsSubmodel({
 		async addTier(options: {
 				label: string
 				planId: string
-				pricing: SubscriptionPricing
+				pricing: SubscriptionPricingDraft
 			}) {
 			const plans = getPlans()
 			const tier = await services.subscriptionPlanning
@@ -129,7 +129,7 @@ export function makeSubscriptionsSubmodel({
 				tierId: string
 				label: string
 				active: boolean
-				pricing: SubscriptionPricing
+				pricing: SubscriptionPricingDraft
 			}) {
 			await services.subscriptionPlanning.editTier({
 				tierId,
@@ -142,7 +142,7 @@ export function makeSubscriptionsSubmodel({
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
 			tier.active = active
 			tier.label = label
-			tier.pricing.price = pricing.price
+			tier.pricing[0].price = pricing.price
 			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
 		},
 	}

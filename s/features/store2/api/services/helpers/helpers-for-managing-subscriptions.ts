@@ -3,10 +3,9 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreLinkedAuth} from "../../types.js"
-import {SubscriptionPlanDraft} from "../planning/planning-types.js"
-import {SubscriptionPricing} from "../../../types/store-concepts.js"
 import {getStripeId} from "../../../stripe/liaison/helpers/get-stripe-id.js"
 import {PermissionsInteractions} from "../../../interactions/interactions-types.js"
+import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../planning/planning-types.js"
 
 export const helpersForManagingSubscriptions = ({
 		storeDatabase,
@@ -22,7 +21,7 @@ export const helpersForManagingSubscriptions = ({
 
 	async function createStripeProductAndPriceResources({productLabel, pricing}: {
 			productLabel: string
-			pricing: SubscriptionPricing
+			pricing: SubscriptionPricingDraft
 		}) {
 
 		const {id: stripeProductId} = await stripeLiaisonAccount
@@ -66,7 +65,7 @@ export const helpersForManagingSubscriptions = ({
 				archived: false,
 			})
 
-			const {stripeProductId} =
+			const {stripeProductId, stripePriceId} =
 				await createStripeProductAndPriceResources({
 					productLabel: tier.label,
 					pricing: tier.pricing,
@@ -81,7 +80,7 @@ export const helpersForManagingSubscriptions = ({
 				stripeProductId,
 			})
 
-			return {planId, tierId, tierRoleId: roleId, time: Date.now()}
+			return {planId, tierId, stripePriceId, tierRoleId: roleId, time: Date.now()}
 		},
 
 		async createTierForPlan({
@@ -89,7 +88,7 @@ export const helpersForManagingSubscriptions = ({
 			}: {
 				planId: string
 				label: string
-				pricing: SubscriptionPricing
+				pricing: SubscriptionPricingDraft
 			}) {
 
 			const planRow = await storeTables.subscriptions.plans.readOne(
@@ -99,7 +98,7 @@ export const helpersForManagingSubscriptions = ({
 			if (!planRow)
 				throw new Error(`unknown subscription plan ${planId}`)
 
-			const {stripeProductId} =
+			const {stripeProductId, stripePriceId} =
 				await createStripeProductAndPriceResources({
 					productLabel: label,
 					pricing,
@@ -119,7 +118,7 @@ export const helpersForManagingSubscriptions = ({
 				planId: planRow.planId,
 			})
 
-			return {tierId, roleId, time}
+			return {tierId, roleId, time, stripePriceId}
 		},
 
 		async updatePlan({planId: planIdString, label, archived}: {
@@ -147,7 +146,7 @@ export const helpersForManagingSubscriptions = ({
 				tierId: string
 				label: string
 				active: boolean
-				pricing: SubscriptionPricing
+				pricing: SubscriptionPricingDraft
 			}) {
 
 			const tierId = dbmage.Id.fromString(tierIdString)

@@ -62,13 +62,14 @@ export async function fetchSubscriptionPlans(
 					label: cross.row.label,
 					time: cross.row.time,
 					active: cross.status === StripeResourceStatus.Active,
-					pricing: {
+					pricing: [{
+						stripePriceId: cross.stripeResource.id,
 						price: cross.stripeResource.unit_amount,
 						currency: cross.stripeResource.currency as SubscriptionPricing["currency"],
 						interval: cross.stripeResource.recurring.interval as SubscriptionPricing["interval"]
-					},
+					}],
 				}))
-				.sort((tierA, tierB) => tierA.pricing.price - tierB.pricing.price),
+				.sort((tierA, tierB) => tierA.pricing[0].price - tierB.pricing[0].price),
 		}))
 		.sort((planA, planB) => planA.time - planB.time)
 }

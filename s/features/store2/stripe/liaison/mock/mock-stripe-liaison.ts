@@ -130,22 +130,38 @@ export function mockStripeLiaison({
 					}),
 				}),
 
-				prices: makeStandardRestResource<Stripe.Price>()({
-					table: tables.prices,
-					handleCreate: async(params: Stripe.PriceCreateParams) => ({
-						resource: {
-							active: params.active === undefined ?true :params.active,
-							product: params.product,
-							currency: params.currency,
-							unit_amount: params.unit_amount,
-							recurring: <any>params.recurring,
-							type: params.recurring ?"recurring" :"one_time",
-						}
-					}),
-					handleUpdate: async(id, params: Stripe.PriceUpdateParams) => ({
-						active: params.active,
-					}),
-				}),
+				prices: (() => {
+					const resource = makeStandardRestResource<Stripe.Price>()({
+						table: tables.prices,
+						handleCreate: async(params: Stripe.PriceCreateParams) => ({
+							resource: {
+								active: params.active === undefined ?true :params.active,
+								product: params.product,
+								currency: params.currency,
+								unit_amount: params.unit_amount,
+								recurring: <any>params.recurring,
+								type: params.recurring ?"recurring" :"one_time",
+							}
+						}),
+						handleUpdate: async(id, params: Stripe.PriceUpdateParams) => ({
+							active: params.active,
+						}),
+					})
+					return {
+						...resource,
+						async list(params: Stripe.PriceListParams) {
+							let prices = await tables.prices.read({conditions: false})
+							if (params.active !== undefined)
+								prices = prices.filter(p => p.active === params.active)
+							if (params.product !== undefined)
+								prices = prices.filter(p => p.product === params.product)
+							return stripeResponse({
+								object: "list",
+								data: prices,
+							})
+						},
+					}
+				})(),
 
 				checkout: {
 					sessions: makeStandardRestResource<Stripe.Checkout.Session>()({

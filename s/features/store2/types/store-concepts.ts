@@ -24,6 +24,7 @@ export interface StripeConnectDetails {
 }
 
 export interface SubscriptionPricing {
+	stripePriceId: string
 	price: number
 	currency: "usd"
 	interval: "month" | "year"
@@ -35,7 +36,7 @@ export interface SubscriptionTier {
 	roleId: string
 	time: number
 	active: boolean
-	pricing: SubscriptionPricing
+	pricing: SubscriptionPricing[]
 }
 
 export interface SubscriptionPlan {

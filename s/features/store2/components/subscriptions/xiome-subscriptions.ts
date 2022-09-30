@@ -144,7 +144,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 						action: async () => {
 							const isRenewed = await this.#modals.confirm({
 								title: `Renew subscription`,
-								body: html`are you sure you want to renew your <strong>${tier.label}</strong> subscription for $${centsToDollars(tier.pricing.price)}/month?`
+								body: html`are you sure you want to renew your <strong>${tier.label}</strong> subscription for $${centsToDollars(tier.pricing[0].price)}/month?`
 							})
 							if(isRenewed) subscriptions.uncancelSubscription(tierId)
 						},
@@ -166,7 +166,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					<xio-price-display
 						unit-superscript
 						vertical-currency
-						value=${centsToDollars(tier.pricing.price)}>
+						value=${centsToDollars(tier.pricing[0].price)}>
 						${tier.label}
 					</xio-price-display>
 					<p>monthly</p>
