@@ -85,9 +85,5 @@ export function makeConnectSubmodel({
 					paused: false,
 				})
 		},
-		async customerPortal() {
-			const {popupId, customerPortalLink} = await services.connect.generateCustomerPortalLink()
-			await stripePopups.openStoreCustomerPortal(popupId, customerPortalLink)
-		}
 	}
 }

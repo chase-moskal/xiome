@@ -1,11 +1,11 @@
 
-import {ops} from "../../../../framework/ops.js"
+import {Op, ops} from "../../../../framework/ops.js"
 import {makeStoreModel} from "../../models/store-model.js"
 import {preparePurchaseActions} from "./utils/subscription-actions.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
+import {Component, html, mixinRequireShare, mixinStyles, property} from "../../../../framework/component.js"
 import {PurchaseScenario, SubscriptionDetails, SubscriptionPlan, SubscriptionStatus, SubscriptionTier} from "../../types/store-concepts.js"
 
 import xiomeSubscriptionsCss from "./xiome-subscriptions.css.js"
@@ -36,6 +36,9 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	get #subscriptions() {
 		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
 	}
+
+	@property()
+	private op: Op<void> = ops.ready(undefined)
 
 	#renderTier = ({
 			tier, tierIndex,
@@ -108,7 +111,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 										return await buySubscriptionWithExistingPaymentMethod()
 
 									case PurchaseScenario.CheckoutPopup:
-										return await buySubscriptionWithCheckoutPopup()
+										return await ops.operation({
+											promise: buySubscriptionWithCheckoutPopup(),
+											setOp: newOp => this.op = newOp
+										})
 
 									default:
 										throw new Error("unknown purchase scenario");
@@ -134,7 +140,10 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 					return {
 						stateLabel: "payment failed",
 						buttonLabel: "update now",
-						action: () => billing.customerPortal(),
+						action: async() => await ops.operation({
+							promise: billing.customerPortal(),
+							setOp: newOp => this.op = newOp
+						}),
 					}
 
 				case SubscriptionStatus.Cancelled:
@@ -220,6 +229,7 @@ export class XiomeSubscriptions extends mixinRequireShare<{
 	render() {
 		return renderOp(
 			ops.combine(
+				this.op,
 				this.#state.subscriptions.subscriptionPlansOp,
 				this.#state.subscriptions.mySubscriptionDetailsOp,
 			),

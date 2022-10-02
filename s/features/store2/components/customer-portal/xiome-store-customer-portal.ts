@@ -4,8 +4,8 @@ import xiomeStoreCustomerPortalCss from "./xiome-store-customer-portal.css.js"
 import {makeStoreModel} from "../../models/store-model.js"
 import {StripeConnectStatus} from "../../types/store-concepts.js"
 import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {Component, html, mixinRequireShare, mixinStyles} from "../../../../framework/component.js"
-import {ops} from "../../../../framework/ops.js"
+import {Component, html, mixinRequireShare, mixinStyles, property} from "../../../../framework/component.js"
+import {Op, ops} from "../../../../framework/ops.js"
 
 @mixinStyles(xiomeStoreCustomerPortalCss)
 export class XiomeStoreCustomerPortal extends mixinRequireShare<{
@@ -20,23 +20,14 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 		await this.#storeModel.initialize()
 	}
 
+	@property()
+	private op: Op<void> = ops.ready(undefined)
+
 	#openPopup = async () => {
 		const {customerPortal} = this.#storeModel.billing
-		await customerPortal()
-	}
-
-	#renderControls = () => {
-		const {connectStatusOp} = this.#storeModel.state.stripeConnect
-		return renderOp(connectStatusOp, status => {
-			return status === StripeConnectStatus.Ready
-				? html`
-					<xio-button @press=${this.#openPopup}>
-						open customer portal </xio-button>
-				`
-				: html`<slot name="not-ready">
-						the merchant's stripe account must be ready, to access the customer portal
-						</slot>
-					`
+		await ops.operation({
+			promise: customerPortal(),
+			setOp: newOp => this.op = newOp
 		})
 	}
 
@@ -67,7 +58,7 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 	render() {
 		const {accessOp} = this.#storeModel.state.user
 		const {connectStatusOp} = this.#storeModel.state.stripeConnect
-		const combinedOp = ops.combine(accessOp, connectStatusOp)
+		const combinedOp = ops.combine(accessOp, connectStatusOp, this.op)
 		return html`
 			<h3>Customer Portal</h3>
 			${renderOp(combinedOp, () => {

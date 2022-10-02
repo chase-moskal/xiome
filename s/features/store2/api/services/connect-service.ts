@@ -119,11 +119,5 @@ export const makeConnectService = (
 				stripeLoginLink: `https://dashboard.stripe.com/b/${stripeAccountId}`,
 			}
 		},
-
-		async generateCustomerPortalLink() {
-			const {popupId} = makeStripePopupSpec.openCustomerPortal(options)
-			const url = makeFakestripePopupUrl.customerPortal()
-			return {popupId, customerPortalLink: url}
-		},
 	}),
 }))
