@@ -73,6 +73,7 @@ export function makePermissionsInteractions({database, generateId}: {
 			await database.tables.role.create({
 				label,
 				roleId,
+				// TODO hard should maybe be false?
 				hard: true,
 				public: true,
 				assignable: false,
