@@ -6,7 +6,7 @@ import {stripeWebhooks} from "./webhooks/stripe-webhooks.js"
 import {StoreDatabaseRaw} from "../database/types/schema.js"
 import {makeStripeLiaison} from "./liaison/stripe-liaison.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
-import {makeStripePopups} from "../../aspects/popups/make-stripe-popups.js"
+import {makeStripePopups} from "../../popups/make-stripe-popups.js"
 import {ConfigStripe} from "../../../../assembly/backend/types/config-stripe.js"
 import {PrepareRoleManager} from "../../../auth/aspects/permissions/interactions/types.js"
 

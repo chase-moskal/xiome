@@ -4,7 +4,7 @@ import * as dbmage from "dbmage"
 
 import {createStripeSubscriptionViaExistingPaymentMethod} from "./create-stripe-subscription-via-existing-payment-method.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
-import {makeStripePopupSpec} from "../../aspects/popups/make-stripe-popup-spec.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {StoreCustomerAuth} from "../policies/types.js"
 import {fulfillSubscriptionRoles} from "../stripe/fulfillment/fulfillment.js"
 import {timerangeFromStripePeriod} from "../stripe/utils/seconds-to-millisecond-timerange.js"

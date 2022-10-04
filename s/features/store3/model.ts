@@ -1,13 +1,13 @@
 
-import {Op} from "../../../framework/ops.js"
-import {StoreServices} from "./model/types.js"
-import {makeStoreStateSystem} from "./model/state.js"
-import {StripePopups} from "../aspects/popups/types.js"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {makeBillingSubmodel} from "../aspects/billing/submodel.js"
-import {makeConnectSubmodel} from "../aspects/connect/submodel.js"
-import {makeSubscriptionsSubmodel} from "../aspects/subscriptions/submodel.js"
-import {setupLogicForInitAndLoading} from "./model/setup-logic-for-init-and-loading.js"
+import {Op} from "../../framework/ops.js"
+import {StoreServices} from "./frontend/types.js"
+import {makeStoreStateSystem} from "./frontend/state.js"
+import {StripePopups} from "./popups/types.js"
+import {AccessPayload} from "../auth/types/auth-tokens.js"
+import {makeBillingSubmodel} from "./aspects/billing/submodel.js"
+import {makeConnectSubmodel} from "./aspects/connect/submodel.js"
+import {makeSubscriptionsSubmodel} from "./aspects/subscriptions/submodel.js"
+import {setupLogicForInitAndLoading} from "./frontend/model/setup-logic-for-init-and-loading.js"
 
 export function makeStoreModel(options: {
 		services: StoreServices

@@ -1,10 +1,10 @@
 
 import {snapstate} from "@chasemoskal/snapstate"
 
-import {Op, ops} from "../../../../framework/ops.js"
-import {storePrivileges} from "../../isomorphic/privileges.js"
-import {AccessPayload} from "../../../auth/types/auth-tokens.js"
-import {StripeConnectStatus, StripeConnectDetails, SubscriptionPlan, SubscriptionDetails, PaymentMethod} from "../../isomorphic/concepts.js"
+import {Op, ops} from "../../../framework/ops.js"
+import {storePrivileges} from "../isomorphic/privileges.js"
+import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {StripeConnectStatus, StripeConnectDetails, SubscriptionPlan, SubscriptionDetails, PaymentMethod} from "../isomorphic/concepts.js"
 
 export type StoreStateSystem = ReturnType<typeof makeStoreStateSystem>
 export type StoreSnap = StoreStateSystem["snap"]

@@ -2,9 +2,9 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {StoreServiceOptions} from "../../backend/types/options.js"
 import {StripeConnectStatus} from "../../isomorphic/concepts.js"
-import {makeStripePopupSpec} from "../popups/make-stripe-popup-spec.js"
+import {StoreServiceOptions} from "../../backend/types/options.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {requiredPrivilege} from "../../backend/utils/required-privilege.js"
 import {MerchantRow} from "../../backend/database/types/rows/merchant-rows.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"

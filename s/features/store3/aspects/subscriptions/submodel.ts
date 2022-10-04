@@ -1,10 +1,10 @@
 
 import {objectMap, unproxy} from "@chasemoskal/snapstate"
 
-import {StripePopups} from "../popups/types.js"
 import {ops} from "../../../../framework/ops.js"
-import {StoreServices} from "../../frontend/model/types.js"
-import {StoreStateSystem} from "../../frontend/model/state.js"
+import {StripePopups} from "../../popups/types.js"
+import {StoreServices} from "../../frontend/types.js"
+import {StoreStateSystem} from "../../frontend/state.js"
 import {SubscriptionTierDraft, SubscriptionPricingDraft} from "./planning/types/drafts.js"
 
 export function makeSubscriptionsSubmodel({

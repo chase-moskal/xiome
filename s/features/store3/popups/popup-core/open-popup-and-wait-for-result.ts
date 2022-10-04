@@ -1,6 +1,6 @@
 
 import {Popups} from "../types.js"
-import {centeredPopupFeatures} from "../../../../../toolbox/popups/centered-popup-features.js"
+import {centeredPopupFeatures} from "../../../../toolbox/popups/centered-popup-features.js"
 
 export async function openPopupAndWaitForResult<xDetails = void>({
 		url,

@@ -1,6 +1,6 @@
 
 import {Popups} from "./types.js"
-import {MockStripeOperations} from "../../backend/stripe/types.js"
+import {MockStripeOperations} from "../backend/stripe/types.js"
 import {openPopupAndWaitForResult} from "./popup-core/open-popup-and-wait-for-result.js"
 
 export function mockStripePopups({mockStripeOperations}: {

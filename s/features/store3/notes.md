@@ -9,9 +9,10 @@ next up:
 - [x] permissions interactions to role manager
 - [x] stripe popups
 - [x] services and api
-- [ ] models
+- [x] models
 - [ ] components
 - [ ] testing
+- [ ] integration into xiome, production, mocks, tests
 
 after everything is back in place:
 - rename
