@@ -37,7 +37,7 @@ export type SetupSubscriptionMetadata = {
 	subscription_id: string
 } & Stripe.Metadata
 
-export interface SubscriptionDetails {
+export interface SubscriptionData {
 	id: string
 	status: Stripe.Subscription.Status
 	current_period_end: number

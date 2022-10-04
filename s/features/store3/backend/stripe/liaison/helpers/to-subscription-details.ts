@@ -1,11 +1,11 @@
 
 import Stripe from "stripe"
 import {getStripeId} from "./get-stripe-id.js"
-import {SubscriptionDetails} from "../types.js"
+import {SubscriptionData} from "../types.js"
 
 export const toSubscriptionDetails = (
 			subscription: Partial<Stripe.Subscription>
-		): SubscriptionDetails => ({
+		): SubscriptionData => ({
 
 	id: subscription.id,
 	status: subscription.status,

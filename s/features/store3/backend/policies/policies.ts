@@ -2,7 +2,7 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {StoreApiOptions} from "../types.js"
+import {StoreApiOptions} from "../types/options.js"
 import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"

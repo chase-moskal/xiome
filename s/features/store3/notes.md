@@ -8,7 +8,10 @@ next up:
 - [x] liaison
 - [x] permissions interactions to role manager
 - [x] stripe popups
-- [ ] services and api
+- [x] services and api
+- [ ] models
+- [ ] components
+- [ ] testing
 
 after everything is back in place:
 - rename
