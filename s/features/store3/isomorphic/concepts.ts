@@ -1,4 +1,6 @@
 
+import {CardClues} from "../backend/stripe/liaison/types.js"
+
 export enum StripeConnectStatus {
 	Unlinked,
 	Incomplete,

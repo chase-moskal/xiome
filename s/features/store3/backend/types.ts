@@ -1,7 +1,9 @@
 
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
+
 import {StoreAuth} from "./policies/types.js"
+import {StripeLiaison} from "./stripe/liaison/types.js"
 import {makeStorePolicies} from "./policies/policies.js"
 
 export interface StoreApiOptions<xMeta = any> {

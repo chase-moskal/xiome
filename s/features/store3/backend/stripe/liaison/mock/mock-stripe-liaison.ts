@@ -10,7 +10,7 @@ import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
 import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"
 import {MockStripeTables, MockAccount, MetaDataTables} from "./tables/types.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
-import {makeFakestripePopupUrl} from "../../../popups/make-fakestripe-popup-urls.js"
+import {makeFakestripePopupUrl} from "../../../../aspects/popups/make-fakestripe-popup-urls.js"
 
 export function mockStripeLiaison({
 		rando, tables: rawTables, metaDataTables, recentDetails, dispatchWebhook,

@@ -2,7 +2,7 @@
 import * as dbmage from "dbmage"
 
 import {StoreSchema} from "../database/types/schema.js"
-import {StripeLiaison} from "../../../stripe/liaison/types.js"
+import {StripeLiaison} from "../stripe/liaison/types.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
 
 export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {

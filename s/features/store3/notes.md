@@ -11,8 +11,10 @@ next up:
 - [ ] services and api
 
 after everything is back in place:
-- renames
+- rename
   - `roleManager.createRoleForNewSubscriptionTier` => `roleManager.createPrivateSystemRole`
+- move
+  - `get-stripe-id.ts` into `stripe/utils/`
 
 refactors to consider later:
 - consider adding backend/frontend dirs into `aspects/popups`
