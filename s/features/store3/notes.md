@@ -21,8 +21,83 @@ after everything is back in place:
   - `get-stripe-id.ts` into `stripe/utils/`
 
 refactors to consider later:
-- consider adding backend/frontend dirs into `aspects/popups`
 - why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
+
+------
+
+
+services
+- merchant
+  - loadConnectStatus
+  - loadConnectDetails
+  - generateConnectSetupLink
+  - generateStripeLoginLink
+- customer
+  - getPaymentMethodDetails
+  - generateCustomerPortalLink
+- subscription
+  - catalog
+    - listSubscriptionPlans
+  - planning
+    - addPlan
+    - addTier
+    - editPlan
+    - editTier
+  - shopping
+    - fetchMySubscriptionDetails
+    - buy
+    - cancel
+    - uncancel
+
+(sub)models
+- merchant
+- customer
+- subscription
+
+components
+- merchant
+- 
+
+------
+
+```
+
+store3/
+  api.ts
+  components.ts
+  supermodel.ts
+  tests.test.ts
+
+  backend/
+    database/
+    policies/
+    stripe/
+    types/
+    utils/
+    services/
+      merchant/
+      customer/
+      subscription/
+
+  frontend/
+    state.ts
+    utils/
+    models/
+      merchant/
+      customer/
+      subscription/
+    components/
+      merchant/
+      customer/
+      subscription-planning/
+      subscription-shopping/
+
+  isomorphic/
+  popups/
+  testing/
+  
+
+```
 
 ------
 
