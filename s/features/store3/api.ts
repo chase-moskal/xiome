@@ -3,11 +3,11 @@ import * as renraku from "renraku"
 
 import {StoreApiOptions} from "./backend/types/options.js"
 import {makeStorePolicies} from "./backend/policies/policies.js"
-import {makeBillingService} from "./aspects/billing/service.js"
-import {makeConnectService} from "./aspects/connect/service.js"
-import {makeSubscriptionObserverService} from "./aspects/subscriptions/observer/service.js"
-import {makeSubscriptionPlanningService} from "./aspects/subscriptions/planning/service.js"
-import {makeSubscriptionShoppingService} from "./aspects/subscriptions/shopping/service.js"
+import {makeBillingService} from "./backend/services/billing.js"
+import {makeConnectService} from "./backend/services/connect.js"
+import {makeSubscriptionObserverService} from "./backend/services/subscriptions/observer.js"
+import {makeSubscriptionShoppingService} from "./backend/services/subscriptions/shopping.js"
+import {makeSubscriptionPlanningService} from "./backend/services/subscriptions/planning.js"
 
 export function makeStoreApi<xMeta>(options: StoreApiOptions<xMeta>) {
 

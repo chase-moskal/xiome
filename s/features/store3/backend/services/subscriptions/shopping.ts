@@ -1,17 +1,17 @@
 
 import * as renraku from "renraku"
 
-import {StoreServiceOptions} from "../../../backend/types/options.js"
+import {StoreServiceOptions} from "../../types/options.js"
 import {validator, string} from "../../../../../toolbox/darkvalley.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
 import {SubscriptionDetails, PurchaseScenario} from "../../../isomorphic/concepts.js"
 import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
-import {cancelStripeSubscription} from "../../../backend/utils/cancel-stripe-subscription.js"
-import {uncancelStripeSubscription} from "../../../backend/utils/uncancel-stripe-subscription.js"
+import {cancelStripeSubscription} from "../../utils/cancel-stripe-subscription.js"
+import {uncancelStripeSubscription} from "../../utils/uncancel-stripe-subscription.js"
 import {determinePurchaseScenario} from "../../../isomorphic/utils/determine-purchase-scenario.js"
-import {fetchAllSubscriptionDetails} from "../../../backend/utils/fetch-all-subscription-details.js"
-import {prepareToBuyStripeSubscription} from "../../../backend/utils/prepare-to-buy-stripe-subscription.js"
-import {verifyPlanHasExistingStripeSubscription} from "../../../backend/utils/verify-plan-has-existing-stripe-subscription.js"
+import {fetchAllSubscriptionDetails} from "../../utils/fetch-all-subscription-details.js"
+import {prepareToBuyStripeSubscription} from "../../utils/prepare-to-buy-stripe-subscription.js"
+import {verifyPlanHasExistingStripeSubscription} from "../../utils/verify-plan-has-existing-stripe-subscription.js"
 
 export const makeSubscriptionShoppingService = (
 	options: StoreServiceOptions

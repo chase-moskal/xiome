@@ -1,7 +1,7 @@
 
 import {validateId} from "../../../common/validators/validate-id.js"
 import {boolean, branch, is, maxLength, min, minLength, number, schema, string, validator} from "../../../toolbox/darkvalley.js"
-import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionPricingDraft, SubscriptionTierDraft} from "../aspects/subscriptions/planning/types/drafts.js"
+import {EditPlanDraft, EditTierDraft, SubscriptionPlanDraft, SubscriptionPricingDraft, SubscriptionTierDraft} from "../backend/services/subscriptions/types/drafts.js"
 
 export const validatePriceNumber = validator<number>(
 	number(),

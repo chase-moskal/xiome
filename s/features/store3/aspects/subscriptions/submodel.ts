@@ -5,7 +5,7 @@ import {ops} from "../../../../framework/ops.js"
 import {StripePopups} from "../../popups/types.js"
 import {StoreServices} from "../../frontend/types.js"
 import {StoreStateSystem} from "../../frontend/state.js"
-import {SubscriptionTierDraft, SubscriptionPricingDraft} from "./planning/types/drafts.js"
+import {SubscriptionTierDraft, SubscriptionPricingDraft} from "../../backend/services/subscriptions/types/drafts.js"
 
 export function makeSubscriptionsSubmodel({
 		services,

@@ -1,7 +1,7 @@
 
 import * as renraku from "renraku"
-import {StoreServiceOptions} from "../../../backend/types/options.js"
-import {fetchSubscriptionPlans} from "../../../backend/utils/fetch-subscription-plans.js"
+import {StoreServiceOptions} from "../../types/options.js"
+import {fetchSubscriptionPlans} from "../../utils/fetch-subscription-plans.js"
 
 export const makeSubscriptionObserverService = (
 	options: StoreServiceOptions
