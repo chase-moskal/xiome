@@ -1,12 +1,14 @@
 
 import {html} from "lit"
-import {makeStoreModel} from "../../model.js"
-import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
-import xiomeBillingCss from "../../../store2/components/billing/xiome-billing.css.js"
-import {mixinStyles, mixinRequireShare, Component} from "../../../../framework/component.js"
 
-@mixinStyles(xiomeBillingCss)
+import {makeStoreModel} from "../../../model.js"
+import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
+import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
+import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"
+
+import styles from "./styles.js"
+
+@mixinStyles(styles)
 export class XiomeBilling extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>

@@ -1,12 +1,12 @@
 
 import {html} from "lit"
 
-import {makeStoreModel} from "../../model.js"
-import {ops} from "../../../../framework/ops.js"
-import {StripeConnectStatus} from "../../isomorphic/concepts.js"
-import {renderOp} from "../../../../framework/op-rendering/render-op.js"
-import {mixinRequireShare, Component} from "../../../../framework/component.js"
-import {ModalSystem} from "../../../../assembly/frontend/modal/types/modal-system.js"
+import {makeStoreModel} from "../../../model.js"
+import {ops} from "../../../../../framework/ops.js"
+import {StripeConnectStatus} from "../../../isomorphic/concepts.js"
+import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
+import {mixinRequireShare, Component} from "../../../../../framework/component.js"
+import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 
 export class XiomeStoreConnect extends mixinRequireShare<{
 		modals: ModalSystem
