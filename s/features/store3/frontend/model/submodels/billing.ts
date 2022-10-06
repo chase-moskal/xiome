@@ -1,9 +1,9 @@
 
-import {ops} from "../../../../framework/ops.js"
+import {ops} from "../../../../../framework/ops.js"
 
-import {StripePopups} from "../../popups/types.js"
-import {StoreServices} from "../types.js"
-import {StoreStateSystem} from "../state.js"
+import {StoreServices} from "../../types.js"
+import {StoreStateSystem} from "../../state.js"
+import {StripePopups} from "../../../popups/types.js"
 
 export function makeBillingSubmodel({
 		stripePopups,
