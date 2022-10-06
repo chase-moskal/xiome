@@ -1,4 +1,5 @@
 
+import {Querystrings} from "../types.js"
 import {parseSearchParams} from "./parse-search-params.js"
 import {assignClickHandlers} from "./assign-click-handlers.js"
 import {makeSecretMockCommandSystem} from "./secret-command-system.js"
@@ -6,9 +7,7 @@ import {makeSecretMockCommandSystem} from "./secret-command-system.js"
 const routines = {
 
 	async "connect"() {
-		// TODO fix the <any>?
-		// many instances throughout this file
-		const {return_url, refresh_url} = parseSearchParams<any>()
+		const {return_url, refresh_url} = parseSearchParams<Querystrings.Connect>()
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
 			async "button.complete"() {
@@ -43,7 +42,7 @@ const routines = {
 	},
 
 	async "checkout"() {
-		const {success_url, cancel_url} = parseSearchParams<any>()
+		const {success_url, cancel_url} = parseSearchParams<Querystrings.Checkout>()
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
 			async "button.success"() {
@@ -61,7 +60,7 @@ const routines = {
 	},
 
 	async "checkout-payment-method"() {
-		const {success_url, cancel_url} = parseSearchParams<any>()
+		const {success_url, cancel_url} = parseSearchParams<Querystrings.CheckoutPaymentMethod>()
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
 			async "button.success"() {

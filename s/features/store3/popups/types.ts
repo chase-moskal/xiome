@@ -34,3 +34,21 @@ export namespace Popups {
 		details?: xDetails
 	}
 }
+
+export namespace Querystrings {
+
+	export interface Connect {
+		return_url: string
+		refresh_url: string
+	}
+
+	export interface Checkout {
+		success_url: string
+		cancel_url: string
+	}
+
+	export interface CheckoutPaymentMethod {
+		success_url: string
+		cancel_url: string
+	}
+}

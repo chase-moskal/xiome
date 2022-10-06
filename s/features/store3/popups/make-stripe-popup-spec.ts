@@ -1,5 +1,6 @@
 
 import {Popups} from "./types.js"
+import {encodeQuerystring} from "./utils/encode-querystring.js"
 
 export namespace makeStripePopupSpec {
 
@@ -47,9 +48,4 @@ export namespace makeStripePopupSpec {
 			})}`,
 		}
 	}
-}
-
-function encodeQuerystring(result: any) {
-	const searchParams = new URLSearchParams({...result})
-	return searchParams.toString()
 }

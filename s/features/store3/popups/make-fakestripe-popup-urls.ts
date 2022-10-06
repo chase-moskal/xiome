@@ -1,13 +1,11 @@
 
+import {Querystrings} from "./types.js"
+import {encodeQuerystring} from "./utils/encode-querystring.js"
+
 export namespace makeFakestripePopupUrl {
 
-	export function connect(params: {
-			return_url: string
-			refresh_url: string
-		}) {
-		return `/mocksite/fakestripe/connect`
-			+ `?return_url=${encodeURIComponent(params.return_url)}`
-			+ `&refresh_url=${encodeURIComponent(params.refresh_url)}`
+	export function connect(params: Querystrings.Connect) {
+		return `/mocksite/fakestripe/connect?${encodeQuerystring(params)}`
 	}
 
 	export function login() {
@@ -18,21 +16,13 @@ export namespace makeFakestripePopupUrl {
 		return `/mocksite/fakestripe/store-customer-portal`
 	}
 
-	export function checkout(params: {
-			success_url: string
-			cancel_url: string
-		}) {
-		return `/mocksite/fakestripe/checkout`
-			+ `?success_url=${encodeURIComponent(params.success_url)}`
-			+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`
+	export function checkout(params: Querystrings.Checkout) {
+		return `/mocksite/fakestripe/checkout?${encodeQuerystring(params)}`
 	}
 
-	export function checkoutPaymentMethod(params: {
-			success_url: string
-			cancel_url: string
-		}) {
-		return `/mocksite/fakestripe/checkout-payment-method`
-			+ `?success_url=${encodeURIComponent(params.success_url)}`
-			+ `&cancel_url=${encodeURIComponent(params.cancel_url)}`
+	export function checkoutPaymentMethod(
+			params: Querystrings.CheckoutPaymentMethod
+		) {
+		return `/mocksite/fakestripe/checkout-payment-method?${encodeQuerystring(params)}`
 	}
 }
