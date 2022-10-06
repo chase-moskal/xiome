@@ -10,8 +10,8 @@ next up:
 - [x] stripe popups
 - [x] services and api
 - [x] models
-- [ ] components
-- [ ] testing
+- [x] components
+- [x] testing
 - [ ] integration into xiome, production, mocks, tests
 
 after everything is back in place:
