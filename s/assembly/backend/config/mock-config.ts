@@ -26,6 +26,9 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 	email: "mock-console",
 	database: "mock-storage",
 	stripe: "mock-mode",
+	store: {
+		popupReturnUrl: "http://localhost:8080/popups/return",
+	},
 	chat: {
 		port: 8001
 	},

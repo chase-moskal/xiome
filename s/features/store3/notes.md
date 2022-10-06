@@ -22,7 +22,7 @@ after everything is back in place:
 
 refactors to consider later:
 - [x] why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
-- [ ] address all TODOs
+- [x] address all TODOs
 
 ------
 
