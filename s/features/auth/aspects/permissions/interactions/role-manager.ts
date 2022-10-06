@@ -39,7 +39,7 @@ export function makeRoleManager({database, generateId}: {
 				})
 			}
 		},
-		async createRoleForNewSubscriptionTier({label}) {
+		async createPrivateSystemRole({label}) {
 			const roleId = generateId()
 			await database.tables.role.create({
 				label,

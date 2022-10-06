@@ -4,7 +4,7 @@ import * as dbmage from "dbmage"
 import {StoreLinkedAuth} from "../policies/types.js"
 import {SubscriptionTierRow} from "../database/types/rows/subscription-rows.js"
 import {SubscriptionPlan, SubscriptionPricing} from "../../isomorphic/concepts.js"
-import {getStripeId} from "../stripe/liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {stripeAttempt} from "../stripe/liaison/helpers/stripe-attempt.js"
 
 // TODO

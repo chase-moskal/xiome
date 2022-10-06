@@ -3,7 +3,7 @@ import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
 import {StoreLinkedAuth} from "../policies/types.js"
-import {getStripeId} from "../stripe/liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.js"
 import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../services/subscriptions/types/drafts.js"
 
@@ -54,7 +54,7 @@ export const helpersForManagingSubscriptions = ({
 			const planId = generateId()
 			const tierId = generateId()
 
-			const {roleId} = await roleManager.createRoleForNewSubscriptionTier({
+			const {roleId} = await roleManager.createPrivateSystemRole({
 				label: tier.label,
 			})
 
@@ -110,7 +110,7 @@ export const helpersForManagingSubscriptions = ({
 					pricing,
 				})
 
-			const {roleId} = await roleManager.createRoleForNewSubscriptionTier({label})
+			const {roleId} = await roleManager.createPrivateSystemRole({label})
 
 			const time = Date.now()
 			const tierId = generateId()

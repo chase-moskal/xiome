@@ -1,7 +1,7 @@
 
 import {Stripe} from "stripe"
 import {StoreCustomerAuth} from "../policies/types.js"
-import {getStripeId} from "../stripe/liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 
 export async function getStripeDefaultPaymentMethod(
 		{stripeLiaisonAccount, stripeCustomerId}: StoreCustomerAuth

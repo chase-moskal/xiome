@@ -3,7 +3,7 @@ import * as dbmage from "dbmage"
 
 import {StripeLiaisonAccount} from "../../liaison/types.js"
 import {StoreDatabase} from "../../../database/types/schema.js"
-import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../../utils/get-stripe-id.js"
 
 export async function getTiersForStripePrices({
 		priceIds,

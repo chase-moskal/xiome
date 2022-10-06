@@ -12,16 +12,17 @@ next up:
 - [x] models
 - [x] components
 - [x] testing
-- [ ] integration into xiome, production, mocks, tests
+- [x] integration into xiome, production, mocks, tests
 
 after everything is back in place:
 - rename
-  - `roleManager.createRoleForNewSubscriptionTier` => `roleManager.createPrivateSystemRole`
+  - [x] `roleManager.createRoleForNewSubscriptionTier` => `roleManager.createPrivateSystemRole`
 - move
-  - `get-stripe-id.ts` into `stripe/utils/`
+  - [x] `get-stripe-id.ts` into `stripe/utils/`
 
 refactors to consider later:
-- why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
+- [ ] why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
+- [ ] address all TODOs
 
 ------
 

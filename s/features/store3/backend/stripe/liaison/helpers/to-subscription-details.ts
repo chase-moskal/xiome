@@ -1,6 +1,6 @@
 
 import Stripe from "stripe"
-import {getStripeId} from "./get-stripe-id.js"
+import {getStripeId} from "../../utils/get-stripe-id.js"
 import {SubscriptionData} from "../types.js"
 
 export const toSubscriptionDetails = (

@@ -2,7 +2,7 @@
 import Stripe from "stripe"
 import * as dbmage from "dbmage"
 
-import {getStripeId} from "../liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "./get-stripe-id.js"
 import {DispatchWebhook, MockStripeRecentDetails} from "../types.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../liaison/types.js"
 import {MetaDataTables, MockStripeTables} from "../liaison/mock/tables/types.js"

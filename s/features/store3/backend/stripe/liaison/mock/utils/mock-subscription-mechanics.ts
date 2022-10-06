@@ -2,7 +2,7 @@
 import {Stripe} from "stripe"
 import * as dbmage from "dbmage"
 import {MockStripeTables} from "../tables/types.js"
-import {getStripeId} from "../../helpers/get-stripe-id.js"
+import {getStripeId} from "../../../utils/get-stripe-id.js"
 
 export function mockSubscriptionMechanics({
 		tables,

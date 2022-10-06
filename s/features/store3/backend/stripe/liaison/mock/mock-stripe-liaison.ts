@@ -4,7 +4,7 @@ import * as dbmage from "dbmage"
 import {find, Rando} from "dbmage"
 
 import {StripeLiaison} from "../types.js"
-import {getStripeId} from "../helpers/get-stripe-id.js"
+import {getStripeId} from "../../utils/get-stripe-id.js"
 import {stripeResponse} from "./utils/stripe-response.js"
 import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
 import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"

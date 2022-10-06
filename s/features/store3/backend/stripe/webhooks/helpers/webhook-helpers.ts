@@ -2,7 +2,7 @@
 import Stripe from "stripe"
 import * as dbmage from "dbmage"
 
-import {getStripeId} from "../../liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../../utils/get-stripe-id.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../../liaison/types.js"
 import {stripeClientReferenceId} from "../../utils/stripe-client-reference-id.js"
 import {StoreDatabase, StoreDatabaseRaw} from "../../../database/types/schema.js"

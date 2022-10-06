@@ -3,7 +3,7 @@ import * as dbmage from "dbmage"
 import {SubscriptionDetails} from "../../isomorphic/concepts.js"
 
 import {StoreCustomerAuth} from "../policies/types.js"
-import {getStripeId} from "../stripe/liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {determineSubscriptionStatus} from "./determine-subscription-status.js"
 
 export async function fetchAllSubscriptionDetails({

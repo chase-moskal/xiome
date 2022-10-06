@@ -3,7 +3,7 @@ import Stripe from "stripe"
 
 import {StoreCustomerAuth} from "../policies/types.js"
 import {getRowsForTierId} from "./get-rows-for-tier-id.js"
-import {getStripeId} from "../stripe/liaison/helpers/get-stripe-id.js"
+import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {getTierRowByQueryingStripePriceId} from "./get-tier-row-by-querying-stripe-price-id.js"
 
 export async function findStripeSubscriptionRelatedToTier(

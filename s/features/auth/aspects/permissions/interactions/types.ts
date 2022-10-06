@@ -22,7 +22,7 @@ export interface RoleManager {
 			userId: Id
 			roleIds: Id[]
 		}): Promise<void>
-	createRoleForNewSubscriptionTier({}: {label: string}): Promise<{roleId: Id}>
+	createPrivateSystemRole({}: {label: string}): Promise<{roleId: Id}>
 	readRole(roleId: Id): Promise<Row>
 	updateRole({}: {label: string, roleId: Id}): Promise<void>
 }
