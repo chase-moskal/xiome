@@ -1,6 +1,7 @@
 
 import {Popups} from "../types.js"
 import {centeredPopupFeatures} from "../../../../toolbox/popups/centered-popup-features.js"
+import {isSafeOriginForPopupReturn} from "../utils/is-safe-origin-for-popup-return.js"
 
 export async function openPopupAndWaitForResult<xDetails = void>({
 		url,
@@ -10,19 +11,18 @@ export async function openPopupAndWaitForResult<xDetails = void>({
 		handleSecretMockCommand = async() => {},
 	}: Popups.Parameters) {
 
-	// TODO
-	// - message origin checking should work properly
-
 	const popup = window.open(url, "_blank", centeredPopupFeatures(width, height))
 
 	return new Promise<Popups.Result<xDetails>>(resolve => {
+
 		function finish(result: Popups.Result<xDetails>) {
 			clearInterval(interval)
 			window.removeEventListener("message", handleMessage)
 			resolve(result)
 		}
+
 		function handleMessage(event: MessageEvent<any>) {
-			const isFromSafeOrigin = event.origin === window.origin
+			const isFromSafeOrigin = isSafeOriginForPopupReturn(event.origin)
 			const isMatchingPopupId = event.data?.popupId === popupId
 			const isSecretMockCommand = event.data.secretMockCommand === true
 
@@ -39,12 +39,14 @@ export async function openPopupAndWaitForResult<xDetails = void>({
 					finish({popupId, details})
 				}
 				else
-					console.error(`ignoring message for other popup "${event.data.popupId}":`, event.data)
+					console.warn(`ignoring message for other popup "${event.data.popupId}":`, event.data)
 			}
 			else
-				console.error(`ignoring message from origin "${event.origin}":`, event.data)
+				console.warn(`ignoring message from origin "${event.origin}":`, event.data)
 		}
+
 		window.addEventListener("message", handleMessage)
+
 		const interval = setInterval(() => {
 			if (popup.closed)
 				finish({popupId})

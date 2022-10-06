@@ -14,6 +14,9 @@ export interface SecretConfig {
 	email: "mock-console" | ConfigEmailMailgun
 	database: "mock-storage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
+	store: {
+		popupReturnUrl: string
+	},
 	dacast: "mock-mode" | true
 	chat: {
 		port: number

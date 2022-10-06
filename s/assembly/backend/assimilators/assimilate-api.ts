@@ -93,9 +93,7 @@ export async function assimilateApi({
 			},
 			stripeLiaison,
 			generateId: rando.randomId,
-			
-			// TODO make this json configurable
-			popupReturnUrl: "http://localhost:8080/popups/return",
+			popupReturnUrl: config.store.popupReturnUrl,
 		}),
 	})
 }
