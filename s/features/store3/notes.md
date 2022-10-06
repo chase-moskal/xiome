@@ -21,7 +21,7 @@ after everything is back in place:
   - [x] `get-stripe-id.ts` into `stripe/utils/`
 
 refactors to consider later:
-- [ ] why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
+- [x] why does the real stripe circuit contain frontend stripePopups? -- it feels wrong that `store3/backend/stripe/` imports from `store3/aspects/popups/`
 - [ ] address all TODOs
 
 ------

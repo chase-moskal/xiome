@@ -7,7 +7,6 @@ import {StoreDatabaseRaw} from "../database/types/schema.js"
 import {Logger} from "../../../../toolbox/logger/interfaces.js"
 import {MockStripeRecentDetails, StripeWebhooks} from "./types.js"
 import {mockStripeLiaison} from "./liaison/mock/mock-stripe-liaison.js"
-import {mockStripePopups} from "../../popups/mock-stripe-popups.js"
 import {mockStripeTables} from "./liaison/mock/tables/mock-stripe-tables.js"
 import {makeMetaDataTables} from "./liaison/mock/tables/make-meta-data-tables.js"
 import {prepareMockStripeOperations} from "./utils/prepare-mock-stripe-operations.js"
@@ -59,7 +58,6 @@ export async function mockStripeCircuit({
 	return {
 		stripe: <Stripe>undefined,
 		stripeLiaison,
-		stripePopups: mockStripePopups({mockStripeOperations}),
 		stripeWebhooks: pointer.webhooks,
 		mockStripeOperations,
 	}
