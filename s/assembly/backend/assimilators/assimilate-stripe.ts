@@ -3,9 +3,9 @@ import * as dbmage from "dbmage"
 
 import {DatabaseRaw} from "../types/database.js"
 import {SecretConfig} from "../types/secret-config.js"
-import {mockStripeCircuit} from "../../../features/store2/stripe/mock-stripe-circuit.js"
 import type {configureStripe as _configureStripe} from "../configurators/configure-stripe.js"
-import {buildFunctionToPreparePermissionsInteractions} from "../../../features/store2/interactions/permissions-interactions.js"
+import {mockStripeCircuit} from "../../../features/store3/backend/stripe/mock-stripe-circuit.js"
+import {buildFunctionToPrepareRoleManager} from "../../../features/auth/aspects/permissions/interactions/role-manager.js"
 
 export async function assimilateStripe({
 		databaseRaw, mockStorage,
@@ -24,8 +24,8 @@ export async function assimilateStripe({
 	const storeDatabaseRaw = dbmage.subsection(databaseRaw, tables => tables.store)
 	const permissionsDatabaseRaw = dbmage.subsection(databaseRaw, tables => tables.auth.permissions)
 
-	const preparePermissionsInteractions = (
-		buildFunctionToPreparePermissionsInteractions({
+	const prepareRoleManager = (
+		buildFunctionToPrepareRoleManager({
 			rando,
 			permissionsDatabaseRaw,
 		})
@@ -37,14 +37,14 @@ export async function assimilateStripe({
 			logger,
 			tableStorage: mockStorage,
 			storeDatabaseRaw,
-			preparePermissionsInteractions,
+			prepareRoleManager,
 		})
 	}
 	else {
 		return configureStripe({
 			config,
 			storeDatabaseRaw,
-			preparePermissionsInteractions,
+			prepareRoleManager,
 		})
 	}
 }

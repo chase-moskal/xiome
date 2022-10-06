@@ -2,7 +2,6 @@
 import {makeChatModel} from "../../../features/chat/models/chat-model.js"
 import {AssembleModelsOptions} from "../types/assemble-models-options.js"
 import {makeNotesModel} from "../../../features/notes/models/notes-model.js"
-import {makeStoreModel} from "../../../features/store2/models/store-model.js"
 import {makeVideoModels} from "../../../features/videos/models/video-models.js"
 import {makeExampleModel} from "../../../features/example/models/example-model.js"
 import {makeAppsModel} from "../../../features/auth/aspects/apps/models/apps-model.js"
@@ -11,6 +10,7 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
+import {makeStoreModel} from "../../../features/store3/frontend/model/model.js"
 
 export async function assembleModels({
 		appId,

@@ -2,7 +2,7 @@
 import {FlexStorage} from "dbmage"
 
 import {SystemRemote} from "./system-remote.js"
-import {StripePopups} from "../../../features/store2/popups/types.js"
+import {StripePopups} from "../../../features/store3/popups/types.js"
 import {ChatConnect} from "../../../features/chat/common/types/chat-concepts.js"
 import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 

@@ -15,6 +15,7 @@ import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
 import {makeNotesDepositBox} from "../../features/notes/api/notes-deposit-box.js"
+import {mockStripePopups} from "../../features/store3/popups/mock-stripe-popups.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {
@@ -25,13 +26,15 @@ export function prepareBackend(configurators: Configurators) {
 		const {databaseRaw, mockStorage} = await assimilateDatabase(options)
 		const {signToken, verifyToken} = assimilateCrypto(options)
 
-		const {stripeLiaison, stripePopups, mockStripeOperations} = (
+		const {stripeLiaison, mockStripeOperations} = (
 			await assimilateStripe({
 				...options,
 				databaseRaw,
 				mockStorage,
 			})
 		)
+
+		const stripePopups = mockStripePopups({mockStripeOperations})
 
 		const dacastSdk = assimilateDacast(options)
 
