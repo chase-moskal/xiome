@@ -57,7 +57,7 @@ export type ConnectedTables = {
 
 export type MockStripeSchema = {
 	prices: Partial<Stripe.Price>
-	accounts: MockAccount // TODO make the others like this!?
+	accounts: MockAccount
 	invoices: Partial<Stripe.Invoice>
 	products: Partial<Stripe.Product>
 	customers: Partial<Stripe.Customer>

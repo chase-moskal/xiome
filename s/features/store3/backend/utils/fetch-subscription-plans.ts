@@ -7,9 +7,8 @@ import {SubscriptionPlan, SubscriptionPricing} from "../../isomorphic/concepts.j
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {stripeAttempt} from "../stripe/liaison/helpers/stripe-attempt.js"
 
-// TODO
-// all of the logic in this function is questionable
-// and should probably be reconsidered and rewritten.
+// TODO all of the logic in this function is questionable,
+// and should probably be rewritten.
 export async function fetchSubscriptionPlans(
 		auth: StoreLinkedAuth
 	): Promise<SubscriptionPlan[]> {

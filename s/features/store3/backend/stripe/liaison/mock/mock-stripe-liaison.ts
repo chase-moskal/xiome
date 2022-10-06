@@ -76,7 +76,6 @@ export function mockStripeLiaison({
 
 			return {
 
-				// TODO implement
 				billingPortal: {
 					async create(params: Stripe.BillingPortal.SessionCreateParams) {
 						return stripeResponse(<Stripe.BillingPortal.Session>{
@@ -257,7 +256,6 @@ export function mockStripeLiaison({
 					}),
 				}),
 
-				// TODO implement items
 				subscriptionItems: makeStandardRestResource<Stripe.Subscription>(),
 
 				subscriptions: (() => {
