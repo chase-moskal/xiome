@@ -3,10 +3,10 @@ import {Await} from "dbmage"
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {makeStoreApi} from "../api.js"
+import {makeStoreApi} from "../../backend/api.js"
 import {makeTestSession} from "./test-session.js"
 import {testingBrowserTab} from "./testing-browser-tab.js"
-import {mockStripeCircuit} from "../backend/stripe/mock-stripe-circuit.js"
+import {mockStripeCircuit} from "../../backend/stripe/mock-stripe-circuit.js"
 
 export const testingClient = ({
 		appId,

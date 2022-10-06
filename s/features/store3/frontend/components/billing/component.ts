@@ -1,7 +1,7 @@
 
 import {html} from "lit"
 
-import {makeStoreModel} from "../../../model.js"
+import {makeStoreModel} from "../../model/model.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"

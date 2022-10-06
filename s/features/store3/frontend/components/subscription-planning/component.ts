@@ -2,7 +2,7 @@
 import {html} from "lit"
 
 import {planningUi} from "./ui/planning-ui.js"
-import {makeStoreModel} from "../../../model.js"
+import {makeStoreModel} from "../../model/model.js"
 import {ops} from "../../../../../framework/ops.js"
 import {StripeConnectStatus} from "../../../isomorphic/concepts.js"
 import {makePlanningComponentSnap} from "./ui/planning-component-snap.js"

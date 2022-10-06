@@ -1,7 +1,7 @@
 
 import {html} from "lit"
 
-import {makeStoreModel} from "../../../../model.js"
+import {makeStoreModel} from "../../../model/model.js"
 import {select} from "../../../../../../toolbox/selects.js"
 import {dollarsToCents, centsToDollars} from "./price-utils.js"
 import {makePlanningComponentSnap} from "./planning-component-snap.js"

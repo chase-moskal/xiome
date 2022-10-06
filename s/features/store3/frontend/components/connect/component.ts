@@ -1,7 +1,7 @@
 
 import {html} from "lit"
 
-import {makeStoreModel} from "../../../model.js"
+import {makeStoreModel} from "../../model/model.js"
 import {ops} from "../../../../../framework/ops.js"
 import {StripeConnectStatus} from "../../../isomorphic/concepts.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"

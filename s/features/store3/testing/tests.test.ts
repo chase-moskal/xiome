@@ -1,9 +1,9 @@
 
 import {Suite, expect} from "cynic"
 
-import {storeTestSetup} from "./testing/store-test-setup.js"
-import {StripeConnectStatus, SubscriptionPricing} from "./isomorphic/concepts.js"
-import {SubscriptionPricingDraft} from "./backend/services/subscriptions/types/drafts.js"
+import {storeTestSetup} from "./utils/store-test-setup.js"
+import {StripeConnectStatus, SubscriptionPricing} from "../isomorphic/concepts.js"
+import {SubscriptionPricingDraft} from "../backend/services/subscriptions/types/drafts.js"
 
 const setups = {
 	async linkedStore() {

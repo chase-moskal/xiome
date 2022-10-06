@@ -2,7 +2,7 @@
 import {html} from "lit"
 import {property} from "lit/decorators.js"
 
-import {makeStoreModel} from "../../../model.js"
+import {makeStoreModel} from "../../model/model.js"
 import {Op, ops} from "../../../../../framework/ops.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"

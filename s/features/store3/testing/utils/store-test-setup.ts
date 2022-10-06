@@ -1,19 +1,19 @@
 
 import * as dbmage from "dbmage"
 
-import {makeStoreApi} from "../api.js"
+import {makeStoreApi} from "../../backend/api.js"
 import {testingClient} from "./testing-client.js"
-import {StoreAuth} from "../backend/policies/types.js"
-import {storePrivileges} from "../isomorphic/privileges.js"
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
-import {StoreDatabase} from "../backend/database/types/schema.js"
-import {mockStoreDatabaseRaw} from "../backend/database/mock-raw.js"
-import {mockStripeCircuit} from "../backend/stripe/mock-stripe-circuit.js"
-import {DisabledLogger} from "../../../toolbox/logger/disabled-logger.js"
-import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
-import {appPermissions} from "../../../assembly/backend/permissions/standard-permissions.js"
-import {makePrivilegeChecker} from "../../auth/aspects/permissions/tools/make-privilege-checker.js"
-import {buildFunctionToPrepareRoleManager, mockRoleManagerDatabaseRaw} from "../../auth/aspects/permissions/interactions/role-manager.js"
+import {StoreAuth} from "../../backend/policies/types.js"
+import {storePrivileges} from "../../isomorphic/privileges.js"
+import {AccessPayload} from "../../../auth/types/auth-tokens.js"
+import {StoreDatabase} from "../../backend/database/types/schema.js"
+import {mockStoreDatabaseRaw} from "../../backend/database/mock-raw.js"
+import {mockStripeCircuit} from "../../backend/stripe/mock-stripe-circuit.js"
+import {DisabledLogger} from "../../../../toolbox/logger/disabled-logger.js"
+import {UnconstrainedTable} from "../../../../framework/api/unconstrained-table.js"
+import {appPermissions} from "../../../../assembly/backend/permissions/standard-permissions.js"
+import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
+import {buildFunctionToPrepareRoleManager, mockRoleManagerDatabaseRaw} from "../../../auth/aspects/permissions/interactions/role-manager.js"
 
 export const storeTestSetup = async() => ({
 

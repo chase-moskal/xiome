@@ -1,5 +1,5 @@
 
-import {makeStoreModel} from "../../../../model.js"
+import {makeStoreModel} from "../../../model/model.js"
 import {SubscriptionTier} from "../../../../isomorphic/concepts.js"
 import {centsToDollars} from "../../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"

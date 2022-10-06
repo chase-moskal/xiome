@@ -1,13 +1,13 @@
 
-import {Op} from "../../framework/ops.js"
-import {StripePopups} from "./popups/types.js"
-import {StoreServices} from "./frontend/types.js"
-import {makeStoreStateSystem} from "./frontend/state.js"
-import {AccessPayload} from "../auth/types/auth-tokens.js"
-import {makeConnectSubmodel} from "./frontend/model/submodels/connect.js"
-import {makeBillingSubmodel} from "./frontend/model/submodels/billing.js"
-import {makeSubscriptionsSubmodel} from "./frontend/model/submodels/subscriptions.js"
-import {setupLogicForInitAndLoading} from "./frontend/model/utils/setup-logic-for-init-and-loading.js"
+import {Op} from "../../../../framework/ops.js"
+import {StripePopups} from "../../popups/types.js"
+import {StoreServices} from "../types.js"
+import {makeStoreStateSystem} from "../state.js"
+import {AccessPayload} from "../../../auth/types/auth-tokens.js"
+import {makeConnectSubmodel} from "./submodels/connect.js"
+import {makeBillingSubmodel} from "./submodels/billing.js"
+import {makeSubscriptionsSubmodel} from "./submodels/subscriptions.js"
+import {setupLogicForInitAndLoading} from "./utils/setup-logic-for-init-and-loading.js"
 
 export function makeStoreModel(options: {
 		services: StoreServices

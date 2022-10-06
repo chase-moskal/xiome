@@ -1,5 +1,5 @@
 
-import {AccessPayload} from "../../auth/types/auth-tokens.js"
+import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 
 export interface TestSession {
 	access?: AccessPayload

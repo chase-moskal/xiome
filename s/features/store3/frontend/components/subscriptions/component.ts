@@ -2,7 +2,7 @@
 import {html} from "lit"
 import {property} from "lit/decorators.js"
 
-import {makeStoreModel} from "../../../model.js"
+import {makeStoreModel} from "../../model/model.js"
 import {ops, Op} from "../../../../../framework/ops.js"
 import {preparePurchaseActions} from "./utils/subscription-actions.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
