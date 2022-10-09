@@ -74,7 +74,7 @@ export async function assimilateApi({
 			authPolicies,
 		}),
 		store: makeStoreApi<AnonMeta>({
-			async storePolicy(meta, headers) {
+			async anonPolicy(meta, headers) {
 				const auth = await authPolicies.anonPolicy(meta, headers)
 				const {database} = auth
 				delete auth.database

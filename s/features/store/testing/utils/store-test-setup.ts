@@ -42,7 +42,7 @@ export const storeTestSetup = async() => ({
 			popupReturnUrl: "fake-popup-return-url",
 			stripeLiaison: circuit.stripeLiaison,
 			generateId,
-			storePolicy: async(access) => (<StoreAuth>{
+			anonPolicy: async(access) => (<StoreAuth>{
 				access,
 				stripeLiaison: circuit.stripeLiaison,
 				roleManager: prepareRoleManager(appId),

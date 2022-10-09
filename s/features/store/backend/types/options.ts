@@ -10,11 +10,9 @@ export interface StoreApiOptions<xMeta = any> {
 	popupReturnUrl: string
 	stripeLiaison: StripeLiaison
 	generateId: () => dbmage.Id
-	storePolicy: renraku.Policy<xMeta, StoreAuth>
+	anonPolicy: renraku.Policy<xMeta, StoreAuth>
 }
 
 export interface StoreServiceOptions<xMeta = any> extends StoreApiOptions<xMeta> {
 	storePolicies: ReturnType<typeof makeStorePolicies>
 }
-
-

@@ -4,32 +4,13 @@ import * as renraku from "renraku"
 import {StoreServiceOptions} from "../../types/options.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
 import {SubscriptionTierDraft, SubscriptionPricingDraft} from "./types/drafts.js"
+import {SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
-import {fetchStripeConnectDetails} from "../../utils/fetch-stripe-connect-details.js"
-import {determineConnectStatus} from "../../../isomorphic/utils/determine-connect-status.js"
-import {helpersForManagingSubscriptions} from "../../utils/helpers-for-managing-subscriptions.js"
-import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {validateNewPlanDraft, validateLabel, validateSubscriptionPricingDraft, validateBoolean} from "../../../isomorphic/validators.js"
 
-export const makeSubscriptionPlanningService = (
-	options: StoreServiceOptions
-) => renraku.service()
-
-.policy(async(meta, headers) => {
-	const auth = await options.storePolicies.storeLinkedPolicy(meta, headers)
-	auth.checker.requirePrivilege("manage store")
-	const connectStatus = determineConnectStatus(
-		await fetchStripeConnectDetails({
-			storeTables: auth.storeDatabase.tables,
-			stripeLiaison: auth.stripeLiaison,
-		})
-	)
-	if (connectStatus !== StripeConnectStatus.Ready)
-		throw new renraku.ApiError(400, "stripe connect status not ready")
-	const helpers = helpersForManagingSubscriptions({...options, ...auth})
-	return {...auth, helpers}
-})
-
+export const makeSubscriptionPlanningService = (options: StoreServiceOptions) => renraku
+.service()
+.policy(options.storePolicies.merchant)
 .expose(({helpers}) => ({
 
 	async addPlan(inputs: {
