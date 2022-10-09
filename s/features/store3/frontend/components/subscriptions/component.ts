@@ -15,7 +15,7 @@ import {SubscriptionTier, SubscriptionDetails, SubscriptionStatus, PurchaseScena
 import styles from "./styles.js"
 
 @mixinStyles(styles)
-export class XiomeSubscriptions extends mixinRequireShare<{
+export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>
 	}>()(Component) {

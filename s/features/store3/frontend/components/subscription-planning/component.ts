@@ -12,7 +12,7 @@ import {mixinStyles, mixinRequireShare, Component} from "../../../../../framewor
 import styles from "./styles.js"
 
 @mixinStyles(styles)
-export class XiomeSubscriptionPlanning extends mixinRequireShare<{
+export class XiomeStoreSubscriptionPlanning extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>
 	}>()(Component) {

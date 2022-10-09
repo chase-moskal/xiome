@@ -11,29 +11,36 @@ mainHtml: html`
 
 	<section>
 		<h2>store</h2>
+
+		<h3>connect</h3>
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
 		<br/>
-		<br>
+
+		<h3>customer-portal</h3>
 		<xiome-store-customer-portal></xiome-store-customer-portal>
 		<br/>
 		<br/>
-		<h3>subscriptions</h3>
-		<xiome-subscriptions>
-			<p slot="b86de1934e3a9eacaae2606f9444d4fd579e36d5c6bb9f278eccb992f2469233">COOL</p>
-		</xiome-subscriptions>
+
+		<h3>subscription catalog</h3>
+		<xiome-store-subscription-catalog></xiome-store-subscription-catalog>
 		<br/>
 		<br/>
+
 		<h3>subscription planning</h3>
-		<xiome-subscription-planning></xiome-subscription-planning>
+		<xiome-store-subscription-planning></xiome-subscription-store-planning>
+
 	</section>
 	<br/>
 	<br/>
+
 	<section>
 		<h2>your account</h2>
+
 		<xiome-login-panel show-logout="show-logout">
 			<xiome-my-account></xiome-my-account>
 		</xiome-login-panel>
+
 	</section>
 
 `})

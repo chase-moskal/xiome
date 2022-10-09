@@ -3,9 +3,9 @@ import {mixinSnapstateSubscriptions, mixinShare} from "../../../../framework/com
 import {XiomeComponentOptions} from "../../../../assembly/frontend/components/types/xiome-component-options.js"
 
 import {XiomeStoreConnect} from "./connect/component.js"
-import {XiomeSubscriptions} from "./subscriptions/component.js"
 import {XiomeStoreCustomerPortal} from "./customer-portal/component.js"
-import {XiomeSubscriptionPlanning} from "./subscription-planning/component.js"
+import {XiomeStoreSubscriptionCatalog} from "./subscriptions/component.js"
+import {XiomeStoreSubscriptionPlanning} from "./subscription-planning/component.js"
 
 export function integrateStoreComponents({models, modals}: XiomeComponentOptions) {
 	const {storeModel} = models
@@ -18,20 +18,20 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 				})(XiomeStoreConnect)
 			)
 		),
-		XiomeSubscriptionPlanning: (
+		XiomeStoreSubscriptionPlanning: (
 			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
 				mixinShare({
 					modals,
 					storeModel,
-				})(XiomeSubscriptionPlanning)
+				})(XiomeStoreSubscriptionPlanning)
 			)
 		),
-		XiomeSubscriptions: (
+		XiomeStoreSubscriptionCatalog: (
 			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
 				mixinShare({
 					modals,
 					storeModel,
-				})(XiomeSubscriptions)
+				})(XiomeStoreSubscriptionCatalog)
 			)
 		),
 		XiomeStoreCustomerPortal: (

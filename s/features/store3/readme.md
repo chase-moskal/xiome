@@ -64,13 +64,17 @@ how is the system structured?
 what conceptual features are expressed across the structure?
 ------------------------------------------------------------
 
-#### `<xiome-store-connect>`  
+#### `<xiome-store-connect>`
 - interface for merchants to link their own stripe accounts to the xiome platform stripe account.
 
-#### `<xiome-store-customer-portal>`  
+#### `<xiome-store-customer-portal>`
 - allows the user to open the stripe customer portal, to manage their subscriptions, linked payment methods, view invoice history, etc.
 
-#### `<xiome-store-subscription-planning>`  
+#### `<xiome-store-subscription-catalog>`
+- customer can purchase subscription tiers to earn a `role` in the permissions system.
+- a customer can subscribe to only one tier for each plan (tiers are mutually-exclusive within a plan).
+
+#### `<xiome-store-subscription-planning>`
 - merchants can create subscription plans and tiers, set and edit pricing, etc.
 - subscription plans can have many tiers.
 - each tier is associated with its own `role` in the xiome permissions system.
@@ -78,7 +82,3 @@ what conceptual features are expressed across the structure?
 - plans and tiers are xiome concepts (not stripe).
 - each tier is tied to a particular stripe product.
 - each stripe subscription "belongs" to a plan (different plans may be billed on different days).
-
-#### `<xiome-store-subscription-shopping>`  
-- customer can purchase subscription tiers to earn a `role` in the permissions system.
-- a customer can subscribe to only one tier for each plan (tiers are mutually-exclusive within a plan).
