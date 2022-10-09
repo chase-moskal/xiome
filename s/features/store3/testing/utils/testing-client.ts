@@ -29,11 +29,13 @@ export const testingClient = ({
 	const remote = renraku.mock()
 		.forApi(storeApi)
 		.withMetaMap({
-			connectService: getMeta,
-			billingService: getMeta,
-			subscriptionListingService: getMeta,
-			subscriptionPlanningService: getMeta,
-			subscriptionShoppingService: getMeta,
+			connect: getMeta,
+			billing: getMeta,
+			subscriptions: {
+				listing: getMeta,
+				planning: getMeta,
+				shopping: getMeta,
+			},
 		})
 
 	return {

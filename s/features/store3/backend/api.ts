@@ -17,10 +17,12 @@ export function makeStoreApi<xMeta>(options: StoreApiOptions<xMeta>) {
 	}
 
 	return renraku.api({
-		connectService: makeConnectService(serviceOptions),
-		billingService: makeBillingService(serviceOptions),
-		subscriptionListingService: makeSubscriptionListingService(serviceOptions),
-		subscriptionPlanningService: makeSubscriptionPlanningService(serviceOptions),
-		subscriptionShoppingService: makeSubscriptionShoppingService(serviceOptions),
+		connect: makeConnectService(serviceOptions),
+		billing: makeBillingService(serviceOptions),
+		subscriptions: {
+			listing: makeSubscriptionListingService(serviceOptions),
+			planning: makeSubscriptionPlanningService(serviceOptions),
+			shopping: makeSubscriptionShoppingService(serviceOptions),
+		},
 	})
 }

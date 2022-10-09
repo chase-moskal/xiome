@@ -9,28 +9,9 @@ import {makeSubscriptionShoppingService} from "../backend/services/subscriptions
 export interface StoreServices {
 	connect: Service<typeof makeConnectService>
 	billing: Service<typeof makeBillingService>
-	subscriptionPlanning: Service<typeof makeSubscriptionPlanningService>
-	subscriptionShopping: Service<typeof makeSubscriptionShoppingService>
-	subscriptionListing: Service<typeof makeSubscriptionListingService>
+	subscriptions: {
+		listing: Service<typeof makeSubscriptionListingService>
+		planning: Service<typeof makeSubscriptionPlanningService>
+		shopping: Service<typeof makeSubscriptionShoppingService>
+	}
 }
-
-// export type StoreCheckoutPopup = ({}: {
-// 	stripeAccountId: string
-// 	stripeSessionId: string
-// 	stripeSessionUrl: string
-// }) => Promise<void>
-
-// export interface StorePopups {
-// 	stripeLogin: ({}: {
-// 		url: string
-// 		stripeAccountId: string
-// 	}) => Promise<void>
-
-// 	stripeConnect: ({}: {
-// 		stripeAccountId: string
-// 		stripeAccountSetupLink: string
-// 	}) => Promise<void>
-
-// 	checkoutPaymentMethod: StoreCheckoutPopup
-// 	checkoutSubscription: StoreCheckoutPopup
-// }

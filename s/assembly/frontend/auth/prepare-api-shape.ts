@@ -56,11 +56,13 @@ export function prepareApiShape({appId, storage}: {
 			notesService: getStandardMeta,
 		},
 		store: {
-			billingService: getStandardMeta,
-			connectService: getStandardMeta,
-			subscriptionPlanningService: getStandardMeta,
-			subscriptionShoppingService: getStandardMeta,
-			subscriptionListingService: getStandardMeta,
+			billing: getStandardMeta,
+			connect: getStandardMeta,
+			subscriptions: {
+				listing: getStandardMeta,
+				planning: getStandardMeta,
+				shopping: getStandardMeta,
+			},
 		},
 	}
 

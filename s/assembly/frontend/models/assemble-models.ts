@@ -64,15 +64,9 @@ export async function assembleModels({
 	})
 
 	const storeModel = makeStoreModel({
-		reauthorize,
-		services: {
-			billing: remote.store.billingService,
-			connect: remote.store.connectService,
-			subscriptionListing: remote.store.subscriptionListingService,
-			subscriptionPlanning: remote.store.subscriptionPlanningService,
-			subscriptionShopping: remote.store.subscriptionShoppingService,
-		},
 		stripePopups,
+		services: remote.store,
+		reauthorize,
 	})
 
 	const administrativeModel = makeAdministrativeModel({

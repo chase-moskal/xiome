@@ -61,13 +61,7 @@ export const testingBrowserTab = ({
 	const rig = mockStoreRig()
 
 	const store = makeStoreModel({
-		services: {
-			billing: remote.billingService,
-			connect: remote.connectService,
-			subscriptionListing: remote.subscriptionListingService,
-			subscriptionPlanning: remote.subscriptionPlanningService,
-			subscriptionShopping: remote.subscriptionShoppingService,
-		},
+		services: remote,
 		stripePopups: riggedStripePopups({
 			rig,
 			mockStripeOperations: circuit.mockStripeOperations,

@@ -23,17 +23,35 @@ export function makeSubscriptionsSubmodel({
 	const {get} = stateSystem
 
 	async function load() {
-		state.subscriptions.subscriptionPlansOp = ops.none()
-		state.subscriptions.mySubscriptionDetailsOp = ops.none()
+
+		state
+			.subscriptions
+			.subscriptionPlansOp = ops.none()
+
+		state
+			.subscriptions
+			.mySubscriptionDetailsOp = ops.none()
+
 		if (get.is.storeActive) {
 			await ops.operation({
-				setOp: op => state.subscriptions.subscriptionPlansOp = op,
-				promise: services.subscriptionListing.listSubscriptionPlans(),
+				setOp: op => state
+					.subscriptions
+					.subscriptionPlansOp = op,
+				promise: services
+					.subscriptions
+					.listing
+					.listSubscriptionPlans(),
 			})
+
 			if (get.is.userLoggedIn) {
 				await ops.operation({
-					setOp: op => state.subscriptions.mySubscriptionDetailsOp = op,
-					promise: services.subscriptionShopping.fetchMySubscriptionDetails(),
+					setOp: op => state
+						.subscriptions
+						.mySubscriptionDetailsOp = op,
+					promise: services
+						.subscriptions
+						.shopping
+						.fetchMySubscriptionDetails(),
 				})
 			}
 		}
@@ -47,22 +65,37 @@ export function makeSubscriptionsSubmodel({
 			}) {
 
 			if (showLoadingSpinner)
-				state.subscriptions.mySubscriptionDetailsOp = ops.loading()
+				state
+					.subscriptions
+					.mySubscriptionDetailsOp = ops.loading()
 
-			const {checkoutDetails} = await services.subscriptionShopping.buy(stripePriceId)
+			const {checkoutDetails} = await services
+				.subscriptions
+				.shopping
+				.buy(stripePriceId)
 
 			if (checkoutDetails)
 				await stripePopups.checkoutSubscription(checkoutDetails)
 		},
 
 		async cancelSubscription(tierId: string) {
-			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
-			await services.subscriptionShopping.cancelSubscription(tierId)
+			state
+				.subscriptions
+				.mySubscriptionDetailsOp = ops.loading()
+			await services
+				.subscriptions
+				.shopping
+				.cancelSubscription(tierId)
 		},
 
 		async uncancelSubscription(tierId: string) {
-			state.subscriptions.mySubscriptionDetailsOp = ops.loading()
-			await services.subscriptionShopping.uncancelSubscription(tierId)
+			state
+				.subscriptions
+				.mySubscriptionDetailsOp = ops.loading()
+			await services
+				.subscriptions
+				.shopping
+				.uncancelSubscription(tierId)
 		},
 	}
 
@@ -88,12 +121,20 @@ export function makeSubscriptionsSubmodel({
 				planLabel: string
 				tier: SubscriptionTierDraft
 			}) {
-			const newPlan = await services.subscriptionPlanning.addPlan(options)
+
+			const newPlan = await services
+				.subscriptions
+				.planning.addPlan(options)
+
 			const oldPlans = getPlans()
-			state.subscriptions.subscriptionPlansOp = ops.replaceValue(
-				state.subscriptions.subscriptionPlansOp,
-				[...oldPlans, newPlan],
-			)
+
+			state
+				.subscriptions
+				.subscriptionPlansOp = ops.replaceValue(
+					state.subscriptions.subscriptionPlansOp,
+					[...oldPlans, newPlan],
+				)
+
 			return newPlan
 		},
 
@@ -102,12 +143,21 @@ export function makeSubscriptionsSubmodel({
 				planId: string
 				pricing: SubscriptionPricingDraft
 			}) {
+
 			const plans = getPlans()
-			const tier = await services.subscriptionPlanning
+
+			const tier = await services
+				.subscriptions
+				.planning
 				.addTier(options)
+
 			const plan = plans.find(plan => plan.planId === options.planId)
 			plan.tiers = [...plan.tiers, tier]
-			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
+
+			state
+				.subscriptions
+				.subscriptionPlansOp = ops.ready(plans)
+
 			return tier
 		},
 
@@ -116,12 +166,21 @@ export function makeSubscriptionsSubmodel({
 				label: string
 				archived: boolean
 			}) {
-			await services.subscriptionPlanning.editPlan({planId, label, archived})
+
+			await services
+				.subscriptions
+				.planning
+				.editPlan({planId, label, archived})
+
 			const plans = getPlans()
+
 			const plan = plans.find(plan => plan.planId === planId)
 			plan.label = label
 			plan.archived = archived
-			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
+
+			state
+				.subscriptions
+				.subscriptionPlansOp = ops.ready(plans)
 		},
 
 		async editTier({
@@ -137,19 +196,28 @@ export function makeSubscriptionsSubmodel({
 				active: boolean
 				pricing: SubscriptionPricingDraft
 			}) {
-			await services.subscriptionPlanning.editTier({
-				tierId,
-				active,
-				label,
-				pricing
-			})
+
+			await services
+				.subscriptions
+				.planning
+				.editTier({
+					tierId,
+					active,
+					label,
+					pricing
+				})
+
 			const plans = getPlans()
 			const plan = plans.find(plan => plan.planId === planId)
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
+
 			tier.active = active
 			tier.label = label
 			tier.pricing[0].price = pricing.price
-			state.subscriptions.subscriptionPlansOp = ops.ready(plans)
+
+			state
+				.subscriptions
+				.subscriptionPlansOp = ops.ready(plans)
 		},
 	}
 }
