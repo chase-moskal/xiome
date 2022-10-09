@@ -4,7 +4,7 @@ import {XiomeComponentOptions} from "../../../../assembly/frontend/components/ty
 
 import {XiomeStoreConnect} from "./connect/component.js"
 import {XiomeStoreCustomerPortal} from "./customer-portal/component.js"
-import {XiomeStoreSubscriptionCatalog} from "./subscriptions/component.js"
+import {XiomeStoreSubscriptionCatalog} from "./subscription-catalog/component.js"
 import {XiomeStoreSubscriptionPlanning} from "./subscription-planning/component.js"
 
 export function integrateStoreComponents({models, modals}: XiomeComponentOptions) {
