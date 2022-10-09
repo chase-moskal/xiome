@@ -18,6 +18,7 @@ export class XiomeStoreSubscriptionPlanning extends mixinRequireShare<{
 	}>()(Component) {
 
 	#componentSnap = makePlanningComponentSnap()
+
 	get #storeModel() { return this.share.storeModel }
 
 	#planningUi = planningUi({
@@ -27,9 +28,14 @@ export class XiomeStoreSubscriptionPlanning extends mixinRequireShare<{
 	})
 
 	async init() {
-		this.addSubscription(() =>
-			this.#componentSnap.subscribe(() => this.requestUpdate()))
-		await this.#storeModel.initialize()
+		this.addSubscription(
+			() => this
+				.#componentSnap
+				.subscribe(() => this.requestUpdate())
+		)
+		await this
+			.#storeModel
+			.initialize()
 	}
 
 	render() {

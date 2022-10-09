@@ -2,13 +2,13 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 import {StoreServiceOptions} from "../types/options.js"
-import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
+import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 import {requiredPrivilege} from "../utils/required-privilege.js"
 import {MerchantRow} from "../database/types/rows/merchant-rows.js"
-import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
+import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
 
 export const makeConnectService = (
 	options: StoreServiceOptions
