@@ -31,7 +31,7 @@ export const testingClient = ({
 		.withMetaMap({
 			connectService: getMeta,
 			billingService: getMeta,
-			subscriptionObserverService: getMeta,
+			subscriptionListingService: getMeta,
 			subscriptionPlanningService: getMeta,
 			subscriptionShoppingService: getMeta,
 		})

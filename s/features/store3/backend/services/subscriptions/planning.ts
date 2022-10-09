@@ -3,16 +3,13 @@ import * as renraku from "renraku"
 
 import {StoreServiceOptions} from "../../types/options.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
+import {SubscriptionTierDraft, SubscriptionPricingDraft} from "./types/drafts.js"
 import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
 import {fetchStripeConnectDetails} from "../../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../../isomorphic/utils/determine-connect-status.js"
 import {helpersForManagingSubscriptions} from "../../utils/helpers-for-managing-subscriptions.js"
 import {StripeConnectStatus, SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.js"
-import {SubscriptionTierDraft, SubscriptionPricingDraft} from "./types/drafts.js"
 import {validateNewPlanDraft, validateLabel, validateSubscriptionPricingDraft, validateBoolean} from "../../../isomorphic/validators.js"
-
-const hardcodedCurrency = "usd"
-const hardcodedInterval = "month"
 
 export const makeSubscriptionPlanningService = (
 	options: StoreServiceOptions

@@ -68,7 +68,7 @@ export async function assembleModels({
 		services: {
 			billing: remote.store.billingService,
 			connect: remote.store.connectService,
-			subscriptionObserver: remote.store.subscriptionObserverService,
+			subscriptionListing: remote.store.subscriptionListingService,
 			subscriptionPlanning: remote.store.subscriptionPlanningService,
 			subscriptionShopping: remote.store.subscriptionShoppingService,
 		},

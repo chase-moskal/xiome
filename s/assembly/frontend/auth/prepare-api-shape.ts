@@ -60,7 +60,7 @@ export function prepareApiShape({appId, storage}: {
 			connectService: getStandardMeta,
 			subscriptionPlanningService: getStandardMeta,
 			subscriptionShoppingService: getStandardMeta,
-			subscriptionObserverService: getStandardMeta,
+			subscriptionListingService: getStandardMeta,
 		},
 	}
 

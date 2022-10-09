@@ -28,7 +28,7 @@ export function makeSubscriptionsSubmodel({
 		if (get.is.storeActive) {
 			await ops.operation({
 				setOp: op => state.subscriptions.subscriptionPlansOp = op,
-				promise: services.subscriptionObserver.listSubscriptionPlans(),
+				promise: services.subscriptionListing.listSubscriptionPlans(),
 			})
 			if (get.is.userLoggedIn) {
 				await ops.operation({

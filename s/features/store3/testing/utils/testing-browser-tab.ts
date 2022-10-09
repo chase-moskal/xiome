@@ -64,7 +64,7 @@ export const testingBrowserTab = ({
 		services: {
 			billing: remote.billingService,
 			connect: remote.connectService,
-			subscriptionObserver: remote.subscriptionObserverService,
+			subscriptionListing: remote.subscriptionListingService,
 			subscriptionPlanning: remote.subscriptionPlanningService,
 			subscriptionShopping: remote.subscriptionShoppingService,
 		},

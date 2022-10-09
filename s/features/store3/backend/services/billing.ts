@@ -1,10 +1,10 @@
 
 import * as renraku from "renraku"
 
-import {PaymentMethod} from "../../isomorphic/concepts.js"
 import {StoreServiceOptions} from "../types/options.js"
-import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
+import {PaymentMethod} from "../../isomorphic/concepts.js"
 import {derivePaymentMethod} from "../utils/derive-payment-method.js"
+import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {stripeClientReferenceId} from "../stripe/utils/stripe-client-reference-id.js"
 import {getStripeDefaultPaymentMethod} from "../utils/get-stripe-default-payment-method.js"
 
