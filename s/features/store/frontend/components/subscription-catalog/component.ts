@@ -134,7 +134,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 								title: "Cancel subscription",
 								message: `are you sure you want to cancel your ${tier.label} subscription`,
 								loadingMessage: "cancelling subscription",
-								actionWhenConfirmed: () => subscriptions.cancelSubscription(tierId)
+								actionWhenConfirmed: () => subscriptions.cancel(tierId)
 							})
 						},
 					}
@@ -158,7 +158,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 								title: "Renew subscription",
 								message: `are you sure you want to renew your ${tier.label} subscription for $${centsToDollars(tier.pricing[0].price)}/month?`,
 								loadingMessage: "renewing subscription",
-								actionWhenConfirmed: () => subscriptions.uncancelSubscription(tierId),
+								actionWhenConfirmed: () => subscriptions.uncancel(tierId),
 							})
 						},
 					}

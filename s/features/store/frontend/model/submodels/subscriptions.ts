@@ -40,7 +40,7 @@ export function makeSubscriptionsSubmodel({
 				promise: services
 					.subscriptions
 					.listing
-					.listSubscriptionPlans(),
+					.listPlans(),
 			})
 
 			if (get.is.userLoggedIn) {
@@ -51,7 +51,7 @@ export function makeSubscriptionsSubmodel({
 					promise: services
 						.subscriptions
 						.shopping
-						.fetchMySubscriptionDetails(),
+						.fetchDetailsAboutMySubscriptions(),
 				})
 			}
 		}
@@ -78,24 +78,24 @@ export function makeSubscriptionsSubmodel({
 				await stripePopups.checkoutSubscription(checkoutDetails)
 		},
 
-		async cancelSubscription(tierId: string) {
+		async cancel(tierId: string) {
 			state
 				.subscriptions
 				.mySubscriptionDetailsOp = ops.loading()
 			await services
 				.subscriptions
 				.shopping
-				.cancelSubscription(tierId)
+				.cancel(tierId)
 		},
 
-		async uncancelSubscription(tierId: string) {
+		async uncancel(tierId: string) {
 			state
 				.subscriptions
 				.mySubscriptionDetailsOp = ops.loading()
 			await services
 				.subscriptions
 				.shopping
-				.uncancelSubscription(tierId)
+				.uncancel(tierId)
 		},
 	}
 

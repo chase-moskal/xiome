@@ -21,7 +21,7 @@ export const makeSubscriptionShoppingService = (
 
 .expose(auth => ({
 
-	async fetchMySubscriptionDetails(): Promise<SubscriptionDetails[]> {
+	async fetchDetailsAboutMySubscriptions(): Promise<SubscriptionDetails[]> {
 		return fetchAllSubscriptionDetails(auth)
 	},
 
@@ -54,13 +54,13 @@ export const makeSubscriptionShoppingService = (
 		}
 	},
 
-	async cancelSubscription(tierId: string) {
+	async cancel(tierId: string) {
 		tierId = runValidation(tierId, validateId)
 		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
 		await cancelStripeSubscription(auth, stripeSubscription.id)
 	},
 
-	async uncancelSubscription(tierId: string) {
+	async uncancel(tierId: string) {
 		tierId = runValidation(tierId, validateId)
 		const stripeSubscription = await verifyPlanHasExistingStripeSubscription(auth, tierId)
 		await uncancelStripeSubscription(auth, stripeSubscription.id)
