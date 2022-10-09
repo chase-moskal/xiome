@@ -15,7 +15,7 @@ export default ({name, contentHtml}: {
 	<script
 		defer
 		type=module
-		src="/features/store3/popups/inside-actual-popups/run-popup.js"
+		src="/features/store/popups/inside-actual-popups/run-popup.js"
 	></script>
 	<style>
 		html, body {

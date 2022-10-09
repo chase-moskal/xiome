@@ -11,7 +11,7 @@ import {integrateVideoComponents} from "../../../features/videos/components/inte
 import {integrateExampleComponents} from "../../../features/example/components/integrate-example-components.js"
 import {integrateQuestionsComponents} from "../../../features/questions/components/integrate-questions-components.js"
 import {integrateAdministrativeComponents} from "../../../features/administrative/components/integrate-administrative-components.js"
-import {integrateStoreComponents} from "../../../features/store3/frontend/components/components.js"
+import {integrateStoreComponents} from "../../../features/store/frontend/components/components.js"
 
 export function getComponents(options: XiomeComponentOptions) {
 	return themeComponents(theme, {

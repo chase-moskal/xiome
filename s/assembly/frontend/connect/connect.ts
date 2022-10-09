@@ -3,7 +3,7 @@ import {simpleFlexStorage} from "dbmage"
 
 import {makeRemote} from "./remote/make-remote.js"
 import {XiomeConfig} from "../types/xiome-config-connected.js"
-import {makeStripePopups} from "../../../features/store3/popups/make-stripe-popups.js"
+import {makeStripePopups} from "../../../features/store/popups/make-stripe-popups.js"
 import {chatSocketClient} from "../../../features/chat/api/sockets/chat-socket-client.js"
 import {wireMediatorBroadcastChannel} from "./mock/common/wire-mediator-broadcast-channel.js"
 

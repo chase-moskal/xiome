@@ -4,7 +4,7 @@ import * as dbmage from "dbmage"
 import {DatabaseRaw} from "../types/database.js"
 import {SecretConfig} from "../types/secret-config.js"
 import type {configureStripe as _configureStripe} from "../configurators/configure-stripe.js"
-import {mockStripeCircuit} from "../../../features/store3/backend/stripe/mock-stripe-circuit.js"
+import {mockStripeCircuit} from "../../../features/store/backend/stripe/mock-stripe-circuit.js"
 import {buildFunctionToPrepareRoleManager} from "../../../features/auth/aspects/permissions/interactions/role-manager.js"
 
 export async function assimilateStripe({

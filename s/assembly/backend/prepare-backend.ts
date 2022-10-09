@@ -15,7 +15,7 @@ import {assimilateDacast} from "./assimilators/assimilate-dacast.js"
 import {assimilateDatabase} from "./assimilators/assimilate-database.js"
 import {UnconstrainedTable} from "../../framework/api/unconstrained-table.js"
 import {makeNotesDepositBox} from "../../features/notes/api/notes-deposit-box.js"
-import {mockStripePopups} from "../../features/store3/popups/mock-stripe-popups.js"
+import {mockStripePopups} from "../../features/store/popups/mock-stripe-popups.js"
 
 export function prepareBackend(configurators: Configurators) {
 	return async function configureApi(config: SecretConfig) {

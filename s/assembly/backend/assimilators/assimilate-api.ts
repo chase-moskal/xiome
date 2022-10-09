@@ -16,8 +16,8 @@ import {makeAdministrativeApi} from "../../../features/administrative/api/admini
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
 import {AnonMeta} from "../../../features/auth/types/auth-metas.js"
-import {makeStoreApi} from "../../../features/store3/backend/api.js"
-import {StripeLiaison} from "../../../features/store3/backend/stripe/liaison/types.js"
+import {makeStoreApi} from "../../../features/store/backend/api.js"
+import {StripeLiaison} from "../../../features/store/backend/stripe/liaison/types.js"
 import {makeRoleManager} from "../../../features/auth/aspects/permissions/interactions/role-manager.js"
 
 export async function assimilateApi({

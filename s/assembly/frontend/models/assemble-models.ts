@@ -10,7 +10,7 @@ import {makeAccessModel} from "../../../features/auth/aspects/users/models/acces
 import {makePersonalModel} from "../../../features/auth/aspects/users/models/personal-model.js"
 import {makeAdministrativeModel} from "../../../features/administrative/models/administrative-model.js"
 import {makePermissionsModel} from "../../../features/auth/aspects/permissions/models/permissions-model.js"
-import {makeStoreModel} from "../../../features/store3/frontend/model/model.js"
+import {makeStoreModel} from "../../../features/store/frontend/model/model.js"
 
 export async function assembleModels({
 		appId,

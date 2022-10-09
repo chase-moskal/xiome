@@ -1,6 +1,6 @@
 
 import {asPermissions, mutable, immutable} from "./permissions-helpers.js"
-import {storePowerPrivileges} from "../../../features/store3/isomorphic/privileges.js"
+import {storePowerPrivileges} from "../../../features/store/isomorphic/privileges.js"
 import {videoPowerPrivileges} from "../../../features/videos/api/video-privileges.js"
 import {chatPowerPrivileges, chatRegularPrivileges} from "../../../features/chat/common/chat-privileges.js"
 

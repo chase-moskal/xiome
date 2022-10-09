@@ -1,9 +1,9 @@
 
 import {SecretConfig} from "../types/secret-config.js"
 import {ConfigStripe} from "../types/config-stripe.js"
-import {StoreDatabaseRaw} from "../../../features/store3/backend/database/types/schema.js"
+import {StoreDatabaseRaw} from "../../../features/store/backend/database/types/schema.js"
 import {PrepareRoleManager} from "../../../features/auth/aspects/permissions/interactions/types.js"
-import {realStripeCircuit} from "../../../features/store3/backend/stripe/real-stripe-circuit.js"
+import {realStripeCircuit} from "../../../features/store/backend/stripe/real-stripe-circuit.js"
 
 export async function configureStripe({
 		config,
