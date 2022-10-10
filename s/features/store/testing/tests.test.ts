@@ -1,20 +1,10 @@
 
 import {Suite, expect} from "cynic"
 
+import {setups} from "./utils/common-setups.js"
 import {storeTestSetup} from "./utils/store-test-setup.js"
 import {StripeConnectStatus, SubscriptionPricing} from "../isomorphic/concepts.js"
 import {SubscriptionPricingDraft} from "../backend/services/subscriptions/types/drafts.js"
-
-const setups = {
-	async linkedStore() {
-		const api = await storeTestSetup()
-			.then(x => x.api())
-		const merchant = await api.client(api.roles.merchant)
-			.then(x => x.browserTab())
-		await merchant.store.connect.connectStripeAccount()
-		return {api, merchant}
-	},
-}
 
 export default <Suite>{
 	"managing the store": {
