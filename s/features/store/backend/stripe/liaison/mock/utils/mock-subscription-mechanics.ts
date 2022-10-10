@@ -111,7 +111,6 @@ export function mockSubscriptionMechanics({
 	}
 
 	return {
-		interpretCreateItemsParam,
 		interpretUpdateItemsParam,
 		interpretCreateParams,
 		generateInvoiceForSubscriptionItems,

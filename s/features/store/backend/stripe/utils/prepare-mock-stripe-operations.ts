@@ -52,23 +52,6 @@ export function prepareMockStripeOperations({
 			return setupIntent
 		},
 
-		async createPaymentIntent({
-				amount, customer, paymentMethod, stripeLiaisonAccount,
-			}: {
-				amount: number
-				customer: string
-				paymentMethod: Stripe.PaymentMethod
-				stripeLiaisonAccount: StripeLiaisonAccount
-			}) {
-			const paymentIntent = await stripeLiaisonAccount.paymentIntents.create({
-				amount,
-				customer,
-				currency: "usd",
-				payment_method: paymentMethod.id,
-			})
-			return paymentIntent
-		},
-
 		async createSubscription({
 				customer, paymentMethod, stripeLiaisonAccount, items,
 			}: {
