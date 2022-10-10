@@ -13,7 +13,8 @@ import {prepareToBuyStripeSubscription} from "../../utils/prepare-to-buy-stripe-
 import {determinePurchaseScenario} from "../../../isomorphic/utils/determine-purchase-scenario.js"
 import {verifyPlanHasExistingStripeSubscription} from "../../utils/verify-plan-has-existing-stripe-subscription.js"
 
-export const makeSubscriptionShoppingService = (options: StoreServiceOptions) => renraku
+export const makeSubscriptionShoppingService = (options: StoreServiceOptions) =>
+renraku
 .service()
 .policy(options.storePolicies.customer)
 .expose(auth => ({

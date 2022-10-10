@@ -7,7 +7,8 @@ import {derivePaymentMethod} from "../utils/derive-payment-method.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {getStripeDefaultPaymentMethod} from "../utils/get-stripe-default-payment-method.js"
 
-export const makeBillingService = (options: StoreServiceOptions) => renraku
+export const makeBillingService = (options: StoreServiceOptions) =>
+renraku
 .service()
 .policy(options.storePolicies.customer)
 .expose(auth => ({

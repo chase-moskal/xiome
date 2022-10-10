@@ -10,7 +10,8 @@ import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
 
-export const makeConnectService = (options: StoreServiceOptions) => renraku
+export const makeConnectService = (options: StoreServiceOptions) =>
+renraku
 .service()
 .policy(options.storePolicies.anon)
 .expose(({access, stripeLiaison, storeDatabase, checker}) => ({

@@ -8,7 +8,8 @@ import {SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.j
 import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
 import {validateNewPlanDraft, validateLabel, validateSubscriptionPricingDraft, validateBoolean} from "../../../isomorphic/validators.js"
 
-export const makeSubscriptionPlanningService = (options: StoreServiceOptions) => renraku
+export const makeSubscriptionPlanningService = (options: StoreServiceOptions) =>
+renraku
 .service()
 .policy(options.storePolicies.merchant)
 .expose(({helpers}) => ({
