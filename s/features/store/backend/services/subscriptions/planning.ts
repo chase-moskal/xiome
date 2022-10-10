@@ -91,8 +91,6 @@ renraku
 			pricing: SubscriptionPricingDraft
 		}) {
 
-		debugger
-
 		const label = runValidation(inputs.label, validateLabel)
 		const tierId = runValidation(inputs.tierId, validateId)
 		const active = runValidation(inputs.active, validateBoolean)
