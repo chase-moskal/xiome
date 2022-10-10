@@ -1,7 +1,7 @@
 
 import * as dbmage from "dbmage"
 
-import {StoreLinkedAuth} from "../policies/types.js"
+import {StoreConnectedAuth} from "../policies/types.js"
 import {SubscriptionTierRow} from "../database/types/rows/subscription-rows.js"
 import {SubscriptionPlan, SubscriptionPricing} from "../../isomorphic/concepts.js"
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
@@ -10,7 +10,7 @@ import {stripeAttempt} from "../stripe/liaison/helpers/stripe-attempt.js"
 // TODO all of the logic in this function is questionable,
 // and should probably be rewritten.
 export async function fetchSubscriptionPlans(
-		auth: StoreLinkedAuth
+		auth: StoreConnectedAuth
 	): Promise<SubscriptionPlan[]> {
 
 	const helpers = setupHelpers(auth)
@@ -73,7 +73,7 @@ export async function fetchSubscriptionPlans(
 		.sort((planA, planB) => planA.time - planB.time)
 }
 
-function setupHelpers({storeDatabase}: StoreLinkedAuth) {
+function setupHelpers({storeDatabase}: StoreConnectedAuth) {
 	const storeTables = storeDatabase.tables
 	return {
 

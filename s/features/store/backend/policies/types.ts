@@ -10,11 +10,11 @@ export interface StoreAuth extends Omit<AnonAuth, "database"> {
 	roleManager: RoleManager
 }
 
-export interface StoreLinkedAuth extends StoreAuth {
+export interface StoreConnectedAuth extends StoreAuth {
 	stripeAccountId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
 }
 
-export interface StoreCustomerAuth extends StoreLinkedAuth {
+export interface StoreCustomerAuth extends StoreConnectedAuth {
 	stripeCustomerId: string
 }

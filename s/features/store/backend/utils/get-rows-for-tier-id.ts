@@ -1,13 +1,13 @@
 
 import * as dbmage from "dbmage"
-import {StoreLinkedAuth} from "../policies/types.js"
+import {StoreConnectedAuth} from "../policies/types.js"
 
 export async function getRowsForTierId({
 		tierId: tierIdString,
 		auth: {storeDatabase},
 	}: {
 		tierId: string
-		auth: StoreLinkedAuth
+		auth: StoreConnectedAuth
 	}) {
 
 	const tierId = dbmage.Id.fromString(tierIdString)

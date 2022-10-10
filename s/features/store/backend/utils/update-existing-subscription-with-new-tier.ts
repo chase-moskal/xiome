@@ -1,12 +1,12 @@
 
 import {Stripe} from "stripe"
-import {StoreLinkedAuth} from "../policies/types.js"
+import {StoreConnectedAuth} from "../policies/types.js"
 
 export async function updateExistingSubscriptionWithNewTier({
 		stripePriceId, auth, stripeSubscription,
 	}: {
 		stripePriceId: string
-		auth: StoreLinkedAuth
+		auth: StoreConnectedAuth
 		stripeSubscription: Stripe.Subscription
 	}): Promise<Stripe.Subscription> {
 

@@ -2,7 +2,7 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
-import {StoreLinkedAuth} from "../policies/types.js"
+import {StoreConnectedAuth} from "../policies/types.js"
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.js"
 import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../services/subscriptions/types/drafts.js"
@@ -12,7 +12,7 @@ export const helpersForManagingSubscriptions = ({
 		stripeLiaisonAccount,
 		roleManager,
 		generateId,
-	}: StoreLinkedAuth & {
+	}: StoreConnectedAuth & {
 		roleManager: RoleManager
 		generateId: () => dbmage.Id
 	}) => {
