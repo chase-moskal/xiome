@@ -59,4 +59,9 @@ app.post("/", express.raw({type: "application/json"}), (request, response) => {
 
 const {port} = config.stripe.webhookServer
 
-app.listen(port, () => console.log(`running on port ${port}`))
+app.listen(
+	port,
+	() => console.log(
+		`🚀 listening for stripe webhooks on port ${port}`
+	)
+)
