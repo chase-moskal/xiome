@@ -8,11 +8,14 @@ import {SubscriptionPricingDraft} from "../../../backend/services/subscriptions/
 
 export default suite({
 	"a user with clerk permisisons": {
+
 		async "can create a new subscription plan"() {
 			const {store} = await setups.connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
+
 			expect(store.get.subscriptions.plans.length).equals(0)
+
 			const plan = await store.subscriptions.addPlan({
 				planLabel: "premium membership",
 				tier: {
@@ -24,25 +27,31 @@ export default suite({
 					},
 				},
 			})
+
 			expect(plan.planId).ok()
 			expect(plan.tiers.length).equals(1)
+
 			function expectPlanAndTierIsLocallyPresent() {
 				const plans = store.get.subscriptions.plans
 				expect(plans.length).equals(1)
 				expect(plans[0]).ok()
 				expect(plans[0].tiers.length).equals(1)
 			}
+
 			expectPlanAndTierIsLocallyPresent()
 			await store.refresh()
 			expectPlanAndTierIsLocallyPresent()
 		},
+
 		async "can create multiple plans, and the tiers aren't scrambled"() {
 			const {store} = await setups.connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
+
 			const getPlans = () => store.get.subscriptions.plans
 			const getPlan = (id: string) => getPlans().find(p => p.planId === id)
 			expect(getPlans().length).equals(0)
+
 			const plan1 = await store.subscriptions.addPlan({
 				planLabel: "video membership",
 				tier: {
@@ -54,9 +63,11 @@ export default suite({
 					},
 				},
 			})
+
 			expect(getPlans().length).equals(1)
 			expect(getPlan(plan1.planId)).ok()
 			expect(getPlan(plan1.planId).tiers.length).equals(1)
+
 			const plan2 = await store.subscriptions.addPlan({
 				planLabel: "deluxe membership",
 				tier: {
@@ -68,6 +79,7 @@ export default suite({
 					},
 				},
 			})
+
 			function expectPlansAreLocallyPresent() {
 				expect(getPlans().length).equals(2)
 				expect(getPlan(plan2.planId)).ok()
@@ -75,15 +87,20 @@ export default suite({
 				expect(getPlan(plan1.planId)).ok()
 				expect(getPlan(plan1.planId).tiers.length).equals(1)
 			}
+
 			expectPlansAreLocallyPresent()
 			await store.refresh()
 			expectPlansAreLocallyPresent()
 		},
+
 		async "can view subscription plans made by other clerks"() {
 			const {api} = await setups.connectedStore()
 			{
-				const {store} = await api.client(api.roles.clerk)
+				const {store}
+					= await api
+					.client(api.roles.clerk)
 					.then(x => x.browserTab())
+
 				await Promise.all([
 					store.subscriptions.addPlan({
 						planLabel: "premium membership",
@@ -110,16 +127,26 @@ export default suite({
 				])
 			}
 			{
-				const {store} = await api.client(api.roles.clerk)
+				const {store}
+					= await api
+					.client(api.roles.clerk)
 					.then(x => x.browserTab())
-				expect(store.get.subscriptions.plans.length).equals(2)
+
+				expect(store.get.subscriptions.plans.length)
+					.equals(2)
 			}
 		},
+
 		async "can add a new tier to an existing plan"() {
 			const {api} = await setups.connectedStore()
-			const {store} = await api.client(api.roles.clerk)
+			const {store}
+				= await api
+				.client(api.roles.clerk)
 				.then(x => x.browserTab())
-			const {planId} = await store.subscriptions
+
+			const {planId}
+				= await store
+				.subscriptions
 				.addPlan({
 					planLabel: "membership",
 					tier: {
@@ -131,7 +158,10 @@ export default suite({
 						},
 					},
 				})
-			const {tierId} = await store.subscriptions
+
+			const {tierId}
+				= await store
+				.subscriptions
 				.addTier({
 					planId,
 					label: "deluxe",
@@ -141,28 +171,43 @@ export default suite({
 						price: 10_000,
 					},
 				})
+
 			const plans = store.get.subscriptions.plans
 			const plan = plans.find(plan => plan.planId === planId)
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
+
 			expect(tier).ok()
 			expect(tier.pricing[0].price).equals(10_000)
+
 			{
-				const {store} = await api.client(api.roles.clerk)
+				const {store}
+					= await api
+					.client(api.roles.clerk)
 					.then(x => x.browserTab())
+
 				const anotherPlans = store.get.subscriptions.plans
+
 				const anotherPlan = anotherPlans
 					.find(plan => plan.planId === planId)
+
 				const anotherTier = anotherPlan.tiers
 					.find(tier => tier.tierId === tierId)
+
 				expect(anotherTier).ok()
 				expect(anotherTier.pricing[0].price).equals(10_000)
 			}
 		},
+
 		async "can edit a plan"() {
-			const {store} = await setups.connectedStore()
+			const {store}
+				= await setups
+				.connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
-			const plan = await store.subscriptions
+
+			const plan
+				= await store
+				.subscriptions
 				.addPlan({
 					planLabel: "membership",
 					tier: {
@@ -174,24 +219,34 @@ export default suite({
 						},
 					},
 				})
+
 			function getPlan(planId: string) {
 				const plans = store.get.subscriptions.plans
 				return plans.find(plan => plan.planId === planId)
 			}
-			expect(getPlan(plan.planId).label).equals("membership")
+
+			expect(getPlan(plan.planId).label)
+				.equals("membership")
+
 			await store.subscriptions.editPlan({
 				planId: plan.planId,
 				archived: false,
 				label: "premium",
 			})
-			expect(getPlan(plan.planId).label).equals("premium")
+
+			expect(getPlan(plan.planId).label)
+				.equals("premium")
+
 			await store.subscriptions.editPlan({
 				planId: plan.planId,
 				archived: true,
 				label: "premium",
 			})
-			expect(getPlan(plan.planId).archived).equals(true)
+
+			expect(getPlan(plan.planId).archived)
+				.equals(true)
 		},
+
 		async "can edit a tier"() {
 			const {store} = await setups.connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
@@ -219,7 +274,6 @@ export default suite({
 			expect(tier1.active).equals(true)
 			expect(tier1.label).equals("benevolent donor")
 			expect(tier1.pricing[0].price).equals(5_00)
-
 			function pricingToDraft(pricing: SubscriptionPricing): SubscriptionPricingDraft {
 				return {
 					price: pricing.price,
@@ -227,7 +281,6 @@ export default suite({
 					interval: pricing.interval,
 				}
 			}
-
 			await store.subscriptions.editTier({
 				planId: plan.planId,
 				tierId: tier1.tierId,
@@ -239,7 +292,6 @@ export default suite({
 			expect(tier2.label).equals("test")
 			expect(tier2.active).equals(tier1.active)
 			expect(tier2.pricing[0].price).equals(tier1.pricing[0].price)
-
 			await store.subscriptions.editTier({
 				planId: plan.planId,
 				tierId: tier2.tierId,
@@ -252,10 +304,35 @@ export default suite({
 			expect(tier3.label).equals(tier2.label)
 			expect(tier3.pricing[0].price).equals(tier2.pricing[0].price)
 		},
+
 	},
 	"a user with regular permissions": {
-		async "can view subscription plans"() {},
-		async "cannot create a new subscription plan"() {},
+
+		async "cannot create a new subscription plan"() {
+			const customer
+				= await setups
+				.connectedStore()
+				.then(x => x.api.client(x.api.roles.customer))
+				.then(x => x.browserTab())
+
+			async function customerAddsPlan() {
+				await customer.store.subscriptions.addPlan({
+					planLabel: "membership plan",
+					tier: {
+						label: "premium tier",
+						pricing: {
+							currency: "usd",
+							interval: "month",
+							price: 9_00,
+						},
+					},
+				})
+			}
+
+			await expect(customerAddsPlan).throws()
+		},
+
 		async "cannot edit plans or tiers"() {},
+
 	},
 })
