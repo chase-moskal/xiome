@@ -3,7 +3,7 @@ import {storeTestSetup} from "./store-test-setup.js"
 
 export const setups = {
 
-	async linkedStore() {
+	async connectedStore() {
 		const api = await storeTestSetup()
 			.then(x => x.api())
 

@@ -47,7 +47,7 @@ export default <Suite>{
 			},
 			"a user with clerk permissions": {
 				async "can see connect status, but not details"() {
-					const {api} = await setups.linkedStore()
+					const {api} = await setups.connectedStore()
 					const {store} = await api.client(api.roles.clerk)
 						.then(x => x.browserTab())
 					expect(store.get.connect.status).defined()
@@ -72,7 +72,7 @@ export default <Suite>{
 						.throws()
 				},
 				async "can see connect status, but not details"() {
-					const {api} = await setups.linkedStore()
+					const {api} = await setups.connectedStore()
 					const {store} = await api.client(api.roles.customer)
 						.then(x => x.browserTab())
 					expect(store.get.connect.status).defined()
@@ -83,7 +83,7 @@ export default <Suite>{
 		"login to stripe account": {
 			"a user with merchant permissions": {
 				async "can login to stripe account and toggle between complete/incomplete"() {
-					const {store, rig} = await setups.linkedStore()
+					const {store, rig} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.merchant))
 						.then(x => x.browserTab())
 					rig.stripeAccountFate = "incomplete"
@@ -104,7 +104,7 @@ export default <Suite>{
 			},
 			"a user with clerk permissions": {
 				async "cannot login to stripe account"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.clerk))
 						.then(x => x.browserTab())
 					await expect(async() => store.connect.stripeLogin())
@@ -113,7 +113,7 @@ export default <Suite>{
 			},
 			"a user with customer permissions": {
 				async "cannot login to stripe account"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.customer))
 						.then(x => x.browserTab())
 					await expect(async() => store.connect.stripeLogin())
@@ -124,7 +124,7 @@ export default <Suite>{
 		"pause and resume the store": {
 			"a user with merchant permissions": {
 				async "can pause and resume a store"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.merchant))
 						.then(x => x.browserTab())
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -136,7 +136,7 @@ export default <Suite>{
 			},
 			"a user with clerk permissions": {
 				async "can pause and resume a store"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.clerk))
 						.then(x => x.browserTab())
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -148,7 +148,7 @@ export default <Suite>{
 			},
 			"a user with customer permissions": {
 				async "cannot pause the store"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(x => x.api.client(x.api.roles.customer))
 						.then(x => x.browserTab())
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -156,7 +156,7 @@ export default <Suite>{
 					expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 				},
 				async "cannot resume the store"() {
-					const {store} = await setups.linkedStore()
+					const {store} = await setups.connectedStore()
 						.then(async x => {
 							await x.merchant.store.connect.pause()
 							return x.api.client(x.api.roles.customer)
@@ -172,7 +172,7 @@ export default <Suite>{
 	"subscription planning": {
 		"a user with clerk permisisons": {
 			async "can create a new subscription plan"() {
-				const {store} = await setups.linkedStore()
+				const {store} = await setups.connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				expect(store.get.subscriptions.plans.length).equals(0)
@@ -200,7 +200,7 @@ export default <Suite>{
 				expectPlanAndTierIsLocallyPresent()
 			},
 			async "can create multiple plans, and the tiers aren't scrambled"() {
-				const {store} = await setups.linkedStore()
+				const {store} = await setups.connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				const getPlans = () => store.get.subscriptions.plans
@@ -243,7 +243,7 @@ export default <Suite>{
 				expectPlansAreLocallyPresent()
 			},
 			async "can view subscription plans made by other clerks"() {
-				const {api} = await setups.linkedStore()
+				const {api} = await setups.connectedStore()
 				{
 					const {store} = await api.client(api.roles.clerk)
 						.then(x => x.browserTab())
@@ -279,7 +279,7 @@ export default <Suite>{
 				}
 			},
 			async "can add a new tier to an existing plan"() {
-				const {api} = await setups.linkedStore()
+				const {api} = await setups.connectedStore()
 				const {store} = await api.client(api.roles.clerk)
 					.then(x => x.browserTab())
 				const {planId} = await store.subscriptions
@@ -322,7 +322,7 @@ export default <Suite>{
 				}
 			},
 			async "can edit a plan"() {
-				const {store} = await setups.linkedStore()
+				const {store} = await setups.connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				const plan = await store.subscriptions
@@ -356,7 +356,7 @@ export default <Suite>{
 				expect(getPlan(plan.planId).archived).equals(true)
 			},
 			async "can edit a tier"() {
-				const {store} = await setups.linkedStore()
+				const {store} = await setups.connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				const plan = await store.subscriptions
