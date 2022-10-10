@@ -4,6 +4,7 @@ import * as dbmage from "dbmage"
 import {CustomerRow} from "./rows/billing-rows.js"
 import {MerchantRow} from "./rows/merchant-rows.js"
 import {SubscriptionPlanRow, SubscriptionTierRow} from "./rows/subscription-rows.js"
+import {ItemRow, OwnershipRow} from "./rows/product-rows.js"
 import {SchemaToUnconstrainedTables} from "../../../../../framework/api/types/unconstrained-tables.js"
 
 export type StoreSchema = dbmage.AsSchema<{
@@ -12,6 +13,10 @@ export type StoreSchema = dbmage.AsSchema<{
 	subscriptions: {
 		plans: SubscriptionPlanRow
 		tiers: SubscriptionTierRow
+	}
+	products: {
+		items: ItemRow
+		ownership: OwnershipRow
 	}
 }>
 
