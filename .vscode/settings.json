@@ -11,9 +11,7 @@
 		"package-lock.json": true,
 	},
 
-	"search.exclude": {
-		"s/features/store/**": true,
-	},
+	"search.exclude": {},
 
 	"files.watcherExclude": {
 		"x/**": true,
