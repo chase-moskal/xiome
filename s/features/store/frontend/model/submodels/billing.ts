@@ -24,7 +24,7 @@ export function makeBillingSubmodel({
 		state.billing.paymentMethodOp = ops.none()
 		if (get.is.storeActive && get.is.userLoggedIn) {
 			await ops.operation({
-				promise: services.billing.getPaymentMethodDetails(),
+				promise: services.billing.getDefaultPaymentMethod(),
 				setOp: op => state.billing.paymentMethodOp = op,
 			})
 		}

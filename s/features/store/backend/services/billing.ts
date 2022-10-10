@@ -13,7 +13,7 @@ renraku
 .policy(options.storePolicies.customer)
 .expose(auth => ({
 
-	async getPaymentMethodDetails(): Promise<PaymentMethod> {
+	async getDefaultPaymentMethod(): Promise<PaymentMethod> {
 		return derivePaymentMethod(await getStripeDefaultPaymentMethod(auth))
 	},
 
