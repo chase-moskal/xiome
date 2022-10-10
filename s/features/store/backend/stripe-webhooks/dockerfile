@@ -9,4 +9,4 @@ COPY x x
 
 RUN npm ci --production
 
-CMD ["node", "./x/features/store/backend/stripe-webhook-server.js"]
+CMD ["node", "./x/features/store/backend/stripe-webhooks/server.js"]
