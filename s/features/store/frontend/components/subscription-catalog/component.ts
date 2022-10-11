@@ -20,6 +20,9 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		storeModel: ReturnType<typeof makeStoreModel>
 	}>()(Component) {
 
+	@property({type: String})
+	["allow-plans"]: string
+
 	get #state() {
 		return this.share.storeModel.snap.readable
 	}
@@ -29,11 +32,16 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 	}
 
 	get #plans() {
+		const allowedPlans = this["allow-plans"]?.match(/(\w+)/g)
 		const plans = ops.value(this.#state.subscriptions.subscriptionPlansOp)
 			?? []
-		return plans
+		const activePlans = plans
 			.filter(plan => !plan.archived)
 			.filter(plan => plan.tiers.length)
+		if(!!this["allow-plans"]) {
+			return activePlans.filter(plan => allowedPlans.includes(plan.planId))
+		}
+		return activePlans
 	}
 
 	get #subscriptions() {
