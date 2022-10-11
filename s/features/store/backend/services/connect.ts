@@ -77,26 +77,43 @@ renraku
 				storeTables: storeDatabase.tables,
 				stripeLiaison,
 			})
+
 			let stripeAccountId = connectDetails?.stripeAccountId
+
 			if (!stripeAccountId) {
-				const stripeAccount = await stripeLiaison
-					.accounts.create({type: "standard"})
+				const stripeAccount
+					= await stripeLiaison
+					.accounts
+					.create({type: "standard"})
+
 				stripeAccountId = stripeAccount.id
+
 				const row: MerchantRow = {
 					stripeAccountId,
 					time: Date.now(),
 					userId: dbmage.Id.fromString(access.user.userId),
 					paused: false,
 				}
-				await storeDatabase.tables.merchants.create(row)
+
+				await storeDatabase
+					.tables
+					.merchants
+					.create(row)
 			}
-			const {popupId, ...urls} = makeStripePopupSpec.connect(options)
-			const {url: stripeAccountSetupLink} = await stripeLiaison
-				.accountLinks.create({
+
+			const {popupId, ...urls}
+				= makeStripePopupSpec
+				.connect(options)
+
+			const {url: stripeAccountSetupLink}
+				= await stripeLiaison
+				.accountLinks
+				.create({
 					account: stripeAccountId,
 					type: "account_onboarding",
 					...urls,
 				})
+	
 			return {popupId, stripeAccountId, stripeAccountSetupLink}
 		},
 

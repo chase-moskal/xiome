@@ -27,6 +27,7 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 		const {connectDetailsOp} = state.stripeConnect
 		const {connectStripeAccount, stripeLogin, pause, resume} = this.#storeModel.connect
 		return renderOp(connectStatusOp, status => {
+			const details = ops.value(connectDetailsOp)
 			switch (status) {
 				case StripeConnectStatus.Unlinked: return html`
 					<p>status: unlinked</p>
@@ -34,6 +35,16 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 				`
 				case StripeConnectStatus.Incomplete: return html`
 					<p>status: incomplete</p>
+					<p>details:</p>
+					<ul>
+						<li>charges enabled: ${details.charges_enabled ?"true" :"false"}</li>
+						<li>details submitted: ${details.details_submitted ?"true" :"false"}</li>
+						<li>payouts enabled: ${details.payouts_enabled ?"true" :"false"}</li>
+						<li>email: ${details.email}</li>
+						<li>paused: ${details.paused}</li>
+						<li>stripe account id: ${details.stripeAccountId}</li>
+						<li>time linked: ${details.timeLinked}</li>
+					</ul>
 					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
 					<xio-button @press=${connectStripeAccount}>CONNECT STRIPE ACCOUNT</xio-button>
 				`
@@ -44,7 +55,6 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 					<xio-button @press=${resume}>Resume Ecommerce</xio-button>
 				`
 				case StripeConnectStatus.Ready: {
-					const details = ops.value(connectDetailsOp)
 					return details
 						? html`
 							<p>status: ready</p>
