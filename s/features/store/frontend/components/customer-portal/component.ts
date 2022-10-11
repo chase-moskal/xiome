@@ -36,7 +36,7 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 	#renderButton() {
 		return html`
 			<xio-button @press=${this.#openPopup}>
-				open customer portal
+				<slot name="button-label">open customer portal</slot>
 			</xio-button>
 		`
 	}

@@ -22,6 +22,12 @@ mainHtml: html`
 		<br/>
 		<br/>
 
+		
+		<h3>subscription controls</h3>
+		<xiome-store-subscription-controls></xiome-store-subscription-controls>
+		<br/>
+		<br/>
+
 		<h3>subscription catalog</h3>
 		<xiome-store-subscription-catalog></xiome-store-subscription-catalog>
 		<br/>

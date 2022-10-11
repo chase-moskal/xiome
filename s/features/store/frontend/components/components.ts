@@ -6,6 +6,7 @@ import {XiomeStoreConnect} from "./connect/component.js"
 import {XiomeStoreCustomerPortal} from "./customer-portal/component.js"
 import {XiomeStoreSubscriptionCatalog} from "./subscription-catalog/component.js"
 import {XiomeStoreSubscriptionPlanning} from "./subscription-planning/component.js"
+import {XiomeStoreSubscriptionControls} from "./subscription-controls/component.js"
 
 export function integrateStoreComponents({models, modals}: XiomeComponentOptions) {
 	const {storeModel} = models
@@ -39,6 +40,13 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 				mixinShare({
 					storeModel,
 				})(XiomeStoreCustomerPortal)
+			)
+		),
+		XiomeStoreSubscriptionControls: (
+			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
+				mixinShare({
+					storeModel,
+				})(XiomeStoreSubscriptionControls)
 			)
 		),
 	}
