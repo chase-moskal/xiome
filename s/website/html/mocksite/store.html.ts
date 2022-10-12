@@ -22,6 +22,11 @@ mainHtml: html`
 		<br/>
 		<br/>
 
+		<h3>billing-area</h3>
+		<xiome-store-billing-area></xiome-store-billing-area>
+		<br/>
+		<br/>
+
 		
 		<h3>subscription status</h3>
 		<xiome-store-subscription-status></xiome-store-subscription-status>
