@@ -23,8 +23,8 @@ mainHtml: html`
 		<br/>
 
 		
-		<h3>subscription controls</h3>
-		<xiome-store-subscription-controls></xiome-store-subscription-controls>
+		<h3>subscription status</h3>
+		<xiome-store-subscription-status></xiome-store-subscription-status>
 		<br/>
 		<br/>
 
