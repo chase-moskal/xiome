@@ -62,7 +62,6 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 		const {connectStatusOp} = this.#storeModel.state.stripeConnect
 		const combinedOp = ops.combine(accessOp, connectStatusOp, this.op)
 		return html`
-			<h3>Customer Portal</h3>
 			${renderOp(combinedOp, () => {
 				const {userLoggedIn, storeActive} = this.#storeModel.get.is
 				if (userLoggedIn) {

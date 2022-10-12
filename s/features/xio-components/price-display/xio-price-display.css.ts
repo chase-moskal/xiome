@@ -42,6 +42,7 @@ export default css`
 		margin-top: 0.1em;
 		margin-left: 0.3em;
 		user-select: none;
+		text-transform: uppercase;
 	}
 
 	.vertical {
