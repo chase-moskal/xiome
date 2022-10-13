@@ -271,6 +271,8 @@ export function mockStripeLiaison({
 										.default_payment_method,
 									subscriptionId: subscription.id,
 									items: subscription.items,
+									current_period_end: subscription.current_period_end,
+									current_period_start: subscription.current_period_start
 								})
 							const paymentMethodId = getStripeId(paymentIntent.payment_method)
 							const paymentMethodMetaData = await metaDataTables.
@@ -327,6 +329,8 @@ export function mockStripeLiaison({
 										.default_payment_method,
 									subscriptionId: id,
 									items,
+									current_period_end: existingSubscription.current_period_end,
+									current_period_start: existingSubscription.current_period_start
 								})
 								if(paymentMethodMetaData?.isFailing){
 									await dispatchWebhook(
