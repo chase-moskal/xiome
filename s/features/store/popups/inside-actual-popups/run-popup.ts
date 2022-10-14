@@ -76,6 +76,27 @@ const routines = {
 			},
 		})
 	},
+
+	async "store-customer-portal"() {
+		const commandSystem = makeSecretMockCommandSystem()
+		assignClickHandlers({
+			async "button.success"() {
+				await commandSystem.postCommand("success")
+				window.close()
+			},
+			async "button.failure"() {
+				await commandSystem.postCommand("failure")
+				window.close()
+			},
+			async "button.detach"() {
+				await commandSystem.postCommand("detach")
+				window.close()
+			},
+			async "button.cancel"() {
+				window.close()
+			},
+		})
+	},
 }
 
 const type = window.location.pathname.split("/").pop()

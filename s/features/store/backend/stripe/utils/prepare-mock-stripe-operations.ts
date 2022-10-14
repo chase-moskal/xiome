@@ -107,33 +107,33 @@ export function prepareMockStripeOperations({
 					},
 			})
 		},
-		async completePaymentMethodCheckout(
-				stripeAccountId: string, stripeSessionId: string, isFailing?: boolean
-			) {
-			const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
-			const session = await stripeTables
-				.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
-			const customer = <string>session.customer
-			const paymentMethod = await mockHelpers.setPaymentMethod({
-				customer,
-				stripeLiaisonAccount,
-			})
-			await metaDataTables.paymentMethodMetaData.create({
-				id: paymentMethod.id,
-				isFailing
-			})
-			const setupIntent = await mockHelpers.createSetupIntent({
-				customer,
-				paymentMethod,
-				stripeLiaisonAccount,
-			})
-			await dispatchWebhook("checkout.session.completed", stripeAccountId, {
-				customer,
-				mode: "setup",
-				setup_intent: setupIntent.id,
-				client_reference_id: session.client_reference_id,
-			})
-		},
+		// async completePaymentMethodCheckout(
+		// 		stripeAccountId: string, stripeSessionId: string, isFailing?: boolean
+		// 	) {
+		// 	const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
+		// 	const session = await stripeTables
+		// 		.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
+		// 	const customer = <string>session.customer
+		// 	const paymentMethod = await mockHelpers.setPaymentMethod({
+		// 		customer,
+		// 		stripeLiaisonAccount,
+		// 	})
+		// 	await metaDataTables.paymentMethodMetaData.create({
+		// 		id: paymentMethod.id,
+		// 		isFailing
+		// 	})
+		// 	const setupIntent = await mockHelpers.createSetupIntent({
+		// 		customer,
+		// 		paymentMethod,
+		// 		stripeLiaisonAccount,
+		// 	})
+		// 	await dispatchWebhook("checkout.session.completed", stripeAccountId, {
+		// 		customer,
+		// 		mode: "setup",
+		// 		setup_intent: setupIntent.id,
+		// 		client_reference_id: session.client_reference_id,
+		// 	})
+		// },
 		async checkoutSubscriptionTier(stripeAccountId: string, stripeSessionId: string) {
 			const session = await stripeTables
 				.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
@@ -165,5 +165,29 @@ export function prepareMockStripeOperations({
 				payment_intent: recentDetails.subscriptionCreation.paymentIntent,
 			})
 		},
+		async createNewDefaultPaymentMethod({
+				stripeAccountId, customer, isFailing,
+			}: {
+				stripeAccountId: string
+				customer: string
+				isFailing: boolean
+			}) {
+			const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
+			const paymentMethod = await mockHelpers
+				.setPaymentMethod({stripeLiaisonAccount, customer})
+			await metaDataTables.paymentMethodMetaData.create({
+				id: paymentMethod.id,
+				isFailing
+			})
+			await stripeLiaisonAccount.customers.update(customer, {
+				invoice_settings: {
+					default_payment_method: paymentMethod.id,
+				},
+			})
+			return paymentMethod
+		},
+		async removeAllPaymentMethods(customer: string) {
+			await stripeTables.paymentMethods.delete(dbmage.find({customer}))
+		}
 	}
 }

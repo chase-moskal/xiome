@@ -37,12 +37,12 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 			return {popupId}
 		},
 
-		async checkoutPaymentMethod({popupId, stripeAccountId, stripeSessionId}) {
-			await mockStripeOperations.completePaymentMethodCheckout(stripeAccountId, stripeSessionId)
-			return {popupId}
-		},
+		// async checkoutPaymentMethod({popupId, stripeAccountId, stripeSessionId}) {
+		// 	await mockStripeOperations.completePaymentMethodCheckout(stripeAccountId, stripeSessionId)
+		// 	return {popupId}
+		// },
 
-		async openStoreCustomerPortal(popupId) {
+		async openStoreCustomerPortal({popupId, stripeAccountId, stripeSessionUrl}) {
 			return {popupId}
 		},
 	}

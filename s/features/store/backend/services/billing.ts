@@ -31,7 +31,9 @@ renraku
 
 		return {
 			popupId,
-			customerPortalLink: session.url
+			customer: session.customer,
+			stripeSessionUrl: session.url,
+			stripeAccountId: auth.stripeAccountId
 		}
 	},
 }))

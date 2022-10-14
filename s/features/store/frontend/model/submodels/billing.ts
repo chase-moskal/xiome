@@ -31,12 +31,13 @@ export function makeBillingSubmodel({
 	}
 
 	async function customerPortal() {
-		const {popupId, customerPortalLink} = await services
+		const {popupId, stripeSessionUrl, customer, stripeAccountId} = await services
 			.billing
 			.generateCustomerPortalLink()
 
-		await stripePopups
-			.openStoreCustomerPortal(popupId, customerPortalLink)
+		await stripePopups.openStoreCustomerPortal({
+			popupId, customer, stripeSessionUrl, stripeAccountId
+		})
 
 		await reloadStore()
 	}
