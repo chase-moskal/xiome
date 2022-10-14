@@ -20,9 +20,4 @@ export namespace makeFakestripePopupUrl {
 		return `/mocksite/fakestripe/checkout?${encodeQuerystring(params)}`
 	}
 
-	export function checkoutPaymentMethod(
-			params: Querystrings.CheckoutPaymentMethod
-		) {
-		return `/mocksite/fakestripe/checkout-payment-method?${encodeQuerystring(params)}`
-	}
 }

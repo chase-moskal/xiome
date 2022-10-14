@@ -171,10 +171,7 @@ export function mockStripeLiaison({
 							resource: {
 								mode: params.mode,
 								url: params.mode === "setup"
-									? makeFakestripePopupUrl.checkoutPaymentMethod({
-										cancel_url: params.cancel_url!,
-										success_url: params.success_url!,
-									})
+									? undefined
 									: makeFakestripePopupUrl.checkout({
 										cancel_url: params.cancel_url!,
 										success_url: params.success_url!,

@@ -21,23 +21,23 @@ type OptionsForDetails = {
 	storeDatabaseRaw: StoreDatabaseRaw
 }
 
-export async function getSessionDetails({
-		event, stripeLiaison, storeDatabaseRaw
-	}: OptionsForDetails) {
-	const session = <Stripe.Checkout.Session>event.data.object
-	const stripeCustomerId = getStripeId(session.customer)
-	const {appId, userId} = getReferencedClient(session)
-	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
-	const stripeLiaisonAccount = stripeLiaison.account(event.account)
-	return {
-		appId,
-		userId,
-		session,
-		storeDatabase,
-		stripeCustomerId,
-		stripeLiaisonAccount,
-	}
-}
+// export async function getSessionDetails({
+// 		event, stripeLiaison, storeDatabaseRaw
+// 	}: OptionsForDetails) {
+// 	const session = <Stripe.Checkout.Session>event.data.object
+// 	const stripeCustomerId = getStripeId(session.customer)
+// 	const {appId, userId} = getReferencedClient(session)
+// 	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
+// 	const stripeLiaisonAccount = stripeLiaison.account(event.account)
+// 	return {
+// 		appId,
+// 		userId,
+// 		session,
+// 		storeDatabase,
+// 		stripeCustomerId,
+// 		stripeLiaisonAccount,
+// 	}
+// }
 
 export async function getInvoiceDetails({
 		event, stripeLiaison, storeDatabaseRaw
@@ -93,101 +93,101 @@ export function getDatabaseForApp(storeDatabaseRaw: StoreDatabaseRaw, appId: dbm
 	})
 }
 
-export async function getStripeSubscription(
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		s: string | Stripe.Subscription,
-	): Promise<Stripe.Subscription> {
-	return typeof s === "string"
-		? await stripeLiaisonAccount.subscriptions.retrieve(s)
-		: <Stripe.Subscription>s
-}
+// export async function getStripeSubscription(
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		s: string | Stripe.Subscription,
+// 	): Promise<Stripe.Subscription> {
+// 	return typeof s === "string"
+// 		? await stripeLiaisonAccount.subscriptions.retrieve(s)
+// 		: <Stripe.Subscription>s
+// }
 
-export async function getStripeSetupIntent(
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		s: string | Stripe.SetupIntent,
-	): Promise<Stripe.SetupIntent> {
-	return typeof s === "string"
-		? await stripeLiaisonAccount.setupIntents.retrieve(s)
-		: <Stripe.SetupIntent>s
-}
+// export async function getStripeSetupIntent(
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		s: string | Stripe.SetupIntent,
+// 	): Promise<Stripe.SetupIntent> {
+// 	return typeof s === "string"
+// 		? await stripeLiaisonAccount.setupIntents.retrieve(s)
+// 		: <Stripe.SetupIntent>s
+// }
 
-export async function getStripePaymentIntent(
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		s: string | Stripe.PaymentIntent,
-	): Promise<Stripe.PaymentIntent> {
-	return typeof s === "string"
-		? await stripeLiaisonAccount.paymentIntents.retrieve(s)
-		: <Stripe.PaymentIntent>s
-}
+// export async function getStripePaymentIntent(
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		s: string | Stripe.PaymentIntent,
+// 	): Promise<Stripe.PaymentIntent> {
+// 	return typeof s === "string"
+// 		? await stripeLiaisonAccount.paymentIntents.retrieve(s)
+// 		: <Stripe.PaymentIntent>s
+// }
 
-export async function getPaymentMethodIdFromSetupIntent({
-		stripeLiaisonAccount, session,
-	}: {
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		session: Stripe.Checkout.Session,
-	}): Promise<string> {
-	const intent = await getStripeSetupIntent(
-		stripeLiaisonAccount,
-		session.setup_intent)
-	return getStripeId(intent.payment_method)
-}
+// export async function getPaymentMethodIdFromSetupIntent({
+// 		stripeLiaisonAccount, session,
+// 	}: {
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		session: Stripe.Checkout.Session,
+// 	}): Promise<string> {
+// 	const intent = await getStripeSetupIntent(
+// 		stripeLiaisonAccount,
+// 		session.setup_intent)
+// 	return getStripeId(intent.payment_method)
+// }
 
-export async function getPaymentMethodIdFromPaymentIntent({
-		stripeLiaisonAccount, invoice,
-	}: {
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		invoice: Stripe.Invoice,
-	}): Promise<string> {
-	const intent = await getStripePaymentIntent(
-		stripeLiaisonAccount,
-		invoice.payment_intent)
-	return getStripeId(intent.payment_method)
-}
+// export async function getPaymentMethodIdFromPaymentIntent({
+// 		stripeLiaisonAccount, invoice,
+// 	}: {
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		invoice: Stripe.Invoice,
+// 	}): Promise<string> {
+// 	const intent = await getStripePaymentIntent(
+// 		stripeLiaisonAccount,
+// 		invoice.payment_intent)
+// 	return getStripeId(intent.payment_method)
+// }
 
-export async function updateCustomerDefaultPaymentMethod ({
-		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
-	}: PaymentDetails) {
-	await stripeLiaisonAccount.customers.update(stripeCustomerId, {
-		invoice_settings: {
-			default_payment_method: stripePaymentMethodId,
-		},
-	})
-}
+// export async function updateCustomerDefaultPaymentMethod ({
+// 		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
+// 	}: PaymentDetails) {
+// 	await stripeLiaisonAccount.customers.update(stripeCustomerId, {
+// 		invoice_settings: {
+// 			default_payment_method: stripePaymentMethodId,
+// 		},
+// 	})
+// }
 
-export async function detachAllOtherPaymentMethods ({
-		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
-	}: PaymentDetails) {
-	const paymentMethods = await stripeLiaisonAccount
-		.customers.listPaymentMethods(stripeCustomerId, {type: "card"})
-	for (const paymentMethod of paymentMethods.data) {
-		if (paymentMethod.id !== stripePaymentMethodId)
-			await stripeLiaisonAccount.paymentMethods.detach(paymentMethod.id)
-	}
-}
+// export async function detachAllOtherPaymentMethods ({
+// 		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
+// 	}: PaymentDetails) {
+// 	const paymentMethods = await stripeLiaisonAccount
+// 		.customers.listPaymentMethods(stripeCustomerId, {type: "card"})
+// 	for (const paymentMethod of paymentMethods.data) {
+// 		if (paymentMethod.id !== stripePaymentMethodId)
+// 			await stripeLiaisonAccount.paymentMethods.detach(paymentMethod.id)
+// 	}
+// }
 
-export async function updateAllSubscriptionsToUseThisPaymentMethod ({
-		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
-	}: PaymentDetails) {
+// export async function updateAllSubscriptionsToUseThisPaymentMethod ({
+// 		stripeCustomerId, stripePaymentMethodId, stripeLiaisonAccount,
+// 	}: PaymentDetails) {
 
-	const subscriptions = await stripeLiaisonAccount
-		.subscriptions
-		.list({customer: stripeCustomerId, status: "all"})
+// 	const subscriptions = await stripeLiaisonAccount
+// 		.subscriptions
+// 		.list({customer: stripeCustomerId, status: "all"})
 
-	for (const {id, status} of subscriptions.data) {
-		if (status !== "incomplete_expired")
-			await stripeLiaisonAccount
-				.subscriptions
-				.update(id, {
-					default_payment_method: stripePaymentMethodId
-				})
-	}
-}
+// 	for (const {id, status} of subscriptions.data) {
+// 		if (status !== "incomplete_expired")
+// 			await stripeLiaisonAccount
+// 				.subscriptions
+// 				.update(id, {
+// 					default_payment_method: stripePaymentMethodId
+// 				})
+// 	}
+// }
 
-export async function updateCustomerPaymentMethod(details: PaymentDetails) {
-	await updateCustomerDefaultPaymentMethod(details)
-	await detachAllOtherPaymentMethods(details)
-	await updateAllSubscriptionsToUseThisPaymentMethod(details)
-}
+// export async function updateCustomerPaymentMethod(details: PaymentDetails) {
+// 	await updateCustomerDefaultPaymentMethod(details)
+// 	await detachAllOtherPaymentMethods(details)
+// 	await updateAllSubscriptionsToUseThisPaymentMethod(details)
+// }
 
 export async function getStripeCustomerDetails(
 		storeDatabaseRaw: StoreDatabaseRaw,
@@ -207,18 +207,18 @@ export async function getStripeCustomerDetails(
 	}
 }
 
-export async function getSubscriptionAndPriceIds({
-		stripeLiaisonAccount, session,
-	}: {
-		stripeLiaisonAccount: StripeLiaisonAccount,
-		session: Stripe.Checkout.Session
-	}) {
-	const subscription = await getStripeSubscription(
-		stripeLiaisonAccount,
-		session.subscription,
-	)
-	return {subscription, priceIds: getPriceIdsFromSubscription(subscription)}
-}
+// export async function getSubscriptionAndPriceIds({
+// 		stripeLiaisonAccount, session,
+// 	}: {
+// 		stripeLiaisonAccount: StripeLiaisonAccount,
+// 		session: Stripe.Checkout.Session
+// 	}) {
+// 	const subscription = await getStripeSubscription(
+// 		stripeLiaisonAccount,
+// 		session.subscription,
+// 	)
+// 	return {subscription, priceIds: getPriceIdsFromSubscription(subscription)}
+// }
 
 export function getPriceIdsFromSubscription(subscription: Stripe.Subscription) {
 	return subscription.items.data.map(item => getStripeId(item.price))

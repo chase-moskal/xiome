@@ -47,8 +47,4 @@ export namespace Querystrings {
 		cancel_url: string
 	}
 
-	export interface CheckoutPaymentMethod {
-		success_url: string
-		cancel_url: string
-	}
 }

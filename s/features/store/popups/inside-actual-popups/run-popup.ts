@@ -59,24 +59,6 @@ const routines = {
 		})
 	},
 
-	async "checkout-payment-method"() {
-		const {success_url, cancel_url} = parseSearchParams<Querystrings.CheckoutPaymentMethod>()
-		const commandSystem = makeSecretMockCommandSystem()
-		assignClickHandlers({
-			async "button.success"() {
-				await commandSystem.postCommand("success")
-				window.location.href = success_url
-			},
-			async "button.failure"() {
-				await commandSystem.postCommand("failure")
-				window.location.href = cancel_url
-			},
-			async "button.cancel"() {
-				window.location.href = cancel_url
-			},
-		})
-	},
-
 	async "store-customer-portal"() {
 		const commandSystem = makeSecretMockCommandSystem()
 		assignClickHandlers({
