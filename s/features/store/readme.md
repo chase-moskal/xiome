@@ -58,6 +58,7 @@ how is the system structured?
       - xiome's `/popups/return` page has one job: parse the querystring data, and return it via a postMessage back to the parent window
       - in short: xiome opens a popup at the stripe url, then stripe redirects the popup back to xiome's return page, and xiome's return page parses and sends the querystring data as a postMessage, and then it closes the popup.
     - xiome's return page is not store-specific: it will postMessage back any querystring. it doesn't live in the `store` feature, it lives in xiome's static website pages.
+  - in mock mode, we use our own fake stripe popups, which are in `s/website/html/mocksite/fakestripe/`
 
 <br/>
 
