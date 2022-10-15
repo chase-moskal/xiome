@@ -2,7 +2,7 @@
 import {expect} from "cynic"
 
 import {suite} from "../../../../../types/suite.js"
-import {setups} from "../../utils/common-setups.js"
+import {connectedStore} from "../../utils/common-setups.js"
 import {SubscriptionPricing} from "../../../isomorphic/concepts.js"
 import {SubscriptionPricingDraft} from "../../../backend/services/subscriptions/types/drafts.js"
 
@@ -10,7 +10,7 @@ export default suite({
 	"a user with clerk permisisons": {
 
 		async "can create a new subscription plan"() {
-			const {store} = await setups.connectedStore()
+			const {store} = await connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
 
@@ -44,7 +44,7 @@ export default suite({
 		},
 
 		async "can create multiple plans, and the tiers aren't scrambled"() {
-			const {store} = await setups.connectedStore()
+			const {store} = await connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
 
@@ -94,7 +94,7 @@ export default suite({
 		},
 
 		async "can view subscription plans made by other clerks"() {
-			const {api} = await setups.connectedStore()
+			const {api} = await connectedStore()
 			{
 				const {store}
 					= await api
@@ -138,7 +138,7 @@ export default suite({
 		},
 
 		async "can add a new tier to an existing plan"() {
-			const {api} = await setups.connectedStore()
+			const {api} = await connectedStore()
 			const {store}
 				= await api
 				.client(api.roles.clerk)
@@ -200,8 +200,7 @@ export default suite({
 
 		async "can edit a plan"() {
 			const {store}
-				= await setups
-				.connectedStore()
+				= await connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
 
@@ -248,7 +247,7 @@ export default suite({
 		},
 
 		async "can edit a tier"() {
-			const {store} = await setups.connectedStore()
+			const {store} = await connectedStore()
 				.then(x => x.api.client(x.api.roles.clerk))
 				.then(x => x.browserTab())
 			const plan = await store.subscriptions
@@ -310,8 +309,7 @@ export default suite({
 
 		async "cannot create a new subscription plan"() {
 			const customer
-				= await setups
-				.connectedStore()
+				= await connectedStore()
 				.then(x => x.api.client(x.api.roles.customer))
 				.then(x => x.browserTab())
 

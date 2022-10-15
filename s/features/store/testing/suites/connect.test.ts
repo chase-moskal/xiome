@@ -2,7 +2,7 @@
 import {expect} from "cynic"
 
 import {suite} from "../../../../types/suite.js"
-import {setups} from "../utils/common-setups.js"
+import {connectedStore} from "../utils/common-setups.js"
 import {storeTestSetup} from "../utils/store-test-setup.js"
 import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 
@@ -46,7 +46,7 @@ export default suite({
 		},
 		"a user with clerk permissions": {
 			async "can see connect status, but not details"() {
-				const {api} = await setups.connectedStore()
+				const {api} = await connectedStore()
 				const {store} = await api.client(api.roles.clerk)
 					.then(x => x.browserTab())
 				expect(store.get.connect.status).defined()
@@ -71,7 +71,7 @@ export default suite({
 					.throws()
 			},
 			async "can see connect status, but not details"() {
-				const {api} = await setups.connectedStore()
+				const {api} = await connectedStore()
 				const {store} = await api.client(api.roles.customer)
 					.then(x => x.browserTab())
 				expect(store.get.connect.status).defined()
@@ -82,7 +82,7 @@ export default suite({
 	"login to stripe account": {
 		"a user with merchant permissions": {
 			async "can login to stripe account and toggle between complete/incomplete"() {
-				const {store, rig} = await setups.connectedStore()
+				const {store, rig} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.merchant))
 					.then(x => x.browserTab())
 				rig.stripeAccountFate = "incomplete"
@@ -103,7 +103,7 @@ export default suite({
 		},
 		"a user with clerk permissions": {
 			async "cannot login to stripe account"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				await expect(async() => store.connect.stripeLogin())
@@ -112,7 +112,7 @@ export default suite({
 		},
 		"a user with customer permissions": {
 			async "cannot login to stripe account"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.customer))
 					.then(x => x.browserTab())
 				await expect(async() => store.connect.stripeLogin())
@@ -123,7 +123,7 @@ export default suite({
 	"pause and resume the store": {
 		"a user with merchant permissions": {
 			async "can pause and resume a store"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.merchant))
 					.then(x => x.browserTab())
 				expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -135,7 +135,7 @@ export default suite({
 		},
 		"a user with clerk permissions": {
 			async "can pause and resume a store"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.clerk))
 					.then(x => x.browserTab())
 				expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -147,7 +147,7 @@ export default suite({
 		},
 		"a user with customer permissions": {
 			async "cannot pause the store"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(x => x.api.client(x.api.roles.customer))
 					.then(x => x.browserTab())
 				expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
@@ -155,7 +155,7 @@ export default suite({
 				expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 			},
 			async "cannot resume the store"() {
-				const {store} = await setups.connectedStore()
+				const {store} = await connectedStore()
 					.then(async x => {
 						await x.merchant.store.connect.pause()
 						return x.api.client(x.api.roles.customer)

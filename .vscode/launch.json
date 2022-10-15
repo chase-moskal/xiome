@@ -6,7 +6,7 @@
 			"request": "launch",
 			"name": "debug",
 			"program": "${workspaceFolder}/node_modules/cynic/dist/cli.js",
-			"args": ["node", "x/features/store2/store.test.js"],
+			"args": ["node", "x/features/store/testing/tests.test.js"],
 			"stopOnEntry": false
 		}
 	]
