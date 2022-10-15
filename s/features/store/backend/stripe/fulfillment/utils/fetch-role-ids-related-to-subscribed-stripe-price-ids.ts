@@ -1,7 +1,7 @@
 
 import * as dbmage from "dbmage"
 import {StoreDatabase} from "../../../database/types/schema.js"
-import {SubscriptionTierRow} from "../../../database/types/rows/subscription-rows.js"
+import {SubscriptionTierRow} from "../../../database/types/rows/subscription-tier-row.js"
 
 import {StripeLiaisonAccount} from "../../liaison/types.js"
 import {getTiersForStripePrices} from "./get-tiers-for-stripe-prices.js"

@@ -1,4 +1,6 @@
 
+import * as dbmage from "dbmage"
+
 import {StoreDatabase} from "../database/types/schema.js"
 import {AnonAuth} from "../../../auth/types/auth-metas.js"
 import {StripeLiaison, StripeLiaisonAccount} from "../stripe/liaison/types.js"
@@ -11,6 +13,7 @@ export interface StoreAuth extends Omit<AnonAuth, "database"> {
 }
 
 export interface StoreConnectedAuth extends StoreAuth {
+	connectId: dbmage.Id
 	stripeAccountId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
 }

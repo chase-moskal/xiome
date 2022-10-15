@@ -8,6 +8,7 @@ import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.
 import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../services/subscriptions/types/drafts.js"
 
 export const helpersForManagingSubscriptions = ({
+		connectId,
 		storeDatabase,
 		stripeLiaisonAccount,
 		roleManager,
@@ -24,19 +25,21 @@ export const helpersForManagingSubscriptions = ({
 			pricing: SubscriptionPricingDraft
 		}) {
 
-		const {id: stripeProductId} = await stripeLiaisonAccount
-			.products
-			.create({name: productLabel})
+		const {id: stripeProductId} =
+			await stripeLiaisonAccount
+				.products
+				.create({name: productLabel})
 
-		const {id: stripePriceId} = await stripeLiaisonAccount
-			.prices
-			.create({
-				active: true,
-				product: stripeProductId,
-				currency: pricing.currency,
-				unit_amount: pricing.price,
-				recurring: {interval: pricing.interval},
-			})
+		const {id: stripePriceId} =
+			await stripeLiaisonAccount
+				.prices
+				.create({
+					active: true,
+					product: stripeProductId,
+					currency: pricing.currency,
+					unit_amount: pricing.price,
+					recurring: {interval: pricing.interval},
+				})
 
 		await stripeLiaisonAccount
 			.products
@@ -47,23 +50,25 @@ export const helpersForManagingSubscriptions = ({
 
 	return {
 
-		async createPlanAndTier({
-				planLabel, tier,
-			}: SubscriptionPlanDraft) {
-
+		async createPlanAndTier({planLabel, tier}: SubscriptionPlanDraft) {
 			const planId = generateId()
 			const tierId = generateId()
 
-			const {roleId} = await roleManager.createPrivateSystemRole({
-				label: tier.label,
-			})
+			const {roleId} = await roleManager
+				.createPrivateSystemRole({
+					label: tier.label,
+				})
 
-			await storeTables.subscriptions.plans.create({
-				planId,
-				label: planLabel,
-				time: Date.now(),
-				archived: false,
-			})
+			await storeTables
+				.subscriptions
+				.plans
+				.create({
+					connectId,
+					planId,
+					label: planLabel,
+					time: Date.now(),
+					archived: false,
+				})
 
 			const {stripeProductId, stripePriceId} =
 				await createStripeProductAndPriceResources({
@@ -71,14 +76,18 @@ export const helpersForManagingSubscriptions = ({
 					pricing: tier.pricing,
 				})
 
-			await storeTables.subscriptions.tiers.create({
-				tierId,
-				planId,
-				label: tier.label,
-				roleId,
-				time: Date.now(),
-				stripeProductId,
-			})
+			await storeTables
+				.subscriptions
+				.tiers
+				.create({
+					connectId,
+					tierId,
+					planId,
+					label: tier.label,
+					roleId,
+					time: Date.now(),
+					stripeProductId,
+				})
 
 			return {
 				planId,
@@ -89,17 +98,18 @@ export const helpersForManagingSubscriptions = ({
 			}
 		},
 
-		async createTierForPlan({
-				planId, label, pricing,
-			}: {
+		async createTierForPlan({planId, label, pricing}: {
 				planId: string
 				label: string
 				pricing: SubscriptionPricingDraft
 			}) {
 
-			const planRow = await storeTables.subscriptions.plans.readOne(
-				dbmage.find({planId: dbmage.Id.fromString(planId)})
-			)
+			const planRow = await storeTables
+				.subscriptions
+				.plans
+				.readOne(
+					dbmage.find({planId: dbmage.Id.fromString(planId)})
+				)
 
 			if (!planRow)
 				throw new Error(`unknown subscription plan ${planId}`)
@@ -115,14 +125,18 @@ export const helpersForManagingSubscriptions = ({
 			const time = Date.now()
 			const tierId = generateId()
 
-			await storeTables.subscriptions.tiers.create({
-				time,
-				label,
-				tierId,
-				roleId,
-				stripeProductId,
-				planId: planRow.planId,
-			})
+			await storeTables
+				.subscriptions
+				.tiers
+				.create({
+					connectId,
+					time,
+					label,
+					tierId,
+					roleId,
+					stripeProductId,
+					planId: planRow.planId,
+				})
 
 			return {tierId, roleId, time, stripePriceId}
 		},
@@ -133,22 +147,24 @@ export const helpersForManagingSubscriptions = ({
 				archived: boolean
 			}) {
 			const planId = dbmage.Id.fromString(planIdString)
-			const planRow = await storeTables.subscriptions.plans.readOne(
-				dbmage.find({planId})
-			)
+			const planRow = await storeTables
+				.subscriptions
+				.plans
+				.readOne(dbmage.find({planId}))
 
 			if (!planRow)
 				throw new renraku.ApiError(400, `unable to find plan ${planIdString}`)
 
-			await storeTables.subscriptions.plans.update({
-				...dbmage.find({planId: dbmage.Id.fromString(planIdString)}),
-				write: {label, archived},
-			})
+			await storeTables
+				.subscriptions
+				.plans
+				.update({
+					...dbmage.find({planId}),
+					write: {label, archived},
+				})
 		},
 
-		async updateTier({
-				tierId: tierIdString, label, active, pricing,
-			}: {
+		async updateTier({tierId: tierIdString, label, active, pricing}: {
 				tierId: string
 				label: string
 				active: boolean

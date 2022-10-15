@@ -16,22 +16,26 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 			headers: renraku.HttpHeaders,
 		) {
 		const auth = await anonPolicy(meta, headers)
-		const connectDetails = await fetchStripeConnectDetails({
-			storeTables: auth.storeDatabase.tables,
-			stripeLiaison: auth.stripeLiaison,
-		})
+		const {connectId, connectDetails} =
+			await fetchStripeConnectDetails({
+				storeTables: auth.storeDatabase.tables,
+				stripeLiaison: auth.stripeLiaison,
+			})
+
 		const connectStatus = determineConnectStatus(connectDetails)
 		if (connectStatus !== StripeConnectStatus.Ready)
 			throw new renraku.ApiError(
 				400,
 				"stripe account is not connected, and this action requires it"
 			)
-		const stripeLiaisonAccount = stripeLiaison
-			.account(connectDetails.stripeAccountId)
+
+		const {stripeAccountId} = connectDetails
+		const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
 		return {
 			...auth,
+			connectId,
+			stripeAccountId,
 			stripeLiaisonAccount,
-			stripeAccountId: connectDetails.stripeAccountId,
 		}
 	}
 
@@ -39,33 +43,29 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 			meta: xMeta,
 			headers: renraku.HttpHeaders,
 		) {
-
 		const auth = await connected(meta, headers)
-
 		if (!auth.access.user)
 			throw new renraku.ApiError(400, "user is not logged in")
 
 		const userId = dbmage.Id.fromString(auth.access.user.userId)
-
-		let customerRow
-			= await auth
-			.storeDatabase
-			.tables
-			.customers
-			.readOne(dbmage.find({userId}))
+		let customerRow =
+			await auth
+				.storeDatabase
+				.tables
+				.customers
+				.readOne(dbmage.find({userId}))
 
 		if (!customerRow) {
-			const {id: stripeCustomerId}
-				= await auth
-				.stripeLiaisonAccount
-				.customers
-				.create({})
-
+			const {id: stripeCustomerId} =
+				await auth
+					.stripeLiaisonAccount
+					.customers
+					.create({})
 			customerRow = {
+				connectId: auth.connectId,
 				userId,
 				stripeCustomerId,
 			}
-
 			await auth
 				.storeDatabase
 				.tables
@@ -74,7 +74,7 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 		}
 
 		const {stripeCustomerId} = customerRow
-	
+
 		return {
 			...auth,
 			stripeCustomerId,
@@ -84,24 +84,22 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 	async function merchant(meta: xMeta, headers: renraku.HttpHeaders) {
 		const auth = await connected(meta, headers)
 		auth.checker.requirePrivilege("manage store")
-
-		const connectStatus = determineConnectStatus(
+		const {connectDetails} =
 			await fetchStripeConnectDetails({
 				storeTables: auth.storeDatabase.tables,
 				stripeLiaison: auth.stripeLiaison,
 			})
-		)
 
+		const connectStatus = determineConnectStatus(connectDetails)
 		if (connectStatus !== StripeConnectStatus.Ready)
 			throw new renraku.ApiError(400, "stripe connect status not ready")
 
 		const helpers = helpersForManagingSubscriptions({...options, ...auth})
-
 		return {...auth, helpers}
 	}
 
 	return {
-		anon: anonPolicy,
+		guest: anonPolicy,
 		connected,
 		customer,
 		merchant,

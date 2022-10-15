@@ -93,6 +93,28 @@ export function getDatabaseForApp(storeDatabaseRaw: StoreDatabaseRaw, appId: dbm
 	})
 }
 
+export async function getConnectAccountDetails({
+		stripeAccountId,
+		storeDatabaseRaw,
+	}: {
+		stripeAccountId: string
+		storeDatabaseRaw: StoreDatabaseRaw
+	}) {
+
+	const connectAccount
+		= await storeDatabaseRaw
+		.tables
+		.connect
+		.accounts
+		.unconstrained
+		.readOne(dbmage.find({stripeAccountId}))
+
+	const appId = connectAccount[appConstraintKey]
+	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
+
+	return {connectAccount, appId, storeDatabase}
+}
+
 // export async function getStripeSubscription(
 // 		stripeLiaisonAccount: StripeLiaisonAccount,
 // 		s: string | Stripe.Subscription,

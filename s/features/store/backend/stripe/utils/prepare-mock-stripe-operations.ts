@@ -71,40 +71,21 @@ export function prepareMockStripeOperations({
 
 	return {
 		async linkStripeAccount(stripeAccountId: string) {
-			await stripeTables.accounts.update({
-				...dbmage.find({id: stripeAccountId}),
-				write: {
-					email: "fake-stripe-account-email@xiome.io",
-					charges_enabled: true,
-					payouts_enabled: true,
-					details_submitted: true,
-				},
+			await dispatchWebhook<Partial<Stripe.Account>>("account.updated", stripeAccountId, {
+				id: stripeAccountId,
+				email: "fake-stripe-account-email@xiome.io",
+				charges_enabled: true,
+				payouts_enabled: true,
+				details_submitted: true,
 			})
 		},
 		async linkStripeAccountThatIsIncomplete(stripeAccountId: string) {
-			await stripeTables.accounts.update({
-				...dbmage.find({id: stripeAccountId}),
-				write: {
-					charges_enabled: false,
-					payouts_enabled: false,
-					details_submitted: false,
-				},
-			})
-		},
-		async configureStripeAccount(stripeAccountId: string, completed: boolean) {
-			await stripeTables.accounts.update({
-				...dbmage.find({id: stripeAccountId}),
-				write: completed
-					? {
-						charges_enabled: true,
-						payouts_enabled: true,
-						details_submitted: true,
-					}
-					: {
-						charges_enabled: false,
-						payouts_enabled: false,
-						details_submitted: false,
-					},
+			await dispatchWebhook<Partial<Stripe.Account>>("account.updated", stripeAccountId, {
+				id: stripeAccountId,
+				email: "fake-stripe-account-email@xiome.io",
+				charges_enabled: false,
+				payouts_enabled: false,
+				details_submitted: false,
 			})
 		},
 		// async completePaymentMethodCheckout(

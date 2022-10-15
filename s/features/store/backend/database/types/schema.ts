@@ -1,14 +1,19 @@
 
 import * as dbmage from "dbmage"
 
-import {CustomerRow} from "./rows/billing-rows.js"
-import {MerchantRow} from "./rows/merchant-rows.js"
-import {SubscriptionPlanRow, SubscriptionTierRow} from "./rows/subscription-rows.js"
+import {CustomerRow} from "./rows/customer-row.js"
+import {ActiveConnectRow} from "./rows/active-connect-row.js"
+import {ConnectAccountRow} from "./rows/connected-account-row.js"
+import {SubscriptionTierRow} from "./rows/subscription-tier-row.js"
+import {SubscriptionPlanRow} from "./rows/subscription-plan-row.js"
 import {SchemaToUnconstrainedTables} from "../../../../../framework/api/types/unconstrained-tables.js"
 
 export type StoreSchema = dbmage.AsSchema<{
-	merchants: MerchantRow
 	customers: CustomerRow
+	connect: {
+		accounts: ConnectAccountRow
+		active: ActiveConnectRow
+	}
 	subscriptions: {
 		plans: SubscriptionPlanRow
 		tiers: SubscriptionTierRow

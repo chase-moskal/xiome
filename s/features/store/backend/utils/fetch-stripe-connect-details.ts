@@ -10,26 +10,36 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 		stripeLiaison: StripeLiaison
 	}) {
 
-	let connectDetails: StripeConnectDetails
+	const active =
+		await storeTables
+			.connect
+			.active
+			.readOne({conditions: false})
 
-	const ourRecordOfStripeAccount = await storeTables
-		.merchants
-		.readOne({conditions: false})
-
-	if (ourRecordOfStripeAccount) {
-		const id = ourRecordOfStripeAccount.stripeAccountId
-		const timeLinked = ourRecordOfStripeAccount.time
-		const stripeRecordOfAccount = await stripeLiaison.accounts.retrieve(id)
-		connectDetails = {
-			timeLinked,
-			email: stripeRecordOfAccount.email,
-			paused: ourRecordOfStripeAccount.paused,
-			stripeAccountId: stripeRecordOfAccount.id,
-			charges_enabled: stripeRecordOfAccount.charges_enabled,
-			payouts_enabled: stripeRecordOfAccount.payouts_enabled,
-			details_submitted: stripeRecordOfAccount.details_submitted,
+	if (!active)
+		return {
+			connectDetails: undefined,
+			connectId: undefined,
 		}
+
+	const account =
+		await storeTables
+			.connect
+			.accounts
+			.readOne(dbmage.find({connectId: active.connectId}))
+
+	const connectDetails: StripeConnectDetails = {
+		stripeAccountId: account.stripeAccountId,
+		email: account.email,
+		paused: account.paused,
+		timeLinked: account.time,
+		payouts_enabled: account.payouts_enabled,
+		charges_enabled: account.charges_enabled,
+		details_submitted: account.details_submitted,
 	}
 
-	return connectDetails
+	return {
+		connectDetails,
+		connectId: active.connectId,
+	}
 }

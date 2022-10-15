@@ -22,10 +22,10 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 
 		async login({popupId, stripeAccountId}) {
 			rig.stripeLoginCount += 1
-			await mockStripeOperations.configureStripeAccount(
-				stripeAccountId,
-				rig.stripeAccountFate === "complete",
-			)
+			if (rig.stripeAccountFate === "complete")
+				await mockStripeOperations.linkStripeAccount(stripeAccountId)
+			else
+				await mockStripeOperations.linkStripeAccountThatIsIncomplete(stripeAccountId)
 			return {popupId}
 		},
 

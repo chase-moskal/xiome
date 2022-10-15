@@ -22,7 +22,10 @@ renraku
 		const {planLabel, tier} = runValidation(inputs, validateNewPlanDraft)
 
 		const {planId, tierId, tierRoleId, time, stripePriceId} =
-			await helpers.createPlanAndTier({planLabel, tier})
+			await helpers.createPlanAndTier({
+				planLabel,
+				tier,
+			})
 
 		return {
 			planId: planId.toString(),
@@ -55,11 +58,12 @@ renraku
 		const label = runValidation(inputs.label, validateLabel)
 		const pricing = runValidation(inputs.pricing, validateSubscriptionPricingDraft)
 
-		const {tierId, roleId, time, stripePriceId} = await helpers.createTierForPlan({
-			label,
-			planId,
-			pricing,
-		})
+		const {tierId, roleId, time, stripePriceId} =
+			await helpers.createTierForPlan({
+				label,
+				planId,
+				pricing,
+			})
 
 		const tier: SubscriptionTier = {
 			tierId: tierId.toString(),

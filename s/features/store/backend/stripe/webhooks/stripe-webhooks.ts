@@ -8,7 +8,9 @@ import {Logger} from "../../../../../toolbox/logger/interfaces.js"
 import {fulfillSubscriptionRoles} from "../fulfillment/fulfillment.js"
 import {timerangeFromStripePeriod} from "../utils/seconds-to-millisecond-timerange.js"
 import {RoleManager} from "../../../../auth/aspects/permissions/interactions/types.js"
-import {getPriceIdsFromInvoice, getInvoiceDetails, getSubscriptionDetails, getPriceIdsFromSubscription} from "./helpers/webhook-helpers.js"
+import {getPriceIdsFromInvoice, getInvoiceDetails, getSubscriptionDetails, getPriceIdsFromSubscription, getDatabaseForApp, getConnectAccountDetails} from "./helpers/webhook-helpers.js"
+import {appConstraintKey} from "../../../../../assembly/backend/types/database.js"
+import {getStripeId} from "../utils/get-stripe-id.js"
 
 export function stripeWebhooks(options: {
 		logger: Logger
@@ -19,6 +21,41 @@ export function stripeWebhooks(options: {
 	const {logger, prepareRoleManager} = options
 
 	return {
+
+		async "account.application.deauthorized"(event: Stripe.Event) {
+			const stripeAccountId = getStripeId(event.account)
+
+			const {connectAccount: {connectId}, storeDatabase}
+				= await getConnectAccountDetails({...options, stripeAccountId})
+
+			await storeDatabase
+				.tables
+				.connect
+				.active
+				.delete(dbmage.find({connectId}))
+		},
+
+		async "account.updated"(event: Stripe.Event) {
+			const account = <Stripe.Account>event.data.object
+			const stripeAccountId = account.id
+
+			const {connectAccount: {connectId}, storeDatabase}
+				= await getConnectAccountDetails({...options, stripeAccountId})
+
+			await storeDatabase
+				.tables
+				.connect
+				.accounts
+				.update({
+					...dbmage.find({connectId}),
+					write: {
+						email: account.email,
+						charges_enabled: account.charges_enabled,
+						payouts_enabled: account.payouts_enabled,
+						details_submitted: account.details_submitted,
+					},
+				})
+		},
 
 		async "customer.subscription.updated"(event: Stripe.Event) {
 			logger.info(

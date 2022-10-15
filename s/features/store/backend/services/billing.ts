@@ -18,16 +18,18 @@ renraku
 	},
 
 	async generateCustomerPortalLink() {
-		const {popupId, return_url} = makeStripePopupSpec
-			.openCustomerPortal(options)
+		const {popupId, return_url} =
+			makeStripePopupSpec
+				.openCustomerPortal(options)
 
-		const session = await auth
-			.stripeLiaisonAccount
-			.billingPortal
-			.create({
-				customer: auth.stripeCustomerId,
-				return_url
-			})
+		const session =
+			await auth
+				.stripeLiaisonAccount
+				.billingPortal
+				.create({
+					customer: auth.stripeCustomerId,
+					return_url
+				})
 
 		return {
 			popupId,

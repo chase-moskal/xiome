@@ -37,7 +37,10 @@ export const databaseShapeRequiresAppIsolation:
 	},
 	store: {
 		customers: true,
-		merchants: true,
+		connect: {
+			accounts: true,
+			active: true,
+		},
 		subscriptions: {
 			plans: true,
 			tiers: true,
