@@ -3,7 +3,7 @@ import {ops} from "../../../../../framework/ops.js"
 import {makeStoreModel} from "../../model/model.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
-import {SubscriptionPlan, SubscriptionStatus} from "../../../isomorphic/concepts.js"
+import {StripeConnectStatus, SubscriptionPlan, SubscriptionStatus} from "../../../isomorphic/concepts.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../../framework/component.js"
 
 import styles from "./styles.js"
@@ -81,12 +81,16 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 
 	render() {
 		const hasSubscriptions = this.#subscriptions?.length > 0
-		return hasSubscriptions
-			? renderOp(ops.combine(
-					this.#state.subscriptions.subscriptionPlansOp,
-					this.#state.subscriptions.mySubscriptionDetailsOp,
-				),
-				() => html`
+		const {subscriptionPlansOp, mySubscriptionDetailsOp} =
+			this.#state.subscriptions
+		const {connectStatusOp} = this.#state.stripeConnect
+		const connectStatus = ops.value(connectStatusOp)
+		const combinedOp = ops.combine(
+			subscriptionPlansOp, mySubscriptionDetailsOp, connectStatusOp)
+		return renderOp(combinedOp, () => {
+			return connectStatus !== StripeConnectStatus.Ready || !hasSubscriptions
+				? null
+				: html`
 					<div class="body">
 						<h3>Current Subscriptions</h3>
 						<div class="subscriptions">
@@ -94,7 +98,6 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 						</div>
 					</div>
 				`
-			)
-			: null
+			})
 	}
 }

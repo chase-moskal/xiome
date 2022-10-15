@@ -1,10 +1,11 @@
 
+import {ops} from "../../../../../framework/ops.js"
 import {makeStoreModel} from "../../model/model.js"
+import {StripeConnectStatus} from "../../../isomorphic/concepts.js"
+import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {Component, html, mixinRequireShare, mixinStyles} from "../../../../../framework/component.js"
 
 import styles from "./styles.js"
-import {ops} from "../../../../../framework/ops.js"
-import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 
 @mixinStyles(styles)
 export class XiomeStoreBillingArea extends mixinRequireShare<{
@@ -20,23 +21,28 @@ export class XiomeStoreBillingArea extends mixinRequireShare<{
 	}
 
 	render() {
-		const paymentMethodOp = this.#state.billing.paymentMethodOp
+		const {paymentMethodOp} = this.#state.billing
+		const {connectStatusOp} = this.#state.stripeConnect
+		const connectStatus = ops.value(connectStatusOp)
 		const card = this.#paymentMethod?.cardClues
-		return renderOp(paymentMethodOp, () => {
-			return html`
-				<div class="billing_area">
-					${card ? html`
-							<div>
-								<p>Payment Method</p>
-								${card.brand} ${card.last4}
-							</div>
-						`
-						: null}
-					<xiome-store-customer-portal>
-						<span slot="button-label">Billing Portal</span>
-					</xiome-store-customer-portal>
-				</div>
-			`
+
+		return renderOp(ops.combine(paymentMethodOp, connectStatusOp), () => {
+			return connectStatus !== StripeConnectStatus.Ready
+				? null
+				: html`
+					<div class="billing_area">
+						${card ? html`
+								<div>
+									<p>Payment Method</p>
+									${card.brand} ${card.last4}
+								</div>
+							`
+							: null}
+						<xiome-store-customer-portal>
+							<span slot="button-label">Billing Portal</span>
+						</xiome-store-customer-portal>
+					</div>
+				`
 		})
 	}
 	}
