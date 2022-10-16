@@ -9,6 +9,7 @@ export enum StripeConnectStatus {
 }
 
 export interface StripeConnectDetails {
+	userId: string
 	stripeAccountId: string
 	email: string
 	charges_enabled: boolean

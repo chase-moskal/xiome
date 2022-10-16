@@ -29,6 +29,7 @@ export async function fetchStripeConnectDetails({storeTables, stripeLiaison}: {
 			.readOne(dbmage.find({connectId: active.connectId}))
 
 	const connectDetails: StripeConnectDetails = {
+		userId: account.userId.string,
 		stripeAccountId: account.stripeAccountId,
 		email: account.email,
 		paused: account.paused,

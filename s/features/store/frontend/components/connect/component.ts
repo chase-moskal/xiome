@@ -25,9 +25,35 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 		const state = this.#storeModel.snap.readable
 		const {connectStatusOp} = state.stripeConnect
 		const {connectDetailsOp} = state.stripeConnect
-		const {connectStripeAccount, stripeLogin, pause, resume} = this.#storeModel.connect
+		const {
+			allowedToConnectStripeAccount,
+			connectStripeAccount,
+			disconnectStripeAccount,
+			stripeLogin,
+			pause,
+			resume,
+		} = this.#storeModel.connect
+
 		return renderOp(connectStatusOp, status => {
 			const details = ops.value(connectDetailsOp)
+
+			function renderLoginAndSetupButton() {
+				return html`
+					<xio-button @press=${stripeLogin}>
+						Login to Stripe
+					</xio-button>
+					${allowedToConnectStripeAccount
+						? html`
+							<xio-button @press=${connectStripeAccount}>
+								Update Stripe Account
+							</xio-button>`
+						: null}
+					<xio-button @press=${disconnectStripeAccount}>
+						Disconnect Stripe Account
+					</xio-button>
+				`
+			}
+
 			switch (status) {
 				case StripeConnectStatus.Unlinked: return html`
 					<p>status: unlinked</p>
@@ -45,14 +71,12 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 						<li>stripe account id: ${details.stripeAccountId}</li>
 						<li>time linked: ${details.timeLinked}</li>
 					</ul>
-					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
-					<xio-button @press=${connectStripeAccount}>CONNECT STRIPE ACCOUNT</xio-button>
+					${renderLoginAndSetupButton()}
 				`
 				case StripeConnectStatus.Paused: return html`
 					<p>status: paused</p>
-					<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
-					<xio-button @press=${connectStripeAccount}>CONNECT STRIPE ACCOUNT</xio-button>
 					<xio-button @press=${resume}>Resume Ecommerce</xio-button>
+					${renderLoginAndSetupButton()}
 				`
 				case StripeConnectStatus.Ready: {
 					return details
@@ -68,7 +92,7 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 								<li>stripe account id: ${details.stripeAccountId}</li>
 								<li>time linked: ${details.timeLinked}</li>
 							</ul>
-							<xio-button @press=${stripeLogin}>Login to Stripe</xio-button>
+							${renderLoginAndSetupButton()}
 							<xio-button @press=${pause}>Pause Ecommerce</xio-button>
 						`
 						: html`

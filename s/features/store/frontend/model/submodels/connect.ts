@@ -4,6 +4,7 @@ import {StoreStateSystem} from "../../state.js"
 import {ops} from "../../../../../framework/ops.js"
 import {StripePopups} from "../../../popups/types.js"
 import {StripeConnectStatus} from "../../../isomorphic/concepts.js"
+import {storePrivileges} from "../../../isomorphic/privileges.js"
 
 export function makeConnectSubmodel({
 		stripePopups,
@@ -49,12 +50,35 @@ export function makeConnectSubmodel({
 	return {
 		load,
 
+		get allowedToConnectStripeAccount() {
+			const {get} = stateSystem
+			const access = get.user.access
+
+			if (!access?.user)
+				return false
+
+			if (!access.permit.privileges.includes(
+					storePrivileges["control stripe account"]
+				))
+				return false
+
+			return get.connect.status === StripeConnectStatus.Unlinked
+				? true
+				: access.user.userId === get.connect.details?.userId
+		},
+
 		async connectStripeAccount() {
-			const popupInfo = await services.connect.generateConnectSetupLink()
+			const popupInfo = await services.connect.generateConnectPopup()
 			const result = await stripePopups.connect(popupInfo)
 			if (result.details?.status === "return")
 				await reloadStore()
 		},
+
+		async disconnectStripeAccount() {
+			await services.connect.disconnectStripeAccount()
+			await reloadStore()
+		},
+
 		async stripeLogin() {
 			const connectStatus = ops.value(state.stripeConnect.connectStatusOp)
 			const connectDetails = ops.value(state.stripeConnect.connectDetailsOp)
@@ -67,6 +91,7 @@ export function makeConnectSubmodel({
 			await stripePopups.login({stripeAccountId, stripeLoginLink, popupId})
 			await reloadStore()
 		},
+
 		async pause() {
 			await services.connect.pause()
 			state.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Paused)
@@ -76,6 +101,7 @@ export function makeConnectSubmodel({
 					paused: true,
 				})
 		},
+
 		async resume() {
 			await services.connect.resume()
 			state.stripeConnect.connectStatusOp = ops.ready(StripeConnectStatus.Ready)

@@ -45,15 +45,17 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 		) {
 		const auth = await connected(meta, headers)
 		if (!auth.access.user)
-			throw new renraku.ApiError(400, "user is not logged in")
+			throw new renraku.ApiError(400, "user must be logged in")
 
+		const {connectId} = auth
 		const userId = dbmage.Id.fromString(auth.access.user.userId)
+
 		let customerRow =
 			await auth
 				.storeDatabase
 				.tables
 				.customers
-				.readOne(dbmage.find({userId}))
+				.readOne(dbmage.find({connectId, userId}))
 
 		if (!customerRow) {
 			const {id: stripeCustomerId} =
@@ -61,11 +63,13 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 					.stripeLiaisonAccount
 					.customers
 					.create({})
+
 			customerRow = {
-				connectId: auth.connectId,
+				connectId,
 				userId,
 				stripeCustomerId,
 			}
+
 			await auth
 				.storeDatabase
 				.tables

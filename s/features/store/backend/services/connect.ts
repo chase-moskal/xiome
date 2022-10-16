@@ -8,6 +8,7 @@ import {requiredPrivilege} from "../utils/required-privilege.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
+import {connectAccountOnboarding, connectAccountUpdate, userIsOwnerOfStripeAccount} from "../utils/connect-helpers.js"
 
 export const makeConnectService = (options: StoreServiceOptions) =>
 renraku
@@ -91,63 +92,39 @@ renraku
 			}
 		},
 
-		async generateConnectSetupLink() {
+		async disconnectStripeAccount() {
+			await storeDatabase
+				.tables
+				.connect
+				.active
+				.delete({conditions: false})
+		},
+
+		async generateConnectPopup() {
 			const {connectDetails} = await fetchStripeConnectDetails({
 				storeTables: storeDatabase.tables,
 				stripeLiaison,
 			})
-
-			let stripeAccountId = connectDetails?.stripeAccountId
-
-			if (!stripeAccountId) {
-				const stripeAccount = await stripeLiaison
-					.accounts
-					.create({type: "standard"})
-
-				const connectId = options.generateId()
-				stripeAccountId = stripeAccount.id
-
-				await storeDatabase.transaction(async({tables}) => {
-					await tables
-						.connect
-						.accounts
-						.create({
-							connectId,
-	
-							stripeAccountId,
-							charges_enabled: false,
-							payouts_enabled: false,
-							details_submitted: false,
-							email: undefined,
-	
-							time: Date.now(),
-							paused: false,
-							userId: dbmage.Id.fromString(access.user.userId),
-						})
-					await tables
-						.connect
-						.active
-						.update({
-							conditions: false,
-							whole: {connectId},
-						})
-				})
-			}
-
-			const {popupId, ...urls} =
-				makeStripePopupSpec
-					.connect(options)
-
-			const {url: stripeAccountSetupLink} =
-				await stripeLiaison
-					.accountLinks
-					.create({
-						account: stripeAccountId,
-						type: "account_onboarding",
-						...urls,
+			if (connectDetails) {
+				if (userIsOwnerOfStripeAccount(access, connectDetails))
+					return connectAccountUpdate({
+						options,
+						stripeLiaison,
+						connectDetails,
 					})
-
-			return {popupId, stripeAccountId, stripeAccountSetupLink}
+				else
+					throw new renraku.ApiError(
+						401,
+						"unauthorized to update stripe account"
+					)
+			}
+			else
+				return connectAccountOnboarding({
+					access,
+					options,
+					stripeLiaison,
+					storeDatabase,
+				})
 		},
 
 		async generateStripeLoginLink() {
