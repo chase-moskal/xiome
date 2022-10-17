@@ -13,7 +13,6 @@ export interface StoreAuth extends Omit<AnonAuth, "database"> {
 }
 
 export interface StoreConnectedAuth extends StoreAuth {
-	connectId: dbmage.Id
 	stripeAccountId: string
 	stripeLiaisonAccount: StripeLiaisonAccount
 	storeDatabase: StoreDatabase
