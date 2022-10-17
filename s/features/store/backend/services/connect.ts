@@ -8,7 +8,7 @@ import {requiredPrivilege} from "../utils/required-privilege.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
-import {connectAccountOnboarding, connectAccountUpdate, userIsOwnerOfStripeAccount} from "../utils/connect-helpers.js"
+import {connectAccountOnboarding, connectAccountUpdate, isUserOwnerOfStripeAccount} from "../utils/connect-helpers.js"
 
 export const makeConnectService = (options: StoreServiceOptions) =>
 renraku
@@ -17,20 +17,17 @@ renraku
 .expose(({access, stripeLiaison, storeDatabaseUnconnected, checker}) => ({
 
 	async loadConnectStatus() {
-		const {connectDetails} = await fetchStripeConnectDetails({
-			stripeLiaison,
-			storeConnectTables: storeDatabaseUnconnected.tables.connect,
-		})
+		const {connectDetails} =
+			await fetchStripeConnectDetails({storeDatabaseUnconnected})
+
 		return determineConnectStatus(connectDetails)
 	},
 
 	...requiredPrivilege(checker, "manage store", {
 
 		async pause() {
-			const {connectDetails} = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeConnectTables: storeDatabaseUnconnected.tables.connect,
-			})
+			const {connectDetails} =
+				await fetchStripeConnectDetails({storeDatabaseUnconnected})
 
 			const {stripeAccountId} = connectDetails
 			const connectStatus = determineConnectStatus(connectDetails)
@@ -53,10 +50,8 @@ renraku
 		},
 
 		async resume() {
-			const {connectDetails} = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeConnectTables: storeDatabaseUnconnected.tables.connect,
-			})
+			const {connectDetails} =
+				await fetchStripeConnectDetails({storeDatabaseUnconnected})
 
 			const {stripeAccountId} = connectDetails
 			const connectStatus = determineConnectStatus(connectDetails)
@@ -82,10 +77,9 @@ renraku
 	...requiredPrivilege(checker, "control stripe account", {
 
 		async loadConnectDetails() {
-			const {connectDetails} = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeConnectTables: storeDatabaseUnconnected.tables.connect,
-			})
+			const {connectDetails} =
+				await fetchStripeConnectDetails({storeDatabaseUnconnected})
+
 			return {
 				connectDetails,
 				connectStatus: determineConnectStatus(connectDetails),
@@ -101,12 +95,11 @@ renraku
 		},
 
 		async generateConnectPopup() {
-			const {connectDetails} = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeConnectTables: storeDatabaseUnconnected.tables.connect,
-			})
+			const {connectDetails} =
+				await fetchStripeConnectDetails({storeDatabaseUnconnected})
+
 			if (connectDetails) {
-				if (userIsOwnerOfStripeAccount(access, connectDetails))
+				if (isUserOwnerOfStripeAccount(access, connectDetails))
 					return connectAccountUpdate({
 						options,
 						stripeLiaison,
@@ -128,18 +121,19 @@ renraku
 		},
 
 		async generateStripeLoginLink() {
-			const {connectDetails} = await fetchStripeConnectDetails({
-				stripeLiaison,
-				storeConnectTables: storeDatabaseUnconnected.tables.connect,
-			})
+			const {connectDetails} =
+				await fetchStripeConnectDetails({storeDatabaseUnconnected})
+
 			const stripeAccountId = connectDetails?.stripeAccountId
 			return !stripeAccountId
 				? undefined
 				: {
 					stripeLoginLink: `https://dashboard.stripe.com/b/${stripeAccountId}`,
-					popupId: makeStripePopupSpec
-						.login(options)
-						.popupId,
+					popupId: (
+						makeStripePopupSpec
+							.login(options)
+							.popupId
+					),
 				}
 		},
 	}),

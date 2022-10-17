@@ -5,9 +5,9 @@ import * as renraku from "renraku"
 import {StoreApiOptions} from "../types/options.js"
 import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
+import {getConnectedStoreDatabase} from "../database/get-connected-store-database.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
 import {helpersForManagingSubscriptions} from "../utils/helpers-for-managing-subscriptions.js"
-import {getConnectedStoreDatabase} from "../database/get-connected-store-database.js"
 
 export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 	const {stripeLiaison, anonPolicy} = options
@@ -20,10 +20,7 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 		const auth = await anonPolicy(meta, headers)
 
 		const {connectId, connectDetails} =
-			await fetchStripeConnectDetails({
-				storeConnectTables: auth.storeDatabaseUnconnected.tables.connect,
-				stripeLiaison: auth.stripeLiaison,
-			})
+			await fetchStripeConnectDetails(auth)
 
 		const connectStatus = determineConnectStatus(connectDetails)
 
@@ -99,12 +96,7 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 		const auth = await connected(meta, headers)
 		auth.checker.requirePrivilege("manage store")
 
-		const {connectDetails} =
-			await fetchStripeConnectDetails({
-				storeConnectTables: auth.storeDatabaseUnconnected.tables.connect,
-				stripeLiaison: auth.stripeLiaison,
-			})
-
+		const {connectDetails} = await fetchStripeConnectDetails(auth)
 		const connectStatus = determineConnectStatus(connectDetails)
 
 		if (connectStatus !== StripeConnectStatus.Ready)

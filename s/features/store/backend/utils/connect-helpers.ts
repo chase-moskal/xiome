@@ -3,9 +3,9 @@ import * as dbmage from "dbmage"
 
 import {StoreApiOptions} from "../types/options.js"
 import {StripeLiaison} from "../stripe/liaison/types.js"
-import {StoreDatabase, StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
+import {StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 
 export async function createNewConnectAccountRecordsAndSetActive({
@@ -55,11 +55,10 @@ export async function createNewConnectAccountRecordsAndSetActive({
 	}
 }
 
-export function userIsOwnerOfStripeAccount(
+export function isUserOwnerOfStripeAccount(
 		access: AccessPayload,
 		connectDetails: StripeConnectDetails
 	) {
-
 	return access.user.userId === connectDetails.userId
 }
 

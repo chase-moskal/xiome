@@ -1,17 +1,17 @@
 
 import * as dbmage from "dbmage"
 
-import {StripeLiaison} from "../stripe/liaison/types.js"
-import {StoreConnectTables} from "../database/types/schema.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
+import {StoreDatabaseUnconnected} from "../database/types/schema.js"
 
-export async function fetchStripeConnectDetails({storeConnectTables, stripeLiaison}: {
-		storeConnectTables: StoreConnectTables
-		stripeLiaison: StripeLiaison
+export async function fetchStripeConnectDetails({storeDatabaseUnconnected}: {
+		storeDatabaseUnconnected: StoreDatabaseUnconnected
 	}) {
 
 	const active =
-		await storeConnectTables
+		await storeDatabaseUnconnected
+			.tables
+			.connect
 			.active
 			.readOne({conditions: false})
 
@@ -22,7 +22,9 @@ export async function fetchStripeConnectDetails({storeConnectTables, stripeLiais
 		}
 
 	const account =
-		await storeConnectTables
+		await storeDatabaseUnconnected
+			.tables
+			.connect
 			.accounts
 			.readOne(dbmage.find({connectId: active.connectId}))
 
