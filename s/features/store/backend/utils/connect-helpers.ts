@@ -5,7 +5,7 @@ import {StoreApiOptions} from "../types/options.js"
 import {StripeLiaison} from "../stripe/liaison/types.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
-import {StoreDatabaseUnconnected} from "../database/types/schema.js"
+import {StoreConnectTables, StoreDatabase, StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 
 export async function createNewConnectAccountRecordsAndSetActive({
@@ -40,13 +40,10 @@ export async function createNewConnectAccountRecordsAndSetActive({
 				paused: false,
 				time: Date.now(),
 			})
-		await tables
-			.connect
-			.active
-			.update({
-				conditions: false,
-				whole: {connectId},
-			})
+		await activateConnectAccount({
+			connectId,
+			storeConnectTables: tables.connect,
+		})
 	})
 
 	return {
@@ -141,4 +138,22 @@ export async function connectAccountUpdate({
 		type: "account_update",
 		stripeAccountId: connectDetails.stripeAccountId,
 	})
+}
+
+export async function activateConnectAccount({connectId, storeConnectTables}: {
+		connectId: dbmage.Id
+		storeConnectTables: StoreConnectTables
+	}) {
+	await storeConnectTables.active.update({
+		conditions: false,
+		upsert: {connectId},
+	})
+}
+
+export async function deactivateConnectAccount({storeConnectTables}: {
+		storeConnectTables: StoreConnectTables
+	}) {
+	await storeConnectTables
+		.active
+		.delete({conditions: false})
 }

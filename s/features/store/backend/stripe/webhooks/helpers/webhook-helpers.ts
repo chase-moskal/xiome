@@ -101,18 +101,21 @@ export async function getConnectAccountDetails({
 		storeDatabaseRaw: StoreDatabaseRaw
 	}) {
 
-	const connectAccount
-		= await storeDatabaseRaw
-		.tables
-		.connect
-		.accounts
-		.unconstrained
-		.readOne(dbmage.find({stripeAccountId}))
+	const connectAccount =
+		await storeDatabaseRaw
+			.tables
+			.connect
+			.accounts
+			.unconstrained
+			.readOne(dbmage.find({stripeAccountId}))
 
-	const appId = connectAccount[appConstraintKey]
-	const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
-
-	return {connectAccount, appId, storeDatabase}
+	if (connectAccount) {
+		const appId = connectAccount[appConstraintKey]
+		const storeDatabase = getDatabaseForApp(storeDatabaseRaw, appId)
+		return {connectAccount, appId, storeDatabase}
+	}
+	else
+		return undefined
 }
 
 // export async function getStripeSubscription(

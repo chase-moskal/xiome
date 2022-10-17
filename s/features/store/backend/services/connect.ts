@@ -8,7 +8,7 @@ import {requiredPrivilege} from "../utils/required-privilege.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
-import {connectAccountOnboarding, connectAccountUpdate, isUserOwnerOfStripeAccount} from "../utils/connect-helpers.js"
+import {connectAccountOnboarding, connectAccountUpdate, deactivateConnectAccount, isUserOwnerOfStripeAccount} from "../utils/connect-helpers.js"
 
 export const makeConnectService = (options: StoreServiceOptions) =>
 renraku
@@ -87,11 +87,9 @@ renraku
 		},
 
 		async disconnectStripeAccount() {
-			await storeDatabaseUnconnected
-				.tables
-				.connect
-				.active
-				.delete({conditions: false})
+			await deactivateConnectAccount({
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
+			})
 		},
 
 		async generateConnectPopup() {
@@ -111,13 +109,27 @@ renraku
 						"unauthorized to update stripe account"
 					)
 			}
-			else
-				return connectAccountOnboarding({
-					access,
-					options,
-					stripeLiaison,
-					storeDatabaseUnconnected,
-				})
+			else {
+				const userId = dbmage.Id.fromString(access.user.userId)
+				const accountAlreadyExistsForUser =
+					await storeDatabaseUnconnected
+						.tables
+						.connect
+						.accounts
+						.readOne(dbmage.find({userId}))
+				return accountAlreadyExistsForUser
+					? connectAccountUpdate({
+						connectDetails,
+						options,
+						stripeLiaison,
+					})
+					: connectAccountOnboarding({
+						access,
+						options,
+						stripeLiaison,
+						storeDatabaseUnconnected,
+					})
+			}
 		},
 
 		async generateStripeLoginLink() {
