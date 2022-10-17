@@ -42,7 +42,6 @@ export function makeSubscriptionsSubmodel({
 					.listing
 					.listPlans(),
 			})
-		debugger
 
 			if (get.is.userLoggedIn) {
 				await ops.operation({
