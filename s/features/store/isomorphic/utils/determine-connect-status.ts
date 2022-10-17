@@ -17,5 +17,6 @@ export function determineConnectStatus(
 function isStripeAccountComplete(details: StripeConnectDetails) {
 	return details.details_submitted
 		&& details.charges_enabled
-		&& details.payouts_enabled
+		// // TODO i don't think payouts are actually necessary
+		// && details.payouts_enabled
 }

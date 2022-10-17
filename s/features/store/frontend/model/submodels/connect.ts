@@ -68,9 +68,12 @@ export function makeConnectSubmodel({
 				))
 				return false
 
+			// // TODO re-enable if we want to lock stripe onboarding to the user that started it
+			// return get.connect.status === StripeConnectStatus.Unlinked
+			// 	? true
+			// 	: access.user.userId === get.connect.details?.userId
 			return get.connect.status === StripeConnectStatus.Unlinked
-				? true
-				: access.user.userId === get.connect.details?.userId
+				|| get.connect.status === StripeConnectStatus.Incomplete
 		},
 
 		async stripeAccountOnboarding() {
