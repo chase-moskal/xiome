@@ -5,8 +5,9 @@ import {StoreApiOptions} from "../types/options.js"
 import {StripeLiaison} from "../stripe/liaison/types.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
-import {StoreConnectTables, StoreDatabase, StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
+import {StoreConnectTables, StoreDatabaseUnconnected} from "../database/types/schema.js"
+import {fetchStripeConnectDetails} from "./fetch-stripe-connect-details.js"
 
 export async function createNewConnectAccountRecordsAndSetActive({
 		access,
@@ -89,6 +90,40 @@ export async function createConnectPopup({
 		stripeAccountId,
 		stripeAccountSetupLink,
 	}
+}
+
+export async function assertStripeConnectAccount({
+		access,
+		stripeLiaison,
+		storeDatabaseUnconnected,
+		generateId,
+	}: {
+		access: AccessPayload
+		generateId: () => dbmage.Id
+		stripeLiaison: StripeLiaison
+		storeDatabaseUnconnected: StoreDatabaseUnconnected
+	}) {
+
+	const {connectDetails} =
+		await fetchStripeConnectDetails({storeDatabaseUnconnected})
+
+	if (!connectDetails) {
+		const {id: stripeAccountId} =
+			await stripeLiaison
+				.accounts
+				.create({type: "standard"})
+
+		await createNewConnectAccountRecordsAndSetActive({
+			access,
+			stripeAccountId,
+			storeDatabaseUnconnected,
+			generateId,
+		})
+	}
+
+	return (
+		await fetchStripeConnectDetails({storeDatabaseUnconnected})
+	).connectDetails
 }
 
 export async function connectAccountOnboarding({

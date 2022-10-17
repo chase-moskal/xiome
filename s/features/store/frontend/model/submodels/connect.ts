@@ -67,16 +67,28 @@ export function makeConnectSubmodel({
 				: access.user.userId === get.connect.details?.userId
 		},
 
-		async connectStripeAccount() {
-			const popupInfo = await services.connect.generateConnectPopup()
-			const result = await stripePopups.connect(popupInfo)
+		async stripeAccountOnboarding() {
+			const popupInfo =
+				await services
+					.connect
+					.generatePopupForStripeAccountOnboarding()
+			const result =
+				await stripePopups
+					.connect(popupInfo)
 			if (result.details?.status === "return")
 				await reloadStore()
 		},
 
-		async disconnectStripeAccount() {
-			await services.connect.disconnectStripeAccount()
-			await reloadStore()
+		async stripeAccountUpdate() {
+			const popupInfo =
+				await services
+					.connect
+					.generatePopupForStripeAccountUpdate()
+			const result =
+				await stripePopups
+					.connect(popupInfo)
+			if (result.details?.status === "return")
+				await reloadStore()
 		},
 
 		async stripeLogin() {

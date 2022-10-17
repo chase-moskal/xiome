@@ -14,7 +14,7 @@ export const setups = {
 		await merchant
 			.store
 			.connect
-			.connectStripeAccount()
+			.stripeAccountOnboarding()
 
 		return {api, merchant}
 	},

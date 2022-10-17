@@ -15,7 +15,7 @@ export default suite({
 					.then(x => x.client(x.roles.merchant))
 					.then(x => x.browserTab())
 				expect(store.get.connect.details).not.ok()
-				await store.connect.connectStripeAccount()
+				await store.connect.stripeAccountOnboarding()
 				expect(store.get.connect.details).ok()
 				expect(store.get.connect.status).equals(StripeConnectStatus.Ready)
 			},
@@ -26,7 +26,7 @@ export default suite({
 					.then(x => x.browserTab())
 				expect(store.get.connect.details).not.ok()
 				rig.stripeAccountFate = "incomplete"
-				await store.connect.connectStripeAccount()
+				await store.connect.stripeAccountOnboarding()
 				expect(store.get.connect.details).ok()
 				expect(store.get.connect.status)
 					.equals(StripeConnectStatus.Incomplete)
@@ -38,7 +38,7 @@ export default suite({
 					.then(x => x.api())
 				const merchant1 = await api.client(api.roles.merchant)
 					.then(x => x.browserTab())
-				await merchant1.store.connect.connectStripeAccount()
+				await merchant1.store.connect.stripeAccountOnboarding()
 				const merchant2 = await api.client(api.roles.merchant)
 					.then(x => x.browserTab())
 				expect(merchant2.store.get.connect.details).ok()
@@ -57,7 +57,7 @@ export default suite({
 					.then(x => x.api())
 					.then(x => x.client(x.roles.clerk))
 					.then(x => x.browserTab())
-				await expect(async() => store.connect.connectStripeAccount())
+				await expect(async() => store.connect.stripeAccountOnboarding())
 					.throws()
 			},
 		},
@@ -67,7 +67,7 @@ export default suite({
 					.then(x => x.api())
 					.then(x => x.client(x.roles.customer))
 					.then(x => x.browserTab())
-				await expect(async() => store.connect.connectStripeAccount())
+				await expect(async() => store.connect.stripeAccountOnboarding())
 					.throws()
 			},
 			async "can see connect status, but not details"() {

@@ -27,8 +27,8 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 		const {connectDetailsOp} = state.stripeConnect
 		const {
 			allowedToConnectStripeAccount,
-			connectStripeAccount,
-			disconnectStripeAccount,
+			stripeAccountOnboarding,
+			stripeAccountUpdate,
 			stripeLogin,
 			pause,
 			resume,
@@ -44,20 +44,23 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 					</xio-button>
 					${allowedToConnectStripeAccount
 						? html`
-							<xio-button @press=${connectStripeAccount}>
+							<xio-button @press=${stripeAccountOnboarding}>
+								Onboard Stripe Account
+							</xio-button>
+							<xio-button @press=${stripeAccountUpdate}>
 								Update Stripe Account
-							</xio-button>`
+							</xio-button>
+						`
 						: null}
-					<xio-button @press=${disconnectStripeAccount}>
-						Disconnect Stripe Account
-					</xio-button>
 				`
 			}
 
 			switch (status) {
 				case StripeConnectStatus.Unlinked: return html`
 					<p>status: unlinked</p>
-					<xio-button @press=${connectStripeAccount}>Connect Stripe</xio-button>
+					<xio-button @press=${stripeAccountOnboarding}>
+						Onboard Stripe Account
+					</xio-button>
 				`
 				case StripeConnectStatus.Incomplete: return html`
 					<p>status: incomplete</p>
