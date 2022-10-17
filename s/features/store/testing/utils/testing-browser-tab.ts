@@ -26,7 +26,10 @@ export const testingBrowserTab = ({
 		remote: renraku.ApiRemote<ReturnType<typeof makeStoreApi>>
 	}) => async() => {
 
-	async function login(newPrivileges: string[]) {
+	async function login(
+			newPrivileges: string[],
+			userId: string = generateId().string
+		) {
 		session.privileges = newPrivileges
 		session.access = {
 			appId,
@@ -34,7 +37,7 @@ export const testingBrowserTab = ({
 			permit: {privileges: session.privileges},
 			scope: {core: true},
 			user: {
-				userId: generateId().string,
+				userId,
 				roles: [],
 				stats: {joined: Date.now()},
 				profile: {
@@ -67,8 +70,10 @@ export const testingBrowserTab = ({
 			mockStripeOperations: circuit.mockStripeOperations,
 		}),
 		async reauthorize() {
-			await logout()
-			await login(session.privileges)
+			await login(
+				session.privileges,
+				session.access?.user?.userId
+			)
 		},
 	})
 

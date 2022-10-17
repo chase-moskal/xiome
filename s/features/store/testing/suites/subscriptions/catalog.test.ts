@@ -26,40 +26,50 @@ export default suite({
 	},
 	
 	"subscription purchases": {
-		"a user with regular permissions": {
+		"a user with customer permissions": {
 			async "can purchase a subscription, with an existing payment method"() {},
 			async "can purchase a subscription, while providing a new payment method"() {},
 			async "can cancel and uncancel a subscription"() {
-				const {api, store} = await storeWithSubscriptionPlans()
+				const {api} = await storeWithSubscriptionPlans()
+
+				const customer =
+					await api
+						.client(api.roles.customer)
+						.then(x => x.browserTab())
+
 				function getFirstTier() {
-					const plans = store.get.subscriptions.plans
-					const [plan] = plans
-					const [tier] = plan.tiers
-					return tier
+					return customer
+						.store
+						.get
+						.subscriptions
+						.plans[0]
+						.tiers[0]
 				}
+
 				const {tierId, pricing} = getFirstTier()
 				const {stripePriceId} = pricing[0]
-				console.log(stripePriceId)
-				const customer
-					= await api
-					.client(api.roles.customer)
-					.then(x => x.browserTab())
 
-				await customer.store.subscriptions.purchase({stripePriceId})
-				// await customer.store.refresh()
-				// await customer.store.load()
+				function getMySubscription() {
+					return customer
+						.store
+						.get
+						.subscriptions
+						.mySubscriptionDetails
+						.find(subscription => subscription.tierId === tierId)
+				}
 
-				const subscription = customer.store.get
+				await customer
+					.store
 					.subscriptions
-					.mySubscriptionDetails
-					.find(subscription => subscription.tierId === tierId)
+					.purchase({stripePriceId})
 
-				expect(subscription.status).equals(SubscriptionStatus.Active)
+				expect(getMySubscription().status).equals(SubscriptionStatus.Active)
+
 				await customer.store.subscriptions.cancel(tierId)
-				expect(subscription.status).equals(SubscriptionStatus.Cancelled)
-				await customer.store.subscriptions.uncancel(tierId)
-				expect(subscription.status).equals(SubscriptionStatus.Active)
+				expect(getMySubscription().status).equals(SubscriptionStatus.Cancelled)
 
+				await customer.store.subscriptions.uncancel(tierId)
+				expect(getMySubscription().status).equals(SubscriptionStatus.Active)
 			},
 			async "can upgrade a subscription to a higher tier"() {},
 			async "can downgrade a subscription to a lower tier"() {},

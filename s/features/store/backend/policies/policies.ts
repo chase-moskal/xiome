@@ -55,7 +55,6 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 		if (!auth.access.user)
 			throw new renraku.ApiError(400, "user must be logged in")
 
-		const {connectId} = auth
 		const userId = dbmage.Id.fromString(auth.access.user.userId)
 
 		let customerRow =
@@ -63,7 +62,7 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 				.storeDatabase
 				.tables
 				.customers
-				.readOne(dbmage.find({connectId, userId}))
+				.readOne(dbmage.find({userId}))
 
 		if (!customerRow) {
 			const {id: stripeCustomerId} =

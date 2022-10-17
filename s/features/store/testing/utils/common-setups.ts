@@ -19,23 +19,31 @@ export async function connectedStore() {
 
 export async function storeWithSubscriptionPlans() {
 	const {api} = await connectedStore()
-	const {store} = await api.client(api.roles.clerk)
-		.then(x => x.browserTab())
 
-	const {planId} = await store.subscriptions
-		.addPlan({
-			planLabel: "membership",
-			tier: {
-				label: "benevolent donor",
-				pricing: {
-					currency: "usd",
-					interval: "month",
-					price: 5_00,
+	const clerk =
+		await api
+			.client(api.roles.clerk)
+			.then(x => x.browserTab())
+
+	const {planId} =
+		await clerk
+			.store
+			.subscriptions
+			.addPlan({
+				planLabel: "membership",
+				tier: {
+					label: "benevolent donor",
+					pricing: {
+						currency: "usd",
+						interval: "month",
+						price: 5_00,
+					},
 				},
-			},
-		})
+			})
 
-	await store.subscriptions
+	await clerk
+		.store
+		.subscriptions
 		.addTier({
 			planId,
 			label: "deluxe",
@@ -46,5 +54,5 @@ export async function storeWithSubscriptionPlans() {
 			},
 		})
 	
-	return {store, api}
+	return {api, clerk}
 }
