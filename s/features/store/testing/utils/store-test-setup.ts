@@ -47,7 +47,7 @@ export const storeTestSetup = async() => ({
 				stripeLiaison: circuit.stripeLiaison,
 				roleManager: prepareRoleManager(appId),
 				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
-				storeDatabase: <StoreDatabase>UnconstrainedTable.constrainDatabaseForApp({
+				storeDatabaseUnconnected: <StoreDatabase>UnconstrainedTable.constrainDatabaseForApp({
 					appId: dbmage.Id.fromString(access.appId),
 					database: storeDatabaseRaw,
 				}),

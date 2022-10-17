@@ -3,28 +3,27 @@ import * as dbmage from "dbmage"
 
 import {StoreApiOptions} from "../types/options.js"
 import {StripeLiaison} from "../stripe/liaison/types.js"
-import {StoreDatabase} from "../database/types/schema.js"
+import {StoreDatabase, StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
 
 export async function createNewConnectAccountRecordsAndSetActive({
 		access,
-		storeDatabase,
 		stripeAccountId,
+		storeDatabaseUnconnected,
 		generateId,
 	}: {
 		access: AccessPayload
 		stripeAccountId: string
-		storeDatabase: StoreDatabase
+		storeDatabaseUnconnected: StoreDatabaseUnconnected
 		generateId: () => dbmage.Id
 	}) {
 
 	const connectId = generateId()
 	const userId = dbmage.Id.fromString(access.user.userId)
 
-	await storeDatabase.transaction(async({tables}) => {
-
+	await storeDatabaseUnconnected.transaction(async({tables}) => {
 		await tables
 			.connect
 			.accounts
@@ -41,7 +40,6 @@ export async function createNewConnectAccountRecordsAndSetActive({
 				paused: false,
 				time: Date.now(),
 			})
-
 		await tables
 			.connect
 			.active
@@ -101,12 +99,12 @@ export async function connectAccountOnboarding({
 		access,
 		options,
 		stripeLiaison,
-		storeDatabase,
+		storeDatabaseUnconnected,
 	}: {
 		access: AccessPayload
 		options: StoreApiOptions
 		stripeLiaison: StripeLiaison
-		storeDatabase: StoreDatabase
+		storeDatabaseUnconnected: StoreDatabaseUnconnected
 	}) {
 
 	const {id: stripeAccountId} = await stripeLiaison
@@ -115,8 +113,8 @@ export async function connectAccountOnboarding({
 
 	await createNewConnectAccountRecordsAndSetActive({
 		access,
-		storeDatabase,
 		stripeAccountId,
+		storeDatabaseUnconnected,
 		generateId: options.generateId,
 	})
 

@@ -88,7 +88,7 @@ export async function assimilateApi({
 							userHasRole: tables.auth.permissions.userHasRole,
 						})),
 					}),
-					storeDatabase: dbmage.subsection(database, tables => tables.store),
+					storeDatabaseUnconnected: dbmage.subsection(database, tables => tables.store),
 				}
 			},
 			stripeLiaison,

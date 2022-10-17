@@ -7,6 +7,7 @@ import {StripeConnectStatus} from "../../isomorphic/concepts.js"
 import {fetchStripeConnectDetails} from "../utils/fetch-stripe-connect-details.js"
 import {determineConnectStatus} from "../../isomorphic/utils/determine-connect-status.js"
 import {helpersForManagingSubscriptions} from "../utils/helpers-for-managing-subscriptions.js"
+import {getConnectedStoreDatabase} from "../database/get-connected-store-database.js"
 
 export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 	const {stripeLiaison, anonPolicy} = options
@@ -15,14 +16,17 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 			meta: xMeta,
 			headers: renraku.HttpHeaders,
 		) {
+
 		const auth = await anonPolicy(meta, headers)
+
 		const {connectId, connectDetails} =
 			await fetchStripeConnectDetails({
-				storeTables: auth.storeDatabase.tables,
+				storeConnectTables: auth.storeDatabaseUnconnected.tables.connect,
 				stripeLiaison: auth.stripeLiaison,
 			})
 
 		const connectStatus = determineConnectStatus(connectDetails)
+
 		if (connectStatus !== StripeConnectStatus.Ready)
 			throw new renraku.ApiError(
 				400,
@@ -31,11 +35,18 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 
 		const {stripeAccountId} = connectDetails
 		const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
+
+		const storeDatabase = getConnectedStoreDatabase(
+			auth.storeDatabaseUnconnected,
+			connectId,
+		)
+
 		return {
 			...auth,
 			connectId,
 			stripeAccountId,
 			stripeLiaisonAccount,
+			storeDatabase,
 		}
 	}
 
@@ -65,7 +76,6 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 					.create({})
 
 			customerRow = {
-				connectId,
 				userId,
 				stripeCustomerId,
 			}
@@ -88,17 +98,23 @@ export function makeStorePolicies<xMeta>(options: StoreApiOptions) {
 	async function merchant(meta: xMeta, headers: renraku.HttpHeaders) {
 		const auth = await connected(meta, headers)
 		auth.checker.requirePrivilege("manage store")
+
 		const {connectDetails} =
 			await fetchStripeConnectDetails({
-				storeTables: auth.storeDatabase.tables,
+				storeConnectTables: auth.storeDatabaseUnconnected.tables.connect,
 				stripeLiaison: auth.stripeLiaison,
 			})
 
 		const connectStatus = determineConnectStatus(connectDetails)
+
 		if (connectStatus !== StripeConnectStatus.Ready)
 			throw new renraku.ApiError(400, "stripe connect status not ready")
 
-		const helpers = helpersForManagingSubscriptions({...options, ...auth})
+		const helpers = helpersForManagingSubscriptions({
+			...options,
+			...auth,
+		})
+
 		return {...auth, helpers}
 	}
 

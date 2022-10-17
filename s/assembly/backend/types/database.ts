@@ -7,7 +7,7 @@ import {VideoSchema} from "../../../features/videos/types/video-schema.js"
 import {NotesSchema} from "../../../features/notes/api/tables/notes-schema.js"
 import {AppSchema} from "../../../features/auth/aspects/apps/types/app-tables.js"
 import {ExampleSchema} from "../../../features/example/api/types/example-tables.js"
-import {StoreSchema} from "../../../features/store/backend/database/types/schema.js"
+import {StoreSchemaUnconnected} from "../../../features/store/backend/database/types/schema.js"
 import {QuestionsSchema} from "../../../features/questions/api/types/questions-schema.js"
 import {SchemaToUnconstrainedTables} from "../../../framework/api/types/unconstrained-tables.js"
 
@@ -24,7 +24,7 @@ export type DatabaseSchemaUnisolated = dbmage.AsSchema<{
 export type DatabaseSchemaRequiresAppIsolation = dbmage.AsSchema<{
 	auth: AuthSchema
 	notes: NotesSchema
-	store: StoreSchema
+	store: StoreSchemaUnconnected
 	videos: VideoSchema
 	example: ExampleSchema
 	questions: QuestionsSchema

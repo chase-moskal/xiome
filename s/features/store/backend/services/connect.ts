@@ -14,12 +14,12 @@ export const makeConnectService = (options: StoreServiceOptions) =>
 renraku
 .service()
 .policy(options.storePolicies.guest)
-.expose(({access, stripeLiaison, storeDatabase, checker}) => ({
+.expose(({access, stripeLiaison, storeDatabaseUnconnected, checker}) => ({
 
 	async loadConnectStatus() {
 		const {connectDetails} = await fetchStripeConnectDetails({
 			stripeLiaison,
-			storeTables: storeDatabase.tables,
+			storeConnectTables: storeDatabaseUnconnected.tables.connect,
 		})
 		return determineConnectStatus(connectDetails)
 	},
@@ -29,7 +29,7 @@ renraku
 		async pause() {
 			const {connectDetails} = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: storeDatabase.tables,
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
 			})
 
 			const {stripeAccountId} = connectDetails
@@ -42,7 +42,7 @@ renraku
 				)
 
 			else
-				await storeDatabase
+				await storeDatabaseUnconnected
 					.tables
 					.connect
 					.accounts
@@ -55,7 +55,7 @@ renraku
 		async resume() {
 			const {connectDetails} = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: storeDatabase.tables,
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
 			})
 
 			const {stripeAccountId} = connectDetails
@@ -68,7 +68,7 @@ renraku
 				)
 
 			else
-				await storeDatabase
+				await storeDatabaseUnconnected
 					.tables
 					.connect
 					.accounts
@@ -84,7 +84,7 @@ renraku
 		async loadConnectDetails() {
 			const {connectDetails} = await fetchStripeConnectDetails({
 				stripeLiaison,
-				storeTables: storeDatabase.tables,
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
 			})
 			return {
 				connectDetails,
@@ -93,7 +93,7 @@ renraku
 		},
 
 		async disconnectStripeAccount() {
-			await storeDatabase
+			await storeDatabaseUnconnected
 				.tables
 				.connect
 				.active
@@ -102,8 +102,8 @@ renraku
 
 		async generateConnectPopup() {
 			const {connectDetails} = await fetchStripeConnectDetails({
-				storeTables: storeDatabase.tables,
 				stripeLiaison,
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
 			})
 			if (connectDetails) {
 				if (userIsOwnerOfStripeAccount(access, connectDetails))
@@ -123,14 +123,14 @@ renraku
 					access,
 					options,
 					stripeLiaison,
-					storeDatabase,
+					storeDatabaseUnconnected,
 				})
 		},
 
 		async generateStripeLoginLink() {
 			const {connectDetails} = await fetchStripeConnectDetails({
-				storeTables: storeDatabase.tables,
 				stripeLiaison,
+				storeConnectTables: storeDatabaseUnconnected.tables.connect,
 			})
 			const stripeAccountId = connectDetails?.stripeAccountId
 			return !stripeAccountId

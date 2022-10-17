@@ -8,7 +8,6 @@ import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.
 import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../services/subscriptions/types/drafts.js"
 
 export const helpersForManagingSubscriptions = ({
-		connectId,
 		storeDatabase,
 		stripeLiaisonAccount,
 		roleManager,
@@ -63,7 +62,6 @@ export const helpersForManagingSubscriptions = ({
 				.subscriptions
 				.plans
 				.create({
-					connectId,
 					planId,
 					label: planLabel,
 					time: Date.now(),
@@ -80,7 +78,6 @@ export const helpersForManagingSubscriptions = ({
 				.subscriptions
 				.tiers
 				.create({
-					connectId,
 					tierId,
 					planId,
 					label: tier.label,
@@ -129,7 +126,6 @@ export const helpersForManagingSubscriptions = ({
 				.subscriptions
 				.tiers
 				.create({
-					connectId,
 					time,
 					label,
 					tierId,
