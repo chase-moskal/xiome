@@ -37,7 +37,22 @@ export function riggedStripePopups({rig, mockStripeOperations}: {
 			return {popupId}
 		},
 
-		async openStoreCustomerPortal({popupId, stripeAccountId, stripeSessionUrl}) {
+		async openStoreCustomerPortal({
+			popupId, stripeAccountId, customer
+		}) {
+			if(rig.customerPortalAction === "link successful payment method"){
+				await mockStripeOperations.createNewDefaultPaymentMethod({
+					stripeAccountId, customer, isFailing: false
+				})
+			}
+			else if (rig.customerPortalAction === "link failing payment method"){
+				await mockStripeOperations.createNewDefaultPaymentMethod({
+					stripeAccountId, customer, isFailing: true
+				})
+			}
+			else if (rig.customerPortalAction === "detach payment method"){
+				await mockStripeOperations.removeAllPaymentMethods(customer)
+			}
 			return {popupId}
 		},
 	}
