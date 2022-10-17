@@ -50,7 +50,13 @@ export function makeConnectSubmodel({
 	return {
 		load,
 
-		get allowedToConnectStripeAccount() {
+		get isOnboardingNeeded() {
+			const {get} = stateSystem
+			return get.connect.status === StripeConnectStatus.Unlinked
+				|| !get.connect.details?.details_submitted
+		},
+
+		get isAllowedToOnboard() {
 			const {get} = stateSystem
 			const access = get.user.access
 
@@ -72,18 +78,6 @@ export function makeConnectSubmodel({
 				await services
 					.connect
 					.generatePopupForStripeAccountOnboarding()
-			const result =
-				await stripePopups
-					.connect(popupInfo)
-			if (result.details?.status === "return")
-				await reloadStore()
-		},
-
-		async stripeAccountUpdate() {
-			const popupInfo =
-				await services
-					.connect
-					.generatePopupForStripeAccountUpdate()
 			const result =
 				await stripePopups
 					.connect(popupInfo)

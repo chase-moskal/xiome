@@ -26,13 +26,18 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 		const {connectStatusOp} = state.stripeConnect
 		const {connectDetailsOp} = state.stripeConnect
 		const {
-			allowedToConnectStripeAccount,
+			isOnboardingNeeded,
+			isAllowedToOnboard,
 			stripeAccountOnboarding,
-			stripeAccountUpdate,
 			stripeLogin,
 			pause,
 			resume,
 		} = this.#storeModel.connect
+
+		const showOnboardingButton = (
+			isOnboardingNeeded
+			&& isAllowedToOnboard
+		)
 
 		return renderOp(connectStatusOp, status => {
 			const details = ops.value(connectDetailsOp)
@@ -42,13 +47,10 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 					<xio-button @press=${stripeLogin}>
 						Login to Stripe
 					</xio-button>
-					${allowedToConnectStripeAccount
+					${showOnboardingButton
 						? html`
 							<xio-button @press=${stripeAccountOnboarding}>
 								Onboard Stripe Account
-							</xio-button>
-							<xio-button @press=${stripeAccountUpdate}>
-								Update Stripe Account
 							</xio-button>
 						`
 						: null}

@@ -6,52 +6,8 @@ import {StripeLiaison} from "../stripe/liaison/types.js"
 import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {StripeConnectDetails} from "../../isomorphic/concepts.js"
 import {makeStripePopupSpec} from "../../popups/make-stripe-popup-spec.js"
-import {StoreConnectTables, StoreDatabaseUnconnected} from "../database/types/schema.js"
 import {fetchStripeConnectDetails} from "./fetch-stripe-connect-details.js"
-
-export async function createNewConnectAccountRecordsAndSetActive({
-		access,
-		stripeAccountId,
-		storeDatabaseUnconnected,
-		generateId,
-	}: {
-		access: AccessPayload
-		stripeAccountId: string
-		storeDatabaseUnconnected: StoreDatabaseUnconnected
-		generateId: () => dbmage.Id
-	}) {
-
-	const connectId = generateId()
-	const userId = dbmage.Id.fromString(access.user.userId)
-
-	await storeDatabaseUnconnected.transaction(async({tables}) => {
-		await tables
-			.connect
-			.accounts
-			.create({
-				connectId,
-
-				stripeAccountId,
-				charges_enabled: false,
-				payouts_enabled: false,
-				details_submitted: false,
-				email: undefined,
-
-				userId,
-				paused: false,
-				time: Date.now(),
-			})
-		await activateConnectAccount({
-			connectId,
-			storeConnectTables: tables.connect,
-		})
-	})
-
-	return {
-		connectId,
-		stripeAccountId,
-	}
-}
+import {StoreConnectTables, StoreDatabaseUnconnected} from "../database/types/schema.js"
 
 export function isUserOwnerOfStripeAccount(
 		access: AccessPayload,
@@ -99,9 +55,9 @@ export async function assertStripeConnectAccount({
 		generateId,
 	}: {
 		access: AccessPayload
-		generateId: () => dbmage.Id
 		stripeLiaison: StripeLiaison
 		storeDatabaseUnconnected: StoreDatabaseUnconnected
+		generateId: () => dbmage.Id
 	}) {
 
 	const {connectDetails} =
@@ -126,56 +82,7 @@ export async function assertStripeConnectAccount({
 	).connectDetails
 }
 
-export async function connectAccountOnboarding({
-		access,
-		options,
-		stripeLiaison,
-		storeDatabaseUnconnected,
-	}: {
-		access: AccessPayload
-		options: StoreApiOptions
-		stripeLiaison: StripeLiaison
-		storeDatabaseUnconnected: StoreDatabaseUnconnected
-	}) {
-
-	const {id: stripeAccountId} = await stripeLiaison
-		.accounts
-		.create({type: "standard"})
-
-	await createNewConnectAccountRecordsAndSetActive({
-		access,
-		stripeAccountId,
-		storeDatabaseUnconnected,
-		generateId: options.generateId,
-	})
-
-	return createConnectPopup({
-		options,
-		stripeLiaison,
-		stripeAccountId,
-		type: "account_onboarding",
-	})
-}
-
-export async function connectAccountUpdate({
-		options,
-		stripeLiaison,
-		connectDetails,
-	}: {
-		options: StoreApiOptions
-		stripeLiaison: StripeLiaison
-		connectDetails: StripeConnectDetails
-	}) {
-
-	return createConnectPopup({
-		options,
-		stripeLiaison,
-		type: "account_update",
-		stripeAccountId: connectDetails.stripeAccountId,
-	})
-}
-
-export async function activateConnectAccount({connectId, storeConnectTables}: {
+async function activateConnectAccount({connectId, storeConnectTables}: {
 		connectId: dbmage.Id
 		storeConnectTables: StoreConnectTables
 	}) {
@@ -185,10 +92,46 @@ export async function activateConnectAccount({connectId, storeConnectTables}: {
 	})
 }
 
-export async function deactivateConnectAccount({storeConnectTables}: {
-		storeConnectTables: StoreConnectTables
+async function createNewConnectAccountRecordsAndSetActive({
+		access,
+		stripeAccountId,
+		storeDatabaseUnconnected,
+		generateId,
+	}: {
+		access: AccessPayload
+		stripeAccountId: string
+		storeDatabaseUnconnected: StoreDatabaseUnconnected
+		generateId: () => dbmage.Id
 	}) {
-	await storeConnectTables
-		.active
-		.delete({conditions: false})
+
+	const connectId = generateId()
+	const userId = dbmage.Id.fromString(access.user.userId)
+
+	await storeDatabaseUnconnected.transaction(async({tables}) => {
+		await tables
+			.connect
+			.accounts
+			.create({
+				connectId,
+
+				stripeAccountId,
+				charges_enabled: false,
+				payouts_enabled: false,
+				details_submitted: false,
+				email: undefined,
+
+				userId,
+				paused: false,
+				time: Date.now(),
+			})
+		await activateConnectAccount({
+			connectId,
+			storeConnectTables: tables.connect,
+		})
+	})
+
+	return {
+		connectId,
+		stripeAccountId,
+	}
 }
