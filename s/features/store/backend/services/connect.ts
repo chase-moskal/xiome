@@ -96,12 +96,11 @@ renraku
 
 			const {stripeAccountId} = connectDetails
 
-			// // TODO decide if only the appointed account creator can continue onboarding
-			// if (!isUserOwnerOfStripeAccount(access, connectDetails))
-			// 	throw new renraku.ApiError(
-			// 		400,
-			// 		"only the owner of the stripe account can onboard it"
-			// 	)
+			if (!isUserOwnerOfStripeAccount(access, connectDetails))
+				throw new renraku.ApiError(
+					400,
+					"only the owner of the stripe account can onboard it"
+				)
 
 			return createConnectPopup({
 				options,
