@@ -4,12 +4,12 @@ import {getRando} from "dbmage"
 import {deathWithDignity} from "renraku"
 import {default as express} from "express"
 
-import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {configureMongo} from "../../../../assembly/backend/configurators/configure-mongo.js"
-import {configureStripe} from "../../../../assembly/backend/configurators/configure-stripe.js"
-import {assimilateStripe} from "../../../../assembly/backend/assimilators/assimilate-stripe.js"
-import {assimilateDatabase} from "../../../../assembly/backend/assimilators/assimilate-database.js"
-import {configureMockFileStorage} from "../../../../assembly/backend/configurators/configure-mock-file-storage.js"
+import {SecretConfig} from "../../../../../assembly/backend/types/secret-config.js"
+import {configureMongo} from "../../../../../assembly/backend/configurators/configure-mongo.js"
+import {configureStripe} from "../../../../../assembly/backend/configurators/configure-stripe.js"
+import {assimilateStripe} from "../../../../../assembly/backend/assimilators/assimilate-stripe.js"
+import {assimilateDatabase} from "../../../../../assembly/backend/assimilators/assimilate-database.js"
+import {configureMockFileStorage} from "../../../../../assembly/backend/configurators/configure-mock-file-storage.js"
 
 deathWithDignity()
 const config = json5.parse<SecretConfig>(process.env.XIOME_CONFIG)
