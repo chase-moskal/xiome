@@ -55,6 +55,7 @@ export const storeTestSetup = async() => ({
 		})
 
 		return {
+			circuit,
 			roles: {
 				merchant: [
 					storePrivileges["control stripe account"],

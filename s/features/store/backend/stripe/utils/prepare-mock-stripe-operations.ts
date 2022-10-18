@@ -169,6 +169,14 @@ export function prepareMockStripeOperations({
 		},
 		async removeAllPaymentMethods(customer: string) {
 			await stripeTables.paymentMethods.delete(dbmage.find({customer}))
-		}
+		},
+		wipeAll: {
+			async customers() {
+				await stripeTables.customers.delete({conditions: false})
+			},
+			async products() {
+				await stripeTables.products.delete({conditions: false})
+			},
+		},
 	}
 }
