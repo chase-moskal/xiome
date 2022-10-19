@@ -36,24 +36,22 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 	#renderButton() {
 		return html`
 			<xio-button @press=${this.#openPopup}>
-				<slot name="button-label">open customer portal</slot>
+				<slot>
+					billing panel
+				</slot>
 			</xio-button>
 		`
 	}
 
 	#renderMessageWhenStoreInactive() {
 		return html`
-			<slot name="not-ready">
-				the merchant's stripe account must be ready, to access the customer portal
-			</slot>
+			<slot name="not-ready"></slot>
 		`
 	}
 
 	#renderMessageWhenLoggedOut() {
 		return html`
-			<slot name="logged-out">
-				you must be logged in to access the customer portal.
-			</slot>
+			<slot name="logged-out"></slot>
 		`
 	}
 
@@ -65,10 +63,13 @@ export class XiomeStoreCustomerPortal extends mixinRequireShare<{
 			${renderOp(combinedOp, () => {
 				const {userLoggedIn, storeActive} = this.#storeModel.get.is
 				if (userLoggedIn) {
-					if (storeActive) return this.#renderButton()
-					else return this.#renderMessageWhenStoreInactive()
+					if (storeActive)
+						return this.#renderButton()
+					else
+						return this.#renderMessageWhenStoreInactive()
 				}
-				else return this.#renderMessageWhenLoggedOut()
+				else
+					return this.#renderMessageWhenLoggedOut()
 			})}
 		`
 	}

@@ -224,9 +224,9 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		}
 
 		return html`
-			<li data-plan=${plan.planId}>
-				<p>${plan.label}</p>
-				<div class=tiers>
+			<li data-plan=${plan.planId} part=plan>
+				<h4 part=planlabel>${plan.label}</h4>
+				<div class=tiers part=tiers>
 					${plan.tiers
 						.filter(tier => tier.active)
 						.map((tier, tierIndex) => this.#renderTier({
