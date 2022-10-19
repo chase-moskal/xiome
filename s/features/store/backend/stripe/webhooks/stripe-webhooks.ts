@@ -1,6 +1,7 @@
 
 import {Stripe} from "stripe"
 import * as dbmage from "dbmage"
+import {objectMap} from "@chasemoskal/snapstate"
 
 import {StripeLiaison} from "../liaison/types.js"
 import {StoreDatabaseRaw} from "../../database/types/schema.js"
@@ -16,10 +17,10 @@ export function stripeWebhooks(options: {
 		storeDatabaseRaw: StoreDatabaseRaw
 		prepareRoleManager: (appId: dbmage.Id) => RoleManager
 	}) {
+
 	const {logger, prepareRoleManager} = options
 
-	return {
-
+	const webhooks = {
 		async "account.updated"(event: Stripe.Event) {
 			const account = <Stripe.Account>event.data.object
 			const stripeAccountId = account.id
@@ -48,15 +49,17 @@ export function stripeWebhooks(options: {
 		},
 
 		async "customer.subscription.updated"(event: Stripe.Event) {
-			logger.info(
-				"stripe-webhook customer.subscription.updated",
-				event.data.object
-			)
-			const {appId, subscription, userId, storeDatabase, stripeLiaisonAccount} = (
-				await getSubscriptionDetails({...options, event})
-			)
+			const {
+				appId,
+				subscription,
+				userId,
+				storeDatabase,
+				stripeLiaisonAccount,
+			} = await getSubscriptionDetails({...options, event})
+
 			const roleManager = prepareRoleManager(appId)
 			const priceIds = getPriceIdsFromSubscription(subscription)
+
 			await fulfillSubscriptionRoles({
 				userId,
 				priceIds,
@@ -70,43 +73,9 @@ export function stripeWebhooks(options: {
 			})
 		},
 
-		async "checkout.session.completed"(event: Stripe.Event) {
-			logger.info("stripe-webhook checkout.session.completed:", event.data.object)
-
-			// const {session, storeDatabase, stripeLiaisonAccount}
-			// 	= await getSessionDetails({...options, event})
-
-			// debugger
-
-			// if (session.mode === "subscription") {
-			// 	// const priceIds = session.line_items.data
-			// 	// 	.map(item => getStripeId(item.price))
-			// 	// // const {tierRows} = await getTiersForStripePrices({priceIds, storeDatabase})
-
-			// 	const subscription = await stripeLiaisonAccount.subscriptions
-			// 		.retrieve(getStripeId(session.subscription))
-
-			// 	subscription;
-
-			// 	debugger
-
-			// 	// const unwantedSubscriptionItems = subscription.items.data
-			// 	// 	.filter(item => !priceIds.includes(getStripeId(item.price)))
-
-			// 	// for (const item of unwantedSubscriptionItems) {
-			// 	// 	await stripeLiaisonAccount.subscriptionItems.del(
-			// 	// 		item.id,
-			// 	// 		{proration_behavior: "create_prorations"}
-			// 	// 	)
-			// 	// }
-			// }
-		},
-
 		async "invoice.paid"(event: Stripe.Event) {
-			logger.info("stripe-webhook invoice.paid:", event.data.object)
-
-			const {invoice, appId, userId, storeDatabase, stripeLiaisonAccount}
-				= await getInvoiceDetails({...options, event})
+			const {invoice, appId, userId, storeDatabase, stripeLiaisonAccount} =
+				await getInvoiceDetails({...options, event})
 
 			const invoiceIsForSubscription = !!invoice.subscription
 			const roleManager = prepareRoleManager(appId)
@@ -124,15 +93,22 @@ export function stripeWebhooks(options: {
 			else
 				logger.error(`unknown 'invoice.paid' hook (not for a subscription)`)
 		},
-
-		async "invoice.payment_failed"(event: Stripe.Event) {
-			// logger.info("stripe-webhook invoice.payment_failed", event.data.object)
-		},
-		async "customer.subscription.created"(event: Stripe.Event) {},
-		async "customer.subscription.deleted"(event: Stripe.Event) {
-			// logger.info(
-			// 	"stripe-webhook customer.subscription.deleted", event.data.object
-			// )
-		},
 	}
+
+	type WebhookFunction = (event: Stripe.Event) => Promise<any>
+
+	const webhooksWithLogging = objectMap(
+		webhooks,
+		(webhookFunction: WebhookFunction, functionName) => <WebhookFunction>(
+			async event => {
+				logger.info(
+					`stripe-webhook ${functionName}:`,
+					event.data.object,
+				)
+				return webhookFunction(event)
+			}
+		)
+	)
+
+	return webhooksWithLogging
 }
