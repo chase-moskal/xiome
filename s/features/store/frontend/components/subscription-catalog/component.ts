@@ -3,6 +3,7 @@ import {html} from "lit"
 import {property} from "lit/decorators.js"
 
 import {makeStoreModel} from "../../model/model.js"
+import {RenderTier} from "../../views/render-tier.js"
 import {ops, Op} from "../../../../../framework/ops.js"
 import {preparePurchaseActions} from "./utils/subscription-actions.js"
 import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
@@ -177,32 +178,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		})()
 
 		return html`
-			<div
-				class="tier"
-				data-tier=${tier.tierId}
-				?data-subscribed=${isSubscribedToThisTier}>
-				<slot name="${tier.tierId}"></slot>
-				<div class=details>
-					<h2>${tier.label}</h2>
-					<xio-price-display
-						unit-superscript
-						vertical-currency
-						value=${centsToDollars(tier.pricing[0].price)}>
-						${tier.label}
-					</xio-price-display>
-					<p>monthly</p>
-				</div>
-				${info
-					? html`
-						<div class=label>
-							${info.stateLabel}
-							<button @click=${info.action}>
-								${info.buttonLabel}
-							</button>
-						</div>
-					`
-					: null}
-			</div>
+			${RenderTier({info, tier, isSubscribedToThisTier})}
 		`
 	}
 
