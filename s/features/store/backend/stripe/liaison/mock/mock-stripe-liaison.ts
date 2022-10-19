@@ -291,12 +291,12 @@ export function mockStripeLiaison({
 											stripeAccountId,
 											invoice,
 										)}
-									else {
-										await dispatchWebhook(
-											"invoice.payment_failed",
-											stripeAccountId,
-											invoice,
-										)}
+									// else {
+									// 	await dispatchWebhook(
+									// 		"invoice.payment_failed",
+									// 		stripeAccountId,
+									// 		invoice,
+									// 	)}
 								}
 							}
 						},
@@ -331,11 +331,11 @@ export function mockStripeLiaison({
 									current_period_start: existingSubscription.current_period_start
 								})
 								if(paymentMethodMetaData?.isFailing){
-									await dispatchWebhook(
-										"invoice.payment_failed",
-										stripeAccountId,
-										invoice,
-									)
+									// await dispatchWebhook(
+									// 	"invoice.payment_failed",
+									// 	stripeAccountId,
+									// 	invoice,
+									// )
 								}
 								else {
 									await dispatchWebhook(

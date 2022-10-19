@@ -88,33 +88,6 @@ export function prepareMockStripeOperations({
 				details_submitted: false,
 			})
 		},
-		// async completePaymentMethodCheckout(
-		// 		stripeAccountId: string, stripeSessionId: string, isFailing?: boolean
-		// 	) {
-		// 	const stripeLiaisonAccount = stripeLiaison.account(stripeAccountId)
-		// 	const session = await stripeTables
-		// 		.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
-		// 	const customer = <string>session.customer
-		// 	const paymentMethod = await mockHelpers.setPaymentMethod({
-		// 		customer,
-		// 		stripeLiaisonAccount,
-		// 	})
-		// 	await metaDataTables.paymentMethodMetaData.create({
-		// 		id: paymentMethod.id,
-		// 		isFailing
-		// 	})
-		// 	const setupIntent = await mockHelpers.createSetupIntent({
-		// 		customer,
-		// 		paymentMethod,
-		// 		stripeLiaisonAccount,
-		// 	})
-		// 	await dispatchWebhook("checkout.session.completed", stripeAccountId, {
-		// 		customer,
-		// 		mode: "setup",
-		// 		setup_intent: setupIntent.id,
-		// 		client_reference_id: session.client_reference_id,
-		// 	})
-		// },
 		async checkoutSubscriptionTier(stripeAccountId: string, stripeSessionId: string) {
 			const session = await stripeTables
 				.checkoutSessions.readOne(dbmage.find({id: stripeSessionId}))
@@ -138,13 +111,13 @@ export function prepareMockStripeOperations({
 				...dbmage.find({id: stripeSessionId}),
 				write: {subscription: subscription.id},
 			})
-			await dispatchWebhook("checkout.session.completed", stripeAccountId, {
-				customer,
-				mode: "subscription",
-				subscription,
-				client_reference_id: session.client_reference_id,
-				payment_intent: recentDetails.subscriptionCreation.paymentIntent,
-			})
+			// await dispatchWebhook("checkout.session.completed", stripeAccountId, {
+			// 	customer,
+			// 	mode: "subscription",
+			// 	subscription,
+			// 	client_reference_id: session.client_reference_id,
+			// 	payment_intent: recentDetails.subscriptionCreation.paymentIntent,
+			// })
 		},
 		async createNewDefaultPaymentMethod({
 				stripeAccountId, customer, isFailing,
