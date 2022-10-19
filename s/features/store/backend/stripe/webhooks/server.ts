@@ -31,7 +31,7 @@ const {stripe, stripeWebhooks} = await (async() => {
 
 const app = express()
 
-app.post("/", express.raw({type: "application/json"}), (request, response) => {
+app.post("/", express.raw({type: "application/json"}), async(request, response) => {
 	let event = request.body
 
 	if (typeof config.stripe === "object" && config.stripe.keys.webhookEndpointSecret) {
@@ -51,10 +51,16 @@ app.post("/", express.raw({type: "application/json"}), (request, response) => {
 
 	const webhook = stripeWebhooks[event.type]
 
-	if (webhook)
-		webhook(event)
-
-	response.send()
+	if (webhook) {
+		try {
+			await webhook(event)
+			response.sendStatus(200)
+		}
+		catch (error) {
+			console.error("webhook error:", error.message)
+			response.status(500).send("internal server error while executing webhook")
+		}
+	}
 })
 
 const {port} = config.stripe.webhookServer
