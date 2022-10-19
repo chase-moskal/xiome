@@ -22,8 +22,7 @@ export class XiomeMyAccount extends mixinRequireShare<{
 				.user=${user}
 				.saveProfile=${this.saveProfile}
 			></xio-profile-card>
-			<xiome-store-billing-area></xiome-store-billing-area>
-			<xiome-store-subscription-status></xiome-store-subscription-status>
+			<slot></slot>
 		`)
 	}
 }

@@ -31,6 +31,9 @@ export class XiomeStoreBillingArea extends mixinRequireShare<{
 				? null
 				: html`
 					<div class="billing_area">
+						<xiome-store-customer-portal>
+							<span slot="button-label">Billing Portal</span>
+						</xiome-store-customer-portal>
 						${card ? html`
 								<div>
 									<p>Payment Method</p>
@@ -38,9 +41,6 @@ export class XiomeStoreBillingArea extends mixinRequireShare<{
 								</div>
 							`
 							: null}
-						<xiome-store-customer-portal>
-							<span slot="button-label">Billing Portal</span>
-						</xiome-store-customer-portal>
 					</div>
 				`
 		})

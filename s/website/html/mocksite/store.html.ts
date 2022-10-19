@@ -49,7 +49,10 @@ mainHtml: html`
 		<h2>your account</h2>
 
 		<xiome-login-panel show-logout="show-logout">
-			<xiome-my-account></xiome-my-account>
+			<xiome-my-account>
+				<xiome-store-subscription-status></xiome-store-subscription-status>
+				<xiome-store-billing-area></xiome-store-billing-area>
+			</xiome-my-account>
 		</xiome-login-panel>
 
 	</section>

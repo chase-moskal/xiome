@@ -5,14 +5,8 @@ export default css`
 :host {
 	display: block;
 	width: max-content;
-	border: 1px dashed;
 	border-radius: 5px;
 }
-
-.body {
-	padding: 1rem;
-}
-
 
 .subscriptions {
 	display: flex;
