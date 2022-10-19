@@ -6,6 +6,7 @@ export function readXiomeMock(): XiomeMockConfig {
 	const {attr} = configReading("xiome-mock")
 	const rawMode = attr("mode")
 	return {
+		root: attr("root") ?? "",
 		mode: (
 			rawMode === undefined
 				? undefined

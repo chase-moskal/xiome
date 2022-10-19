@@ -93,7 +93,7 @@ export async function assimilateApi({
 			},
 			stripeLiaison,
 			generateId: rando.randomId,
-			popupReturnUrl: config.store.popupReturnUrl,
+			popupReturnUrl: config.webRoot + config.store.popupReturnUrl,
 		}),
 	})
 }

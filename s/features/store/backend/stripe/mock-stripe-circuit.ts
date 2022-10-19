@@ -14,10 +14,11 @@ import {PrepareRoleManager} from "../../../auth/aspects/permissions/interactions
 import {prepareWebhookDispatcherWithAntiCircularity} from "./utils/prepare-webhook-dispatcher-with-anti-circularity.js"
 
 export async function mockStripeCircuit({
-		logger, rando, tableStorage, storeDatabaseRaw,
+		logger, webRoot, rando, tableStorage, storeDatabaseRaw,
 		prepareRoleManager,
 	}: {
 		logger: Logger
+		webRoot: string
 		rando: dbmage.Rando
 		tableStorage: dbmage.FlexStorage
 		storeDatabaseRaw: StoreDatabaseRaw
@@ -33,6 +34,7 @@ export async function mockStripeCircuit({
 
 	const stripeLiaison = mockStripeLiaison({
 		rando,
+		rootUrl: webRoot,
 		recentDetails,
 		metaDataTables,
 		tables: stripeTables,

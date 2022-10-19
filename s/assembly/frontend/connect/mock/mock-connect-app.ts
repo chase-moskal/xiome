@@ -8,8 +8,9 @@ import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectApp({
-		appOrigin, origins, storage, appWindowLink,
+		root, appOrigin, origins, storage, appWindowLink,
 	}: {
+		root: string
 		appOrigin: string
 		origins: string[]
 		storage: FlexStorage
@@ -17,6 +18,7 @@ export async function mockConnectApp({
 	}) {
 
 	const backend = await backendForBrowser(storage)(mockConfig({
+		root,
 		platformHome: appWindowLink,
 		platformOrigins: origins,
 	}))

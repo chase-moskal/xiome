@@ -33,6 +33,7 @@ export async function assimilateStripe({
 
 	if (config.stripe === "mock-mode") {
 		return mockStripeCircuit({
+			webRoot: config.webRoot,
 			rando,
 			logger,
 			tableStorage: mockStorage,

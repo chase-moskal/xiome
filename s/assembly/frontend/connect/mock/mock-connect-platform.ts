@@ -7,8 +7,9 @@ import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectPlatform({
-		platformHome, storage,
+		root, platformHome, storage,
 	}: {
+		root: string
 		platformHome: string
 		storage: FlexStorage
 	}) {
@@ -16,6 +17,7 @@ export async function mockConnectPlatform({
 	const appOrigin = new URL(platformHome).origin
 
 	const backend = await backendForBrowser(storage)(mockConfig({
+		root,
 		platformHome,
 		platformOrigins: [appOrigin],
 	}))

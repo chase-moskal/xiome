@@ -2,22 +2,19 @@
 import {Querystrings} from "./types.js"
 import {encodeQuerystring} from "./utils/encode-querystring.js"
 
-export namespace makeFakestripePopupUrl {
-
-	export function connect(params: Querystrings.Connect) {
-		return `/mocksite/fakestripe/connect?${encodeQuerystring(params)}`
+export function makeFakestripePopupUrls(base: string) {
+	return {
+		connect(params: Querystrings.Connect) {
+			return `${base}/mocksite/fakestripe/connect?${encodeQuerystring(params)}`
+		},
+		login() {
+			return `${base}/mocksite/fakestripe/login`
+		},
+		customerPortal() {
+			return `${base}/mocksite/fakestripe/store-customer-portal`
+		},
+		checkout(params: Querystrings.Checkout) {
+			return `${base}/mocksite/fakestripe/checkout?${encodeQuerystring(params)}`
+		},
 	}
-
-	export function login() {
-		return `/mocksite/fakestripe/login`
-	}
-
-	export function customerPortal() {
-		return `/mocksite/fakestripe/store-customer-portal`
-	}
-
-	export function checkout(params: Querystrings.Checkout) {
-		return `/mocksite/fakestripe/checkout?${encodeQuerystring(params)}`
-	}
-
 }

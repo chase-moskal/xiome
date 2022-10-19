@@ -2,10 +2,12 @@
 import {SecretConfig} from "../types/secret-config.js"
 import {day, minute} from "../../../toolbox/goodtimes/times.js"
 
-export const mockConfig = ({platformHome, platformOrigins}: {
+export const mockConfig = ({root, platformHome, platformOrigins}: {
+		root: string
 		platformHome: string
 		platformOrigins: string[]
 	}): SecretConfig => ({
+	webRoot: root,
 	server: {
 		port: 4999,
 		detailedLogs: true,
@@ -27,7 +29,7 @@ export const mockConfig = ({platformHome, platformOrigins}: {
 	database: "mock-storage",
 	stripe: "mock-mode",
 	store: {
-		popupReturnUrl: "http://localhost:8080/popups/return",
+		popupReturnUrl: "/popups/return"
 	},
 	chat: {
 		port: 8001

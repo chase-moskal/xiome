@@ -13,6 +13,7 @@ export async function prepareMockAuth() {
 	const rando = await dbmage.getRando()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
+		root: "",
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
 	})

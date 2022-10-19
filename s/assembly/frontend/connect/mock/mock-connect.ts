@@ -7,6 +7,7 @@ import {XiomeMockConfig} from "../../types/xiome-config-mock.js"
 
 export async function mockConnect(config: XiomeMockConfig) {
 	const options = {
+		root: config.root,
 		origins: [window.location.origin],
 		appOrigin: window.location.origin,
 		storage: simpleFlexStorage(window.localStorage),

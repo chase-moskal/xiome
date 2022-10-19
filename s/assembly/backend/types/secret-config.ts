@@ -6,6 +6,7 @@ import {ConfigEmailMailgun} from "./config-email-mailgun.js"
 import {ConfigDatabaseMongo} from "./config-database-mongo.js"
 
 export interface SecretConfig {
+	webRoot: string
 	server: {
 		port: number
 		detailedLogs: boolean

@@ -13,6 +13,7 @@ void async function demos() {
 	const appOrigin = window.location.origin
 
 	const connection = await mockConnectApp({
+		root: "",
 		appWindowLink,
 		appOrigin,
 		origins: [appOrigin],

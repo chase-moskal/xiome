@@ -32,6 +32,7 @@ export const storeTestSetup = async() => ({
 
 		const circuit = await mockStripeCircuit({
 			rando,
+			webRoot: "",
 			tableStorage,
 			storeDatabaseRaw,
 			logger: new DisabledLogger(),

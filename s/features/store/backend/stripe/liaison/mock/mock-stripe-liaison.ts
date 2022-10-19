@@ -10,12 +10,18 @@ import {DispatchWebhook, MockStripeRecentDetails} from "../../types.js"
 import {prepareStandardRestResource} from "./utils/standard-rest-resource.js"
 import {MockStripeTables, MockAccount, MetaDataTables} from "./tables/types.js"
 import {mockSubscriptionMechanics} from "./utils/mock-subscription-mechanics.js"
-import {makeFakestripePopupUrl} from "../../../../popups/make-fakestripe-popup-urls.js"
+import {makeFakestripePopupUrls} from "../../../../popups/make-fakestripe-popup-urls.js"
 
 export function mockStripeLiaison({
-		rando, tables: rawTables, metaDataTables, recentDetails, dispatchWebhook,
+		rando,
+		rootUrl,
+		recentDetails,
+		metaDataTables,
+		tables: rawTables,
+		dispatchWebhook,
 	}: {
 		rando: Rando
+		rootUrl: string
 		tables: MockStripeTables
 		metaDataTables: MetaDataTables
 		recentDetails: MockStripeRecentDetails
@@ -24,6 +30,7 @@ export function mockStripeLiaison({
 
 	const generateId = () => rando.randomId().string
 	const makeStandardRestResource = prepareStandardRestResource({generateId})
+	const fakestripePopups = makeFakestripePopupUrls(rootUrl)
 
 	return {
 
@@ -44,7 +51,7 @@ export function mockStripeLiaison({
 			async createLoginLink(id) {
 				const loginLink: Partial<Stripe.LoginLink> = {
 					created: Date.now(),
-					url: makeFakestripePopupUrl.login(),
+					url: fakestripePopups.login(),
 				}
 				return stripeResponse(<Stripe.LoginLink>loginLink)
 			},
@@ -53,7 +60,7 @@ export function mockStripeLiaison({
 		accountLinks: {
 			async create(params) {
 				const accountLink: Partial<Stripe.AccountLink> = {
-					url: makeFakestripePopupUrl.connect({
+					url: fakestripePopups.connect({
 						return_url: params.return_url!,
 						refresh_url: params.refresh_url!,
 					}),
@@ -79,7 +86,7 @@ export function mockStripeLiaison({
 				billingPortal: {
 					async create(params: Stripe.BillingPortal.SessionCreateParams) {
 						return stripeResponse(<Stripe.BillingPortal.Session>{
-							url: makeFakestripePopupUrl.customerPortal(),
+							url: fakestripePopups.customerPortal(),
 							customer: params.customer
 						})
 					}
@@ -172,7 +179,7 @@ export function mockStripeLiaison({
 								mode: params.mode,
 								url: params.mode === "setup"
 									? undefined
-									: makeFakestripePopupUrl.checkout({
+									: fakestripePopups.checkout({
 										cancel_url: params.cancel_url!,
 										success_url: params.success_url!,
 									}),

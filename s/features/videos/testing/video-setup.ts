@@ -36,6 +36,7 @@ export async function videoSetup() {
 	const appId = rando.randomId()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
+		root: "",
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
 	})
