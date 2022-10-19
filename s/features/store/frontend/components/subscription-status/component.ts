@@ -92,7 +92,6 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 				? null
 				: html`
 					<div class="body">
-						<h3>Current Subscriptions</h3>
 						<div class="subscriptions">
 							${this.#subscribedPlans.map(this.#renderStatusCard)}
 						</div>
