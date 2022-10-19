@@ -5,216 +5,94 @@ import {SubscriptionStatus} from "../../../isomorphic/concepts.js"
 import {storeWithSubscriptionPlans} from "../../utils/common-setups.js"
 
 export default suite({
-	async "can view subscription plans"() {
-		const {api, clerk} = await storeWithSubscriptionPlans()
+	async "merchants, clerks and customers can view subscription plans"() {
+		const {api} = await storeWithSubscriptionPlans()
+		const {merchant, clerk, customer} = api.roles
 
-		const customer
-			= await api
-			.client(api.roles.customer)
-			.then(x => x.browserTab())
+		for (const role of [merchant, clerk, customer]) {
+			const {store} = await api
+				.client(role)
+				.then(x => x.browserTab())
 
-		const plansForCustomer = customer.store.get.subscriptions.plans
-		expect(plansForCustomer.length).equals(1)
-
-		const plansForClerk = clerk.store.get.subscriptions.plans
-		expect(plansForClerk.length).equals(1)
+			const plans = store.get.subscriptions.plans
+			expect(plans.length).equals(2)
+		}
 	},
+
+	"subscription purchases x": {
+		async "merchants, clerks and customers can purchase a subscription with an existing payment method"() {
+			const {api, getMySubscription} = await storeWithSubscriptionPlans()
+			const {merchant, clerk, customer} = api.roles
+
+			for (const role of [merchant, clerk, customer]) {
+				const {store} = await api
+					.client(role)
+					.then(x => x.browserTab())
+
+				expect(store.get.billing.paymentMethod).not.ok()
+				await store.billing.customerPortal()
+				expect(store.get.billing.paymentMethod).ok()
+
+				const {tierId, pricing} 
+					= store.get.subscriptions.plans[0].tiers[0]
+				const {stripePriceId} = pricing[0]
+
+				await store
+					.subscriptions
+					.purchase({stripePriceId})
+
+				expect(getMySubscription(store, tierId).tierId).equals(tierId)
+			}
+		},
 	
-	"subscription purchases": {
-		"a user with customer permissions": {
-			async "can purchase a subscription, with an existing payment method"() {
-				const {api} = await storeWithSubscriptionPlans()
-				const customer
-					= await api
-					.client(api.roles.customer)
+		async "merchants, clerks and customers cannot purchase a subscription with a failing payment method"() {
+			const {api, getMySubscription} = await storeWithSubscriptionPlans()
+			const {merchant, clerk, customer} = api.roles
+
+			for (const role of [merchant, clerk, customer]) {
+				const {store, rig} = await api
+					.client(role)
 					.then(x => x.browserTab())
 
-				expect(customer.store.get.billing.paymentMethod).not.ok()
-				await customer.store.billing.customerPortal()
-				expect(customer.store.get.billing.paymentMethod).ok()
+				rig.customerPortalAction = "link failing payment method"
+				await store.billing.customerPortal()
 
 				const {tierId, pricing} 
-					= customer.store.get.subscriptions.plans[0].tiers[0]
+					= store.get.subscriptions.plans[0].tiers[0]
 				const {stripePriceId} = pricing[0]
 
-				function getMySubscription() {
-					return customer
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-						.find(subscription => subscription.tierId === tierId)
-				}
-
-				await customer
-					.store
+				await store
 					.subscriptions
 					.purchase({stripePriceId})
-				expect(getMySubscription().tierId).equals(tierId)
-			},
-			async "cannot purchase a subscription, with a failing payment method"() {
-				const {api} = await storeWithSubscriptionPlans()
-				const customer
-					= await api
-					.client(api.roles.customer)
+
+				expect(getMySubscription(store, tierId).status).equals(SubscriptionStatus.Unpaid)
+			}
+		},
+
+		async "merchants, clerks and customers can purchase multiple subscriptions for different plans"() {
+			const {api} = await storeWithSubscriptionPlans()
+			const {merchant, clerk, customer} = api.roles
+
+			for (const role of [merchant, clerk, customer]) {
+				const {store} = await api
+					.client(role)
 					.then(x => x.browserTab())
 
-				customer.rig.customerPortalAction = "link failing payment method"
-				await customer.store.billing.customerPortal()
-
-				const {tierId, pricing} 
-					= customer.store.get.subscriptions.plans[0].tiers[0]
-				const {stripePriceId} = pricing[0]
-
-				function getMySubscription() {
-					return customer
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-						.find(subscription => subscription.tierId === tierId)
-				}
-
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId})
-				expect(getMySubscription().status).equals(SubscriptionStatus.Unpaid)
-			},
-			async "can cancel and uncancel a subscription"() {
-				const {api} = await storeWithSubscriptionPlans()
-				const customer =
-					await api
-						.client(api.roles.customer)
-						.then(x => x.browserTab())
-
-				const {tierId, pricing} 
-					= customer.store.get.subscriptions.plans[0].tiers[0]
-				const {stripePriceId} = pricing[0]
-
-				function getMySubscription() {
-					return customer
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-						.find(subscription => subscription.tierId === tierId)
-				}
-
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId})
-				expect(getMySubscription().status).equals(SubscriptionStatus.Active)
-
-				await customer.store.subscriptions.cancel(tierId)
-				expect(getMySubscription().status).equals(SubscriptionStatus.Cancelled)
-
-				await customer.store.subscriptions.uncancel(tierId)
-				expect(getMySubscription().status).equals(SubscriptionStatus.Active)
-			},
-			async "can upgrade a subscription to a higher tier"() {
-				const {api} = await storeWithSubscriptionPlans()
-
-				const customer =
-					await api
-						.client(api.roles.customer)
-						.then(x => x.browserTab())
-
-				function getMySubscription(tierId: string) {
-					return customer
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-						.find(subscription => subscription.tierId === tierId)
-				}
-
-				const tier1 = customer.store.get.subscriptions.plans[0].tiers[0]
-				const stripePriceId1 = tier1.pricing[0].stripePriceId
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId: stripePriceId1})
-				expect(getMySubscription(tier1.tierId).tierId).equals(tier1.tierId)
-
-				const tier2 = customer.store.get.subscriptions.plans[0].tiers[1]
-				const stripePriceId2 = tier2.pricing[0].stripePriceId
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId: stripePriceId2})
-				expect(getMySubscription(tier2.tierId).tierId).equals(tier2.tierId)
-			},
-			async "can downgrade a subscription to a lower tier"() {
-				const {api} = await storeWithSubscriptionPlans()
-				const customer =
-					await api
-						.client(api.roles.customer)
-						.then(x => x.browserTab())
-
-				function getMySubscription(tierId: string) {
-					return customer
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-						.find(subscription => subscription.tierId === tierId)
-				}
-
-				const tier2 = customer.store.get.subscriptions.plans[0].tiers[1]
-				const stripePriceId2 = tier2.pricing[0].stripePriceId
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId: stripePriceId2})
-				expect(getMySubscription(tier2.tierId).tierId).equals(tier2.tierId)
-
-				const tier1 = customer.store.get.subscriptions.plans[0].tiers[0]
-				const stripePriceId1 = tier1.pricing[0].stripePriceId
-				await customer
-					.store
-					.subscriptions
-					.purchase({stripePriceId: stripePriceId1})
-				expect(getMySubscription(tier1.tierId).tierId).equals(tier1.tierId)
-			},
-			async "can purchase multiple subscriptions for different plans"() {
-				const {api, clerk} = await storeWithSubscriptionPlans()
-				await clerk
-					.store.subscriptions.addPlan({
-						planLabel: "bees",
-						tier: {
-							label: "worker bee",
-							pricing: {
-								currency: "usd",
-								interval: "month",
-								price: 4_00,
-							},
-						},
-					})
-
-				const customer
-					= await api
-						.client(api.roles.customer)
-						.then(x => x.browserTab())
-
-				const tier1 = customer.store.get.subscriptions.plans[0].tiers[0]
-				const tier2 = customer.store.get.subscriptions.plans[1].tiers[0]
+				const tier1 = store.get.subscriptions.plans[0].tiers[0]
+				const tier2 = store.get.subscriptions.plans[1].tiers[0]
 
 				const stripePriceId1 = tier1.pricing[0].stripePriceId
 				const stripePriceId2 = tier2.pricing[0].stripePriceId
 
-				await customer.store.subscriptions.purchase({
+				await store.subscriptions.purchase({
 					stripePriceId: stripePriceId1
 				})
-				await customer.store.subscriptions.purchase({
+				await store.subscriptions.purchase({
 					stripePriceId: stripePriceId2
 				})
 
 				const subscriptionDetails 
-					= customer
-						.store
-						.get
+					= store.get
 						.subscriptions
 						.mySubscriptionDetails
 
@@ -224,51 +102,69 @@ export default suite({
 				
 				expect(planIds.length).equals(2)
 				expect(planIds[0]).not.equals(planIds[1])
-			},
+			}
 		},
-		"a user with clerk permissions": {
-			async "can purchase a subscription to a tier in their own store"() {
-				const {clerk} = await storeWithSubscriptionPlans()
 
-				function getSubscriptions() {
-					return clerk
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-				}
-				expect(getSubscriptions().length).equals(0)
+		async "merchants, clerks and customers can cancel and uncancel a subscription"() {
+			const {api, getMySubscription} = await storeWithSubscriptionPlans()
+			const {merchant, clerk, customer} = api.roles
 
-				const {pricing} = clerk.store.get.subscriptions.plans[0].tiers[0]
-				const {stripePriceId} = pricing[0]
-
-				await clerk.store.subscriptions.purchase({stripePriceId})
-				expect(getSubscriptions().length).equals(1)
-			},
-		},
-		"a user with merchant permissions": {
-			async "can purchase a subscription to a tier in their own store"() {
-				const {api} = await storeWithSubscriptionPlans()
-
-				const merchant = await api
-					.client(api.roles.merchant)
+			for (const role of [merchant, clerk, customer]) {
+				const {store} = await api
+					.client(role)
 					.then(x => x.browserTab())
 
-				function getSubscriptions() {
-					return merchant
-						.store
-						.get
-						.subscriptions
-						.mySubscriptionDetails
-				}
-				expect(getSubscriptions().length).equals(0)
+				const tier1 = store.get.subscriptions.plans[0].tiers[0]
+				const stripePriceId1 = tier1.pricing[0].stripePriceId
+				await store
+					.subscriptions
+					.purchase({stripePriceId: stripePriceId1})
+				expect(getMySubscription(store, tier1.tierId).tierId).equals(tier1.tierId)
 
-				const {pricing} = merchant.store.get.subscriptions.plans[0].tiers[0]
-				const {stripePriceId} = pricing[0]
+				const tier2 = store.get.subscriptions.plans[0].tiers[1]
+				const stripePriceId2 = tier2.pricing[0].stripePriceId
+				await store
+					.subscriptions
+					.purchase({stripePriceId: stripePriceId2})
+				expect(getMySubscription(store, tier2.tierId).tierId).equals(tier2.tierId)
+			}
+		},
 
-				await merchant.store.subscriptions.purchase({stripePriceId})
-				expect(getSubscriptions().length).equals(1)
-			},
+		async "merchants, clerks and customers can upgrade and downgrade a subscription"() {
+			const {api, getMySubscription} = await storeWithSubscriptionPlans()
+			const {merchant, clerk, customer} = api.roles
+
+			for (const role of [merchant, clerk, customer]) {
+				const {store} = await api
+					.client(role)
+					.then(x => x.browserTab())
+
+				const plan = store.get.subscriptions.plans[0]
+				const tier1 = plan.tiers[0]
+				const tier2 = plan.tiers[1]
+
+				const stripePriceId1 = tier1.pricing[0].stripePriceId
+				const stripePriceId2 = tier2.pricing[0].stripePriceId
+
+				await store
+					.subscriptions
+					.purchase({stripePriceId: stripePriceId1})
+
+				const upgrade = async() => await store
+					.subscriptions
+					.purchase({stripePriceId: stripePriceId2})
+
+				const downgrade = async() => await store
+					.subscriptions
+					.purchase({stripePriceId: stripePriceId1})
+
+				expect(getMySubscription(store, tier1.tierId).tierId).equals(tier1.tierId)
+				await upgrade()
+				expect(getMySubscription(store, tier2.tierId).tierId).equals(tier2.tierId)
+				await downgrade()
+				expect(getMySubscription(store, tier1.tierId).tierId).equals(tier1.tierId)
+			}
 		},
 	},
+
 })

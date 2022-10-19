@@ -1,5 +1,6 @@
 
 import {storeTestSetup} from "./store-test-setup.js"
+import {makeStoreModel} from "../../frontend/model/model.js"
 
 export async function connectedStore() {
 	const api = await storeTestSetup()
@@ -53,6 +54,31 @@ export async function storeWithSubscriptionPlans() {
 				price: 10_000,
 			},
 		})
-	
-	return {api, clerk}
+
+	await clerk
+		.store
+		.subscriptions
+		.addPlan({
+			planLabel: "bees",
+			tier: {
+				label: "worker bee",
+				pricing: {
+					currency: "usd",
+					interval: "month",
+					price: 4_00,
+				},
+			},
+		})
+
+	function getMySubscription(
+			store: ReturnType<typeof makeStoreModel>,
+			tierId: string
+		) {
+		return store.get
+			.subscriptions
+			.mySubscriptionDetails
+			.find(subscription => subscription.tierId === tierId)
+		}
+
+	return {api, clerk, getMySubscription}
 }
