@@ -2,6 +2,10 @@
 xiome store feature
 ===================
 
+> ⚠️ known deficiencies:
+> - retry mechanisms that handle stripe rate-limiting is not implemented. it should be.
+> - handling for closed stripe accounts is not implemented. it should be.
+
 the store feature allows xiome community creators ("merchants") to sell subscriptions and digital products to customers.
 
 - it's a stripe integration.
