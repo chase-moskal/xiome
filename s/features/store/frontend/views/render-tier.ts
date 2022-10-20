@@ -3,18 +3,17 @@ import {html} from "lit"
 import {view} from "@chasemoskal/magical/x/view/view.js"
 import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 
-import {TierInfo} from "../utils/apprehend-tier-info.js"
-import {SubscriptionTier} from "../../isomorphic/concepts.js"
 import {centsToDollars} from "../components/subscription-planning/ui/price-utils.js"
+import {getButtonLabel, getStatusLabel, TierBasics, TierContext, TierInteractivity} from "../utils/apprehend-tier-info.js"
 
 export const RenderTier = view(use => ({
-		info,
-		tier,
-		isSubscribedToThisTier,
+		basics: {tier},
+		context: {isSubscribedToThisTier, status},
+		interactivity,
 	}: {
-		info: TierInfo | undefined
-		tier: SubscriptionTier
-		isSubscribedToThisTier: boolean
+		basics: TierBasics
+		context: TierContext
+		interactivity: TierInteractivity | undefined
 	}) => {
 
 	return html`
@@ -37,14 +36,18 @@ export const RenderTier = view(use => ({
 			</div>
 
 			${
-				info ? html`
-					<div class=label>
-						${info.stateLabel}
-						<button @click=${info.action}>
-							${info.buttonLabel}
-						</button>
-					</div>
-				` : null
+				interactivity
+					? html`
+						<div class=label>
+							<div class=state>
+								${getStatusLabel(status)}
+							</div>
+							<button @click=${interactivity.action}>
+								${getButtonLabel(interactivity.button)}
+							</button>
+						</div>
+					`
+					: null
 			}
 		</div>
 	`

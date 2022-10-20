@@ -13,6 +13,8 @@ import {mixinStyles, mixinRequireShare, Component} from "../../../../../framewor
 import {determinePurchaseScenario} from "../../../isomorphic/utils/determine-purchase-scenario.js"
 import {SubscriptionTier, SubscriptionDetails, SubscriptionStatus, PurchaseScenario, SubscriptionPlan} from "../../../isomorphic/concepts.js"
 
+import {ascertainTierContext, ascertainTierInteractivity, TierBasics} from "../../utils/apprehend-tier-info.js"
+
 import styles from "./styles.js"
 
 @mixinStyles(styles)
@@ -24,201 +26,70 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 	@property({type: String})
 	["allow-plans"]: string
 
-	get #state() {
-		return this.share.storeModel.snap.readable
-	}
-
-	get #modals() {
-		return this.share.modals
+	get #storeModel() {
+		return this.share.storeModel
 	}
 
 	get #plans() {
 		const allowedPlans = this["allow-plans"]?.match(/(\w+)/g)
-		const plans = ops.value(this.#state.subscriptions.subscriptionPlansOp)
-			?? []
+		const plans = this.#storeModel.get.subscriptions.plans ?? []
 		const activePlans = plans
 			.filter(plan => !plan.archived)
 			.filter(plan => plan.tiers.length)
-		if(!!this["allow-plans"]) {
-			return activePlans.filter(plan => allowedPlans.includes(plan.planId))
-		}
-		return activePlans
-	}
-
-	get #subscriptions() {
-		return ops.value(this.#state.subscriptions.mySubscriptionDetailsOp)
+		return !!this["allow-plans"]
+			? activePlans.filter(plan => allowedPlans.includes(plan.planId))
+			: activePlans
 	}
 
 	@property()
 	private op: Op<void> = ops.ready(undefined)
 
-	#renderTier = ({
-			tier, tierIndex,
-			subscribedTierIndex,
-			subscription,
-		}: {
-			tier: SubscriptionTier
-			tierIndex: number
-			subscription: SubscriptionDetails
-			subscribedTierIndex: number | undefined
-		}) => {
-		const {storeModel} = this.share
-		const {tierId} = tier
-		const isSubscribedToThisTier = tierIndex === subscribedTierIndex
-		const noExistingSubscriptionForPlan = subscribedTierIndex === undefined
-		const tierSubscription = this.#subscriptions.find(
-			subscription => subscription.tierId === tierId
-		)
-		const subscriptionStatus = tierSubscription?.status
-			?? SubscriptionStatus.Unsubscribed
-		const {subscriptions, billing} = storeModel
-		const isAnotherTierInPlanUnpaid = (
-			subscription
-			&& !isSubscribedToThisTier
-			&& subscription.status === SubscriptionStatus.Unpaid
-		)
-
-		type Info = {
-			stateLabel: string
-			buttonLabel: string
-			action: () => Promise<void>
-		}
-
-		const info = ((): Info | undefined => {
-			switch (subscriptionStatus) {
-
-				case SubscriptionStatus.Unsubscribed:
-					const buttonLabel = noExistingSubscriptionForPlan
-						? "buy"
-						: (subscribedTierIndex > tierIndex)
-							? "downgrade"
-							: "upgrade"
-					return isAnotherTierInPlanUnpaid
-						? undefined
-						: {
-							stateLabel: "",
-							buttonLabel,
-							action: async () => {
-								const {
-									upgradeOrDowngrade,
-									buySubscriptionWithCheckoutPopup,
-									buySubscriptionWithExistingPaymentMethod,
-								} = preparePurchaseActions({
-									storeModel: this.share.storeModel,
-									modals: this.#modals,
-									buttonLabel,
-									tier
-								})
-
-								const scenario = determinePurchaseScenario({
-									hasDefaultPaymentMethod: !!storeModel.get.billing.paymentMethod,
-									hasExistingSubscription: !noExistingSubscriptionForPlan
-								})
-
-								switch (scenario) {
-									case PurchaseScenario.Update:
-										return await upgradeOrDowngrade()
-
-									case PurchaseScenario.UsePaymentMethod:
-										return await buySubscriptionWithExistingPaymentMethod()
-
-									case PurchaseScenario.CheckoutPopup:
-										return await ops.operation({
-											promise: buySubscriptionWithCheckoutPopup(),
-											setOp: newOp => this.op = newOp
-										})
-
-									default:
-										throw new Error("unknown purchase scenario");
-								}
-							}
-						}
-
-				case SubscriptionStatus.Active:
-					return {
-						stateLabel: "purchased",
-						buttonLabel: "cancel",
-						action: async () => {
-							await this.#modals.confirmAction({
-								title: "Cancel subscription",
-								message: `are you sure you want to cancel your ${tier.label} subscription`,
-								loadingMessage: "cancelling subscription",
-								actionWhenConfirmed: () => subscriptions.cancel(tierId)
-							})
-						},
-					}
-
-				case SubscriptionStatus.Unpaid:
-					return {
-						stateLabel: "payment failed",
-						buttonLabel: "update now",
-						action: async() => await ops.operation({
-							promise: billing.customerPortal(),
-							setOp: newOp => this.op = newOp
-						}),
-					}
-
-				case SubscriptionStatus.Cancelled:
-					return {
-						stateLabel: "cancelled",
-						buttonLabel: "renew",
-						action: async () => {
-							await this.#modals.confirmAction({
-								title: "Renew subscription",
-								message: `are you sure you want to renew your ${tier.label} subscription for $${centsToDollars(tier.pricing[0].price)}/month?`,
-								loadingMessage: "renewing subscription",
-								actionWhenConfirmed: () => subscriptions.uncancel(tierId),
-							})
-						},
-					}
-
-				default:
-					throw new Error("unknown subscription status")
-			}
-		})()
-
-		return html`
-			${RenderTier({info, tier, isSubscribedToThisTier})}
-		`
-	}
-
 	#renderPlan = (plan: SubscriptionPlan) => {
-		const tiers = plan.tiers.filter(tier => tier.active)
-
-		let subscription: SubscriptionDetails
-		let subscribedTierIndex = undefined as number
-
-		for (const [index, tier] of tiers.entries()) {
-			const foundSubscription = this.#subscriptions.find(
-				sub => sub.tierId === tier.tierId
-			)
-			if (foundSubscription) {
-				subscription = foundSubscription
-				subscribedTierIndex = index
-				break
-			}
-		}
-
+		const {storeModel, modals} = this.share
+		const {mySubscriptionDetails} = this.#storeModel.get.subscriptions
 		return html`
 			<li data-plan=${plan.planId} part=plan>
 				<h4 part=planlabel>${plan.label}</h4>
 				<div class=tiers part=tiers>
-					${plan.tiers
-						.filter(tier => tier.active)
-						.map((tier, tierIndex) => this.#renderTier({
-							tier, tierIndex, subscribedTierIndex, subscription,
-						}))}
+					${
+						plan.tiers
+							.filter(tier => tier.active)
+							.map((tier) => {
+								const basics: TierBasics = {
+									plan,
+									tier,
+									mySubscriptionDetails,
+								}
+								const context = ascertainTierContext(basics)
+								const interactivity = ascertainTierInteractivity({
+									basics,
+									context,
+									modals,
+									storeModel,
+									paymentMethod: storeModel.get.billing.paymentMethod,
+									setOp: op => this.op = op,
+								})
+								return RenderTier({
+									context,
+									interactivity,
+									basics: {tier, plan, mySubscriptionDetails},
+								})
+							})
+					}
 				</div>
 			</li>
 		`
 	}
 
 	render() {
+		const {subscriptionPlansOp, mySubscriptionDetailsOp} = (
+			this.#storeModel.state.subscriptions
+		)
 		return renderOp(
 			ops.combine(
 				this.op,
-				this.#state.subscriptions.subscriptionPlansOp,
-				this.#state.subscriptions.mySubscriptionDetailsOp,
+				subscriptionPlansOp,
+				mySubscriptionDetailsOp,
 			),
 			() => html`
 				<ol class=plans>
