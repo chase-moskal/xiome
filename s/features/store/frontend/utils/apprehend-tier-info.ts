@@ -31,7 +31,7 @@ export interface TierContext {
 	subscription: SubscriptionDetails | undefined
 	tierIndex: number
 	status: SubscriptionStatus
-	subscribedTierIndex: number
+	subscribedTierIndex: number | undefined
 	isSubscribedToThisTier: boolean
 	isAnotherTierInPlanUnpaid: boolean
 }
@@ -84,31 +84,33 @@ export function ascertainTierContext({
 
 	const {tierId} = tier
 
-	const subscription = (
-		mySubscriptionDetails
-			.find(s => s.planId === plan.planId)
-	)
-
-	const status = (
-		subscription?.status
-			?? SubscriptionStatus.Unsubscribed
-	)
-
 	const tierIndex = (
 		plan
 			.tiers
 			.findIndex(t => t.tierId === tierId)
 	)
 
-	const subscribedTierIndex = (
+	const subscription = (
+		mySubscriptionDetails
+			.find(s => s.planId === plan.planId)
+	)
+
+	const subscribedTierIndex = subscription && (
 		plan
 			.tiers
 			.findIndex(t => t.tierId === subscription.tierId)
 	)
 
-	const isSubscribedToThisTier = (
+	const isSubscribedToThisTier = !!subscription && (
 		tierIndex === subscribedTierIndex
 	)
+
+	const status = isSubscribedToThisTier
+		? (
+			subscription?.status
+				?? SubscriptionStatus.Unsubscribed
+		)
+		: SubscriptionStatus.Unsubscribed
 
 	const isAnotherTierInPlanUnpaid = (
 		subscription

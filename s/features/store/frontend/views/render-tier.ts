@@ -28,7 +28,6 @@ export const RenderTier = view(use => ({
 				<h2>${tier.label}</h2>
 				<xio-price-display
 					unit-superscript
-					vertical-currency
 					value=${centsToDollars(tier.pricing[0].price)}>
 					${tier.label}
 				</xio-price-display>
@@ -67,7 +66,7 @@ RenderTier.css = css`
 		flex-direction: column;
 		justify-content: space-between;
 
-		heigth: 8rem;
+		height: 100%;
 		font: inherit;
 		color: inherit;
 
@@ -106,7 +105,7 @@ RenderTier.css = css`
 				color: inherit;
 				background: transparent;
 				opacity: 0.7;
-			
+
 				^:is(:hover, :focus) {
 					opacity: 1;
 				}

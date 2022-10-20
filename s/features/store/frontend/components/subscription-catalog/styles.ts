@@ -15,6 +15,9 @@ ol, ul {
 	flex-direction: row;
 	gap: 0.5em;
 	align-items: stretch;
+	^ > span {
+		display: block;
+	}
 }
 
 `

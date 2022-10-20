@@ -5,13 +5,10 @@ import {property} from "lit/decorators.js"
 import {makeStoreModel} from "../../model/model.js"
 import {RenderTier} from "../../views/render-tier.js"
 import {ops, Op} from "../../../../../framework/ops.js"
-import {preparePurchaseActions} from "./utils/subscription-actions.js"
-import {centsToDollars} from "../subscription-planning/ui/price-utils.js"
+import {SubscriptionPlan} from "../../../isomorphic/concepts.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"
-import {determinePurchaseScenario} from "../../../isomorphic/utils/determine-purchase-scenario.js"
-import {SubscriptionTier, SubscriptionDetails, SubscriptionStatus, PurchaseScenario, SubscriptionPlan} from "../../../isomorphic/concepts.js"
 
 import {ascertainTierContext, ascertainTierInteractivity, TierBasics} from "../../utils/apprehend-tier-info.js"
 
@@ -69,6 +66,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 									paymentMethod: storeModel.get.billing.paymentMethod,
 									setOp: op => this.op = op,
 								})
+								console.log(tier.label, context)
 								return RenderTier({
 									context,
 									interactivity,
