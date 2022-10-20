@@ -5,7 +5,7 @@ import {SubscriptionStatus} from "../../../../isomorphic/concepts.js"
 export function ascertainTierContext({
 		tier,
 		plan,
-		mySubscriptionDetails,
+		subscription,
 	}: TierBasics): TierContext {
 
 	const {tierId} = tier
@@ -14,11 +14,6 @@ export function ascertainTierContext({
 		plan
 			.tiers
 			.findIndex(t => t.tierId === tierId)
-	)
-
-	const subscription = (
-		mySubscriptionDetails
-			.find(s => s.planId === plan.planId)
 	)
 
 	const subscribedTierIndex = subscription && (

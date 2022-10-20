@@ -24,13 +24,9 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 	@property({type: String})
 	["allow-plans"]: string
 
-	get #storeModel() {
-		return this.share.storeModel
-	}
-
 	get #plans() {
 		const allowedPlans = this["allow-plans"]?.match(/(\w+)/g)
-		const plans = this.#storeModel.get.subscriptions.plans ?? []
+		const plans = this.share.storeModel.get.subscriptions.plans ?? []
 		const activePlans = plans
 			.filter(plan => !plan.archived)
 			.filter(plan => plan.tiers.length)
@@ -44,13 +40,19 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 
 	#renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
 		const {storeModel, modals} = this.share
-		const {mySubscriptionDetails} = this.#storeModel.get.subscriptions
+		const {mySubscriptionDetails} = storeModel.get.subscriptions
+		const subscription =
+			mySubscriptionDetails
+				.find(s => s.planId === plan.planId)
+
 		const basics: TierBasics = {
 			plan,
 			tier,
-			mySubscriptionDetails,
+			subscription,
 		}
+
 		const context = ascertainTierContext(basics)
+
 		const interactivity = ascertainTierInteractivity({
 			basics,
 			context,
@@ -58,18 +60,18 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 			storeModel,
 			setOp: op => this.op = op,
 		})
-		console.log(tier.label, context)
+
 		return TierView({
 			context,
 			interactivity,
-			basics: {tier, plan, mySubscriptionDetails},
+			basics: {tier, plan, subscription},
 		})
 	}
 
 	#renderPlan = (plan: SubscriptionPlan) => {
 		return html`
 			<li data-plan=${plan.planId} part=plan>
-				<h4 part=planlabel>${plan.label}</h4>
+				<h3 part=planlabel>${plan.label}</h3>
 				<div class=tiers part=tiers>
 					${
 						plan.tiers
@@ -82,14 +84,12 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 	}
 
 	render() {
-		const {subscriptionPlansOp, mySubscriptionDetailsOp} = (
-			this.#storeModel.state.subscriptions
-		)
+		const {state} = this.share.storeModel
 		return renderOp(
 			ops.combine(
 				this.op,
-				subscriptionPlansOp,
-				mySubscriptionDetailsOp,
+				state.subscriptions.subscriptionPlansOp,
+				state.subscriptions.mySubscriptionDetailsOp,
 			),
 			() => html`
 				<ol class=plans>

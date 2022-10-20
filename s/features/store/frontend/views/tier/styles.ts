@@ -23,10 +23,8 @@ export default css`
 			text-align: center;
 			flex-basis: 50%;
 
-			h2 {
-				font-weight: 100;
-				margin-bottom: 0.3em;
-				text-transform: capitalize;
+			[part="tierlabel"] {
+				font-size: 1.5em;
 			}
 
 			.icon {

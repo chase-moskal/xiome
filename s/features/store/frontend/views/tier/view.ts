@@ -44,7 +44,7 @@ export const TierView = view(use => ({
 							</div>`
 						: null
 				}
-				<h2>${tier.label}</h2>
+				<h4 part=tierlabel>${tier.label}</h4>
 				<xio-price-display
 					unit-superscript
 					value="${centsToDollars(pricing.price)}">

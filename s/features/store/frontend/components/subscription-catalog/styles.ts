@@ -20,4 +20,9 @@ ol, ul {
 	}
 }
 
+[part="planlabel"] {
+	font-size: 1em;
+	padding-bottom: 0.2em;
+}
+
 `

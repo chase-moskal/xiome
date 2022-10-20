@@ -4,7 +4,7 @@ import {SubscriptionTier, SubscriptionPlan, SubscriptionDetails, SubscriptionSta
 export interface TierBasics {
 	tier: SubscriptionTier
 	plan: SubscriptionPlan
-	mySubscriptionDetails: SubscriptionDetails[]
+	subscription: SubscriptionDetails | undefined
 }
 
 export enum TierButton {
