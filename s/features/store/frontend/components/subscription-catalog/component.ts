@@ -15,7 +15,7 @@ import {ascertainTierInteractivity} from "../../views/tier/utils/apprehend-tier-
 
 import styles from "./styles.js"
 
-@mixinStyles(styles)
+@mixinStyles(styles, TierView.css)
 export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		modals: ModalSystem
 		storeModel: ReturnType<typeof makeStoreModel>

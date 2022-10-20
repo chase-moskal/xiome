@@ -1,18 +1,12 @@
 
 import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 export default css`
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
 
 	.tier {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 
-		height: 100%;
 		font: inherit;
 		color: inherit;
 
@@ -24,6 +18,8 @@ export default css`
 		}
 
 		.details {
+			position: relative;
+
 			text-align: center;
 			flex-basis: 50%;
 
@@ -31,6 +27,25 @@ export default css`
 				font-weight: 100;
 				margin-bottom: 0.3em;
 				text-transform: capitalize;
+			}
+
+			.icon {
+				position: absolute;
+				top: -0.75rem;
+				right: -0.75rem;
+				width: 1.5rem;
+				height: 1.5rem;
+				padding: 0.2rem;
+				border-radius: 1rem;
+				background: currentColor;
+				svg {
+					width: 100%;
+					height: 100%;
+					color: blue;
+				}
+				^[data-icon="check"] svg { color: green; }
+				^[data-icon="x"] svg { color: red; }
+				^[data-icon="warning"] svg { color: orange; }
 			}
 		}
 

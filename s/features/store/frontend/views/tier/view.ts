@@ -8,6 +8,7 @@ import {TierBasics, TierContext, TierInteractivity} from "./types.js"
 import {centsToDollars} from "../../components/subscription-planning/ui/price-utils.js"
 
 import styles from "./styles.js"
+import {getStatusIcon} from "./utils/get-status-icon.js"
 
 export const TierView = view(use => ({
 		basics: {tier},
@@ -19,41 +20,54 @@ export const TierView = view(use => ({
 		interactivity: TierInteractivity | undefined
 	}) => {
 
+	const [pricing] = tier.pricing
+	const recurringInterval = pricing.interval === "month"
+		? "monthly"
+		: "yearly"
+
+	const icon = getStatusIcon(status)
+
 	return html`
 		<div
-			class="tier"
-			data-tier=${tier.tierId}
+			class=tier
+			data-tier="${tier.tierId}"
 			?data-subscribed=${isSubscribedToThisTier}>
 
 			<slot name="${tier.tierId}"></slot>
 
 			<div class=details>
+				${
+					icon
+						? html`
+							<div class=icon data-icon="${icon.name}">
+								${icon.svg}
+							</div>`
+						: null
+				}
 				<h2>${tier.label}</h2>
 				<xio-price-display
 					unit-superscript
-					value=${centsToDollars(tier.pricing[0].price)}>
-					${tier.label}
+					value="${centsToDollars(pricing.price)}">
+						${tier.label}
 				</xio-price-display>
-				<p>monthly</p>
+				<p>${recurringInterval}</p>
 			</div>
 
-			${
-				interactivity
-					? html`
-						<div class=label>
-							<div class=state>
-								${getStatusLabel(status)}
-							</div>
+			<div class=label>
+				<span class=state>${getStatusLabel(status)}</span>
+				${
+					interactivity
+						? html`
 							<button @click=${interactivity.action}>
 								${getButtonLabel(interactivity.button)}
 							</button>
-						</div>
-					`
-					: null
-			}
+						`
+						: null
+				}
+			</div>
 		</div>
 	`
 })
 
-TierView.shadow = true
+TierView.shadow = false
 TierView.css = styles
