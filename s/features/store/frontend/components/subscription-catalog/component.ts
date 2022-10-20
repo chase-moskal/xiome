@@ -2,15 +2,16 @@
 import {html} from "lit"
 import {property} from "lit/decorators.js"
 
+import {TierView} from "../../views/tier/view.js"
 import {makeStoreModel} from "../../model/model.js"
-import {RenderTier} from "../../views/render-tier.js"
+import {TierBasics} from "../../views/tier/types.js"
 import {ops, Op} from "../../../../../framework/ops.js"
-import {SubscriptionPlan} from "../../../isomorphic/concepts.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
+import {SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.js"
+import {ascertainTierContext} from "../../views/tier/utils/ascertain-tier-context.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"
-
-import {ascertainTierContext, ascertainTierInteractivity, TierBasics} from "../../utils/apprehend-tier-info.js"
+import {ascertainTierInteractivity} from "../../views/tier/utils/apprehend-tier-interactivity.js"
 
 import styles from "./styles.js"
 
@@ -41,9 +42,31 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 	@property()
 	private op: Op<void> = ops.ready(undefined)
 
-	#renderPlan = (plan: SubscriptionPlan) => {
+	#renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
 		const {storeModel, modals} = this.share
 		const {mySubscriptionDetails} = this.#storeModel.get.subscriptions
+		const basics: TierBasics = {
+			plan,
+			tier,
+			mySubscriptionDetails,
+		}
+		const context = ascertainTierContext(basics)
+		const interactivity = ascertainTierInteractivity({
+			basics,
+			context,
+			modals,
+			storeModel,
+			setOp: op => this.op = op,
+		})
+		console.log(tier.label, context)
+		return TierView({
+			context,
+			interactivity,
+			basics: {tier, plan, mySubscriptionDetails},
+		})
+	}
+
+	#renderPlan = (plan: SubscriptionPlan) => {
 		return html`
 			<li data-plan=${plan.planId} part=plan>
 				<h4 part=planlabel>${plan.label}</h4>
@@ -51,28 +74,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 					${
 						plan.tiers
 							.filter(tier => tier.active)
-							.map((tier) => {
-								const basics: TierBasics = {
-									plan,
-									tier,
-									mySubscriptionDetails,
-								}
-								const context = ascertainTierContext(basics)
-								const interactivity = ascertainTierInteractivity({
-									basics,
-									context,
-									modals,
-									storeModel,
-									paymentMethod: storeModel.get.billing.paymentMethod,
-									setOp: op => this.op = op,
-								})
-								console.log(tier.label, context)
-								return RenderTier({
-									context,
-									interactivity,
-									basics: {tier, plan, mySubscriptionDetails},
-								})
-							})
+							.map(tier => this.#renderTier(plan, tier))
 					}
 				</div>
 			</li>

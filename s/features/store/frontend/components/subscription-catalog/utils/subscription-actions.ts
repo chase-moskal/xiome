@@ -3,13 +3,13 @@ import {makeStoreModel} from "../../../model/model.js"
 import {SubscriptionTier} from "../../../../isomorphic/concepts.js"
 import {centsToDollars} from "../../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
-import {TierButton} from "../../../utils/apprehend-tier-info.js"
+import {TierButton} from "../../../views/tier/types.js"
 
 export function preparePurchaseActions({
 		modals, button, tier, storeModel
 	}:{
-		modals: ModalSystem
 		button: TierButton
+		modals: ModalSystem
 		tier: SubscriptionTier
 		storeModel: ReturnType<typeof makeStoreModel>
 	}) {
