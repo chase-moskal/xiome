@@ -202,7 +202,7 @@ export const helpersForManagingSubscriptions = ({
 				pricing.currency !== stripePrice.currency ||
 				pricing.interval !== stripePrice.recurring.interval
 
-			const isLabelDifferent = label !== stripeProduct.name
+			const isLabelDifferent = label !== tierRow.label
 			if (isLabelDifferent) {
 				await storeTables
 					.subscriptions
