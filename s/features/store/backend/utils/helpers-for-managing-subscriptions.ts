@@ -202,6 +202,20 @@ export const helpersForManagingSubscriptions = ({
 				pricing.currency !== stripePrice.currency ||
 				pricing.interval !== stripePrice.recurring.interval
 
+			const isLabelDifferent = label !== stripeProduct.name
+			if (isLabelDifferent) {
+				await storeTables
+					.subscriptions
+					.tiers
+					.update({
+						...dbmage.find({tierId}),
+						write: {label}
+					})
+				await stripeLiaisonAccount
+					.products
+					.update(stripeProductId, {name: label})
+			}
+
 			if (isPricingDifferent) {
 				const newStripePrice = await stripeLiaisonAccount
 					.prices

@@ -287,6 +287,7 @@ export default suite({
 				label: "test",
 				pricing: pricingToDraft(tier1.pricing[0]),
 			})
+			await store.subscriptions.load()
 			const tier2 = getFirstTier()
 			expect(tier2.label).equals("test")
 			expect(tier2.active).equals(tier1.active)
