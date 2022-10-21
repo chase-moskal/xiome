@@ -30,8 +30,6 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 			isAllowedToOnboard,
 			stripeAccountOnboarding,
 			stripeLogin,
-			pause,
-			resume,
 		} = this.#storeModel.connect
 
 		const showOnboardingButton = (
@@ -88,7 +86,6 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 					<p>status: paused</p>
 					${renderStripeAccountDetailsReadout()}
 					${renderLoginAndSetupButton()}
-					<xio-button @press=${resume}>Resume Ecommerce</xio-button>
 				`
 				case StripeConnectStatus.Ready: {
 					return details
@@ -96,7 +93,6 @@ export class XiomeStoreConnect extends mixinRequireShare<{
 							<p>status: ready</p>
 							${renderStripeAccountDetailsReadout()}
 							${renderLoginAndSetupButton()}
-							<xio-button @press=${pause}>Pause Ecommerce</xio-button>
 						`
 						: html`
 							<p>status: loading</p>
