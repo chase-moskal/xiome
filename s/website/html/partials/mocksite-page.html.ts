@@ -64,10 +64,6 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 			margin-top: 1em;
 			margin-bottom: 0.5em;
 		}
-		xiome-store-subscription-status, xiome-store-billing-area{
-			border: 1px dashed;
-			padding: 0.5em;
-		}
 		xiome-store-subscription-status:not(:defined),
 		xiome-store-billing-area:not(:defined){
 			display: none
