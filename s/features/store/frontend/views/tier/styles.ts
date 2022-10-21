@@ -2,7 +2,7 @@
 import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 export default css`
 
-.tier {
+[part="tier"] {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -17,17 +17,17 @@ export default css`
 		padding: 0.5em;
 	}
 
-	.details {
+	[part="tier_details"] {
 		position: relative;
 
 		text-align: center;
 		flex-basis: 50%;
 
-		[part="tierlabel"] {
+		[part="tier_label"] {
 			font-size: 1.5em;
 		}
 
-		.icon {
+		[part="tier_icon"] {
 			position: absolute;
 			top: -0.75rem;
 			right: -0.75rem;
@@ -36,18 +36,18 @@ export default css`
 			padding: 0.2rem;
 			border-radius: 1rem;
 			background: currentColor;
-			svg {
+			svg, [part="tier_icon_content"] {
 				width: 100%;
 				height: 100%;
-				color: blue;
 			}
-			^[data-icon="check"] svg { color: green; }
-			^[data-icon="x"] svg { color: red; }
-			^[data-icon="warning"] svg { color: orange; }
+			[part="tier_icon_content"] { color: blue; }
+			^[data-icon="check"] [part="tier_icon_content"] { color: green; }
+			^[data-icon="x"] [part="tier_icon_content"] { color: red; }
+			^[data-icon="warning"] [part="tier_icon_content"] { color: orange; }
 		}
 	}
 
-	.label {
+	[part="tier_info"] {
 		display: flex;
 		flex-basis: 50%;
 		align-items: center;
@@ -56,7 +56,7 @@ export default css`
 		gap: 0.2rem;
 		background: #fff2;
 
-		button {
+		[part="tier_button"] {
 			padding: 0.3rem;
 			border: 1px solid;
 			border-radius: 5px;

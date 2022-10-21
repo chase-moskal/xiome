@@ -72,7 +72,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 		return html`
 			<li data-plan=${plan.planId} part=plan>
 				<h3 part=planlabel>${plan.label}</h3>
-				<div class=tiers part=tiers>
+				<div part=tiers>
 					${
 						plan.tiers
 							.filter(tier => tier.active)
@@ -92,7 +92,7 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 				state.subscriptions.mySubscriptionDetailsOp,
 			),
 			() => html`
-				<ol class=plans>
+				<ol part=plans>
 					${this.#plans.map(this.#renderPlan)}
 				</ol>
 			`

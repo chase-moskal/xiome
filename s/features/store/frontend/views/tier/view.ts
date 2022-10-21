@@ -29,22 +29,24 @@ export const TierView = view(use => ({
 
 	return html`
 		<div
-			class=tier
+			part=tier
 			data-tier="${tier.tierId}"
 			?data-subscribed=${isSubscribedToThisTier}>
 
 			<slot name="${tier.tierId}"></slot>
 
-			<div class=details>
+			<div part=tier_details>
 				${
 					icon
 						? html`
-							<div class=icon data-icon="${icon.name}">
-								${icon.svg}
+							<div part=tier_icon data-icon="${icon.name}">
+								<div part=tier_icon_content>
+									${icon.svg}
+								</div>
 							</div>`
 						: null
 				}
-				<h4 part=tierlabel>${tier.label}</h4>
+				<h4 part=tier_label>${tier.label}</h4>
 				<xio-price-display
 					unit-superscript
 					value="${centsToDollars(pricing.price)}">
@@ -53,12 +55,12 @@ export const TierView = view(use => ({
 				<p>${recurringInterval}</p>
 			</div>
 
-			<div class=label>
-				<span class=state>${getStatusLabel(status)}</span>
+			<div part=tier_info>
+				<span part=tier_status>${getStatusLabel(status)}</span>
 				${
 					interactivity
 						? html`
-							<button @click=${interactivity.action}>
+							<button part=tier_button @click=${interactivity.action}>
 								${getButtonLabel(interactivity.button)}
 							</button>
 						`

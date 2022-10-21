@@ -6,11 +6,11 @@ ol, ul {
 	list-style: none;
 }
 
-.plans > li {
+[part="plans"] > li {
 	margin-top: 1em;
 }
 
-.tiers {
+[part="tiers"] {
 	display: flex;
 	flex-direction: row;
 	gap: 0.5em;
