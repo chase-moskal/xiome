@@ -2,7 +2,7 @@
 import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 export default css`
 
-[part="tier"] {
+[part~="tier"] {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -17,37 +17,37 @@ export default css`
 		padding: 0.5em;
 	}
 
-	[part="tier_details"] {
+	[part~="tier_details"] {
 		position: relative;
 
 		text-align: center;
 		flex-basis: 50%;
 
-		[part="tier_label"] {
+		[part~="tier_label"] {
 			font-size: 1.5em;
 		}
 
-		[part="tier_icon"] {
+		[part~="tier_icon"] {
 			position: absolute;
-			top: -0.75rem;
-			right: -0.75rem;
-			width: 1.5rem;
-			height: 1.5rem;
-			padding: 0.2rem;
-			border-radius: 1rem;
+			top: -0.75em;
+			right: -0.75em;
+			width: 1.5em;
+			height: 1.5em;
+			padding: 0.2em;
+			border-radius: 1em;
 			background: currentColor;
-			svg, [part="tier_icon_content"] {
+			svg, [part~="tier_icon_content"] {
 				width: 100%;
 				height: 100%;
 			}
-			[part="tier_icon_content"] { color: blue; }
-			^[data-icon="check"] [part="tier_icon_content"] { color: green; }
-			^[data-icon="x"] [part="tier_icon_content"] { color: red; }
-			^[data-icon="warning"] [part="tier_icon_content"] { color: orange; }
+			[part~="tier_icon_content"] { color: blue; }
+			^[data-icon="check"] [part~="tier_icon_content"] { color: green; }
+			^[data-icon="x"] [part~="tier_icon_content"] { color: red; }
+			^[data-icon="warning"] [part~="tier_icon_content"] { color: orange; }
 		}
 	}
 
-	[part="tier_info"] {
+	[part~="tier_info"] {
 		display: flex;
 		flex-basis: 50%;
 		align-items: center;
@@ -56,7 +56,7 @@ export default css`
 		gap: 0.2rem;
 		background: #fff2;
 
-		[part="tier_button"] {
+		[part~="tier_button"] {
 			padding: 0.3rem;
 			border: 1px solid;
 			border-radius: 5px;

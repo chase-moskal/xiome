@@ -13,10 +13,14 @@ ol, ul {
 [part="tiers"] {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	gap: 0.5em;
 	align-items: stretch;
-	^ > span {
+	> span {
 		display: block;
+	}
+	> * {
+		max-width: 100%;
 	}
 }
 

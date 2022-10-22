@@ -33,7 +33,7 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 	#renderCard(basics: TierBasics) {
 		return html`
 			<div part=card>
-				<strong>${basics.plan.label}</strong>
+				<strong part=plan_label>${basics.plan.label}</strong>
 				${
 					TierView({
 						basics,
@@ -58,7 +58,7 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 				connectStatusOp
 			),
 			() => html`
-				<div part=cardlist>
+				<div part=card_list>
 					${
 						this.#ongoingSubscriptions
 							.map(basics => this.#renderCard(basics))

@@ -11,7 +11,7 @@ export function getStatusLabel(status: SubscriptionStatus) {
 			return "active"
 
 		case SubscriptionStatus.Unpaid:
-			return "payment failed"
+			return "unpaid"
 
 		case SubscriptionStatus.Cancelled:
 			return "cancelled"
