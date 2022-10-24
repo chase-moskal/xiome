@@ -2,6 +2,7 @@
 import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 
+import Stripe from "stripe"
 import {StoreConnectedAuth} from "../policies/types.js"
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.js"
@@ -187,36 +188,35 @@ export const helpersForManagingSubscriptions = ({
 
 			let stripePriceId = getStripeId(stripeProduct.default_price)
 
-			const stripePrice = await stripeLiaisonAccount
-				.prices
-				.retrieve(stripePriceId)
-
-			if (!stripePrice)
-				throw new renraku.ApiError(500, `stripe price not found ${stripePriceId}`)
+			let stripePrice: Stripe.Response<Stripe.Price> = undefined
+			if (stripePriceId)
+				stripePrice = await stripeLiaisonAccount
+					.prices
+					.retrieve(stripePriceId)
 
 			if (!stripeProduct)
 				throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
-			const isPricingDifferent =
-				pricing.price !== stripePrice.unit_amount ||
-				pricing.currency !== stripePrice.currency ||
-				pricing.interval !== stripePrice.recurring.interval
-
 			const isLabelDifferent = label !== tierRow.label
-			if (isLabelDifferent) {
-				await storeTables
-					.subscriptions
-					.tiers
-					.update({
-						...dbmage.find({tierId}),
-						write: {label}
-					})
-				await stripeLiaisonAccount
-					.products
-					.update(stripeProductId, {name: label})
-			}
+				if (isLabelDifferent) {
+					await storeTables
+						.subscriptions
+						.tiers
+						.update({
+							...dbmage.find({tierId}),
+							write: {label}
+						})
+					await stripeLiaisonAccount
+						.products
+						.update(stripeProductId, {name: label})
+				}
 
-			if (isPricingDifferent) {
+			const isPricingDifferent =
+				pricing.price !== stripePrice?.unit_amount ||
+				pricing.currency !== stripePrice?.currency ||
+				pricing.interval !== stripePrice?.recurring.interval
+
+			if (isPricingDifferent || !stripePrice) {
 				const newStripePrice = await stripeLiaisonAccount
 					.prices
 					.create({
@@ -231,10 +231,10 @@ export const helpersForManagingSubscriptions = ({
 					.products
 					.update(stripeProductId, {default_price: stripePriceId})
 			}
-			else if (active !== stripePrice.active)
+			else if (active !== stripeProduct.active)
 				await stripeLiaisonAccount
-					.prices
-					.update(stripePrice.id, {active})
+					.products
+					.update(stripeProductId, {active, name: label})
 
 			await roleManager.updateRole({
 				label,
