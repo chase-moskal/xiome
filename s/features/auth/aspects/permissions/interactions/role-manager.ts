@@ -61,7 +61,12 @@ export function makeRoleManager({database, generateId}: {
 				...dbmage.find({roleId: roleId}),
 				write: {label},
 		})
-		}
+		},
+		async deleteRole(roleId) {
+			await database.tables.role.delete(
+				dbmage.find({roleId: roleId})
+			)
+		},
 	}
 }
 

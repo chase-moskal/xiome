@@ -25,4 +25,5 @@ export interface RoleManager {
 	createPrivateSystemRole({}: {label: string}): Promise<{roleId: Id}>
 	readRole(roleId: Id): Promise<Row>
 	updateRole({}: {label: string, roleId: Id}): Promise<void>
+	deleteRole(roleId: Id): Promise<void>
 }

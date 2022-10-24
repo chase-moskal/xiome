@@ -15,7 +15,7 @@ export async function fetchSubscriptionPlans(
 	): Promise<SubscriptionPlan[]> {
 
 	const helpers = setupHelpers(auth)
-	const {stripeLiaisonAccount} = auth
+	const {stripeLiaisonAccount, roleManager} = auth
 	const storeTables = auth.storeDatabase.tables
 
 	const {planRows, tierRows} = await helpers
@@ -39,12 +39,18 @@ export async function fetchSubscriptionPlans(
 			},
 		}),
 		getIdFromRow: row => row.tierId,
+		getRoleIdFromRow: row => row.roleId,
 		deleteMissing: ids => (
 			storeTables
 				.subscriptions
 				.tiers
 				.delete(dbmage.findAll(ids, id => ({tierId: id})))
 		),
+		deleteAssociatedRoles: async roleIds => (
+			roleIds.forEach(async id => (
+				await roleManager.deleteRole(id)
+			))
+		)
 	})
 
 	await helpers.deleteTiersWithoutParentPlans({
@@ -101,19 +107,29 @@ function setupHelpers({storeDatabase}: StoreConnectedAuth) {
 		},
 
 		async cleanse<xRow extends dbmage.Row, xResource extends BasicStripeResource>({
-				crossed, getIdFromRow, deleteMissing,
+				crossed, getIdFromRow, getRoleIdFromRow,
+				deleteMissing, deleteAssociatedRoles
 			}: {
 				crossed: CrossReference<xRow, xResource>[]
 				getIdFromRow: (row: xRow) => dbmage.Id
+				getRoleIdFromRow: (row: xRow) => dbmage.Id
 				deleteMissing: (ids: dbmage.Id[]) => Promise<void>
+				deleteAssociatedRoles: (roleIds: dbmage.Id[]) => Promise<void>
 			}) {
 
-			const idsMissingFromStripe = crossed
+			const missingTiers = crossed
 				.filter(({status}) => status === StripeResourceStatus.Missing)
+
+			const idsMissingFromStripe = missingTiers
 				.map(({row}) => getIdFromRow(row))
 
-			if (idsMissingFromStripe.length)
+			const roleIdsForMissingTiers = missingTiers
+				.map(({row}) => getRoleIdFromRow(row))
+
+			if (idsMissingFromStripe.length) {
 				await deleteMissing(idsMissingFromStripe)
+				await deleteAssociatedRoles(roleIdsForMissingTiers)
+			}
 
 			return crossed
 				.filter(({status}) => status !== StripeResourceStatus.Missing)
