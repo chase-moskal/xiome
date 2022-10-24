@@ -32,7 +32,7 @@ export interface SubscriptionTier {
 	roleId: string
 	time: number
 	active: boolean
-	pricing: SubscriptionPricing[]
+	pricing?: SubscriptionPricing[]
 }
 
 export interface SubscriptionPlan {

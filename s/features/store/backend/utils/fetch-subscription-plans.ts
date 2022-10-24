@@ -6,6 +6,7 @@ import {SubscriptionTierRow} from "../database/types/rows/subscription-tier-row.
 import {SubscriptionPlan, SubscriptionPricing} from "../../isomorphic/concepts.js"
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {stripeAttempt} from "../stripe/liaison/helpers/stripe-attempt.js"
+import Stripe from "stripe"
 
 // TODO all of the logic in this function is questionable,
 // and should probably be rewritten.
@@ -28,9 +29,13 @@ export async function fetchSubscriptionPlans(
 					.products
 					.retrieve(row.stripeProductId)
 				const stripePriceId = getStripeId(stripeProduct.default_price)
-				return stripePriceId && stripeLiaisonAccount
-					.prices
-					.retrieve(stripePriceId)
+				const stripePrice = !!stripePriceId 
+					? await stripeLiaisonAccount.prices
+						.retrieve(stripePriceId)
+					: undefined
+				const {active} = stripeProduct
+
+				return {active, stripePrice}
 			},
 		}),
 		getIdFromRow: row => row.tierId,
@@ -61,11 +66,11 @@ export async function fetchSubscriptionPlans(
 					label: cross.row.label,
 					time: cross.row.time,
 					active: cross.status === StripeResourceStatus.Active,
-					pricing: [{
-						stripePriceId: cross.stripeResource.id,
-						price: cross.stripeResource.unit_amount,
-						currency: cross.stripeResource.currency as SubscriptionPricing["currency"],
-						interval: cross.stripeResource.recurring.interval as SubscriptionPricing["interval"]
+					pricing: cross.stripeResource.stripePrice && [{
+						stripePriceId: cross.stripeResource.stripePrice.id,
+						price: cross.stripeResource.stripePrice.unit_amount,
+						currency: cross.stripeResource.stripePrice.currency as SubscriptionPricing["currency"],
+						interval: cross.stripeResource.stripePrice.recurring.interval as SubscriptionPricing["interval"]
 					}],
 				}))
 				.sort((tierA, tierB) => tierA.pricing[0].price - tierB.pricing[0].price),
