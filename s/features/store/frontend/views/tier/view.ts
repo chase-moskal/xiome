@@ -21,8 +21,9 @@ export const TierView = view(use => ({
 		interactivity: TierInteractivity | undefined
 	}) => {
 
-	const [pricing] = tier.pricing
-	const recurringInterval = pricing.interval === "month"
+	const hasPricing = !!tier.pricing
+	const pricing = hasPricing ? tier.pricing[0] : undefined
+	const recurringInterval = pricing?.interval === "month"
 		? "monthly"
 		: "yearly"
 
@@ -63,12 +64,18 @@ export const TierView = view(use => ({
 						: null
 				}
 				<h4 part="${statusify("tier_label")}">${tier.label}</h4>
-				<xio-price-display
-					unit-superscript
-					value="${centsToDollars(pricing.price)}">
-						${tier.label}
-				</xio-price-display>
-				<p>${recurringInterval}</p>
+				${hasPricing
+					? html `
+							<xio-price-display
+								unit-superscript
+								value="${centsToDollars(pricing.price)}">
+									${tier.label}
+							</xio-price-display>
+							<p>${recurringInterval}</p>
+						`
+					: html`<p style="color: red">price not set</p>`
+				}
+				
 			</div>
 
 			<div part="${statusify("tier_info")}">

@@ -118,6 +118,12 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			return {draft, problems, isChanged}
 		},
 		editedTier(tier: SubscriptionTier) {
+			const initialPricing = tier.pricing ? tier.pricing[0] : {
+				stripePriceId: "",
+				currency: "usd" as SubscriptionPricing["currency"],
+				interval: "month" as SubscriptionPricing["interval"],
+				price: dollarsToCents(""),
+			}
 			const shadow = getShadowRoot()
 			const elements = {
 				label: select<XioTextInput>(
@@ -143,7 +149,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 			const isChanged =
 				draft.label !== tier.label ||
 				draft.active !== tier.active ||
-				isPricingChanged(tier.pricing[0], draft.pricing)
+				isPricingChanged(initialPricing, draft.pricing)
 			states.component.editingTierDraft.isChanged = isChanged
 			states.component.editingTierDraft.problems = problems
 			return {draft, problems, isChanged}
@@ -312,6 +318,8 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 	function renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
 		const isEditing = states.component.editingTierDraft?.tierId === tier.tierId
 		const loading = states.component.editingTierDraft?.loading
+		const hasPricing = !!tier.pricing
+		const initialPrice = hasPricing ? centsToDollars(tier.pricing[0].price) : ""
 		return html`
 			<li data-tier="${tier.tierId}">
 				<xio-button
@@ -334,7 +342,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 							<xio-price-input
 								data-field="price"
 								.validator=${validatePriceNumber}
-								initial-value=${centsToDollars(tier.pricing[0].price)}>
+								initial-value=${initialPrice}>
 									Price</xio-price-input>
 							<label>
 								active:
@@ -342,7 +350,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 									type=checkbox
 									data-field="active"
 									?disabled=${loading}
-									?checked=${tier.active}/>
+									?checked=${tier.active} />
 							</label>
 							${states.component.editingTierDraft.isChanged
 								? html`
@@ -356,7 +364,10 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 						</div>
 					`: html`
 						<p class=label>tier label: ${tier.label}</p>
-						<p>price: $${centsToDollars(tier.pricing[0].price)}</p>
+						${hasPricing 
+								? html`<p>price: $${centsToDollars(tier.pricing[0].price)}</p>`
+								: html`<p style="color: red">price not set</p>`
+							}
 						<p>active: ${tier.active ?"true" :"false"}</p>
 					`}
 				</div>
@@ -405,7 +416,7 @@ export function planningUi({storeModel, componentSnap, getShadowRoot}: {
 										type=checkbox
 										data-field="archived"
 										?disabled=${loading}
-										?checked=${plan.archived}/>
+										?checked=${plan.archived} />
 								</label>
 								${states.component.editingPlanDraft.isChanged
 									? html`
