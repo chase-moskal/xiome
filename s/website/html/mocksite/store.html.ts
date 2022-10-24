@@ -12,6 +12,21 @@ mainHtml: html`
 	<section>
 		<h2>store</h2>
 
+		<h3>subscription catalog TWO</h3>
+		<template>
+			<p>ASD</p>
+		</template>
+		<xiome-store-subscription-catalog-two>
+			<template data-name=alpha>
+				<p>alpha</p>
+			</template>
+			<template data-name=bravo>
+				<p>bravo</p>
+			</template>
+		</xiome-store-subscription-catalog-two>
+		<br/>
+		<br/>
+
 		<h3>connect</h3>
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
@@ -39,7 +54,7 @@ mainHtml: html`
 		<br/>
 
 		<h3>subscription planning</h3>
-		<xiome-store-subscription-planning></xiome-subscription-store-planning>
+		<xiome-store-subscription-planning></xiome-store-subscription-planning>
 
 	</section>
 	<br/>

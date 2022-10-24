@@ -5,9 +5,10 @@ import {XiomeComponentOptions} from "../../../../assembly/frontend/components/ty
 import {XiomeStoreConnect} from "./connect/component.js"
 import {XiomeStoreBillingArea} from "./billing-area/component.js"
 import {XiomeStoreCustomerPortal} from "./customer-portal/component.js"
+import {XiomeStoreSubscriptionStatus} from "./subscription-status/component.js"
 import {XiomeStoreSubscriptionCatalog} from "./subscription-catalog/component.js"
 import {XiomeStoreSubscriptionPlanning} from "./subscription-planning/component.js"
-import {XiomeStoreSubscriptionStatus} from "./subscription-status/component.js"
+import {XiomeStoreSubscriptionCatalogTwo} from "./subscription-catalog/component2.js"
 
 export function integrateStoreComponents({models, modals}: XiomeComponentOptions) {
 	const {storeModel} = models
@@ -34,6 +35,14 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 					modals,
 					storeModel,
 				})(XiomeStoreSubscriptionCatalog)
+			)
+		),
+		XiomeStoreSubscriptionCatalogTwo: (
+			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
+				mixinShare({
+					modals,
+					storeModel,
+				})(XiomeStoreSubscriptionCatalogTwo)
 			)
 		),
 		XiomeStoreCustomerPortal: (
