@@ -12,43 +12,42 @@ mainHtml: html`
 	<section>
 		<h2>store</h2>
 
-		<h3>subscription catalog TWO</h3>
-		<xiome-store-subscription-catalog-three>
-			<template slot=alpha>
-				<p>alpha</p>
-			</template>
-			<template slot=bravo>
-				<p>bravo</p>
-			</template>
-		</xiome-store-subscription-catalog-three>
-		<br/>
-		<br/>
-		<br/>
+		<h3>xiome-store-subscription-tier</h3>
+		<xiome-store-subscription-tier></xiome-store-subscription-tier>
 		<br/>
 		<br/>
 
-		<h3>connect</h3>
+		<h3>xiome-store-subscription-catalog</h3>
+		<xiome-store-subscription-catalog>
+			<template slot="8653c3550b980652f33ab788bccd51c45d30c555c3b898f70418680c7e87f3ab">
+				<p>alpha</p>
+			</template>
+		</xiome-store-subscription-catalog>
+		<br/>
+		<br/>
+
+		<h3>xiome-store-connect</h3>
 		<xiome-store-connect></xiome-store-connect>
 		<br/>
 		<br/>
 
-		<h3>customer-portal</h3>
+		<h3>xiome-store-customer-portal</h3>
 		<xiome-store-customer-portal></xiome-store-customer-portal>
 		<br/>
 		<br/>
 
-		<h3>billing-area</h3>
+		<h3>xiome-store-billing-area</h3>
 		<xiome-store-billing-area></xiome-store-billing-area>
 		<br/>
 		<br/>
 
 		
-		<h3>subscription status</h3>
+		<h3>xiome-store-subscription-status</h3>
 		<xiome-store-subscription-status></xiome-store-subscription-status>
 		<br/>
 		<br/>
 
-		<h3>subscription planning</h3>
+		<h3>xiome-store-subscription-planning</h3>
 		<xiome-store-subscription-planning></xiome-store-subscription-planning>
 
 	</section>

@@ -71,8 +71,6 @@ export class TemplateSlots {
 			.#parent
 			.querySelector<HTMLTemplateElement>(selector)
 
-		return template
-			?.content.cloneNode(true)
-				?? null
+		return template?.content.cloneNode(true)
 	}
 }

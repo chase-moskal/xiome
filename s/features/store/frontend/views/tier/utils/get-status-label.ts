@@ -5,7 +5,7 @@ export function getStatusLabel(status: SubscriptionStatus) {
 	switch (status) {
 
 		case SubscriptionStatus.Unsubscribed:
-			return undefined
+			return "unsubscribed"
 
 		case SubscriptionStatus.Active:
 			return "active"

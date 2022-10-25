@@ -1,8 +1,9 @@
 
+import {elem, Elem} from "./elem.js"
 import {Constructor} from "../types/constructor.js"
 import {LitElement, TemplateResult, PropertyDeclaration, CSSResult} from "lit"
 
-export interface Use<xProps extends {}> {
+export interface Use<xProps extends {}> extends Elem {
 	element: LitElement & xProps
 
 	state<xValue>(
@@ -43,6 +44,8 @@ export function component<xProps extends {}>(
 
 		#use: Use<xProps> = {
 			element: <any>this,
+
+			...elem(this),
 
 			setup: initializer => {
 				if (this.#renderCount === 0) {

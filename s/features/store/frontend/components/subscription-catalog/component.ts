@@ -1,74 +1,86 @@
 
-import {html} from "lit"
-import {property} from "lit/decorators.js"
-
-import {TierView} from "../../views/tier/view.js"
 import {makeStoreModel} from "../../model/model.js"
 import {TierBasics} from "../../views/tier/types.js"
 import {ops, Op} from "../../../../../framework/ops.js"
+import {html} from "../../../../../framework/component.js"
+import {TemplateSlots} from "../../../../../toolbox/template-slots.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {SubscriptionPlan, SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {ascertainTierContext} from "../../views/tier/utils/ascertain-tier-context.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
-import {mixinStyles, mixinRequireShare, Component} from "../../../../../framework/component.js"
+import {asPropertyDeclarations, component} from "../../../../../toolbox/magical-component.js"
 import {ascertainTierInteractivity} from "../../views/tier/utils/apprehend-tier-interactivity.js"
 
 import styles from "./styles.js"
 
-@mixinStyles(styles, TierView.css)
-export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
-		modals: ModalSystem
-		storeModel: ReturnType<typeof makeStoreModel>
-	}>()(Component) {
+type Props = {
+	"allow-plans": string
+}
 
-	@property({type: String})
-	["allow-plans"]: string
+const properties = asPropertyDeclarations<Props>({
+	"allow-plans": {type: String},
+})
 
-	get #plans() {
-		const allowedPlans = this["allow-plans"]?.match(/(\w+)/g)
-		const plans = this.share.storeModel.get.subscriptions.plans ?? []
+export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
+	modals: ModalSystem
+	storeModel: ReturnType<typeof makeStoreModel>
+}) => component<Props>({
+	styles,
+	properties,
+	shadow: false,
+}, use => {
+
+	use.setup(() => storeModel.snap.subscribe(() => use.element.requestUpdate()))
+	const {state} = storeModel
+	const [op, setOp] = use.state<Op<void>>(ops.ready(undefined))
+	const [slots] = use.state(() =>
+		new TemplateSlots(
+			use.element,
+			() => use.element.requestUpdate(),
+		)
+	)
+
+	const plans = (() => {
+		const allowedPlans = use.element["allow-plans"]?.match(/(\w+)/g)
+		const plans = storeModel.get.subscriptions.plans ?? []
 		const activePlans = plans
 			.filter(plan => !plan.archived)
 			.filter(plan => plan.tiers.length)
-		return !!this["allow-plans"]
+		return !!use.element["allow-plans"]
 			? activePlans.filter(plan => allowedPlans.includes(plan.planId))
 			: activePlans
-	}
+	})()
 
-	@property()
-	private op: Op<void> = ops.ready(undefined)
-
-	#renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
-		const {storeModel, modals} = this.share
+	function renderTier(plan: SubscriptionPlan, tier: SubscriptionTier) {
 		const {mySubscriptionDetails} = storeModel.get.subscriptions
-		const subscription =
+		const subscription = (
 			mySubscriptionDetails
 				.find(s => s.planId === plan.planId)
-
+		)
 		const basics: TierBasics = {
 			plan,
 			tier,
 			subscription,
 		}
-
 		const context = ascertainTierContext(basics)
-
 		const interactivity = ascertainTierInteractivity({
 			basics,
 			context,
 			modals,
 			storeModel,
-			setOp: op => this.op = op,
+			setOp,
 		})
-
-		return TierView({
-			context,
-			interactivity,
-			basics: {tier, plan, subscription},
-		})
+		return html`
+			<xiome-store-subscription-tier
+				.basics=${basics}
+				.context=${context}
+				.interactivity=${interactivity}>
+					${slots.get(tier.tierId)}
+			</xiome-store-subscription-tier>
+		`
 	}
 
-	#renderPlan = (plan: SubscriptionPlan) => {
+	function renderPlan(plan: SubscriptionPlan) {
 		return html`
 			<li data-plan=${plan.planId} part=plan>
 				<h3 part=planlabel>${plan.label}</h3>
@@ -76,26 +88,23 @@ export class XiomeStoreSubscriptionCatalog extends mixinRequireShare<{
 					${
 						plan.tiers
 							.filter(tier => tier.active)
-							.map(tier => this.#renderTier(plan, tier))
+							.map(tier => renderTier(plan, tier))
 					}
 				</div>
 			</li>
 		`
 	}
 
-	render() {
-		const {state} = this.share.storeModel
-		return renderOp(
-			ops.combine(
-				this.op,
-				state.subscriptions.subscriptionPlansOp,
-				state.subscriptions.mySubscriptionDetailsOp,
-			),
-			() => html`
-				<ol part=plans>
-					${this.#plans.map(this.#renderPlan)}
-				</ol>
-			`
-		)
-	}
-}
+	return renderOp(
+		ops.combine(
+			op,
+			state.subscriptions.subscriptionPlansOp,
+			state.subscriptions.mySubscriptionDetailsOp,
+		),
+		() => html`
+			<ol part=plans>
+				${plans.map(renderPlan)}
+			</ol>
+		`
+	)
+})
