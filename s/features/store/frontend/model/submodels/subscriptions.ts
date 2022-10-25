@@ -211,6 +211,7 @@ export function makeSubscriptionsSubmodel({
 			const plan = plans.find(plan => plan.planId === planId)
 			const tier = plan.tiers.find(tier => tier.tierId === tierId)
 
+			//TODO: Fix error when pricing is undefined
 			tier.active = active
 			tier.label = label
 			tier.pricing[0].price = pricing.price
