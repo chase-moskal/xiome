@@ -13,17 +13,17 @@ mainHtml: html`
 		<h2>store</h2>
 
 		<h3>subscription catalog TWO</h3>
-		<template>
-			<p>ASD</p>
-		</template>
-		<xiome-store-subscription-catalog-two>
-			<template data-name=alpha>
+		<xiome-store-subscription-catalog-three>
+			<template slot=alpha>
 				<p>alpha</p>
 			</template>
-			<template data-name=bravo>
+			<template slot=bravo>
 				<p>bravo</p>
 			</template>
-		</xiome-store-subscription-catalog-two>
+		</xiome-store-subscription-catalog-three>
+		<br/>
+		<br/>
+		<br/>
 		<br/>
 		<br/>
 
@@ -45,11 +45,6 @@ mainHtml: html`
 		
 		<h3>subscription status</h3>
 		<xiome-store-subscription-status></xiome-store-subscription-status>
-		<br/>
-		<br/>
-
-		<h3>subscription catalog</h3>
-		<xiome-store-subscription-catalog></xiome-store-subscription-catalog>
 		<br/>
 		<br/>
 
