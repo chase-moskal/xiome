@@ -16,11 +16,13 @@ export function buildFinalTierObject(
 		label: tierRow.label,
 		time: tierRow.time,
 		active: stripeProduct.active,
-		pricing: stripePrice && [{
-			stripePriceId: stripePrice.id,
-			price: stripePrice.unit_amount,
-			currency: stripePrice.currency as SubscriptionPricing["currency"],
-			interval: stripePrice.recurring.interval as SubscriptionPricing["interval"]
-		}]
+		pricing: stripePrice?.active
+			? [{
+				stripePriceId: stripePrice.id,
+				price: stripePrice.unit_amount,
+				currency: stripePrice.currency as SubscriptionPricing["currency"],
+				interval: stripePrice.recurring.interval as SubscriptionPricing["interval"]
+			}]
+			: undefined
 	}
 }
