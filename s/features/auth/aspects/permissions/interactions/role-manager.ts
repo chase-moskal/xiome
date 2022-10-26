@@ -62,10 +62,12 @@ export function makeRoleManager({database, generateId}: {
 				write: {label},
 		})
 		},
-		async deleteRole(roleId) {
-			await database.tables.role.delete(
-				dbmage.find({roleId: roleId})
-			)
+		async deleteRoleAndAllRelatedRecords(roleId) {
+			const conditional = dbmage.find({roleId: roleId})
+			await database.transaction(async({tables}) => Promise.all([
+				tables.role.delete(conditional),
+				tables.userHasRole.delete(conditional),
+			]))
 		},
 	}
 }

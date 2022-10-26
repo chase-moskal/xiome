@@ -100,7 +100,7 @@ renraku
 		const active = runValidation(inputs.active, validateBoolean)
 		const pricing = runValidation(inputs.pricing, validateSubscriptionPricingDraft)
 
-		await helpers.updateTier({
+		return helpers.updateTier({
 			label,
 			tierId,
 			active,

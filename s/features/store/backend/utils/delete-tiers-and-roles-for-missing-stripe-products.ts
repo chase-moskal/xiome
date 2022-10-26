@@ -33,7 +33,7 @@ export async function deleteTiersAndRolesForMissingStripeProducts({
 			))
 
 		IdsForMissingTiers.forEach(async ({roleId}) => {
-			await roleManager.deleteRole(roleId)
+			await roleManager.deleteRoleAndAllRelatedRecords(roleId)
 		})
 	}
 }

@@ -7,6 +7,7 @@ import {StoreConnectedAuth} from "../policies/types.js"
 import {getStripeId} from "../stripe/utils/get-stripe-id.js"
 import {RoleManager} from "../../../auth/aspects/permissions/interactions/types.js"
 import {SubscriptionPlanDraft, SubscriptionPricingDraft} from "../services/subscriptions/types/drafts.js"
+import {buildFinalTierObject} from "./subscription-object-compilation/build-final-tier-object.js"
 
 export const helpersForManagingSubscriptions = ({
 		storeDatabase,
@@ -186,14 +187,6 @@ export const helpersForManagingSubscriptions = ({
 				.products
 				.retrieve(stripeProductId)
 
-			let stripePriceId = getStripeId(stripeProduct.default_price)
-
-			let stripePrice: Stripe.Response<Stripe.Price> = undefined
-			if (stripePriceId)
-				stripePrice = await stripeLiaisonAccount
-					.prices
-					.retrieve(stripePriceId)
-
 			if (!stripeProduct)
 				throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
@@ -211,13 +204,22 @@ export const helpersForManagingSubscriptions = ({
 						.update(stripeProductId, {name: label})
 				}
 
-			const isPricingDifferent =
+			const stripePriceId = getStripeId(stripeProduct.default_price)
+			let stripePrice: Stripe.Response<Stripe.Price> = undefined
+
+			if (stripePriceId)
+				stripePrice = await stripeLiaisonAccount
+					.prices
+					.retrieve(stripePriceId)
+
+			const isPricingDifferent = (
 				pricing.price !== stripePrice?.unit_amount ||
 				pricing.currency !== stripePrice?.currency ||
 				pricing.interval !== stripePrice?.recurring.interval
+			)
 
-			if (isPricingDifferent || !stripePrice) {
-				const newStripePrice = await stripeLiaisonAccount
+			if (!stripePrice || isPricingDifferent) {
+				stripePrice = await stripeLiaisonAccount
 					.prices
 					.create({
 						active,
@@ -226,10 +228,9 @@ export const helpersForManagingSubscriptions = ({
 						unit_amount: pricing.price,
 						recurring: {interval: pricing.interval},
 					})
-				stripePriceId = newStripePrice.id
 				await stripeLiaisonAccount
 					.products
-					.update(stripeProductId, {default_price: stripePriceId})
+					.update(stripeProductId, {default_price: stripePrice.id})
 			}
 			else if (active !== stripeProduct.active)
 				await stripeLiaisonAccount
@@ -240,6 +241,14 @@ export const helpersForManagingSubscriptions = ({
 				label,
 				roleId: tierRow.roleId,
 			})
+
+			const newTier = buildFinalTierObject(
+				tierRow,
+				stripePrice,
+				stripeProduct,
+			)
+
+			return newTier
 		},
 	}
 }

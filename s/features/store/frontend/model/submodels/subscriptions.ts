@@ -5,6 +5,7 @@ import {StoreServices} from "../../types.js"
 import {StoreStateSystem} from "../../state.js"
 import {ops} from "../../../../../framework/ops.js"
 import {StripePopups} from "../../../popups/types.js"
+import {SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {SubscriptionTierDraft, SubscriptionPricingDraft} from "../../../backend/services/subscriptions/types/drafts.js"
 
 export function makeSubscriptionsSubmodel({
@@ -197,24 +198,27 @@ export function makeSubscriptionsSubmodel({
 				pricing: SubscriptionPricingDraft
 			}) {
 
-			await services
+			const newTier = await services
 				.subscriptions
 				.planning
 				.editTier({
 					tierId,
 					active,
 					label,
-					pricing
+					pricing,
 				})
 
 			const plans = getPlans()
 			const plan = plans.find(plan => plan.planId === planId)
-			const tier = plan.tiers.find(tier => tier.tierId === tierId)
 
-			//TODO: Fix error when pricing is undefined
-			tier.active = active
-			tier.label = label
-			tier.pricing[0].price = pricing.price
+			plan.tiers = plan.tiers.map(
+				function swapTierInPlace(existingTier: SubscriptionTier) {
+					const isEditedTier = (existingTier.tierId === newTier.tierId)
+					return isEditedTier
+						? newTier
+						: existingTier
+				}
+			)
 
 			state
 				.subscriptions
