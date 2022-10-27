@@ -12,7 +12,7 @@ import styles from "./styles.js"
 import {SubscriptionStatus} from "../../../isomorphic/concepts.js"
 
 export const TierView = view(use => ({
-		basics: {tier},
+		basics: {tier, pricing},
 		context: {isSubscribedToThisTier, status},
 		interactivity,
 	}: {
@@ -22,7 +22,6 @@ export const TierView = view(use => ({
 	}) => {
 
 	const hasPricing = !!tier.pricing
-	const pricing = hasPricing ? tier.pricing[0] : undefined
 	const recurringInterval = pricing?.interval === "month"
 		? "monthly"
 		: "yearly"

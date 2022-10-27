@@ -61,6 +61,7 @@ export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 			plan,
 			tier,
 			subscription,
+			pricing: tier.pricing[0],
 		}
 		const context = ascertainTierContext(basics)
 		const interactivity = ascertainTierInteractivity({

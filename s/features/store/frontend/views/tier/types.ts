@@ -1,10 +1,11 @@
 
-import {SubscriptionTier, SubscriptionPlan, SubscriptionDetails, SubscriptionStatus} from "../../../isomorphic/concepts.js"
+import {SubscriptionTier, SubscriptionPlan, SubscriptionDetails, SubscriptionStatus, SubscriptionPricing} from "../../../isomorphic/concepts.js"
 
 export interface TierBasics {
 	tier: SubscriptionTier
 	plan: SubscriptionPlan
 	subscription: SubscriptionDetails | undefined
+	pricing: SubscriptionPricing | undefined
 }
 
 export enum TierButton {

@@ -26,7 +26,12 @@ export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
 			.map(subscription => {
 				const plan = plans.find(p => p.planId === subscription.planId)
 				const tier = plan.tiers.find(t => t.tierId === subscription.tierId)
-				return {plan, tier, subscription}
+				return {
+					plan,
+					tier,
+					subscription,
+					pricing: subscription.pricing,
+				}
 			})
 	}
 
