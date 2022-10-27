@@ -5,6 +5,7 @@ import {CatalogProps} from "./utils/catalog-props.js"
 import {ops, Op} from "../../../../../framework/ops.js"
 import {html} from "../../../../../framework/component.js"
 import {getActiveAndAllowedPlans} from "./utils/get-plans.js"
+import {SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {CatalogRenderingParams} from "./catalog-rendering-params.js"
 import {component} from "../../../../../toolbox/magical-component.js"
 import {engageTemplateSlotting} from "../../utils/setup-template-slots.js"
@@ -46,10 +47,22 @@ use => {
 			storeModel.state.subscriptions.subscriptionPlansOp,
 			storeModel.state.subscriptions.mySubscriptionDetailsOp,
 		),
-		() => html`
-			<ol data-plans>
-				${plans.map(plan => renderPlan(params, plan))}
-			</ol>
-		`
+		() => {
+			const tiersWithPricing: SubscriptionTier[] = []
+			for (const plan of plans) {
+				plan.tiers.forEach(tier => {
+					if (tier.pricing) tiersWithPricing.push(tier)
+				})
+			}
+			const hasTierWithPricing = !!tiersWithPricing.length
+			return hasTierWithPricing
+				? html`
+					<ol data-plans>
+						${plans.map(plan => renderPlan(params, plan))}
+					</ol>
+				`
+				: null
+		}
 	)
 })
+renderPlan
