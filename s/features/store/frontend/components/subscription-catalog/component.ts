@@ -105,10 +105,21 @@ export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 			state.subscriptions.subscriptionPlansOp,
 			state.subscriptions.mySubscriptionDetailsOp,
 		),
-		() => html`
-			<ol part=plans>
-				${plans.map(renderPlan)}
-			</ol>
-		`
+		() => {
+			const tiersWithPricing: SubscriptionTier[] = []
+			for (const plan of plans) {
+				plan.tiers.forEach(tier => {
+					if (tier.pricing) tiersWithPricing.push(tier)
+				})
+			}
+			const hasTierWithPricing = !!tiersWithPricing.length
+			return hasTierWithPricing 
+				? html`
+					<ol part=plans>
+						${plans.map(renderPlan)}
+					</ol>
+				`
+				: null
+		}
 	)
 })
