@@ -61,8 +61,9 @@ export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 			plan,
 			tier,
 			subscription,
-			pricing: tier.pricing[0],
+			pricing: tier.pricing && tier.pricing[0],
 		}
+		const hasPricing = !!basics.pricing
 		const context = ascertainTierContext(basics)
 		const interactivity = ascertainTierInteractivity({
 			basics,
@@ -71,14 +72,16 @@ export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 			storeModel,
 			setOp,
 		})
-		return html`
-			<xiome-store-subscription-tier
-				.basics=${basics}
-				.context=${context}
-				.interactivity=${interactivity}>
-					${slots.get(tier.tierId)}
-			</xiome-store-subscription-tier>
-		`
+		return hasPricing 
+			? html`
+				<xiome-store-subscription-tier
+					.basics=${basics}
+					.context=${context}
+					.interactivity=${interactivity}>
+						${slots.get(tier.tierId)}
+				</xiome-store-subscription-tier>
+			`
+			: null
 	}
 
 	function renderPlan(plan: SubscriptionPlan) {
