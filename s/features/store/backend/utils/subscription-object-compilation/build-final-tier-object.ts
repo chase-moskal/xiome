@@ -1,9 +1,9 @@
 
 import Stripe from "stripe"
 
-import {SubscriptionPricing, SubscriptionTier} from "../../../isomorphic/concepts.js"
-import {SubscriptionTierRow} from "../../database/types/rows/subscription-tier-row.js"
+import {SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {derivePricingFromStripePrice} from "./derive-pricing-from-stripe-price.js"
+import {SubscriptionTierRow} from "../../database/types/rows/subscription-tier-row.js"
 
 export function buildFinalTierObject(
 		tierRow: SubscriptionTierRow,
