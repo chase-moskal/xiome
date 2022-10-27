@@ -3,6 +3,7 @@ import Stripe from "stripe"
 
 import {SubscriptionPricing, SubscriptionTier} from "../../../isomorphic/concepts.js"
 import {SubscriptionTierRow} from "../../database/types/rows/subscription-tier-row.js"
+import {derivePricingFromStripePrice} from "./derive-pricing-from-stripe-price.js"
 
 export function buildFinalTierObject(
 		tierRow: SubscriptionTierRow,
@@ -17,12 +18,7 @@ export function buildFinalTierObject(
 		time: tierRow.time,
 		active: stripeProduct.active,
 		pricing: stripePrice?.active
-			? [{
-				stripePriceId: stripePrice.id,
-				price: stripePrice.unit_amount,
-				currency: stripePrice.currency as SubscriptionPricing["currency"],
-				interval: stripePrice.recurring.interval as SubscriptionPricing["interval"]
-			}]
+			? [derivePricingFromStripePrice(stripePrice)]
 			: undefined
 	}
 }

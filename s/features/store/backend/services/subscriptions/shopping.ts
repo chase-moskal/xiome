@@ -4,14 +4,17 @@ import * as renraku from "renraku"
 import {StoreServiceOptions} from "../../types/options.js"
 import {validator, string} from "../../../../../toolbox/darkvalley.js"
 import {validateId} from "../../../../../common/validators/validate-id.js"
+import {buildSubscriptionDetails} from "../../utils/build-subscription-details.js"
 import {cancelStripeSubscription} from "../../utils/cancel-stripe-subscription.js"
 import {SubscriptionDetails, PurchaseScenario} from "../../../isomorphic/concepts.js"
 import {uncancelStripeSubscription} from "../../utils/uncancel-stripe-subscription.js"
 import {runValidation} from "../../../../../toolbox/topic-validation/run-validation.js"
-import {fetchAllSubscriptionDetails} from "../../utils/fetch-all-subscription-details.js"
 import {prepareToBuyStripeSubscription} from "../../utils/prepare-to-buy-stripe-subscription.js"
 import {determinePurchaseScenario} from "../../../isomorphic/utils/determine-purchase-scenario.js"
 import {verifyPlanHasExistingStripeSubscription} from "../../utils/verify-plan-has-existing-stripe-subscription.js"
+import {fetchStripeSubscriptionsForCustomer} from "../../utils/fetch-stripe-subscriptions-for-customer.js"
+import {queryStripePriceRelatedToSubscription} from "../../utils/query-stripe-price-related-to-subscription.js"
+import {queryTierRowRelatedToStripePrice} from "../../utils/query-tier-row-related-to-stripe-price.js"
 
 export const makeSubscriptionShoppingService = (options: StoreServiceOptions) =>
 renraku
@@ -20,7 +23,28 @@ renraku
 .expose(auth => ({
 
 	async fetchDetailsAboutMySubscriptions(): Promise<SubscriptionDetails[]> {
-		return fetchAllSubscriptionDetails(auth)
+		const subscriptions = await fetchStripeSubscriptionsForCustomer(auth)
+
+		return Promise.all(
+			subscriptions.map(async subscription => {
+
+				const price = await queryStripePriceRelatedToSubscription(
+					auth.stripeLiaisonAccount,
+					subscription,
+				)
+
+				const tierRow = await queryTierRowRelatedToStripePrice(
+					auth.storeDatabase,
+					price,
+				)
+
+				return buildSubscriptionDetails(
+					subscription,
+					price,
+					tierRow,
+				)
+			})
+		)
 	},
 
 	async buy(stripePriceId: string) {

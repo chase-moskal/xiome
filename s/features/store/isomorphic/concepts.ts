@@ -54,6 +54,7 @@ export interface SubscriptionDetails {
 	status: SubscriptionStatus
 	planId: string
 	tierId: string
+	pricing: SubscriptionPricing
 }
 
 export interface PaymentMethod {
