@@ -31,7 +31,7 @@ export function renderTier(
 		plan,
 		tier,
 		subscription,
-		pricing: tier.pricing[0],
+		pricing: tier.pricing && tier.pricing[0],
 	}
 
 	const context = ascertainTierContext(basics)
@@ -44,12 +44,16 @@ export function renderTier(
 		setOp,
 	})
 
-	return html`
-		<xiome-store-subscription-tier
-			.basics=${basics}
-			.context=${context}
-			.interactivity=${interactivity}>
-				${slots.get(tier.tierId)}
-		</xiome-store-subscription-tier>
-	`
+	const hasPricing = !!basics.pricing
+
+	return hasPricing
+		? html`
+			<xiome-store-subscription-tier
+				.basics=${basics}
+				.context=${context}
+				.interactivity=${interactivity}>
+					${slots.get(tier.tierId)}
+			</xiome-store-subscription-tier>
+		`
+		: null
 }

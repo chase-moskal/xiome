@@ -63,18 +63,12 @@ export const TierView = view(use => ({
 						: null
 				}
 				<h4 part="${statusify("tier_label")}">${tier.label}</h4>
-				${hasPricing
-					? html `
-							<xio-price-display
-								unit-superscript
-								value="${centsToDollars(pricing.price)}">
-									${tier.label}
-							</xio-price-display>
-							<p>${recurringInterval}</p>
-						`
-					: html`<p style="color: red">price not set</p>`
-				}
-				
+				<xio-price-display
+					unit-superscript
+					value="${centsToDollars(pricing.price)}">
+						${tier.label}
+				</xio-price-display>
+				<p>${recurringInterval}</p>
 			</div>
 
 			<div part="${statusify("tier_info")}">
