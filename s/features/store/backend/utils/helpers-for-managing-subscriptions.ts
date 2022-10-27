@@ -183,7 +183,7 @@ export const helpersForManagingSubscriptions = ({
 				throw new renraku.ApiError(400, `role not found ${tierRow.roleId.string}`)
 
 			let {stripeProductId} = tierRow
-			const stripeProduct = await stripeLiaisonAccount
+			let stripeProduct = await stripeLiaisonAccount
 				.products
 				.retrieve(stripeProductId)
 
@@ -199,7 +199,7 @@ export const helpersForManagingSubscriptions = ({
 							...dbmage.find({tierId}),
 							write: {label}
 						})
-					await stripeLiaisonAccount
+					stripeProduct = await stripeLiaisonAccount
 						.products
 						.update(stripeProductId, {name: label})
 				}
@@ -228,12 +228,12 @@ export const helpersForManagingSubscriptions = ({
 						unit_amount: pricing.price,
 						recurring: {interval: pricing.interval},
 					})
-				await stripeLiaisonAccount
+				stripeProduct = await stripeLiaisonAccount
 					.products
 					.update(stripeProductId, {default_price: stripePrice.id})
 			}
 			else if (active !== stripeProduct.active)
-				await stripeLiaisonAccount
+				stripeProduct = await stripeLiaisonAccount
 					.products
 					.update(stripeProductId, {active, name: label})
 

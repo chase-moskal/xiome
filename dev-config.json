@@ -1,4 +1,5 @@
 {
+	"webRoot": "http://localhost:8080",
 	"server": {
 		"port": 8000,
 		"detailedLogs": true
@@ -19,10 +20,10 @@
 	},
 	"email": "mock-console",
 	"database": "mock-storage",
-	"stripe": "mock-mode",
 	"store": {
-		"popupReturnUrl": "http://localhost:8080/popups/return"
+		"popupReturnUrl": "/popups/return"
 	},
+	"stripe": "mock-mode",
 	"dacast": "mock-mode",
 	"chat": {
 		"port": 8001
