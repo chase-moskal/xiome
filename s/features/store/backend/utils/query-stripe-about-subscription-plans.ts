@@ -14,14 +14,17 @@ export async function queryStripeAboutSubscriptionPlans({
 	}) {
 
 	const {stripeLiaisonAccount} = auth
-	const stripeProducts = await Promise.all(
-		tierRows.map(async row => (
-			await stripeLiaisonAccount
-				.products
-				.retrieve(row.stripeProductId)
-		))
-	)
-	const stripePrices = await Promise.all(
+
+	const stripeProducts = (await Promise.all(
+		tierRows
+			.map(async row => (
+				await stripeLiaisonAccount
+					.products
+					.retrieve(row.stripeProductId)
+			))
+	)).filter(p => !!p)
+
+	const stripePrices = (await Promise.all(
 		stripeProducts.map(async product => {
 			const stripePriceId = getStripeId(product.default_price)
 			return stripePriceId
@@ -29,7 +32,7 @@ export async function queryStripeAboutSubscriptionPlans({
 						.retrieve(stripePriceId)
 				: undefined
 		})
-	)
+	)).filter(p => !!p)
 
 	return {stripeProducts, stripePrices}
 }

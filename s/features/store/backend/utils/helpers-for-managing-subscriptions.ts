@@ -188,13 +188,6 @@ export const helpersForManagingSubscriptions = ({
 			if (!stripeProduct)
 				throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
-			const isLabelDifferent = label !== stripeProduct.name
-				if (isLabelDifferent) {
-					stripeProduct = await stripeLiaisonAccount
-						.products
-						.update(stripeProductId, {name: label})
-				}
-
 			const stripePriceId = getStripeId(stripeProduct.default_price)
 			let stripePrice: Stripe.Response<Stripe.Price> = undefined
 
@@ -223,7 +216,11 @@ export const helpersForManagingSubscriptions = ({
 					.products
 					.update(stripeProductId, {default_price: stripePrice.id})
 			}
-			else if (active !== stripeProduct.active)
+
+			const isLabelDifferent = label !== stripeProduct.name
+			const isActiveDifferent = active !== stripeProduct.active
+
+			if (isLabelDifferent || isActiveDifferent)
 				stripeProduct = await stripeLiaisonAccount
 					.products
 					.update(stripeProductId, {active, name: label})

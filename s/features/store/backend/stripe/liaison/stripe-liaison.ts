@@ -1,10 +1,11 @@
 
 import {Stripe} from "stripe"
+import {stripeAttempt} from "./helpers/stripe-attempt.js"
 
 export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 	return {
 
-		accounts: {
+		accounts: stripeAttempt({
 			async create(params: Stripe.AccountCreateParams) {
 				return stripe.accounts.create(params)
 			},
@@ -14,23 +15,23 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 			async createLoginLink(id: string) {
 				return stripe.accounts.createLoginLink(id)
 			},
-		},
+		}),
 
-		accountLinks: {
+		accountLinks: stripeAttempt({
 			async create(params: Stripe.AccountLinkCreateParams) {
 				return stripe.accountLinks.create(params)
 			},
-		},
+		}),
 
 		account(stripeAccount: string) {
 			const connection = {stripeAccount}
 			return {
-				billingPortal: {
+				billingPortal: stripeAttempt({
 					async create(params: Stripe.BillingPortal.SessionCreateParams) {
 						return stripe.billingPortal.sessions.create(params, connection)
 					}
-				},
-				customers: {
+				}),
+				customers: stripeAttempt({
 					async create(params: Stripe.CustomerCreateParams) {
 						return stripe.customers.create(params, connection)
 						// for testing timelines with stripe test clocks
@@ -45,8 +46,8 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async listPaymentMethods(customer: string, params: Stripe.CustomerListPaymentMethodsParams) {
 						return stripe.customers.listPaymentMethods(customer, params, connection)
 					},
-				},
-				products: {
+				}),
+				products: stripeAttempt({
 					async create(params: Stripe.ProductCreateParams) {
 						return stripe.products.create(params, connection)
 					},
@@ -56,8 +57,8 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async update(id: string, params: Stripe.ProductUpdateParams) {
 						return stripe.products.update(id, params, connection)
 					},
-				},
-				prices: {
+				}),
+				prices: stripeAttempt({
 					async list(params: Stripe.PriceListParams) {
 						return stripe.prices.list(params, connection)
 					},
@@ -70,8 +71,8 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async update(id: string, params: Stripe.PriceUpdateParams) {
 						return stripe.prices.update(id, params, connection)
 					},
-				},
-				paymentMethods: {
+				}),
+				paymentMethods: stripeAttempt({
 					async create(params: Stripe.PaymentMethodCreateParams) {
 						return stripe.paymentMethods.create(params, connection)
 					},
@@ -81,24 +82,24 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async detach(id: string) {
 						return stripe.paymentMethods.detach(id, undefined, connection)
 					},
-				},
-				setupIntents: {
+				}),
+				setupIntents: stripeAttempt({
 					async retrieve(id: string) {
 						return stripe.setupIntents.retrieve(id, connection)
 					},
 					async create(params: Stripe.SetupIntentCreateParams) {
 						return stripe.setupIntents.create(params, connection)
 					},
-				},
-				paymentIntents: {
+				}),
+				paymentIntents: stripeAttempt({
 					async retrieve(id: string) {
 						return stripe.paymentIntents.retrieve(id, connection)
 					},
 					async create(params: Stripe.PaymentIntentCreateParams) {
 						return stripe.paymentIntents.create(params, connection)
 					},
-				},
-				subscriptions: {
+				}),
+				subscriptions: stripeAttempt({
 					async list(params: Stripe.SubscriptionListParams) {
 						return stripe.subscriptions.list(params, connection)
 					},
@@ -111,18 +112,18 @@ export function makeStripeLiaison({stripe}: {stripe: Stripe}) {
 					async update(id: string, params: Stripe.SubscriptionUpdateParams) {
 						return stripe.subscriptions.update(id, params, connection)
 					},
-				},
-				subscriptionItems: {
+				}),
+				subscriptionItems: stripeAttempt({
 					async del(id: string, params: Stripe.SubscriptionItemDeleteParams) {
 						return stripe.subscriptionItems.del(id, params, connection)
 					},
-				},
+				}),
 				checkout: {
-					sessions: {
+					sessions: stripeAttempt({
 						async create(params: Stripe.Checkout.SessionCreateParams) {
 							return stripe.checkout.sessions.create(params, connection)
 						},
-					},
+					}),
 				},
 			}
 		}
