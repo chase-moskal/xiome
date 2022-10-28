@@ -83,7 +83,7 @@ export const ops = {
 		}: {
 			errorReason?: string
 			promise: Promise<xValue>
-			setOp: (op: Op<xValue>) => void | Promise<void>
+			setOp: (op: Op<xValue>) => unknown | Promise<unknown>
 		}) {
 
 		await setOp(ops.loading())
