@@ -2,21 +2,21 @@
 import {renderPlan} from "./utils/render-plan.js"
 import {makeStoreModel} from "../../model/model.js"
 import {CatalogProps} from "./utils/catalog-props.js"
+import {planHasTiers} from "./utils/plan-has-tiers.js"
 import {ops, Op} from "../../../../../framework/ops.js"
 import {html} from "../../../../../framework/component.js"
+import {planIsSpecified} from "./utils/plan-is-specified.js"
 import {planIsNotArchived} from "./utils/plan-is-not-archived.js"
-import {CatalogRenderingParams} from "./catalog-rendering-params.js"
 import {component} from "../../../../../toolbox/magical-component.js"
 import {engageTemplateSlotting} from "../../utils/setup-template-slots.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {planHasTiersThatAreActive} from "./utils/plan-has-tiers-that-are-active.js"
-import {planIsInListOfAllowedPlans} from "./utils/plan-is-in-list-of-allowed-plans.js"
 import {ModalSystem} from "../../../../../assembly/frontend/modal/types/modal-system.js"
 import {planHasAtLeastOneTierWithPricing} from "./utils/plan-has-at-least-one-tier-with-pricing.js"
 import {setupRerenderingOnSnapstateChanges} from "../../utils/setup-rerendering-on-snapstate-changes.js"
 
 import styles from "./styles.js"
-import {planHasTiers} from "./utils/plan-has-tiers.js"
+import {parseSpecifiedPlans} from "./utils/parse-specified-plans.js"
 
 export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 	modals: ModalSystem
@@ -27,28 +27,30 @@ component<CatalogProps>({
 	styles,
 	shadow: false,
 	properties: {
-		"allow-plans": {type: String},
+		"plans": {type: String},
 	},
 },
 
 use => {
 	setupRerenderingOnSnapstateChanges(use, storeModel.snap)
 	const slots = engageTemplateSlotting(use)
-	const plans = (
+	const [op, setOp] = use.state<Op<void>>(ops.ready(undefined))
+	const specifiedPlans = parseSpecifiedPlans(use.element.plans)
+
+	const allPlans = (
 		storeModel
 			.get
 			.subscriptions
 			.plans
 				?? []
 	)
-	const [op, setOp] = use.state<Op<void>>(ops.ready(undefined))
 
-	const params: CatalogRenderingParams = {
-		modals,
-		storeModel,
-		slots,
-		setOp,
-	}
+	const plans = allPlans
+		.filter(planIsSpecified(specifiedPlans))
+		.filter(planIsNotArchived())
+		.filter(planHasTiers())
+		.filter(planHasTiersThatAreActive())
+		.filter(planHasAtLeastOneTierWithPricing())
 
 	return renderOp(
 		ops.combine(
@@ -59,13 +61,12 @@ use => {
 		() => html`
 			<ol data-plans>
 				${
-					plans
-						.filter(planIsInListOfAllowedPlans(use.element["allow-plans"]))
-						.filter(planIsNotArchived())
-						.filter(planHasTiers())
-						.filter(planHasTiersThatAreActive())
-						.filter(planHasAtLeastOneTierWithPricing())
-						.map(renderPlan(params))
+					plans.map(renderPlan({
+						modals,
+						storeModel,
+						slots,
+						setOp,
+					}))
 				}
 			</ol>
 		`

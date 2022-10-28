@@ -1,4 +1,4 @@
 
 export interface CatalogProps {
-	"allow-plans": string
+	"plans": string
 }
