@@ -16,6 +16,7 @@ import {planHasAtLeastOneTierWithPricing} from "./utils/plan-has-at-least-one-ti
 import {setupRerenderingOnSnapstateChanges} from "../../utils/setup-rerendering-on-snapstate-changes.js"
 
 import styles from "./styles.js"
+import {planHasTiers} from "./utils/plan-has-tiers.js"
 
 export const XiomeStoreSubscriptionCatalog = ({modals, storeModel}: {
 	modals: ModalSystem
@@ -61,6 +62,7 @@ use => {
 					plans
 						.filter(planIsInListOfAllowedPlans(use.element["allow-plans"]))
 						.filter(planIsNotArchived())
+						.filter(planHasTiers())
 						.filter(planHasTiersThatAreActive())
 						.filter(planHasAtLeastOneTierWithPricing())
 						.map(renderPlan(params))
