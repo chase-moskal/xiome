@@ -1,9 +1,9 @@
 
 import {SubscriptionPlan} from "../../../../isomorphic/concepts.js"
 
-export function planHasAtLeastOneTierWithPricing() {
+export function planHasTiersThatAreActive() {
 
 	return (plan: SubscriptionPlan) => plan
 		.tiers
-		.some(tier => !!tier.pricing)
+		.some(tier => tier.active)
 }
