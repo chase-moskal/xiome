@@ -18,7 +18,7 @@ export function makeAuthMediator({
 		greenService: Service<typeof makeGreenService>
 	}) {
 
-	const tokenChangeEvent = pubsub<() => void>()
+	const tokenChangeEvent = pubsub<() => void | Promise<void>>()
 	const accessEvent = pubsub<AccessEventListener>()
 
 	const key = `auth-tokens-${appId}`
@@ -30,7 +30,7 @@ export function makeAuthMediator({
 	async function commitTokens(tokens: AuthTokens) {
 		const access = decodeAccessToken(tokens.accessToken)
 		await setTokens(tokens)
-		tokenChangeEvent.publish()
+		await tokenChangeEvent.publish()
 		await accessEvent.publish(access)
 		return access
 	}

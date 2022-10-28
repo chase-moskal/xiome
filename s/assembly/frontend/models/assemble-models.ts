@@ -79,7 +79,7 @@ export async function assembleModels({
 		getAccess: getAccessOp,
 	})
 
-	accessModel.subscribe(async({accessOp}) => {
+	accessModel.subscribe(async(accessOp) => {
 		const access = getAccess()
 		await Promise.all([
 			exampleModel.updateAccessOp(accessOp),

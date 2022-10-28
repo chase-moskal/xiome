@@ -83,18 +83,18 @@ export const ops = {
 		}: {
 			errorReason?: string
 			promise: Promise<xValue>
-			setOp: (op: Op<xValue>) => void
+			setOp: (op: Op<xValue>) => void | Promise<void>
 		}) {
 
-		setOp(ops.loading())
+		await setOp(ops.loading())
 
 		try {
 			const value = await promise
-			setOp(ops.ready(value))
+			await setOp(ops.ready(value))
 			return value
 		}
 		catch(error) {
-			setOp(ops.error(errorReason))
+			await setOp(ops.error(errorReason))
 			throw error
 		}
 	},
