@@ -1,6 +1,7 @@
 
 import {html} from "lit"
 
+import {examples} from "./example-data.js"
 import {SubscriptionStatus} from "../../../isomorphic/concepts.js"
 import {component} from "../../../../../toolbox/magical-component.js"
 import {getStatusIcon} from "../../views/tier/utils/get-status-icon.js"
@@ -11,29 +12,9 @@ import {TierBasics, TierContext, TierInteractivity} from "../../views/tier/types
 
 import styles from "./styles.js"
 
-const examples = {
-	basics: <TierBasics>{
-		tier: {
-			active: true,
-			label: "Example Tier",
-			pricing: [{
-				currency: "usd",
-				interval: "month",
-				price: 0,
-				stripePriceId: "FAKE_STRIPE_PRICE_ID",
-			}],
-			roleId: "FAKE_ROLE_ID",
-			tierId: "FAKE_TIER_ID",
-			time: Date.now(),
-		},
-	},
-	context: <TierContext>{
-		isSubscribedToThisTier: true,
-		status: SubscriptionStatus.Active,
-	},
-}
+export const XiomeStoreSubscriptionTier =
 
-export const XiomeStoreSubscriptionTier = component<{
+component<{
 	basics: TierBasics
 	context: TierContext
 	interactivity: TierInteractivity | undefined
@@ -45,8 +26,9 @@ export const XiomeStoreSubscriptionTier = component<{
 		context: {type: Object},
 		interactivity: {type: Object},
 	},
-}, use => {
+},
 
+use => {
 	const {
 		basics: {tier} = examples.basics,
 		context: {status, isSubscribedToThisTier} = examples.context,
@@ -57,7 +39,6 @@ export const XiomeStoreSubscriptionTier = component<{
 	const recurringInterval = pricing.interval === "month"
 		? "monthly"
 		: "yearly"
-
 
 	const icon = getStatusIcon(status)
 	const statusLabel = getStatusLabel(status)
@@ -102,13 +83,13 @@ export const XiomeStoreSubscriptionTier = component<{
 		<div part=tier_info>
 			${
 				status !== SubscriptionStatus.Unsubscribed
-				? html`<span part=tier_status>${statusLabel}</span>`
-				: undefined
+					? html`<span part=tier_status>${statusLabel}</span>`
+					: undefined
 			}
 			${
 				interactivity
-				? renderButton()
-				: null
+					? renderButton()
+					: undefined
 			}
 		</div>
 	`

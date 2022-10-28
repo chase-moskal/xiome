@@ -41,13 +41,9 @@ export function integrateStoreComponents({models, modals}: XiomeComponentOptions
 				})(XiomeStoreCustomerPortal)
 			)
 		),
-		XiomeStoreSubscriptionStatus: (
-			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
-				mixinShare({
-					storeModel,
-				})(XiomeStoreSubscriptionStatus)
-			)
-		),
+		XiomeStoreSubscriptionStatus: XiomeStoreSubscriptionStatus({
+			storeModel,
+		}),
 		XiomeStoreBillingArea: (
 			mixinSnapstateSubscriptions(storeModel.snap.subscribe)(
 				mixinShare({

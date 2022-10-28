@@ -2,14 +2,14 @@
 import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
 export default css`
 
-[part="card_list"] {
+[data-card-list] {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 1em;
 }
 
-[part="card"] {
+[data-card] {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5em;

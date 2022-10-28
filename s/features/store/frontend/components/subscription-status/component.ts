@@ -1,75 +1,64 @@
 
-import {TierView} from "../../views/tier/view.js"
 import {ops} from "../../../../../framework/ops.js"
 import {makeStoreModel} from "../../model/model.js"
-import {TierBasics} from "../../views/tier/types.js"
+import {html} from "../../../../../framework/component.js"
+import {component} from "../../../../../toolbox/magical-component.js"
+import {TemplateSlots} from "../../../../../toolbox/template-slots.js"
+import {getOngoingSubscriptions} from "./utils/get-ongoing-subscriptions.js"
 import {renderOp} from "../../../../../framework/op-rendering/render-op.js"
 import {ascertainTierContext} from "../../views/tier/utils/ascertain-tier-context.js"
-import {Component, html, mixinRequireShare, mixinStyles} from "../../../../../framework/component.js"
 
 import styles from "./styles.js"
+import {setupRerenderingOnSnapstateChanges} from "../../utils/setup-rerendering-on-snapstate-changes.js"
 
-@mixinStyles(styles, TierView.css)
-export class XiomeStoreSubscriptionStatus extends mixinRequireShare<{
-		storeModel: ReturnType<typeof makeStoreModel>
-	}>()(Component) {
+export const XiomeStoreSubscriptionStatus = ({storeModel}: {
+	storeModel: ReturnType<typeof makeStoreModel>
+}) =>
 
-	get #ongoingSubscriptions(): TierBasics[] {
-		const {storeModel} = this.share
+component({
+	styles,
+	shadow: false,
+	properties: {},
+},
 
-		const {
-			mySubscriptionDetails = [],
-			plans = [],
-		} = storeModel.get.subscriptions
+use => {
+	setupRerenderingOnSnapstateChanges(use, storeModel.snap)
 
-		return mySubscriptionDetails
-			.map(subscription => {
-				const plan = plans.find(p => p.planId === subscription.planId)
-				const tier = plan.tiers.find(t => t.tierId === subscription.tierId)
-				return {
-					plan,
-					tier,
-					subscription,
-					pricing: subscription.pricing,
-				}
-			})
-	}
+	const [slots] = use.state(() => new TemplateSlots(
+		use.element,
+		() => use.element.requestUpdate(),
+	))
 
-	#renderCard(basics: TierBasics) {
-		return html`
-			<div part=card>
-				<strong part=plan_label>${basics.plan.label}</strong>
-				${
-					TierView({
-						basics,
-						context: ascertainTierContext(basics),
-						interactivity: undefined,
-					})
-				}
-			</div>
-		`
-	}
+	const {
+		stripeConnect: {connectStatusOp},
+		subscriptions: {subscriptionPlansOp, mySubscriptionDetailsOp},
+	} = storeModel.state
 
-	render() {
-		const {
-			stripeConnect: {connectStatusOp},
-			subscriptions: {subscriptionPlansOp, mySubscriptionDetailsOp},
-		} = this.share.storeModel.state
+	const op = ops.combine(
+		subscriptionPlansOp,
+		mySubscriptionDetailsOp,
+		connectStatusOp,
+	)
 
-		return renderOp(
-			ops.combine(
-				subscriptionPlansOp,
-				mySubscriptionDetailsOp,
-				connectStatusOp
-			),
-			() => html`
-				<div part=card_list>
-					${
-						this.#ongoingSubscriptions
-							.map(basics => this.#renderCard(basics))
-					}
+	console.log({
+		op: ops.debug(op),
+		subscriptionPlansOp: ops.debug(op),
+		mySubscriptionDetailsOp: ops.debug(op),
+		connectStatusOp: ops.debug(op),
+	})
+
+	return renderOp(op, () => html`
+		<div data-card-list>
+			${getOngoingSubscriptions(storeModel).map(basics => html`
+				<div data-card>
+					<strong data-plan-label>${basics.plan.label}</strong>
+					<xiome-store-subscription-tier
+						.basics=${basics}
+						.context=${ascertainTierContext(basics)}>
+							${slots.get(basics.tier.tierId)}
+					</xiome-store-subscription-tier>
 				</div>
-			`
-		)
-	}
-}
+			`)}
+		</div>
+	`)
+})

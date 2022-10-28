@@ -6,11 +6,11 @@ export default css`xiome-store-subscription-catalog {
 	list-style: none;
 }
 
-[part="plans"] > li {
+[data-plans] > li {
 	margin-top: 1em;
 }
 
-[part="tiers"] {
+[data-tiers] {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -24,7 +24,7 @@ export default css`xiome-store-subscription-catalog {
 	}
 }
 
-[part="planlabel"] {
+[data-plan-label] {
 	font-size: 1em;
 	padding-bottom: 0.2em;
 }

@@ -9,6 +9,8 @@ import {AccessPayload} from "../../../auth/types/auth-tokens.js"
 import {makeSubscriptionsSubmodel} from "./submodels/subscriptions.js"
 import {setupLogicForInitAndLoading} from "./utils/setup-logic-for-init-and-loading.js"
 
+export type StoreModel = ReturnType<typeof makeStoreModel>
+
 export function makeStoreModel(options: {
 		services: StoreServices
 		stripePopups: StripePopups
