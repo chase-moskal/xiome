@@ -30,13 +30,12 @@ component<{
 
 use => {
 	const {
-		basics: {tier} = examples.basics,
+		basics: {tier, pricing} = examples.basics,
 		context: {status, isSubscribedToThisTier} = examples.context,
 		interactivity,
 	} = use.element
 
-	const [pricing] = tier.pricing
-	const recurringInterval = pricing.interval === "month"
+	const recurringInterval = pricing?.interval === "month"
 		? "monthly"
 		: "yearly"
 
@@ -72,12 +71,18 @@ use => {
 			}
 			<h4 part=tier_label>${tier.label}</h4>
 			<slot></slot>
-			<xio-price-display
-				unit-superscript
-				value="${centsToDollars(pricing.price)}">
-					${tier.label}
-			</xio-price-display>
-			<p>${recurringInterval}</p>
+			${pricing
+				? html`
+					<xio-price-display
+						unit-superscript
+						value="${centsToDollars(pricing.price)}">
+							${tier.label}
+					</xio-price-display>
+					<p>${recurringInterval}</p>
+				`
+				: html`
+					<p style="color: red">price not set</p>
+				`}
 		</div>
 
 		<div part=tier_info>
