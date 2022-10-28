@@ -5,11 +5,10 @@ import {SubscriptionPlan} from "../../../../isomorphic/concepts.js"
 import {CatalogRenderingParams} from "../catalog-rendering-params.js"
 
 export function renderPlan(
-		params: CatalogRenderingParams,
-		plan: SubscriptionPlan,
+		params: CatalogRenderingParams
 	) {
 
-	return html`
+	return (plan: SubscriptionPlan) => html`
 		<li data-plan=${plan.planId} data-plan>
 			<h3 data-plan-label>${plan.label}</h3>
 			<div data-tiers>
