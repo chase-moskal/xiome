@@ -40,13 +40,6 @@ use => {
 		connectStatusOp,
 	)
 
-	console.log({
-		op: ops.debug(op),
-		subscriptionPlansOp: ops.debug(op),
-		mySubscriptionDetailsOp: ops.debug(op),
-		connectStatusOp: ops.debug(op),
-	})
-
 	return renderOp(op, () => html`
 		<div data-card-list>
 			${getOngoingSubscriptions(storeModel).map(basics => html`
