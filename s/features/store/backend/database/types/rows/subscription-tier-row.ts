@@ -6,7 +6,5 @@ export type SubscriptionTierRow = dbmage.AsRow<{
 	stripeProductId: string
 	planId: dbmage.Id
 	roleId: dbmage.Id
-
-	label: string
 	time: number
 }>

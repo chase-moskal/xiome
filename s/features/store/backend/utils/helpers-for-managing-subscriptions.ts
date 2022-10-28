@@ -82,7 +82,6 @@ export const helpersForManagingSubscriptions = ({
 				.create({
 					tierId,
 					planId,
-					label: tier.label,
 					roleId,
 					time: Date.now(),
 					stripeProductId,
@@ -129,7 +128,6 @@ export const helpersForManagingSubscriptions = ({
 				.tiers
 				.create({
 					time,
-					label,
 					tierId,
 					roleId,
 					stripeProductId,
@@ -190,15 +188,8 @@ export const helpersForManagingSubscriptions = ({
 			if (!stripeProduct)
 				throw new renraku.ApiError(500, `stripe product not found ${stripeProductId}`)
 
-			const isLabelDifferent = label !== tierRow.label
+			const isLabelDifferent = label !== stripeProduct.name
 				if (isLabelDifferent) {
-					await storeTables
-						.subscriptions
-						.tiers
-						.update({
-							...dbmage.find({tierId}),
-							write: {label}
-						})
 					stripeProduct = await stripeLiaisonAccount
 						.products
 						.update(stripeProductId, {name: label})

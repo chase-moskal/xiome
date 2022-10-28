@@ -14,7 +14,7 @@ export function buildFinalTierObject(
 	return {
 		tierId: tierRow.tierId.string,
 		roleId: tierRow.roleId.string,
-		label: tierRow.label,
+		label: stripeProduct.name,
 		time: tierRow.time,
 		active: stripeProduct.active,
 		pricing: stripePrice?.active
