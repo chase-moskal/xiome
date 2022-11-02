@@ -36,6 +36,11 @@ export default suite({
 				expect(plans.length).equals(1)
 				expect(plans[0]).ok()
 				expect(plans[0].tiers.length).equals(1)
+				expect(plans[0].tiers[0]).ok()
+				expect(plans[0].tiers[0].pricing).ok()
+				expect(plans[0].tiers[0].pricing.length).equals(1)
+				expect(plans[0].tiers[0].pricing[0]).ok()
+				expect(plans[0].tiers[0].pricing[0].price).equals(10_00)
 			}
 
 			expectPlanAndTierIsLocallyPresent()

@@ -125,7 +125,8 @@ export function makeSubscriptionsSubmodel({
 
 			const newPlan = await services
 				.subscriptions
-				.planning.addPlan(options)
+				.planning
+				.addPlan(options)
 
 			const oldPlans = getPlans()
 

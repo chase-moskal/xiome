@@ -147,12 +147,17 @@ export function mockStripeLiaison({
 								product: params.product,
 								currency: params.currency,
 								unit_amount: params.unit_amount,
-								recurring: <any>params.recurring,
+								recurring: params.recurring
+									? <any>{usage_type: "licensed", ...params.recurring}
+									: undefined,
 								type: params.recurring ?"recurring" :"one_time",
 							}
 						}),
 						handleUpdate: async(id, params: Stripe.PriceUpdateParams) => ({
 							active: params.active,
+							recurring: params.recurring
+								? <any>{usage_type: "licensed", ...params.recurring}
+								: undefined,
 						}),
 					})
 					return {
