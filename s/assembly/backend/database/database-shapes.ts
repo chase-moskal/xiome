@@ -36,15 +36,10 @@ export const databaseShapeRequiresAppIsolation:
 		questionPosts: true,
 	},
 	store: {
-		// TODO store
-		// billing: {
-		// 	customers: true,
-		// 	storeInfo: true,
-		// 	subscriptionPlans: true,
-		// 	subscriptions: true,
-		// },
-		merchants: {
-			stripeAccounts: true,
+		customers: true,
+		connect: {
+			accounts: true,
+			active: true,
 		},
 		subscriptions: {
 			plans: true,

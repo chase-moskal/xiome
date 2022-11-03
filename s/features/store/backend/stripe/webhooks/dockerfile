@@ -1,0 +1,12 @@
+
+FROM node:17
+
+RUN mkdir /app && mkdir /app/s
+WORKDIR /app
+
+COPY package*.json tsconfig.json ./
+COPY x x
+
+RUN npm ci --production
+
+CMD ["node", "./x/features/store/backend/stripe/webhooks/server.js"]

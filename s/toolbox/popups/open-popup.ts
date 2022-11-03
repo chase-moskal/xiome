@@ -77,7 +77,7 @@ export function openPopup<Parameters, Payload>({
 	popup = window.open(
 		popupLink,
 		namespace,
-		centeredPopupFeatures(),
+		centeredPopupFeatures(260, 260),
 	)
 
 	popup.focus()

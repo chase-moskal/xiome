@@ -73,6 +73,14 @@ jobs:
         push: true
         tags: ${{ env.REGISTRY }}/${{ github.repository }}/chat:${{ github.sha }}
 
+    - name: 🐳 push image - stripe-webhooks
+      uses: docker/build-push-action@v2
+      with:
+        file: ./s/features/store/backend/stripe/webhooks/dockerfile
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}/stripe-webhooks:${{ github.sha }}
+
     - name: 📜 set kubeconfig
       uses: azure/k8s-set-context@v1
       with:

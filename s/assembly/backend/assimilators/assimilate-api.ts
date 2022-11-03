@@ -1,4 +1,5 @@
 
+import * as dbmage from "dbmage"
 import * as renraku from "renraku"
 import {SignToken, VerifyToken} from "redcrypto/x/types.js"
 
@@ -14,12 +15,17 @@ import {prepareAuthPolicies} from "../../../features/auth/policies/prepare-auth-
 import {makeAdministrativeApi} from "../../../features/administrative/api/administrative-api.js"
 import {SendLoginEmail} from "../../../features/auth/aspects/users/types/emails/send-login-email.js"
 import {standardNicknameGenerator} from "../../../features/auth/utils/nicknames/standard-nickname-generator.js"
+import {AnonMeta} from "../../../features/auth/types/auth-metas.js"
+import {makeStoreApi} from "../../../features/store/backend/api.js"
+import {StripeLiaison} from "../../../features/store/backend/stripe/liaison/types.js"
+import {makeRoleManager} from "../../../features/auth/aspects/permissions/interactions/role-manager.js"
 
 export async function assimilateApi({
-		config, rando, databaseRaw, dacastSdk,
+		config, rando, databaseRaw, dacastSdk, stripeLiaison,
 		sendLoginEmail, signToken, verifyToken,
 	}: {
 		databaseRaw: DatabaseRaw
+		stripeLiaison: StripeLiaison
 		sendLoginEmail: SendLoginEmail
 		signToken: SignToken
 		verifyToken: VerifyToken
@@ -66,6 +72,28 @@ export async function assimilateApi({
 		notes: notesApi({
 			config,
 			authPolicies,
-		})
+		}),
+		store: makeStoreApi<AnonMeta>({
+			async anonPolicy(meta, headers) {
+				const auth = await authPolicies.anonPolicy(meta, headers)
+				const {database} = auth
+				delete auth.database
+				return {
+					...auth,
+					stripeLiaison,
+					roleManager: makeRoleManager({
+						generateId: () => rando.randomId(),
+						database: dbmage.subsection(database, tables => ({
+							role: tables.auth.permissions.role,
+							userHasRole: tables.auth.permissions.userHasRole,
+						})),
+					}),
+					storeDatabaseUnconnected: dbmage.subsection(database, tables => tables.store),
+				}
+			},
+			stripeLiaison,
+			generateId: rando.randomId,
+			popupReturnUrl: config.webRoot + config.store.popupReturnUrl,
+		}),
 	})
 }

@@ -23,6 +23,10 @@ export default css`
 	--border-radius: var(--xio-text-input-border-radius, 0.3em);
 }
 
+:host([disabled]) [part="inputbox"] {
+	opacity: 0.4;
+}
+
 :host([hidden]) {
 	display: none;
 }

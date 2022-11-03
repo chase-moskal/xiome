@@ -28,6 +28,7 @@ export function mockModalSystem() {
 		async prompt<xValue>() {
 			return <undefined | {value: xValue}>nextModalResults.prompt
 		},
+		async confirmAction() {},
 	}
 
 	return {

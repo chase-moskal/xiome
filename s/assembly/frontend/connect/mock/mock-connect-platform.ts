@@ -1,15 +1,15 @@
 
 import {FlexStorage} from "dbmage"
 
-import {mockPopups} from "./common/mock-popups.js"
 import {mockWiredRemote} from "./common/mock-wired-remote.js"
 import {mockConfig} from "../../../backend/config/mock-config.js"
 import {backendForBrowser} from "../../../backend/backend-for-browser.js"
 import {chatMockClientEntirely} from "../../../../features/chat/api/sockets/chat-mock-client-entirely.js"
 
 export async function mockConnectPlatform({
-		platformHome, storage,
+		root, platformHome, storage,
 	}: {
+		root: string
 		platformHome: string
 		storage: FlexStorage
 	}) {
@@ -17,6 +17,7 @@ export async function mockConnectPlatform({
 	const appOrigin = new URL(platformHome).origin
 
 	const backend = await backendForBrowser(storage)(mockConfig({
+		root,
 		platformHome,
 		platformOrigins: [appOrigin],
 	}))
@@ -30,12 +31,10 @@ export async function mockConnectPlatform({
 		appOrigin,
 	})
 
-	const popups = mockPopups({
-		mockStripeOperations: backend.mockStripeOperations,
-	})
+	const {stripePopups} = backend
 
 	const chatConnect = await chatMockClientEntirely(storage)
 	// const chatConnect = chatSocketClient("ws://localhost:8001/")
 
-	return {appId, remote, storage, authMediator, backend, popups, setMockLatency, chatConnect}
+	return {appId, remote, storage, authMediator, backend, stripePopups, setMockLatency, chatConnect}
 }

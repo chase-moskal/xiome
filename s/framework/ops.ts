@@ -53,7 +53,7 @@ export const ops = {
 			: op
 	},
 
-	isNone: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Ready,
+	isNone: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.None,
 	isLoading: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Loading,
 	isError: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Error,
 	isReady: <xValue>(op: Op<xValue>) => op.mode === Ops.Mode.Ready,
@@ -83,18 +83,18 @@ export const ops = {
 		}: {
 			errorReason?: string
 			promise: Promise<xValue>
-			setOp: (op: Op<xValue>) => void
+			setOp: (op: Op<xValue>) => unknown | Promise<unknown>
 		}) {
 
-		setOp(ops.loading())
+		await setOp(ops.loading())
 
 		try {
 			const value = await promise
-			setOp(ops.ready(value))
+			await setOp(ops.ready(value))
 			return value
 		}
 		catch(error) {
-			setOp(ops.error(errorReason))
+			await setOp(ops.error(errorReason))
 			throw error
 		}
 	},

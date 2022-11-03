@@ -27,12 +27,12 @@ export function applyMockHacks({connection, frontend}: {
 		},
 	)
 
-	connection.popups.triggerStripeConnectPopup = hitchie(
-		connection.popups.triggerStripeConnectPopup,
-		async(...args) => {
-			console.log("mock: bank popup", args)
-		},
-	)
+	// connection.popups.triggerStripeConnectPopup = hitchie(
+	// 	connection.popups.triggerStripeConnectPopup,
+	// 	async(...args) => {
+	// 		console.log("mock: bank popup", args)
+	// 	},
+	// )
 
 	const notesDepositBox = connection.backend.prepareNotesDepositBox(
 		Id.fromString(frontend.appId)

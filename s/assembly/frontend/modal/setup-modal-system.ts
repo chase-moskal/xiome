@@ -6,10 +6,11 @@ import {html} from "../../../framework/component.js"
 import {prepareModalSystemRendering} from "./utils/prepare-modal-system-rendering.js"
 
 import {Modal} from "./types/modal.js"
+import {prepareAlert} from "./prefabs/alert.js"
 import {ModalSystem} from "./types/modal-system.js"
 import {PopupOptions} from "./types/modal-options.js"
 import {ModalControls} from "./types/modal-controls.js"
-import {prepareAlert} from "./prefabs/alert.js"
+import {prepareConfirmAction} from "./prefabs/confirm-action.js"
 
 export function setupModalSystem() {
 	let count = 0
@@ -50,12 +51,14 @@ export function setupModalSystem() {
 	}
 
 	const confirm = prepareConfirm(popup)
+	const confirmAction = prepareConfirmAction(popup)
 
 	return {
 		modalsElement: element,
 		modals: <ModalSystem>{
 			popup,
 			confirm,
+			confirmAction,
 			alert: prepareAlert(confirm),
 			prompt: preparePrompt(popup),
 		},

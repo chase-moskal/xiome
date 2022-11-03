@@ -6,6 +6,7 @@ import {ConfigEmailMailgun} from "./config-email-mailgun.js"
 import {ConfigDatabaseMongo} from "./config-database-mongo.js"
 
 export interface SecretConfig {
+	webRoot: string
 	server: {
 		port: number
 		detailedLogs: boolean
@@ -14,6 +15,9 @@ export interface SecretConfig {
 	email: "mock-console" | ConfigEmailMailgun
 	database: "mock-storage" | ConfigDatabaseMongo
 	stripe: "mock-mode" | ConfigStripe
+	store: {
+		popupReturnUrl: string
+	},
 	dacast: "mock-mode" | true
 	chat: {
 		port: number

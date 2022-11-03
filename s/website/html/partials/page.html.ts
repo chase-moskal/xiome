@@ -9,6 +9,7 @@ export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 	headHtml?: HtmlTemplate
 } & XiomeWebsiteContext) => html`
 
+<!doctype html>
 <html>
 <head>
 
@@ -34,7 +35,7 @@ export default ({v, mode, base, pageName, pageSubtitle, mainHtml, headHtml}: {
 				chat-server="ws://localhost:8001/"
 			></xiome-config>
 			<script defer type="importmap-shim" src="${base}/importmap.json"></script>
-			<script defer type="module-shim" src="${base}/xiome-mock.js"></script>
+			<script defer type="module-shim" src="${base}/xiome.js"></script>
 			<script defer src="${base}/../node_modules/es-module-shims/dist/es-module-shims.js"></script>
 		`
 		else return html`

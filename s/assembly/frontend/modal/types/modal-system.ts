@@ -4,6 +4,7 @@ import {AlertOptions} from "./alert-options.js"
 import {ModalControls} from "./modal-controls.js"
 import {PromptOptions} from "./prompt-options.js"
 import {ConfirmOptions} from "./confirm-options.js"
+import {ConfirmActionOptions} from "./confirm-action-options.js"
 
 export interface ModalSystem {
 	popup({}: PopupOptions): {
@@ -14,4 +15,5 @@ export interface ModalSystem {
 	prompt<xValue>({}: PromptOptions<xValue>):
 		Promise<undefined | {value: xValue}>
 	alert({}: AlertOptions): Promise<void>
+	confirmAction({}: ConfirmActionOptions): Promise<void>
 }

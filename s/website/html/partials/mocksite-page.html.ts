@@ -7,6 +7,7 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 	headHtml?: HtmlTemplate
 } & XiomeWebsiteContext) => html`
 
+<!doctype html>
 <html>
 <head>
 
@@ -26,7 +27,7 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 		`
 		: html`
 			<xiome-config
-				app="4dfc8a5dd1f52a487a0c3a0d848ea8d31ca0d1cd344c31688312ae6c3728ed42"
+				app="49aef0eb9bdb853dc3b45d1556a5229f313894125cf65a948d1a6f6d85d66ca4"
 				platform="http://localhost:8080"
 				api-server="http://localhost:8000/"
 				chat-server="ws://localhost:8001/"
@@ -63,6 +64,10 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 			margin-top: 1em;
 			margin-bottom: 0.5em;
 		}
+		xiome-store-subscription-status:not(:defined),
+		xiome-store-billing-area:not(:defined){
+			display: none
+		}
 	</style>
 
 	${headHtml}
@@ -74,5 +79,6 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 		${mainHtml}
 	</main>
 </body>
+</html>
 
 `

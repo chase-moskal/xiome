@@ -1,11 +1,12 @@
 
-import * as renraku from "renraku"
 import {Id} from "dbmage"
+import {getRando} from "dbmage"
+import * as renraku from "renraku"
+import {memoryFlexStorage} from "dbmage"
 import {mockVerifyToken} from "redcrypto/x/curries/mock-verify-token.js"
 
 import {ops} from "../../../framework/ops.js"
 import {mockVideoMeta} from "./meta/mock-meta.js"
-import {getRando} from "dbmage"
 import {makeVideoModels} from "../models/video-models.js"
 import {videoPrivileges} from "../api/video-privileges.js"
 import {mockDacastSdk} from "../dacast/mocks/mock-dacast-sdk.js"
@@ -14,7 +15,6 @@ import {makeContentService} from "../api/services/content-service.js"
 import {goodApiKey} from "../dacast/mocks/parts/mock-dacast-constants.js"
 import {mockConfig} from "../../../assembly/backend/config/mock-config.js"
 import {prepareAuthPolicies} from "../../auth/policies/prepare-auth-policies.js"
-import {memoryFlexStorage} from "dbmage"
 import {UnconstrainedTable} from "../../../framework/api/unconstrained-table.js"
 import {mockDatabase} from "../../../assembly/backend/database/mock-database.js"
 
@@ -36,6 +36,7 @@ export async function videoSetup() {
 	const appId = rando.randomId()
 	const appOrigin = "chasemoskal.com"
 	const config = mockConfig({
+		root: "",
 		platformHome: `https://xiome.io/`,
 		platformOrigins: ["xiome.io"],
 	})

@@ -22,6 +22,7 @@ export class XiomeMyAccount extends mixinRequireShare<{
 				.user=${user}
 				.saveProfile=${this.saveProfile}
 			></xio-profile-card>
+			<slot></slot>
 		`)
 	}
 }

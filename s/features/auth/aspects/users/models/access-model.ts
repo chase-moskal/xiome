@@ -1,6 +1,5 @@
 
-import {snapstate} from "@chasemoskal/snapstate"
-
+import {pub} from "../../../../../toolbox/pub.js"
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AccessLoginExpiredError} from "./errors/access-errors.js"
@@ -8,19 +7,22 @@ import {AccessModelOptions} from "./types/access-model-options.js"
 import {isTokenValid} from "../../../utils/tokens/is-token-valid.js"
 
 export function makeAccessModel({authMediator, loginService}: AccessModelOptions) {
+	let accessOp: Op<AccessPayload> = ops.none()
+	const accessOpEvent = pub<(accessOp: Op<AccessPayload>) => void | Promise<void>>()
 
-	const state = snapstate({
-		accessOp: <Op<AccessPayload>>ops.none(),
-	})
+	async function setAccessOp(op: Op<AccessPayload>) {
+		accessOp = op
+		await accessOpEvent.publish(op)
+	}
 
-	authMediator.subscribeToAccessChange(access => {
-		state.writable.accessOp = ops.ready(access)
-	})
+	authMediator.subscribeToAccessChange(
+		async access => setAccessOp(ops.ready(access))
+	)
 
 	async function accessOperation(promise: Promise<AccessPayload>) {
 		return ops.operation({
 			promise,
-			setOp: op => state.writable.accessOp = op,
+			setOp: setAccessOp,
 		})
 	}
 
@@ -33,7 +35,7 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 		},
 		async login(loginToken: string) {
 			try {
-				if (isTokenValid(loginToken)) 
+				if (isTokenValid(loginToken))
 					await accessOperation(
 						loginService
 							.authenticateViaLoginToken({loginToken})
@@ -44,15 +46,16 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 			}
 			catch (error) {
 				console.error(error)
-				state.writable.accessOp = ops.none()
+				await setAccessOp(ops.none())
 				await accessOperation(authMediator.initialize())
 				throw error
 			}
 		},
 		async logout() {
+			await accessOperation(authMediator.logout())
 			await ops.operation({
 				promise: authMediator.logout(),
-				setOp: op => state.writable.accessOp = op,
+				setOp: setAccessOp,
 			})
 		},
 		async reauthorize() {
@@ -61,15 +64,13 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 	}
 
 	return {
-		readable: state.readable,
-		track: state.track,
-		subscribe: state.subscribe,
 		...loginFacilities,
+		subscribe: accessOpEvent.subscribe,
 		getAccessOp() {
-			return state.readable.accessOp
+			return structuredClone(accessOp)
 		},
 		getAccess() {
-			return ops.value(state.readable.accessOp)
+			return ops.value(structuredClone(accessOp))
 		},
 		getValidAccess() {
 			return authMediator.getValidAccess()

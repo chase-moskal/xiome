@@ -15,3 +15,5 @@ microservices:
     replicas: 1
   chat:
     replicas: 1
+  stripe-webhooks:
+    replicas: 1

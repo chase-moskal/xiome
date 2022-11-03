@@ -42,16 +42,22 @@ export default css`
 	color: #444;
 }
 
+[data-modal-system] [data-plate] h2 {
+	padding: 0 1rem;
+	margin: 1rem auto;
+}
+
 [data-modal-system] [data-content]:focus {
 	outline: unset;
 }
 
 [data-modal-system] [data-confirm] {
-	padding: 1em;
+	padding: 0 1rem;
+	margin: 1rem auto;
 }
 
 [data-modal-system] [data-buttons] {
-	margin-top: 1em;
+	margin-top: 1rem;
 	text-align: right;
 }
 

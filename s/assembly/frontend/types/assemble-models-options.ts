@@ -1,15 +1,16 @@
 
-import {SystemRemote} from "./system-remote.js"
-import {SystemPopups} from "../connect/system-popups/types/system-popups.js"
 import {FlexStorage} from "dbmage"
-import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
+
+import {SystemRemote} from "./system-remote.js"
+import {StripePopups} from "../../../features/store/popups/types.js"
 import {ChatConnect} from "../../../features/chat/common/types/chat-concepts.js"
+import {AuthMediator} from "../../../features/auth/mediator/types/auth-mediator.js"
 
 export interface AssembleModelsOptions {
 	appId: string
 	remote: SystemRemote
-	popups: SystemPopups
 	storage: FlexStorage
 	authMediator: AuthMediator
+	stripePopups: StripePopups
 	chatConnect: ChatConnect
 }
