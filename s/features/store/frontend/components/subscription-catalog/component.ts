@@ -32,6 +32,7 @@ component<CatalogProps>({
 },
 
 use => {
+	storeModel.initialize()
 	setupRerenderingOnSnapstateChanges(use, storeModel.snap)
 	const slots = engageTemplateSlotting(use)
 	const [op, setOp] = use.state<Op<void>>(ops.ready(undefined))
