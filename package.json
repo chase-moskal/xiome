@@ -70,7 +70,7 @@
 		"typescript": "^4.8.4"
 	},
 	"dependencies": {
-		"@chasemoskal/magical": "^0.0.0",
+		"@chasemoskal/magical": "^0.0.1",
 		"@chasemoskal/snapstate": "^0.0.8",
 		"broadcastchannel-polyfill": "1.0.1",
 		"chalk": "^5.1.2",
@@ -82,12 +82,12 @@
 		"json5": "^2.2.1",
 		"lit": "^2.4.0",
 		"mailgun.js": "^8.0.1",
-		"mongodb": "^4.10.0",
+		"mongodb": "^4.11.0",
 		"redcrypto": "0.0.0-dev.9",
 		"renraku": "^0.0.0-dev.58",
 		"stripe": "^10.14.0",
 		"typed-rest-client": "^1.8.9",
-		"ws": "^8.9.0"
+		"ws": "^8.10.0"
 	},
 	"keywords": [
 		"components",
