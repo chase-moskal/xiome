@@ -21,7 +21,7 @@ export function realStripeCircuit({
 
 	const stripe = new Stripe(
 		stripeConfig.keys.secret,
-		{apiVersion: "2022-08-01"},
+		{apiVersion: "2022-11-15"},
 	)
 
 	const stripeLiaison = makeStripeLiaison({stripe})
