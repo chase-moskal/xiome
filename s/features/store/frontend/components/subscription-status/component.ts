@@ -40,9 +40,14 @@ use => {
 		connectStatusOp,
 	)
 
+	const ongoingSubscriptions = getOngoingSubscriptions({
+		plans: storeModel.get.subscriptions.plans,
+		mySubscriptionDetails: storeModel.get.subscriptions.mySubscriptionDetails,
+	})
+
 	return renderOp(op, () => html`
 		<div data-card-list>
-			${getOngoingSubscriptions(storeModel).map(basics => html`
+			${ongoingSubscriptions.map(basics => html`
 				<div data-card>
 					<strong data-plan-label>${basics.plan.label}</strong>
 					<xiome-store-subscription-tier

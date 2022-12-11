@@ -64,8 +64,11 @@ use => {
 				${
 					plans.map(renderPlan({
 						modals,
-						storeModel,
 						slots,
+						billing: storeModel.billing,
+						mySubscriptionDetails: storeModel.get.subscriptions.mySubscriptionDetails ?? [],
+						paymentMethod: storeModel.get.billing.paymentMethod,
+						subscriptions: storeModel.subscriptions,
 						setOp,
 					}))
 				}

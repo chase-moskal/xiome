@@ -1,5 +1,5 @@
 
-import {makeStoreModel} from "../../../model/model.js"
+import {makeStoreModel, StoreModel} from "../../../model/model.js"
 import {Op, ops} from "../../../../../../framework/ops.js"
 import {TierBasics, TierButton, TierContext, TierInteractivity} from "../types.js"
 import {centsToDollars} from "../../../components/subscription-planning/ui/price-utils.js"
@@ -18,18 +18,21 @@ export function ascertainTierInteractivity({
 			isAnotherTierInPlanUnpaid,
 		},
 		modals,
-		storeModel,
+		paymentMethod,
+		billing,
+		subscriptions,
 		setOp,
 	}: {
 		basics: TierBasics
 		modals: ModalSystem
 		context: TierContext
-		storeModel: ReturnType<typeof makeStoreModel>
+		paymentMethod: PaymentMethod
+		billing: StoreModel["billing"]
+		subscriptions: StoreModel["subscriptions"]
 		setOp: (op: Op<void>) => void
 	}): TierInteractivity | undefined {
 
 	const {tierId} = tier
-	const {paymentMethod} = storeModel.get.billing
 
 	switch (status) {
 		case SubscriptionStatus.Unsubscribed: {
@@ -46,10 +49,10 @@ export function ascertainTierInteractivity({
 				button,
 				async action() {
 					const actions = preparePurchaseActions({
+						tier,
 						button,
 						modals,
-						storeModel,
-						tier,
+						subscriptions,
 					})
 					const scenario = determinePurchaseScenario({
 						hasDefaultPaymentMethod: !!paymentMethod,
@@ -82,7 +85,7 @@ export function ascertainTierInteractivity({
 					title: "Cancel subscription",
 					message: `are you sure you want to cancel your ${tier.label} subscription`,
 					loadingMessage: "cancelling subscription",
-					actionWhenConfirmed: () => storeModel.subscriptions.cancel(tierId)
+					actionWhenConfirmed: () => subscriptions.cancel(tierId)
 				}),
 			}
 		}
@@ -90,7 +93,7 @@ export function ascertainTierInteractivity({
 			return {
 				button: TierButton.Pay,
 				action: async() => ops.operation({
-					promise: storeModel.billing.customerPortal(),
+					promise: billing.customerPortal(),
 					setOp,
 				}),
 			}
@@ -102,7 +105,7 @@ export function ascertainTierInteractivity({
 					title: "Renew subscription",
 					message: `are you sure you want to renew your ${tier.label} subscription for $${centsToDollars(tier.pricing[0].price)}/month?`,
 					loadingMessage: "renewing subscription",
-					actionWhenConfirmed: () => storeModel.subscriptions.uncancel(tierId),
+					actionWhenConfirmed: () => subscriptions.uncancel(tierId),
 				})
 			}
 		}

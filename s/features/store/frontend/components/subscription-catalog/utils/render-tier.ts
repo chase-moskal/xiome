@@ -16,11 +16,12 @@ export function renderTier(
 	const {
 		slots,
 		modals,
-		storeModel,
+		billing,
+		paymentMethod,
+		subscriptions,
+		mySubscriptionDetails,
 		setOp,
 	} = params
-
-	const {mySubscriptionDetails} = storeModel.get.subscriptions
 
 	const subscription = (
 		mySubscriptionDetails
@@ -40,7 +41,9 @@ export function renderTier(
 		basics,
 		context,
 		modals,
-		storeModel,
+		billing,
+		subscriptions,
+		paymentMethod,
 		setOp,
 	})
 

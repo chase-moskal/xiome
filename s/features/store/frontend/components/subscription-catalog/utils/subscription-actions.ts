@@ -1,20 +1,19 @@
 
-import {makeStoreModel} from "../../../model/model.js"
+import {StoreModel} from "../../../model/model.js"
+import {TierButton} from "../../../views/tier/types.js"
 import {SubscriptionTier} from "../../../../isomorphic/concepts.js"
 import {centsToDollars} from "../../subscription-planning/ui/price-utils.js"
 import {ModalSystem} from "../../../../../../assembly/frontend/modal/types/modal-system.js"
-import {TierButton} from "../../../views/tier/types.js"
 
 export function preparePurchaseActions({
-		modals, button, tier, storeModel
+		modals, button, tier, subscriptions,
 	}:{
 		button: TierButton
 		modals: ModalSystem
 		tier: SubscriptionTier
-		storeModel: ReturnType<typeof makeStoreModel>
+		subscriptions: StoreModel["subscriptions"]
 	}) {
 
-	const {subscriptions} = storeModel
 	const {stripePriceId} = tier.pricing[0]
 
 	return {

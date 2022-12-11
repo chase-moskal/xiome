@@ -1,34 +1,30 @@
 
-import {StoreModel} from "../../../model/model.js"
 import {TierBasics} from "../../../views/tier/types.js"
+import {SubscriptionDetails, SubscriptionPlan} from "../../../../isomorphic/concepts.js"
 
-export function getOngoingSubscriptions(storeModel: StoreModel): TierBasics[] {
+export function getOngoingSubscriptions({
+		plans = [],
+		mySubscriptionDetails = [],
+	}: {
+		plans?: SubscriptionPlan[]
+		mySubscriptionDetails?: SubscriptionDetails[]
+	}): TierBasics[] {
 
-	return (storeModel
-		.get
-		.subscriptions
-		.mySubscriptionDetails ?? [])
-		.map(subscription => {
+	return mySubscriptionDetails.map(subscription => {
+		const plan
+			= plans	
+				.find(p => p.planId === subscription.planId)
 
-			const plan = (
-				storeModel
-					.get
-					.subscriptions
-					.plans
-					.find(p => p.planId === subscription.planId)
-			)
+		const tier
+			= plan
+				.tiers
+				.find(t => t.tierId === subscription.tierId)
 
-			const tier = (
-				plan
-					.tiers
-					.find(t => t.tierId === subscription.tierId)
-			)
-
-			return {
-				plan,
-				tier,
-				subscription,
-				pricing: subscription.pricing,
-			}
-		})
+		return {
+			plan,
+			tier,
+			subscription,
+			pricing: subscription.pricing,
+		}
+	})
 }
