@@ -19,6 +19,16 @@ export default suite({
 		}
 	},
 
+	async "logged-out user can view subscription plans"() {
+		const {api} = await storeWithSubscriptionPlans()
+		const {store, logout} = await api
+			.client(api.roles.customer)
+			.then(x => x.browserTab())
+		await logout()
+		expect(store.get.subscriptions.plans.length)
+			.equals(2)
+	},
+
 	"subscription purchases x": {
 		async "merchants, clerks and customers can purchase a subscription with an existing payment method"() {
 			const {api, getMySubscription} = await storeWithSubscriptionPlans()
