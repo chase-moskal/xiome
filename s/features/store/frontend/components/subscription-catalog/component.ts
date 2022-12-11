@@ -57,7 +57,6 @@ use => {
 		ops.combine(
 			op,
 			storeModel.state.subscriptions.subscriptionPlansOp,
-			storeModel.state.subscriptions.mySubscriptionDetailsOp,
 		),
 		() => html`
 			<ol data-plans>
