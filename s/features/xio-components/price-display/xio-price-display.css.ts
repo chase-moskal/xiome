@@ -1,5 +1,5 @@
 
-import {css} from "@chasemoskal/magical/x/camel-css/camel-css-lit.js"
+import {css} from "@chasemoskal/magical"
 export default css`
 
 :host {

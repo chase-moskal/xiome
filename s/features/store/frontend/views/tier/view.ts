@@ -1,6 +1,6 @@
 
 import {html} from "lit"
-import {view} from "@chasemoskal/magical/x/view/view.js"
+import {view} from "@chasemoskal/magical"
 
 import {getStatusIcon} from "./utils/get-status-icon.js"
 import {getButtonLabel} from "./utils/get-button-label.js"
@@ -9,9 +9,11 @@ import {TierBasics, TierButton, TierContext, TierInteractivity} from "./types.js
 import {centsToDollars} from "../../components/subscription-planning/ui/price-utils.js"
 
 import styles from "./styles.js"
-import {SubscriptionStatus} from "../../../isomorphic/concepts.js"
 
-export const TierView = view(use => ({
+export const TierView = view({
+		styles,
+		shadow: false,
+	}, use => ({
 		basics: {tier, pricing},
 		context: {isSubscribedToThisTier, status},
 		interactivity,
@@ -80,6 +82,3 @@ export const TierView = view(use => ({
 		</div>
 	`
 })
-
-TierView.shadow = false
-TierView.css = styles
