@@ -23,7 +23,7 @@ jobs:
     - name: 🔧 set up node
       uses: actions/setup-node@v2
       with:
-        node-version: '17'
+        node-version: '18'
 
     - name: 🎶 set up qemu
       uses: docker/setup-qemu-action@v1
