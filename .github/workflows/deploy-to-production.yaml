@@ -44,11 +44,6 @@ jobs:
     - name: 🔨 build
       run: npm run build
 
-    - name: 🚀 npm publish
-      uses: JS-DevTools/npm-publish@v1
-      with:
-        token: ${{ secrets.NPM_TOKEN }}
-
     - name: 🐳 push image - web
       uses: docker/build-push-action@v2
       with:
