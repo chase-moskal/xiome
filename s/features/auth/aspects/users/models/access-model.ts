@@ -1,5 +1,6 @@
 
 import {pub} from "../../../../../toolbox/pub.js"
+import {clone} from "../../../../../toolbox/clone.js"
 import {Op, ops} from "../../../../../framework/ops.js"
 import {AccessPayload} from "../../../types/auth-tokens.js"
 import {AccessLoginExpiredError} from "./errors/access-errors.js"
@@ -67,10 +68,10 @@ export function makeAccessModel({authMediator, loginService}: AccessModelOptions
 		...loginFacilities,
 		subscribe: accessOpEvent.subscribe,
 		getAccessOp() {
-			return structuredClone(accessOp)
+			return clone(accessOp)
 		},
 		getAccess() {
-			return ops.value(structuredClone(accessOp))
+			return ops.value(clone(accessOp))
 		},
 		getValidAccess() {
 			return authMediator.getValidAccess()
