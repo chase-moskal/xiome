@@ -61,12 +61,15 @@ app.post("/", express.raw({type: "application/json"}), async(request, response) 
 	if (webhook) {
 		try {
 			await webhook(event)
-			response.sendStatus(200)
+			response.json({received: true})
 		}
 		catch (error) {
 			console.error("webhook error:", error.message)
 			response.status(500).send("internal server error while executing webhook")
 		}
+	}
+	else {
+		response.json({received: true})
 	}
 })
 
