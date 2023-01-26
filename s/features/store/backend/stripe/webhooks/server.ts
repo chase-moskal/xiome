@@ -31,6 +31,13 @@ const {stripe, stripeWebhooks} = await (async() => {
 
 const app = express()
 
+app.get("/health", async(request, response) => {
+	console.log(`⚕️ health check`)
+	response.setHeader("Content-Type", "text/plain; charset=utf-8")
+	response.statusCode = 200
+	response.end(Date.now().toString())
+})
+
 app.post("/", express.raw({type: "application/json"}), async(request, response) => {
 	let event = request.body
 
