@@ -1,13 +1,10 @@
 
-import {promisify} from "util"
-import globCallback from "glob"
-const glob = promisify(globCallback)
+import {glob} from "glob"
 import {relative, dirname, resolve, join} from "path"
 
 import {escapeRegex} from "../../escape-regex.js"
 import {makeFileWriter} from "./utils/file-writer.js"
 import {WebsiteContext} from "./build-website-types.js"
-import {hashVersioner} from "../versioning/hash-versioner.js"
 import {getWebsiteContext} from "./utils/get-website-context.js"
 
 export async function buildWebsite<xOptions extends WebsiteContext>({
