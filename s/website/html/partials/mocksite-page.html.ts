@@ -1,5 +1,6 @@
 
 import {XiomeWebsiteContext} from "../../build-types.js"
+import {mocksiteAppId} from "../../../mocksite-app-id.js"
 import {html, HtmlTemplate} from "../../../toolbox/hamster-html/html.js"
 
 export default ({v, mode, base, mainHtml, headHtml}: {
@@ -27,7 +28,7 @@ export default ({v, mode, base, mainHtml, headHtml}: {
 		`
 		: html`
 			<xiome-config
-				app="49aef0eb9bdb853dc3b45d1556a5229f313894125cf65a948d1a6f6d85d66ca4"
+				app="${mocksiteAppId}"
 				platform="http://localhost:8080"
 				api-server="http://localhost:8000/"
 				chat-server="ws://localhost:8001/"
