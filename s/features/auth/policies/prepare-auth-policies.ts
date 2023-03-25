@@ -39,7 +39,7 @@ export function prepareAuthPolicies({
 				checker: makePrivilegeChecker(access.permit, appPermissions.privileges),
 			}
 		else
-			throw new renraku.ApiError(403, "request origin not allowed")
+			throw new renraku.ApiError(403, `request origin not allowed: ${headers.origin}`)
 	}
 
 	const userPolicy: renraku.Policy<UserMeta, UserAuth> = async(meta, headers) => {
