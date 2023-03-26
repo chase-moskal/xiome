@@ -32,8 +32,10 @@ component<CatalogProps>({
 },
 
 use => {
-	storeModel.initialize()
+	use.setup(() => { storeModel.initialize() })
+
 	setupRerenderingOnSnapstateChanges(use, storeModel.snap)
+
 	const slots = engageTemplateSlotting(use)
 	const [op, setOp] = use.state<Op<void>>(ops.ready(undefined))
 	const specifiedPlans = parseSpecifiedPlans(use.element.plans)

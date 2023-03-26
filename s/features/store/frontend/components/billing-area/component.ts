@@ -12,6 +12,10 @@ export class XiomeStoreBillingArea extends mixinRequireShare<{
 		storeModel: ReturnType<typeof makeStoreModel>
 	}>()(Component) {
 
+	async init() {
+		await this.share.storeModel.initialize()
+	}
+
 	get #state() {
 		return this.share.storeModel.snap.readable
 	}

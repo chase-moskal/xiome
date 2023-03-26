@@ -22,6 +22,8 @@ component({
 },
 
 use => {
+	use.setup(() => { storeModel.initialize() })
+
 	setupRerenderingOnSnapstateChanges(use, storeModel.snap)
 
 	const [slots] = use.state(() => new TemplateSlots(
