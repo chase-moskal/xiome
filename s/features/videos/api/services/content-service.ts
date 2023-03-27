@@ -6,7 +6,6 @@ import {VideoMeta} from "../../types/video-auth.js"
 import {getCatalog} from "./routines/get-catalog.js"
 import {videoPrivileges} from "../video-privileges.js"
 import {getAllViews} from "./routines/get-all-views.js"
-import {VideoSchema} from "../../types/video-schema.js"
 import {Dacast} from "../../dacast/types/dacast-types.js"
 import {getVideoViews} from "./routines/get-video-views.js"
 import {concurrent} from "../../../../toolbox/concurrent.js"
@@ -98,6 +97,7 @@ export const makeContentService = ({
 
 	async getShows({labels}: {labels: string[]}) {
 		const apiKey = await getDacastApiKey(database.tables.videos)
+
 		if (!apiKey)
 			return []
 
@@ -109,15 +109,19 @@ export const makeContentService = ({
 		})
 
 		const dacast = dacastSdk.getClient(apiKey)
+
 		return Promise.all(
 			views.map(async(view, index) => {
 				const label = labels[index]
+
 				if (!view)
 					return {label, details: undefined}
+
 				const [data, embed] = await Promise.all([
 					getDacastContent({dacast, reference: view}),
 					getDacastEmbed({dacast, reference: view}),
 				])
+
 				const show: VideoShow = {
 					label,
 					details: data
@@ -130,6 +134,7 @@ export const makeContentService = ({
 						}
 						: null,
 				}
+
 				return show
 			})
 		)

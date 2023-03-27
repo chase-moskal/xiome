@@ -26,13 +26,17 @@ headHtml: html`
 
 `,
 mainHtml: html`
-
 	<section>
+
 		<h2>videos</h2>
 		<xiome-video-hosting></xiome-video-hosting>
 		<hr />
 		<xiome-video-views></xiome-video-views>
 		<hr />
+		<br/>
+		<br/>
+
+		<h3>video display default</h3>
 		<xiome-video-display mock-embed show-title initially-hidden>
 			<p>video is on</p>
 			<p slot="unprivileged">you are not privileged to view this video</p>
@@ -43,10 +47,17 @@ mainHtml: html`
 			<p slot="unprivileged">you are not privileged to view this video</p>
 			<p slot="unavailable">this video is unavailable</p>
 		</xiome-video-companion>
+		<br/>
+		<br/>
+
+		<h3>video display abc</h3>
 		<xiome-video-display mock-embed label="abc" show-title initially-hidden>
 			<p slot="unprivileged">you are not privileged to view this video</p>
 			<p slot="unavailable">this video is unavailable</p>
 		</xiome-video-display>
+		<br/>
+		<br/>
+
 	</section>
 	<hr />
 	<section>

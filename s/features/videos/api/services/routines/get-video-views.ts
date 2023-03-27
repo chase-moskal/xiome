@@ -32,14 +32,18 @@ export async function getVideoViews({
 		const privileges = privilegeRows
 			.filter(p => p.label === label)
 			.map(p => p.privilegeId.toString())
+
 		const hasExplicitPrivilege = isPermittedToView({
 			viewPrivileges: privileges,
 			userPrivileges,
 		})
+
 		const isPermitted = hasExplicitPrivilege
 			|| checker.hasPrivilege("view all videos")
 			|| checker.hasPrivilege("moderate videos")
+
 		const dacastRow = dacastRows.find(r => r.label === label)
+
 		return isPermitted
 			? dacastRow
 				? {

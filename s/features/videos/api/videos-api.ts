@@ -23,10 +23,12 @@ export function videosApi({
 	}
 
 	return renraku.api({
+
 		dacastService: makeDacastService({
 			...options,
 			dacastSdk,
 		}),
+
 		contentService: makeContentService({
 			...options,
 			dacastSdk,
