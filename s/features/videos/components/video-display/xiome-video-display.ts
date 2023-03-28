@@ -42,9 +42,16 @@ export class XiomeVideoDisplay extends mixinRequireShare<{
 
 	#renderShow() {
 		const show = this.#model.getShow(this.label)
-		return show
-			? show.details
-				? html`
+		switch (show?.status ?? "unavailable") {
+
+			case "unavailable":
+				return html`<slot name=unavailable></slot>`
+
+			case "unprivileged":
+				return html`<slot name=unprivileged></slot>`
+
+			case "available":
+				return html`
 					${this["show-title"]
 						? html`<h4 part=title>${show.details.title}</h4>`
 						: null}
@@ -53,8 +60,7 @@ export class XiomeVideoDisplay extends mixinRequireShare<{
 							?? "(embed missing)"}
 					<slot></slot>
 				`
-				: html`<slot name=unprivileged></slot>`
-			: html`<slot name=unavailable></slot>`
+		}
 	}
 
 	render() {

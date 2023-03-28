@@ -95,7 +95,7 @@ export const makeContentService = ({
 		await database.tables.videos.viewPrivileges.delete(find({label}))
 	},
 
-	async getShows({labels}: {labels: string[]}) {
+	async getShows({labels}: {labels: string[]}): Promise<VideoShow[]> {
 		const apiKey = await getDacastApiKey(database.tables.videos)
 
 		if (!apiKey)
@@ -115,27 +115,28 @@ export const makeContentService = ({
 				const label = labels[index]
 
 				if (!view)
-					return {label, details: undefined}
+					return {label, status: "unavailable", details: undefined}
 
 				const [data, embed] = await Promise.all([
-					getDacastContent({dacast, reference: view}),
-					getDacastEmbed({dacast, reference: view}),
+					getDacastContent({dacast, reference: view.reference}),
+					getDacastEmbed({dacast, reference: view.reference}),
 				])
 
-				const show: VideoShow = {
+				return {
 					label,
+					status: view.reference
+						? "available"
+						: "unprivileged",
 					details: data
 						? {
 							...ingestDacastContent({
-								type: view.type,
+								type: view.reference.type,
 								data,
 							}),
 							embed: embed?.code,
 						}
-						: null,
+						: undefined,
 				}
-
-				return show
 			})
 		)
 	},

@@ -71,7 +71,8 @@ export function makeContentModel({
 				.then(show => updatedShow = show)
 				.then(show => [
 					...oldShows.filter(s => s.label !== label),
-					...(show ? [show] : [{label, details: undefined}]),
+					show,
+					// ...(show ? [show] : [{label, details: undefined}]),
 				]),
 		})
 		currentlyLoadingShows.delete(label)

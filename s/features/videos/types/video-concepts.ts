@@ -25,13 +25,15 @@ export namespace VideoHosting {
 	export type AnyEmbed = DacastEmbed
 }
 
-export interface VideoView extends VideoHosting.AnyReference {
+export interface VideoView {
 	label: string
 	privileges: string[]
+	reference?: VideoHosting.AnyReference
 }
 
 export interface VideoShow {
 	label: string
+	status: "available" | "unavailable" | "unprivileged"
 	details?: VideoHosting.AnyEmbed
 }
 
