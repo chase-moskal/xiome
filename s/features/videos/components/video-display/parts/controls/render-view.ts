@@ -8,20 +8,21 @@ export function renderView({view, onDeleteClick, getPrivilegeDisplay}: {
 		onDeleteClick: () => void
 		getPrivilegeDisplay: (id: string) => void | PrivilegeDisplay
 	}) {
+
 	return html`
 		<div class="view">
 			<div class="view-details">
 				<div>
 					<h4>hosting provider</h4>
-					<p>${view.provider}</p>
+					<p>${view.reference.provider}</p>
 				</div>
 				<div>
 					<h4>content type</h4>
-					<p>${view.type}</p>
+					<p>${view.reference.type}</p>
 				</div>
 				<div>
 					<h4>content id</h4>
-					<xio-id id="${view.id}"></xio-id>
+					<xio-id id="${view.reference.id}"></xio-id>
 				</div>
 			</div>
 			<h4>privileges with access</h4>

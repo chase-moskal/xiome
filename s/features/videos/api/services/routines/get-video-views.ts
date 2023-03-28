@@ -44,16 +44,18 @@ export async function getVideoViews({
 
 		const dacastRow = dacastRows.find(r => r.label === label)
 
-		return isPermitted
-			? dacastRow
-				? {
-					type: dacastRow.type,
-					label,
-					privileges,
-					id: dacastRow.dacastId,
-					provider: "dacast",
-				}
-				: undefined
+		return dacastRow
+			? {
+				label,
+				privileges,
+				reference: isPermitted
+					? {
+						type: dacastRow.type,
+						id: dacastRow.dacastId,
+						provider: "dacast" as const,
+					}
+					: undefined
+			}
 			: undefined
 	})
 }

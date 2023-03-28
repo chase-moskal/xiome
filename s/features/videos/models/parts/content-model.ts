@@ -71,7 +71,8 @@ export function makeContentModel({
 				.then(show => updatedShow = show)
 				.then(show => [
 					...oldShows.filter(s => s.label !== label),
-					...(show ? [show] : [{label, details: undefined}]),
+					show,
+					// ...(show ? [show] : [{label, details: undefined}]),
 				]),
 		})
 		currentlyLoadingShows.delete(label)
@@ -171,7 +172,7 @@ export function makeContentModel({
 				.find(show => show.label === label)
 		},
 
-		async setView(options: {
+		async setView(view: {
 				label: string
 				privileges: string[]
 				reference: VideoHosting.AnyReference
@@ -179,23 +180,22 @@ export function makeContentModel({
 			const oldViews = ops.value(state.readable.viewsOp) ?? []
 			await ops.operation({
 				setOp: op => state.writable.viewsOp = op,
-				promise: contentService.writeView(options).then(() => [
-					...oldViews.filter(v => v.label !== options.label),
-					{
-						...options.reference,
-						label: options.label,
-						privileges: options.privileges,
-					},
-				]),
+				promise: contentService
+					.writeView(view)
+					.then(() => [
+						...oldViews.filter(v => v.label !== view.label),
+						view,
+					]),
 			})
-			await loadShow(options.label)
+			await loadShow(view.label)
 		},
 
 		async deleteView(label: string) {
 			const oldViews = ops.value(state.readable.viewsOp) ?? []
 			await ops.operation({
 				setOp: op => state.writable.viewsOp = op,
-				promise: contentService.deleteView({label})
+				promise: contentService
+					.deleteView({label})
 					.then(() => oldViews.filter(v => v.label !== label)),
 			})
 			const oldShows = ops.value(state.readable.showsOp) ?? []

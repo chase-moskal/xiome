@@ -17,7 +17,7 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {VideoHosting, VideoModerationData, VideoShow} from "../../types/video-concepts.js"
+import {VideoHosting, VideoModerationData, VideoShow, VideoStatus} from "../../types/video-concepts.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
@@ -95,7 +95,7 @@ export const makeContentService = ({
 		await database.tables.videos.viewPrivileges.delete(find({label}))
 	},
 
-	async getShows({labels}: {labels: string[]}) {
+	async getShows({labels}: {labels: string[]}): Promise<VideoShow[]> {
 		const apiKey = await getDacastApiKey(database.tables.videos)
 
 		if (!apiKey)
@@ -114,28 +114,35 @@ export const makeContentService = ({
 			views.map(async(view, index) => {
 				const label = labels[index]
 
-				if (!view)
-					return {label, details: undefined}
+				let status: VideoStatus = view
+					? view.reference
+						? "available"
+						: "unprivileged"
+					: "unavailable"
 
-				const [data, embed] = await Promise.all([
-					getDacastContent({dacast, reference: view}),
-					getDacastEmbed({dacast, reference: view}),
-				])
+				let details: VideoHosting.AnyEmbed | undefined
 
-				const show: VideoShow = {
-					label,
-					details: data
-						? {
+				if (view?.reference) {
+					const [data, embed] = await Promise.all([
+						getDacastContent({dacast, reference: view.reference}),
+						getDacastEmbed({dacast, reference: view.reference}),
+					])
+					if (data) {
+						status = "available"
+						details = {
 							...ingestDacastContent({
-								type: view.type,
+								type: view.reference.type,
 								data,
 							}),
 							embed: embed?.code,
 						}
-						: null,
+					}
+					else {
+						status = "unavailable"
+					}
 				}
 
-				return show
+				return {label, status, details}
 			})
 		)
 	},
