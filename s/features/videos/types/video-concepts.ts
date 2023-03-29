@@ -7,7 +7,7 @@ export namespace VideoHosting {
 	export interface Base {
 		provider: Provider
 	}
-	
+
 	export interface DacastReference extends Base {
 		provider: "dacast"
 		type: DacastData.ContentType
@@ -31,9 +31,11 @@ export interface VideoView {
 	reference?: VideoHosting.AnyReference
 }
 
+export type VideoStatus = "available" | "unavailable" | "unprivileged"
+
 export interface VideoShow {
 	label: string
-	status: "available" | "unavailable" | "unprivileged"
+	status: VideoStatus
 	details?: VideoHosting.AnyEmbed
 }
 

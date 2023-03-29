@@ -17,7 +17,7 @@ import {AnonAuth, AnonMeta} from "../../../auth/types/auth-metas.js"
 import {setViewPermissions} from "./routines/set-view-permissions.js"
 import {ingestDacastContent} from "./routines/ingest-dacast-content.js"
 import {SecretConfig} from "../../../../assembly/backend/types/secret-config.js"
-import {VideoHosting, VideoModerationData, VideoShow} from "../../types/video-concepts.js"
+import {VideoHosting, VideoModerationData, VideoShow, VideoStatus} from "../../types/video-concepts.js"
 import {makePermissionsEngine} from "../../../../assembly/backend/permissions/permissions-engine.js"
 import {makePrivilegeChecker} from "../../../auth/aspects/permissions/tools/make-privilege-checker.js"
 
@@ -114,29 +114,35 @@ export const makeContentService = ({
 			views.map(async(view, index) => {
 				const label = labels[index]
 
-				if (!view)
-					return {label, status: "unavailable", details: undefined}
-
-				const [data, embed] = await Promise.all([
-					getDacastContent({dacast, reference: view.reference}),
-					getDacastEmbed({dacast, reference: view.reference}),
-				])
-
-				return {
-					label,
-					status: view.reference
+				let status: VideoStatus = view
+					? view.reference
 						? "available"
-						: "unprivileged",
-					details: data
-						? {
+						: "unprivileged"
+					: "unavailable"
+
+				let details: VideoHosting.AnyEmbed | undefined
+
+				if (view?.reference) {
+					const [data, embed] = await Promise.all([
+						getDacastContent({dacast, reference: view.reference}),
+						getDacastEmbed({dacast, reference: view.reference}),
+					])
+					if (data) {
+						status = "available"
+						details = {
 							...ingestDacastContent({
 								type: view.reference.type,
 								data,
 							}),
 							embed: embed?.code,
 						}
-						: undefined,
+					}
+					else {
+						status = "unavailable"
+					}
 				}
+
+				return {label, status, details}
 			})
 		)
 	},
